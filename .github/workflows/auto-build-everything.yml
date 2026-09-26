@@ -59,9 +59,14 @@ jobs:
         if: env.UPSTREAM_CHANGED == 'true'
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Setup Android SDK
+      - name: Accept Android SDK licenses
         if: env.UPSTREAM_CHANGED == 'true'
-        uses: android-actions/setup-android@v3
+        run: |
+          # GitHub ubuntu-latest runners have Android SDK pre-installed at $ANDROID_HOME
+          # We just need to accept licenses so Gradle can use the SDK
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          echo "✅ Android SDK licenses accepted"
+          echo "ANDROID_HOME=$ANDROID_HOME"
 
       - name: Inject AMOLED Fix
         if: env.UPSTREAM_CHANGED == 'true'
@@ -69,7 +74,9 @@ jobs:
 
       - name: Configure local.properties
         if: env.UPSTREAM_CHANGED == 'true'
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "✅ local.properties configured with ANDROID_HOME=$ANDROID_HOME"
 
       - name: Extract version
         if: env.UPSTREAM_CHANGED == 'true'
@@ -150,7 +157,7 @@ jobs:
         run: |
           echo "Fetching stock-tiktok-apk release from Wake-Old-Hyphen/PAB..."
           
-          # Use gh CLI to find and download the asset
+          # Use gh CLI to find the 47.0.3 asset
           ASSET_NAME=$(gh release view stock-tiktok-apk --repo Wake-Old-Hyphen/PAB \
             --json assets --jq '.assets[] | select(.name | test("47\\.0\\.3.*\\.apk$")) | select(.name | test("arm64")) | .name' | head -n1)
           
@@ -167,7 +174,7 @@ jobs:
           
           mv "build/$ASSET_NAME" build/base.apk
           
-          # Verify it's a valid APK
+          # Verify it's a valid APK (ZIP format)
           if ! file build/base.apk | grep -qE "Zip archive|Java archive"; then
             echo "❌ Downloaded file is not a valid APK!"
             exit 1
@@ -240,8 +247,8 @@ jobs:
               json.dump(options, f, indent=2)
           
           print("✅ Options configured")
-          print(f"   Bundle 0 (Hushfeed): All compatible patches enabled")
-          print(f"   Bundle 1 (Nai64): Only 'Empty Clipboard Report' enabled")
+          print("   Bundle 0 (Hushfeed): All compatible patches enabled")
+          print("   Bundle 1 (Nai64): Only 'Empty Clipboard Report' enabled")
           PYEOF
 
       - name: Patch TikTok APK
@@ -307,10 +314,12 @@ jobs:
       - name: Re-sign stripped APK
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
-          BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | tail -n1)
+          BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
+          echo "Using build-tools: $BUILD_TOOLS"
           
           # Zipalign
           $BUILD_TOOLS/zipalign -p 4 build/stripped.apk build/aligned.apk
+          echo "✅ Zipaligned"
           
           # Sign with your keystore
           $BUILD_TOOLS/apksigner sign \
@@ -320,12 +329,13 @@ jobs:
             --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
             --out build/final-privacy.apk \
             build/aligned.apk
+          echo "✅ Signed"
           
           # Verify signature
           $BUILD_TOOLS/apksigner verify --print-certs build/final-privacy.apk
+          echo "✅ Signature verified"
           
-          echo "✅ Final APK signed!"
-          echo "   Size: $(du -h build/final-privacy.apk | cut -f1)"
+          echo "Final APK size: $(du -h build/final-privacy.apk | cut -f1)"
 
       - name: Publish final APK release
         if: env.UPSTREAM_CHANGED == 'true'
