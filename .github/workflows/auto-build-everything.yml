@@ -62,11 +62,8 @@ jobs:
       - name: Accept Android SDK licenses
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
-          # GitHub ubuntu-latest runners have Android SDK pre-installed at $ANDROID_HOME
-          # We just need to accept licenses so Gradle can use the SDK
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           echo "✅ Android SDK licenses accepted"
-          echo "ANDROID_HOME=$ANDROID_HOME"
 
       - name: Inject AMOLED Fix
         if: env.UPSTREAM_CHANGED == 'true'
@@ -76,7 +73,7 @@ jobs:
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "✅ local.properties configured with ANDROID_HOME=$ANDROID_HOME"
+          echo "✅ local.properties configured"
 
       - name: Extract version
         if: env.UPSTREAM_CHANGED == 'true'
@@ -117,7 +114,6 @@ jobs:
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           mkdir -p build
-          # Get latest Morphe CLI release
           CLI_URL=$(curl -s https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest \
             | jq -r '.assets[] | select(.name | endswith("-all.jar")) | .browser_download_url')
           
@@ -152,31 +148,19 @@ jobs:
       # ============================================
       - name: Download stock TikTok 47.0.3 from PAB
         if: env.UPSTREAM_CHANGED == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Fetching stock-tiktok-apk release from Wake-Old-Hyphen/PAB..."
+          mkdir -p build
           
-          # Use gh CLI to find the 47.0.3 asset
-          ASSET_NAME=$(gh release view stock-tiktok-apk --repo Wake-Old-Hyphen/PAB \
-            --json assets --jq '.assets[] | select(.name | test("47\\.0\\.3.*\\.apk$")) | select(.name | test("arm64")) | .name' | head -n1)
+          APK_URL="https://github.com/Wake-Old-Hyphen/PAB/releases/download/stock-tiktok-apk/com.zhiliaoapp.musically_47.0.3-2024700030_minAPI23.arm64-v8a.armeabi-v7a.nodpi._apkmirror.com.apk"
           
-          if [ -z "$ASSET_NAME" ]; then
-            echo "❌ Could not find 47.0.3 APK in PAB's stock-tiktok-apk release!"
-            echo "Please ensure com.zhiliaoapp.musically_47.0.3-*.apk is uploaded."
-            exit 1
-          fi
+          echo "Downloading base APK directly from PAB release..."
+          curl -L -# -o build/base.apk "$APK_URL"
           
-          echo "Found asset: $ASSET_NAME"
+          FILE_SIZE=$(stat -c%s build/base.apk)
+          echo "Downloaded file size: $FILE_SIZE bytes"
           
-          gh release download stock-tiktok-apk --repo Wake-Old-Hyphen/PAB \
-            --pattern "$ASSET_NAME" --dir build/
-          
-          mv "build/$ASSET_NAME" build/base.apk
-          
-          # Verify it's a valid APK (ZIP format)
-          if ! file build/base.apk | grep -qE "Zip archive|Java archive"; then
-            echo "❌ Downloaded file is not a valid APK!"
+          if [ "$FILE_SIZE" -lt 100000000 ]; then
+            echo "❌ Downloaded file is too small ($FILE_SIZE bytes). Download failed."
             exit 1
           fi
           
@@ -195,7 +179,6 @@ jobs:
       - name: Download Nai64 bundle
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
-          # Nai64 publishes patches-bundle.json which points to the .mpp
           NAI64_JSON=$(curl -s https://raw.githubusercontent.com/Nai64/Nai64ExtraPatches/main/patches-bundle.json)
           NAI64_URL=$(echo "$NAI64_JSON" | jq -r '.download_url')
           
@@ -229,17 +212,12 @@ jobs:
           with open("build/options.json") as f:
               options = json.load(f)
           
-          # options is a list of bundles, each with a "patches" dict
-          # Bundle 0 = Hushfeed, Bundle 1 = Nai64
-          
           for i, bundle in enumerate(options):
               patches = bundle.get("patches", {})
               for patch_name, patch_data in patches.items():
-                  # Enable all patches by default
                   patch_data["enabled"] = True
                   
-                  # For Nai64 (bundle index 1), ONLY enable Empty Clipboard Report
-                  # Golden Rule #10: Nai64 must be allowlisted to "Empty Clipboard Report" only
+                  # Nai64 (bundle index 1): ONLY enable Empty Clipboard Report
                   if i == 1 and patch_name.lower() != "empty clipboard report":
                       patch_data["enabled"] = False
           
@@ -247,8 +225,8 @@ jobs:
               json.dump(options, f, indent=2)
           
           print("✅ Options configured")
-          print("   Bundle 0 (Hushfeed): All compatible patches enabled")
-          print("   Bundle 1 (Nai64): Only 'Empty Clipboard Report' enabled")
+          print("   Hushfeed: All patches enabled")
+          print("   Nai64: Only 'Empty Clipboard Report' enabled")
           PYEOF
 
       - name: Patch TikTok APK
@@ -270,12 +248,11 @@ jobs:
             build/base.apk
           
           if [ ! -f build/patched.apk ]; then
-            echo "❌ Patching failed! Check the logs above."
+            echo "❌ Patching failed!"
             exit 1
           fi
           
-          echo "✅ APK patched successfully!"
-          echo "   Size: $(du -h build/patched.apk | cut -f1)"
+          echo "✅ APK patched: $(du -h build/patched.apk | cut -f1)"
 
       # ============================================
       # PHASE 7: STRIP PERMISSIONS
@@ -294,7 +271,7 @@ jobs:
           curl -L -o build/apkeditor.jar "$APKEDITOR_URL"
           echo "✅ APKEditor downloaded"
 
-      - name: Strip permissions (static manifest surgery)
+      - name: Strip permissions
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           echo "Decoding APK manifest..."
@@ -317,11 +294,9 @@ jobs:
           BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
           echo "Using build-tools: $BUILD_TOOLS"
           
-          # Zipalign
           $BUILD_TOOLS/zipalign -p 4 build/stripped.apk build/aligned.apk
           echo "✅ Zipaligned"
           
-          # Sign with your keystore
           $BUILD_TOOLS/apksigner sign \
             --ks signing/keystore.bks \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
@@ -331,11 +306,8 @@ jobs:
             build/aligned.apk
           echo "✅ Signed"
           
-          # Verify signature
           $BUILD_TOOLS/apksigner verify --print-certs build/final-privacy.apk
           echo "✅ Signature verified"
-          
-          echo "Final APK size: $(du -h build/final-privacy.apk | cut -f1)"
 
       - name: Publish final APK release
         if: env.UPSTREAM_CHANGED == 'true'
@@ -346,16 +318,15 @@ jobs:
           
           gh release create "$TAG" \
             --title "TikTok 47.0.3 Privacy Build (Hushfeed v${{ env.VERSION }})" \
-            --notes "Automated privacy-hardened build with:
+            --notes "Automated privacy-hardened build:
           - Hushfeed v${{ env.VERSION }} + AMOLED fix
           - Nai64 Empty Clipboard Report
-          - 54 permissions stripped (static manifest surgery)
-          - arm64-v8a libs stripped
+          - Permissions stripped
+          - arm64-v8a only
           
-          Base: stock-tiktok-apk release from Wake-Old-Hyphen/PAB" \
+          Base: stock-tiktok-apk from Wake-Old-Hyphen/PAB" \
             --prerelease
           
-          # Per-file upload with retries (Golden Rule #6)
           for i in 1 2 3 4 5; do
             if gh release upload "$TAG" build/final-privacy.apk --clobber; then
               echo "✅ Uploaded final-privacy.apk"
