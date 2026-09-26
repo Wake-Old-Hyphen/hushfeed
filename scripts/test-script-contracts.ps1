@@ -445,6 +445,36 @@ foreach ($name in $consumerScripts) {
 
 . (Join-Path $PSScriptRoot 'release-receipt.ps1')
 
+# A failed fixture run quotes the CLI: an early error wherever it fell, and the last lines.
+$cliRun = @('INFO: Loading patches...', 'SEVERE: early fingerprint failure') +
+    @(1..30 | ForEach-Object { "INFO: Applied: patch $_" }) +
+    @('', 'java.lang.OutOfMemoryError: Java heap space')
+$cliTail = Get-CliOutputTail -Output $cliRun
+Assert-True ($cliTail -match 'early fingerprint failure' -and $cliTail -match 'OutOfMemoryError' -and
+    $cliTail -match 'patch 30' -and $cliTail -notmatch 'Loading patches') `
+    "The CLI tail lost an error line or kept the whole run: $cliTail"
+Assert-True (@($cliTail -split "`n").Count -eq 21) `
+    "The CLI tail repeated a line it already had: $(@($cliTail -split "`n").Count) lines"
+# Many failed patches first, then the line that ended the run and a long trace under it.
+$manyFailures = @(1..12 | ForEach-Object { "SEVERE: patch $_ failed" }) +
+    @('Exception in thread "main" java.lang.IllegalStateException: the run ended here') +
+    @(1..25 | ForEach-Object { "    at frame$_(Source.java:$_)" })
+$manyTail = Get-CliOutputTail -Output $manyFailures
+Assert-True ($manyTail -match 'the run ended here' -and $manyTail -match 'patch 1 failed') `
+    "The CLI tail dropped the line that ended the run behind earlier failures: $manyTail"
+Assert-True ((Get-CliOutputTail -Output @()) -eq '(the CLI printed nothing)') `
+    'A silent CLI run left the failure message with nothing after the colon.'
+$receiptScript = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'build-release-receipt.ps1') -Raw
+Assert-True ($receiptScript -match 'bundleManifest\.timestamp -ne \$commitTimestamp \* 1000') `
+    'build-release-receipt.ps1 patches the fixtures before checking the bundle is stamped with its commit.'
+$bundleBuild = Get-Content -LiteralPath (Join-Path (Split-Path -Parent $PSScriptRoot) 'patches/build.gradle.kts') -Raw
+Assert-True ($bundleBuild -match '"git", "status", "--porcelain"' -and
+    $bundleBuild.IndexOf('"status", "--porcelain"') -lt $bundleBuild.IndexOf('"log", "-1", "--format=%ct"')) `
+    'The bundle takes HEAD''s time without asking whether the tree has uncommitted changes.'
+Assert-True ($receiptScript -notmatch 'DesktopJar @arguments 2>&1 \| Out-Null' -and
+    $receiptScript -match 'Get-CliOutputTail') `
+    'build-release-receipt.ps1 throws the desktop CLI output away again.'
+
 $manifestLines = @(
     'N: android=http://schemas.android.com/apk/res/android (line=1)',
     '  E: manifest (line=1)',
@@ -1012,6 +1042,13 @@ try {
         $synced = $indexText
         if ($indexVersion -ne $fixtureVersion) { $synced = $synced -replace [regex]::Escape($indexVersion), $fixtureVersion }
         $synced = $synced -replace '\b\d+ patches\b', "$count patches"
+        # The 0.60.0 index went out on the owner's word with the gate skipped, and its description
+        # quotes the runtime count alone. The cases below move one count at a time against the two
+        # a gated release quotes, so the copy gains the missing one rather than every scripts change
+        # failing here until the next release.
+        if ($synced -notmatch '\b\d+ patch tests passed\b') {
+            $synced = $synced -replace '\b(\d+ runtime tests passed)\b', '$1 and 421 patch tests passed'
+        }
         if ($synced -ceq $indexText) { return }
         Set-FactsFile 'patches-bundle.json' { param($text) $synced }
     }
@@ -1434,8 +1471,12 @@ try {
         $env:PATH = $hookRoot
         $env:GITHUB_ACTOR = $null
         $env:GITHUB_TOKEN = $null
+        # The files the tests read from outside the source folders reach the build too: a push
+        # that changed only one of them ran the release facts check at most.
         foreach ($pin in @('gradle/libs.versions.toml', 'gradle/verification-metadata.xml',
-                'settings.gradle.kts', 'build.gradle.kts', 'patches/build.gradle.kts')) {
+                'settings.gradle.kts', 'build.gradle.kts', 'patches/build.gradle.kts',
+                'README.md', 'NOTICE', 'patches-list.json', 'patches-bundle.png', 'assets/readme-hero.png',
+                'concepts/marketing/2026-09-12/selected/hero-final.png')) {
             Assert-Throws { & $prePushScript -Root $hookRoot -ChangedPaths @($pin) 6> $null } `
                 '*GITHUB_ACTOR*' "A push that changed $pin did not reach the build gates."
         }
@@ -1700,6 +1741,34 @@ try {
             $contractsBroken = Save-GateContracts 'broken'
             Assert-Throws { & $prePushScript -Root $gateRepo -PushedRefs "refs/heads/main $contractsBroken refs/heads/main $contractsGood" 6> $null } `
                 '*script contract tests did not pass*' 'A push whose own script contract tests fail was let through.'
+            & git -C $gateRepo checkout --quiet -- .
+
+            # A source file moved out of the source folders. With rename detection the diff
+            # named only the new path, so the push read as a docs change and built nothing.
+            function Get-GateHead { return (& git -C $gateRepo rev-parse HEAD).Trim() }
+            Set-Content -LiteralPath (Join-Path $gateRepo 'extensions/Moved.java') -Value 'class Moved {}' -Encoding ASCII
+            & git -C $gateRepo add extensions/Moved.java
+            & git -C $gateRepo commit --quiet -m 'a source file'
+            $beforeMove = Get-GateHead
+            New-Item -ItemType Directory -Path (Join-Path $gateRepo 'docs') -Force | Out-Null
+            & git -C $gateRepo mv extensions/Moved.java docs/Moved.java
+            & git -C $gateRepo commit --quiet -m 'moved out'
+            $afterMove = Get-GateHead
+            Remove-Item -LiteralPath $gateMarker -Force -ErrorAction SilentlyContinue
+            & $prePushScript -Root $gateRepo -PushedRefs "refs/heads/main $afterMove refs/heads/main $beforeMove" 6> $null
+            Assert-True ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $gateMarker)) `
+                'A push that moved a source file out of extensions/ ran no build.'
+
+            # A name with a letter outside ASCII. git quoted it, and a quoted path matched no route.
+            $wideName = 'extensions/' + [char]0x00DC + 'berall.java'
+            Set-Content -LiteralPath (Join-Path $gateRepo $wideName) -Value 'class Wide {}' -Encoding ASCII
+            & git -C $gateRepo add -- $wideName
+            & git -C $gateRepo commit --quiet -m 'a wide name'
+            $afterWide = Get-GateHead
+            Remove-Item -LiteralPath $gateMarker -Force -ErrorAction SilentlyContinue
+            & $prePushScript -Root $gateRepo -PushedRefs "refs/heads/main $afterWide refs/heads/main $afterMove" 6> $null
+            Assert-True ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $gateMarker)) `
+                'A push that added a source file with a non-ASCII name ran no build.'
         } finally {
             foreach ($line in @(& git -C $gateRepo worktree list --porcelain)) {
                 if ($line -like 'worktree *') {

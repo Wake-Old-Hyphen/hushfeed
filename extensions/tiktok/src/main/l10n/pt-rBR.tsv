@@ -53,7 +53,6 @@
 1 result so far	1 resultado até agora
 1 video left	Resta 1 vídeo
 A Lab change is already running	Já há uma mudança do Lab em andamento
-A creator pattern is taking too long and was turned off: %1$s	Um padrão de criador está demorando demais e foi desligado: %1$s
 A diagnostic report is already being saved	Um relatório de diagnóstico já está sendo salvo
 A field value couldn't be read. Check the values and try again.	Não foi possível ler o valor de um campo. Verifique os valores e tente novamente.
 A good place to stop, if you want one.	Uma boa hora para parar, se você quiser uma.
@@ -76,12 +75,15 @@ Leave when TikTok says time is up	Sair quando o TikTok disser que o tempo acabou
 No app on this phone opens that file	Nenhum app neste celular abre esse arquivo
 Open	Abrir
 Restart TikTok to apply this	Reinicie o TikTok para aplicar
+That creator pattern could stall the feed, so it was skipped: %1$s	Esse padrão de criador pode travar o feed, então foi ignorado: %1$s
+That creator pattern could stall the feed, so it wasn't added: %1$s	Esse padrão de criador pode travar o feed, então não foi adicionado: %1$s
 This key touches account safety. Forcing it can change login, region, payment or security checks.	Esta chave mexe com a proteção da conta. Forçá-la pode mudar as verificações de login, região, pagamento ou segurança.
 Activity	Atividade
 Activity center (PIA)	Centro de atividade (PIA)
 Add	Adicionar
 Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.	Bloqueie o criador com um toque. Quando o TikTok confirmar, vá para o próximo vídeo. Um pequeno botão Desbloquear aparece no canto superior esquerdo por dois segundos. Você também pode desbloquear depois em Privacidade > Contas bloqueadas do TikTok.
 TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.	O próprio lembrete diário de tempo de tela do TikTok manda o app para o segundo plano em vez de esperar ser dispensado. Se você voltar logo em seguida, o lembrete fica na tela, para o limite continuar ao alcance. Precisa de um limite diário em Configurações e privacidade do TikTok, em Tempo e bem-estar.
+Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.	Tente outra palavra ou limpe a busca. As chaves de patches que você não marcou no Morphe Manager não aparecem.
 Unblock	Desbloquear
 Add a button beside the block control to send feedback about the current video.	Adiciona um botão ao lado do controle de bloqueio para enviar feedback sobre o vídeo atual.
 Add a creator	Adicionar um criador

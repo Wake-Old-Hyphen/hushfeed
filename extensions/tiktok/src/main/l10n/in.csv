@@ -54,7 +54,6 @@ source,target
 1 result so far,1 hasil sejauh ini
 1 video left,Sisa 1 video
 A Lab change is already running,Perubahan Lab sedang berjalan
-A creator pattern is taking too long and was turned off: %1$s,"Ada pola kreator yang terlalu lama, jadi dimatikan: %1$s"
 A diagnostic report is already being saved,Laporan diagnostik sedang disimpan
 A field value couldn't be read. Check the values and try again.,Nilai kolom tidak dapat dibaca. Periksa nilainya lalu coba lagi.
 "A good place to stop, if you want one.","Tempat yang bagus untuk berhenti, kalau kamu mencarinya."
@@ -74,6 +73,8 @@ Couldn't undo that. Try again.,Tidak bisa dibatalkan. Coba lagi.
 Got it,Mengerti
 Later,Nanti
 Restart TikTok to apply this,Mulai ulang TikTok agar berlaku
+"That creator pattern could stall the feed, so it was skipped: %1$s","Pola kreator itu bisa membuat feed macet, jadi dilewati: %1$s"
+"That creator pattern could stall the feed, so it wasn't added: %1$s","Pola kreator itu bisa membuat feed macet, jadi tidak ditambahkan: %1$s"
 "This key touches account safety. Forcing it can change login, region, payment or security checks.","Kunci ini menyangkut keselamatan akun. Memaksanya bisa mengubah pemeriksaan login, wilayah, pembayaran, atau keamanan."
 Activity,Aktivitas
 Activity center (PIA),Pusat aktivitas (PIA)
@@ -81,6 +82,7 @@ Add,Tambah
 "Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.","Blokir kreator dengan satu ketukan. Setelah TikTok mengonfirmasi, lanjut ke video berikutnya. Tombol Buka blokir kecil muncul di kiri atas selama dua detik. Kamu juga bisa membuka blokir nanti di Privasi > Akun yang diblokir di TikTok."
 No app on this phone opens that file,Tidak ada aplikasi di ponsel ini yang bisa membuka file itu
 Open,Buka
+Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.,Coba kata lain atau hapus pencarian. Sakelar dari patch yang tidak kamu centang di Morphe Manager tidak muncul.
 Unblock,Buka blokir
 Add a button beside the block control to send feedback about the current video.,Tambahkan tombol di samping kontrol blokir untuk mengirim masukan tentang video ini.
 Add a creator,Tambah kreator
