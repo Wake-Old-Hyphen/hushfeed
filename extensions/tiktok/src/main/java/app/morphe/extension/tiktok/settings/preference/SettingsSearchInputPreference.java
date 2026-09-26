@@ -132,7 +132,8 @@ public final class SettingsSearchInputPreference extends Preference {
         clear.setTag("settings_search_clear");
         clear.setImageDrawable(new ClearDrawable(context));
         clear.setScaleType(ImageView.ScaleType.CENTER);
-        clear.setBackground(SettingsUi.roundedSurface(context, SettingsUi.RADIUS_CONTROL, false));
+        clear.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CONTROL,
+                SettingsUi.roundedSurface(context, SettingsUi.RADIUS_CONTROL, false)));
         clear.setContentDescription(L10n.t(context, "Clear search"));
         SettingsUi.markAsButton(clear);
         clear.setFocusable(true);
@@ -149,8 +150,12 @@ public final class SettingsSearchInputPreference extends Preference {
         resultCount = SettingsUi.resultCount(context, "settings_search_result_count");
         resultCount.setAllCaps(true);
         resultCount.setLetterSpacing(0.08f);
-        resultCount.setPadding(0, SettingsUi.dp(context, 16),
-                0, SettingsUi.dp(context, 6));
+        // The home page's group labels: 12sp, and inset 18dp to line up with the text inside the
+        // cards. This one sat on the card's edge, the only label on any page that did.
+        resultCount.setTextSize(12);
+        int inset = SettingsUi.dp(context, 18);
+        resultCount.setPaddingRelative(inset, SettingsUi.dp(context, 16),
+                inset, SettingsUi.dp(context, 6));
         root.addView(resultCount, new LinearLayout.LayoutParams(-1, -2));
         updateResultCount();
         return root;
