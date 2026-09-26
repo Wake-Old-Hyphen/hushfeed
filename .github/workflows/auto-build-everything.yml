@@ -179,7 +179,7 @@ jobs:
       - name: Download Nai64 bundle
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
-          NAI64_JSON=$(curl -s https://raw.githubusercontent.com/Nai64/Nai64ExtraPatches/main/patches-bundle.json)
+          NAI64_JSON=$(curl -s "https://raw.githubusercontent.com/Nai64/Nai64ExtraPatches/refs/heads/main/patches-bundle.json")
           NAI64_URL=$(echo "$NAI64_JSON" | jq -r '.download_url')
           
           if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
@@ -196,7 +196,7 @@ jobs:
       - name: Generate patch options
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
-          java -jar build/cli.jar options/options-create \
+          java -jar build/cli.jar options-create \
             -p bundles/hushfeed.mpp \
             -p bundles/nai64.mpp \
             -o build/options.json
