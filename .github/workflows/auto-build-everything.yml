@@ -147,9 +147,6 @@ jobs:
           fi
           echo "✅ Keystore decoded ($SIZE bytes)"
 
-      # ============================================
-      # PHASE 3.5: AUTO-DETECT KEYSTORE ALIAS
-      # ============================================
       - name: Detect keystore alias (self-healing)
         if: env.UPSTREAM_CHANGED == 'true'
         env:
@@ -258,43 +255,65 @@ jobs:
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           python3 - <<'PYEOF'
-          import json
-          import yaml
+          import json, yaml, re
+
+          def norm(s): return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
           with open("build/options.json") as f:
               options = json.load(f)
-
           with open("Nai64ExtraPatches_Options.yaml") as f:
-              nai64_config = yaml.safe_load(f) or {"patches": []}
+              cfg = yaml.safe_load(f) or {}
 
-          requested_patches = {p["name"].lower(): p for p in nai64_config.get("patches", [])}
+          requested = {p["name"].lower(): p for p in cfg.get("patches", [])}
+          disabled_hushfeed = {norm(x) for x in cfg.get("hushfeed_disabled", [])}
 
           for i, bundle in enumerate(options):
-              patches_dict = bundle.get("patches", {})
-              
+              pd = bundle.get("patches", {})
+
               if i == 0:
-                  # Bundle 0: Hushfeed (Enable ALL patches)
-                  for patch_data in patches_dict.values():
-                      patch_data["enabled"] = True
-                      
+                  # Hushfeed: enable all EXCEPT the ones the YAML disables
+                  for name, data in pd.items():
+                      if norm(name) in disabled_hushfeed:
+                          data["enabled"] = False
+                          print(f"   -> Hushfeed disabled per YAML: {name}")
+                      else:
+                          data["enabled"] = True
+
               elif i == 1:
-                  # Bundle 1: Nai64 (Disable ALL by default, then enable from YAML)
-                  for patch_name, patch_data in patches_dict.items():
-                      patch_data["enabled"] = False
-                      
-                      req = requested_patches.get(patch_name.lower())
-                      if req and req.get("enabled", False):
-                          patch_data["enabled"] = True
-                          if "options" in req and isinstance(req["options"], dict):
-                              if "options" not in patch_data:
-                                  patch_data["options"] = {}
-                              patch_data["options"].update(req["options"])
-                              print(f"   -> Applied options to {patch_name}: {req['options']}")
+                  # Nai64: disable all, then enable exactly what the YAML lists
+                  for name, data in pd.items():
+                      data["enabled"] = False
+                      req = requested.get(name.lower())
+                      if not (req and req.get("enabled", False)):
+                          continue
+                      data["enabled"] = True
+                      existing = data.get("options") or {}
+                      for k, v in (req.get("options") or {}).items():
+                          target = k if k in existing else None
+                          if target is None:
+                              nk = norm(k)
+                              for ek in existing:
+                                  if norm(ek) == nk:
+                                      target = ek
+                                      break
+                          if target is None:
+                              print(f"   ⚠️ {name}: option key '{k}' not in bundle — skipped")
+                              continue
+                          if isinstance(existing[target], dict) and "value" in existing[target]:
+                              existing[target]["value"] = v
+                          else:
+                              existing[target] = v
+                          print(f"   -> {name}: {target} = {v!r}")
+                      data["options"] = existing
+
+                  found = {n.lower() for n in pd}
+                  for rn in requested:
+                      if rn not in found:
+                          print(f"   ⚠️ Requested Nai64 patch not present in bundle: {rn}")
 
           with open("build/options.json", "w") as f:
               json.dump(options, f, indent=2)
-              
-          print("✅ Options configured successfully via Nai64ExtraPatches_Options.yaml")
+          print("✅ Options configured via Nai64ExtraPatches_Options.yaml")
           PYEOF
 
       - name: Patch TikTok APK
