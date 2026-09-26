@@ -405,7 +405,9 @@ jobs:
         run: |
           TAG="privacy-tiktok-47.0.3-v${{ env.VERSION }}"
           
+          # Explicitly specify the fork repo so gh doesn't accidentally target upstream
           gh release create "$TAG" \
+            --repo ${{ github.repository }} \
             --title "TikTok 47.0.3 Privacy Build (Hushfeed v${{ env.VERSION }})" \
             --notes "Automated privacy-hardened build:
           - Hushfeed v${{ env.VERSION }} + AMOLED fix
@@ -417,7 +419,7 @@ jobs:
             --prerelease
           
           for i in 1 2 3 4 5; do
-            if gh release upload "$TAG" build/final-privacy.apk --clobber; then
+            if gh release upload "$TAG" build/final-privacy.apk --clobber --repo ${{ github.repository }}; then
               echo "✅ Uploaded final-privacy.apk"
               break
             fi
