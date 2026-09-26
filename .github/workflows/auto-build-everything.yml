@@ -110,6 +110,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Python dependencies
+        if: env.UPSTREAM_CHANGED == 'true'
+        run: pip install requests pyyaml
+
       - name: Download Morphe CLI
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
@@ -142,6 +146,53 @@ jobs:
             exit 1
           fi
           echo "✅ Keystore decoded ($SIZE bytes)"
+
+      # ============================================
+      # PHASE 3.5: AUTO-DETECT KEYSTORE ALIAS
+      # ============================================
+      - name: Detect keystore alias (self-healing)
+        if: env.UPSTREAM_CHANGED == 'true'
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          PREFERRED_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          # BouncyCastle provider lets keytool read .bks keystores
+          curl -sL -o build/bcprov.jar https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.78.1/bcprov-jdk18on-1.78.1.jar
+          
+          # Try BKS first, fall back to default type if that fails
+          if ! keytool -list -v -keystore signing/keystore.bks -storetype BKS \
+            -storepass "$KEYSTORE_PASSWORD" \
+            -providerpath build/bcprov.jar \
+            -providerclass org.bouncycastle.jce.provider.BouncyCastleProvider \
+            > build/ks_list.txt 2>&1; then
+            echo "BKS read failed, trying default keystore type..."
+            keytool -list -v -keystore signing/keystore.bks \
+              -storepass "$KEYSTORE_PASSWORD" > build/ks_list.txt 2>&1 || true
+          fi
+          
+          echo "--- Keystore contents ---"
+          cat build/ks_list.txt
+          echo "-------------------------"
+          
+          # Grab the first private-key alias
+          DETECTED=$(awk '/^Alias name:/{a=$3} /Entry type: PrivateKeyEntry/{if(a!=""){print a; exit}}' build/ks_list.txt)
+          
+          # Prefer the secret value if it actually exists in the keystore
+          if [ -n "$PREFERRED_ALIAS" ] && grep -q "^Alias name: $PREFERRED_ALIAS$" build/ks_list.txt; then
+            FINAL_ALIAS="$PREFERRED_ALIAS"
+            echo "✅ Secret KEY_ALIAS '$PREFERRED_ALIAS' found in keystore."
+          else
+            FINAL_ALIAS="$DETECTED"
+            echo "⚠️ Secret KEY_ALIAS '$PREFERRED_ALIAS' NOT found in keystore."
+            echo "   Auto-detected alias instead: $FINAL_ALIAS"
+          fi
+          
+          if [ -z "$FINAL_ALIAS" ]; then
+            echo "❌ Could not detect any alias in the keystore. Check KEYSTORE_PASSWORD!"
+            exit 1
+          fi
+          
+          echo "SIGNING_ALIAS=$FINAL_ALIAS" >> $GITHUB_ENV
 
       # ============================================
       # PHASE 4: DOWNLOAD BASE APK FROM PAB
@@ -203,36 +254,54 @@ jobs:
           
           echo "✅ Options generated"
 
-      - name: Configure options
+      - name: Configure options (via YAML)
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           python3 - <<'PYEOF'
           import json
-          
+          import yaml
+
           with open("build/options.json") as f:
               options = json.load(f)
-          
+
+          with open("Nai64ExtraPatches_Options.yaml") as f:
+              nai64_config = yaml.safe_load(f) or {"patches": []}
+
+          requested_patches = {p["name"].lower(): p for p in nai64_config.get("patches", [])}
+
           for i, bundle in enumerate(options):
-              patches = bundle.get("patches", {})
-              for patch_name, patch_data in patches.items():
-                  patch_data["enabled"] = True
-                  
-                  # Nai64 (bundle index 1): ONLY enable Empty Clipboard Report
-                  if i == 1 and patch_name.lower() != "empty clipboard report":
+              patches_dict = bundle.get("patches", {})
+              
+              if i == 0:
+                  # Bundle 0: Hushfeed (Enable ALL patches)
+                  for patch_data in patches_dict.values():
+                      patch_data["enabled"] = True
+                      
+              elif i == 1:
+                  # Bundle 1: Nai64 (Disable ALL by default, then enable from YAML)
+                  for patch_name, patch_data in patches_dict.items():
                       patch_data["enabled"] = False
-          
+                      
+                      req = requested_patches.get(patch_name.lower())
+                      if req and req.get("enabled", False):
+                          patch_data["enabled"] = True
+                          if "options" in req and isinstance(req["options"], dict):
+                              if "options" not in patch_data:
+                                  patch_data["options"] = {}
+                              patch_data["options"].update(req["options"])
+                              print(f"   -> Applied options to {patch_name}: {req['options']}")
+
           with open("build/options.json", "w") as f:
               json.dump(options, f, indent=2)
-          
-          print("✅ Options configured")
-          print("   Hushfeed: All patches enabled")
-          print("   Nai64: Only 'Empty Clipboard Report' enabled")
+              
+          print("✅ Options configured successfully via Nai64ExtraPatches_Options.yaml")
           PYEOF
 
       - name: Patch TikTok APK
         if: env.UPSTREAM_CHANGED == 'true'
         run: |
           echo "Patching TikTok with Hushfeed v${{ env.VERSION }} + AMOLED + Nai64..."
+          echo "Using signing alias: $SIGNING_ALIAS"
           
           java -jar build/cli.jar patch \
             -p bundles/hushfeed.mpp \
@@ -241,7 +310,7 @@ jobs:
             --force \
             --keystore signing/keystore.bks \
             --keystore-password "${{ secrets.KEYSTORE_PASSWORD }}" \
-            --keystore-entry-alias "${{ secrets.KEY_ALIAS }}" \
+            --keystore-entry-alias "$SIGNING_ALIAS" \
             --keystore-entry-password "${{ secrets.KEY_PASSWORD }}" \
             --striplibs arm64-v8a \
             -o build/patched.apk \
@@ -293,6 +362,7 @@ jobs:
         run: |
           BUILD_TOOLS=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
           echo "Using build-tools: $BUILD_TOOLS"
+          echo "Using signing alias: $SIGNING_ALIAS"
           
           $BUILD_TOOLS/zipalign -p 4 build/stripped.apk build/aligned.apk
           echo "✅ Zipaligned"
@@ -300,7 +370,7 @@ jobs:
           $BUILD_TOOLS/apksigner sign \
             --ks signing/keystore.bks \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+            --ks-key-alias "$SIGNING_ALIAS" \
             --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
             --out build/final-privacy.apk \
             build/aligned.apk
@@ -320,7 +390,7 @@ jobs:
             --title "TikTok 47.0.3 Privacy Build (Hushfeed v${{ env.VERSION }})" \
             --notes "Automated privacy-hardened build:
           - Hushfeed v${{ env.VERSION }} + AMOLED fix
-          - Nai64 Empty Clipboard Report
+          - Nai64 patches configured via Nai64ExtraPatches_Options.yaml
           - Permissions stripped
           - arm64-v8a only
           
