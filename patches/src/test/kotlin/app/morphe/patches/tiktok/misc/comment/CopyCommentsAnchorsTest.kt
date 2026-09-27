@@ -77,7 +77,11 @@ class CopyCommentsAnchorsTest {
             assertEquals("${apk.name}: a Copy through a route the patch doesn't hook", emptyMap<String, String>(), routes.filterValues { it.startsWith("neither") })
             covered[apk.name] = routes.values.sorted().joinToString()
         }
-        assertTrue("47.0.3 takes the builder route: $covered", covered.entries.any { it.key.contains("47.0.3") && "builder" in it.value })
+        Fixtures.declaredVersions().forEach { version ->
+            assertTrue("$version takes the builder route: $covered", covered.entries.any {
+                Fixtures.versionOf(java.io.File(it.key)) == version && "builder" in it.value
+            })
+        }
     }
 
     private fun invokes(instruction: Instruction, owner: String, name: String): Boolean {

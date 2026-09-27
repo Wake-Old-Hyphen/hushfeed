@@ -39,7 +39,7 @@ val repostDiagnosticsPatch = bytecodePatch(
 ) {
     category("Interaction")
     dependsOn(sharedExtensionPatch, followDiagnosticsPatch)
-    compatibleWith(*AppCompatibilities.tiktok4703())
+    compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
         val publish = mutableListOf<Method>()

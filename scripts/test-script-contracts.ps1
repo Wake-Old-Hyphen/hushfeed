@@ -205,7 +205,15 @@ Write-Host '[scripts] guarded phone foreground parser contracts passed'
 $catalog = Get-Content -LiteralPath (Join-Path $Root 'patches-list.json') -Raw | ConvertFrom-Json
 $target = Get-PatchTarget -PatchList $catalog
 Assert-True ($target.PackageName -eq 'com.zhiliaoapp.musically') 'The catalog package was not resolved.'
-Assert-True ($target.PackageVersion -eq '47.0.3') 'The catalog version was not resolved.'
+Assert-True ((@($target.PackageVersions) -join ',') -eq '47.0.3,47.1.3' -and $target.PackageVersion -eq '47.1.3') `
+    "The catalog versions were not resolved: $(@($target.PackageVersions) -join ', ')."
+Assert-True ((Format-VersionList -Versions @('47.0.3')) -eq '47.0.3' -and
+    (Format-VersionList -Versions @('47.0.3', '47.1.3')) -eq '47.0.3 and 47.1.3' -and
+    (Format-VersionList -Versions @('1.0', '2.0', '3.0')) -eq '1.0, 2.0 and 3.0') 'A version list was not written as a sentence.'
+Assert-True ((Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.0.3' }) -Target $target) -eq '47.0.3' -and
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.2.3' }) -Target $target) -eq '47.1.3' -and
+    (Get-DeclaredReportVersion -Report $null -Target $target) -eq '47.1.3') `
+    'A report was held to a version other than the declared one it names.'
 
 $allNames = @($catalog.patches | ForEach-Object { $_.name })
 $allDependencies = @(Get-PatchDependencyNames -PatchList $catalog -RequestedNames $allNames)
@@ -251,11 +259,20 @@ Assert-True ($futureTarget.PackageName -eq 'com.example.future' -and
 $twoVersions = [pscustomobject]@{
     patches = @([pscustomobject]@{
         name = 'two versions'
-        compatiblePackages = [pscustomobject]@{ 'com.example.app' = @('1.0.0', '2.0.0') }
+        compatiblePackages = [pscustomobject]@{ 'com.example.app' = @('10.0.0', '2.0.0') }
     })
 }
-Assert-Throws { Get-PatchTarget -PatchList $twoVersions } '*Expected one compatible version*' `
-    'A catalog with two versions was accepted.'
+$twoTarget = Get-PatchTarget -PatchList $twoVersions
+Assert-True ((@($twoTarget.PackageVersions) -join ',') -eq '2.0.0,10.0.0' -and $twoTarget.PackageVersion -eq '10.0.0') `
+    'Two declared versions were not both returned, oldest first by number.'
+$unevenVersions = [pscustomobject]@{
+    patches = @(
+        [pscustomobject]@{ name = 'both'; compatiblePackages = [pscustomobject]@{ 'com.example.app' = @('1.0.0', '2.0.0') } },
+        [pscustomobject]@{ name = 'one'; compatiblePackages = [pscustomobject]@{ 'com.example.app' = @('1.0.0') } }
+    )
+}
+Assert-Throws { Get-PatchTarget -PatchList $unevenVersions } '*every patch to declare the same versions*' `
+    'A catalog whose patches declare different versions was accepted.'
 $missingTarget = [pscustomobject]@{ patches = @([pscustomobject]@{ name = 'missing target' }) }
 Assert-Throws { Get-PatchTarget -PatchList $missingTarget } '*has no compatible package*' `
     'A patch without compatibility metadata was accepted.'
@@ -688,6 +705,25 @@ try {
     $twoTargets = Test-TestReceipt -Receipt $secondTarget
     Assert-True $twoTargets.Valid "A receipt with the declared target beside a forced run was refused: $($twoTargets.Reason)"
 
+    # Two declared versions: each needs a run of its own without -f.
+    $bothDeclared = New-TestReceipt -Mutate {
+        param($r)
+        $newer = $r.targets[0] | ConvertTo-Json -Depth 8 | ConvertFrom-Json
+        $newer.source.versionName = '46.8.3'
+        $r.targets = @($r.targets[0], $newer)
+    }
+    $bothValid = Test-ReleaseReceipt -Receipt $bothDeclared -ExpectedVersion '9.9.9' `
+        -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
+        -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
+        -ExpectedPackageVersions @('46.7.3', '46.8.3') -BundlePath $bundle
+    Assert-True $bothValid.Valid "A receipt proving both declared versions was refused: $($bothValid.Reason)"
+    $oneMissing = Test-ReleaseReceipt -Receipt (New-TestReceipt) -ExpectedVersion '9.9.9' `
+        -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
+        -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
+        -ExpectedPackageVersions @('46.7.3', '46.8.3') -BundlePath $bundle
+    Assert-True (-not $oneMissing.Valid -and $oneMissing.Reason -like '*No target*46.8.3*without -f*') `
+        "A receipt missing one declared version was not refused for it: $($oneMissing.Reason)"
+
     # The bundle the receipt is about, gone. Every fact above is checked against a file, and a
     # missing file is the one case where there is nothing to disagree with, so an unguarded
     # check would read it as agreement and pass the release.
@@ -1042,6 +1078,10 @@ try {
         $synced = $indexText
         if ($indexVersion -ne $fixtureVersion) { $synced = $synced -replace [regex]::Escape($indexVersion), $fixtureVersion }
         $synced = $synced -replace '\b\d+ patches\b', "$count patches"
+        # And the TikTok builds the catalog declares, where the index names its target: two since
+        # 47.1.3 joined 47.0.3, while the published index still names the one it went out with.
+        $catalogTargets = Format-VersionList -Versions @((Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json)).PackageVersions)
+        $synced = [regex]::Replace($synced, 'TikTok\s+\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*', "TikTok $catalogTargets")
         # The 0.60.0 index went out on the owner's word with the gate skipped, and its description
         # quotes the runtime count alone. The cases below move one count at a time against the two
         # a gated release quotes, so the copy gains the missing one rather than every scripts change
@@ -1053,14 +1093,15 @@ try {
         Set-FactsFile 'patches-bundle.json' { param($text) $synced }
     }
 
-    # The bug form names the published version, which the synced index above now names too.
+    # The bug form names the published version and its newest TikTok target, which the synced
+    # index above now names too.
     function Sync-FixtureBugForm {
         $fixtureVersion = ((Get-Content -LiteralPath (Join-Path $factsRoot 'gradle.properties')) `
             -match '^version\s*=' | Select-Object -First 1) -replace '^version\s*=\s*', ''
         $publishedHere = "$((Get-Content -LiteralPath (Join-Path $Root 'patches-bundle.json') -Raw | ConvertFrom-Json).version)"
-        if ($publishedHere -eq $fixtureVersion) { return }
+        $newestTarget = (Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json)).PackageVersion
         Set-FactsFile $bugFormRelative {
-            param($text) $text -replace ('Version ' + [regex]::Escape($publishedHere) + ' for TikTok'), "Version $fixtureVersion for TikTok"
+            param($text) $text -replace ('Version ' + [regex]::Escape($publishedHere) + ' for TikTok \d+(?:\.\d+)+'), "Version $fixtureVersion for TikTok $newestTarget"
         }
     }
 

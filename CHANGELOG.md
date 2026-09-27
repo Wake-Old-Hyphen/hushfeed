@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Save media on a comment sticker reads the sticker from TikTok's own sticker data now, which keeps its names from one version to the next. It used to look first for a field and a class that neither 47.0.3 nor 47.1.3 has, and only reached the sticker through its last fallback. It saves the picture the sheet shows, and if a later TikTok renames that data, Hook status says so.
+* **TikTok:** Hushfeed supports TikTok 47.1.3 as well as 47.0.3 (#33). Every patch applies to both, and Morphe Manager lists both versions. 47.1.3 renamed 42 of the screen parts Hushfeed finds by name, so each one is looked up by the name the running build gives it. The feed filter reads 47.1.3's rearranged cold-start cache, AMOLED dark theme knows its gray palette, the corner LIVE button check reads its LIVE mode where 47.1.3 moved it, and the four resource optimizers and the language purger accept its reviewed files, from the universal APK and from APKMirror's split bundle. On the S22 running 47.1.3, the feed, comments, inbox, share sheet, captions and the dark theme were checked.
 * **TikTok:** The Feature Gate Lab names its export file in UTC like every other Hushfeed export, so they sort together.
 * **TikTok:** A like, comment or share count range restored with spaces around its numbers is read as that range instead of being reset to any.
 * **TikTok:** A CAPTCHA check whose type TikTok sends as a number is named by its scene now, not by the word scene.

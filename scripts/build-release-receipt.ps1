@@ -214,10 +214,10 @@ foreach ($apk in $Fixture) {
         $temp = Resolve-WithinRoot -Path (Join-Path $runDir 'tmp') -Root $workRoot
         $resultPath = Resolve-WithinRoot -Path (Join-Path $runDir 'result.json') -Root $workRoot
 
-        # The bundle declares one compatible version. A fixture past it is patched under -f,
-        # which is the whole point of keeping the newer builds around, and the receipt says so
-        # rather than letting a forced run read like a declared-compatible one.
-        $forced = $stock.versionName -ne $expectedTarget.PackageVersion
+        # The bundle declares its compatible versions. A fixture of any other build is patched
+        # under -f, which is the whole point of keeping the other builds around, and the receipt
+        # says so rather than letting a forced run read like a declared-compatible one.
+        $forced = $stock.versionName -cnotin @($expectedTarget.PackageVersions)
 
         $enable = @()
         foreach ($name in $patchNames) { $enable += '-e'; $enable += $name }
@@ -310,7 +310,7 @@ $check = Test-ReleaseReceipt -Receipt ($receipt | ConvertTo-Json -Depth 12 | Con
     -ExpectedPatcherVersion $patcherMatch.Groups[1].Value `
     -ExpectedManagerFloor $floorMatch.Groups[1].Value `
     -ExpectedPackageName $expectedTarget.PackageName `
-    -ExpectedPackageVersion $expectedTarget.PackageVersion -BundlePath $Bundle `
+    -ExpectedPackageVersions @($expectedTarget.PackageVersions) -BundlePath $Bundle `
     -ApprovedManifestDelta $approved
 if (-not $check.Valid) { throw "The receipt this run produced does not pass validation: $($check.Reason)" }
 

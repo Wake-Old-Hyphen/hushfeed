@@ -46,7 +46,7 @@ class SeekbarGatesAnchorsTest {
                 it.opcode == Opcode.IGET && it.getReference<FieldReference>()?.name == DRAFT_PROGRESS_BAR
             }
             assertTrue("${apk.name}: the can-drag gate reads the draggable flag $reads times", reads <= 1)
-            if (apk.name.contains("47.0.3")) {
+            if (Fixtures.versionOf(apk) in Fixtures.declaredVersions()) {
                 assertEquals("${apk.name}: the can-drag gate no longer reads the draggable flag", 1, reads)
                 val exceptsPaidContent = inverseGate.implementation!!.instructions.any {
                     it.opcode == Opcode.IGET_BOOLEAN && it.getReference<FieldReference>()?.name == "isPaidContent"
