@@ -887,7 +887,7 @@ public class SettingsBackupTest {
                         .put("type", "INT").put("value", "3").put("force", false));
         JSONObject before = FeatureGateLabStore.exportSettings();
         JSONObject after = new JSONObject().put("schema", 1).put("target", "TikTok global")
-                .put("tiktok_version", FeatureGateLabStore.TARGET_VERSION).put("rules", ordered)
+                .put("tiktok_version", FeatureGateLabStore.targetVersion()).put("rules", ordered)
                 .put("master", false).put("acknowledged", false);
         JSONArray reversed = new JSONArray().put(ordered.get(1)).put(ordered.get(0));
         JSONObject current = new JSONObject(after.toString()).put("rules", reversed);

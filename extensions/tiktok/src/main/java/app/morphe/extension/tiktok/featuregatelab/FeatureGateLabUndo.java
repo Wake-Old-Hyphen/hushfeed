@@ -303,7 +303,7 @@ final class FeatureGateLabUndo {
     private static JSONObject replacement(List<FeatureGateLabStore.Rule> rules, boolean master,
             boolean acknowledged) throws Exception {
         JSONObject root = new JSONObject().put("schema", 1).put("target", "TikTok global")
-                .put("tiktok_version", FeatureGateLabStore.TARGET_VERSION);
+                .put("tiktok_version", FeatureGateLabStore.targetVersion());
         JSONArray items = new JSONArray();
         for (FeatureGateLabStore.Rule rule : rules) {
             items.put(new JSONObject().put("manager", rule.manager).put("key", rule.key)

@@ -4,6 +4,7 @@
 %1$d fields will be overridden when requested	%1$d campos serão substituídos quando solicitados
 %1$d gates selected	%1$d gates selecionados
 %1$d minutes left	Restam %1$d minutos
+%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.	%1$d substituições foram desligadas porque o Lab não conseguiu confirmar que os gates delas continuam iguais no TikTok %2$s. Confira antes de ligá-las de novo.
 %1$d rejected	%1$d rejeitados
 %1$d results	%1$d resultados
 %1$d results so far	%1$d resultados até agora
@@ -36,6 +37,7 @@
 %1$s min left	Restam %1$s min
 %1$s to %2$s	De %1$s a %2$s
 %1$s videos left	Restam %1$s vídeos
+%1$s videos were recorded before each account kept its own list. They hide nothing until you add them here.	%1$s vídeos foram registrados antes de cada conta ter sua própria lista. Eles não ocultam nada até você adicioná-los aqui.
 %1$s was rejected. %2$s	%1$s foi rejeitado. %2$s
 %1$s, %2$s, %3$s, %4$s, %5$s	%1$s, %2$s, %3$s, %4$s, %5$s
 %1$s, selected	%1$s, selecionado
@@ -49,6 +51,7 @@
 1 field will be overridden when requested	1 campo será substituído quando solicitado
 1 gate selected	1 gate selecionado
 1 min left	Resta 1 min
+1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.	1 substituição foi desligada porque o Lab não conseguiu confirmar que o gate dela continua igual no TikTok %2$s. Confira antes de ligá-la de novo.
 1 result	1 resultado
 1 result so far	1 resultado até agora
 1 video left	Resta 1 vídeo
@@ -67,14 +70,20 @@ A web address someone left in a comment can be tapped instead of copied out by h
 AI-generated posts	Publicações geradas por IA
 About	Sobre
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.	Um valor forçado vale para esta cópia do TikTok, seja qual for a conta conectada. Ele não passa por cima de uma verificação feita pelo servidor.
+Add older seen videos to this account	Adicionar vídeos vistos anteriores a esta conta
+Added %1$s older seen videos to this account	%1$s vídeos vistos anteriores adicionados a esta conta
+Added to this account.	Adicionados a esta conta.
+Couldn't add the older seen videos. Try again.	Não foi possível adicionar os vídeos vistos anteriores. Tente de novo.
 Couldn't restart TikTok. Close it and open it again.	Não foi possível reiniciar o TikTok. Feche e abra de novo.
 Couldn't undo that. Try again.	Não foi possível desfazer. Tente de novo.
+Forget the %1$s videos @%2$s has seen.	Esquecer os %1$s vídeos que @%2$s viu.
 Got it	Entendi
 Later	Mais tarde
 Leave when TikTok says time is up	Sair quando o TikTok disser que o tempo acabou
 No app on this phone opens that file	Nenhum app neste celular abre esse arquivo
 Open	Abrir
 Restart TikTok to apply this	Reinicie o TikTok para aplicar
+Stay on the video in full screen	Ficar no vídeo em tela cheia
 That creator pattern could stall the feed, so it was skipped: %1$s	Esse padrão de criador pode travar o feed, então foi ignorado: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Esse padrão de criador pode travar o feed, então não foi adicionado: %1$s
 This key touches account safety. Forcing it can change login, region, payment or security checks.	Esta chave mexe com a proteção da conta. Forçá-la pode mudar as verificações de login, região, pagamento ou segurança.
@@ -653,7 +662,6 @@ Off	Desligado
 Off forces false, on forces true. Reset hands the choice back to TikTok.	Desligado força false e ligado força true. Redefinir devolve a decisão ao TikTok.
 Offline videos	Vídeos offline
 Offline videos limit	Limite de vídeos offline
-Older overrides were kept disabled. Review their values before enabling them on TikTok %1$s.	As substituições antigas ficaram desligadas. Confira os valores antes de ligá-las no TikTok %1$s.
 On mobile data	Nos dados móveis
 Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out.	Quando o orçamento de hoje acaba, a pausa fica e não pode ser fechada. As configurações de orçamento ficam bloqueadas até o dia recomeçar. Desative isso a qualquer momento antes do orçamento acabar.
 One area was checked and everything it needs is here.	Uma área foi verificada e tudo de que ela precisa está aqui.
@@ -1126,6 +1134,7 @@ Watching and sharing	Assistir e compartilhar
 WebP, exactly as TikTok sent it	WebP, exatamente como o TikTok mandou
 What TikTok gets	O que o TikTok recebe
 When TikTok requests this key, return the selected value below	Quando o TikTok pedir esta chave, devolver o valor escolhido abaixo
+When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.	Quando um vídeo termina em tela cheia, fica nele em vez de passar para o próximo. Deslizar ainda avança.
 While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.	Enquanto o registro de diagnóstico estiver ligado, uma mensagem indica a parte do Hushfeed que falhou. Desligado, as falhas ficam só no relatório.
 Window width needed to enable the layout. Restart TikTok to apply this.	Largura de janela necessária para ligar o layout. Reinicie o TikTok para aplicar.
 Words and countries	Palavras e países

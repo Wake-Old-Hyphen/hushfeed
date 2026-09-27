@@ -309,6 +309,8 @@ public class Settings extends BaseSettings {
             TRUE
     );
     public static final BooleanSetting STOP_VIDEO_LOOPING = new BooleanSetting("stop_video_looping", FALSE, true);
+    /** Keeps the full-screen viewer on a video when it ends; the Stay on the video in full screen patch. */
+    public static final BooleanSetting FULL_SCREEN_HOLD = new BooleanSetting("full_screen_hold", FALSE, true);
     public static final BooleanSetting RESUME_VIDEO_AFTER_SCROLL = new BooleanSetting(
             "resume_video_after_scroll",
             TRUE,

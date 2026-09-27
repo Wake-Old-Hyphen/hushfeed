@@ -55,6 +55,7 @@ public class SettingsStatus {
     public static boolean liveSearchEnabled = false;
     public static boolean seekbarThumbnailEnabled = false;
     public static boolean stopVideoLoopingEnabled = false;
+    public static boolean fullScreenHoldEnabled = false;
     public static boolean resumeVideoAfterScrollEnabled = false;
     public static boolean externalBrowserEnabled = false;
     public static boolean alwaysShowPublishDateEnabled = false;
@@ -204,6 +205,10 @@ public class SettingsStatus {
 
     public static void enableSanitizeShareUrls() {
         sanitizeShareUrlsEnabled = true;
+    }
+
+    public static void enableFullScreenHold() {
+        fullScreenHoldEnabled = true;
     }
 
     public static void enableStopVideoLooping() {

@@ -139,7 +139,7 @@ public final class SettingsBackup {
         JSONObject lab = FeatureGateLabStore.exportSettings();
         if (defaults) lab.put("rules", new JSONArray()).put("master", false).put("acknowledged", false);
         String text = new JSONObject().put("format", FORMAT).put("schema", SCHEMA)
-                .put("target", FeatureGateLabStore.TARGET_VERSION).put("settings", values)
+                .put("target", FeatureGateLabStore.targetVersion()).put("settings", values)
                 .put("setting_keys", keys)
                 .put("lab", lab).toString(2);
         if (text.getBytes(StandardCharsets.UTF_8).length > MAX_BYTES) throw new IOException("Backup exceeds 2 MB");
@@ -492,9 +492,14 @@ public final class SettingsBackup {
         // The target belongs to the Lab rules, which name gates in one TikTok build. It used to
         // refuse the whole file, so the day this project retargets, every backup anyone holds
         // becomes unrestorable, settings included, for a reason that only concerns the Lab. The
-        // settings half is version independent and is restored either way; the Lab half is
-        // dropped and the caller says so.
-        boolean labApplies = FeatureGateLabStore.TARGET_VERSION.equals(root.optString("target"));
+        // settings half is version independent and is restored either way. The Lab half applies
+        // on its own build, and from another build a catalog was generated from: parseSettings
+        // then keeps each rule whose gate both catalogs carry identically and brings the rest
+        // back turned off. From a build with no catalog nothing can be checked, so the Lab half
+        // is dropped and the caller says so.
+        String target = root.optString("target");
+        boolean labApplies = FeatureGateLabStore.targetVersion().equals(target)
+                || app.morphe.extension.tiktok.featuregatelab.FeatureGateCatalog.hasCatalogFor(target);
         JSONObject values = root.getJSONObject("settings"), lab = root.getJSONObject("lab");
         JSONArray required = root.getJSONArray("setting_keys");
         java.util.Set<String> keys = new java.util.HashSet<>();
@@ -604,7 +609,10 @@ public final class SettingsBackup {
         final Map<Setting<?>, Object> values;
         final List<FeatureGateLabStore.Rule> rules;
         final boolean master, acknowledged;
-        /** False when the backup was written against another TikTok build, so the Lab is left alone. */
+        /**
+         * False when the backup was written against a TikTok build the Lab has no catalog for,
+         * so its rules can't be checked against this one and the Lab is left alone.
+         */
         final boolean labIncluded;
         /** Included settings the file did not carry, kept at whatever the device already held. */
         final int absent;

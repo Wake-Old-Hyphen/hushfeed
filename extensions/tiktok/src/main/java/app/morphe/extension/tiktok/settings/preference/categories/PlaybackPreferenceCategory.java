@@ -30,6 +30,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
     public static boolean isAvailable() {
         return SettingsStatus.playbackQualityEnabled || SettingsStatus.playbackSpeedEnabled
                 || SettingsStatus.autoAdvanceEnabled || SettingsStatus.videoFitEnabled
+                || SettingsStatus.fullScreenHoldEnabled
                 // The comment sheet switch is a playback switch, and on a bundle with the
                 // comment tools and none of the players it is the only thing on this page.
                 || SettingsStatus.commentToolsEnabled;
@@ -62,6 +63,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Pauses the video behind the comment sheet while you read. "
                             + "It plays on from the same spot when the sheet closes.",
                     Settings.PAUSE_ON_COMMENTS));
+        }
+        if (SettingsStatus.fullScreenHoldEnabled) {
+            addPreference(new TogglePreference(context, "Stay on the video in full screen",
+                    "When a video ends in full screen, stay on it instead of moving to the next "
+                            + "one. Swiping still moves on.",
+                    Settings.FULL_SCREEN_HOLD));
         }
 
         if (SettingsStatus.playbackSpeedEnabled) {

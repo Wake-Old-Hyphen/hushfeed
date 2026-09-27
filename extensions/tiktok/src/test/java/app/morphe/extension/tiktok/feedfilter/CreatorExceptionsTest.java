@@ -10,11 +10,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.shared.settings.StringSetting;
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.seen.SeenVideoHistory;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -303,6 +305,15 @@ public class CreatorExceptionsTest {
         return item;
     }
 
+    /** A plain post by another account, which no case's trip or creator list reaches. */
+    private static Item stranger(String aid) {
+        Item item = new Item(aid);
+        item.author.handle = "someone_else";
+        item.author.uid = "999";
+        item.author.secUid = "MS4wLjABAAAAother";
+        return item;
+    }
+
     private static FeedItemList page(Item... items) {
         FeedItemList list = new FeedItemList();
         list.items = new ArrayList<>(Arrays.asList(items));
@@ -400,6 +411,85 @@ public class CreatorExceptionsTest {
         RegionFilter region = new RegionFilter();
         assertTrue(region.getEnabled() && region.getFiltered(russian));
         assertFalse(CreatorExceptions.isSubjective(region));
+    }
+
+    /**
+     * A profile's list, whoever's: TikTok reads it through the main feed's getItems, stamped with
+     * the profile's uid. Every filter but the ads one leaves it alone, so a minimum view count
+     * never empties a creator's page and a place badge never takes posts off a grid (#35). The
+     * same page unstamped is the control: each filter still takes the post from a feed.
+     */
+    @Test
+    public void aProfilesListKeepsEveryPostOnlyTheFeedFiltersHide() {
+        List<Case> cases = new ArrayList<>(subjectiveCases());
+        for (Case which : hardCases()) if (!which.filter.equals("AdsFilter")) cases.add(which);
+        for (Case which : cases) {
+            quiet();
+            which.enable.run();
+            FeedItemList profile = page(tripped("post", which), stranger("plain"));
+            profile.dataUserId = "777";
+            assertEquals(which.filter + " hid a post on a profile page",
+                    List.of("post", "plain"), survivors(profile));
+            assertEquals(which.filter + " did not run on the feed, so the profile case proves nothing",
+                    List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
+        }
+    }
+
+    @Test
+    public void aProfilesListStillLosesItsAds() {
+        Settings.REMOVE_ADS.save(true);
+        Item ad = new Item("ad");
+        ad.ad = true;
+        FeedItemList profile = page(ad, stranger("plain"));
+        profile.dataUserId = "777";
+        assertEquals(List.of("plain"), survivors(profile));
+        assertTrue("the profile's reads are counted on their own line: " + FeedFilterCounters.report(),
+                FeedFilterCounters.report().contains(
+                        FeedItemsFilter.PROFILE_LIST_SOURCE + ": 1 lists, 2 items, 1 removed. Last reason: AdsFilter"));
+    }
+
+    /**
+     * The signed-in reader's own posts stay on every route, stamped or not: TikTok reads your
+     * profile's first page before it stamps the uid (#35: a reporter's recent posts carried place
+     * badges and only months-old ones were left). Signed out, the same post goes, the control.
+     */
+    @Test
+    public void yourOwnPostsStayOnEveryListAndOthersStillGo() {
+        try {
+            List<Case> cases = new ArrayList<>(subjectiveCases());
+            cases.addAll(hardCases());
+            for (Case which : cases) {
+                quiet();
+                which.enable.run();
+                SignedInUser.idForTests = UID;
+                assertEquals(which.filter + " hid the reader's own post",
+                        List.of("mine", "plain"), survivors(page(tripped("mine", which), stranger("plain"))));
+                SignedInUser.idForTests = "";
+                assertEquals(which.filter + " did not run signed out, so the own-post case proves nothing",
+                        List.of("plain"), survivors(page(tripped("mine", which), stranger("plain"))));
+            }
+            // The ads filter takes creator-labelled posts too, and on your own stamped profile those
+            // are yours: they stay there as well.
+            quiet();
+            Settings.REMOVE_ADS.save(true);
+            for (String signedIn : new String[]{UID, ""}) {
+                SignedInUser.idForTests = signedIn;
+                Item labelled = new Item("labelled");
+                labelled.ad = true;
+                FeedItemList profile = page(labelled, stranger("plain"));
+                profile.dataUserId = UID;
+                assertEquals(signedIn.isEmpty() ? List.of("plain") : List.of("labelled", "plain"), survivors(profile));
+            }
+            // Signed in as someone else, the post is anyone's.
+            quiet();
+            Settings.FILTER_LOCATION_VIDEOS.save(true);
+            SignedInUser.idForTests = "999";
+            Item tagged = new Item("tagged");
+            tagged.anchors = List.of(new LocationBadgeFilterTest.Anchor("anchor_poi"));
+            assertEquals(List.of("plain"), survivors(page(tagged, stranger("plain"))));
+        } finally {
+            SignedInUser.idForTests = null;
+        }
     }
 
     @Test

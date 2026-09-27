@@ -699,7 +699,7 @@ public class FeatureGatePagesTest {
             String profile = new org.json.JSONObject()
                     .put("schema", 1)
                     .put("target", "TikTok global")
-                    .put("tiktok_version", FeatureGateLabStore.TARGET_VERSION)
+                    .put("tiktok_version", FeatureGateLabStore.targetVersion())
                     .put("rules", new org.json.JSONArray().put(new org.json.JSONObject()
                             .put("manager", "abmock").put("key", entry.key)
                             .put("type", "BOOLEAN").put("value", "true")))

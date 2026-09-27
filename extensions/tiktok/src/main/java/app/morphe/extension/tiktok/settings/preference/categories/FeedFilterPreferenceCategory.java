@@ -17,6 +17,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.RangeValuePreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
+import app.morphe.extension.tiktok.settings.preference.AdoptSeenVideoHistoryPreference;
 import app.morphe.extension.tiktok.settings.preference.ClearSeenVideoHistoryPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.CreatorListPreference;
@@ -292,6 +293,8 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
                 Settings.SEEN_VIDEO_RETENTION_DAYS, "%1$s day", "%1$s days"
         ).zeroMeansOff());
         addPreference(new ClearSeenVideoHistoryPreference(context));
+        int unowned = SeenVideoHistory.unownedCount();
+        if (unowned > 0) addPreference(new AdoptSeenVideoHistoryPreference(context, unowned));
     }
 
     private void addAdvanced(Context context) {

@@ -529,12 +529,18 @@ public final class FeatureGateLabFragment extends Fragment {
 
     private void showMigrationNoticeIfNeeded() {
         Activity activity = getActivity();
-        if (activity == null || activity.isFinishing() || !FeatureGateLabStore.consumeMigrationNotice()) {
+        if (activity == null || activity.isFinishing()) {
             return;
         }
-        Utils.showToastLong(L10n.f(Utils.getContext(),
-                "Older overrides were kept disabled. Review their values before enabling them on TikTok %1$s.",
-                FeatureGateLabStore.TARGET_VERSION));
+        int turnedOff = FeatureGateLabStore.consumeMigrationNotice();
+        if (turnedOff <= 0) {
+            return;
+        }
+        // Both forms take (count, build); the one form leaves the count unused.
+        Utils.showToastLong(L10n.quantity(Utils.getContext(), turnedOff,
+                "1 override was turned off because the Lab couldn't confirm its gate is unchanged in TikTok %2$s. Review it before turning it back on.",
+                "%1$d overrides were turned off because the Lab couldn't confirm their gates are unchanged in TikTok %2$s. Review them before turning them back on.",
+                turnedOff, FeatureGateLabStore.targetVersion()));
     }
 
     @Override
@@ -1256,7 +1262,7 @@ public final class FeatureGateLabFragment extends Fragment {
                     .addCategory(Intent.CATEGORY_OPENABLE)
                     .setType("application/gzip")
                     .putExtra(Intent.EXTRA_TITLE,
-                            "tiktok-" + FeatureGateLabStore.TARGET_VERSION + "-loaded-feature-gates-" + timestamp + ".json.gz");
+                            "tiktok-" + FeatureGateLabStore.targetVersion() + "-loaded-feature-gates-" + timestamp + ".json.gz");
             startActivityForResult(intent, REQUEST_EXPORT_LOADED);
         } catch (Throwable throwable) {
             Utils.showToastLong(L10n.t(Utils.getContext(),
@@ -1345,7 +1351,7 @@ public final class FeatureGateLabFragment extends Fragment {
         if (!"loaded_values".equals(imported.optString("payload_kind"))) {
             throw new ImportRefused(L10n.t(context, "This file isn't a loaded-values export from the Feature Gate Lab."));
         }
-        if (!FeatureGateLabStore.TARGET_VERSION.equals(imported.optString("tiktok_version"))) {
+        if (!FeatureGateLabStore.targetVersion().equals(imported.optString("tiktok_version"))) {
             throw new ImportRefused(L10n.t(context, "These loaded values are for a different TikTok version."));
         }
 
@@ -1397,7 +1403,7 @@ public final class FeatureGateLabFragment extends Fragment {
         JSONObject profile = new JSONObject();
         profile.put("schema", 1);
         profile.put("target", "TikTok global");
-        profile.put("tiktok_version", FeatureGateLabStore.TARGET_VERSION);
+        profile.put("tiktok_version", FeatureGateLabStore.targetVersion());
         profile.put("rules", candidates);
         FeatureGateLabStore.ImportReview review = FeatureGateLabStore.reviewProfile(
                 profile.toString(), currentSnapshot.byIdentity);
@@ -1502,7 +1508,7 @@ public final class FeatureGateLabFragment extends Fragment {
         root.put("schema", 1);
         root.put("payload_kind", "loaded_values");
         root.put("target", "TikTok global");
-        root.put("tiktok_version", FeatureGateLabStore.TARGET_VERSION);
+        root.put("tiktok_version", FeatureGateLabStore.targetVersion());
         root.put("exported_at_ms", System.currentTimeMillis());
         root.put("entry_count", rules.length());
         root.put("rules", rules);

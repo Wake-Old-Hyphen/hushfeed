@@ -227,7 +227,7 @@ public class FeatureGateLocalizationTest {
             attach(activity, lab);
             JSONObject importFile = new JSONObject()
                     .put("payload_kind", "loaded_values")
-                    .put("tiktok_version", FeatureGateLabStore.TARGET_VERSION)
+                    .put("tiktok_version", FeatureGateLabStore.targetVersion())
                     .put("rules", new JSONArray()
                             .put(new JSONObject()
                                     .put("manager", FeatureGateLabStore.MANAGER_ABMOCK)
