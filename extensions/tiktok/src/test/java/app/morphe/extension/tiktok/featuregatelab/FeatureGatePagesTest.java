@@ -834,7 +834,7 @@ public class FeatureGatePagesTest {
                     "The override couldn't be applied: IllegalArgumentException: count. Edit"
                             + " the field values, or reset the override.");
             expected.put(FeatureGateFailure.of(FeatureGateFailure.Reason.NOT_IN_CATALOGUE),
-                    "This key isn't in the local catalog, so its type can't be checked. Reset"
+                    "This key isn't in Hushfeed's list, so its type can't be checked. Reset"
                             + " the override.");
             expected.put(FeatureGateFailure.of(FeatureGateFailure.Reason.TYPE_MISMATCH,
                             "INT", "STRING"),

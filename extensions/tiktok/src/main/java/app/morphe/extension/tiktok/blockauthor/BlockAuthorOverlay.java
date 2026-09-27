@@ -844,7 +844,7 @@ public final class BlockAuthorOverlay {
         chip.setText(L10n.t(activity, "Unblock"));
         chip.setContentDescription(L10n.f(activity, "Blocked %1$s. Unblock", author.label()));
         chip.setTextColor(SettingsUi.OVERLAY_TEXT);
-        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
         chip.setGravity(Gravity.CENTER);
         chip.setPadding(SettingsUi.dp(activity, 12), 0, SettingsUi.dp(activity, 12), 0);
         chip.setMinimumHeight(SettingsUi.dp(activity, 48));
@@ -966,7 +966,7 @@ public final class BlockAuthorOverlay {
                 TextView label = new TextView(activity);
                 label.setText(message);
                 label.setTextColor(SettingsUi.OVERLAY_TEXT);
-                label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                label.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
                 banner.addView(label, new LinearLayout.LayoutParams(0, -2, 1f));
 
                 if (action != null) {
@@ -1084,7 +1084,7 @@ public final class BlockAuthorOverlay {
         undo.setText(label);
         undo.setContentDescription(label);
         undo.setTextColor(SettingsUi.OVERLAY_ACCENT);
-        undo.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        undo.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
         // A banner that dismisses itself is the worst place for a small target.
         undo.setPadding(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12),
                 SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12));

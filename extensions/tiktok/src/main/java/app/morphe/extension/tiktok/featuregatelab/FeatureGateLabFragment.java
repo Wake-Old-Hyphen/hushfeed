@@ -274,7 +274,7 @@ public final class FeatureGateLabFragment extends Fragment {
         searchRow.setAddStatesFromChildren(true);
         search = new EditText(context);
         search.setSingleLine(true);
-        search.setTextSize(16);
+        search.setTextSize(SettingsUi.TEXT_TITLE);
         // No content description on a search box. On an editable view it replaces what was
         // typed in the announcement, so "cats" came back as the label. The hint names it.
         search.setHint(L10n.t(context, "Search by name or gate key"));
@@ -646,8 +646,8 @@ public final class FeatureGateLabFragment extends Fragment {
 
     private void load(boolean refresh) {
         count.setText(L10n.t(getContext(), refresh
-                ? "Refreshing current TikTok cache…"
-                : "Loading local catalog and current TikTok cache…"));
+                ? "Refreshing TikTok's current values…"
+                : "Loading the gate list and TikTok's current values…"));
         FeatureGateCatalog.loadAsync(refresh, new FeatureGateCatalog.Callback() {
             @Override
             public void onLoaded(FeatureGateCatalog.Snapshot loaded) {
@@ -667,7 +667,7 @@ public final class FeatureGateLabFragment extends Fragment {
             public void onError(String message) {
                 if (!isAdded() || getView() == null) return;
                 count.setText(
-                        L10n.f(getContext(), "Current cache unavailable: %1$s", message));
+                        L10n.f(getContext(), "Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.", message));
                 FeatureGateCatalog.Snapshot cached = FeatureGateCatalog.cachedSnapshot();
                 if (cached != null) {
                     snapshot = cached;
@@ -1861,7 +1861,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 TextView title = FeatureGateLabUi.text(context, "", 16, SettingsUi.textPrimary(), Typeface.BOLD);
                 title.setMaxLines(2);
                 TextView key = FeatureGateLabUi.label(context, "");
-                key.setTextSize(12);
+                key.setTextSize(SettingsUi.TEXT_CAPTION);
                 key.setTypeface(Typeface.MONOSPACE);
                 key.setPadding(0, FeatureGateLabUi.dp(context, 6), 0, 0);
                 key.setSingleLine(true);

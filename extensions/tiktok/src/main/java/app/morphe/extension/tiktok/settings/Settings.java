@@ -186,6 +186,8 @@ public class Settings extends BaseSettings {
     public static final StringSetting CREATOR_FILTER_EXCEPTIONS =
             new FeedRuleStringSetting("creator_filter_exceptions", true);
     public static final StringSetting REGION_ONLY_FROM = new StringSetting("region_only_from", "", true);
+    /** Caption languages to keep, by the video's original caption track; empty keeps every language. */
+    public static final StringSetting CAPTION_LANGUAGES = new StringSetting("caption_languages", "");
     public static final StringSetting REGION_NEVER_FROM = new StringSetting("region_never_from", "", true);
     public static final IntegerSetting MAX_VIDEO_SECONDS =
             new IntegerSetting("max_video_seconds", 0).withRange(0, 86400);
@@ -456,6 +458,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_RAIL_SHARE = new BooleanSetting("hide_rail_share", FALSE);
     public static final BooleanSetting HIDE_RAIL_COUNTS = new BooleanSetting("hide_rail_counts", FALSE);
     public static final BooleanSetting HIDE_STATUS_BAR = new BooleanSetting("hide_status_bar", FALSE);
+    /** LIVE rooms are an activity of their own, which Hide the status bar never reached (#38). */
+    public static final BooleanSetting HIDE_STATUS_BAR_IN_LIVE = new BooleanSetting("hide_status_bar_in_live", FALSE);
     public static final StringSetting TOUCH_TARGET_SCALE = new StringSetting("touch_target_scale", "1");
     public static final BooleanSetting HIDE_SENSITIVE_WARNINGS = new BooleanSetting("hide_sensitive_warnings", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_REGION = new BooleanSetting("show_author_region", FALSE);
@@ -508,6 +512,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_SEEN_VIDEOS = new BooleanSetting("hide_seen_videos", FALSE, true);
     public static final IntegerSetting SEEN_VIDEO_RETENTION_DAYS =
             new IntegerSetting("seen_video_retention_days", 30).withRange(0, 3650);
+    /**
+     * How much of a video, in percent, has to play before it counts as seen. Zero keeps the
+     * original rule (a tenth of the video, one to five seconds). 90 is the top because the
+     * last progress report before a loop can land anywhere in the final second.
+     */
+    public static final IntegerSetting SEEN_VIDEO_MARK_PERCENT =
+            new IntegerSetting("seen_video_mark_percent", 0).withRange(0, 90);
     public static final BooleanSetting HIDE_PLAYLIST_BAR = new BooleanSetting("hide_playlist_bar", FALSE, true);
     public static final BooleanSetting HIDE_EVENT_BADGE = new BooleanSetting("hide_event_badge", FALSE, true);
     public static final BooleanSetting HIDE_INSERTED_CARDS = new BooleanSetting("hide_inserted_cards", FALSE, true);

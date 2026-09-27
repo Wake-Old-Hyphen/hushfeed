@@ -671,15 +671,30 @@ public final class SeenVideoHistory {
         return Math.max(0, Math.min(3650, Settings.SEEN_VIDEO_RETENTION_DAYS.get()));
     }
 
-    private static boolean hasReachedSeenThreshold(long positionMs, long durationMs) {
+    /**
+     * With no percent chosen, a tenth of the video held to one to five seconds. With one, that
+     * share of the video, never less than a second and never later than a second before the
+     * end, where the last progress report may not land. A video of unknown length counts after
+     * two seconds either way, since a share of it can't be worked out.
+     */
+    static boolean hasReachedSeenThreshold(long positionMs, long durationMs) {
         long safePosition = Math.max(0L, positionMs);
         if (durationMs <= 0L) {
             return safePosition >= UNKNOWN_DURATION_MARK_MS;
         }
 
-        long percentThreshold = Math.max(0L, durationMs) * MARK_PERCENT / 100L;
-        long threshold = Math.max(MIN_MARK_MS, Math.min(MAX_MARK_MS, percentThreshold));
-        return safePosition >= threshold;
+        int chosen = markPercent();
+        if (chosen == 0) {
+            long percentThreshold = durationMs * MARK_PERCENT / 100L;
+            return safePosition >= Math.max(MIN_MARK_MS, Math.min(MAX_MARK_MS, percentThreshold));
+        }
+        long share = durationMs * chosen / 100L;
+        return safePosition >= Math.max(MIN_MARK_MS, Math.min(share, durationMs - MIN_MARK_MS));
+    }
+
+    /** 0 to 90, the range the dialog offers. A restored backup can hold anything. */
+    private static int markPercent() {
+        return Math.max(0, Math.min(90, Settings.SEEN_VIDEO_MARK_PERCENT.get()));
     }
 
     private static String normalizeAid(String aid) {

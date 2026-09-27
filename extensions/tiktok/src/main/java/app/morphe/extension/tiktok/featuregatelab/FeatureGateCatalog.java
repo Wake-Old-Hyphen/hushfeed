@@ -882,25 +882,7 @@ public final class FeatureGateCatalog {
     }
 
     static String normalizeSearchText(String text) {
-        if (text == null || text.isEmpty()) return "";
-        String lower = text.toLowerCase(Locale.ROOT);
-        StringBuilder normalized = new StringBuilder(lower.length());
-        boolean previousWasSpace = true;
-        for (int index = 0; index < lower.length(); index++) {
-            char character = lower.charAt(index);
-            if (Character.isLetterOrDigit(character)) {
-                normalized.append(character);
-                previousWasSpace = false;
-            } else if (!previousWasSpace) {
-                normalized.append(' ');
-                previousWasSpace = true;
-            }
-        }
-        int length = normalized.length();
-        if (length > 0 && normalized.charAt(length - 1) == ' ') {
-            normalized.setLength(length - 1);
-        }
-        return normalized.toString();
+        return app.morphe.extension.tiktok.settings.SearchText.normalize(text);
     }
 
 }

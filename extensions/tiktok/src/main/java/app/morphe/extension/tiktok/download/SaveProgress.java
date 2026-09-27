@@ -191,7 +191,7 @@ final class SaveProgress {
                 String text = L10n.f("Saving %1$s of %2$s", String.valueOf(1), String.valueOf(total));
                 label.setText(text);
                 label.setTextColor(SettingsUi.OVERLAY_TEXT);
-                label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                label.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
                 banner.addView(label, new LinearLayout.LayoutParams(0, -2, 1f));
 
                 TextView stop = new TextView(activity);
@@ -199,7 +199,7 @@ final class SaveProgress {
                 stop.setText(cancelLabel);
                 stop.setContentDescription(cancelLabel);
                 stop.setTextColor(SettingsUi.OVERLAY_ACCENT);
-                stop.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                stop.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
                 stop.setPadding(SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12),
                         SettingsUi.dp(activity, 16), SettingsUi.dp(activity, 12));
                 stop.setMinimumHeight(SettingsUi.dp(activity, 48));

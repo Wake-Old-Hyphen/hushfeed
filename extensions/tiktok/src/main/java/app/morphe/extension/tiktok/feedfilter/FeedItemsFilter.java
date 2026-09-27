@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,6 +60,7 @@ public final class FeedItemsFilter {
         new AdvancedFeedRules.PromotionalMusicFilter(),
         new AdvancedFeedRules.LiveReplayFilter(),
         new RegionFilter(),
+        new CaptionLanguageFilter(),
         new AdvancedFeedRules.PublicationAgeFilter(),
         new AdvancedFeedRules.QualityFilter()
     );
@@ -173,8 +175,7 @@ public final class FeedItemsFilter {
             return;
         }
 
-        String profile = feedItemList.dataUserId;
-        if (profile != null && !profile.isEmpty()) {
+        if (isProfileList(feedItemList)) {
             filterProfileList(feedItemList);
             return;
         }
@@ -285,6 +286,42 @@ public final class FeedItemsFilter {
 
     public static List filterProfileAds(List items) {
         return filterAdOnlyAwemeList("ProfileAwemeList", items);
+    }
+
+    /**
+     * Profile lists as TikTok parses them. The profile's model stamps dataUserId only after the
+     * advance request and the feed author preload have read getItems, so on 47.x the stamp alone
+     * let the feed's preferences empty page after page of someone else's profile, and every empty
+     * page made TikTok load the next one at once. FeedItemList keeps Object's equals and hashCode,
+     * so the map keys by identity, and an entry goes when its list does.
+     */
+    private static final Map<FeedItemList, Boolean> PARSED_PROFILE_LISTS = new WeakHashMap<>();
+
+    /**
+     * Called with what ProfileDependentComponentImpl.apiExecuteGetJSONObject returns: posts,
+     * Liked, collections, private posts, whoever's profile. Only the two profile fetchers pass it
+     * FeedItemList, and the For You feed parses elsewhere (both traced on 47.0.3 and 47.1.3).
+     * Runs inside TikTok's own parse, so it never throws.
+     */
+    public static void markProfileResponse(Object result) {
+        try {
+            if (!(result instanceof FeedItemList)) return;
+            HookStatus.bound("main feed", "profile list parse");
+            synchronized (PARSED_PROFILE_LISTS) {
+                PARSED_PROFILE_LISTS.put((FeedItemList) result, Boolean.TRUE);
+            }
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not mark a profile list", ex);
+        }
+    }
+
+    /** Marked where TikTok parsed it, or stamped with a profile's uid (a clone keeps only the stamp). */
+    static boolean isProfileList(FeedItemList list) {
+        String profile = list.dataUserId;
+        if (profile != null && !profile.isEmpty()) return true;
+        synchronized (PARSED_PROFILE_LISTS) {
+            return PARSED_PROFILE_LISTS.containsKey(list);
+        }
     }
 
     /** The counter line for a profile's list read through FeedItemList.getItems. */

@@ -53,6 +53,20 @@ public class SeenVideoRowsTest {
                 String.valueOf(new ClearSeenVideoHistoryPreference(activity).getSummary()));
     }
 
+    /** One record reads as one: the S22 showed "Forget the 1 videos @... has seen." */
+    @Test public void aSingleRecordIsNamedInTheSingular() {
+        SeenVideoHistory.onPlayProgressChange("v1", 5000, 10000);
+        SignedInUser.handleForTests = "poster";
+        assertEquals("Forget the video @poster has seen.",
+                String.valueOf(new ClearSeenVideoHistoryPreference(activity).getSummary()));
+        SignedInUser.handleForTests = null;
+        assertEquals("Forget the seen video.",
+                String.valueOf(new ClearSeenVideoHistoryPreference(activity).getSummary()));
+        assertEquals("One video was recorded before each account kept its own list. It hides nothing "
+                + "until you add it here.",
+                String.valueOf(new AdoptSeenVideoHistoryPreference(activity, 1).getSummary()));
+    }
+
     @Test public void theAddRowSaysHowManyOlderRecordsItWouldAdd() {
         AdoptSeenVideoHistoryPreference row = new AdoptSeenVideoHistoryPreference(activity, 1234);
         assertEquals(AdoptSeenVideoHistoryPreference.TITLE, String.valueOf(row.getTitle()));

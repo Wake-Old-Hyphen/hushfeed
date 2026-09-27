@@ -80,8 +80,10 @@ public final class ClearSeenVideoHistoryPreference extends Preference
                 String handle = SignedInUser.handle();
                 String number = NumberFormat.getInstance().format(count);
                 setSummary(handle != null
-                        ? L10n.f(getContext(), "Forget the %1$s videos @%2$s has seen.", number, handle)
-                        : L10n.f(getContext(), "Forget the %1$s seen videos.", number));
+                        ? L10n.quantity(getContext(), count, "Forget the video @%2$s has seen.",
+                                "Forget the %1$s videos @%2$s has seen.", number, handle)
+                        : L10n.quantity(getContext(), count, "Forget the seen video.",
+                                "Forget the %1$s seen videos.", number));
             } else {
                 setSummary("No seen videos recorded yet.");
             }

@@ -40,6 +40,7 @@ public class SeenVideoHistoryTest {
         SignedInUser.idForTests = ME;
         Settings.HIDE_SEEN_VIDEOS.save(true);
         Settings.SEEN_VIDEO_RETENTION_DAYS.save(30);
+        Settings.SEEN_VIDEO_MARK_PERCENT.save(0);
         SeenVideoHistory.clear();
         drain();
         // Other accounts' rows outlive a clear on purpose, so the table is emptied by hand.
@@ -51,6 +52,41 @@ public class SeenVideoHistoryTest {
     @After public void tearDown() {
         SignedInUser.idForTests = null;
         SignedInUser.handleForTests = null;
+    }
+
+    @Test public void aChosenShareDecidesWhenALongVideoCountsAsSeen() throws Exception {
+        // Five seconds used to hide a ten-minute video for good. At half, it takes five minutes.
+        Settings.SEEN_VIDEO_MARK_PERCENT.save(50);
+        SeenVideoHistory.onPlayProgressChange("long", 5_000, 600_000);
+        SeenVideoHistory.onPlayProgressChange("long", 299_999, 600_000);
+        drain();
+        assertFalse(SeenVideoHistory.shouldHide("long"));
+        SeenVideoHistory.onPlayProgressChange("long", 300_000, 600_000);
+        drain();
+        assertTrue(SeenVideoHistory.shouldHide("long"));
+    }
+
+    @Test public void withNoShareChosenTheFewSecondsRuleStays() throws Exception {
+        SeenVideoHistory.onPlayProgressChange("long", 5_000, 600_000);
+        drain();
+        assertTrue(SeenVideoHistory.shouldHide("long"));
+        assertFalse(SeenVideoHistory.hasReachedSeenThreshold(999, 5_000));
+        assertTrue(SeenVideoHistory.hasReachedSeenThreshold(1_000, 5_000));
+        assertFalse(SeenVideoHistory.hasReachedSeenThreshold(4_999, 600_000));
+    }
+
+    @Test public void aShareIsHeldInsideTheClipAndUnknownLengthsKeepTwoSeconds() {
+        Settings.SEEN_VIDEO_MARK_PERCENT.save(90);
+        // 90% of three seconds is 2.7 s, past the last second, where a report may never land.
+        assertFalse(SeenVideoHistory.hasReachedSeenThreshold(1_999, 3_000));
+        assertTrue(SeenVideoHistory.hasReachedSeenThreshold(2_000, 3_000));
+        Settings.SEEN_VIDEO_MARK_PERCENT.save(10);
+        // A tenth of a four-second clip is under the one-second floor.
+        assertFalse(SeenVideoHistory.hasReachedSeenThreshold(999, 4_000));
+        assertTrue(SeenVideoHistory.hasReachedSeenThreshold(1_000, 4_000));
+        // No length, no share of it: two seconds, as before.
+        assertFalse(SeenVideoHistory.hasReachedSeenThreshold(1_999, 0));
+        assertTrue(SeenVideoHistory.hasReachedSeenThreshold(2_000, -1));
     }
 
     @Test public void clearingKeepsAWayBackUntilTheNextClear() throws Exception {

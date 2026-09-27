@@ -1934,6 +1934,34 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         }
     }
 
+    /** A greyed number row puts the note on its own line; it ran into "Current: Off" before. */
+    @Test public void aGreyedNumberRowPutsTheNoteOnALineOfItsOwn() throws Exception {
+        boolean autoAdvance = SettingsStatus.autoAdvanceEnabled;
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            SettingsStatus.autoAdvanceEnabled = true;
+            Settings.AUTO_ADVANCE.save(false);
+            Settings.AUTO_ADVANCE_LIMIT.save(0);
+            TikTokPreferenceFragment page = attachSection(activity, "PLAYBACK");
+            Preference limit = findPreference(page.getPreferenceScreen(), "Auto-advance session limit");
+            Preference parent = findPreference(page.getPreferenceScreen(), "Auto-advance videos");
+            assertNotNull(limit);
+            assertNotNull(parent);
+            String[] lines = String.valueOf(limit.getSummary()).split("\n");
+            assertEquals("Turn on " + parent.getTitle() + " first.", lines[lines.length - 1]);
+            assertEquals("Current: Off", lines[lines.length - 2]);
+
+            Settings.AUTO_ADVANCE.save(true);
+            refreshAvailability(page);
+            assertTrue(String.valueOf(limit.getSummary()).endsWith("Current: Off"));
+        } finally {
+            Settings.AUTO_ADVANCE.resetToDefault();
+            Settings.AUTO_ADVANCE_LIMIT.resetToDefault();
+            SettingsStatus.autoAdvanceEnabled = autoAdvance;
+        }
+    }
+
     /** The pass the settings screen makes over every row when it opens. */
     private static void refreshAvailability(TikTokPreferenceFragment page) throws Exception {
         java.lang.reflect.Method method = app.morphe.extension.shared.settings.preference

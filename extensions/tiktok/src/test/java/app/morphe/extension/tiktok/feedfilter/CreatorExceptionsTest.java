@@ -94,8 +94,27 @@ public class CreatorExceptionsTest {
 
     public static final class Duration {
         final long duration;
+        CaptionModel captionModel;
         Duration(long duration) { this.duration = duration; }
         public long getDuration() { return duration; }
+        public Object getCaptionModel() { return captionModel; }
+    }
+
+    /** A caption track as TikTok's model has it: its language tag and whether it is the original. */
+    public static final class Caption {
+        final String languageCode;
+        final boolean original;
+        public Caption(String languageCode, boolean original) {
+            this.languageCode = languageCode;
+            this.original = original;
+        }
+        public String getLanguageCode() { return languageCode; }
+        public boolean isOriginalCaption() { return original; }
+    }
+
+    public static final class CaptionModel {
+        public final List<Caption> captionList;
+        public CaptionModel(List<Caption> captionList) { this.captionList = captionList; }
     }
 
     public static final class Labelled {
@@ -122,7 +141,7 @@ public class CreatorExceptionsTest {
         boolean ad, promotionalMusic, liveReplay, story, paidContent;
         long liveId;
         int awemeType;
-        String shareUrl, region;
+        String shareUrl, region, captionLanguage;
         String desc = "";
         List<Object> images;
         List<?> anchors;
@@ -161,7 +180,13 @@ public class CreatorExceptionsTest {
         public Object getCommercialVideoInfo() { return commercialVideoInfo; }
         public boolean isPaidContent() { return paidContent; }
         public long getCreateTime() { return createTime; }
-        public Object getVideo() { return new Duration(durationMs); }
+        public Object getVideo() {
+            Duration video = new Duration(durationMs);
+            if (captionLanguage != null) {
+                video.captionModel = new CaptionModel(List.of(new Caption(captionLanguage, true)));
+            }
+            return video;
+        }
     }
 
     /** One filter: its name on the feed path, the switch that turns it on, the post that trips it. */
@@ -231,7 +256,9 @@ public class CreatorExceptionsTest {
                 new Case("PromotionalMusicFilter", () -> Settings.HIDE_PROMOTIONAL_MUSIC.save(true),
                         item -> item.promotionalMusic = true),
                 new Case("LiveReplayFilter", () -> Settings.HIDE_LIVE_REPLAYS.save(true),
-                        item -> item.liveReplay = true));
+                        item -> item.liveReplay = true),
+                new Case("CaptionLanguageFilter", () -> Settings.CAPTION_LANGUAGES.save("en"),
+                        item -> item.captionLanguage = "es"));
     }
 
     private static void range(StringSetting setting) {
@@ -254,6 +281,7 @@ public class CreatorExceptionsTest {
         return new StringSetting[]{
                 Settings.BLOCKED_CAPTION_WORDS, Settings.BLOCKED_CREATORS, Settings.LOCAL_HIDDEN_CREATORS,
                 Settings.CREATOR_FILTER_EXCEPTIONS, Settings.BLOCKED_SOUND_IDS, Settings.BLOCKED_SOUND_NAMES,
+                Settings.CAPTION_LANGUAGES,
         };
     }
 
@@ -433,6 +461,37 @@ public class CreatorExceptionsTest {
             assertEquals(which.filter + " did not run on the feed, so the profile case proves nothing",
                     List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
         }
+    }
+
+    /**
+     * The same page marked where TikTok parses it and not yet stamped, which is how 47.x's advance
+     * request and feed author preload read someone else's profile: on a phone, a minimum view
+     * count emptied a small creator's grid page by page. Unmarked, the page is the feed's again.
+     */
+    @Test
+    public void aProfilesListMarkedWhereItIsParsedKeepsItsPostsBeforeTheStamp() {
+        List<Case> cases = new ArrayList<>(subjectiveCases());
+        for (Case which : hardCases()) if (!which.filter.equals("AdsFilter")) cases.add(which);
+        for (Case which : cases) {
+            quiet();
+            which.enable.run();
+            FeedItemList parsed = page(tripped("post", which), stranger("plain"));
+            FeedItemsFilter.markProfileResponse(parsed);
+            assertEquals(which.filter + " hid a post from a profile page read before its stamp",
+                    List.of("post", "plain"), survivors(parsed));
+            assertEquals(which.filter + " did not run on an unmarked page, so the marked case proves nothing",
+                    List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
+        }
+        quiet();
+        Settings.REMOVE_ADS.save(true);
+        Item ad = new Item("ad");
+        ad.ad = true;
+        FeedItemList parsed = page(ad, stranger("plain"));
+        FeedItemsFilter.markProfileResponse(parsed);
+        assertEquals("a marked profile page still loses its ads", List.of("plain"), survivors(parsed));
+        // Whatever else the parse returns (a user, a search result) passes through untouched.
+        FeedItemsFilter.markProfileResponse(null);
+        FeedItemsFilter.markProfileResponse("{}");
     }
 
     @Test

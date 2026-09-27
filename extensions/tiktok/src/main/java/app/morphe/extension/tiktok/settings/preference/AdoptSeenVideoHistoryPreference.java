@@ -29,7 +29,8 @@ public final class AdoptSeenVideoHistoryPreference extends Preference
         super(context);
         setKey("action_adopt_seen_video_history");
         setTitle(L10n.t(context, TITLE));
-        setSummary(L10n.f(context,
+        setSummary(L10n.quantity(context, unowned,
+                "One video was recorded before each account kept its own list. It hides nothing until you add it here.",
                 "%1$s videos were recorded before each account kept its own list. They hide nothing until you add them here.",
                 NumberFormat.getInstance().format(unowned)));
         setOnPreferenceClickListener(preference -> {
@@ -42,7 +43,8 @@ public final class AdoptSeenVideoHistoryPreference extends Preference
                     return;
                 }
                 setSummary(L10n.t(context, "Added to this account."));
-                SettingsActionBanner.showNotice(context, L10n.f(context,
+                SettingsActionBanner.showNotice(context, L10n.quantity(context, added,
+                        "Added one older seen video to this account",
                         "Added %1$s older seen videos to this account", NumberFormat.getInstance().format(added)));
             });
             return true;

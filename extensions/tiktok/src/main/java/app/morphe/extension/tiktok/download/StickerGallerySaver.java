@@ -198,7 +198,7 @@ public final class StickerGallerySaver {
             boolean dark = SettingsUi.isDarkContext(template.getContext());
             int textColor = SettingsUi.textPrimaryOn(dark);
             button.setTextColor(SettingsUi.enabledTextColors(textColor));
-            button.setTextSize(16);
+            button.setTextSize(SettingsUi.TEXT_TITLE);
             int paddingHorizontal = SettingsUi.dp(context, 16);
             int paddingVertical = SettingsUi.dp(context, 10);
             button.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);

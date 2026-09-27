@@ -555,6 +555,7 @@ public final class CommentTools {
         if (button != null) {
             ControlTouchListener listener = existingControl(button);
             if (listener != null) listener.handBack(button);
+            CommentLikeTouchTarget.detachBlockHalo(button);
             // The native thumbs down control uses touch handling; this click belongs to the takeover.
             button.setOnClickListener(null);
             button.setClickable(state.buttonClickable);
@@ -663,6 +664,8 @@ public final class CommentTools {
         if (button == null) return;
         control(button).blocking = true;
         button.setOnClickListener(CommentTools::onDislikeTapped);
+        // About 40 x 24 dp on the S25's sheet; the halo grows it toward 48 x 48 in blank space.
+        CommentLikeTouchTarget.attachBlockHalo(button);
         if (icon != null) {
             control(icon).blocking = true;
             // One target for the row rather than two, so the label and the state are in one
