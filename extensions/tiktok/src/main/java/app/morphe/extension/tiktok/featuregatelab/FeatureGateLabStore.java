@@ -42,6 +42,7 @@ public final class FeatureGateLabStore {
     private static final String MIGRATION_NOTICE_KEY = "migration_notice_pending";
     /** How many rules the pending notice is about. */
     private static final String MIGRATION_TURNED_OFF_KEY = "migration_turned_off";
+    private static final String TRANSLATION_PRESET_TITLE = "Show See translation";
 
     private FeatureGateLabStore() {
     }
@@ -493,6 +494,29 @@ public final class FeatureGateLabStore {
             accepted.add(new Rule(id, manager, key, type, value, false, System.currentTimeMillis()));
         }
         return new ImportReview(accepted, rejected);
+    }
+
+    /** Bundled JSON, since the injected extension carries code but no Android resources. */
+    static JSONObject reviewedPresets() throws JSONException {
+        return new JSONObject("{\"47.1.3\":{\"see_translation\":{"
+                + "\"title\":\"" + TRANSLATION_PRESET_TITLE + "\",\"rules\":["
+                + "{\"manager\":\"abmock\",\"key\":\"feed_translation_reverse\",\"type\":\"INT\",\"value\":\"0\"},"
+                + "{\"manager\":\"abmock\",\"key\":\"cla_translate_button_weaken_v2\",\"type\":\"INT\",\"value\":\"0\"}]}}}");
+    }
+
+    static ImportReview reviewPreset(String build, String id,
+            Map<String, FeatureGateCatalog.Entry> catalog) throws JSONException {
+        // Unknown host versions must not inherit targetVersion's early-startup fallback.
+        if (!build.equals(app.morphe.extension.shared.BuildNames.runningBuild())) {
+            throw new JSONException("Preset does not match the installed TikTok version");
+        }
+        JSONObject profile = reviewedPresets().getJSONObject(build).getJSONObject(id);
+        profile.put("tiktok_version", build);
+        ImportReview review = reviewProfile(profile.toString(), catalog);
+        if (!review.rejected.isEmpty() || review.accepted.isEmpty()) {
+            throw new JSONException("Preset gates do not match the installed catalog");
+        }
+        return review;
     }
 
     public static ValidationFailure validateValue(String type, String value) {

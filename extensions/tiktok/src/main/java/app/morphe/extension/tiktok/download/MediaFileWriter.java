@@ -29,10 +29,17 @@ final class MediaFileWriter {
         final String name;
         /** Null below API 29, where the file goes straight to disk and only the scanner sees it. */
         final Uri uri;
+        /** The legacy path, retained so a later already-saved choice can open the file. */
+        final File file;
 
         Saved(String name, Uri uri) {
+            this(name, uri, null);
+        }
+
+        Saved(String name, Uri uri, File file) {
             this.name = name;
             this.uri = uri;
+            this.file = file;
         }
     }
 
@@ -54,7 +61,7 @@ final class MediaFileWriter {
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, path);
             values.put(MediaStore.MediaColumns.IS_PENDING, 1);
             Uri collection;
-            if ("application/x-subrip".equals(mime)) {
+            if ("application/x-subrip".equals(mime) || "text/plain".equals(mime)) {
                 collection = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             } else if (mime.startsWith("audio/")) {
                 // Sound goes in the audio collection whatever folder the video chose; the
@@ -125,7 +132,7 @@ final class MediaFileWriter {
                 throw exception;
             }
             MediaScannerConnection.scanFile(context, new String[]{target.getAbsolutePath()}, new String[]{mime}, null);
-            return new Saved(target.getName(), null);
+            return new Saved(target.getName(), null, target);
         }
     }
 

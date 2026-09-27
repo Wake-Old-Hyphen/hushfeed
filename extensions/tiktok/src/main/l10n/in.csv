@@ -842,10 +842,7 @@ Saving %1$s original photos,Menyimpan %1$s foto asli
 Saving one original photo,Menyimpan satu foto asli
 Saving settings backup,Menyimpan cadangan pengaturan
 Saving the sticker,Menyimpan stiker
-Saving the selected video quality,Menyimpan kualitas video pilihan
-Saving the selected video quality without sound,Menyimpan kualitas video pilihan tanpa suara
 Saving the story,Menyimpan Story
-Saving video and subtitles to %1$s,Menyimpan video dan subtitel ke %1$s
 Screen,Layar
 Screen time,Waktu layar
 Search,Pencarian
@@ -1100,7 +1097,6 @@ Today: %1$d minutes,Hari ini: %1$d menit
 Today: %1$d video,Hari ini: %1$d video
 Today: %1$d videos,Hari ini: %1$d video
 "Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically.","Token: {creator}, {date}, {video_id}, {index}. {index} menomori foto dari slideshow yang kamu simpan dengan Unduh foto asli; apa pun yang disimpan lewat tombol TikTok sendiri dinomori oleh foldernya. Ekstensi berkas dipertahankan otomatis."
-"Tokens: {creator}, {date}, {video_id}. The file extension is kept automatically.","Token: {creator}, {date}, {video_id}. Ekstensi berkas dipertahankan otomatis."
 "Tokens: {date}, {media_id}. Works for image and video stickers.","Token: {date}, {media_id}. Berlaku untuk stiker gambar dan video."
 Too many media saves are already running. Try again in a moment.,Terlalu banyak penyimpanan media yang sedang berjalan. Coba lagi sebentar.
 Tracking,Pelacakan
@@ -1298,3 +1294,29 @@ Allow storage for TikTok in Android settings to save the live photo's clip,Izink
 "Not a handle or id, so ignored: %1$s","Bukan nama akun atau id, jadi diabaikan: %1$s"
 What's new,Yang baru
 Changes in Hushfeed %1$s,Perubahan di Hushfeed %1$s
+Reviewed presets,Preset teruji
+Show See translation,Tampilkan Lihat terjemahan
+Reviewed for TikTok %1$s,Diuji untuk TikTok %1$s
+Value: %1$s to %2$s,Nilai: %1$s menjadi %2$s
+The presets couldn't load. Open the Lab again.,Preset tidak dapat dimuat. Buka Lab lagi.
+Apply enables these overrides. Undo last Lab change restores your previous rules.,Terapkan mengaktifkan penggantian ini. Urungkan perubahan Lab terakhir memulihkan aturan sebelumnya.
+Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules.,Terapkan menyimpan penggantian ini. Aktifkan penggantian di Lab untuk menggunakannya. Urungkan memulihkan aturan sebelumnya.
+This preset isn't available for your installed TikTok version.,Preset ini tidak tersedia untuk versi TikTok yang terpasang.
+Preset applied. Restart TikTok to use it.,Preset diterapkan. Mulai ulang TikTok untuk menggunakannya.
+Preset saved. Turn on overrides in the Lab to use it.,Preset disimpan. Aktifkan penggantian di Lab untuk menggunakannya.
+This preset doesn't match the installed gates. Nothing changed.,Preset ini tidak cocok dengan gate yang terpasang. Tidak ada perubahan.
+About overrides,Tentang penggantian
+"Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically.","Token: {creator}, {date}, {video_id}. Awali dengan {creator}/ untuk membuat folder per kreator. Ekstensi file tetap disertakan otomatis."
+Save details beside the video,Simpan detail di samping video
+"Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.","Simpan keterangan, kreator, tautan, dan tanggal terbit dalam file TXT. Pada Android 10 ke atas, kedua file memakai Download atau Documents dengan nama folder yang sama. Berlaku untuk penyimpanan di sini."
+Check for already-saved videos,Periksa video yang sudah disimpan
+"Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.","Ingat hingga %1$s video yang disimpan di sini saat opsi ini aktif. Jika file masih ada, tawarkan Buka atau Simpan lagi sebelum mengunduh salinan baru."
+This video is already saved. Open TikTok to save another copy.,Video ini sudah disimpan. Buka TikTok untuk menyimpan salinan lain.
+This video is already saved,Video ini sudah disimpan
+Save again,Simpan lagi
+The saved-video choice couldn't open. Try again.,Pilihan untuk video tersimpan tidak dapat dibuka. Coba lagi.
+This video isn't available as a complete file. Try again later.,Video ini belum tersedia sebagai file lengkap. Coba lagi nanti.
+Saving video to %1$s,Menyimpan video ke %1$s
+Video and details saved to %1$s,Video dan detail disimpan ke %1$s
+"The video was saved, but its record couldn't be updated. A later save may make another copy.","Video telah disimpan, tetapi catatannya tidak dapat diperbarui. Penyimpanan berikutnya mungkin membuat salinan lain."
+The already-saved check failed. Try again.,Pemeriksaan video tersimpan gagal. Coba lagi.

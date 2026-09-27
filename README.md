@@ -154,7 +154,7 @@ Playback quality chooses among the video streams TikTok offers. It doesn't cap t
 
 | Patch | Description |
 |---|---|
-| `Advanced downloads` | Adds download quality choices, saves Photo Mode images directly from their source URLs, keeps a video's sound as its own audio file, and saves a profile picture or a story from a long press. Switch: Hushfeed settings > Downloads. |
+| `Advanced downloads` | Adds download quality choices, original Photo Mode images, separate audio files and optional video details. It can check for an existing saved video before downloading another copy. Long presses save profile pictures and stories. Switch: Hushfeed settings > Downloads. |
 | `Allow Duet and Stitch` | Ignores the creator's Duet and Stitch setting so the entries appear for videos that closed them. Everything else the app checks still applies: a photo post, a private video or one with music it may not reuse is still refused, and whether the upload is accepted is the server's decision, not the app's. Switch: Hushfeed settings > App. |
 | `Allow screenshots and Circle to Search` | Removes secure window flags and disables the Circle to Search block. Off by default. Restart after changing. Switch: Hushfeed settings > Feed screen. |
 | `Always show publish date` | Always shows the publish date in video author information. Switch: Hushfeed settings > Feed screen. |
@@ -344,6 +344,14 @@ Auto-advance session limit is zero by default. A positive value counts videos th
 
 Advanced downloads can send a sanitized TikTok link to another installed app. Enter its package name in `Send links to another app`. An empty value keeps TikTok's own save. The [YTDLnis](https://github.com/deniscerri/ytdlnis) package is recognized explicitly as `com.deniscerri.ytdl`, so its documented audio or video type and optional background mode are available. The profile controls stay disabled for every other package, and an uninstalled target falls back to TikTok's save.
 
+Start **Video filename** with `{creator}/` to give each creator a folder under your chosen video destination. For example, `{creator}/{date}_{video_id}` keeps the date and video ID as the filename. Original photo downloads also understand this prefix in Photo filename. Templates without it keep saving directly in the chosen folder.
+
+With `Advanced downloads`, **Save details beside the video** writes a TXT file containing the caption, creator handle, source link and publication date. Android 10 and later put the video and its details in Download or Documents, keeping the chosen subfolder, because Android won't accept a TXT file in DCIM. Older Android versions keep the chosen video folder. Subtitles saved with a details file use that same folder.
+
+**Check for already-saved videos** remembers up to 10,000 successful video saves made while it's on. Saving one again offers Open or Save again if the file is still available, even if TikTok no longer supplies its download link. Deleted files can be downloaded again. The record stays on the phone. Both switches start off and apply to Hushfeed's saves, including video stories, rather than links handed to another app.
+
+<img src="assets/settings/already-saved.png" alt="Already-saved video choices in the dark theme" width="300" /> <img src="assets/settings/already-saved-light.png" alt="Already-saved video choices in the light theme" width="300" />
+
 Photo filename templates can use `{index}`. TikTok's own Photo Mode saver numbers each image from 1 and starts over when the post has finished saving, including on Android versions that write straight to a shared folder.
 
 Foldable controls are on the App page. Settings save immediately, including when an older settings page is still open. A banner offers Restart now when a change needs it, and a pinned row keeps the action available until TikTok restarts. With the split view on, unfolding past your width with TikTok already open refreshes the feed once so the side-by-side layout can take over, and folding back refreshes it again.
@@ -374,9 +382,12 @@ The exported report also carries a feed filter table, and that one counts whethe
 
 Feature Gate Lab saves its master switch immediately. Its menu can reset overrides while the switch is off, reset all Lab data, or undo the last reset or import. Imported values stay disabled. The Lab holds up to 1,024 saved rules, and it rejects a save or import that would exceed that limit before anything changes. Reset all Lab data can recover an older oversized store without clearing other Hushfeed settings. Changes run in the background and report their result with a notification. Every filtered list in settings, the hidden creator editor, the share checklist and the Lab shows and announces its current result count. Removing a hidden creator says which entry was removed and moves focus to the next action. The recorder discards an interrupted session before taking the next baseline. Copied recorder reports use Android's sensitive-content flag on supported versions. Reports above 60,000 characters stay off the clipboard and use Save report. The undo copy stores Lab configuration privately. Full-reset undo also restores captured observations during the same app run. Other patch preferences are unchanged.
 
-The Lab can also bring back a missing See translation link. If captions in another language never show one, TikTok may have turned caption translation off for your account. On the test account two App AB values did that together, `feed_translation_reverse` and `cla_translate_button_weaken_v2`, both at 1. Setting both to 0 and restarting TikTok brought the link back, and either one alone didn't.
+The Lab can also bring back a missing See translation link. On TikTok 47.1.3, open the Lab menu, choose Reviewed presets, then Show See translation. The preview lists both values before you apply them. Turn on the Lab's overrides switch and restart TikTok to use the preset. Undo last Lab change restores the previous rules. This preset is only available for the version it was checked on. On the test account, `feed_translation_reverse` and `cla_translate_button_weaken_v2` were both 1; setting both to 0 brought the link back, and either one alone didn't.
 
-<img src="assets/settings/lab.png" alt="Feature Gate Lab with immediate master control and settings menu" width="300" />
+The Lab uses a compact toolbar so more gates fit on small screens. Tap the warning icon beside Apply overrides for the explanation and account warning. Source and view tabs scroll sideways when larger text needs more room.
+
+<img src="assets/settings/lab.png" alt="Feature Gate Lab with compact controls and a scrollable gate list" width="300" />
+<img src="assets/settings/lab-preset.png" alt="See translation preset showing both gate changes before applying" width="300" />
 
 <br>
 

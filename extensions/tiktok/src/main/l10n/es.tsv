@@ -842,10 +842,7 @@ Saving %1$s original photos	Guardando %1$s fotos originales
 Saving one original photo	Guardando una foto original
 Saving settings backup	Guardando la copia de seguridad de los ajustes
 Saving the sticker	Guardando el sticker
-Saving the selected video quality	Guardando la calidad de vídeo elegida
-Saving the selected video quality without sound	Guardando la calidad de vídeo elegida sin sonido
 Saving the story	Guardando la historia
-Saving video and subtitles to %1$s	Guardando el vídeo y los subtítulos en %1$s
 Screen	Pantalla
 Screen time	Tiempo de pantalla
 Search	Búsqueda
@@ -1099,7 +1096,6 @@ Today: %1$d minutes	Hoy: %1$d minutos
 Today: %1$d video	Hoy: %1$d vídeo
 Today: %1$d videos	Hoy: %1$d vídeos
 Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically.	Comodines: {creator}, {date}, {video_id}, {index}. {index} numera las fotos de una presentación que guardes con Descargar las fotos originales; lo que se guarde con el botón propio de TikTok lo numera la carpeta. La extensión del archivo se mantiene automáticamente.
-Tokens: {creator}, {date}, {video_id}. The file extension is kept automatically.	Comodines: {creator}, {date}, {video_id}. La extensión del archivo se mantiene automáticamente.
 Tokens: {date}, {media_id}. Works for image and video stickers.	Comodines: {date}, {media_id}. Sirve para los stickers de imagen y de vídeo.
 Too many media saves are already running. Try again in a moment.	Ya se están guardando demasiados archivos. Inténtalo dentro de un momento.
 Tracking	Rastreo
@@ -1297,3 +1293,29 @@ This is the video's own sound, so YouTube Music won't have it	Este es el sonido 
 Not a handle or id, so ignored: %1$s	No es un nombre de cuenta ni un id, así que se ignora: %1$s
 What's new	Novedades
 Changes in Hushfeed %1$s	Cambios en Hushfeed %1$s
+Reviewed presets	Ajustes verificados
+Show See translation	Mostrar la opción de traducir
+Reviewed for TikTok %1$s	Verificado para TikTok %1$s
+Value: %1$s to %2$s	Valor: de %1$s a %2$s
+The presets couldn't load. Open the Lab again.	No se pudieron cargar los ajustes. Abre el laboratorio de nuevo.
+Apply enables these overrides. Undo last Lab change restores your previous rules.	Aplicar activa estas modificaciones. Deshacer el último cambio del laboratorio restaura tus reglas anteriores.
+Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules.	Aplicar guarda estas modificaciones. Actívalas en el laboratorio para usarlas. Deshacer restaura tus reglas anteriores.
+This preset isn't available for your installed TikTok version.	Este ajuste no está disponible para tu versión instalada de TikTok.
+Preset applied. Restart TikTok to use it.	Ajuste aplicado. Reinicia TikTok para usarlo.
+Preset saved. Turn on overrides in the Lab to use it.	Ajuste guardado. Activa las modificaciones en el laboratorio para usarlo.
+This preset doesn't match the installed gates. Nothing changed.	Este ajuste no coincide con las opciones instaladas. No se cambió nada.
+About overrides	Acerca de las sustituciones
+Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically.	Variables: {creator}, {date}, {video_id}. Empieza con {creator}/ para crear una carpeta por creador. La extensión del archivo se conserva automáticamente.
+Save details beside the video	Guardar detalles junto al video
+Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.	Guarda la descripción, el creador, el enlace y la fecha de publicación en un TXT. En Android 10 o posterior, ambos archivos usan Download o Documents con el mismo nombre de carpeta. Se aplica a los videos guardados aquí.
+Check for already-saved videos	Comprobar videos ya guardados
+Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.	Recuerda hasta %1$s videos guardados aquí mientras está activado. Si el archivo aún existe, ofrece Abrir o Guardar de nuevo antes de descargar otra copia.
+This video is already saved. Open TikTok to save another copy.	Este video ya está guardado. Abre TikTok para guardar otra copia.
+This video is already saved	Este video ya está guardado
+Save again	Guardar de nuevo
+The saved-video choice couldn't open. Try again.	No se pudieron abrir las opciones del video guardado. Inténtalo de nuevo.
+This video isn't available as a complete file. Try again later.	Este video no está disponible como archivo completo. Inténtalo más tarde.
+Saving video to %1$s	Guardando video en %1$s
+Video and details saved to %1$s	Video y detalles guardados en %1$s
+The video was saved, but its record couldn't be updated. A later save may make another copy.	El video se guardó, pero no se pudo actualizar su registro. Si lo guardas de nuevo, puede crearse otra copia.
+The already-saved check failed. Try again.	No se pudieron comprobar los videos ya guardados. Inténtalo de nuevo.

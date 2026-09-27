@@ -876,10 +876,7 @@ Saving %1$s original photos	%1$s orijinal fotoğraf kaydediliyor
 Saving one original photo	Bir orijinal fotoğraf kaydediliyor
 Saving settings backup	Ayar yedeği kaydediliyor
 Saving the sticker	Çıkartma kaydediliyor
-Saving the selected video quality	Seçilen video kalitesi kaydediliyor
-Saving the selected video quality without sound	Seçilen video kalitesi sessiz olarak kaydediliyor
 Saving the story	Hikaye kaydediliyor
-Saving video and subtitles to %1$s	Video ve altyazılar %1$s konumuna kaydediliyor
 Screen	Ekran
 Screen time	Ekran süresi
 Search	Arama
@@ -1135,7 +1132,6 @@ Today: %1$d minutes	Bugün: %1$d dakika
 Today: %1$d video	Bugün: %1$d video
 Today: %1$d videos	Bugün: %1$d video
 Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically.	Belirteçler: {creator}, {date}, {video_id}, {index}. {index}, Orijinal fotoğrafları indir ile kaydettiğin bir slayt gösterisinin fotoğraflarını numaralar, TikTok'un kendi düğmesiyle kaydedilenleri ise klasör numaralar. Dosya uzantısı otomatik olarak korunur.
-Tokens: {creator}, {date}, {video_id}. The file extension is kept automatically.	Belirteçler: {creator}, {date}, {video_id}. Dosya uzantısı otomatik olarak korunur.
 Tokens: {date}, {media_id}. Works for image and video stickers.	Belirteçler: {date}, {media_id}. Görsel ve video çıkartmalarda çalışır.
 Too many media saves are already running. Try again in a moment.	Zaten çok fazla medya kaydı sürüyor. Birazdan yeniden dene.
 Tracking	İzlenme
@@ -1297,3 +1293,29 @@ This is the video's own sound, so YouTube Music won't have it	Bu videonun kendi 
 Not a handle or id, so ignored: %1$s	Hesap adı veya kimlik değil, bu yüzden yok sayıldı: %1$s
 What's new	Yenilikler
 Changes in Hushfeed %1$s	Hushfeed %1$s sürümündeki değişiklikler
+Reviewed presets	Doğrulanmış hazır ayarlar
+Show See translation	Çeviriyi gör seçeneğini göster
+Reviewed for TikTok %1$s	TikTok %1$s için doğrulandı
+Value: %1$s to %2$s	Değer: %1$s yerine %2$s
+The presets couldn't load. Open the Lab again.	Hazır ayarlar yüklenemedi. Laboratuvarı yeniden açın.
+Apply enables these overrides. Undo last Lab change restores your previous rules.	Uygula bu geçersiz kılmaları etkinleştirir. Son laboratuvar değişikliğini geri al, önceki kurallarınızı geri yükler.
+Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules.	Uygula bu geçersiz kılmaları kaydeder. Kullanmak için laboratuvarda geçersiz kılmaları açın. Geri al, önceki kurallarınızı geri yükler.
+This preset isn't available for your installed TikTok version.	Bu hazır ayar, yüklü TikTok sürümünüz için kullanılamıyor.
+Preset applied. Restart TikTok to use it.	Hazır ayar uygulandı. Kullanmak için TikTok'u yeniden başlatın.
+Preset saved. Turn on overrides in the Lab to use it.	Hazır ayar kaydedildi. Kullanmak için laboratuvarda geçersiz kılmaları açın.
+This preset doesn't match the installed gates. Nothing changed.	Bu hazır ayar, yüklü özelliklerle eşleşmiyor. Hiçbir şey değişmedi.
+About overrides	Geçersiz kılmalar hakkında
+Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically.	Değişkenler: {creator}, {date}, {video_id}. Her üreticiye bir klasör vermek için {creator}/ ile başlayın. Dosya uzantısı otomatik olarak korunur.
+Save details beside the video	Ayrıntıları videonun yanına kaydet
+Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.	Açıklamayı, üreticiyi, bağlantıyı ve yayın tarihini bir TXT dosyasına kaydeder. Android 10 ve sonrasında iki dosya aynı klasör adıyla Download veya Documents içine kaydedilir. Burada yapılan kayıtlar için geçerlidir.
+Check for already-saved videos	Önceden kaydedilen videoları kontrol et
+Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.	Bu seçenek açıkken burada kaydedilen en fazla %1$s videoyu hatırlar. Dosya hâlâ varsa başka bir kopya indirmeden önce Aç veya Yeniden kaydet seçeneklerini sunar.
+This video is already saved. Open TikTok to save another copy.	Bu video zaten kayıtlı. Başka bir kopya kaydetmek için TikTok'u açın.
+This video is already saved	Bu video zaten kayıtlı
+Save again	Yeniden kaydet
+The saved-video choice couldn't open. Try again.	Kayıtlı video seçenekleri açılamadı. Yeniden deneyin.
+This video isn't available as a complete file. Try again later.	Bu video tam bir dosya olarak mevcut değil. Daha sonra yeniden deneyin.
+Saving video to %1$s	Video %1$s konumuna kaydediliyor
+Video and details saved to %1$s	Video ve ayrıntılar %1$s konumuna kaydedildi
+The video was saved, but its record couldn't be updated. A later save may make another copy.	Video kaydedildi, ancak kaydı güncellenemedi. Daha sonra yeniden kaydetmek başka bir kopya oluşturabilir.
+The already-saved check failed. Try again.	Önceden kaydedilen videolar kontrol edilemedi. Yeniden deneyin.

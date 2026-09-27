@@ -104,6 +104,7 @@ A video you paused stays paused when you come back to the app instead of startin
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
 AI-generated posts,AI-generated posts
 About,About
+About overrides,About overrides
 Activity,Activity
 Activity center (PIA),Activity center (PIA)
 Add,Add
@@ -154,7 +155,9 @@ App AB,App AB
 Appearance,Appearance
 Applies to both video and photo downloads.,Applies to both video and photo downloads.
 Apply,Apply
+Apply enables these overrides. Undo last Lab change restores your previous rules.,Apply enables these overrides. Undo last Lab change restores your previous rules.
 Apply overrides,Apply overrides
+Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules.,Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules.
 Applying Calm feed,Applying Calm feed
 Around the video,Around the video
 Arrange your feed and bottom tabs,Arrange your feed and bottom tabs
@@ -216,6 +219,7 @@ Capture crash reports locally,Capture crash reports locally
 Changed,Changed
 Changes in Hushfeed %1$s,Changes in Hushfeed %1$s
 Changes to %1$s at %2$s,Changes to %1$s at %2$s
+Check for already-saved videos,Check for already-saved videos
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.
 Choose a backup file. Your current settings are kept for Undo.,Choose a backup file. Your current settings are kept for Undo.
 Choose a folder on internal storage. SD cards aren't supported.,Choose a folder on internal storage. SD cards aren't supported.
@@ -808,6 +812,8 @@ Popular,Popular
 Popups,Popups
 Post age,Post age
 Preset,Preset
+Preset applied. Restart TikTok to use it.,Preset applied. Restart TikTok to use it.
+Preset saved. Turn on overrides in the Lab to use it.,Preset saved. Turn on overrides in the Lab to use it.
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.,Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.
@@ -836,6 +842,7 @@ Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
 Region,Region
 Remember the last speed,Remember the last speed
+"Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.","Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy."
 Remind me every,Remind me every
 Remove,Remove
 Remove %1$s,Remove %1$s
@@ -875,6 +882,8 @@ Retry,Retry
 Return a copy with the fields below changed,Return a copy with the fields below changed
 Return after using a TikTok feature to see every gate read during the recording.,Return after using a TikTok feature to see every gate read during the recording.
 Returns %1$s,Returns %1$s
+Reviewed for TikTok %1$s,Reviewed for TikTok %1$s
+Reviewed presets,Reviewed presets
 Right column,Right column
 Rows,Rows
 SIM country preset,SIM country preset
@@ -885,12 +894,15 @@ Save Hushfeed settings and Feature Gate Lab rules to a JSON file.,Save Hushfeed 
 "Save SRT files with the video. Paired saves use Movies on Android 11+, Download on Android 10, and your video folder on older versions.","Save SRT files with the video. Paired saves use Movies on Android 11+, Download on Android 10, and your video folder on older versions."
 Save a profile picture on a long press,Save a profile picture on a long press
 Save a story on a long press,Save a story on a long press
+Save again,Save again
+Save details beside the video,Save details beside the video
 "Save every photo in the post as TikTok received it, not as the screen shows it.","Save every photo in the post as TikTok received it, not as the screen shows it."
 Save field values,Save field values
 Save full report,Save full report
 Save media,Save media
 Save report,Save report
 Save subtitles beside videos,Save subtitles beside videos
+"Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.","Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here."
 Save the latest available TikTok crash report for diagnostic export.,Save the latest available TikTok crash report for diagnostic export.
 Save the original sound,Save the original sound
 Save the sound as well,Save the sound as well
@@ -913,11 +925,9 @@ Saving %1$s of %2$s,Saving %1$s of %2$s
 Saving %1$s original photos,Saving %1$s original photos
 Saving one original photo,Saving one original photo
 Saving settings backup,Saving settings backup
-Saving the selected video quality,Saving the selected video quality
-Saving the selected video quality without sound,Saving the selected video quality without sound
 Saving the sticker,Saving the sticker
 Saving the story,Saving the story
-Saving video and subtitles to %1$s,Saving video and subtitles to %1$s
+Saving video to %1$s,Saving video to %1$s
 Screen,Screen
 Screen time,Screen time
 Search,Search
@@ -962,6 +972,7 @@ Shop order updates and coupon messages no longer take up rows in the Inbox. Your
 Shop posts,Shop posts
 Show,Show
 Show @username beside a video instead of the display name the creator chose.,Show @username beside a video instead of the display name the creator chose.
+Show See translation,Show See translation
 Show TikTok's feed buttons,Show TikTok's feed buttons
 Show TikTok's own progress bar on videos where it's normally hidden.,Show TikTok's own progress bar on videos where it's normally hidden.
 "Show TikTok's own sort sheet on every post, with its hot, newest, media and creator options, instead of whichever cut-down row your account was given. Restart TikTok to apply this. It reads the style once per run and remembers it.","Show TikTok's own sort sheet on every post, with its hot, newest, media and creator options, instead of whichever cut-down row your account was given. Restart TikTok to apply this. It reads the style once per run and remembers it."
@@ -1101,6 +1112,7 @@ The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the 
 The accounts TikTok suggests you follow no longer take up rows in the Inbox.,The accounts TikTok suggests you follow no longer take up rows in the Inbox.
 The activity status control leaves the Inbox header. Whether others see you as active is unchanged.,The activity status control leaves the Inbox header. Whether others see you as active is unchanged.
 "The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged.","The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged."
+The already-saved check failed. Try again.,The already-saved check failed. Try again.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.,The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.,The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
@@ -1119,10 +1131,12 @@ The loaded-values file you chose couldn't be read. Try again.,The loaded-values 
 "The override changes no fields. Edit the field values, or reset the override.","The override changes no fields. Edit the field values, or reset the override."
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.","The override couldn't be applied: %1$s. Edit the field values, or reset the override."
 "The override doesn't say what list to return. Edit the field values, or reset the override.","The override doesn't say what list to return. Edit the field values, or reset the override."
+The presets couldn't load. Open the Lab again.,The presets couldn't load. Open the Lab again.
 The profile picture couldn't be saved. Try again.,The profile picture couldn't be saved. Try again.
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.","The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings."
 The report couldn't be saved. Try again.,The report couldn't be saved. Try again.
 The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.,The row of story avatars across the top of the Inbox goes. Stories still play from the feed and from profiles.
+The saved-video choice couldn't open. Try again.,The saved-video choice couldn't open. Try again.
 The setting couldn't finish updating. Its saved value is shown.,The setting couldn't finish updating. Its saved value is shown.
 The settings backup was rejected. Nothing was altered.,The settings backup was rejected. Nothing was altered.
 The smallest value is above the largest,The smallest value is above the largest
@@ -1131,6 +1145,7 @@ The sticker couldn't be saved. Try again.,The sticker couldn't be saved. Try aga
 The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
 "The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks."
 "The video couldn't be saved. Try again, or choose Automatic.","The video couldn't be saved. Try again, or choose Automatic."
+"The video was saved, but its record couldn't be updated. A later save may make another copy.","The video was saved, but its record couldn't be updated. A later save may make another copy."
 There is no Lab change to undo.,There is no Lab change to undo.
 There is no diagnostic data to clear,There is no diagnostic data to clear
 There is no diagnostic data to put back,There is no diagnostic data to put back
@@ -1149,6 +1164,8 @@ This gate type isn't supported.,This gate type isn't supported.
 "This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second.","This line opens a rule and doesn't finish it: %1$s. Write two phrases as ""a"" & ""b"" for both, or ""a"" !& ""b"" for the first without the second."
 "This phone has no file picker, so there's no way to choose a file here","This phone has no file picker, so there's no way to choose a file here"
 This phone has no folder picker. Type the folder into the row instead.,This phone has no folder picker. Type the folder into the row instead.
+This preset doesn't match the installed gates. Nothing changed.,This preset doesn't match the installed gates. Nothing changed.
+This preset isn't available for your installed TikTok version.,This preset isn't available for your installed TikTok version.
 This profile picture isn't available to save,This profile picture isn't available to save
 "This quality isn't available as a complete file, so TikTok's own save runs instead","This quality isn't available as a complete file, so TikTok's own save runs instead"
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","This setting's value can't be copied on this build, so it can't be overridden. Reset the override."
@@ -1158,6 +1175,9 @@ This video has no link to copy,This video has no link to copy
 "This video has no link to send, so TikTok's own save runs instead","This video has no link to send, so TikTok's own save runs instead"
 This video has no original sound to save,This video has no original sound to save
 This video has no sound of its own,This video has no sound of its own
+This video is already saved,This video is already saved
+This video is already saved. Open TikTok to save another copy.,This video is already saved. Open TikTok to save another copy.
+This video isn't available as a complete file. Try again later.,This video isn't available as a complete file. Try again later.
 This video's sound has no title to look for,This video's sound has no title to look for
 Thumbs down blocks the commenter,Thumbs down blocks the commenter
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are."
@@ -1194,7 +1214,7 @@ Today: %1$d minutes,Today: %1$d minutes
 Today: %1$d video,Today: %1$d video
 Today: %1$d videos,Today: %1$d videos
 "Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically.","Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically."
-"Tokens: {creator}, {date}, {video_id}. The file extension is kept automatically.","Tokens: {creator}, {date}, {video_id}. The file extension is kept automatically."
+"Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically.","Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically."
 "Tokens: {date}, {media_id}. Works for image and video stickers.","Tokens: {date}, {media_id}. Works for image and video stickers."
 Too many media saves are already running. Try again in a moment.,Too many media saves are already running. Try again in a moment.
 Tracking,Tracking
@@ -1242,11 +1262,13 @@ Use your own offline videos limit,Use your own offline videos limit
 Using TikTok's value,Using TikTok's value
 Value,Value
 Value to return,Value to return
+Value: %1$s to %2$s,Value: %1$s to %2$s
 Verified accounts,Verified accounts
 Version %1$s,Version %1$s
 Version %1$s for TikTok %2$s,Version %1$s for TikTok %2$s
 Video,Video
 Video (MP4),Video (MP4)
+Video and details saved to %1$s,Video and details saved to %1$s
 Video destination,Video destination
 Video download quality,Video download quality
 Video filename,Video filename

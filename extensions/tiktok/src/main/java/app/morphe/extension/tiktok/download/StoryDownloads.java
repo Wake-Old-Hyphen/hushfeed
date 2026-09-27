@@ -302,12 +302,18 @@ public final class StoryDownloads {
         Utils.showToastShort(L10n.t("Saving the story"));
         try {
             String capturedAudioName = audioName;
+            String path = DownloadFilenameFormatter.destinationPath(aweme, !photoSnapshot.isEmpty());
+            String videoName = photoSnapshot.isEmpty() ? DownloadFilenameFormatter.formatSelectedVideoName(aweme) : null;
+            List<String> photoNames = new ArrayList<>();
+            for (int i = 0; i < photoSnapshot.size(); i++) {
+                photoNames.add(DownloadFilenameFormatter.formatOriginalPhotoName(aweme, i + 1, "tmp"));
+            }
             boolean submitted = MediaJobScheduler.submit("story", () -> {
                 try {
                     if (photoSnapshot.isEmpty()) {
-                        saveVideo(app, aweme, videoSnapshot, capturedAudioName);
+                        saveVideo(app, videoName, path, videoSnapshot, capturedAudioName);
                     } else {
-                        savePhotos(app, aweme, photoSnapshot);
+                        savePhotos(app, photoNames, path, photoSnapshot);
                     }
                 } catch (IOException | RuntimeException exception) {
                     Logger.printException(() -> "Story download failed", exception);
@@ -328,14 +334,13 @@ public final class StoryDownloads {
         return true;
     }
 
-    private static void saveVideo(Context app, Object aweme, List<String> urls, String audioName) throws IOException {
+    private static void saveVideo(Context app, String name, String path, List<String> urls, String audioName) throws IOException {
         MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
         File temp = MediaCache.createTempFile(app, "story-", ".mp4");
         try {
             RemoteMedia.fetch(urls, temp, RemoteMedia.Kind.VIDEO);
-            String path = DownloadsPatch.getVideoDownloadPath();
             MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, temp,
-                    DownloadFilenameFormatter.formatSelectedVideoName(aweme), "video/mp4", path, true);
+                    name, "video/mp4", path, true);
             // The sound keeps to a toast: its banner went up first and the story's, a tick
             // later, took it down before anyone saw it (refutation review of 3d5395f2).
             if (audioName != null) AudioDownloads.write(app, audioName, temp, false);
@@ -345,8 +350,7 @@ public final class StoryDownloads {
         }
     }
 
-    private static void savePhotos(Context app, Object aweme, List<List<String>> photos) {
-        String path = DownloadsPatch.getPhotoDownloadPath();
+    private static void savePhotos(Context app, List<String> names, String path, List<List<String>> photos) {
         List<File> temporary = new ArrayList<>();
         // The banner's Open lands on the newest photo, which is where the gallery puts the rest.
         MediaFileWriter.Saved[] last = {null};
@@ -361,7 +365,8 @@ public final class StoryDownloads {
                 temporary.add(temp);
                 String extension = RemoteMedia.fetch(photos.get(index), temp, RemoteMedia.Kind.IMAGE);
                 String mime = "jpg".equals(extension) ? "image/jpeg" : "image/" + extension;
-                String name = DownloadFilenameFormatter.formatOriginalPhotoName(aweme, index + 1, extension);
+                String named = names.get(index);
+                String name = named.substring(0, named.lastIndexOf('.') + 1) + extension;
                 last[0] = MediaFileWriter.publishForResult(app, temp, name, mime, path, false);
             });
             if (outcome.saved == 0 && outcome.cancelled == 0) {

@@ -878,7 +878,15 @@ public class FeatureGateLabActionsTest {
         assertNotNull("the overflow did not open", menu);
         android.widget.ListView list = menu.getListView();
         assertNotNull("the overflow has no items", list);
-        int position = id - 1;
+        // These IDs name actions, not their positions after adding another menu entry.
+        String[] labels = {"Refresh values", "Export loaded values", "Import loaded values",
+                "Remove all overrides", "Clear all Lab data (overrides, switch, recordings)",
+                "Undo last Lab change"};
+        int position = -1;
+        for (int index = 0; index < list.getAdapter().getCount(); index++) {
+            if (labels[id - 1].equals(list.getAdapter().getItem(index))) position = index;
+        }
+        assertTrue("missing action " + labels[id - 1], position >= 0);
         assertTrue("overflow item " + position + " is offered but cannot be taken",
                 list.getAdapter().isEnabled(position));
         assertTrue(list.performItemClick(list.getAdapter().getView(position, null, list),
