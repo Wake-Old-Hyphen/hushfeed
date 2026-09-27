@@ -445,6 +445,12 @@ public class Settings extends BaseSettings {
 
     public static final BooleanSetting ENABLE_LONG_PRESS_SPEED_LOCK = new BooleanSetting("enable_long_press_speed_lock", FALSE, true);
     public static final BooleanSetting NOT_INTERESTED_BUTTON = new BooleanSetting("not_interested_button", FALSE);
+    /**
+     * Mute feed videos. Whether the feed is muted right now is the phone's state, like the volume,
+     * so a backup doesn't carry it; paused, Hushfeed plays the feed with sound as TikTok would.
+     */
+    public static final BooleanSetting FEED_MUTED = new BooleanSetting("feed_muted", FALSE, false, false);
+    public static final BooleanSetting FEED_MUTE_BUTTON = new BooleanSetting("feed_mute_button", TRUE);
     public static final BooleanSetting HIDE_FEED_CAPTION = new BooleanSetting("hide_feed_caption", FALSE);
     public static final BooleanSetting HIDE_FEED_MUSIC = new BooleanSetting("hide_feed_music", FALSE);
     public static final BooleanSetting HIDE_FEED_ACTION_BAR = new BooleanSetting("hide_feed_action_bar", FALSE);
@@ -478,6 +484,8 @@ public class Settings extends BaseSettings {
             new StringSetting("block_sound_button_position", "");
     public static final StringSetting NOT_INTERESTED_BUTTON_POSITION =
             new StringSetting("not_interested_button_position", "");
+    public static final StringSetting FEED_MUTE_BUTTON_POSITION =
+            new StringSetting("feed_mute_button_position", "");
     public static final BooleanSetting HIDE_INBOX_STORIES = new BooleanSetting("hide_inbox_stories", FALSE);
     public static final BooleanSetting HIDE_INBOX_NEW_FOLLOWERS = new BooleanSetting("hide_inbox_new_followers", FALSE);
     public static final BooleanSetting HIDE_INBOX_ACTIVITY = new BooleanSetting("hide_inbox_activity", FALSE);
@@ -628,6 +636,7 @@ public class Settings extends BaseSettings {
                 BOTTOM_NAVIGATION_OBSERVED_TABS, DOWNLOAD_PATH, DOWNLOAD_PATHS_MIGRATED,
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
+                FEED_MUTE_BUTTON_POSITION,
                 SHARE_ACTION_CATALOG, DIAGNOSTIC_REPORT_SALT,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.

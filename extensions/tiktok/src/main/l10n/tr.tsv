@@ -931,6 +931,13 @@ Show last report	Son raporu göster
 Show search in LIVE	CANLI'da aramayı göster
 Show TikTok's feed buttons	TikTok'un akış düğmelerini göster
 Show the Not interested button	İlgilenmiyorum düğmesini göster
+Mute feed videos	Akış videolarının sesini kapat
+Muted	Sessiz
+Sound on	Ses açık
+Sound	Ses
+Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Akış videolarını sessiz oynatır ve telefonun ses düzeyine dokunmaz. Açıkken başka bir uygulamadaki müzik çalmaya devam eder. DM'ler, hikayeler ve LIVE yayınlar seslerini korur.
+Show the mute button on videos	Videolarda sesi kapatma düğmesini göster
+Add a button beside the block control that turns the feed's sound off and on.	Engelleme düğmesinin yanına, akışın sesini kapatıp açan bir düğme ekle.
 Show the block button on videos	Videolarda engelle düğmesini göster
 Show the block sound button	Sesi engelle düğmesini göster
 Show the country a video was posted from next to the creator's name.	Videonun paylaşıldığı ülkeyi içerik üreticisinin adının yanında göster.

@@ -533,6 +533,13 @@ public class SettingsPagesTest {
                 String name = "pages/" + theme + "/" + SECTIONS[i].toLowerCase(java.util.Locale.ROOT);
                 UiCapture.save(page.getView(), name + ".png");
                 ListView list = page.getView().findViewById(android.R.id.list);
+                if ("PLAYBACK".equals(SECTIONS[i])) {
+                    int mute = positionOf(list, Settings.FEED_MUTED.key);
+                    assertTrue("the Sound controls are missing", mute > 0);
+                    list.setSelectionFromTop(mute - 1, 70);
+                    Shadows.shadowOf(Looper.getMainLooper()).idle();
+                    UiCapture.save(page.getView(), name + "-sound.png");
+                }
                 list.setSelection(list.getCount() - 1);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 UiCapture.save(page.getView(), name + "-end.png");

@@ -107,6 +107,7 @@ About,About
 Activity,Activity
 Activity center (PIA),Activity center (PIA)
 Add,Add
+Add a button beside the block control that turns the feed's sound off and on.,Add a button beside the block control that turns the feed's sound off and on.
 Add a button beside the block control to send feedback about the current video.,Add a button beside the block control to send feedback about the current video.
 Add a button that hides the current creator on this phone without blocking them.,Add a button that hides the current creator on this phone without blocking them.
 Add a creator,Add a creator
@@ -683,6 +684,8 @@ Move right,Move right
 "Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.","Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this."
 Move up,Move up
 Music disc,Music disc
+Mute feed videos,Mute feed videos
+Muted,Muted
 Nearby,Nearby
 Never from these countries,Never from these countries
 New value,New value
@@ -796,6 +799,7 @@ Photos and stickers,Photos and stickers
 "Photos can't be saved to the folder in that file, so your photo folder was kept","Photos can't be saved to the folder in that file, so your photo folder was kept"
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.
 Pick the buttons to take off the column. The rest stay where they are.,Pick the buttons to take off the column. The rest stay where they are.
+"Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.","Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound."
 Play videos TikTok has classified without the overlay asking to be tapped through first.,Play videos TikTok has classified without the overlay asking to be tapped through first.
 Playback,Playback
 Player,Player
@@ -979,6 +983,7 @@ Show the country a video was posted from next to the creator's name.,Show the co
 Show the current spoken caption while the other controls are hidden.,Show the current spoken caption while the other controls are hidden.
 Show the handle instead of the name,Show the handle instead of the name
 Show the hide button on videos,Show the hide button on videos
+Show the mute button on videos,Show the mute button on videos
 Show the progress bar,Show the progress bar
 Show the progress bar thumbnail,Show the progress bar thumbnail
 "Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.","Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments."
@@ -994,7 +999,9 @@ Skip content warnings,Skip content warnings
 Skipping videos with %1$s,Skipping videos with %1$s
 Some Calm feed settings changed. Restore still puts back your earlier setup.,Some Calm feed settings changed. Restore still puts back your earlier setup.
 Something is missing from %1$s. Tap for the whole report.,Something is missing from %1$s. Tap for the whole report.
+Sound,Sound
 Sound link copied,Sound link copied
+Sound on,Sound on
 Sound saved to %1$s,Sound saved to %1$s
 Source,Source
 Speed,Speed

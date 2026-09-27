@@ -903,6 +903,13 @@ Show gates,Tampilkan gate
 Show last report,Tampilkan laporan terakhir
 Show the hide button on videos,Tampilkan tombol sembunyikan di video
 Show the Not interested button,Tampilkan tombol Tidak tertarik
+Mute feed videos,Senyapkan video feed
+Muted,Senyap
+Sound on,Suara aktif
+Sound,Suara
+"Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.","Putar video feed tanpa suara dan biarkan volume ponsel tetap. Musik dari aplikasi lain tetap diputar selama ini aktif. DM, cerita, dan LIVE tetap bersuara."
+Show the mute button on videos,Tampilkan tombol senyap di video
+Add a button beside the block control that turns the feed's sound off and on.,Tambahkan tombol di samping kontrol blokir yang mematikan dan menyalakan suara feed.
 Show the country a video was posted from next to the creator's name.,Tampilkan negara asal unggahan video di sebelah nama kreator.
 Show the current spoken caption while the other controls are hidden.,Tampilkan teks ucapan yang sedang berjalan meski kontrol lain disembunyikan.
 Show the handle instead of the name,"Tampilkan nama pengguna, bukan nama tampilan"

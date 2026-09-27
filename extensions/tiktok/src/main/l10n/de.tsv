@@ -906,6 +906,13 @@ Show gates	Schalter anzeigen
 Show last report	Letzten Bericht anzeigen
 Show the hide button on videos	Ausblenden-Schaltfläche auf Videos anzeigen
 Show the Not interested button	Knopf Kein Interesse anzeigen
+Mute feed videos	Feed-Videos stummschalten
+Muted	Stumm
+Sound on	Ton an
+Sound	Ton
+Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Feed-Videos ohne Ton abspielen und die Lautstärke des Telefons unverändert lassen. Musik aus einer anderen App läuft weiter, solange das an ist. DMs, Stories und LIVE behalten ihren Ton.
+Show the mute button on videos	Stummschalt-Schaltfläche auf Videos anzeigen
+Add a button beside the block control that turns the feed's sound off and on.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die den Ton des Feeds aus- und einschaltet.
 Show the country a video was posted from next to the creator's name.	Das Land, aus dem ein Video veröffentlicht wurde, neben dem Namen des Creators anzeigen.
 Show the current spoken caption while the other controls are hidden.	Den aktuell gesprochenen Untertitel anzeigen, während die anderen Bedienelemente ausgeblendet sind.
 Show the handle instead of the name	@Namen statt Anzeigenamen zeigen

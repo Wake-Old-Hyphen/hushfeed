@@ -217,6 +217,7 @@ Playback quality chooses among the video streams TikTok offers. It doesn't cap t
 | `Limit background traffic` | Turns off TikTok's buffer-preload gate and skips its push initialization task. Videos may start buffering later, and TikTok push notifications may stop. |
 | `Location access governor` | Answers TikTok's location requests with nothing: the last known location comes back empty and update requests never fire. The SIM and region spoof change the locale and timezone, not the coordinates. This patch stops the coordinates. Switch: Hushfeed settings > Privacy. |
 | `Long-press controls` | Lets a long press on a video keep TikTok's own action, do nothing, open the video's comments, save the original sound, copy the link to the video or its sound, or look the sound up on YouTube Music. It can also turn a press on the left or right third of the screen into a jump back or forward, and make a long press on Comment, Share or Favorites play at the hold speed instead of opening TikTok's menu. Brings Double-tap controls with it, which supplies the comment control. Switch: Hushfeed settings > Feed screen. |
+| `Mute feed videos` | Adds a movable button that mutes feed videos without touching the phone's volume, and a switch that does the same. While muted, music from another app keeps playing, and DMs, stories and LIVE keep their sound. Switch: Hushfeed settings > Playback. |
 | `Network request report` | Counts the requests TikTok's own API client sends, by domain and kind, and adds them to the diagnostic export. Video and image downloads and other companies' SDKs keep their own connections and aren't counted. Nothing about the requests is changed. |
 | `Not interested button` | Adds a movable button that tells TikTok you aren't interested in the current video. It hides while comments are open. Off by default. Switch: Hushfeed settings > Feed filter. |
 | `Notification controls` | Adds a switch for the notification saying somebody new followed you, and one for message streaks, neither of which TikTok lets you turn off. The follower switch drops the notification before Android is asked to post it, so nothing else in the drawer is affected. Switch: Hushfeed settings > Inbox. |
@@ -275,7 +276,7 @@ Inside a page, rows sit under headings that say what they are about. Feed filter
 
 The pages use grouped controls on an AMOLED background. The home page uses pink section icons and muted group labels, and each section keeps pink headings. Search has a framed field above its results. Light mode follows TikTok's theme, including the space behind the system bars. Larger text wraps across lines without clipping headers, captions or editor labels, and the three home shortcuts become full-width rows before their names can split. Invalid values stay in the editor with an inline explanation and clear as soon as you type again. Undo, restart and a refused change's reason stay inside settings in a ten-second banner with a full-size button. Changing font size or navigation mode keeps the settings page you were using and its Back history. If a page can't finish loading, Hushfeed replaces the half-built controls with a page that says so, with Retry as the way forward and Back as the way out. These screenshots come from native Android views rendered by the local test suite. Enabled controls and values are test fixtures.
 
-<img src="assets/settings/settings.png" alt="Hushfeed settings home" width="260" /> <img src="assets/settings/playback.png" alt="Playback settings" width="260" /> <img src="assets/settings/playback-light.png" alt="Playback settings in light mode" width="260" />
+<img src="assets/settings/settings.png" alt="Hushfeed settings home" width="260" /> <img src="assets/settings/playback-sound.png" alt="Playback sound controls" width="260" /> <img src="assets/settings/playback-sound-light.png" alt="Playback sound controls in light mode" width="260" />
 
 <details>
 <summary>Every settings page</summary>
@@ -287,6 +288,7 @@ The pages use grouped controls on an AMOLED background. The home page uses pink 
 | Feed tabs | [View](assets/settings/feed_navigation.png) |
 | Feed screen | [View](assets/settings/interface.png) |
 | Playback | [View](assets/settings/playback.png) |
+| Playback sound | [Dark](assets/settings/playback-sound.png), [light](assets/settings/playback-sound-light.png) |
 | Screen time | [View](assets/settings/screen_time.png) |
 | Comments | [View](assets/settings/comments.png) |
 | Downloads | [View](assets/settings/downloads.png) |
@@ -473,7 +475,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Mo
 
 ### Why those versions and not a newer one
 
-Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. 47.0.3 and 47.1.3 are the declared targets. All 97 patches apply to both reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
+Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. 47.0.3 and 47.1.3 are the declared targets. All 98 patches apply to both reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
 
 Only the global package is declared in the compatibility metadata.
 

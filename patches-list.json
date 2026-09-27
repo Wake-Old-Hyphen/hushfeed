@@ -3144,6 +3144,57 @@
       "options": []
     },
     {
+      "name": "Mute feed videos",
+      "description": "Adds a movable button that mutes feed videos without touching the phone's volume, and a switch that does the same. While muted, music from another app keeps playing, and DMs, stories and LIVE keep their sound. Switch: Hushfeed settings > Playback.",
+      "category": "Playback",
+      "use": false,
+      "dependencies": [
+        "Block author button",
+        "BytecodePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.0.3",
+          "47.1.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.0.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024700030,
+                "ARMEABI_V7A": 2024700030,
+                "X86": 2024700030,
+                "X86_64": 2024700030
+              }
+            },
+            {
+              "version": "47.1.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024701030,
+                "ARMEABI_V7A": 2024701030,
+                "X86": 2024701030,
+                "X86_64": 2024701030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Network request report",
       "description": "Counts the requests TikTok's own API client sends, by domain and kind, and adds them to the diagnostic export. Video and image downloads and other companies' SDKs keep their own connections and aren't counted. Nothing about the requests is changed.",
       "category": "Privacy",

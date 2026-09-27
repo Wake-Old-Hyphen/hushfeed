@@ -69,6 +69,11 @@ public class SettingsStatus {
     public static void enableNotInterested() {
         notInterestedEnabled = true;
     }
+    public static boolean feedMuteEnabled = false;
+
+    public static void enableFeedMute() {
+        feedMuteEnabled = true;
+    }
     public static boolean inboxFilterEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;

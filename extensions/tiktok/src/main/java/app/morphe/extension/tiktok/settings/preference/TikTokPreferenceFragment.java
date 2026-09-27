@@ -6,6 +6,7 @@
 
 package app.morphe.extension.tiktok.settings.preference;
 
+import app.morphe.extension.tiktok.playback.FeedMute;
 import app.morphe.extension.tiktok.settings.L10n;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -241,7 +242,12 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 && (setting == Settings.BLOCK_AUTHOR_BUTTON
                 || setting == Settings.LOCAL_HIDE_BUTTON
                 || setting == Settings.BLOCK_SOUND_BUTTON
-                || setting == Settings.NOT_INTERESTED_BUTTON)) {
+                || setting == Settings.NOT_INTERESTED_BUTTON
+                || setting == Settings.FEED_MUTE_BUTTON)) {
+            BlockAuthorOverlay.refresh();
+        }
+        if (!applySettingToPreference && setting == Settings.FEED_MUTED) {
+            FeedMute.refresh();
             BlockAuthorOverlay.refresh();
         }
         if (!applySettingToPreference && setting == Settings.COMMENT_SEARCH) {

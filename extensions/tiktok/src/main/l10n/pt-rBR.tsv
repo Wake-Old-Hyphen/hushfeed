@@ -903,6 +903,13 @@ Show gates	Mostrar gates
 Show last report	Mostrar último relatório
 Show the hide button on videos	Mostrar o botão de esconder nos vídeos
 Show the Not interested button	Mostrar o botão de Não tenho interesse
+Mute feed videos	Silenciar os vídeos do feed
+Muted	Silenciado
+Sound on	Som ativado
+Sound	Som
+Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Reproduz os vídeos do feed sem som e não mexe no volume do celular. A música de outro app continua tocando enquanto isso estiver ativado. DMs, stories e LIVE mantêm o som.
+Show the mute button on videos	Mostrar o botão de silenciar nos vídeos
+Add a button beside the block control that turns the feed's sound off and on.	Adiciona um botão ao lado do controle de bloqueio que desliga e liga o som do feed.
 Show the country a video was posted from next to the creator's name.	Mostrar o país de onde o vídeo foi publicado ao lado do nome do criador.
 Show the current spoken caption while the other controls are hidden.	Mostrar a legenda que está sendo falada enquanto os outros controles estão escondidos.
 Show the handle instead of the name	Mostrar o nome de usuário em vez do nome
