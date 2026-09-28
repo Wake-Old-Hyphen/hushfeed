@@ -137,4 +137,65 @@ public class SettingsActionBannerTest {
         assertEquals("one press restarted more than once", 1, restarts.get());
         assertNull(content.findViewWithTag(SettingsActionBanner.BANNER_TAG));
     }
+
+    @Test @Config(sdk = 35)
+    public void theRecommendedControlTimeoutKeepsUndoAvailableAndOneShot() {
+        recommendedTimeouts(60_000, 45_000);
+        AtomicInteger calls = new AtomicInteger();
+        SettingsActionBanner.showUndo(activity, "History cleared", calls::incrementAndGet);
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofSeconds(46));
+        TextView action = content.findViewWithTag(SettingsActionBanner.ACTION_TAG);
+        assertNotNull("Undo ignored the reader's time-to-take-action setting", action);
+        action.performClick();
+        action.performClick();
+        assertEquals(1, calls.get());
+        assertNull(content.findViewWithTag(SettingsActionBanner.BANNER_TAG));
+    }
+
+    @Test @Config(sdk = 35)
+    public void aNoticeUsesTheRecommendedReadingTimeoutWithoutClaimingToHaveControls() {
+        recommendedTimeouts(60_000, 45_000);
+        SettingsActionBanner.showNotice(activity, "Settings saved");
+        var looper = Shadows.shadowOf(android.os.Looper.getMainLooper());
+        looper.idleFor(Duration.ofSeconds(11));
+        assertNotNull("the notice ignored the reading timeout",
+                content.findViewWithTag(SettingsActionBanner.MESSAGE_TAG));
+        looper.idleFor(Duration.ofSeconds(35));
+        assertNull("a notice requested the unrelated control timeout",
+                content.findViewWithTag(SettingsActionBanner.BANNER_TAG));
+    }
+
+    @Test @Config(sdk = 35)
+    public void anActionAlsoHonorsALongerReadingTimeout() {
+        recommendedTimeouts(15_000, 60_000);
+        SettingsActionBanner.showRestart(activity, "Restart to apply your settings");
+        var looper = Shadows.shadowOf(android.os.Looper.getMainLooper());
+        looper.idleFor(Duration.ofSeconds(16));
+        assertNotNull("the action forgot that its banner also contains text",
+                content.findViewWithTag(SettingsActionBanner.ACTION_TAG));
+        looper.idleFor(Duration.ofSeconds(45));
+        assertNull(content.findViewWithTag(SettingsActionBanner.BANNER_TAG));
+    }
+
+    @Test @Config(sdk = 35)
+    public void anOlderAccessibleTimerCannotRemoveANewerBanner() {
+        recommendedTimeouts(60_000, 45_000);
+        var looper = Shadows.shadowOf(android.os.Looper.getMainLooper());
+        SettingsActionBanner.showUndo(activity, "first", () -> { });
+        looper.idleFor(Duration.ofSeconds(20));
+        SettingsActionBanner.showUndo(activity, "second", () -> { });
+        looper.idleFor(Duration.ofSeconds(40));
+        TextView message = content.findViewWithTag(SettingsActionBanner.MESSAGE_TAG);
+        assertNotNull("the first accessible timer removed the newer action", message);
+        assertEquals("second", message.getText().toString());
+        looper.idleFor(Duration.ofSeconds(21));
+        assertNull(content.findViewWithTag(SettingsActionBanner.BANNER_TAG));
+    }
+
+    private void recommendedTimeouts(int controls, int text) {
+        var manager = (android.view.accessibility.AccessibilityManager)
+                activity.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE);
+        Shadows.shadowOf(manager).setInteractiveUiTimeout(controls);
+        Shadows.shadowOf(manager).setNonInteractiveUiTimeout(text);
+    }
 }

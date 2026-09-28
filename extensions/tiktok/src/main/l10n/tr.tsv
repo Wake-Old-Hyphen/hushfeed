@@ -65,7 +65,6 @@ A field value couldn't be read. Check the values and try again.	Bir alan değeri
 A good place to stop, if you want one.	İstersen, durmak için iyi bir an.
 A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.	TikTok kamerayı açık tuttuğu sürece üst köşede yeşil bir kare, ses kaydederken turuncu bir eşkenar dörtgen görünür. Erişim bitince kaybolurlar.
 A host to put in place of tiktok.com when you share or copy a link, like vxtiktok.com. Leave it empty to share TikTok's own links. Only TikTok links are changed, and only the host: nothing is sent anywhere new.	Bir bağlantıyı paylaşırken veya kopyalarken tiktok.com yerine konacak alan adı, örneğin vxtiktok.com. TikTok'un kendi bağlantılarını paylaşmak için boş bırak. Yalnızca TikTok bağlantıları değişir, onların da yalnızca alan adı: hiçbir yere yeni bir şey gönderilmez.
-A newer clear replaced that undo. Tap the row again to undo.	Daha yeni bir temizleme o geri almanın yerini aldı. Geri almak için satıra tekrar dokun.
 A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.	Akıştaki küçük bir etiket, bugünkü bütçenden kalan dakikayı veya video sayısını gösterir, hangisi bitmeye daha yakınsa onu.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.	Senin İçin açıkken Ana Sayfa'ya ya da Senin İçin sekmesine dokunmak artık akışı yenilemez. İzlediğin video yerinde kalır.
 A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.	Şuraya gönder satırındaki bir kişiye dokunmak onu yalnızca seçer. Aynı kişiye %1$d saniye içinde ikinci kez dokunmak videoyu gönderir.
@@ -983,7 +982,6 @@ Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen re
 Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.	TikTok'un ekrandan, oynattığı videonun kare hızında çalışmasını istemesini durdur. 90 veya 120 Hz'lik bir telefonda bu istek, kaydırma dahil tüm uygulamayı videonun hızına düşürür.
 Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone. Saves the battery they wake.	TikTok'un ivmeölçeri, jiroskopu, manyetometreyi ve telefonun parmak izini çıkarmak için kullandığı diğer hareket sensörlerini dinlemesini durdur. Bu sensörlerin uyandıkça harcadığı pili korur.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.	TikTok'un kopyaladıklarını okumasını durdur. TikTok'tan bağlantı kopyalamak yine çalışır.
-Stop TikTok reporting that you viewed a story or a profile, or that you're typing. Online status is unchanged. It can't undo what the server has already recorded.	TikTok'un bir hikayeyi veya profili görüntülediğini ya da yazmakta olduğunu bildirmesini durdur. Çevrimiçi durumu değişmez. Sunucunun zaten kaydettiği şeyleri geri alamaz.
 Stop a long press on Like from opening TikTok's repost action.	Beğen'e uzun basmanın TikTok'un yeniden yayınlama işlemini açmasını durdur.
 Stop a long press on Share from opening TikTok's quick share action.	Paylaş'a uzun basmanın TikTok'un hızlı paylaşım işlemini açmasını durdur.
 Stop feature gate recording	Özellik kapısı kaydını durdur
@@ -1045,7 +1043,6 @@ The catalog says this key is %1$s and this override is %2$s. Reset the override 
 The diagnostic report couldn't be saved yet. Try again in a moment.	Tanılama raporu henüz kaydedilemedi. Birazdan yeniden dene.
 The diagnostic report couldn't be saved. Try again.	Tanılama raporu kaydedilemedi. Yeniden dene.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.	Seçtiğin indirme uygulaması yüklü değil. İndirmeler altındaki Bağlantıları başka bir uygulamaya gönder ayarını kontrol et.
-The export failed and the partial file couldn't be removed. Delete it from your Downloads folder.	Dışa aktarma başarısız oldu ve yarım kalan dosya kaldırılamadı. Dosyayı İndirilenler klasöründen sil.
 The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.	Akış, bekletmeden önceki son kırk beş saniye boyunca kararır, böylece bekletmeye birden çarpmak yerine yavaşça varırsın. Bir süre bütçesi ve varılacak bir bekletme gerekir.
 The feed doesn't end. This is a fine time to leave it.	Akışın sonu yok. Şimdi bırakmak için iyi bir an.
 The feed is open again	Akış yeniden açık
@@ -1324,3 +1321,16 @@ Show a progress bar while a video saves.	Video kaydedilirken ilerleme çubuğu g
 Saving video	Video kaydediliyor
 Saving video: %1$s	Video kaydediliyor: %1$s
 Saving %1$s of %2$s: %3$s	%1$s / %2$s kaydediliyor: %3$s
+Couldn't save the change. Try again.	Değişiklik kaydedilemedi. Tekrar dene.
+Off. TikTok can report views and typing.	Kapalı. TikTok görüntülemeleri ve yazıyor durumunu bildirebilir.
+Hushfeed is paused. Ghost mode isn't active.	Hushfeed duraklatıldı. Hayalet modu etkin değil.
+Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.	Sorun algılandı. Hikâye görüntülemeleri yine de bildirilebilir. Hayalet modu tanılamasına bak. Uyarı, TikTok yeniden başlatılana kadar kalır.
+Reporting calls were blocked here. Viewer-list privacy hasn't been verified. Online status is unchanged.	Bildirim çağrıları burada engellendi. İzleyici listesindeki gizlilik doğrulanmadı. Çevrimiçi durumu değişmez.
+On. No reporting call has been observed in this process. Online status is unchanged.	Açık. Bu işlemde henüz bir bildirim çağrısı gözlenmedi. Çevrimiçi durumu değişmez.
+Ghost mode diagnostics	Hayalet modu tanılaması
+The partial file couldn't be removed. Delete it from the folder you chose.	Eksik dosya kaldırılamadı. Seçtiğin klasörden sil.
+The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.	Yedekleme başlamadı ve eksik dosyası kaldırılamadı. Seçtiğin klasörden sil.
+Problem detected.	Sorun algılandı.
+Couldn't save these choices. Try again.	Bu seçimler kaydedilemedi. Tekrar dene.
+Clearing seen videos	İzlenen videolar temizleniyor
+Couldn't clear seen videos. Try again.	İzlenen videolar temizlenemedi. Tekrar dene.

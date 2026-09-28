@@ -1023,7 +1023,7 @@ public class SettingsPagesTest {
     }
 
     @Test @Config(qualifiers = "de-rDE-w320dp-h800dp-night-mdpi", fontScale = 2f)
-    public void calmFeedPresetStacksAndKeepsAnAccessibleActionAtLargeText() {
+    public void calmFeedPresetStacksAndKeepsAnAccessibleActionAtLargeText() throws Exception {
         boolean shop = Settings.HIDE_SHOP.get();
         CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
         Settings.HIDE_SHOP.save(false);
@@ -1032,6 +1032,7 @@ public class SettingsPagesTest {
             Utils.setContext(activity);
             Preference preset = new app.morphe.extension.tiktok.settings.preference
                     .CalmFeedPresetPreference(activity);
+            app.morphe.extension.tiktok.settings.preference.SettingsUi.syncDarkMode(activity);
             View view = preset.getView(null, null);
             android.widget.LinearLayout heading = view.findViewWithTag(
                     "calm_feed_preset_heading");
@@ -1041,10 +1042,26 @@ public class SettingsPagesTest {
             assertAccessibleButton(activity,
                     view.findViewWithTag("calm_feed_preset_action"),
                     "„Ruhiger Feed“ verwenden");
+            view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.AT_MOST));
+            view.layout(0, 0, 320, view.getMeasuredHeight());
+            String theme = app.morphe.extension.tiktok.settings.preference.SettingsUi.isDarkMode()
+                    ? "dark" : "light";
+            UiCapture.save(view, "audit/calm-feed-large-text-" + theme + ".png", 320, view.getMeasuredHeight());
+            TextView title = (TextView) heading.getChildAt(0);
+            assertTrue("the stacked heading measured its title at zero width", title.getWidth() > 0);
+            assertTrue("the title did not render any text", title.getLayout().getLineCount() > 0);
+            assertEquals("the heading clipped its last line", title.getText().length(),
+                    title.getLayout().getLineEnd(title.getLayout().getLineCount() - 1));
         } finally {
             Settings.HIDE_SHOP.save(shop);
             CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
         }
+    }
+
+    @Test @Config(qualifiers = "de-rDE-w320dp-h800dp-notnight-mdpi", fontScale = 2f)
+    public void theLightCalmFeedPresetKeepsItsLargeTextHeadingAndAction() throws Exception {
+        calmFeedPresetStacksAndKeepsAnAccessibleActionAtLargeText();
     }
 
     @Test public void localCreatorEditorFiltersAndRemovesIndividualEntries() throws Exception {

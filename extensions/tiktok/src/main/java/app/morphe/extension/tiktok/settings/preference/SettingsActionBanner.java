@@ -110,7 +110,7 @@ public final class SettingsActionBanner {
                 final int token = ++generation;
                 Utils.runOnMainThreadDelayed(() -> {
                     if (token == generation) dismissCurrent();
-                }, VISIBLE_MS);
+                }, SettingsUi.feedbackTimeout(activity, (int) VISIBLE_MS, action != null));
             } catch (Throwable throwable) {
                 Logger.printException(() -> "Could not show the settings action banner", throwable);
                 Utils.showToastShort(message);

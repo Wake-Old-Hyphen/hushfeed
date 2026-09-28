@@ -143,10 +143,10 @@ public final class LogBufferManager {
         DiagnosticEvent event = new DiagnosticEvent(
                 category,
                 System.currentTimeMillis(),
-                Thread.currentThread().getName(),
-                safe(source),
-                safe(level),
-                safe(message)
+                DiagnosticRedactor.redact(Thread.currentThread().getName()),
+                DiagnosticRedactor.redact(source),
+                DiagnosticRedactor.redact(level),
+                DiagnosticRedactor.redact(message)
         );
         int eventSize = event.format().length();
         synchronized (CLEAR_UNDO_LOCK) {
@@ -563,11 +563,15 @@ public final class LogBufferManager {
     /** Writes while the diagnostic generation lock is already held. */
     private static void persistCrashReportLocked(Context context, String fileName, String report)
             throws Exception {
-        byte[] bytes = safe(report).getBytes(StandardCharsets.UTF_8);
+        String sanitized = DiagnosticRedactor.redact(report);
+        if (sanitized.contains("[diagnostic text truncated]")) {
+            sanitized = sanitized.replaceFirst("(?m)^complete: true$", "complete: false");
+        }
+        byte[] bytes = sanitized.getBytes(StandardCharsets.UTF_8);
         if (bytes.length > CRASH_MAX_BYTES) {
             // The header's own claim goes with the cut. The marker at the end said the report
             // was cut while its first lines still said it was complete.
-            bytes = safe(report).replaceFirst("(?m)^complete: true$", "complete: false")
+            bytes = sanitized.replaceFirst("(?m)^complete: true$", "complete: false")
                     .getBytes(StandardCharsets.UTF_8);
         }
         int length = Math.min(bytes.length, CRASH_MAX_BYTES);

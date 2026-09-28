@@ -96,7 +96,6 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.
-A newer clear replaced that undo. Tap the row again to undo.,A newer clear replaced that undo. Tap the row again to undo.
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
 A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.,A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.
@@ -242,6 +241,7 @@ Clear seen videos,Clear seen videos
 Clear the search,Clear the search
 Cleared. Tap to undo before TikTok closes.,Cleared. Tap to undo before TikTok closes.
 Clearing,Clearing
+Clearing seen videos,Clearing seen videos
 Clearing suggested accounts,Clearing suggested accounts
 "Clearing, %1$d so far","Clearing, %1$d so far"
 Close,Close
@@ -284,6 +284,7 @@ Copy the sound link,Copy the sound link
 Copy the video link,Copy the video link
 Couldn't add the older seen videos. Try again.,Couldn't add the older seen videos. Try again.
 Couldn't change the Lab settings. Try again.,Couldn't change the Lab settings. Try again.
+Couldn't clear seen videos. Try again.,Couldn't clear seen videos. Try again.
 Couldn't clear the suggested accounts. Reopen the Inbox and try again.,Couldn't clear the suggested accounts. Reopen the Inbox and try again.
 Couldn't confirm the block for %1$s. Open their profile to check.,Couldn't confirm the block for %1$s. Open their profile to check.
 Couldn't confirm the unblock for %1$s. Open their profile to check.,Couldn't confirm the unblock for %1$s. Open their profile to check.
@@ -298,7 +299,9 @@ Couldn't read who posted this comment. Open their profile and block them there.,
 Couldn't reset this override. Try again.,Couldn't reset this override. Try again.
 Couldn't restart TikTok. Close it and open it again.,Couldn't restart TikTok. Close it and open it again.
 Couldn't restore the settings. Try again.,Couldn't restore the settings. Try again.
+Couldn't save the change. Try again.,Couldn't save the change. Try again.
 Couldn't save the settings backup. Try again.,Couldn't save the settings backup. Try again.
+Couldn't save these choices. Try again.,Couldn't save these choices. Try again.
 Couldn't save this override. Try again.,Couldn't save this override. Try again.
 Couldn't send the feedback. Try again in a moment.,Couldn't send the feedback. Try again in a moment.
 Couldn't start the Lab change. Try again in a moment.,Couldn't start the Lab change. Try again in a moment.
@@ -440,6 +443,7 @@ Gate details,Gate details
 Generated defaults,Generated defaults
 Gestures,Gestures
 Ghost mode,Ghost mode
+Ghost mode diagnostics,Ghost mode diagnostics
 Got it,Got it
 Hand-off,Hand-off
 Handle or id,Handle or id
@@ -590,6 +594,7 @@ Hushfeed can't read the creator pattern %1$s,Hushfeed can't read the creator pat
 Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.,Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
 Hushfeed is active,Hushfeed is active
 Hushfeed is paused,Hushfeed is paused
+Hushfeed is paused. Ghost mode isn't active.,Hushfeed is paused. Ghost mode isn't active.
 Hushfeed turns back on when TikTok restarts.,Hushfeed turns back on when TikTok restarts.
 "Ignore the creator's choice so the Duet and Stitch entries appear. Everything else the app checks still applies, and whether the upload is accepted is the server's decision.","Ignore the creator's choice so the Duet and Stitch entries appear. Everything else the app checks still applies, and whether the upload is accepted is the server's decision."
 Import finished,Import finished
@@ -744,11 +749,13 @@ Notices from this project and the ones it's built on,Notices from this project a
 OK,OK
 Off,Off
 "Off forces false, on forces true. Reset hands the choice back to TikTok.","Off forces false, on forces true. Reset hands the choice back to TikTok."
+Off. TikTok can report views and typing.,Off. TikTok can report views and typing.
 Offline videos,Offline videos
 Offline videos limit,Offline videos limit
 On,On
 On mobile data,On mobile data
 On or off,On or off
+On. No reporting call has been observed in this process. Online status is unchanged.,On. No reporting call has been observed in this process. Online status is unchanged.
 On. Restore puts back the feed setup you had before.,On. Restore puts back the feed setup you had before.
 "Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out.","Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out."
 One area was checked and everything it needs is here.,One area was checked and everything it needs is here.
@@ -820,6 +827,8 @@ Press and hold the left or right third of the screen to jump back or forward. Th
 Preview shortened. Save report keeps the full report.,Preview shortened. Save report keeps the full report.
 Privacy,Privacy
 Privacy and system,Privacy and system
+Problem detected.,Problem detected.
+Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.,Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.
 Profile,Profile
 Profile picture saved to %1$s,Profile picture saved to %1$s
 Profile share actions,Profile share actions
@@ -854,6 +863,7 @@ Remove watermark,Remove watermark
 Removed %1$s,Removed %1$s
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
 Report saved to %1$s,Report saved to %1$s
+Reporting calls were blocked here. Viewer-list privacy hasn't been verified. Online status is unchanged.,Reporting calls were blocked here. Viewer-list privacy hasn't been verified. Online status is unchanged.
 Required,Required
 Researched,Researched
 Researched values,Researched values
@@ -1043,7 +1053,6 @@ Still saving the last one,Still saving the last one
 "Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.","Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included."
 "Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone. Saves the battery they wake.","Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone. Saves the battery they wake."
 Stop TikTok reading what you copied. Copying a link from TikTok still works.,Stop TikTok reading what you copied. Copying a link from TikTok still works.
-"Stop TikTok reporting that you viewed a story or a profile, or that you're typing. Online status is unchanged. It can't undo what the server has already recorded.","Stop TikTok reporting that you viewed a story or a profile, or that you're typing. Online status is unchanged. It can't undo what the server has already recorded."
 Stop a long press on Like from opening TikTok's repost action.,Stop a long press on Like from opening TikTok's repost action.
 Stop a long press on Share from opening TikTok's quick share action.,Stop a long press on Share from opening TikTok's quick share action.
 Stop analytics and tracking,Stop analytics and tracking
@@ -1118,12 +1127,12 @@ The accounts TikTok suggests you follow no longer take up rows in the Inbox.,The
 The activity status control leaves the Inbox header. Whether others see you as active is unchanged.,The activity status control leaves the Inbox header. Whether others see you as active is unchanged.
 "The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged.","The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged."
 The already-saved check failed. Try again.,The already-saved check failed. Try again.
+The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.,The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.,The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.,The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.,The downloader app you chose isn't installed. Check Send links to another app under Downloads.
-The export failed and the partial file couldn't be removed. Delete it from your Downloads folder.,The export failed and the partial file couldn't be removed. Delete it from your Downloads folder.
 "The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.","The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at."
 The feed doesn't end. This is a fine time to leave it.,The feed doesn't end. This is a fine time to leave it.
 The feed is open again,The feed is open again
@@ -1136,6 +1145,7 @@ The loaded-values file you chose couldn't be read. Try again.,The loaded-values 
 "The override changes no fields. Edit the field values, or reset the override.","The override changes no fields. Edit the field values, or reset the override."
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.","The override couldn't be applied: %1$s. Edit the field values, or reset the override."
 "The override doesn't say what list to return. Edit the field values, or reset the override.","The override doesn't say what list to return. Edit the field values, or reset the override."
+The partial file couldn't be removed. Delete it from the folder you chose.,The partial file couldn't be removed. Delete it from the folder you chose.
 The presets couldn't load. Open the Lab again.,The presets couldn't load. Open the Lab again.
 The profile picture couldn't be saved. Try again.,The profile picture couldn't be saved. Try again.
 "The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings.","The record of an interrupted settings change couldn't be read, so it was set aside. Check your settings."

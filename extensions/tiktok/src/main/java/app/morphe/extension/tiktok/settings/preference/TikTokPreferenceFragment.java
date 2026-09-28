@@ -176,7 +176,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                                                 @NonNull SharedPreferences preferences) {
         if (pref instanceof NumberInputPreference) {
             NumberInputPreference numberPref = (NumberInputPreference) pref;
-            numberPref.setValue(preferences.getString(setting.key, setting.defaultValue.toString()));
+            numberPref.setValueWithoutPersisting(preferences.getString(setting.key, setting.defaultValue.toString()));
         } else if (pref instanceof CreatorListPreference) {
             CreatorListPreference creatorPref = (CreatorListPreference) pref;
             creatorPref.setValue(preferences.getString(setting.key, setting.defaultValue.toString()));
@@ -203,7 +203,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (pref instanceof NumberInputPreference) {
             NumberInputPreference numberInputPreference = (NumberInputPreference) pref;
             if (applySettingToPreference) {
-                numberInputPreference.setValue(setting.savedValue().toString());
+                numberInputPreference.setValueWithoutPersisting(setting.savedValue().toString());
             } else {
                 Setting.privateSetValueFromString(setting, numberInputPreference.getValue());
             }

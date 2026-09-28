@@ -590,7 +590,11 @@ try {
     $commitSeconds = 1700000000L
     function New-TestBundle {
         param([string]$Path, [string]$Version = '9.9.9', [long]$Timestamp = 1700000000000L,
-            [string]$Patcher = '1.12.0')
+            [string]$Patcher = '1.12.0',
+            [string]$SourceCommit = '0123456789abcdef0123456789abcdef01234567',
+            [string]$SourceClean = 'true',
+            [string]$SourceStart = ('A' * 64), [string]$SourceEnd = ('A' * 64),
+            [switch]$OmitSourceProvenance)
         if (Test-Path -LiteralPath $Path) { Remove-Item -LiteralPath $Path -Force }
         $archive = [System.IO.Compression.ZipFile]::Open(
             $Path, [System.IO.Compression.ZipArchiveMode]::Create)
@@ -599,7 +603,20 @@ try {
             $writer = New-Object System.IO.StreamWriter($entry.Open())
             try {
                 $writer.Write("Manifest-Version: 1.0`nVersion: $Version`n" +
-                    "Timestamp: $Timestamp`nPatcher-Version: $Patcher`n`n")
+                    "Timestamp: $Timestamp`nPatcher-Version: $Patcher`n")
+                if (-not $OmitSourceProvenance) {
+                    foreach ($sourceLine in @("Hushfeed-Source-Commit: $SourceCommit",
+                            "Hushfeed-Source-Clean: $SourceClean",
+                            "Hushfeed-Source-Start: $SourceStart", "Hushfeed-Source-End: $SourceEnd")) {
+                        # Real manifests fold long attributes. Exercise the reader's unfolding too.
+                        while ($sourceLine.Length -gt 70) {
+                            $writer.Write($sourceLine.Substring(0, 70) + "`n")
+                            $sourceLine = ' ' + $sourceLine.Substring(70)
+                        }
+                        $writer.Write($sourceLine + "`n")
+                    }
+                }
+                $writer.Write("`n")
             } finally { $writer.Dispose() }
         } finally { $archive.Dispose() }
     }
@@ -622,6 +639,8 @@ try {
         bundle    = [ordered]@{ file = 'patches-9.9.9.mpp'; sizeBytes = $bundleSize
             sha256 = $bundleHash; timestamp = 1700000000000L }
         toolchain = [ordered]@{ patcherVersion = '1.12.0'; managerFloor = '1.29.0' }
+        source = [ordered]@{ commit = '0123456789abcdef0123456789abcdef01234567'; clean = $true
+            startFingerprint = ('A' * 64); endFingerprint = ('A' * 64) }
         extension = [ordered]@{ dexPayloads = @([ordered]@{
             name = 'extensions/tiktok.rve'; sizeBytes = 10; sha256 = ('A' * 64) }) }
         targets   = @([ordered]@{
@@ -653,10 +672,85 @@ try {
     $valid = Test-TestReceipt -Receipt (New-TestReceipt)
     Assert-True $valid.Valid "A complete receipt was refused: $($valid.Reason)"
 
+    # A matching timestamp and receipt hash describe bytes, not the source used to build them.
+    # These bundles keep both correct while changing only the producer's source evidence.
+    $sourceCases = [ordered]@{
+        'another source commit with the same timestamp' = @{ SourceCommit = ('f' * 40) }
+        'a dirty build with a reproducible timestamp'    = @{ SourceClean = 'false' }
+        'a source state that could not be read'          = @{ SourceClean = 'unknown' }
+        'inputs changed during the build'               = @{ SourceEnd = ('B' * 64) }
+        'an unreadable starting source fingerprint'      = @{ SourceStart = '' }
+        'a missing build-time provenance record'         = @{ OmitSourceProvenance = $true }
+    }
+    $sourceCaseIndex = 0
+    foreach ($description in $sourceCases.Keys) {
+        $sourceBundle = Join-Path $allowlistRoot "source-provenance-$sourceCaseIndex.mpp"
+        $sourceCaseIndex++
+        $sourceArguments = $sourceCases[$description]
+        New-TestBundle -Path $sourceBundle @sourceArguments
+        $sourceReceipt = New-TestReceipt -Mutate {
+            param($r)
+            $r.bundle.sizeBytes = (Get-Item -LiteralPath $sourceBundle).Length
+            $r.bundle.sha256 = Get-Sha256Hex -Path $sourceBundle
+        }
+        $sourceResult = Test-ReleaseReceipt -Receipt $sourceReceipt -ExpectedVersion '9.9.9' `
+            -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
+            -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
+            -ExpectedPackageVersion '46.7.3' -BundlePath $sourceBundle `
+            -ExpectedCommit '0123456789abcdef0123456789abcdef01234567'
+        Assert-True (-not $sourceResult.Valid) "Receipt validation accepted $description."
+        Assert-True ([bool]$sourceResult.Reason) "Source provenance was refused without a reason: $description"
+    }
+
+    # An old release label and schema cannot turn a newly built dirty artifact into historical
+    # evidence. Historical verification must be tied to the actual published bytes instead.
+    $legacyNamedBundle = Join-Path $allowlistRoot 'new-build-named-0.61.0.mpp'
+    New-TestBundle -Path $legacyNamedBundle -Version '0.61.0' -SourceClean 'false'
+    $legacyNamedReceipt = New-TestReceipt -Mutate {
+        param($r)
+        $r.schemaVersion = 1
+        $r.release.version = '0.61.0'
+        $r.release.tag = 'v0.61.0'
+        $r.bundle.sizeBytes = (Get-Item -LiteralPath $legacyNamedBundle).Length
+        $r.bundle.sha256 = Get-Sha256Hex -Path $legacyNamedBundle
+    }
+    $legacyNamedResult = Test-ReleaseReceipt -Receipt $legacyNamedReceipt -ExpectedVersion '0.61.0' `
+        -ExpectedPatchNames @('Alpha', 'Beta') -ExpectedPatcherVersion '1.12.0' `
+        -ExpectedManagerFloor '1.29.0' -ExpectedPackageName 'com.example.host' `
+        -ExpectedPackageVersion '46.7.3' -BundlePath $legacyNamedBundle
+    Assert-True (-not $legacyNamedResult.Valid) `
+        'An old version label and receipt schema bypassed current-build source eligibility.'
+
+    # The exact published document remains readable. Its frozen file digest and bundle/commit
+    # identity are the boundary; changing the parsed object while supplying that file is refused.
+    $historicalPath = Join-Path $PSScriptRoot 'fixtures/legacy-receipt-0.61.0.json'
+    $historicalReceipt = Get-Content -LiteralPath $historicalPath -Raw | ConvertFrom-Json
+    $historicalArguments = @{
+        ExpectedVersion = '0.61.0'
+        ExpectedPatchNames = @($historicalReceipt.targets[0].patches | ForEach-Object { [string]$_.name })
+        ExpectedPatcherVersion = '1.13.0'
+        ExpectedManagerFloor = '1.30.0'
+        ExpectedPackageName = 'com.zhiliaoapp.musically'
+        ExpectedPackageVersions = @('47.0.3', '47.1.3')
+        ExpectedCommit = '5abaa467107e28e6800637718a1270d3635210d8'
+        ReceiptPath = $historicalPath
+    }
+    $historicalCheck = Test-ReleaseReceipt -Receipt $historicalReceipt @historicalArguments
+    Assert-True $historicalCheck.Valid "The exact published receipt was refused: $($historicalCheck.Reason)"
+    $historicalReceipt.bundle.sha256 = 'F' * 64
+    $alteredHistorical = Test-ReleaseReceipt -Receipt $historicalReceipt @historicalArguments
+    Assert-True (-not $alteredHistorical.Valid) 'A changed receipt borrowed another file historical identity.'
+
     # Every fact the receipt exists to pin, put in front of the check one at a time. A gate that
     # has never been shown to fail is a gate nobody has tested.
     $mutations = [ordered]@{
         'a receipt from a different schema'     = { param($r) $r.schemaVersion = 99 }
+        'a missing source provenance record'   = { param($r) $r.source = $null }
+        'a source clean flag written as text'  = { param($r) $r.source.clean = 'true' }
+        'a receipt naming another source'      = { param($r) $r.source.commit = ('e' * 40) }
+        'receipt inputs changed during build'  = { param($r) $r.source.endFingerprint = ('E' * 64) }
+        'receipt fingerprints differ from bundle' = { param($r)
+            $r.source.startFingerprint = ('E' * 64); $r.source.endFingerprint = ('E' * 64) }
         'a receipt for a different version'     = { param($r) $r.release.version = '9.9.8' }
         'a tag that does not match the version' = { param($r) $r.release.tag = 'v9.9.8' }
         'a short commit'                        = { param($r) $r.release.commit = '0123456' }

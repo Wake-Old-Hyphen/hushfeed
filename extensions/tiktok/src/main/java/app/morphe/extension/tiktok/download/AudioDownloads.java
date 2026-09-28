@@ -100,7 +100,12 @@ final class AudioDownloads {
     }
 
     static void write(Context app, String name, File source) {
-        write(app, name, source, true);
+        try {
+            write(app, name, source, true);
+        } catch (MediaBudget.StopException refusal) {
+            Logger.printException(() -> "Sound save stopped", refusal);
+            Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
+        }
     }
 
     /**
@@ -109,7 +114,8 @@ final class AudioDownloads {
      * the first one down before anyone saw it.
      */
     /** True when the sound landed; false when the switch is off or the save failed (said by toast). */
-    static boolean write(Context app, String name, File source, boolean announce) {
+    static boolean write(Context app, String name, File source, boolean announce)
+            throws MediaBudget.StopException {
         if (!enabled()) return false;
         File output = null;
         try {
@@ -120,6 +126,8 @@ final class AudioDownloads {
             if (announce) SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
             else Utils.showToastShort(L10n.f("Sound saved to %1$s", path));
             return true;
+        } catch (MediaBudget.StopException refusal) {
+            throw refusal;
         } catch (IOException | RuntimeException exception) {
             Logger.printException(() -> "Sound save failed", exception);
             Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));

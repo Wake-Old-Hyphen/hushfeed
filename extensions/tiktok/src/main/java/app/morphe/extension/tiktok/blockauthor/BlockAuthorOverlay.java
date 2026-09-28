@@ -948,7 +948,7 @@ public final class BlockAuthorOverlay {
         // No entrance/exit animation extends the requested two-second lifetime.
         Utils.runOnMainThreadDelayed(() -> {
             if (token == undoGeneration) dismissUndo();
-        }, BLOCK_UNDO_VISIBLE_MS);
+        }, SettingsUi.feedbackTimeout(activity, (int) BLOCK_UNDO_VISIBLE_MS, true));
     }
 
     static void reportUnblockResult(VideoAuthor author, BlockAuthorService.Result result) {
@@ -1060,7 +1060,7 @@ public final class BlockAuthorOverlay {
                 final int token = ++undoGeneration;
                 Utils.runOnMainThreadDelayed(() -> {
                     if (token == undoGeneration) dismissUndo();
-                }, UNDO_VISIBLE_MS);
+                }, SettingsUi.feedbackTimeout(activity, (int) UNDO_VISIBLE_MS, action != null));
             } catch (Throwable ex) {
                 Logger.printException(() -> "Could not show the undo banner", ex);
                 Utils.showToastShort(message);

@@ -843,7 +843,7 @@ function Test-ReleaseReceiptHere {
         -ExpectedPatcherVersion $expectedToolchain.PatcherVersion `
         -ExpectedManagerFloor $expectedToolchain.ManagerFloor `
         -ExpectedPackageName $receiptTarget.PackageName -ExpectedPackageVersions @($receiptTarget.PackageVersions) `
-        -BundlePath $BundleForComparison -ApprovedManifestDelta $approvedDelta `
+        -BundlePath $BundleForComparison -ReceiptPath $receiptPath -ApprovedManifestDelta $approvedDelta `
         -ActualCommitTimestamp $actualEpoch -ExpectedCommit $expectedCommit
     if (-not $receiptCheck.Valid) {
         throw "The release provenance receipt does not describe this release: $($receiptCheck.Reason)"

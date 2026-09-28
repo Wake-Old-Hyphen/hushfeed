@@ -446,6 +446,81 @@ public class FeatureGateLabActionsTest {
         }
     }
 
+    @Test public void aFailedLabSafExportUsesTheDocumentsProviderDeletionContract() throws Exception {
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            provider.failOpen = true;
+            action(fragment, 2);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK,
+                    new Intent().setData(provider.uri));
+            FeatureGateLabFragment.awaitFileIoForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("ContentResolver.delete never reaches DocumentsProvider.deleteDocument",
+                    1, provider.deleteCalls);
+            assertFalse("the failed export was left in the chosen folder", provider.exists);
+        }
+    }
+
+    @Test public void aLabSafExportWhoseStreamFailsToCloseIsRemoved() throws Exception {
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            Shadows.shadowOf(activity.getContentResolver()).registerOutputStream(provider.uri,
+                    new ByteArrayOutputStream() {
+                        @Override public void close() throws java.io.IOException {
+                            throw new java.io.IOException("injected provider close failure");
+                        }
+                    });
+            action(fragment, 2);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK,
+                    new Intent().setData(provider.uri));
+            FeatureGateLabFragment.awaitFileIoForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(1, provider.deleteCalls);
+            assertFalse(provider.exists);
+        }
+    }
+
+    @Test public void failedLabCleanupDoesNotSendTheReaderToAnAssumedDownloadsFolder() throws Exception {
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            provider.failOpen = true;
+            provider.refuseDeletion = true;
+            action(fragment, 2);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            ShadowToast.reset();
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK,
+                    new Intent().setData(provider.uri));
+            FeatureGateLabFragment.awaitFileIoForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            String notice = ShadowToast.getTextOfLatestToast();
+            assertNotNull(notice);
+            assertTrue(notice.contains("partial file") && notice.contains("couldn't be removed"));
+            assertFalse("SAF permits cloud and arbitrary local destinations", notice.contains("Downloads"));
+            assertEquals(1, provider.deleteCalls);
+            assertTrue(provider.exists);
+        }
+    }
+
+    @Test public void aDetachedLabExportResultCanStillRemoveItsCreatedDocument() throws Exception {
+        var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(Utils.getContext());
+        var fragment = new FeatureGateLabFragment();
+        var write = FeatureGateLabFragment.class.getDeclaredMethod("writeLoadedValuesFile", android.net.Uri.class);
+        write.setAccessible(true);
+        write.invoke(fragment, provider.uri);
+        FeatureGateLabFragment.awaitFileIoForTests();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("losing the view must not abandon its new document", 1, provider.deleteCalls);
+        assertFalse(provider.exists);
+    }
+
     @Test public void importBeforeTheSnapshotIsReadySaysWhy() throws Exception {
         try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
             var activity = owner.get();

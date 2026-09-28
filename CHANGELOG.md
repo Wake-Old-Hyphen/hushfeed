@@ -2,11 +2,27 @@
 
 Every Hushfeed release, newest first.
 
-## Unreleased
+## 0.63.0 (2026-09-27)
+
+Includes the changes developed in 0.62.0, which wasn't published as a separate bundle.
+
+* **TikTok:** Diagnostic messages remove quoted credentials, headers and account identifiers before reaching system logs, the in-memory buffer or crash files. Long inputs and exception chains are bounded, and a long dotted hostname no longer overflows the redactor's stack.
+* **TikTok:** Opening links in an external browser preserves ordinary sites' `target` parameters. Only TikTok's known link-safety routes unwrap that parameter. Lookalike characters in a hostname no longer pass that check.
+* **TikTok:** Ghost mode shows whether this process has seen a reporting call and warns when a story-reporting check fails. Clearing diagnostics or toggling the switch doesn't erase that warning. A diagnostics row sits beside the switch. Blocking a local call still doesn't verify TikTok's viewer list (#39).
+* **TikTok:** Delayed budget changes survive a failed save and can be retried. Tightening a limit saves the new value and cancels its scheduled change together. A restore saves the delayed changes with the rest of its settings, and recovery restores both. A failed edit keeps its dialog open instead of claiming it was scheduled.
+* **TikTok:** A settings transaction that throws puts every live value back. A queued screen-time reminder also checks that its original screen is still active and the feature is still on before leaving TikTok.
+* **TikTok:** Failed settings and Lab exports remove the file created by the picker. If the provider refuses cleanup, the message points to the folder you chose. Backup actions stay disabled while a write is running, including after the settings page is recreated.
+* **TikTok:** Structured Lab edits keep their draft after a failed save. Discard returns to the last successful save, newer edits survive an older save finishing, and untouched null fields keep their original values. Reset refreshes the fields to the value it restored.
+* **TikTok:** Multi-file saves stop on a storage refusal or deadline instead of trying another mirror or counting the last file as an ordinary skip. Counted audio saves preserve the same reason.
+* **TikTok:** Sticker saves check free space in their destination before writing and again while PNG, GIF and video output grows. Running out of space removes the unfinished output and keeps an older saved file intact.
+* **TikTok:** Share-action and button checklists keep your choices open when a save fails. Apply saves the whole selection together, and you can retry without choosing everything again.
+* **TikTok:** Clear seen videos waits for storage before announcing success. Failed clears keep the record and earlier Undo, and completion from a previous account can't offer recovery on the current account.
+* **TikTok:** Undo and Unblock controls respect Android's requested time to act. The Calm feed preset keeps its heading and action visible at larger text sizes in both themes.
+* **TikTok:** New release receipts check the source commit and clean source snapshots embedded during the build. A dirty build stays ineligible after its files are restored, even with a matching timestamp. Ignored source files also make it ineligible. Equivalent checkout line endings keep the same metadata. Builds whose before-and-after source bytes differ stay ineligible. Previously published receipts are accepted only when their exact recorded bytes and bundle identity match the verified archive.
 
 ## 0.62.0 (2026-09-27)
 
-Source update. The downloadable release is still v0.61.0.
+Source changes included in the v0.63.0 release.
 
 * **TikTok:** Installation instructions name the current published bundle and distinguish it from the 98-patch source build. Removed the inherited donation button and corrected the Android verification advice.
 

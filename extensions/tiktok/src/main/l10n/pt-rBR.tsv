@@ -65,7 +65,6 @@ A field value couldn't be read. Check the values and try again.	Não foi possív
 A good place to stop, if you want one.	Uma boa hora para parar, se você quiser uma.
 A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.	Um quadrado verde no canto superior enquanto o TikTok está com a câmera aberta, e um losango laranja enquanto grava som. Eles somem quando o acesso termina.
 A host to put in place of tiktok.com when you share or copy a link, like vxtiktok.com. Leave it empty to share TikTok's own links. Only TikTok links are changed, and only the host: nothing is sent anywhere new.	Um host para colocar no lugar de tiktok.com ao compartilhar ou copiar um link, como vxtiktok.com. Deixe vazio para compartilhar os links do próprio TikTok. Só os links do TikTok mudam, e só o host: nada é enviado para nenhum lugar novo.
-A newer clear replaced that undo. Tap the row again to undo.	Uma limpeza mais recente substituiu esse desfazer. Toque na linha de novo para desfazer.
 A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.	Um rótulo pequeno no feed mostra os minutos ou vídeos restantes do orçamento de hoje.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.	Tocar em Início ou na aba Para você enquanto Para você está aberto não recarrega mais o feed. O vídeo que você está vendo continua.
 A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.	Tocar em alguém na linha Enviar para apenas seleciona a pessoa. Um segundo toque na mesma pessoa dentro de %1$d segundos envia o vídeo.
@@ -946,7 +945,6 @@ Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen re
 Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.	Impedir que o TikTok peça à tela para rodar na taxa de quadros do vídeo que está tocando. Num celular de 90 ou 120 Hz esse pedido derruba o app inteiro para a taxa do vídeo, inclusive a rolagem.
 Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone. Saves the battery they wake.	Impede que o TikTok escute o acelerômetro, o giroscópio, o magnetômetro e os outros sensores de movimento que usa para identificar o telefone. Poupa a bateria que eles gastam.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.	Impede que o TikTok leia o que você copiou. Copiar um link do TikTok continua funcionando.
-Stop TikTok reporting that you viewed a story or a profile, or that you're typing. Online status is unchanged. It can't undo what the server has already recorded.	Impede que o TikTok informe que você viu um story ou um perfil, ou que está digitando. O status on-line não muda. Não dá para desfazer o que o servidor já registrou.
 Stop a long press on Like from opening TikTok's repost action.	Impedir que segurar Curtir abra a ação de repostar do TikTok.
 Stop a long press on Share from opening TikTok's quick share action.	Impedir que segurar Compartilhar abra a ação de compartilhamento rápido do TikTok.
 Stop feature gate recording	Parar de gravar os gates
@@ -1009,7 +1007,6 @@ The catalog says this key is %1$s and this override is %2$s. Reset the override 
 The diagnostic report couldn't be saved yet. Try again in a moment.	O relatório de diagnóstico ainda não pôde ser salvo. Tente de novo em instantes.
 The diagnostic report couldn't be saved. Try again.	Não foi possível salvar o relatório de diagnóstico. Tente de novo.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.	O aplicativo de download que voce escolheu nao esta instalado. Verifique Enviar links para outro aplicativo em Downloads.
-The export failed and the partial file couldn't be removed. Delete it from your Downloads folder.	A exportação falhou e o arquivo incompleto não pôde ser removido. Apague-o da sua pasta Downloads.
 The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.	O feed escurece nos últimos três quartos de minuto antes da pausa, para que você chegue a ela em vez de cair nela. Precisa de um orçamento de tempo e uma pausa.
 The feed doesn't end. This is a fine time to leave it.	O feed não acaba. Esta é uma boa hora para largá-lo.
 The feed is open again	O feed está aberto de novo
@@ -1324,3 +1321,16 @@ Show a progress bar while a video saves.	Mostra uma barra de progresso enquanto 
 Saving video	Salvando vídeo
 Saving video: %1$s	Salvando vídeo: %1$s
 Saving %1$s of %2$s: %3$s	Salvando %1$s de %2$s: %3$s
+Couldn't save the change. Try again.	Não foi possível salvar a alteração. Tente novamente.
+Off. TikTok can report views and typing.	Desativado. O TikTok pode informar visualizações e quando você está digitando.
+Hushfeed is paused. Ghost mode isn't active.	O Hushfeed está pausado. O modo fantasma não está ativo.
+Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.	Um problema foi detectado. As visualizações de stories ainda podem ser informadas. Consulte o diagnóstico do modo fantasma. O aviso permanece até reiniciar o TikTok.
+Reporting calls were blocked here. Viewer-list privacy hasn't been verified. Online status is unchanged.	As chamadas de notificação foram bloqueadas aqui. A privacidade na lista de espectadores não foi verificada. O status online não muda.
+On. No reporting call has been observed in this process. Online status is unchanged.	Ativado. Nenhuma chamada de notificação foi observada neste processo. O status online não muda.
+Ghost mode diagnostics	Diagnóstico do modo fantasma
+The partial file couldn't be removed. Delete it from the folder you chose.	Não foi possível remover o arquivo incompleto. Exclua-o da pasta que você escolheu.
+The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.	O backup não foi iniciado e não foi possível remover o arquivo incompleto. Exclua-o da pasta que você escolheu.
+Problem detected.	Um problema foi detectado.
+Couldn't save these choices. Try again.	Não foi possível salvar essas opções. Tente novamente.
+Clearing seen videos	Limpando vídeos assistidos
+Couldn't clear seen videos. Try again.	Não foi possível limpar os vídeos assistidos. Tente novamente.

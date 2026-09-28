@@ -66,7 +66,6 @@ A field value couldn't be read. Check the values and try again.,Nilai kolom tida
 "A good place to stop, if you want one.","Tempat yang bagus untuk berhenti, kalau kamu mencarinya."
 "A green square in the top corner while TikTok has the camera open, and an orange diamond while it records sound. They go when the access ends.","Kotak hijau di pojok atas saat TikTok membuka kamera, dan belah ketupat oranye saat merekam suara. Keduanya hilang saat akses berakhir."
 "A host to put in place of tiktok.com when you share or copy a link, like vxtiktok.com. Leave it empty to share TikTok's own links. Only TikTok links are changed, and only the host: nothing is sent anywhere new.","Host pengganti tiktok.com saat kamu membagikan atau menyalin tautan, misalnya vxtiktok.com. Kosongkan untuk membagikan tautan TikTok sendiri. Hanya tautan TikTok yang diubah, dan hanya bagian host-nya, tidak ada yang dikirim ke mana pun."
-A newer clear replaced that undo. Tap the row again to undo.,Penghapusan yang lebih baru menggantikan pengurungan itu. Ketuk barisnya lagi untuk mengurungkan.
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.",Label kecil di feed menunjukkan menit atau video yang tersisa dari anggaran hari ini.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,Mengetuk Beranda atau tab Untuk Kamu saat Untuk Kamu sedang tampil tidak lagi memuat ulang feed. Video yang sedang kamu tonton tetap.
 A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.,Satu ketukan pada orang di baris Kirim ke hanya memilihnya. Ketukan kedua pada orang yang sama dalam %1$d detik mengirim videonya.
@@ -946,7 +945,6 @@ Still saving the last one,Yang sebelumnya masih disimpan
 "Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.","Hentikan TikTok meminta layar berjalan pada laju bingkai video yang sedang diputar. Di ponsel 90 atau 120 Hz, permintaan itu memperlambat seluruh aplikasi sampai ke laju videonya, termasuk saat menggulir."
 "Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone. Saves the battery they wake.","Mencegah TikTok mendengarkan akselerometer, giroskop, magnetometer, dan sensor gerak lain yang dipakainya untuk mengenali ponsel. Menghemat baterai yang mereka bangunkan."
 Stop TikTok reading what you copied. Copying a link from TikTok still works.,Mencegah TikTok membaca apa yang kamu salin. Menyalin tautan dari TikTok tetap berfungsi.
-"Stop TikTok reporting that you viewed a story or a profile, or that you're typing. Online status is unchanged. It can't undo what the server has already recorded.","Mencegah TikTok melaporkan bahwa kamu melihat story atau profil, atau bahwa kamu sedang mengetik. Status online tidak berubah. Ini tidak bisa membatalkan apa yang sudah dicatat server."
 Stop a long press on Like from opening TikTok's repost action.,Cegah tekan lama pada Suka membuka aksi posting ulang TikTok.
 Stop a long press on Share from opening TikTok's quick share action.,Cegah tekan lama pada Bagikan membuka aksi bagikan cepat TikTok.
 Stop feature gate recording,Hentikan rekaman feature gate
@@ -1009,7 +1007,6 @@ The catalog says this key is %1$s and this override is %2$s. Reset the override 
 The diagnostic report couldn't be saved yet. Try again in a moment.,Laporan diagnostik belum bisa disimpan. Coba lagi sebentar.
 The diagnostic report couldn't be saved. Try again.,Laporan diagnostik tidak bisa disimpan. Coba lagi.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.,Aplikasi pengunduh yang kamu pilih tidak terpasang. Periksa Kirim tautan ke aplikasi lain di Unduhan.
-The export failed and the partial file couldn't be removed. Delete it from your Downloads folder.,Ekspor gagal dan berkas yang setengah jadi tidak bisa dihapus. Hapus dari folder Unduhan kamu.
 "The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.","Feed meredup selama tiga perempat menit terakhir sebelum jeda, agar kamu tiba di sana, bukan mendarat. Butuh anggaran waktu dan jeda."
 The feed doesn't end. This is a fine time to leave it.,Feed tidak ada habisnya. Ini saat yang baik untuk berhenti.
 The feed is open again,Feed terbuka lagi
@@ -1221,10 +1218,7 @@ Hide search rewards,Sembunyikan hadiah pencarian
 "Hide the points banner under the search box and the coin counter floating over search results, which TikTok shows in some regions. Searching works as before.","Sembunyikan banner poin di bawah kotak pencarian dan penghitung koin yang melayang di atas hasil pencarian, yang ditampilkan TikTok di beberapa wilayah. Pencarian tetap berfungsi seperti biasa."
 "%1$s hid everything TikTok sent, %2$d times in a row. Turn it off if that's not what you wanted.","%1$s menyembunyikan semua yang dikirim TikTok, %2$d kali berturut-turut. Matikan jika bukan itu yang kamu inginkan."
 Show the switch,Tampilkan sakelarnya
-
-
 this creator,kreator ini
-
 %1$s day,%1$s hari
 %1$s days,%1$s hari
 %1$s dp,%1$s dp
@@ -1325,3 +1319,16 @@ Show a progress bar while a video saves.,Tampilkan bilah progres saat video disi
 Saving video,Menyimpan video
 Saving video: %1$s,Menyimpan video: %1$s
 Saving %1$s of %2$s: %3$s,Menyimpan %1$s dari %2$s: %3$s
+Couldn't save the change. Try again.,Perubahan tidak dapat disimpan. Coba lagi.
+Off. TikTok can report views and typing.,Nonaktif. TikTok dapat melaporkan tayangan dan aktivitas mengetik.
+Hushfeed is paused. Ghost mode isn't active.,Hushfeed dijeda. Mode hantu tidak aktif.
+Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.,Masalah terdeteksi. Tayangan cerita mungkin masih dilaporkan. Periksa diagnostik mode hantu. Peringatan tetap muncul sampai TikTok dimulai ulang.
+Reporting calls were blocked here. Viewer-list privacy hasn't been verified. Online status is unchanged.,Panggilan pelaporan diblokir di sini. Privasi daftar penonton belum diverifikasi. Status online tidak berubah.
+On. No reporting call has been observed in this process. Online status is unchanged.,Aktif. Belum ada panggilan pelaporan yang teramati dalam proses ini. Status online tidak berubah.
+Ghost mode diagnostics,Diagnostik mode hantu
+The partial file couldn't be removed. Delete it from the folder you chose.,File yang belum lengkap tidak dapat dihapus. Hapus dari folder yang kamu pilih.
+The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.,Pencadangan tidak dimulai dan file yang belum lengkap tidak dapat dihapus. Hapus dari folder yang kamu pilih.
+Problem detected.,Masalah terdeteksi.
+Couldn't save these choices. Try again.,Pilihan ini tidak dapat disimpan. Coba lagi.
+Clearing seen videos,Menghapus video yang sudah ditonton
+Couldn't clear seen videos. Try again.,Video yang sudah ditonton tidak dapat dihapus. Coba lagi.

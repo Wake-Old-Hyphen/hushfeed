@@ -100,6 +100,25 @@ public class NumberInputPreference extends EditTextPreference {
         showSummary(clampedValue);
     }
 
+    /** Refreshes an already committed value without writing it back through the framework. */
+    public void setValueWithoutPersisting(String value) {
+        boolean persistent = isPersistent();
+        setPersistent(false);
+        try {
+            setValue(value);
+        } finally {
+            setPersistent(persistent);
+        }
+    }
+
+    /** Completes a save consumed by the row's listener, retaining its normal range feedback. */
+    public void acceptSavedValue(String typed) {
+        int saved = clamp(setting.savedValue());
+        setValueWithoutPersisting(String.valueOf(saved));
+        sayIfPulledIntoRange(typed, saved);
+        if (getDialog() != null) getDialog().dismiss();
+    }
+
     /**
      * Draws the summary again from the stored value without writing anything, for a row whose
      * extra line changed while its value did not.

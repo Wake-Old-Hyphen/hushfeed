@@ -35,6 +35,7 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -154,6 +155,23 @@ public final class SettingsUi {
     public static final @ColorInt int OVERLAY_SCRIM_SOLID = Color.argb(238, 0, 0, 0);
 
     private SettingsUi() {
+    }
+
+    /** The phone's reading/action timeout may lengthen feedback, but never shorten its default. */
+    public static long feedbackTimeout(Context context, int defaultMillis, boolean hasAction) {
+        if (Build.VERSION.SDK_INT < 29 || context == null) return defaultMillis;
+        try {
+            AccessibilityManager manager = (AccessibilityManager)
+                    context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+            if (manager == null) return defaultMillis;
+            int flags = AccessibilityManager.FLAG_CONTENT_TEXT;
+            if (hasAction) flags |= AccessibilityManager.FLAG_CONTENT_CONTROLS;
+            return Math.max(defaultMillis, manager.getRecommendedTimeoutMillis(defaultMillis, flags));
+        } catch (RuntimeException failure) {
+            app.morphe.extension.shared.Logger.printException(
+                    () -> "Could not read the accessibility feedback timeout", failure);
+            return defaultMillis;
+        }
     }
 
     /** Sync before painting any surface, since TikTok's theme can differ from the system's. */

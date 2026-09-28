@@ -1374,6 +1374,215 @@ public class SettingsBackupTest {
         }
     }
 
+    @Test public void aFailedSafBackupOpenRemovesOnlyItsCreatedDocument() throws Exception {
+        assertFailedSafBackupRemoved("open");
+    }
+
+    @Test public void aFailedSafBackupWriteRemovesOnlyItsCreatedDocument() throws Exception {
+        assertFailedSafBackupRemoved("write");
+    }
+
+    @Test public void aFailedSafBackupCloseRemovesOnlyItsCreatedDocument() throws Exception {
+        assertFailedSafBackupRemoved("close");
+    }
+
+    @Test public void aBackupRefusedBeforeSerializationRemovesItsCreatedDocument() throws Exception {
+        assertFailedSafBackupRemoved("serialize");
+    }
+
+    private void assertFailedSafBackupRemoved(String failure) throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            if (failure.equals("open")) provider.failOpen = true;
+            else if (failure.equals("serialize")) {
+                storedByAnOlderBuild(Settings.LOCAL_HIDDEN_CREATORS,
+                        ruleEntries(FeedRuleLimits.MAX_ENTRIES + 1));
+            } else {
+                Shadows.shadowOf(activity.getContentResolver()).registerOutputStream(provider.uri,
+                        new java.io.OutputStream() {
+                            @Override public void write(int value) throws java.io.IOException {
+                                if (failure.equals("write")) throw new java.io.IOException("injected write failure");
+                            }
+                            @Override public void close() throws java.io.IOException {
+                                if (failure.equals("close")) throw new java.io.IOException("injected close failure");
+                            }
+                        });
+            }
+            fragment.onActivityResult(7311, android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+            Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(failure + " left the file created by the picker behind", provider.awaitDeletion());
+            assertFalse(provider.exists);
+            assertEquals(1, provider.deleteCalls);
+        }
+    }
+
+    @Test public void aSuccessfulSafBackupIsKeptAndCanBeReadAsJson() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            fragment.onActivityResult(7311, android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+            Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(provider.exists);
+            assertEquals(0, provider.deleteCalls);
+            assertEquals("hushfeed-settings", new JSONObject(new String(java.nio.file.Files.readAllBytes(
+                    provider.file.toPath()), StandardCharsets.UTF_8)).getString("format"));
+            Preference undo = fragment.findPreference("settings_backup_7314");
+            assertFalse("an export must not create a settings Undo", undo.isEnabled());
+            assertEquals("completion replaced the missing-Undo explanation", "Nothing to undo yet.",
+                    undo.getSummary().toString());
+        }
+    }
+
+    @Test public void failedSafCleanupNamesTheChosenFileWithoutAssumingDownloads() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            provider.failOpen = true;
+            provider.refuseDeletion = true;
+            ShadowToast.reset();
+            fragment.onActivityResult(7311, android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+            Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("cleanup was never attempted", provider.awaitDeletion());
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            String message = ShadowToast.getTextOfLatestToast();
+            assertNotNull(message);
+            assertTrue("the abandoned file was not disclosed: " + message,
+                    message.contains("partial file") && message.contains("couldn't be removed"));
+            assertFalse("the picker may have selected a cloud folder", message.contains("Downloads"));
+            assertTrue(provider.exists);
+        }
+    }
+
+    @Test public void aRejectedBackupWorkerStillCleansItsNewSafDocument() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            try (BackgroundPoolSaturation saturation = BackgroundPoolSaturation.fill()) {
+                fragment.onActivityResult(7311, android.app.Activity.RESULT_OK,
+                        new Intent().setData(provider.uri));
+                assertTrue("worker rejection leaked the picker-created document", provider.awaitDeletion());
+                assertFalse(provider.exists);
+            }
+        }
+    }
+
+    @Test public void aDetachedBackupResultStillCleansItsNewSafDocument() throws Exception {
+        var application = RuntimeEnvironment.getApplication();
+        Utils.setContext(application);
+        var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(application);
+        SettingsBackupPreference.onResult(new TikTokPreferenceFragment(), 7311,
+                android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+        assertTrue("a detached result abandoned its new file", provider.awaitDeletion());
+        assertFalse(provider.exists);
+    }
+
+    @Test public void aBusyBackupResultCleansOnlyItsFileWithoutUnlockingTheOtherRun() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            var field = SettingsBackupPreference.class.getDeclaredField("BUSY");
+            field.setAccessible(true);
+            var busy = (java.util.concurrent.atomic.AtomicBoolean) field.get(null);
+            busy.set(true);
+            try {
+                fragment.onActivityResult(7311, android.app.Activity.RESULT_OK,
+                        new Intent().setData(provider.uri));
+                assertTrue("a second result leaked its new file", provider.awaitDeletion());
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertTrue("cleanup released another operation's guard", busy.get());
+            } finally {
+                busy.set(false);
+            }
+        }
+    }
+
+    @Test public void aFailedImportNeverDeletesTheSelectedSourceDocument() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            provider.failOpen = true;
+            fragment.onActivityResult(7312, android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+            Utils.awaitBackgroundTasksForTests();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(provider.exists);
+            assertEquals(0, provider.deleteCalls);
+        }
+    }
+
+    @Test public void backupRowsStayDisabledAfterRebindingAndRecreationDuringAWrite() throws Exception {
+        try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            SettingsBackup.reset(activity);
+            assertTrue("fixture needs an existing Undo", SettingsBackup.hasUndo(activity));
+            var fragment = attachBackupPage(activity);
+            var provider = app.morphe.extension.tiktok.DocumentExportProvider.register(activity);
+            var entered = new java.util.concurrent.CountDownLatch(1);
+            var release = new java.util.concurrent.CountDownLatch(1);
+            Shadows.shadowOf(activity.getContentResolver()).registerOutputStream(provider.uri,
+                    new ByteArrayOutputStream() {
+                        @Override public synchronized void write(byte[] bytes, int offset, int count) {
+                            entered.countDown();
+                            try {
+                                if (!release.await(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                                    throw new IllegalStateException("test never released export");
+                                }
+                            } catch (InterruptedException failure) {
+                                throw new IllegalStateException(failure);
+                            }
+                            super.write(bytes, offset, count);
+                        }
+                    });
+            fragment.onActivityResult(7311, android.app.Activity.RESULT_OK, new Intent().setData(provider.uri));
+            try {
+                assertTrue(entered.await(5, java.util.concurrent.TimeUnit.SECONDS));
+                Preference undo = fragment.findPreference("settings_backup_7314");
+                undo.getView(null, null);
+                assertFalse("binding Undo re-enabled it while export was still writing", undo.isEnabled());
+                activity.getFragmentManager().beginTransaction().remove(fragment).commit();
+                activity.getFragmentManager().executePendingTransactions();
+                var replacement = attachBackupPage(activity);
+                for (int action = 7311; action <= 7314; action++) {
+                    Preference row = replacement.findPreference("settings_backup_" + action);
+                    row.getView(null, null);
+                    assertFalse("a recreated row ignored the running operation: " + action, row.isEnabled());
+                }
+            } finally {
+                release.countDown();
+                Utils.awaitBackgroundTasksForTests();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+            }
+        }
+    }
+
+    private static TikTokPreferenceFragment attachBackupPage(android.app.Activity activity) {
+        var fragment = new TikTokPreferenceFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString("morphe_settings_section", "BACKUP");
+        fragment.setArguments(arguments);
+        activity.getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, fragment).commit();
+        activity.getFragmentManager().executePendingTransactions();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        return fragment;
+    }
+
     private static Preference backupRow(TikTokPreferenceFragment fragment, String title) {
         var screen = fragment.getPreferenceScreen();
         for (int index = 0; index < screen.getPreferenceCount(); index++) {

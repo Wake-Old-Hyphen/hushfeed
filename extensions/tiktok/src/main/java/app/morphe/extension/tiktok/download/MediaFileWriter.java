@@ -17,6 +17,7 @@ import app.morphe.extension.shared.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -161,6 +162,41 @@ final class MediaFileWriter {
 
     static long copy(InputStream input, OutputStream output) throws IOException {
         return copy(input, output, Long.MAX_VALUE, null);
+    }
+
+    /** Gives encoders the same bounded disk grants used by file copies. */
+    static OutputStream withDiskBudget(OutputStream output, File directory) {
+        return new FilterOutputStream(output) {
+            private long allowance;
+
+            private void reserve() throws IOException {
+                MediaBudget.check(null);
+                if (allowance == 0) {
+                    MediaBudget.checkStreamingDiskSpace(directory, null);
+                    allowance = MediaBudget.STREAM_SPACE_CHECK_BYTES;
+                }
+            }
+
+            @Override public void write(int value) throws IOException {
+                reserve();
+                out.write(value);
+                allowance--;
+            }
+
+            @Override public void write(byte[] bytes, int offset, int length) throws IOException {
+                if (offset < 0 || length < 0 || offset > bytes.length - length) {
+                    throw new IndexOutOfBoundsException();
+                }
+                while (length > 0) {
+                    reserve();
+                    int count = (int) Math.min(length, allowance);
+                    out.write(bytes, offset, count);
+                    allowance -= count;
+                    offset += count;
+                    length -= count;
+                }
+            }
+        };
     }
 
     /**

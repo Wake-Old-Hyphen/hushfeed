@@ -1389,10 +1389,11 @@ public final class FeatureGateLabFragment extends Fragment {
 
     private void writeLoadedValuesFile(Uri uri) {
         Activity activity = getActivity();
-        ContentResolver resolver = activity == null ? null : activity.getContentResolver();
+        android.content.Context context = activity == null ? Utils.getContext() : activity.getApplicationContext();
+        ContentResolver resolver = context == null ? null : context.getContentResolver();
         FILE_IO_EXECUTOR.execute(() -> {
             try {
-                if (resolver == null) throw new IllegalStateException("Activity detached");
+                if (activity == null || resolver == null) throw new IllegalStateException("Activity detached");
                 ExportPayload payload = buildExportPayload();
                 try (OutputStream output = resolver.openOutputStream(uri, "w")) {
                     if (output == null) throw new IllegalStateException("Document provider returned no output stream");
@@ -1402,9 +1403,11 @@ public final class FeatureGateLabFragment extends Fragment {
                         "Exported 1 loaded value", "Exported %1$d loaded values"));
             } catch (Throwable throwable) {
                 Logger.printException(() -> "Loaded-value file export failed", throwable);
-                postToast(L10n.t(Utils.getContext(), deleteCreatedDocument(resolver, uri)
-                        ? "Loaded-value file export failed"
-                        : "The export failed and the partial file couldn't be removed. Delete it from your Downloads folder."));
+                boolean removed = deleteCreatedDocument(resolver, uri);
+                String message = L10n.t(Utils.getContext(), "Loaded-value file export failed")
+                        + (removed ? "" : " " + L10n.t(Utils.getContext(),
+                        "The partial file couldn't be removed. Delete it from the folder you chose."));
+                postToast(message);
             }
         });
     }
@@ -1659,7 +1662,7 @@ public final class FeatureGateLabFragment extends Fragment {
     private static boolean deleteCreatedDocument(ContentResolver resolver, Uri uri) {
         if (resolver == null || uri == null) return false;
         try {
-            return resolver.delete(uri, null, null) > 0;
+            return android.provider.DocumentsContract.deleteDocument(resolver, uri);
         } catch (Throwable cleanupError) {
             Logger.printException(() -> "Loaded-value export cleanup failed", cleanupError);
             return false;
