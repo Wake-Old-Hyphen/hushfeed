@@ -114,6 +114,8 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "the .m4a beside it if you want both.", Settings.DOWNLOAD_WITHOUT_SOUND));
             addPreference(new TogglePreference(context, "Save the sound as well",
                     "Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.", Settings.DOWNLOAD_AUDIO_TRACK));
+            addPreference(new TogglePreference(context, "Show download progress",
+                    "Show a progress bar while a video saves.", Settings.DOWNLOAD_PROGRESS));
             addPreference(new TogglePreference(context, "Save details beside the video",
                     "Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.",
                     Settings.DOWNLOAD_DETAILS));

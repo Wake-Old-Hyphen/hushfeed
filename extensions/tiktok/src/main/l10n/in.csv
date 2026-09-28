@@ -1320,3 +1320,8 @@ Saving video to %1$s,Menyimpan video ke %1$s
 Video and details saved to %1$s,Video dan detail disimpan ke %1$s
 "The video was saved, but its record couldn't be updated. A later save may make another copy.","Video telah disimpan, tetapi catatannya tidak dapat diperbarui. Penyimpanan berikutnya mungkin membuat salinan lain."
 The already-saved check failed. Try again.,Pemeriksaan video tersimpan gagal. Coba lagi.
+Show download progress,Tampilkan progres unduhan
+Show a progress bar while a video saves.,Tampilkan bilah progres saat video disimpan.
+Saving video,Menyimpan video
+Saving video: %1$s,Menyimpan video: %1$s
+Saving %1$s of %2$s: %3$s,Menyimpan %1$s dari %2$s: %3$s

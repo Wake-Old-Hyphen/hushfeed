@@ -40,6 +40,7 @@ val trackedScreenshots = mapOf(
     "settings/dialog-single-dark.png" to "dialogs/dark/single-choice.png",
     "settings/dialog-single-light.png" to "dialogs/light/single-choice.png",
     "settings/downloads.png" to "pages/dark/downloads.png",
+    "settings/single-save-progress.png" to "pages/downloads/single-save-progress.png",
     "settings/already-saved.png" to "pages/downloads/already-saved-dark.png",
     "settings/already-saved-light.png" to "pages/downloads/already-saved-light.png",
     "settings/feed_filter.png" to "pages/dark/feed_filter.png",

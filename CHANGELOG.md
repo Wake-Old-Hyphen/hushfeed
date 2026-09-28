@@ -4,6 +4,14 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.62.0 (2026-09-27)
+
+Source update. The downloadable release is still v0.61.0.
+
+* **TikTok:** Installation instructions name the current published bundle and distinguish it from the 98-patch source build. Removed the inherited donation button and corrected the Android verification advice.
+
+* **TikTok:** Show download progress adds a bar for a single video save, including Automatic quality (#27). Known-size video transfers show a percentage; preparation and unknown-size transfers keep a busy indicator. It starts off and announces the start once to a screen reader.
+
 * **TikTok:** Downloads can save a TXT file with the video's caption and source details. An optional saved-video check offers Open or Save again before making another copy, even when the post no longer supplies a download link. Start a video filename template with `{creator}/` for a folder per creator. The switches start off and existing templates keep their current folders.
 
 * **TikTok:** The Feature Gate Lab leaves more room for gates on small screens (#42). Its title fits in the toolbar, the warning opens from the icon beside Apply overrides, and tabs can scroll sideways at larger text sizes. Search and the override switch stay on screen.

@@ -1319,3 +1319,8 @@ Saving video to %1$s	Guardando video en %1$s
 Video and details saved to %1$s	Video y detalles guardados en %1$s
 The video was saved, but its record couldn't be updated. A later save may make another copy.	El video se guardó, pero no se pudo actualizar su registro. Si lo guardas de nuevo, puede crearse otra copia.
 The already-saved check failed. Try again.	No se pudieron comprobar los videos ya guardados. Inténtalo de nuevo.
+Show download progress	Mostrar progreso de descarga
+Show a progress bar while a video saves.	Muestra una barra de progreso mientras se guarda un vídeo.
+Saving video	Guardando vídeo
+Saving video: %1$s	Guardando vídeo: %1$s
+Saving %1$s of %2$s: %3$s	Guardando %1$s de %2$s: %3$s

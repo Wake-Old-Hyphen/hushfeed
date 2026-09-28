@@ -25,6 +25,11 @@ final class MediaFileWriter {
     private MediaFileWriter() {}
 
     /** What a publish left in the gallery: the name MediaStore kept, and its row when there is one. */
+    // java.util.function requires API 24; the injected payload also runs on API 23.
+    interface CopyProgress {
+        void copied(long bytes);
+    }
+
     static final class Saved {
         final String name;
         /** Null below API 29, where the file goes straight to disk and only the scanner sees it. */
@@ -173,6 +178,12 @@ final class MediaFileWriter {
 
     static long copy(InputStream input, OutputStream output, long limit,
             MediaBudget.Deadline deadline, File targetDirectory) throws IOException {
+        return copy(input, output, limit, deadline, targetDirectory, null);
+    }
+
+    static long copy(InputStream input, OutputStream output, long limit,
+            MediaBudget.Deadline deadline, File targetDirectory,
+            CopyProgress copied) throws IOException {
         byte[] buffer = new byte[65536];
         long total = 0;
         long spaceAllowance = 0;
@@ -190,6 +201,7 @@ final class MediaFileWriter {
                 spaceAllowance = MediaBudget.STREAM_SPACE_CHECK_BYTES;
             }
             output.write(buffer, 0, count);
+            if (copied != null) copied.copied(total);
             if (targetDirectory != null) spaceAllowance -= count;
         }
         if (total == 0) throw new IOException("Download is empty");

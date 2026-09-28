@@ -1319,3 +1319,8 @@ Saving video to %1$s	Salvando vídeo em %1$s
 Video and details saved to %1$s	Vídeo e detalhes salvos em %1$s
 The video was saved, but its record couldn't be updated. A later save may make another copy.	O vídeo foi salvo, mas seu registro não pôde ser atualizado. Salvar novamente pode criar outra cópia.
 The already-saved check failed. Try again.	Falha ao verificar os vídeos já salvos. Tente novamente.
+Show download progress	Mostrar progresso do download
+Show a progress bar while a video saves.	Mostra uma barra de progresso enquanto um vídeo é salvo.
+Saving video	Salvando vídeo
+Saving video: %1$s	Salvando vídeo: %1$s
+Saving %1$s of %2$s: %3$s	Salvando %1$s de %2$s: %3$s

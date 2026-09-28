@@ -1322,3 +1322,8 @@ Saving video to %1$s	Video wird in %1$s gespeichert
 Video and details saved to %1$s	Video und Details in %1$s gespeichert
 The video was saved, but its record couldn't be updated. A later save may make another copy.	Das Video wurde gespeichert, sein Eintrag konnte aber nicht aktualisiert werden. Ein erneutes Speichern kann eine weitere Kopie erstellen.
 The already-saved check failed. Try again.	Die Prüfung bereits gespeicherter Videos ist fehlgeschlagen. Versuch es erneut.
+Show download progress	Downloadfortschritt anzeigen
+Show a progress bar while a video saves.	Beim Speichern eines Videos einen Fortschrittsbalken anzeigen.
+Saving video	Video wird gespeichert
+Saving video: %1$s	Video wird gespeichert: %1$s
+Saving %1$s of %2$s: %3$s	%1$s von %2$s wird gespeichert: %3$s

@@ -922,12 +922,15 @@ Saved one original photo,Saved one original photo
 Saved. Restart TikTok to apply this.,Saved. Restart TikTok to apply this.
 Saving,Saving
 Saving %1$s of %2$s,Saving %1$s of %2$s
+Saving %1$s of %2$s: %3$s,Saving %1$s of %2$s: %3$s
 Saving %1$s original photos,Saving %1$s original photos
 Saving one original photo,Saving one original photo
 Saving settings backup,Saving settings backup
 Saving the sticker,Saving the sticker
 Saving the story,Saving the story
+Saving video,Saving video
 Saving video to %1$s,Saving video to %1$s
+Saving video: %1$s,Saving video: %1$s
 Screen,Screen
 Screen time,Screen time
 Search,Search
@@ -976,7 +979,9 @@ Show See translation,Show See translation
 Show TikTok's feed buttons,Show TikTok's feed buttons
 Show TikTok's own progress bar on videos where it's normally hidden.,Show TikTok's own progress bar on videos where it's normally hidden.
 "Show TikTok's own sort sheet on every post, with its hot, newest, media and creator options, instead of whichever cut-down row your account was given. Restart TikTok to apply this. It reads the style once per run and remembers it.","Show TikTok's own sort sheet on every post, with its hot, newest, media and creator options, instead of whichever cut-down row your account was given. Restart TikTok to apply this. It reads the style once per run and remembers it."
+Show a progress bar while a video saves.,Show a progress bar while a video saves.
 Show a video preview thumbnail while dragging the progress bar.,Show a video preview thumbnail while dragging the progress bar.
+Show download progress,Show download progress
 Show failures on screen,Show failures on screen
 Show gates,Show gates
 Show last report,Show last report

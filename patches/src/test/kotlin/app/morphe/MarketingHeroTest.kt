@@ -52,14 +52,11 @@ class MarketingHeroTest {
         )
     }
 
-    /** 7fcbb946 took the button out along with this test; both are back, and the button sits above the title. */
+    /** The installation cleanup explicitly retires the inherited donation button. */
     @Test
-    fun `the README keeps the canonical Ko-fi support link`() {
+    fun `the README leaves out inherited donation links`() {
         val readme = File(root, "README.md").readText()
-        val link = readme.indexOf("https://ko-fi.com/X8K126YVER")
-
-        assertTrue("the README must keep the project support link", link >= 0)
-        assertTrue("the support button belongs above the title", link < readme.indexOf("\n# Hushfeed"))
+        assertFalse("the retired donation link returned", readme.contains("ko-fi.com", ignoreCase = true))
     }
 
     @Test

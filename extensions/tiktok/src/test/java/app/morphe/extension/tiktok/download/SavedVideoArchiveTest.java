@@ -59,10 +59,13 @@ public class SavedVideoArchiveTest {
     private URLStreamHandler oldHttps;
     private ActivityController<PageActivity> owner;
     private File root;
-    private boolean oldDetails, oldCheck, oldMuted, oldAudio, oldSubtitles;
-    private String oldPath, oldTemplate, oldQuality;
+    private boolean oldDetails, oldCheck, oldMuted, oldAudio, oldSubtitles, oldProgress;
+    private java.util.concurrent.CountDownLatch reachedEnd, releaseCopy;
+    private String oldPath, oldTemplate, oldQuality, oldExternal;
 
     @Before public void setup() throws Exception {
+        oldProgress = Settings.DOWNLOAD_PROGRESS.get(); Settings.DOWNLOAD_PROGRESS.save(false);
+        oldExternal = Settings.EXTERNAL_DOWNLOADER_PACKAGE.get(); Settings.EXTERNAL_DOWNLOADER_PACKAGE.save("");
         oldDetails = Settings.DOWNLOAD_DETAILS.get(); oldCheck = Settings.CHECK_SAVED_VIDEOS.get();
         oldMuted = Settings.DOWNLOAD_WITHOUT_SOUND.get(); oldAudio = Settings.DOWNLOAD_AUDIO_TRACK.get();
         oldSubtitles = Settings.DOWNLOAD_SUBTITLES.get(); oldPath = Settings.DOWNLOAD_VIDEO_PATH.get();
@@ -89,7 +92,23 @@ public class SavedVideoArchiveTest {
                     @Override public String getHeaderField(String name) {
                         return "Content-Length".equals(name) ? String.valueOf(VIDEO.length) : null;
                     }
-                    @Override public InputStream getInputStream() { return new ByteArrayInputStream(VIDEO); }
+                    @Override public InputStream getInputStream() {
+                        return new ByteArrayInputStream(VIDEO) {
+                            @Override public synchronized int read(byte[] bytes, int offset, int length) {
+                                int count = super.read(bytes, offset, length);
+                                if (count < 0 && reachedEnd != null) {
+                                    reachedEnd.countDown();
+                                    try {
+                                        if (!releaseCopy.await(10, TimeUnit.SECONDS)) throw new AssertionError("Copy wasn't released");
+                                    } catch (InterruptedException interrupted) {
+                                        Thread.currentThread().interrupt();
+                                        throw new AssertionError(interrupted);
+                                    }
+                                }
+                                return count;
+                            }
+                        };
+                    }
                     @Override public void connect() { }
                     @Override public void disconnect() { }
                     @Override public boolean usingProxy() { return false; }
@@ -100,6 +119,7 @@ public class SavedVideoArchiveTest {
 
     @After public void cleanup() throws Exception {
         try {
+            if (releaseCopy != null) releaseCopy.countDown();
             if (ShadowDialog.getLatestDialog() != null) ShadowDialog.getLatestDialog().dismiss();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             awaitJobs();
@@ -113,6 +133,8 @@ public class SavedVideoArchiveTest {
             RuntimeEnvironment.getApplication().deleteDatabase(SavedVideoArchive.DATABASE_NAME);
         } finally {
             if (oldHttps != null) handlers.put("https", oldHttps);
+            Settings.DOWNLOAD_PROGRESS.save(oldProgress);
+            Settings.EXTERNAL_DOWNLOADER_PACKAGE.save(oldExternal);
             Settings.DOWNLOAD_DETAILS.save(oldDetails); Settings.CHECK_SAVED_VIDEOS.save(oldCheck);
             Settings.DOWNLOAD_WITHOUT_SOUND.save(oldMuted); Settings.DOWNLOAD_AUDIO_TRACK.save(oldAudio);
             Settings.DOWNLOAD_SUBTITLES.save(oldSubtitles); Settings.DOWNLOAD_VIDEO_PATH.save(oldPath);
@@ -229,6 +251,36 @@ public class SavedVideoArchiveTest {
         assertFalse(VideoDownloads.start(new Post(), owner.get()));
         assertEquals(0, requests.get());
         assertFalse(RuntimeEnvironment.getApplication().getDatabasePath(SavedVideoArchive.DATABASE_NAME).exists());
+    }
+
+    @Test public void progressAloneUsesTheOwnedSaveAndFinishesAfterTheFileIsPublished() throws Exception {
+        Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+        Settings.DOWNLOAD_PROGRESS.save(true);
+        reachedEnd = new java.util.concurrent.CountDownLatch(1);
+        releaseCopy = new java.util.concurrent.CountDownLatch(1);
+        SaveNotice.windowRootsForTests = List.of();
+        try {
+            assertTrue(OriginalPhotos.start(new Post(), owner.get()));
+            assertTrue("The save never reached the copy", reachedEnd.await(10, TimeUnit.SECONDS));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
+            android.view.ViewGroup row = owner.get().findViewById(android.R.id.content)
+                    .findViewWithTag("hushfeed_save_progress");
+            assertNotNull("Automatic must show progress when the switch alone is on", row);
+            android.view.ViewGroup body = (android.view.ViewGroup) row.getChildAt(0);
+            android.widget.ProgressBar bar = (android.widget.ProgressBar) body.getChildAt(1);
+            assertFalse(bar.isIndeterminate());
+            assertEquals("A file isn't complete before publication", 99, bar.getProgress());
+            assertFalse(new File(root, "alice/123.mp4").exists());
+            releaseCopy.countDown();
+            awaitJobs();
+            assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+            assertNull(owner.get().findViewById(android.R.id.content).findViewWithTag("hushfeed_save_progress"));
+            assertFalse(RuntimeEnvironment.getApplication().getDatabasePath(SavedVideoArchive.DATABASE_NAME).exists());
+        } finally {
+            releaseCopy.countDown();
+            awaitJobs();
+            SaveNotice.windowRootsForTests = null;
+        }
     }
 
     @Test public void closingTheActivityReleasesThePendingChoice() {

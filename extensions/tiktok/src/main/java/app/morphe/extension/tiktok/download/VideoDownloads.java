@@ -51,7 +51,8 @@ final class VideoDownloads {
         boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
         boolean withDetails = Settings.DOWNLOAD_DETAILS.get();
         boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
-        boolean extras = withDetails || checkSaved;
+        boolean showProgress = Settings.DOWNLOAD_PROGRESS.get();
+        boolean extras = withDetails || checkSaved || showProgress;
         // Photo posts can carry a video model too. Their own save keeps stills and live photos.
         if (extras && Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) return false;
         boolean automatic = "auto".equals(quality);
@@ -123,7 +124,7 @@ final class VideoDownloads {
             // tried; a sound or a track that fails is skipped, and the result says so.
             int files = 1 + (details != null ? 1 : 0) + (audioNameSnapshot != null ? 1 : 0) + captionSnapshot.size();
             int firstSubtitle = files - captionSnapshot.size();
-            SaveProgress progress = SaveProgress.begin(files);
+            SaveProgress progress = SaveProgress.begin(files, showProgress);
             MediaFileWriter.Saved[] published = {null};
             File[] picture = {null};
             File[] sound = {null};
@@ -135,7 +136,8 @@ final class VideoDownloads {
                     if (index == 0) {
                         try {
                             picture[0] = temp(app, temporary);
-                            RemoteMedia.fetch(videoUrls, picture[0], RemoteMedia.Kind.VIDEO);
+                            RemoteMedia.fetch(videoUrls, picture[0], RemoteMedia.Kind.VIDEO, progress::transfer);
+                            progress.transfer(0, -1);
                             File result = picture[0];
                             if (dash && !muted) {
                                 // The sound is a separate stream here and the save is not

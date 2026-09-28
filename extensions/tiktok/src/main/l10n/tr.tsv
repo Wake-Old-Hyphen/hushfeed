@@ -1319,3 +1319,8 @@ Saving video to %1$s	Video %1$s konumuna kaydediliyor
 Video and details saved to %1$s	Video ve ayrıntılar %1$s konumuna kaydedildi
 The video was saved, but its record couldn't be updated. A later save may make another copy.	Video kaydedildi, ancak kaydı güncellenemedi. Daha sonra yeniden kaydetmek başka bir kopya oluşturabilir.
 The already-saved check failed. Try again.	Önceden kaydedilen videolar kontrol edilemedi. Yeniden deneyin.
+Show download progress	İndirme ilerlemesini göster
+Show a progress bar while a video saves.	Video kaydedilirken ilerleme çubuğu gösterir.
+Saving video	Video kaydediliyor
+Saving video: %1$s	Video kaydediliyor: %1$s
+Saving %1$s of %2$s: %3$s	%1$s / %2$s kaydediliyor: %3$s
