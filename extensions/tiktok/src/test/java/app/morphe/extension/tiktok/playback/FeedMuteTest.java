@@ -2,6 +2,8 @@ package app.morphe.extension.tiktok.playback;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -93,6 +95,32 @@ public class FeedMuteTest {
         Settings.FEED_MUTED.resetToDefault();
         SettingsStatus.feedMuteEnabled = wasEnabled;
         feed.pause().stop().destroy();
+    }
+
+    /**
+     * Pausing the feed for the comments, or for a return, takes the sound from TikTok by asking
+     * for focus. A muted feed has none to take, so the ask would only stop the music another
+     * app is playing under it.
+     */
+    @Test public void pausingAMutedFeedLeavesOtherAppsSoundAlone() {
+        Settings.FEED_MUTED.save(true);
+        FeedMute.onControllerPlay(new Controller(feed.get()), video("111"));
+        FeedMute.onEnginePlay(engine("A", "111"));
+        assertTrue(FeedMute.isHoldingFocus());
+        var audio = org.robolectric.Shadows.shadowOf((android.media.AudioManager)
+                RuntimeEnvironment.getApplication().getSystemService(Context.AUDIO_SERVICE));
+        try {
+            PausePlayback.quietenForTests();
+            assertNull("a muted feed asked for the focus", audio.getLastAudioFocusRequest());
+            assertFalse(PausePlayback.quietenedForTests());
+
+            FeedMute.setMuted(false);
+            PausePlayback.quietenForTests();
+            assertNotNull("with sound the feed must still be quietened",
+                    audio.getLastAudioFocusRequest());
+        } finally {
+            PausePlayback.resetForTests();
+        }
     }
 
     @Test public void aFeedVideoPlaysSilentWhileMutedAndGetsItsSoundBack() {

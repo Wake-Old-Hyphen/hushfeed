@@ -343,10 +343,24 @@ public final class StoryDownloads {
                     name, "video/mp4", path, true);
             // The sound keeps to a toast: its banner went up first and the story's, a tick
             // later, took it down before anyone saw it (refutation review of 3d5395f2).
-            if (audioName != null) AudioDownloads.write(app, audioName, temp, false);
+            if (audioName != null) saveSound(app, audioName, temp);
             SaveNotice.saved(L10n.f("Story saved to %1$s", path), saved);
         } finally {
             if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove story temporary file");
+        }
+    }
+
+    /**
+     * The sound beside a story that is already published. A sound stopped for space or time is
+     * the sound's failure alone: letting it reach the job said the story had failed, and a retry
+     * made a second copy of it.
+     */
+    static void saveSound(Context app, String audioName, File source) {
+        try {
+            AudioDownloads.write(app, audioName, source, false);
+        } catch (MediaBudget.StopException refusal) {
+            Logger.printException(() -> "Story sound save stopped", refusal);
+            Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
         }
     }
 

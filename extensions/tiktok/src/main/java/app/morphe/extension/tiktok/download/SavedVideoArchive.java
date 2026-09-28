@@ -75,7 +75,7 @@ public final class SavedVideoArchive {
 
     static void offer(MediaFileWriter.Saved saved, Runnable saveAgain, Runnable release) {
         Utils.runOnMainThread(() -> {
-            Activity activity = Utils.getActivity();
+            Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
                 release.run();
                 Utils.showToastLong(L10n.t("This video is already saved. Open TikTok to save another copy."));

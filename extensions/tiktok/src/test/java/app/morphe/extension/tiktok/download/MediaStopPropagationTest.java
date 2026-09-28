@@ -163,6 +163,26 @@ public class MediaStopPropagationTest {
         assertEquals("Saved 0 of 2, the rest ran out of time", SaveProgress.message(outcome, "all saved"));
     }
 
+    /** The story is published before its sound; a sound stopped by the clock must not fail it. */
+    @Test public void aStorysSoundStoppedByTheClockIsTheSoundsFailureAlone() throws Exception {
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_AUDIO_TRACK.save(true);
+        String folder = "DCIM/story-sound-" + System.nanoTime();
+        Settings.DOWNLOAD_VIDEO_PATH.save(folder);
+        File source = files.newFile("story.mp4");
+        Files.write(source.toPath(), new byte[]{70, 71, 72});
+        ShadowMediaExtractor.addTrack(DataSource.toDataSource(source.getAbsolutePath()),
+                MediaFormat.createAudioFormat("audio/mp4a-latm", 44100, 2), new byte[]{91, 92, 93});
+        try (RunningDeadline budget = new RunningDeadline()) {
+            budget.expire();
+            StoryDownloads.saveSound(RuntimeEnvironment.getApplication(), "story.m4a", source);
+        }
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("The sound couldn't be saved. Try again.",
+                org.robolectric.shadows.ShadowToast.getTextOfLatestToast());
+        assertFalse(new File(new File(Environment.getExternalStorageDirectory(), folder), "story.m4a").exists());
+    }
+
     @Test public void countedAudioKeepsTheTerminalReasonAndAValidLaterSaveStillLands() throws Exception {
         SettingsStatus.advancedDownloadsEnabled = true;
         Settings.DOWNLOAD_AUDIO_TRACK.save(true);

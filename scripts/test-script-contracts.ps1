@@ -1619,6 +1619,38 @@ try {
         $env:GITHUB_TOKEN = $savedNewBranchToken
     }
 
+    # A first push lists the branch's whole tree, and every tree holds patches-bundle.json. That
+    # used to route the push as an index push: the strict release check, and no patching at all.
+    # This case sees the release check's mode; the patching half reads the same flag.
+    $firstPushRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("hushfeed-first-push-" + [guid]::NewGuid().ToString('N'))
+    try {
+        New-Item -ItemType Directory -Path (Join-Path $firstPushRoot 'scripts') -Force | Out-Null
+        # Tracked, because the hook runs its checks from an export of the pushed commit.
+        Copy-Item -LiteralPath (Join-Path $hookRoot 'scripts/validate-release-facts.ps1') -Destination (Join-Path $firstPushRoot 'scripts')
+        Copy-Item -LiteralPath (Join-Path $hookRoot 'scripts/test-script-contracts.ps1') -Destination (Join-Path $firstPushRoot 'scripts')
+        Set-Content -LiteralPath (Join-Path $firstPushRoot 'patches-bundle.json') -Encoding UTF8 -Value '{}'
+        & git -C $firstPushRoot init --quiet
+        $firstPushGitDir = (& git -C $firstPushRoot rev-parse --absolute-git-dir).Trim()
+        Assert-True ([IO.Path]::GetFullPath($firstPushGitDir).TrimEnd('\', '/') -ieq
+            [IO.Path]::GetFullPath((Join-Path $firstPushRoot '.git')).TrimEnd('\', '/')) `
+            'The first-push fixture resolved outside its temporary repository; refusing to write.'
+        & git -C $firstPushRoot config user.name 'Hook Contract'
+        & git -C $firstPushRoot config user.email 'hook@example.invalid'
+        & git -C $firstPushRoot add -A
+        & git -C $firstPushRoot commit --quiet -m 'first'
+        $firstPushHead = (& git -C $firstPushRoot rev-parse HEAD).Trim()
+        # The hook reads each pushed local ref again once its checks end, so it has to exist.
+        $firstPushBranch = (& git -C $firstPushRoot symbolic-ref HEAD).Trim()
+        Remove-Item -LiteralPath $factsMarker -Force -ErrorAction SilentlyContinue
+        $global:LASTEXITCODE = 0
+        & $prePushScript -Root $firstPushRoot -PushedRefs "$firstPushBranch $firstPushHead refs/heads/first $('0' * 40)" 6> $null
+        Assert-True ($LASTEXITCODE -eq 0) 'A first push of an unchanged index failed its release check.'
+        Assert-True ((Get-Content -LiteralPath $factsMarker -Raw) -like 'lag=True*') `
+            'A first push was taken for an index push because its tree holds the index.'
+    } finally {
+        Remove-Item -LiteralPath $firstPushRoot -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
     # The build branch, which runs the Gradle gates that hold the Bouncy Castle graphs to the
     # reviewed release. Starting a real build from a contract test would be absurd, so the case
     # reads the first thing that branch does instead: with no GitHub credentials and no gh on

@@ -283,6 +283,27 @@ public class SavedVideoArchiveTest {
         }
     }
 
+    /**
+     * A post opened from a profile or search plays in an activity of its own. The choice used to
+     * be built on the main activity behind it, a stopped window, so it never showed and the
+     * pending save stayed held.
+     */
+    @Test public void theChoiceOpensOnTheScreenInFront() {
+        try (var detail = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).setup().visible()) {
+            SavedVideoArchive.offer(new MediaFileWriter.Saved("video.mp4",
+                    Uri.parse("content://media/external/video/media/77")), () -> { }, () -> { });
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.app.Dialog dialog = ShadowDialog.getLatestDialog();
+            android.content.Context context = dialog.getContext();
+            while (context instanceof android.content.ContextWrapper && !(context instanceof android.app.Activity)) {
+                context = ((android.content.ContextWrapper) context).getBaseContext();
+            }
+            assertSame(detail.get(), context);
+            dialog.dismiss();
+        }
+    }
+
     @Test public void closingTheActivityReleasesThePendingChoice() {
         AtomicInteger released = new AtomicInteger();
         SavedVideoArchive.offer(new MediaFileWriter.Saved("video.mp4", Uri.parse("content://media/external/video/media/77")),
@@ -325,6 +346,45 @@ public class SavedVideoArchiveTest {
             assertTrue("Save didn't finish", System.nanoTime() < end);
         } while (MediaJobScheduler.runningJobs() != 0 || MediaJobScheduler.queuedJobs() != 0);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    /** With only the progress row asked for, a video Hushfeed can't fetch goes back to TikTok. */
+    @Test public void progressAloneLeavesAnUnavailableVideoToTikTok() {
+        Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+        Settings.DOWNLOAD_PROGRESS.save(true);
+        assertFalse("progress alone refused a save TikTok could still make",
+                VideoDownloads.start(new BarePost(), owner.get()));
+        assertEquals(0, requests.get());
+    }
+
+    /** A post whose video model offers no address Hushfeed can fetch. */
+    public static final class BarePost extends DownloadDetailsTest.Post {
+        BarePost() { super("alice", "124"); }
+        public Object getVideo() { return new Object(); }
+    }
+
+    /** Taken over for its details or progress, Automatic keeps the watermark the switch asks for. */
+    @Test public void automaticKeepsTheWatermarkSwitchsChoice() {
+        boolean before = Settings.REMOVE_DOWNLOAD_WATERMARK.get();
+        try {
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(false);
+            assertEquals(List.of("https://8.8.8.8/stamped.mp4"), VideoDownloads.automaticUrls(new BothAddresses()));
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(true);
+            assertEquals(List.of("https://8.8.8.8/clean.mp4"), VideoDownloads.automaticUrls(new BothAddresses()));
+        } finally {
+            Settings.REMOVE_DOWNLOAD_WATERMARK.save(before);
+        }
+    }
+
+    public static final class BothAddresses {
+        public UrlList getDownloadAddr() { return new UrlList("https://8.8.8.8/stamped.mp4"); }
+        public UrlList getDownloadNoWatermarkAddr() { return new UrlList("https://8.8.8.8/clean.mp4"); }
+    }
+
+    public static final class UrlList {
+        private final String url;
+        UrlList(String url) { this.url = url; }
+        public List<String> getUrlList() { return List.of(url); }
     }
 
     public static final class Post extends DownloadDetailsTest.Post {

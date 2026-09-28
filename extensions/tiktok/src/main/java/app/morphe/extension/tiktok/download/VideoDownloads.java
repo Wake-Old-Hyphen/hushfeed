@@ -65,14 +65,16 @@ final class VideoDownloads {
         if (selected == null && captions.isEmpty() && !muted && !extras) return false;
         List<String> selectedUrls = urls(Reflect.property(selected, "getPlayAddr", "playAddr"));
         if (selected == null) {
-            selectedUrls = sourceUrls(video);
+            selectedUrls = automaticUrls(video);
         }
         List<String> videoUrls = List.copyOf(selectedUrls);
         boolean dash = selected != null && Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"));
         List<String> audioUrls = dash ? List.copyOf(audioUrls(video, selected)) : Collections.emptyList();
         boolean unavailable = videoUrls.isEmpty() || (dash && !muted && audioUrls.isEmpty());
         if (unavailable && !checkSaved) {
-            if (extras) {
+            // A details file can't come from TikTok's own save, so that save is refused here. A
+            // progress row alone is no reason to refuse one TikTok could still have made.
+            if (withDetails) {
                 Utils.showToastLong(L10n.t("This video isn't available as a complete file. Try again later."));
                 return true;
             }
@@ -163,7 +165,7 @@ final class VideoDownloads {
                             }
                             published[0] = MediaFileWriter.publishForResult(app, result, name, "video/mp4", path, true);
                         } catch (IOException | RuntimeException failure) {
-                            progress.cancel();
+                            progress.stop();
                             throw failure;
                         }
                         if (checkSaved) {
@@ -259,6 +261,17 @@ final class VideoDownloads {
     }
 
     /** Every address the video itself can be fetched from, best first. */
+    /**
+     * Automatic, taken over for a switch like details or progress, keeps to the file TikTok's
+     * own save would have made: the stamped one while Remove watermark is off. It fetched the
+     * clean one whatever that switch said.
+     */
+    static List<String> automaticUrls(Object video) {
+        if (DownloadsPatch.shouldRemoveWatermark()) return sourceUrls(video);
+        List<String> stamped = urls(Reflect.property(video, "getDownloadAddr", "downloadAddr"));
+        return stamped.isEmpty() ? sourceUrls(video) : stamped;
+    }
+
     static List<String> sourceUrls(Object video) {
         List<String> found = urls(Reflect.property(video, "getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"));
         if (found.isEmpty()) found = urls(Reflect.property(video, "getDownloadAddr", "downloadAddr"));

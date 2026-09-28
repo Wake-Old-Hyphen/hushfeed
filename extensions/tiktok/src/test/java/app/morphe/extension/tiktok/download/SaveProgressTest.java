@@ -202,6 +202,27 @@ public class SaveProgressTest {
                 SaveProgress.message(new SaveProgress.Outcome(4, 1, 0, 3, SaveProgress.Stop.NO_TIME), "all"));
     }
 
+    /** A save that failed says so itself; the row must not announce a file that never comes. */
+    @Test public void aFailedSaveStopsTheRestWithoutSayingItIsStopping() {
+        try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            SaveProgress progress = SaveProgress.begin(3);
+            settle();
+            List<Integer> ran = new ArrayList<>();
+            progress.run(index -> {
+                ran.add(index);
+                progress.stop();
+                idle();
+                assertNull("a failure was announced as a cancel", find(root, "Stopping after this file"));
+            });
+            idle();
+            assertEquals(List.of(0), ran);
+            assertEquals(List.of("Saving 1 of 3"), said);
+        }
+    }
+
     @Test public void theMessageNamesSkippedAndCancelledTogether() {
         assertEquals("Saved 2 of 6, 1 skipped and the rest cancelled",
                 SaveProgress.message(new SaveProgress.Outcome(6, 2, 1, 3), "all"));

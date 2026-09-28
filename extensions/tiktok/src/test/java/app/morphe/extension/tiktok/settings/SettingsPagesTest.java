@@ -805,6 +805,8 @@ public class SettingsPagesTest {
             Activity activity = owner.get();
             Utils.setContext(activity);
             Settings.AUTO_ADVANCE.save(false);
+            // The speed picker is live only while its switch is on; it greys with it off.
+            Settings.DEFAULT_SPEED_ENABLED.save(true);
             TikTokPreferenceFragment page = attachSection(activity, "PLAYBACK");
             UiCapture.save(page.getView(), "pages/dark/playback-controls.png");
             ListView list = page.getView().findViewById(android.R.id.list);
@@ -837,6 +839,8 @@ public class SettingsPagesTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("0.5", Settings.DEFAULT_SPEED.get());
             assertFalse(dialog.isShowing());
+        } finally {
+            Settings.DEFAULT_SPEED_ENABLED.resetToDefault();
         }
     }
 
@@ -882,6 +886,59 @@ public class SettingsPagesTest {
                 assertTrue("the target row sits flush at the top with no context above it",
                         row.getTop() > list.getPaddingTop());
             }
+        }
+    }
+
+    /** A row greyed until its switch is on is found too; its page says which switch that is. */
+    @Test public void settingsSearchFindsARowWaitingOnItsSwitch() throws Exception {
+        Settings.AUTO_ADVANCE.save(false);
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            TikTokPreferenceFragment home = attachHome(activity);
+            Preference search = findPreference(home.getPreferenceScreen(), "Search settings");
+            assertTrue(search.getOnPreferenceClickListener().onPreferenceClick(search));
+            activity.getFragmentManager().executePendingTransactions();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+            TikTokPreferenceFragment page = (TikTokPreferenceFragment) activity.getFragmentManager()
+                    .findFragmentById(android.R.id.content);
+            ((EditText) page.getView().findViewWithTag("settings_search_input")).setText("session limit");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertNotNull("a row greyed by its switch dropped out of search",
+                    findPreference(page.getPreferenceScreen(), "Auto-advance session limit"));
+        } finally {
+            Settings.AUTO_ADVANCE.resetToDefault();
+        }
+    }
+
+    /** Pause Hushfeed lives on the master menu, so its result has no section to open. */
+    @Test public void settingsSearchOpensPauseHushfeedOnTheMasterMenu() throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            TikTokPreferenceFragment home = attachHome(activity);
+            Preference search = findPreference(home.getPreferenceScreen(), "Search settings");
+            assertTrue(search.getOnPreferenceClickListener().onPreferenceClick(search));
+            activity.getFragmentManager().executePendingTransactions();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+            TikTokPreferenceFragment page = (TikTokPreferenceFragment) activity.getFragmentManager()
+                    .findFragmentById(android.R.id.content);
+            EditText input = (EditText) page.getView().findViewWithTag("settings_search_input");
+            input.setText("pause");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Preference result = findPreference(page.getPreferenceScreen(), "Pause Hushfeed");
+            assertNotNull(result);
+
+            assertTrue(result.getOnPreferenceClickListener().onPreferenceClick(result));
+            activity.getFragmentManager().executePendingTransactions();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            TikTokPreferenceFragment targetPage = (TikTokPreferenceFragment) activity.getFragmentManager()
+                    .findFragmentById(android.R.id.content);
+            assertNull(targetPage.getArguments().getString("morphe_settings_section"));
+            ListView list = targetPage.getView().findViewById(android.R.id.list);
+            assertTrue(positionOf(list, app.morphe.extension.shared.settings.BaseSettings.PAUSED.key) >= 0);
         }
     }
 
@@ -1955,6 +2012,31 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             Settings.REGION_SPOOF.resetToDefault();
             SettingsStatus.simSpoofEnabled = sim;
             SettingsStatus.regionSpoofEnabled = region;
+        }
+    }
+
+    /**
+     * The default speed is read only while its switch is on. Its row took a choice that did
+     * nothing and said so nowhere; now it greys, and the note sits under the value on its own
+     * line rather than running on from it.
+     */
+    @Test public void aChoiceWaitingOnItsSwitchGreysAndSaysSoOnItsOwnLine() throws Exception {
+        boolean speed = SettingsStatus.playbackSpeedEnabled;
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            SettingsStatus.playbackSpeedEnabled = true;
+            Settings.DEFAULT_SPEED_ENABLED.save(false);
+            TikTokPreferenceFragment page = attachSection(activity, "PLAYBACK");
+            Preference choice = findPreference(page.getPreferenceScreen(), "Default playback speed");
+            assertNotNull(choice);
+            assertFalse("the default speed stayed live with its switch off", choice.isEnabled());
+            String[] lines = String.valueOf(choice.getSummary()).split("\n");
+            assertEquals("Turn on Use a default playback speed first.", lines[lines.length - 1]);
+            assertTrue("the value lost its own line", lines.length >= 2);
+        } finally {
+            Settings.DEFAULT_SPEED_ENABLED.resetToDefault();
+            SettingsStatus.playbackSpeedEnabled = speed;
         }
     }
 

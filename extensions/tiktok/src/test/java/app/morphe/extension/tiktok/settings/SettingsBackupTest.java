@@ -130,6 +130,35 @@ public class SettingsBackupTest {
                 SettingsBackup.foldersKept(legacy));
     }
 
+    /**
+     * A restore that kept a device folder wrote less than its file carries. Its journal, left
+     * behind by a failed delete, used to read at the next start as an interrupted restore and put
+     * the old settings back over a restore that had finished.
+     */
+    @Test public void aJournalLeftByARestoreThatKeptAFolderReadsAsCommitted() throws Exception {
+        Settings.DOWNLOAD_VIDEO_PATH.save("Pictures/Clips");
+        Settings.REGION_SPOOF.save(true);
+        String backup = SettingsBackup.create(false);
+        Settings.DOWNLOAD_VIDEO_PATH.save("Movies/Mine");
+        Settings.REGION_SPOOF.save(false);
+
+        SettingsOperationJournal.failCommittedDeletesForTests(true);
+        try {
+            SettingsBackup.restore(Utils.getContext(), backup, true);
+        } finally {
+            SettingsOperationJournal.failCommittedDeletesForTests(false);
+        }
+        assertTrue("no journal was left behind, so this checks nothing",
+                new java.io.File(Utils.getContext().getFilesDir(), "hushfeed-settings-operation.json").isFile());
+
+        SettingsOperationJournal.acquire(Utils.getContext()).complete();
+
+        assertTrue("the next start put a committed restore back", Settings.REGION_SPOOF.get());
+        assertEquals("Movies/Mine", Settings.DOWNLOAD_VIDEO_PATH.get());
+        assertEquals(SettingsOperationJournal.Recovery.ALREADY_COMMITTED,
+                SettingsOperationJournal.consumeRecoveryNotice());
+    }
+
     /** A folder that can't hold its kind keeps the device's; the rest restores; undo puts all back. */
     @Test public void aRestoredFolderThatCantHoldItsKindKeepsTheDevicesAndUndoPutsItAllBack()
             throws Exception {
@@ -168,6 +197,24 @@ public class SettingsBackupTest {
         return root.put("setting_keys", kept).toString();
     }
 
+    /**
+     * Undo used to leave its copy as it was and keep nothing of what it replaced, so an Undo a
+     * week after a restore wiped the week's changes with no way back. A second Undo brings them.
+     */
+    @Test public void aSecondUndoBringsBackWhatTheFirstReplaced() throws Exception {
+        Settings.MAX_VIDEO_SECONDS.save(11);
+        String restored = SettingsBackup.create(false);
+        Settings.MAX_VIDEO_SECONDS.save(22);
+        SettingsBackup.restore(Utils.getContext(), restored, true);
+        assertEquals(11, (int) Settings.MAX_VIDEO_SECONDS.get());
+        Settings.MAX_VIDEO_SECONDS.save(33);
+
+        SettingsBackup.undo(Utils.getContext());
+        assertEquals(22, (int) Settings.MAX_VIDEO_SECONDS.get());
+        SettingsBackup.undo(Utils.getContext());
+        assertEquals("the changes made after the restore were lost", 33, (int) Settings.MAX_VIDEO_SECONDS.get());
+    }
+
     @Test public void malformedLateValuesNeverPartiallyApplyOrReplaceUndo() throws Exception {
         Settings.MAX_VIDEO_SECONDS.save(42);
         SettingsBackup.reset(Utils.getContext());
@@ -197,6 +244,24 @@ public class SettingsBackupTest {
             assertThrows(Exception.class, () -> SettingsBackup.restore(Utils.getContext(), invalid, true));
             assertEquals(baseline, SettingsBackup.create(false));
         }
+    }
+
+    /**
+     * The Lab's own undo copy held the rules from before its last change. Pressed after a
+     * restore that wrote the Lab, it took back every rule the restore had put there.
+     */
+    @Test public void aRestoreThatWritesTheLabRetiresTheLabsOwnUndo() throws Exception {
+        java.io.File labUndo = new java.io.File(Utils.getContext().getFilesDir(), "feature-gate-lab-undo.json");
+        java.nio.file.Files.write(labUndo.toPath(), "{}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        JSONObject backup = new JSONObject(SettingsBackup.create(false));
+        backup.getJSONObject("lab").getJSONArray("rules").put(new JSONObject().put("manager", "abmock")
+                .put("key", "restored_gate").put("type", "BOOLEAN").put("value", "true").put("force", true));
+
+        SettingsBackup.restore(Utils.getContext(), backup.toString(), true);
+
+        assertEquals(1, FeatureGateLabStore.rules().size());
+        assertFalse("the Lab kept an undo that would take the restored rules back", labUndo.exists());
+        FeatureGateLabStore.resetAllLabData();
     }
 
     @Test public void aBackupWithMoreLabRulesThanTheLabKeepsIsRefusedByName() throws Exception {

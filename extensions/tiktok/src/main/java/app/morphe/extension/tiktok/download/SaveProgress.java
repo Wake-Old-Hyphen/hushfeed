@@ -144,6 +144,14 @@ final class SaveProgress {
         return cancelled.get();
     }
 
+    /**
+     * Stops after the file under way without a word, for a save that failed: its own message
+     * says so, and "Stopping after this file" read aloud over it named a file that never came.
+     */
+    void stop() {
+        cancelled.set(true);
+    }
+
     /** Stops after the file under way. The row says so, aloud once, until that file is done. */
     void cancel() {
         if (!cancelled.compareAndSet(false, true)) return;
