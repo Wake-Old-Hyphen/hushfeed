@@ -61,6 +61,9 @@ public final class CurrentVideoAuthor {
 
     /** Runs between the player's lookup and its select, so a test can land a bind there. */
     private static volatile Runnable betweenLookupAndSelectForTests;
+    /** How often the player's report asks whether the budget is spent, on the budget's clock. */
+    private static final long CLAIM_EVERY_MS = 1_000L;
+    private static volatile long lastClaimAskedAt = Long.MIN_VALUE / 2;
 
     private CurrentVideoAuthor() {
     }
@@ -117,6 +120,19 @@ public final class CurrentVideoAuthor {
         // Before the early return: this is the only signal that arrives while a video plays,
         // so it is the only thing that can measure how long the feed has been running.
         SessionBudget.noteWatching();
+        // The budget can run out halfway through a video, or be spent already once the reader
+        // lowers it, and the notice and the hold are due then: left to the next video change, a
+        // long or looping one played on past the budget. claimNotice answers once per spent
+        // budget and re-arms itself when a raised budget puts the reader under it again.
+        // Only while a budget counts: with none set there is nothing to run out, and the video
+        // change still asks, which is what lets a removed budget's hold go.
+        if (SessionBudget.isCounting()) {
+            long now = SessionBudget.now();
+            if (now - lastClaimAskedAt >= CLAIM_EVERY_MS || now < lastClaimAskedAt) {
+                lastClaimAskedAt = now;
+                if (SessionBudget.claimNotice()) SessionBudgetNotice.show();
+            }
+        }
         SessionLockOverlay.ensureRunning();
         // Follows the budget rather than a clock of its own, so it is redrawn from the same
         // signal that measures the budget. Switched off, which is the default, it returns on
@@ -207,6 +223,7 @@ public final class CurrentVideoAuthor {
 
     static void resetForTests() {
         betweenLookupAndSelectForTests = null;
+        lastClaimAskedAt = Long.MIN_VALUE / 2;
         RECENT.clear();
         current = null;
         playingAwemeId = null;

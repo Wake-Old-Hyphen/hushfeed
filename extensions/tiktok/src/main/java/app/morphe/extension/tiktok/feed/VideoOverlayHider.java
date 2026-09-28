@@ -22,6 +22,7 @@ import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.navigation.NavigationTabsFilter;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -199,15 +200,6 @@ public final class VideoOverlayHider {
      */
     static final long STATUS_BAR_PEEK_MS = 4000L;
 
-    /**
-     * The pager a video opened from a profile, a hashtag, a sound or search plays in. It is an
-     * activity of its own, holding the same feed cell with the same right column ids (read off
-     * the S22 on 47.0.3, 2026-09-28, and named in both builds' manifests), so the hides follow
-     * it there (#47: every Like, Save and Share hide stopped at the creator's videos). The tab
-     * strip and the status bar belong to the main feed and are left as TikTok sets them here.
-     */
-    static final String DETAIL_PAGER = "com.ss.android.ugc.aweme.detail.ui.DetailActivity";
-    private static final String MAIN_ACTIVITY = "com.ss.android.ugc.aweme.main.MainActivity";
     private static WeakReference<Application> followed = new WeakReference<>(null);
 
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);
@@ -261,7 +253,7 @@ public final class VideoOverlayHider {
         followed = new WeakReference<>(application);
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityResumed(Activity resumed) {
-                if (isFeedWindow(resumed)) installNow(resumed);
+                if (FeedVisibility.isFeedWindow(resumed)) installNow(resumed);
             }
 
             @Override public void onActivityCreated(Activity created, Bundle state) { }
@@ -271,16 +263,6 @@ public final class VideoOverlayHider {
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
             @Override public void onActivityDestroyed(Activity destroyed) { }
         });
-    }
-
-    static boolean isFeedWindow(Activity activity) {
-        if (activity == null) return false;
-        String name = activity.getClass().getName();
-        return MAIN_ACTIVITY.equals(name) || DETAIL_PAGER.equals(name);
-    }
-
-    static boolean isDetailPager(Activity activity) {
-        return activity != null && DETAIL_PAGER.equals(activity.getClass().getName());
     }
 
     private static void apply() {
@@ -310,7 +292,7 @@ public final class VideoOverlayHider {
                 hide(activity, SEARCH_MODULE_PACKAGE, VISUAL_SEARCH_LAYER_IDS);
                 hide(activity, SEARCH_MODULE_PACKAGE, VISUAL_SEARCH_PILL_IDS);
             }
-            boolean detailPager = isDetailPager(activity);
+            boolean detailPager = FeedVisibility.isDetailPager(activity);
             // The LIVE entrance is the main feed's; looked for in the detail pager it was reported
             // missing on every pass, and the hook table called the overlay hooks broken.
             if (Settings.HIDE_LIVE_ENTRANCE.get() && !detailPager) {

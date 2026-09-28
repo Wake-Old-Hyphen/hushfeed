@@ -51,6 +51,8 @@ final class VideoDownloads {
         boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
         boolean withDetails = Settings.DOWNLOAD_DETAILS.get();
         boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
+        // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
+        long archiveGeneration = SavedVideoArchive.generation();
         boolean showProgress = Settings.DOWNLOAD_PROGRESS.get();
         boolean extras = withDetails || checkSaved || showProgress;
         // Photo posts can carry a video model too. Their own save keeps stills and live photos.
@@ -170,7 +172,7 @@ final class VideoDownloads {
                         }
                         if (checkSaved) {
                             try {
-                                SavedVideoArchive.remember(app, id, published[0]);
+                                SavedVideoArchive.remember(app, id, published[0], archiveGeneration);
                                 remembered[0] = true;
                             } catch (RuntimeException failure) {
                                 Logger.printException(() -> "Could not remember the saved video", failure);

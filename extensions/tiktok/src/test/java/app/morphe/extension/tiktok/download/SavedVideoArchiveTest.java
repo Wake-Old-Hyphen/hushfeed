@@ -319,7 +319,8 @@ public class SavedVideoArchiveTest {
         File video = new File(RuntimeEnvironment.getApplication().getCacheDir(), "archive-limit.mp4");
         Files.write(video.toPath(), VIDEO);
         try {
-            SavedVideoArchive.remember(owner.get(), "initial", new MediaFileWriter.Saved(video.getName(), null, video));
+            SavedVideoArchive.remember(owner.get(), "initial", new MediaFileWriter.Saved(video.getName(), null, video),
+                    SavedVideoArchive.generation());
             try (var db = owner.get().openOrCreateDatabase(SavedVideoArchive.DATABASE_NAME, 0, null)) {
                 db.beginTransaction();
                 try {
@@ -329,7 +330,8 @@ public class SavedVideoArchiveTest {
                     db.setTransactionSuccessful();
                 } finally { db.endTransaction(); }
             }
-            SavedVideoArchive.remember(owner.get(), "newest", new MediaFileWriter.Saved(video.getName(), null, video));
+            SavedVideoArchive.remember(owner.get(), "newest", new MediaFileWriter.Saved(video.getName(), null, video),
+                    SavedVideoArchive.generation());
             try (var db = owner.get().openOrCreateDatabase(SavedVideoArchive.DATABASE_NAME, 0, null);
                  var count = db.rawQuery("SELECT COUNT(*) FROM saved_videos", null)) {
                 assertTrue(count.moveToFirst());

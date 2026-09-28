@@ -271,6 +271,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_TAB_BADGES = new BooleanSetting("hide_tab_badges", FALSE, true);
     public static final BooleanSetting KEEP_FOR_YOU_ON_TAB_TAP = new BooleanSetting("keep_for_you_on_tab_tap", FALSE);
     public static final BooleanSetting KEEP_FOR_YOU_ON_PULL_DOWN = new BooleanSetting("keep_for_you_on_pull_down", FALSE);
+    /** A long press on the Home tab opens Hushfeed's settings (#45). TikTok gives that press nothing of its own. */
+    public static final BooleanSetting HOME_TAB_OPENS_SETTINGS = new BooleanSetting("home_tab_opens_settings", TRUE);
     /** The tab TikTok opens on from its icon: tiktok (its own pick), for_you, following, friends, inbox or profile. */
     public static final StringSetting START_PAGE = new StringSetting("start_page", "tiktok");
     /** TikTok's previous, pause and next buttons on the feed, shown without a screen reader. Off by default. */

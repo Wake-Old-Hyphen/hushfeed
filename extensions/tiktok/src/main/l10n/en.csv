@@ -96,6 +96,7 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.
+"A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.","A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another."
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.","A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out."
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.
 A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.,A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.
@@ -237,7 +238,7 @@ Clear display delay,Clear display delay
 Clear preset,Clear preset
 Clear search,Clear search
 Clear seen videos,Clear seen videos
-"Clear the recent events, saved crash reports and the hook status above.","Clear the recent events, saved crash reports and the hook status above."
+"Clear the recent events, saved crash reports, a recorded screen layout and the hook status above.","Clear the recent events, saved crash reports, a recorded screen layout and the hook status above."
 Clear the search,Clear the search
 Cleared. Tap to undo before TikTok closes.,Cleared. Tap to undo before TikTok closes.
 Clearing,Clearing
@@ -289,13 +290,16 @@ Couldn't clear the suggested accounts. Reopen the Inbox and try again.,Couldn't 
 Couldn't confirm the block for %1$s. Open their profile to check.,Couldn't confirm the block for %1$s. Open their profile to check.
 Couldn't confirm the unblock for %1$s. Open their profile to check.,Couldn't confirm the unblock for %1$s. Open their profile to check.
 Couldn't copy the report. Use Save report instead.,Couldn't copy the report. Use Save report instead.
+Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. Try again.
 Couldn't open settings search. Reopen settings and try again.,Couldn't open settings search. Reopen settings and try again.
 Couldn't open that settings section. Reopen settings and try again.,Couldn't open that settings section. Reopen settings and try again.
 Couldn't open the file picker to export. Try again.,Couldn't open the file picker to export. Try again.
 Couldn't open the file picker to import. Try again.,Couldn't open the file picker to import. Try again.
 Couldn't put back the diagnostic data. Try again.,Couldn't put back the diagnostic data. Try again.
+Couldn't put the saved videos back. Try again.,Couldn't put the saved videos back. Try again.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.
 Couldn't read who posted this comment. Open their profile and block them there.,Couldn't read who posted this comment. Open their profile and block them there.
+Couldn't record the screen's layout. Start again from Diagnostics.,Couldn't record the screen's layout. Start again from Diagnostics.
 Couldn't reset this override. Try again.,Couldn't reset this override. Try again.
 Couldn't restart TikTok. Close it and open it again.,Couldn't restart TikTok. Close it and open it again.
 Couldn't restore the settings. Try again.,Couldn't restore the settings. Try again.
@@ -426,12 +430,16 @@ Forced %1$d gates. Restart TikTok to apply this.,Forced %1$d gates. Restart TikT
 Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
 Forced 1 gate. Restart TikTok to apply this.,Forced 1 gate. Restart TikTok to apply this.
 Forced result,Forced result
+Forget saved videos,Forget saved videos
 Forget seen videos after,Forget seen videos after
 Forget the %1$s seen videos.,Forget the %1$s seen videos.
 Forget the %1$s videos @%2$s has seen.,Forget the %1$s videos @%2$s has seen.
 Forget the seen video.,Forget the seen video.
 Forget the video @%2$s has seen.,Forget the video @%2$s has seen.
 Forget what has been counted today and end any hold. The budgets themselves are left alone.,Forget what has been counted today and end any hold. The budgets themselves are left alone.
+"Forget which videos Hushfeed saved here, so the already-saved check starts over. The saved files and your settings stay. Turning the check off doesn't erase this record.","Forget which videos Hushfeed saved here, so the already-saved check starts over. The saved files and your settings stay. Turning the check off doesn't erase this record."
+Forgetting saved videos,Forgetting saved videos
+Forgotten. Tap to put them back.,Forgotten. Tap to put them back.
 Friends,Friends
 "From the next start TikTok runs as if it weren't patched, so you can tell whether a problem comes from Hushfeed. Your settings stay as they are.","From the next start TikTok runs as if it weren't patched, so you can tell whether a problem comes from Hushfeed. Your settings stay as they are."
 Full comment sort options,Full comment sort options
@@ -444,6 +452,7 @@ Generated defaults,Generated defaults
 Gestures,Gestures
 Ghost mode,Ghost mode
 Ghost mode diagnostics,Ghost mode diagnostics
+Go to the screen now. Hushfeed records its layout in %1$d seconds.,Go to the screen now. Hushfeed records its layout in %1$d seconds.
 Got it,Got it
 Hand-off,Hand-off
 Handle or id,Handle or id
@@ -669,6 +678,7 @@ Lock today's budget,Lock today's budget
 Log diagnostics,Log diagnostics
 "Logging, hook status and reports","Logging, hook status and reports"
 Long press,Long press
+Long-press Home for Hushfeed settings,Long-press Home for Hushfeed settings
 Lowest,Lowest
 Make TikTok yours.,Make TikTok yours.
 Manager,Manager
@@ -745,6 +755,7 @@ Nothing is playing to seek,Nothing is playing to seek
 "Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s","Nothing new was imported. %1$d already matched, %2$d unavailable, %3$d rejected. First rejection: %4$s"
 Nothing on this page changes what TikTok does until they are on.,Nothing on this page changes what TikTok does until they are on.
 Nothing to undo yet.,Nothing to undo yet.
+"Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.","Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings."
 Notices from this project and the ones it's built on,Notices from this project and the ones it's built on
 OK,OK
 Off,Off
@@ -823,6 +834,7 @@ Preset applied. Restart TikTok to use it.,Preset applied. Restart TikTok to use 
 Preset saved. Turn on overrides in the Lab to use it.,Preset saved. Turn on overrides in the Lab to use it.
 Press and hold a profile picture to save the full size original to your photo destination.,Press and hold a profile picture to save the full size original to your photo destination.
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over."
+Press and hold the Home tab to open these settings. A tap on Home works as before.,Press and hold the Home tab to open these settings. A tap on Home works as before.
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.,Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.
 Preview shortened. Save report keeps the full report.,Preview shortened. Save report keeps the full report.
 Privacy,Privacy
@@ -838,12 +850,14 @@ Protect external pages in TikTok's browser,Protect external pages in TikTok's br
 Pulling down at the top of For You no longer reloads it.,Pulling down at the top of For You no longer reloads it.
 Put back the settings saved before the last restore or reset.,Put back the settings saved before the last restore or reset.
 Put every setting back to its default straight away. Your current settings are kept for Undo.,Put every setting back to its default straight away. Your current settings are kept for Undo.
+Putting the saved videos back,Putting the saved videos back
 Putting the settings back to their defaults,Putting the settings back to their defaults
 Quality,Quality
 "Quality, files, subtitles and hand-off","Quality, files, subtitles and hand-off"
 "Quality, speed and auto-advance","Quality, speed and auto-advance"
 Quick setup,Quick setup
 Reading,Reading
+Record a screen's layout,Record a screen's layout
 Recorded gate reads (%1$d),Recorded gate reads (%1$d)
 "Recording gate reads. Use a feature, then return here to stop.","Recording gate reads. Use a feature, then return here to stop."
 Recovered an interrupted settings change. Restart TikTok to apply this.,Recovered an interrupted settings change. Restart TikTok to apply this.
@@ -928,6 +942,8 @@ Saved %1$s of %2$s photos before the story failed,Saved %1$s of %2$s photos befo
 "Saved %1$s of %2$s, the rest ran out of time","Saved %1$s of %2$s, the rest ran out of time"
 Saved %1$s original photos,Saved %1$s original photos
 Saved one original photo,Saved one original photo
+Saved videos forgotten. The files are still there.,Saved videos forgotten. The files are still there.
+Saved videos put back,Saved videos put back
 "Saved, override off","Saved, override off"
 Saved. Restart TikTok to apply this.,Saved. Restart TikTok to apply this.
 Saving,Saving
@@ -942,6 +958,7 @@ Saving video,Saving video
 Saving video to %1$s,Saving video to %1$s
 Saving video: %1$s,Saving video: %1$s
 Screen,Screen
+Screen layout recorded. Export the diagnostic report to send it.,Screen layout recorded. Export the diagnostic report to send it.
 Screen time,Screen time
 Search,Search
 Search and override gates,Search and override gates
@@ -1083,6 +1100,7 @@ Tap again to send,Tap again to send
 Tap the feed Follow button twice within %1$d seconds.,Tap the feed Follow button twice within %1$d seconds.
 Tap the like heart twice within %1$d seconds. Removing a like stays immediate.,Tap the like heart twice within %1$d seconds. Removing a like stays immediate.
 Tap to start the feed,Tap to start the feed
+"Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.","Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report."
 Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.,Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.
 Technical details,Technical details
 "Technical details, %1$s","Technical details, %1$s"
@@ -1165,6 +1183,7 @@ There is no Lab change to undo.,There is no Lab change to undo.
 There is no diagnostic data to clear,There is no diagnostic data to clear
 There is no diagnostic data to put back,There is no diagnostic data to put back
 There was nothing to put back,There was nothing to put back
+There were no saved videos to forget,There were no saved videos to forget
 These loaded values are for a different TikTok version.,These loaded values are for a different TikTok version.
 This catalog entry is no longer available. Refresh the Lab and try again.,This catalog entry is no longer available. Refresh the Lab and try again.
 This change couldn't be saved. Try again.,This change couldn't be saved. Try again.
@@ -1231,6 +1250,7 @@ Today: %1$d videos,Today: %1$d videos
 "Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically.","Tokens: {creator}, {date}, {video_id}, {index}. {index} numbers the photos of a slideshow you save with Download original photos. Anything saved through TikTok's own button is numbered by the folder instead. The file extension is kept automatically."
 "Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically.","Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creator a folder. The file extension is kept automatically."
 "Tokens: {date}, {media_id}. Works for image and video stickers.","Tokens: {date}, {media_id}. Works for image and video stickers."
+Too late to put the saved videos back,Too late to put the saved videos back
 Too many media saves are already running. Try again in a moment.,Too many media saves are already running. Try again in a moment.
 Tracking,Tracking
 "Tracking, device access and links","Tracking, device access and links"
@@ -1256,6 +1276,7 @@ Unblock this commenter,Unblock this commenter
 Unblocked %1$s,Unblocked %1$s
 Undo,Undo
 Undo clearing seen videos,Undo clearing seen videos
+Undo forgetting saved videos,Undo forgetting saved videos
 Undo last Lab change,Undo last Lab change
 Undo last restore or reset,Undo last restore or reset
 Undoing the last change,Undoing the last change
@@ -1298,6 +1319,7 @@ Views range,Views range
 Wait a day to loosen the budget,Wait a day to loosen the budget
 "Wait a day to loosen the budget is on, so Hushfeed stays on","Wait a day to loosen the budget is on, so Hushfeed stays on"
 Wait before hiding the controls.,Wait before hiding the controls.
+Waiting to record. Go to the screen you want recorded.,Waiting to record. Go to the screen you want recorded.
 Watching and sharing,Watching and sharing
 "WebP, exactly as TikTok sent it","WebP, exactly as TikTok sent it"
 What TikTok gets,What TikTok gets

@@ -220,7 +220,15 @@ Choose which rows and controls appear	Wähle sichtbare Zeilen und Bedienelemente
 Clear all	Alle löschen
 Clear all Lab data (overrides, switch, recordings)	Alle Labordaten löschen (Überschreibungen, Schalter, Aufzeichnungen)
 Clear all suggested accounts	Alle vorgeschlagenen Konten löschen
-Clear the recent events, saved crash reports and the hook status above.	Die letzten Ereignisse, gespeicherte Absturzberichte und den Hook-Status oben löschen.
+Clear the recent events, saved crash reports, a recorded screen layout and the hook status above.	Die letzten Ereignisse, gespeicherte Absturzberichte, ein aufgezeichnetes Bildschirmlayout und den Hook-Status oben löschen.
+Record a screen's layout	Layout eines Bildschirms aufzeichnen
+Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.	Tippe hier und geh dann zu dem Bildschirm mit dem, was ausgeblendet werden soll. Nach %1$d Sekunden zeichnet Hushfeed auf, wie dieser Bildschirm aufgebaut ist, ohne seinen Text, für den Diagnosebericht.
+Waiting to record. Go to the screen you want recorded.	Warte auf die Aufzeichnung. Geh zu dem Bildschirm, der aufgezeichnet werden soll.
+A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.	Ein Bildschirmlayout ist aufgezeichnet. Exportiere den Diagnosebericht, um es zu senden, oder tippe, um ein anderes aufzuzeichnen.
+Go to the screen now. Hushfeed records its layout in %1$d seconds.	Geh jetzt zu dem Bildschirm. Hushfeed zeichnet sein Layout in %1$d Sekunden auf.
+Screen layout recorded. Export the diagnostic report to send it.	Bildschirmlayout aufgezeichnet. Exportiere den Diagnosebericht, um es zu senden.
+Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.	Es wurde nichts aufgezeichnet, weil die Hushfeed-Einstellungen noch offen waren. Starte erneut und verlasse dann die Einstellungen.
+Couldn't record the screen's layout. Start again from Diagnostics.	Das Layout des Bildschirms konnte nicht aufgezeichnet werden. Starte erneut unter Diagnose.
 Clear diagnostic data	Diagnosedaten löschen
 Clear display	Freie Ansicht
 Clear display delay	Verzögerung der freien Ansicht
@@ -316,6 +324,8 @@ Diagnostic report copied to the clipboard	Diagnosebericht in die Zwischenablage 
 Diagnostics	Diagnose
 Disable	Ausschalten
 Stop analytics and tracking	Analyse und Tracking stoppen
+Long-press Home for Hushfeed settings	Startseite lange drücken für Hushfeed-Einstellungen
+Press and hold the Home tab to open these settings. A tap on Home works as before.	Halte den Tab Startseite gedrückt, um diese Einstellungen zu öffnen. Ein Tippen auf Startseite funktioniert wie bisher.
 Keep For You on a Home tap	„Für dich“ beim Tippen auf Startseite behalten
 Keep For You on a pull down	„Für dich“ beim Herunterziehen behalten
 Keep long press from quick sharing	Langes Drücken nicht schnell teilen lassen
@@ -1309,6 +1319,18 @@ Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creato
 Save details beside the video	Details neben dem Video speichern
 Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.	Speichere Beschreibung, Ersteller, Link und Veröffentlichungsdatum als TXT. Ab Android 10 liegen beide Dateien unter demselben Ordnernamen in Download oder Documents. Gilt für hier gespeicherte Videos.
 Check for already-saved videos	Bereits gespeicherte Videos prüfen
+Forget saved videos	Gespeicherte Videos vergessen
+Undo forgetting saved videos	Vergessen der gespeicherten Videos rückgängig machen
+Forget which videos Hushfeed saved here, so the already-saved check starts over. The saved files and your settings stay. Turning the check off doesn't erase this record.	Vergisst, welche Videos Hushfeed hier gespeichert hat, damit die Prüfung auf bereits gespeicherte Videos neu beginnt. Die gespeicherten Dateien und deine Einstellungen bleiben. Die Prüfung auszuschalten löscht diese Liste nicht.
+Forgetting saved videos	Gespeicherte Videos werden vergessen
+Putting the saved videos back	Gespeicherte Videos werden zurückgeholt
+Forgotten. Tap to put them back.	Vergessen. Tippe, um sie zurückzuholen.
+Saved videos forgotten. The files are still there.	Gespeicherte Videos vergessen. Die Dateien sind noch da.
+There were no saved videos to forget	Es gab keine gespeicherten Videos zum Vergessen
+Couldn't forget the saved videos. Try again.	Die gespeicherten Videos konnten nicht vergessen werden. Versuch es erneut.
+Saved videos put back	Gespeicherte Videos zurückgeholt
+Couldn't put the saved videos back. Try again.	Die gespeicherten Videos konnten nicht zurückgeholt werden. Versuch es erneut.
+Too late to put the saved videos back	Zu spät, um die gespeicherten Videos zurückzuholen
 Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.	Merke dir bis zu %1$s Videos, die hier bei aktivierter Option gespeichert werden. Existiert die Datei noch, erscheint vor einem erneuten Download die Wahl Öffnen oder Erneut speichern.
 This video is already saved. Open TikTok to save another copy.	Dieses Video ist bereits gespeichert. Öffne TikTok, um eine weitere Kopie zu speichern.
 This video is already saved	Dieses Video ist bereits gespeichert

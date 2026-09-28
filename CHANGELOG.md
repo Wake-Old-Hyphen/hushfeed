@@ -2,6 +2,19 @@
 
 Every Hushfeed release, newest first.
 
+## Unreleased
+
+* **TikTok:** Diagnostics can record a screen's layout for a "please hide this" report. Tap Record a screen's layout, go to the screen, and twenty seconds later the next exported report carries how that screen and any sheet over it are built, without any of its text.
+* **TikTok:** The block control, the mute button and Hushfeed's other buttons over the video now show on a video opened from a creator's profile, a hashtag or a sound, and come back to the feed with you. They stayed on the feed behind that screen, where nobody could see them. Mute feed videos mutes those videos too, so the button means what it says there.
+* **TikTok:** The budget label and the fade before the hold go as soon as you switch to Profile, Inbox or another tab. Only the playing video moved them, so they could stay over those tabs, the fade nearly black. The fade also stops above the tab row now.
+* **TikTok:** When the time budget runs out partway through a long video, the notice and the hold come right then. They waited for the next video, so a long or looping one could play well past the budget. Lowering the budget below what you've already watched today brings them on the same video too.
+* **TikTok:** New row under Downloads, Forget saved videos. It empties the record behind the already-saved check, keeps the files and your settings, and offers Undo while its notice is up. A save that was already running when you forgot doesn't add itself back.
+* **TikTok:** Mute feed videos leaves another app's music playing in two more cases. Turning mute on from the settings page now gives the sound back when you return to the feed, and turning the sound back on while a video is paused makes the feed ask for it when it plays again, rather than playing over the other app. The mute button also stays off stories and LIVE replays, which keep their sound.
+* **TikTok:** Blocking a commenter from the comments is remembered for the account that did it. After switching accounts, someone the first account blocked showed as blocked for the second, and the first tap there sent an unblock. A tap on the row while the banner's Undo is still working no longer sends a second unblock.
+* **Install:** Hushfeed now needs Morphe Manager 1.32.0 or newer, because it's built against Morphe patcher 1.14.1. Older Managers say the bundle needs a Manager update. The new patcher writes Hushfeed's changes into TikTok's own resource table instead of rebuilding it, so everything the patches don't touch stays exactly as TikTok shipped it. The old one dropped the quote marks around about 70 translated phrases in TikTok's effect tools and widened the type of five attributes. Patched code is the same with either patcher on both supported TikTok builds.
+* **TikTok:** Press and hold the Home tab to open Hushfeed's settings (#45), rather than going through Profile, the menu and TikTok's own settings. A tap on Home works as before. It comes with Feed tab navigation and has its own switch under Feed tabs.
+* **TikTok:** Exported diagnostics keep room for the events that matter. Playback quality wrote a line for nearly every video, since gear names and bitrates change each time, and a busy export was almost nothing else. It now writes one line per mode and size ladder.
+
 ## 0.64.0 (2026-09-28)
 
 * **TikTok:** Hiding buttons in the right column now works on videos opened from a creator's profile, a hashtag or a sound too (#47). Those play in a screen of their own, which the hides never reached, so only the feed lost its Like, Save or Share button.

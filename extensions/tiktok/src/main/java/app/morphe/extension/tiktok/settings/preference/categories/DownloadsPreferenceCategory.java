@@ -15,6 +15,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.DownloadPathPreference;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
+import app.morphe.extension.tiktok.settings.preference.ForgetSavedVideosPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
@@ -123,6 +124,7 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     L10n.f(context, "Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.",
                             java.text.NumberFormat.getIntegerInstance().format(SavedVideoArchive.LIMIT)),
                     Settings.CHECK_SAVED_VIDEOS));
+            addPreference(new ForgetSavedVideosPreference(context));
         }
         if (SettingsStatus.advancedDownloadsEnabled || SettingsStatus.downloadEnabled) {
             addPreference(new SectionHeadingPreference(context, "Photos and stickers"));

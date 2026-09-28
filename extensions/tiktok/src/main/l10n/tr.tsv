@@ -222,7 +222,15 @@ Choose which rows and controls appear	Hangi satırların ve kontrollerin görün
 Clear all	Tümünü temizle
 Clear all Lab data (overrides, switch, recordings)	Tüm Lab verilerini temizle (geçersiz kılmalar, anahtar, kayıtlar)
 Clear all suggested accounts	Önerilen tüm hesapları temizle
-Clear the recent events, saved crash reports and the hook status above.	Son olayları, kaydedilen çökme raporlarını ve yukarıdaki kanca durumunu temizle.
+Clear the recent events, saved crash reports, a recorded screen layout and the hook status above.	Son olayları, kaydedilen çökme raporlarını, kaydedilmiş bir ekran düzenini ve yukarıdaki kanca durumunu temizle.
+Record a screen's layout	Bir ekranın düzenini kaydet
+Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.	Dokun, sonra gizlemek istediğin şeyin olduğu ekrana git. %1$d saniye sonra Hushfeed o ekranın nasıl kurulduğunu, metnini almadan, tanılama raporu için kaydeder.
+Waiting to record. Go to the screen you want recorded.	Kayıt bekleniyor. Kaydedilmesini istediğin ekrana git.
+A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.	Bir ekran düzeni kaydedildi. Göndermek için tanılama raporunu dışa aktar ya da başka birini kaydetmek için dokun.
+Go to the screen now. Hushfeed records its layout in %1$d seconds.	Şimdi ekrana git. Hushfeed %1$d saniye içinde düzenini kaydeder.
+Screen layout recorded. Export the diagnostic report to send it.	Ekran düzeni kaydedildi. Göndermek için tanılama raporunu dışa aktar.
+Nothing was recorded because Hushfeed settings were still open. Start again, then leave settings.	Hushfeed ayarları hâlâ açık olduğu için hiçbir şey kaydedilmedi. Yeniden başlat, sonra ayarlardan çık.
+Couldn't record the screen's layout. Start again from Diagnostics.	Ekranın düzeni kaydedilemedi. Tanılama bölümünden yeniden başlat.
 Clear diagnostic data	Tanılama verilerini temizle
 Clear display	Temiz ekran
 Clear display delay	Temiz ekran gecikmesi
@@ -323,6 +331,8 @@ Diagnostic report copied to the clipboard	Tanılama raporu panoya kopyalandı
 Diagnostics	Tanılama
 Disable	Devre dışı bırak
 Stop analytics and tracking	Analitiği ve izlemeyi durdur
+Long-press Home for Hushfeed settings	Hushfeed ayarları için Ana Sayfa'ya basılı tut
+Press and hold the Home tab to open these settings. A tap on Home works as before.	Bu ayarları açmak için Ana Sayfa sekmesine basılı tut. Ana Sayfa'ya dokunmak eskisi gibi çalışır.
 Keep For You on a Home tap	Ana Sayfa'ya dokununca Senin İçin'i koru
 Keep For You on a pull down	Aşağı çekince Senin İçin'i koru
 Keep long press from quick sharing	Uzun basma hızlı paylaşmasın
@@ -1306,6 +1316,18 @@ Tokens: {creator}, {date}, {video_id}. Start with {creator}/ to give each creato
 Save details beside the video	Ayrıntıları videonun yanına kaydet
 Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.	Açıklamayı, üreticiyi, bağlantıyı ve yayın tarihini bir TXT dosyasına kaydeder. Android 10 ve sonrasında iki dosya aynı klasör adıyla Download veya Documents içine kaydedilir. Burada yapılan kayıtlar için geçerlidir.
 Check for already-saved videos	Önceden kaydedilen videoları kontrol et
+Forget saved videos	Kaydedilen videoları unut
+Undo forgetting saved videos	Kaydedilen videoları unutmayı geri al
+Forget which videos Hushfeed saved here, so the already-saved check starts over. The saved files and your settings stay. Turning the check off doesn't erase this record.	Hushfeed'in burada hangi videoları kaydettiğini unutur, böylece zaten kaydedilmiş kontrolü baştan başlar. Kaydedilen dosyalar ve ayarların kalır. Kontrolü kapatmak bu kaydı silmez.
+Forgetting saved videos	Kaydedilen videolar unutuluyor
+Putting the saved videos back	Kaydedilen videolar geri getiriliyor
+Forgotten. Tap to put them back.	Unutuldu. Geri getirmek için dokun.
+Saved videos forgotten. The files are still there.	Kaydedilen videolar unutuldu. Dosyalar hâlâ orada.
+There were no saved videos to forget	Unutulacak kaydedilmiş video yoktu
+Couldn't forget the saved videos. Try again.	Kaydedilen videolar unutulamadı. Tekrar dene.
+Saved videos put back	Kaydedilen videolar geri getirildi
+Couldn't put the saved videos back. Try again.	Kaydedilen videolar geri getirilemedi. Tekrar dene.
+Too late to put the saved videos back	Kaydedilen videoları geri getirmek için artık çok geç
 Remember up to %1$s video saves made here while this is on. If the file still exists, offer Open or Save again before downloading another copy.	Bu seçenek açıkken burada kaydedilen en fazla %1$s videoyu hatırlar. Dosya hâlâ varsa başka bir kopya indirmeden önce Aç veya Yeniden kaydet seçeneklerini sunar.
 This video is already saved. Open TikTok to save another copy.	Bu video zaten kayıtlı. Başka bir kopya kaydetmek için TikTok'u açın.
 This video is already saved	Bu video zaten kayıtlı
