@@ -59,6 +59,7 @@ import java.util.Map;
  *       -e action dump
  *       -e action labrule -e manager abmock -e key favorite_reverse -e type INT -e value 1
  *       -e action labclear
+ *       -e action mediacache -e op plant
  *   adb -s S logcat -d | grep HushfeedProbe
  * </pre>
  */
@@ -213,6 +214,9 @@ public final class Probe extends Instrumentation {
                         break;
                     case "stripkeys":
                         Log.i(TAG, "ok stripkeys " + stripKeys());
+                        break;
+                    case "mediacache":
+                        Log.i(TAG, "ok mediacache " + mediaCache(intent.getStringExtra("op")));
                         break;
                     case "webviews": {
                         // Which page a WebView is showing and what it was built with. Hosts and
@@ -2253,6 +2257,42 @@ public final class Probe extends Instrumentation {
             return "banners=" + banners.size() + "\nsearchBanners=" + search + "\ntakoBanners=" + tako
                     + "\notherBanners=" + unknown + "\nexpectedPublicVideo=" + (expectedId == null ? "not checked" :
                     String.valueOf(expectedId.equals(model.getMethod("getAid").invoke(aweme))));
+        }
+
+        /**
+         * Plants, lists or clears two files in Hushfeed's media cache, one two days old and one
+         * an hour old, for the start's sweep of files older than a day. Nothing but TikTok's own
+         * uid can age a file there on a release build, so the probe does it from inside.
+         * op=plant writes both, op=clear removes whichever is left, anything else lists them.
+         */
+        private String mediaCache(String op) {
+            java.io.File directory = new java.io.File(app.getCacheDir(), "hushfeed-media");
+            java.io.File dayOld = new java.io.File(directory, "probe-day-old.bin");
+            java.io.File hourOld = new java.io.File(directory, "probe-hour-old.bin");
+            long now = System.currentTimeMillis();
+            if ("plant".equals(op)) {
+                if (!directory.isDirectory() && !directory.mkdirs()) return "no cache directory";
+                for (java.io.File file : new java.io.File[]{dayOld, hourOld}) {
+                    try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
+                        out.write(new byte[]{1});
+                    } catch (java.io.IOException error) {
+                        return "could not write " + file.getName() + ": " + error;
+                    }
+                }
+                // Both, whatever the first answers, so a failure leaves neither at "now".
+                boolean agedDay = dayOld.setLastModified(now - 48L * 3_600_000L);
+                boolean agedHour = hourOld.setLastModified(now - 3_600_000L);
+                if (!agedDay || !agedHour) return "could not age the files";
+            } else if ("clear".equals(op)) {
+                dayOld.delete();
+                hourOld.delete();
+            }
+            return describe(dayOld, now) + " " + describe(hourOld, now);
+        }
+
+        private static String describe(java.io.File file, long now) {
+            if (!file.exists()) return file.getName() + "=absent";
+            return file.getName() + "=" + ((now - file.lastModified()) / 60_000L) + "min";
         }
 
         /**
