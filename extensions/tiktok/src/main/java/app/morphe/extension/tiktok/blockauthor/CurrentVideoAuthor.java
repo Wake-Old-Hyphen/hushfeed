@@ -47,6 +47,22 @@ public final class CurrentVideoAuthor {
                 }
             });
 
+    /**
+     * Items that were current, most recent last, so the player naming one again finds it. A
+     * creator's grid or a story binds more videos than {@link #RECENT_LIMIT}, and the feed video
+     * the reader came back to was no longer bound anywhere the player's lookup could see: the
+     * controls went until the next swipe. Only selections land here, so it stays small.
+     */
+    private static final int SELECTED_LIMIT = 8;
+
+    private static final Map<String, Item> SELECTED = Collections.synchronizedMap(
+            new LinkedHashMap<String, Item>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Item> eldest) {
+                    return size() > SELECTED_LIMIT;
+                }
+            });
+
     private static volatile Item current;
     private static volatile String playingAwemeId;
 
@@ -153,6 +169,7 @@ public final class CurrentVideoAuthor {
             // for that moment, which is the right answer: better no button than one wired to
             // the previous creator. The bind that follows finds the id playing and selects it.
             Item found = RECENT.get(awemeId);
+            if (found == null) found = SELECTED.get(awemeId);
             Runnable hook = betweenLookupAndSelectForTests;
             if (hook != null) hook.run();
             select(found);
@@ -163,6 +180,7 @@ public final class CurrentVideoAuthor {
     private static void select(Item item) {
         Item previous = current;
         current = item;
+        if (item != null && item.awemeId != null) SELECTED.put(item.awemeId, item);
 
         String previousId = previous == null ? null : previous.awemeId;
         String newId = item == null ? null : item.awemeId;
@@ -225,6 +243,7 @@ public final class CurrentVideoAuthor {
         betweenLookupAndSelectForTests = null;
         lastClaimAskedAt = Long.MIN_VALUE / 2;
         RECENT.clear();
+        SELECTED.clear();
         current = null;
         playingAwemeId = null;
         CurrentVideoSound.clear();

@@ -63,15 +63,17 @@ public class Settings extends BaseSettings {
             "region_store_spoof",
             FALSE,
             true,
-            // Both switches, and the nearer one is the one the row names: Match locale is itself
-            // greyed until Override SIM details is on, so a reader is never sent two steps back.
+            // Both switches, and the row names the one to turn on: Match locale while it is off,
+            // which is itself greyed until Override SIM details is on, so a reader is never sent
+            // two steps back; Override SIM details when Match locale is on and SIM is the one
+            // off. Naming Match locale then sent the reader to a switch that was already on.
             new Setting.Availability() {
                 @Override public boolean isAvailable() {
                     return SIM_SPOOF.savedValue() && REGION_SPOOF.savedValue();
                 }
 
                 @Override public java.util.List<Setting<?>> getParentSettings() {
-                    return java.util.Collections.singletonList(REGION_SPOOF);
+                    return java.util.Collections.singletonList(REGION_SPOOF.savedValue() ? SIM_SPOOF : REGION_SPOOF);
                 }
             }
     );

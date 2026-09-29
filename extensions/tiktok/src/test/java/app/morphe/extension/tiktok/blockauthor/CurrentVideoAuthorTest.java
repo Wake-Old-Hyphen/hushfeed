@@ -213,6 +213,31 @@ public class CurrentVideoAuthorTest {
         }
     }
 
+    /**
+     * Back on the feed after a creator's grid or a story, the player names the feed video again,
+     * but those screens bound more videos than the bind record keeps and it had forgotten the one
+     * the reader came back to. The controls went until the next swipe (S22, 47.0.3).
+     */
+    @Test
+    public void theFeedVideoIsFoundAgainAfterAScreenThatBoundManyOthers() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            Utils.setContext(controller.get());
+            CurrentVideoAuthor.update(new Params("feed_video", "creator_feed"));
+            CurrentVideoAuthor.onPlaying("feed_video");
+            assertEquals("creator_feed", CurrentVideoAuthor.get().uid);
+
+            for (int index = 0; index < 40; index++) {
+                CurrentVideoAuthor.update(new Params("grid_" + index, "creator_grid"));
+            }
+            CurrentVideoAuthor.onPlaying("grid_39");
+            assertEquals("creator_grid", CurrentVideoAuthor.get().uid);
+
+            CurrentVideoAuthor.onPlaying("feed_video");
+            assertEquals("the feed video came back with nobody to target", "creator_feed",
+                    CurrentVideoAuthor.get() == null ? null : CurrentVideoAuthor.get().uid);
+        }
+    }
+
     @Test
     public void aVideoThePlayerNamesBeforeItIsBoundTargetsNobody() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {

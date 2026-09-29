@@ -457,16 +457,22 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
         if (setting.isAvailable()) return;
         String parentTitle = null;
+        Setting<?> named = null;
         for (Setting<?> parent : setting.getParentSettings()) {
             Preference row = findPreference(parent.key);
             CharSequence title = row == null ? null : row.getTitle();
             if (title != null && title.length() > 0) {
                 parentTitle = title.toString();
+                named = parent;
                 break;
             }
         }
         if (parentTitle == null) return;
-        String note = L10n.f(context, "Turn on %1$s first.", parentTitle);
+        // The YTDLnis rows wait on a text field holding one app's package, not on a switch, so
+        // "Turn on" sent the reader looking for a toggle that isn't there.
+        String note = named == Settings.EXTERNAL_DOWNLOADER_PACKAGE
+                ? L10n.f(context, "Put %1$s in %2$s first.", Settings.YTDLNIS_PACKAGE_NAME, parentTitle)
+                : L10n.f(context, "Turn on %1$s first.", parentTitle);
         CharSequence summary = pref.getSummary();
         String body = summary == null ? "" : summary.toString();
         // A number row's summary is lines ("0 to 1,000 videos", "Current: Off"), and a space ran

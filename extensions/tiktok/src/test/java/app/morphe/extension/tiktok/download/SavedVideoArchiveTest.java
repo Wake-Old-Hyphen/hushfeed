@@ -44,6 +44,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.shadows.ShadowDialog;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 
 /** Exercises the save, paired details, duplicate choices and deleted-file recovery together. */
@@ -339,6 +340,180 @@ public class SavedVideoArchiveTest {
             }
             assertNotNull(SavedVideoArchive.find(owner.get(), "newest"));
         } finally { assertTrue(video.delete()); }
+    }
+
+    /**
+     * A video save that has to wait shows its row the moment it is taken, a second request is
+     * told it is waiting, Cancel on the row lets the video go without fetching anything, and
+     * asking again is taken and saves.
+     */
+    @Test public void aWaitingVideoShowsItsRowAtOnceAndCancelLetsItGo() throws Exception {
+        Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+        Settings.DOWNLOAD_PROGRESS.save(true);
+        SaveNotice.windowRootsForTests = List.of();
+        java.util.concurrent.CountDownLatch hold = holdMediaQueue(0);
+        try {
+            ShadowToast.reset();
+            assertTrue(VideoDownloads.start(new Post(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
+            assertEquals("the row stands for the wait, so there's no toast beside it", 0, ShadowToast.shownToastCount());
+            android.view.ViewGroup content = owner.get().findViewById(android.R.id.content);
+            android.view.View row = content.findViewWithTag("hushfeed_save_progress");
+            assertNotNull("a waiting video showed no row", row);
+            assertEquals("Waiting to save video", labelOf(row));
+
+            assertTrue(VideoDownloads.start(new Post(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("The last one is still waiting to start", ShadowToast.getTextOfLatestToast());
+            assertEquals("a second request queued a second save", 1, MediaJobScheduler.queuedJobs());
+
+            cancelOf(row).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("Save cancelled. Nothing was saved.", ShadowToast.getTextOfLatestToast());
+            assertNull(content.findViewWithTag("hushfeed_save_progress"));
+            assertEquals(0, MediaJobScheduler.queuedJobs());
+
+            assertTrue("the video was still held after Cancel", VideoDownloads.start(new Post(), owner.get()));
+            hold.countDown();
+            awaitJobs();
+            assertEquals("the cancelled save fetched, or the retry didn't", 1, requests.get());
+            assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+            assertNull(content.findViewWithTag("hushfeed_save_progress"));
+        } finally {
+            hold.countDown();
+            SaveNotice.windowRootsForTests = null;
+        }
+    }
+
+    /**
+     * The already-saved choice is part of the save it came from: a second request while it is
+     * open is told so, and a Save again that the full queue refuses lets the video go, so the
+     * next request asks again instead of calling it busy for good.
+     */
+    @Test public void theChoiceIsOneSaveUntilItIsAnswered() throws Exception {
+        Post post = new Post();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        AlertDialog choice = (AlertDialog) ShadowDialog.getLatestDialog();
+        assertTrue(choice.isShowing());
+
+        ShadowToast.reset();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertEquals("The saved-video choice is still open", ShadowToast.getTextOfLatestToast());
+        assertSame("a second choice opened over the first", choice, ShadowDialog.getLatestDialog());
+        assertEquals(0, MediaJobScheduler.queuedJobs() + MediaJobScheduler.runningJobs());
+
+        java.util.concurrent.CountDownLatch hold = holdMediaQueue(MediaJobScheduler.MAX_QUEUED_JOBS);
+        try {
+            choice.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("Too many media saves are already running. Try again in a moment.",
+                    ShadowToast.getTextOfLatestToast());
+            assertFalse(choice.isShowing());
+        } finally {
+            hold.countDown();
+        }
+        awaitJobs();
+        assertEquals("the refused Save again fetched", 1, requests.get());
+
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        assertNotSame("the video stayed held after the refusal", choice, ShadowDialog.getLatestDialog());
+        assertTrue(ShadowDialog.getLatestDialog().isShowing());
+    }
+
+    /** Closing the screen under the choice ends that save, so the video can be asked for again. */
+    @Test public void closingTheScreenUnderTheChoiceLetsTheVideoGo() throws Exception {
+        Post post = new Post();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        AlertDialog choice = (AlertDialog) ShadowDialog.getLatestDialog();
+        assertTrue(choice.isShowing());
+
+        owner.close();
+        owner = Robolectric.buildActivity(PageActivity.class).setup().visible();
+        Utils.setActivity(owner.get());
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertFalse(choice.isShowing());
+
+        ShadowToast.reset();
+        assertTrue(VideoDownloads.start(post, owner.get()));
+        awaitJobs();
+        assertNotEquals("the closed choice kept the video held", "The saved-video choice is still open",
+                ShadowToast.getTextOfLatestToast());
+        assertNotSame(choice, ShadowDialog.getLatestDialog());
+        assertTrue(ShadowDialog.getLatestDialog().isShowing());
+        assertEquals(1, requests.get());
+    }
+
+    /** A save the full queue refuses leaves no row, no hold and no stray word behind the refusal. */
+    @Test public void aRefusedVideoLeavesNothingBehind() throws Exception {
+        Settings.DOWNLOAD_PROGRESS.save(true);
+        SaveNotice.windowRootsForTests = List.of();
+        java.util.concurrent.CountDownLatch hold = holdMediaQueue(MediaJobScheduler.MAX_QUEUED_JOBS);
+        try {
+            ShadowToast.reset();
+            assertTrue("details are asked for, so TikTok's own save must not run instead",
+                    VideoDownloads.start(new Post(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
+            assertEquals(1, ShadowToast.shownToastCount());
+            assertEquals("Too many media saves are already running. Try again in a moment.",
+                    ShadowToast.getTextOfLatestToast());
+            assertNull("a refused save left a row", owner.get().findViewById(android.R.id.content)
+                    .findViewWithTag("hushfeed_save_progress"));
+        } finally {
+            hold.countDown();
+            SaveNotice.windowRootsForTests = null;
+        }
+        awaitJobs();
+        assertEquals(0, requests.get());
+        assertTrue(VideoDownloads.start(new Post(), owner.get()));
+        awaitJobs();
+        assertEquals("the refused video stayed held", 1, requests.get());
+        assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+    }
+
+    /**
+     * Holds all three media workers and fills {@code queued} waiting places behind them, all
+     * until the returned latch opens.
+     */
+    private static java.util.concurrent.CountDownLatch holdMediaQueue(int queued) throws Exception {
+        awaitJobs();
+        java.util.concurrent.CountDownLatch hold = new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.CountDownLatch started =
+                new java.util.concurrent.CountDownLatch(MediaJobScheduler.MAX_RUNNING_JOBS);
+        Runnable held = () -> {
+            started.countDown();
+            try {
+                hold.await(10, TimeUnit.SECONDS);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        };
+        for (int index = 0; index < MediaJobScheduler.MAX_RUNNING_JOBS; index++) {
+            assertTrue(MediaJobScheduler.submit("archive test hold", held));
+        }
+        assertTrue("the media workers never started", started.await(5, TimeUnit.SECONDS));
+        for (int index = 0; index < queued; index++) {
+            assertTrue(MediaJobScheduler.submit("archive test filler", () -> { }));
+        }
+        return hold;
+    }
+
+    private static String labelOf(android.view.View row) {
+        android.view.View first = ((android.view.ViewGroup) row).getChildAt(0);
+        if (first instanceof android.view.ViewGroup) first = ((android.view.ViewGroup) first).getChildAt(0);
+        return ((android.widget.TextView) first).getText().toString();
+    }
+
+    private static android.view.View cancelOf(android.view.View row) {
+        android.view.ViewGroup group = (android.view.ViewGroup) row;
+        return group.getChildAt(group.getChildCount() - 1);
     }
 
     private static void awaitJobs() throws InterruptedException {

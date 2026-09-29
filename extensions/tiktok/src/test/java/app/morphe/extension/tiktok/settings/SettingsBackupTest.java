@@ -548,6 +548,71 @@ public class SettingsBackupTest {
         return (String) message.invoke(null, 7312 /* IMPORT */, refusal);
     }
 
+    /**
+     * A reset sets the setup Calm feed saved aside, and Undo brings it back with the settings.
+     * The card went on offering "Restore setup" after a reset, which would have put back what
+     * the reset had just cleared; dropping the setup instead lost it for good on Undo.
+     */
+    @Test public void aResetSetsTheCalmFeedSetupAsideAndUndoBringsItBack() throws Exception {
+        android.content.Context context = Utils.getContext();
+        Settings.HIDE_LIVE.save(false);
+        CalmFeedPreset.apply(context);
+        assertEquals(CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+
+        SettingsBackup.reset(context);
+        assertFalse("the Calm feed card still offers the setup from before the reset",
+                CalmFeedPreset.hasSnapshot(context));
+
+        SettingsBackup.undo(context);
+        assertEquals("Undo brought the settings back without the setup they came with",
+                CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+        CalmFeedPreset.restore(context);
+        assertFalse("the setup put back is not the one saved before Calm feed", Settings.HIDE_LIVE.get());
+
+        // Undo swaps with what it replaced: once more puts the reset back, with no setup to
+        // offer, and once more after that brings Calm feed back with the setup saved for it.
+        CalmFeedPreset.apply(context);
+        SettingsBackup.undo(context);
+        assertFalse("the reset came back with a setup from before it", CalmFeedPreset.hasSnapshot(context));
+        SettingsBackup.undo(context);
+        assertEquals(CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+    }
+
+    /**
+     * A restore that fails after writing the undo copy leaves Undo on offer, and the banner asks
+     * for it when putting things back needs it. The Calm feed setup went aside only once a
+     * restore had worked, so that Undo swapped in whatever an earlier reset had left there, or
+     * nothing, and took the current setup away; a reset and Undo after that lost it for good.
+     */
+    @Test public void anUndoAfterAFailedImportKeepsTheCalmFeedSetup() throws Exception {
+        android.content.Context context = Utils.getContext();
+        Settings.HIDE_LIVE.save(false);
+        CalmFeedPreset.apply(context);
+        JSONObject next = new JSONObject(SettingsBackup.create(false));
+        next.getJSONObject("settings").put(Settings.REGION_SPOOF.key, true);
+        var original = Setting.preferences.preferences;
+        var field = app.morphe.extension.shared.settings.preference.SharedPrefCategory.class
+                .getDeclaredField("preferences");
+        field.setAccessible(true);
+        field.set(Setting.preferences, failingCommits(original, () -> true, () -> {}));
+        try {
+            assertThrows(Exception.class, () -> SettingsBackup.restore(context, next.toString(), true));
+        } finally {
+            field.set(Setting.preferences, original);
+        }
+        assertEquals(CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+
+        SettingsBackup.undo(context);
+        assertEquals("the Undo after a failed import took the Calm feed setup away",
+                CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+        SettingsBackup.reset(context);
+        SettingsBackup.undo(context);
+        assertEquals("a reset and its Undo lost the setup",
+                CalmFeedPreset.State.ACTIVE, CalmFeedPreset.state(context));
+        CalmFeedPreset.restore(context);
+        assertFalse("the setup put back is not the one saved before Calm feed", Settings.HIDE_LIVE.get());
+    }
+
     @Test public void resetAndUndoRestoreBothStoresAndSurviveAnUnrelatedSettingChange() throws Exception {
         Settings.BLOCKED_CREATORS.save("creator");
         Settings.AUTO_ADVANCE.save(true);

@@ -1302,8 +1302,8 @@ public final class FeatureGateLabFragment extends Fragment {
                     builds.add(build);
                     ids.add(id);
                     String title = version.getJSONObject(id).getString("title");
-                    labels.add(L10n.t(getContext(), title)
-                            + " (TikTok " + build + ")");
+                    // One sentence to translate, not pieces glued in English word order.
+                    labels.add(L10n.f(getContext(), "%1$s (TikTok %2$s)", L10n.t(getContext(), title), build));
                 }
             }
             AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -1343,9 +1343,11 @@ public final class FeatureGateLabFragment extends Fragment {
                             .append(rule.manager).append(" / ").append(rule.type).append("\n")
                             .append(L10n.f(getContext(), "Value: %1$s to %2$s", before, rule.value));
                 }
+                // Undo holds the last Lab change only. The next one replaces it, and with overrides
+                // off, turning them on is that next change, so the promise had to say so.
                 preview.append("\n\n").append(L10n.t(getContext(), FeatureGateLabStore.masterEnabled()
-                        ? "Apply enables these overrides. Undo last Lab change restores your previous rules."
-                        : "Apply saves these overrides. Turn on overrides in the Lab to use them. Undo restores your previous rules."));
+                        ? "Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab."
+                        : "Apply saves these overrides. Turn on overrides in the Lab to use them. Turning them on is a Lab change too, so after that Undo turns them off rather than putting your previous rules back."));
             } else {
                 preview.append("\n\n").append(L10n.t(getContext(),
                         "This preset isn't available for your installed TikTok version."));
@@ -2090,7 +2092,7 @@ public final class FeatureGateLabFragment extends Fragment {
             FeatureGateLabStore.Rule rule = rules.get(ruleIdentity(entry));
             holder.title.setText(entry.title);
             holder.key.setText(entry.key);
-            holder.type.setText(entry.shortSourceName() + " " + entry.type);
+            holder.type.setText(L10n.t(holder.type.getContext(), entry.shortSourceName()) + " " + entry.type);
             String shownValue;
             if (rule != null && rule.enabled && FeatureGateLabStore.masterEnabled()) {
                 shownValue = L10n.f(getContext(), "Returns %1$s", rule.value);

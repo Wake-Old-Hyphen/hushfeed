@@ -2016,6 +2016,75 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
     }
 
     /**
+     * The store-region row names the switch that is off. It always named Match locale, so with
+     * Match locale on and Override SIM details off it sent the reader to a switch already on.
+     */
+    @Test public void theStoreRegionRowNamesTheSwitchThatIsActuallyOff() throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Settings.SIM_SPOOF.save(false);
+            Settings.REGION_SPOOF.save(true);
+            TikTokPreferenceFragment page = attachSection(activity, "REGION");
+            Preference store = findPreference(page.getPreferenceScreen(), "Override store region (experimental)");
+            assertNotNull("the store region row is not on the page", store);
+            assertFalse(store.isEnabled());
+            String simOff = String.valueOf(store.getSummary());
+            assertTrue("the row named a switch that is already on: " + simOff,
+                    simOff.endsWith("Turn on Override SIM details first."));
+
+            Settings.REGION_SPOOF.save(false);
+            refreshAvailability(page);
+            String bothOff = String.valueOf(store.getSummary());
+            assertTrue("with both off the nearer switch is the one named: " + bothOff,
+                    bothOff.endsWith("Turn on Match locale and timezone to country first."));
+        } finally {
+            Settings.SIM_SPOOF.resetToDefault();
+            Settings.REGION_SPOOF.resetToDefault();
+        }
+    }
+
+    /** A row waiting on a text field says what to put in it, not which switch to turn on. */
+    @Test public void theYtdlnisRowsSayWhatToPutInTheField() throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Settings.EXTERNAL_DOWNLOADER_PACKAGE.save("");
+            TikTokPreferenceFragment page = attachSection(activity, "DOWNLOADS");
+            for (String title : new String[]{"YTDLnis download type", "YTDLnis background mode"}) {
+                Preference row = findPreference(page.getPreferenceScreen(), title);
+                assertNotNull(title + " is not on the page", row);
+                assertFalse(title + " is not greyed", row.isEnabled());
+                String summary = String.valueOf(row.getSummary());
+                assertTrue(title + " asked for a switch: " + summary, summary.endsWith(
+                        "Put " + Settings.YTDLNIS_PACKAGE_NAME + " in Send links to another app first."));
+            }
+        } finally {
+            Settings.EXTERNAL_DOWNLOADER_PACKAGE.resetToDefault();
+        }
+    }
+
+    /** Two rows that aren't auto-advance no longer sit under its heading. */
+    @Test public void onlyAutoAdvanceRowsSitUnderItsHeading() throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            android.preference.PreferenceScreen screen = attachSection(activity, "PLAYBACK").getPreferenceScreen();
+            for (String title : new String[]{"Silence the feed while comments are open", "Stay on the video in full screen"}) {
+                String heading = null;
+                for (int index = 0; index < screen.getPreferenceCount(); index++) {
+                    Preference row = screen.getPreference(index);
+                    if (row instanceof app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference) {
+                        heading = String.valueOf(row.getTitle());
+                    }
+                    if (title.equals(String.valueOf(row.getTitle()))) break;
+                }
+                assertEquals(title + " sits under the wrong heading", "Staying on a video", heading);
+            }
+        }
+    }
+
+    /**
      * The default speed is read only while its switch is on. Its row took a choice that did
      * nothing and said so nowhere; now it greys, and the note sits under the value on its own
      * line rather than running on from it.
