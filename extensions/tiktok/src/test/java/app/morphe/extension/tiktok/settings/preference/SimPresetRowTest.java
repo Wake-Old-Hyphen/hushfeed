@@ -427,6 +427,65 @@ public class SimPresetRowTest {
         }
     }
 
+    /**
+     * The chosen row's operator line sits where every other row's does.
+     *
+     * <p>The radio mark went on the title at its own 32dp height, taller than a line of the
+     * title, so the chosen row's title grew and pushed its operator line about 10dp below the
+     * other rows' (seen on the S22, 2026-09-29).
+     */
+    @Test
+    public void theChosenRowsOperatorLineSitsWhereTheOthersDo() throws Exception {
+        app.morphe.extension.tiktok.spoof.sim.SimPreset germany = null;
+        for (app.morphe.extension.tiktok.spoof.sim.SimPreset preset
+                : app.morphe.extension.tiktok.spoof.sim.SimPresets.PRESETS) {
+            if ("Germany".equals(preset.country)) germany = preset;
+        }
+        assertNotNull(germany);
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            Settings.SIM_SPOOF_ISO.save(germany.iso);
+            Settings.SIMSPOOF_MCCMNC.save(germany.mccMnc);
+            Settings.SIMSPOOF_OP_NAME.save(germany.operatorName);
+            SimPresetPreference row = build(controller.get());
+            java.lang.reflect.Method show =
+                    SimPresetPreference.class.getDeclaredMethod("showPresetDialog");
+            show.setAccessible(true);
+            show.invoke(row);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+
+            android.app.AlertDialog dialog = (android.app.AlertDialog)
+                    org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            android.widget.ListView list = findView(
+                    dialog.getWindow().getDecorView(), android.widget.ListView.class);
+            int index = java.util.Arrays.asList(
+                    app.morphe.extension.tiktok.spoof.sim.SimPresets.PRESETS).indexOf(germany);
+            // Rows the list itself laid out, attached to the dialog's window: a start drawable is
+            // only resolved, and only counts toward the title's height, on an attached view.
+            list.measure(android.view.View.MeasureSpec.makeMeasureSpec(480, android.view.View.MeasureSpec.EXACTLY),
+                    android.view.View.MeasureSpec.makeMeasureSpec(640, android.view.View.MeasureSpec.EXACTLY));
+            list.layout(0, 0, 480, 640);
+            int at = index - list.getFirstVisiblePosition();
+            android.view.View chosen = list.getChildAt(at);
+            android.view.View other = list.getChildAt(at == 0 ? 1 : at - 1);
+            assertNotNull("the chosen row was not laid out", chosen);
+            assertNotNull("no second row was laid out", other);
+            assertNotNull("the row carries no mark", ((android.widget.TextView)
+                    chosen.findViewById(android.R.id.text1)).getCompoundDrawablesRelative()[0]);
+
+            assertEquals("the mark makes the chosen row's title taller than the others'",
+                    other.findViewById(android.R.id.text1).getHeight(),
+                    chosen.findViewById(android.R.id.text1).getHeight());
+            assertEquals("the chosen row's operator line sits lower than the others'",
+                    other.findViewById(android.R.id.text2).getTop(),
+                    chosen.findViewById(android.R.id.text2).getTop());
+            dialog.dismiss();
+        } finally {
+            Settings.SIM_SPOOF_ISO.resetToDefault();
+            Settings.SIMSPOOF_MCCMNC.resetToDefault();
+            Settings.SIMSPOOF_OP_NAME.resetToDefault();
+        }
+    }
+
     /** What a background actually paints in the state given, every pixel of it, as one number. */
     private static int renderOf(android.graphics.drawable.Drawable background, int[] state) {
         background.setState(state);

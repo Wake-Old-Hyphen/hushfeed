@@ -657,6 +657,58 @@ public final class Probe extends Instrumentation {
                                 + " permStitch=" + optional(optional(aweme, "getInteractPermission"), "getStitch"));
                         break;
                     }
+                    case "labreport": {
+                        // The Feature Gate Lab's learn mode from the shell: op=begin starts a
+                        // recording, op=stop ends it and logs the report in numbered parts, since
+                        // one log line holds about 4 KB and a report runs longer.
+                        Class<?> learn = loader.loadClass(
+                                "app.morphe.extension.tiktok.featuregatelab.FeatureGateLearnMode");
+                        if ("begin".equals(intent.getStringExtra("op"))) {
+                            learn.getMethod("begin").invoke(null);
+                            Log.i(TAG, "ok labreport recording=" + learn.getMethod("isRecording").invoke(null));
+                            break;
+                        }
+                        String report = String.valueOf(learn.getMethod("stopAndBuildReport").invoke(null));
+                        int size = 3000;
+                        int parts = Math.max(1, (report.length() + size - 1) / size);
+                        for (int part = 0; part < parts; part++) {
+                            Log.i(TAG, "ok labreport part " + (part + 1) + "/" + parts + " "
+                                    + report.substring(part * size, Math.min(report.length(), (part + 1) * size)));
+                        }
+                        break;
+                    }
+                    case "feedmute": {
+                        // What Mute feed videos matches on: each engine it has seen with the
+                        // source id TikTok's player reports for it, the videos the controller asked
+                        // for, and the one on screen. Ids by their last six digits only.
+                        Class<?> mute = loader.loadClass("app.morphe.extension.tiktok.playback.FeedMute");
+                        Field enginesField = mute.getDeclaredField("ENGINES");
+                        enginesField.setAccessible(true);
+                        Field playsField = mute.getDeclaredField("PLAYS");
+                        playsField.setAccessible(true);
+                        Method sourceId = mute.getDeclaredMethod("engineSourceId", Object.class);
+                        sourceId.setAccessible(true);
+                        StringBuilder out = new StringBuilder("engines=");
+                        Map<?, ?> engines = (Map<?, ?>) enginesField.get(null);
+                        synchronized (engines) {
+                            for (Object engine : new ArrayList<>(engines.keySet())) {
+                                out.append(Integer.toHexString(System.identityHashCode(engine))).append(':')
+                                        .append(tail(sourceId.invoke(null, engine))).append(' ');
+                            }
+                        }
+                        out.append("| plays=");
+                        Map<?, ?> plays = (Map<?, ?>) playsField.get(null);
+                        synchronized (plays) {
+                            for (Map.Entry<?, ?> play : plays.entrySet()) {
+                                out.append(tail(play.getKey())).append('=').append(play.getValue()).append(' ');
+                            }
+                        }
+                        Object aweme = loader.loadClass("app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                .getMethod("getAweme").invoke(null);
+                        out.append("| current=").append(tail(optional(aweme, "getAid")));
+                        Log.i(TAG, "ok feedmute " + out);
+                        break;
+                    }
                     case "addrs": {
                         // Which addresses the current post's video carries and where they point,
                         // to tell a photo post's server-side render from an empty shell. Host and
@@ -2875,6 +2927,13 @@ public final class Probe extends Instrumentation {
         }
 
         /** An address's frame as WxH from its getWidth and getHeight, or none. */
+        /** An id by its last six characters, enough to match two reads without logging it whole. */
+        private static String tail(Object id) {
+            if (id == null) return "null";
+            String text = String.valueOf(id);
+            return text.isEmpty() ? "empty" : text.length() <= 6 ? text : text.substring(text.length() - 6);
+        }
+
         /** How many URLs an address holds, the frame it claims, and the first one's host and path. */
         private static String addressReport(Object address) {
             if (address == null) return "none";

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.preference.Preference;
 import android.text.Editable;
@@ -366,8 +367,15 @@ public class SimPresetPreference extends Preference {
             boolean chosen = selected != null && preset == selected;
             Context context = parent.getContext();
             title.setCompoundDrawablePadding(SettingsUi.dp(context, 8));
-            title.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    chosen ? SettingsUi.radioMark(context) : null, null, null, null);
+            Drawable mark = chosen ? SettingsUi.radioMark(context) : null;
+            if (mark != null) {
+                // Its own 32dp height is taller than a line of the title, so the chosen row's
+                // title grew and its operator line sat about 10dp below every other row's. One
+                // line high, the 18dp ring still fits and keeps its width for the summary's indent.
+                mark.setBounds(0, 0, mark.getIntrinsicWidth(),
+                        Math.min(mark.getIntrinsicHeight(), title.getLineHeight()));
+            }
+            title.setCompoundDrawablesRelative(mark, null, null, null);
             summary.setPaddingRelative(chosen ? SettingsUi.dp(context, 40) : 0, 0, 0, 0);
 
             // The fill under the press and the focus. Set flat, it covered the ListView's

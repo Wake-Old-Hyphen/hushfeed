@@ -277,7 +277,7 @@ public class SingleSaveProgressTest {
     }
 
     private static HttpURLConnection response(URL url, byte[] body, int length) {
-        return new HttpURLConnection(url) {
+        return new FakeHttpsConnection(url) {
             @Override public int getResponseCode() { return 200; }
             @Override public String getHeaderField(String name) {
                 return "Content-Length".equalsIgnoreCase(name) && length >= 0 ? String.valueOf(length) : null;
