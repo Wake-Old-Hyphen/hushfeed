@@ -657,6 +657,27 @@ public final class Probe extends Instrumentation {
                                 + " permStitch=" + optional(optional(aweme, "getInteractPermission"), "getStitch"));
                         break;
                     }
+                    case "addrs": {
+                        // Which addresses the current post's video carries and where they point,
+                        // to tell a photo post's server-side render from an empty shell. Host and
+                        // path only, since a query can carry tokens.
+                        Object aweme = loader.loadClass(
+                                "app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                .getMethod("getAweme").invoke(null);
+                        if (aweme == null) throw new IllegalStateException("no current video");
+                        Object video = optional(aweme, "getVideo");
+                        Object images = optional(aweme, "getImageInfos");
+                        StringBuilder out = new StringBuilder("awemeType=").append(optional(aweme, "getAwemeType"))
+                                .append(" images=").append(images instanceof java.util.Collection
+                                        ? String.valueOf(((java.util.Collection<?>) images).size()) : "none");
+                        for (String getter : new String[]{"getPlayAddr", "getPlayAddrH264", "getPlayAddrBytevc1",
+                                "getDownloadAddr", "getDownloadNoWatermarkAddr"}) {
+                            out.append(' ').append(getter.substring(3)).append('=')
+                                    .append(addressReport(optional(video, getter)));
+                        }
+                        Log.i(TAG, "ok addrs " + out);
+                        break;
+                    }
                     case "textviews": {
                         // Every shown TextView on screen, id or not, with its class chain, place,
                         // size and text length. The caption renderer's text view may carry no id
@@ -2854,6 +2875,16 @@ public final class Probe extends Instrumentation {
         }
 
         /** An address's frame as WxH from its getWidth and getHeight, or none. */
+        /** How many URLs an address holds, the frame it claims, and the first one's host and path. */
+        private static String addressReport(Object address) {
+            if (address == null) return "none";
+            Object urls = optional(address, "getUrlList");
+            int count = urls instanceof java.util.List ? ((java.util.List<?>) urls).size() : -1;
+            String first = count > 0
+                    ? hostAndPath(android.net.Uri.parse(String.valueOf(((java.util.List<?>) urls).get(0)))) : "-";
+            return count + "urls," + frame(address) + "," + first;
+        }
+
         private static String frame(Object address) {
             if (address == null) return "none";
             return optional(address, "getWidth") + "x" + optional(address, "getHeight");

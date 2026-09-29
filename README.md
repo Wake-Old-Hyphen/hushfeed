@@ -89,6 +89,10 @@ Login trouble is the most common complaint about any patched TikTok. These are t
 
 A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", and other payments may be refused the same way. The likely cause is TikTok's security library, which signs the requests TikTok's network stack sends and reads the app's signing certificate while it does. A patched TikTok carries your manager's certificate instead of TikTok's, and Hushfeed doesn't pass itself off as TikTok's own signed app for payment checks. Bid and buy from the official app.
 
+### A photo post saved as a video still has TikTok's watermark
+
+On a post that's one photo with a sound, TikTok's Download asks whether you want a video or the image. That video isn't one TikTok's servers keep. The post only carries the photo and the sound, so TikTok builds the video on your phone and adds its logo, the creator's handle and an end card while it does. Hushfeed's watermark-free saving swaps in the clean copy the server holds for a real video, and there isn't one here. Choose Download image for a clean copy of the photo, and with Advanced downloads, Download original photos saves it as TikTok received it.
+
 ### Patching stops at 24 or 25 percent
 
 The manager has run short of memory. Step 4 of [Install](#install) says which limit to change and what to try if it still stalls.
