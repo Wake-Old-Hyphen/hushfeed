@@ -1229,6 +1229,8 @@ Hide location labels,Sembunyikan label lokasi
 Hide the search bar below videos,Sembunyikan bilah pencarian di bawah video
 Hide the suggested-search strip above the bottom tabs and let video details and side controls use its space. The top search button and comments stay unchanged.,Sembunyikan bilah saran pencarian di atas tab bawah agar detail video dan kontrol samping dapat menggunakan ruangnya. Tombol pencarian di atas dan komentar tidak berubah.
 "Hide place badges on videos, including cards with multiple places. Videos and your location permissions stay unchanged.","Sembunyikan label lokasi pada video, termasuk kartu dengan beberapa tempat. Video dan izin lokasi kamu tidak berubah."
+Hide effect and template tags,Sembunyikan tag efek dan template
+"Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.","Sembunyikan tag di atas deskripsi video yang mengajak kamu mencoba efek, template, CapCut, atau gaya AI. Label lokasi dan baris musik punya tombolnya sendiri."
 Filter location-tagged videos,Filter video berlabel lokasi
 "Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.","Sembunyikan video feed berlabel lokasi, meskipun bukan iklan berbayar. Untuk tetap menampilkan video dan hanya menyembunyikan labelnya, gunakan Sembunyikan label lokasi di Tampilan feed."
 Location-tagged videos,Video berlabel lokasi

@@ -35,6 +35,8 @@ Compact comment header keeps headers that switch between different lists, so tho
 
 Feed screen has separate options to hide the **Full screen button** and **location labels** over videos, including badges listing multiple places. They don't remove the videos or change location permissions.
 
+**Hide effect and template tags**, on the same page, takes away the tags above a description that ask you to try an effect, a template, CapCut or an AI style. Film, drama and place tags stay, and so does the music line (its "Contains:" song credit has its own switch, Hide the music line). It's off by default and works without a restart.
+
 Want to skip those videos entirely? Turn on **Filter location-tagged videos** under Feed filter > Ads. It's independent of badge hiding and includes posts that aren't paid ads. These options are off by default and need a restart.
 
 If one of the marker switches (Hide Series, say, or Hide playlist videos) empties three lists of five or more in a row, a banner names that switch and its button opens the row. A filter that has started matching everything shouldn't read as TikTok breaking. Nothing gets switched off for you.
@@ -214,7 +216,7 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 | `Hide the launcher shortcuts` | Empties the menu that opens on pressing and holding TikTok's icon on the home screen. The entries are built while the app runs rather than declared in it, and TikTok only rewrites them when it notices a difference, so this removes what is already published and answers the handover that would publish more. Turning it off asks TikTok to build them again. Tapping the icon still opens the app, and a shortcut pinned to a home screen is left alone. Switch: Hushfeed settings > App. |
 | `Hide Play Store update offer` | Gives the patched APK the highest Android version code so Play shows Open instead of Update. TikTok's visible version stays the same in Morphe Manager. Off by default. Android won't install a lower-code APK over it, and uninstalling to return to a lower code can remove local TikTok data. |
 | `Hide the risk control CAPTCHA` | Hides TikTok's risk control CAPTCHA dialog, raised by its BdTuring service, which the browsing CAPTCHA patch does not cover. Answers the Hide CAPTCHA popups setting, never touches SMS or two factor verification, and never hides a check the server raised over a follow, like, comment or repost. Off by default. |
-| `Hide video overlays` | Hides the visual search prompt TikTok lays over videos, the LIVE entrance in the top left corner, caption and music text, selected action buttons or their counts in the right column, survey cards and the status bar, which can also be hidden only while a LIVE room is open. Separate switches hide the Full screen button, location labels and the Report button some regions get above the creator's picture, without removing videos or changing location permissions. Switch: Hushfeed settings > Feed screen. |
+| `Hide video overlays` | Hides the visual search prompt TikTok lays over videos, the LIVE entrance in the top left corner, caption and music text, selected action buttons or their counts in the right column, survey cards and the status bar, which can also be hidden only while a LIVE room is open. Separate switches hide the Full screen button, location labels, the effect, template and CapCut tags above descriptions, and the Report button some regions get above the creator's picture, without removing videos or changing location permissions. Switch: Hushfeed settings > Feed screen. |
 | `Hold-and-slide 2x lock` | Enables TikTok's own hold, pull down and release gesture to lock the hold speed, 2x unless Playback speed sets another. Switch: Hushfeed settings > Feed screen. |
 | `In-app browser privacy guard` | Keeps TikTok's JavaScript bridge off external pages in its in-app browser while leaving Activity center, Watch history, shop checkout and CAPTCHA working. The switch is off until you turn it on. Switch: Hushfeed settings > Privacy. |
 | `Keep the Favorites tab` | Keeps the Favorites tab on your profile when TikTok's server puts the account into an experiment that empties it. Two people saw that after patching: the tab was there and the saved videos were not. Switch: Hushfeed settings > App. |
@@ -487,9 +489,9 @@ The script writes two generated files, neither of them meant to be edited by han
 ## Supported target
 
 - App: TikTok, the global package `com.zhiliaoapp.musically`
-- Versions: [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), released 19 September 2026, and [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/), on APKMirror since 25 September 2026
-- Builds: version codes 2024700030 and 2024701030, both arm64-v8a and armeabi-v7a, nodpi, minSdk 23
-- SHA-256 of the APKs every patch was verified against: `f4d853f6ccaf145a9b5f106b8e63767e2345e17ae829b6cc6b272fdf0161389c` (47.0.3) and `8b5569f592a5534652ae460ef1d9e7f7394b5b7fdde44ae64f106d76767e2622` (47.1.3)
+- Versions: [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), released 19 September 2026, and [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/), on APKMirror since 25 September 2026. [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/), on APKMirror since 29 September 2026, is declared on main and arrives with the next release. v0.65.0 declares 47.0.3 and 47.1.3, so patch one of those two with it.
+- Builds: version codes 2024700030, 2024701030 and 2024701040, all arm64-v8a and armeabi-v7a, nodpi, minSdk 23
+- SHA-256 of the APKs every patch was verified against: `f4d853f6ccaf145a9b5f106b8e63767e2345e17ae829b6cc6b272fdf0161389c` (47.0.3), `8b5569f592a5534652ae460ef1d9e7f7394b5b7fdde44ae64f106d76767e2622` (47.1.3) and `4226ed5d3031b68208c29f62d80ac421b281fc74201bc4163d98e442d0991a40` (47.1.4)
 
 A patched app inherits TikTok's target SDK, which is 36 today. Android 17 raises that to 37, and the changes that come with it were audited against everything Hushfeed injects: nothing it adds loads code from a file, subclasses Thread, writes a static final field through reflection or keeps audio going without a foreground service, and a connection the platform refuses is reported with its reason rather than retried. Forcing those changes on a running build still needs an Android 17 device, which is why the audit says checked in source and not checked on a phone.
 
@@ -501,7 +503,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Mo
 
 ### Why those versions and not a newer one
 
-Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. 47.0.3 and 47.1.3 are the declared targets. All 98 patches apply to both reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
+Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. On main, 47.0.3, 47.1.3 and 47.1.4 are the declared targets. 47.0.3 stays declared alongside the two 47.1 builds. All 98 patches apply to all three reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
 
 Only the global package is declared in the compatibility metadata.
 

@@ -42,7 +42,11 @@ class ReviewedProfilesMatchFixturesTest {
             for ((group, profiles) in groups) {
                 val paths = profiles.flatMap { it.files }.map { it.path }.toSet()
                 val found = present.filterKeys { it in paths }
-                assertTrue("$group: ${apk.name} carries none of the reviewed paths", found.isNotEmpty())
+                // A build that ships none of a group has to be reviewed as that, an empty profile.
+                assertTrue(
+                    "$group: ${apk.name} carries none of the reviewed paths",
+                    found.isNotEmpty() || profiles.any { it.files.isEmpty() },
+                )
                 val bySet = profiles.filter { profile -> profile.files.map { it.path }.toSet() == found.keys }
                 if (bySet.isEmpty()) {
                     problems += "$group on ${apk.name}: the ${found.size} present paths match no profile's path set " +
