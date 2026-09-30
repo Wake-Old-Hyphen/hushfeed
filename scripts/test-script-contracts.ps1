@@ -1802,8 +1802,11 @@ try {
         try {
             $applyCalls = Join-Path $hookRoot 'apply-calls'
             $applyFails = Join-Path $hookRoot 'apply-fails.txt'
+            # While the slow marker exists each stub run takes a moment and records when it ran.
+            $applySlow = Join-Path $hookRoot 'apply-slow.txt'
+            $applySpans = Join-Path $hookRoot 'apply-spans'
             $fixtureStub = Join-Path $hookRoot 'fixtures'
-            New-Item -ItemType Directory -Path $applyCalls, $fixtureStub -Force | Out-Null
+            New-Item -ItemType Directory -Path $applyCalls, $applySpans, $fixtureStub -Force | Out-Null
             # Both file names the fixture tests take, a bundle file that isn't an APK, and a build
             # the catalog doesn't declare.
             foreach ($name in @('com.zhiliaoapp.musically_1.0.3-100_apkmirror.com.apk', 'tiktok-1.1.3.apk',
@@ -1832,12 +1835,17 @@ try {
                 'param([string]$Apk, [string]$DesktopJar, [string]$WorkDir, [string]$Bundle, [string]$PatchList)',
                 "Set-Content -LiteralPath (Join-Path '$applyCalls' ([guid]::NewGuid().ToString('N') + '.txt')) -Value (",
                 '    "apk=$(Split-Path -Leaf $Apk) jar=$DesktopJar bundle=$Bundle list=$PatchList")',
+                "if (Test-Path -LiteralPath '$applySlow') {",
+                '    $started = [DateTime]::UtcNow.Ticks',
+                '    Start-Sleep -Milliseconds 1500',
+                "    Set-Content -LiteralPath (Join-Path '$applySpans' ([guid]::NewGuid().ToString('N') + '.txt')) -Value `"`$started `$([DateTime]::UtcNow.Ticks)`"",
+                '}',
                 "if (Test-Path -LiteralPath '$applyFails') { Write-Host '[verify] FAILED stub'; exit 1 }",
                 'exit 0')
             function Get-ApplyCalls { return @(Get-ChildItem -LiteralPath $applyCalls -File | ForEach-Object { (Get-Content -LiteralPath $_.FullName -Raw).Trim() } | Sort-Object) }
             function Reset-Apply {
-                Remove-Item -LiteralPath $wrapperMarker, $applyFails -Force -ErrorAction SilentlyContinue
-                Get-ChildItem -LiteralPath $applyCalls -File | Remove-Item -Force
+                Remove-Item -LiteralPath $wrapperMarker, $applyFails, $applySlow -Force -ErrorAction SilentlyContinue
+                Get-ChildItem -LiteralPath $applyCalls, $applySpans -File | Remove-Item -Force
                 Remove-Item -LiteralPath (Join-Path $hookRoot 'patches') -Recurse -Force -ErrorAction SilentlyContinue
             }
             $patchSource = 'patches/src/main/kotlin/app/morphe/patches/tiktok/Any.kt'
@@ -1859,6 +1867,24 @@ try {
             Reset-Apply
             & $prePushScript -Root $hookRoot -ChangedPaths @('gradle/libs.versions.toml') 6> $null
             Assert-True ((Get-ApplyCalls).Count -eq 2) 'A patcher pin change applied nothing to the fixtures.'
+
+            # HUSHFEED_GATE_SERIAL=1 applies one build at a time: the second run starts only once the
+            # first has ended.
+            Reset-Apply
+            Set-Content -LiteralPath $applySlow -Value 'slow' -Encoding ASCII
+            $savedSerial = $env:HUSHFEED_GATE_SERIAL
+            $env:HUSHFEED_GATE_SERIAL = '1'
+            try {
+                & $prePushScript -Root $hookRoot -ChangedPaths @($patchSource) 6> $null
+            } finally {
+                $env:HUSHFEED_GATE_SERIAL = $savedSerial
+            }
+            Assert-True ($LASTEXITCODE -eq 0 -and (Get-ApplyCalls).Count -eq 2) `
+                "A serial gate did not apply the bundle to each declared build: $((Get-ApplyCalls) -join '; ')"
+            $spans = @(Get-ChildItem -LiteralPath $applySpans -File | ForEach-Object {
+                    , [long[]]((Get-Content -LiteralPath $_.FullName -Raw).Trim() -split ' ') } | Sort-Object { $_[0] })
+            Assert-True ($spans.Count -eq 2 -and $spans[1][0] -ge $spans[0][1]) `
+                ('A serial gate applied two builds at once: ' + (($spans | ForEach-Object { $_ -join '-' }) -join ', '))
 
             # A first push lists the branch's whole tree, which holds patches-bundle.json as well as
             # the patch sources. The release check's half of that is covered above; this is the

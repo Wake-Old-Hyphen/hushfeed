@@ -434,6 +434,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SESSION_BUDGET_RAMP = new BooleanSetting(
             "session_budget_ramp", FALSE, true);
     /**
+     * Lets the video on screen finish before the hold covers the feed, with the feed's swipe
+     * turned off until it does. Off by default, read when the budget runs out, and it only has
+     * anything to do when a hold follows the budget. See FinishLastVideo.
+     */
+    public static final BooleanSetting SESSION_BUDGET_FINISH_VIDEO = new BooleanSetting(
+            "session_budget_finish_video", FALSE);
+    /**
      * A small label on the feed saying what is left of today's budget. Off by default, and it
      * has nothing to report unless {@link #SESSION_BUDGET_VIDEOS} or {@link #SESSION_BUDGET_MINUTES}
      * is set. No restart: it is drawn from the same callback that measures the budget.
