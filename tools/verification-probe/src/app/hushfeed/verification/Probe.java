@@ -730,6 +730,51 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok addrs " + out);
                         break;
                     }
+                    case "collect": {
+                        // Adds or removes one favourite through TikTok's own AwemeCollectionAgent,
+                        // found by its parameter shape since the method's name changes by build,
+                        // and logs what TikTok answers. Extras: aid, on (true or false).
+                        String aid = intent.getStringExtra("aid");
+                        boolean on = Boolean.parseBoolean(intent.getStringExtra("on"));
+                        if ("current".equals(aid)) {
+                            Object aweme = loader.loadClass(
+                                    "app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                    .getMethod("getAweme").invoke(null);
+                            aid = aweme == null ? null : String.valueOf(optional(aweme, "getAid"));
+                        }
+                        if (aid == null || aid.isEmpty()) throw new IllegalArgumentException("no aid");
+                        Class<?> agentClass = loader.loadClass(
+                                "com.ss.android.ugc.aweme.favorites.business.aweme.AwemeCollectionAgent");
+                        Class<?> function2 = loader.loadClass("kotlin.jvm.functions.Function2");
+                        java.lang.reflect.Method call = null;
+                        for (java.lang.reflect.Method m : agentClass.getMethods()) {
+                            Class<?>[] p = m.getParameterTypes();
+                            if (p.length == 5 && p[0] == String.class && p[1] == boolean.class
+                                    && p[2] == java.util.Map.class && p[3] == function2 && p[4] == function2) {
+                                call = m;
+                            }
+                        }
+                        if (call == null) throw new IllegalStateException("no collect method on the agent");
+                        // R8 renames kotlin.Unit's INSTANCE, so take its one static Unit field.
+                        Class<?> unitClass = loader.loadClass("kotlin.Unit");
+                        Object unit = null;
+                        for (java.lang.reflect.Field field : unitClass.getDeclaredFields()) {
+                            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                                    && field.getType() == unitClass) {
+                                field.setAccessible(true);
+                                unit = field.get(null);
+                            }
+                        }
+                        final Object done = unit;
+                        Object success = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{function2},
+                                (proxy, method, a) -> answer(method, a, done, "success"));
+                        Object failure = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{function2},
+                                (proxy, method, a) -> answer(method, a, done, "failure"));
+                        Object agent = agentClass.getConstructor().newInstance();
+                        call.invoke(agent, aid, on, new java.util.HashMap<String, Object>(), success, failure);
+                        Log.i(TAG, "ok collect sent aid=" + aid + " on=" + on + " via " + call.getName());
+                        break;
+                    }
                     case "textviews": {
                         // Every shown TextView on screen, id or not, with its class chain, place,
                         // size and text length. The caption renderer's text view may carry no id
@@ -2932,6 +2977,28 @@ public final class Probe extends Instrumentation {
             if (id == null) return "null";
             String text = String.valueOf(id);
             return text.isEmpty() ? "empty" : text.length() <= 6 ? text : text.substring(text.length() - 6);
+        }
+
+        /** A Kotlin two-argument callback's call, logged with what TikTok passed it. */
+        private static Object answer(java.lang.reflect.Method method, Object[] args, Object unit, String which) {
+            switch (method.getName()) {
+                case "invoke":
+                    StringBuilder out = new StringBuilder("collect ").append(which);
+                    if (args != null) {
+                        for (Object arg : args) {
+                            out.append(" | ").append(arg == null ? "null" : arg.getClass().getName())
+                                    .append(' ').append(arg == null ? "" : String.valueOf(arg));
+                        }
+                    }
+                    Log.i(TAG, out.toString());
+                    return unit;
+                case "hashCode":
+                    return System.identityHashCode(method);
+                case "equals":
+                    return args != null && args.length == 1 && args[0] == null;
+                default:
+                    return "collect " + which + " callback";
+            }
         }
 
         /** How many URLs an address holds, the frame it claims, and the first one's host and path. */

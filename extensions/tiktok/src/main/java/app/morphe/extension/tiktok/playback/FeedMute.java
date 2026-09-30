@@ -58,8 +58,11 @@ public final class FeedMute {
             return size() > MAX_PLAYS;
         }
     };
-    /** Engines that played a feed video, so a mute switched on mid-video reaches them. */
-    private static final WeakHashMap<Object, Boolean> FEED_ENGINES = new WeakHashMap<>();
+    /**
+     * Engines that played a feed video, with that video's id, so a mute switched on mid-video
+     * reaches them and a lost note only counts for the video the engine was muted for.
+     */
+    private static final WeakHashMap<Object, String> FEED_ENGINES = new WeakHashMap<>();
     /**
      * Every engine seen playing. TikTok prepares the next videos ahead, and an engine's play()
      * runs while it prepares, before the controller has asked for that video; when the video
@@ -111,6 +114,7 @@ public final class FeedMute {
             @Override public void onActivityResumed(Activity resumed) {
                 if (!isFeedHost(resumed)) return;
                 feedInFront = true;
+                remuteFeedEngines();
                 if (refreshOwed) {
                     refreshOwed = false;
                     refresh();
@@ -213,9 +217,7 @@ public final class FeedMute {
             lastPlayFeed = feed;
             String id = aweme instanceof Aweme ? ((Aweme) aweme).getAid() : null;
             if (id != null && !id.isEmpty()) {
-                synchronized (PLAYS) {
-                    PLAYS.put(id, feed);
-                }
+                record(id, feed, isFeedHost(Reflect.readField(controller, "activity")));
                 settle(id, feed && feedInFront);
             }
             HookStatus.bound(HOOK_FAMILY, "controller play");
@@ -261,13 +263,46 @@ public final class FeedMute {
             if (id == null || id.isEmpty()) return;
             boolean feed = feedInFront && isFeedItem((Aweme) aweme);
             if (current) lastPlayFeed = feed;
-            synchronized (PLAYS) {
-                PLAYS.put(id, feed);
-            }
+            record(id, feed, feedInFront);
             settle(id, feed);
             HookStatus.bound(HOOK_FAMILY, what);
         } catch (Throwable failure) {
             HookStatus.threw(HOOK_FAMILY, what, failure);
+        }
+    }
+
+    /**
+     * Notes whether a video is a feed video. A note from outside the feed never takes the feed's
+     * own note away: a feed video shared to a DM and opened there plays under the same id, and
+     * losing the note left the feed's engine for it with its sound when the reader came back
+     * (verifier, 2026-09-29). The other screen's engines still get their sound from settle(),
+     * and {@link #remuteFeedEngines} silences the feed's again when the feed is back in front.
+     */
+    private static void record(String id, boolean feed, boolean fromFeed) {
+        synchronized (PLAYS) {
+            if (!feed && !fromFeed && Boolean.TRUE.equals(PLAYS.get(id))) return;
+            PLAYS.put(id, feed);
+        }
+    }
+
+    /**
+     * The feed is back in front: every engine prepared for a video the feed noted is a feed
+     * engine again. Another screen that played the same video gave those engines their sound,
+     * and the feed's own resumes without a play() to decide at. Main thread.
+     */
+    private static void remuteFeedEngines() {
+        for (Object engine : keys(ENGINES)) {
+            String id = engineSourceId(engine);
+            if (id == null) continue;
+            Boolean feed;
+            synchronized (PLAYS) {
+                feed = PLAYS.get(id);
+            }
+            if (!Boolean.TRUE.equals(feed)) continue;
+            synchronized (FEED_ENGINES) {
+                FEED_ENGINES.put(engine, id);
+            }
+            apply(engine);
         }
     }
 
@@ -298,7 +333,7 @@ public final class FeedMute {
         for (Object engine : keys(ENGINES)) {
             if (!id.equals(engineSourceId(engine))) continue;
             synchronized (FEED_ENGINES) {
-                if (feed) FEED_ENGINES.put(engine, Boolean.TRUE);
+                if (feed) FEED_ENGINES.put(engine, id);
                 else FEED_ENGINES.remove(engine);
             }
             apply(engine);
@@ -319,10 +354,21 @@ public final class FeedMute {
                     feed = PLAYS.get(id);
                 }
             }
-            boolean isFeed = feedInFront && Boolean.TRUE.equals(feed);
+            boolean isFeed;
+            if (feed == null && feedInFront) {
+                // No note is no evidence against an engine muted for this same video: a profile
+                // grid or search results in the feed's own activity bind past MAX_PLAYS items and
+                // push the playing and next videos' notes out (verifier, 2026-09-29). An engine
+                // reused for another video still gets its sound back.
+                synchronized (FEED_ENGINES) {
+                    isFeed = id != null && id.equals(FEED_ENGINES.get(engine));
+                }
+            } else {
+                isFeed = feedInFront && Boolean.TRUE.equals(feed);
+            }
             if (isFeed) {
                 synchronized (FEED_ENGINES) {
-                    FEED_ENGINES.put(engine, Boolean.TRUE);
+                    FEED_ENGINES.put(engine, id);
                 }
             } else {
                 synchronized (FEED_ENGINES) {
@@ -393,7 +439,7 @@ public final class FeedMute {
         return feedInFront && lastPlayFeed && isMuted();
     }
 
-    private static List<Object> keys(WeakHashMap<Object, Boolean> map) {
+    private static List<Object> keys(WeakHashMap<Object, ?> map) {
         synchronized (map) {
             return new ArrayList<>(map.keySet());
         }
@@ -455,7 +501,7 @@ public final class FeedMute {
         synchronized (PLAYS) {
             PLAYS.clear();
         }
-        for (WeakHashMap<Object, Boolean> map : Arrays.asList(ENGINES, FEED_ENGINES, MUTED, SESSION_HELPERS, PAGE_HELPERS)) {
+        for (WeakHashMap<Object, ?> map : Arrays.<WeakHashMap<Object, ?>>asList(ENGINES, FEED_ENGINES, MUTED, SESSION_HELPERS, PAGE_HELPERS)) {
             synchronized (map) {
                 map.clear();
             }

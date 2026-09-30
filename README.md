@@ -105,6 +105,10 @@ That's a split bundle. Morphe Manager merges it into one APK, and AMOLED dark th
 
 Yes. Every release is patched with all of them selected before it ships, so no two refuse to go in together. The one thing to watch is memory: with AMOLED dark theme selected, raise the manager's limit as step 4 of [Install](#install) says. Hide Play Store update offer also decodes resources, so raise the limit if that patch runs out of memory. Mixing Hushfeed with another TikTok bundle is a different question, and [Moving from Kveld](#moving-from-kveld) covers the overlap we know about.
 
+### Unfollowing a lot of accounts at once
+
+TikTok already does this. Open your profile, tap Following, then Manage at the right end of the Sort by row. Every account gets a checkbox, and the Unfollow button at the bottom takes all the ticked ones. To find the accounts you followed longest ago, set Sort by to Date followed: latest and scroll to the end, where the oldest are. The 10,000 limit on how many accounts you can follow is checked by TikTok's servers, so no patch can raise it.
+
 ### Is it Hushfeed? Pause it and see
 
 Hushfeed settings > Pause Hushfeed turns off everything a switch, list or limit controls, from the next start. TikTok then runs the way it ships. If the problem is still there, it isn't coming from any of that. Your settings stay exactly as they were, and switching Pause off brings every one of them back after a restart, with no patching again. A diagnostic export made while paused says so at the top.
