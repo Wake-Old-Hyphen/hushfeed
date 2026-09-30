@@ -90,6 +90,7 @@ source,target
 1 result,1 result
 1 result so far,1 result so far
 1 video left,1 video left
+"2, from Keep playing in the background","2, from Keep playing in the background"
 A Lab change is already running,A Lab change is already running
 A change that loosens the budget waits until the day starts over and one that tightens it applies at once. A higher budget or no budget loosens it. So do a shorter hold and more times to open the feed anyway. Moving the hour the day starts and turning this off wait too. A restored backup follows the same rule and Start today over is off while this is on.,A change that loosens the budget waits until the day starts over and one that tightens it applies at once. A higher budget or no budget loosens it. So do a shorter hold and more times to open the feed anyway. Moving the hour the day starts and turning this off wait too. A restored backup follows the same rule and Start today over is off while this is on.
 A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.,A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.
@@ -185,6 +186,7 @@ Automatic clear display,Automatic clear display
 Avatar and follow button,Avatar and follow button
 Back,Back
 Back up settings,Back up settings
+Background play,Background play
 Backup and restore,Backup and restore
 Black,Black
 Block clipboard reads,Block clipboard reads
@@ -639,6 +641,8 @@ Keep captions in clear display,Keep captions in clear display
 Keep going,Keep going
 Keep long press from quick sharing,Keep long press from quick sharing
 Keep long press from reposting,Keep long press from reposting
+Keep playing in the background,Keep playing in the background
+"Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off.","Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off."
 Keep the Favorites tab,Keep the Favorites tab
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.
 Keep the screen's refresh rate,Keep the screen's refresh rate
@@ -1213,6 +1217,7 @@ The story couldn't be saved. Try again.,The story couldn't be saved. Try again.
 "The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks."
 "The video couldn't be saved. Try again, or choose Automatic.","The video couldn't be saved. Try again, or choose Automatic."
 "The video was saved, but its record couldn't be updated. A later save may make another copy.","The video was saved, but its record couldn't be updated. A later save may make another copy."
+"The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this."
 There is no Lab change to undo.,There is no Lab change to undo.
 There is no diagnostic data to clear,There is no diagnostic data to clear
 There is no diagnostic data to put back,There is no diagnostic data to put back

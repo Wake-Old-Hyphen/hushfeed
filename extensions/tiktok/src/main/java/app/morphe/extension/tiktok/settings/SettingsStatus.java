@@ -74,6 +74,11 @@ public class SettingsStatus {
     public static void enableFeedMute() {
         feedMuteEnabled = true;
     }
+    public static boolean backgroundPlayEnabled = false;
+
+    public static void enableBackgroundPlay() {
+        backgroundPlayEnabled = true;
+    }
     public static boolean inboxFilterEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;

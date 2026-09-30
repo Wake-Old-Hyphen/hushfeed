@@ -458,6 +458,48 @@ foreach ($name in $consumerScripts) {
         "$name does not pass declared dependency names into result validation."
 }
 
+# --- patch timing ----------------------------------------------------------------------------
+#
+# time-patches.ps1 splits one CLI run into patches by the "Applied:" and "FAILED:" lines and gives
+# each the heap peak of the collections between its line and the one before (#54). Lines before
+# "Executing patches" are loading, and a gap with no collection has no peak rather than zero.
+
+$gcLines = @(
+    '[1500ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 900M->200M(4096M) 3.100ms',
+    '[2200ms] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 1000M->300M(4096M) 5.100ms',
+    '[2300ms] GC(1) Using 24 workers of 24 for evacuation',
+    '[2400ms] GC(2) Pause Young (Concurrent Start) (G1 Humongous Allocation) 1200M->400M(4096M) 6.200ms',
+    '[3000ms] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 800M->350M(4096M) 4.000ms'
+)
+$collections = Read-GcHeapLog -Lines $gcLines
+Assert-True ($collections.Count -eq 4 -and $collections[1].At -eq 2200 -and $collections[1].Before -eq 1000) `
+    'Read-GcHeapLog did not read each collection as its clock and the heap before it.'
+$stamped = @(
+    [pscustomobject]@{ At = 1000; Line = 'INFO: Loading patches' },
+    [pscustomobject]@{ At = 1800; Line = 'INFO: Applied: Early' },
+    [pscustomobject]@{ At = 2000; Line = 'INFO: Executing patches' },
+    [pscustomobject]@{ At = 2500; Line = 'INFO: Applied: First' },
+    [pscustomobject]@{ At = 4000; Line = 'SEVERE: FAILED: Second' },
+    [pscustomobject]@{ At = 4050; Line = 'INFO: Ignored progress line' },
+    [pscustomobject]@{ At = 4100; Line = 'INFO: Applied: Third  ' }
+)
+$times = Get-PatchTimes -Stamped $stamped -Collections $collections
+Assert-True ($null -ne $times -and $times.ExecutingAt -eq 2000 -and $times.LastPatchAt -eq 4100 -and $times.Rows.Count -eq 3) `
+    'Get-PatchTimes counted a line before "Executing patches" or missed a result line.'
+Assert-True ($times.Rows[0].Patch -eq 'First' -and $times.Rows[0].Ms -eq 500 -and $times.Rows[0].PeakMb -eq 1200) `
+    'Get-PatchTimes gave the first patch the wrong time or heap peak.'
+Assert-True ($times.Rows[1].Patch -eq 'Second' -and $times.Rows[1].Result -eq 'FAILED' -and
+    $times.Rows[1].Ms -eq 1500 -and $times.Rows[1].PeakMb -eq 800) `
+    'Get-PatchTimes did not read a failed patch as its own row.'
+Assert-True ($times.Rows[2].Patch -eq 'Third' -and $times.Rows[2].Ms -eq 100 -and $null -eq $times.Rows[2].PeakMb) `
+    'Get-PatchTimes kept trailing spaces in a name or gave a gap without a collection a heap peak.'
+Assert-True ($null -eq (Get-PatchTimes -Stamped @($stamped[0], $stamped[1]) -Collections $collections)) `
+    'Get-PatchTimes timed a run that never reached its patches.'
+$timingScript = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'time-patches.ps1') -Raw
+Assert-True ($timingScript -match 'Get-PatchTimes' -and $timingScript -match 'Read-GcHeapLog' -and
+    $timingScript -match 'Resolve-DesktopCli') `
+    'time-patches.ps1 no longer reads its run through the shared parsers and CLI lookup.'
+
 # --- release receipt -------------------------------------------------------------------------
 
 . (Join-Path $PSScriptRoot 'release-receipt.ps1')

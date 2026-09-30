@@ -25,8 +25,8 @@ public final class LocationBadgeFilter implements IFilter {
     /**
      * Strips that ask the viewer to make something with a tool: an effect, a template, an editing
      * app (CapCut and its siblings) or an AI style (#51). Every key is one TikTok 47.1.4's own code
-     * names; anchor_effect, anchor_ucg_template, anchor_pugc_template and anchor_capcut were served
-     * on the login emulators and the S22. Films, dramas, places and other apps' promotions
+     * names; anchor_effect, anchor_ucg_template, anchor_pugc_template and anchor_capcut were seen
+     * served on 47.0.3 and 47.1.4. Films, dramas, places and other apps' promotions
      * (Lemon8, the photo app) stay, so a tag that links to what the video is about keeps working.
      */
     static final Set<String> CREATION_TOOL_KEYS = Set.of(

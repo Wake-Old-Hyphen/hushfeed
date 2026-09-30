@@ -33,6 +33,7 @@ val p2pRelayBlockerPatch = rawResourcePatch(
             nativeFiles,
             p2pRelayProfiles,
             resolveStandaloneFile = { path -> get(path) },
+            versionName = packageMetadata.versionName,
         )
         result.report("P2P Relay Blocker")
     }
@@ -709,8 +710,9 @@ internal val p2pRelayProfiles = listOf(
     // 47.1.4's universal APK carries 47.1.3's four relay libraries byte for byte.
     p2pRelay4713,
     bundleOf(p2pRelay4713, "lib/armeabi-v7a/libavmdlp2pv2.so", "lib/armeabi-v7a/libp2plivevdp.so"),
-    // 47.1.4's split bundle ships no relay library at all, so there is nothing to empty.
-    ResourceProfile("TikTok 47.1.4 split bundle", emptyList()),
+    // 47.1.4 ships no relay library at all, so there is nothing to empty. Only on 47.1.4: another
+    // build without these files has renamed or moved them, and the strip must refuse it.
+    ResourceProfile("TikTok 47.1.4", emptyList(), onlyVersion = "47.1.4"),
 )
 
 internal val languageInventories = listOf(

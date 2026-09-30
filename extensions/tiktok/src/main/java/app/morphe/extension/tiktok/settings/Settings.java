@@ -160,6 +160,8 @@ public class Settings extends BaseSettings {
             new BooleanSetting("fill_video_to_screen", FALSE);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
+    /** Keep playing in the background (#52). TikTok reads its gate once a process, so a restart applies it. */
+    public static final BooleanSetting BACKGROUND_PLAY = new BooleanSetting("background_play", FALSE, true);
     public static final BooleanSetting HIDE_LAUNCHER_SHORTCUTS =
             new BooleanSetting("hide_launcher_shortcuts", FALSE);
     /**

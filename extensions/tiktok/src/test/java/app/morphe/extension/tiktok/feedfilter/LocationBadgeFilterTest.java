@@ -233,8 +233,13 @@ public class LocationBadgeFilterTest {
                 new TypedAnchor("anchor_effect", 28), film, new TypedAnchor("anchor_capcut", 54))));
 
         String report = String.join("|", FeedFilterCounters.report());
-        assertTrue(report, report.contains("CaptionStrip: 1 lists, 4 items, 3 removed. "));
-        assertTrue(report, report.contains("Last reason: creationTag"));
+        assertTrue(report, report.contains("CaptionStrip: 1 lists, 4 items, 3 removed. Last reason: creationTag. "));
+
+        // A list's places are counted before its tags, so a place alone shows it isn't put down to
+        // the creation switch either.
+        assertEquals(List.of(film), LocationBadgeFilter.visibleAnchors(Arrays.asList(film, new Anchor("anchor_poi"))));
+        report = String.join("|", FeedFilterCounters.report());
+        assertTrue(report, report.contains("CaptionStrip: 2 lists, 6 items, 4 removed. Last reason: placeLabel. "));
     }
 
     @Test public void placesStayWhenOnlyCreationTagsAreHidden() {
