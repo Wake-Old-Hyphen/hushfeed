@@ -180,6 +180,27 @@ public class Settings extends BaseSettings {
             new BooleanSetting("hide_follower_notifications", FALSE);
     public static final BooleanSetting HIDE_MESSAGE_STREAKS =
             new BooleanSetting("hide_message_streaks", FALSE);
+    /**
+     * Sends one message a day to {@link #AUTO_STREAK_RECIPIENT} at {@link #AUTO_STREAK_MINUTE},
+     * so a streak with them keeps going on a day nobody opens the app. Off by default. See
+     * AutoStreak.
+     */
+    public static final BooleanSetting AUTO_STREAK = new BooleanSetting("auto_streak", FALSE);
+    /** The handle to message, with or without its @. */
+    public static final StringSetting AUTO_STREAK_RECIPIENT =
+            new StringSetting("auto_streak_recipient", "", false, Setting.parent(AUTO_STREAK));
+    /** The time of day to send, in minutes after midnight. Noon leaves room for retries. */
+    public static final IntegerSetting AUTO_STREAK_MINUTE = new IntegerSetting(
+            "auto_streak_minute", 12 * 60, false, Setting.parent(AUTO_STREAK)).withRange(0, 24 * 60 - 1);
+    public static final StringSetting AUTO_STREAK_MESSAGE = new StringSetting(
+            "auto_streak_message", "🔥", false, Setting.parent(AUTO_STREAK));
+    /**
+     * The day the last message went, the tries made today and how the last one ended. Kept out
+     * of backups: it describes one phone's sends, and a restore that carried it could stop
+     * today's message on another phone or send a second one.
+     */
+    public static final StringSetting AUTO_STREAK_STATE =
+            new StringSetting("auto_streak_state", "", false, false);
         // Zero is meaningful, and the dialog takes it: it turns edge seeking off on its own.
     public static final IntegerSetting EDGE_SEEK_SECONDS =
             new IntegerSetting("edge_seek_seconds", 5, false, Setting.parent(EDGE_SEEK)).withRange(0, 60);
@@ -568,6 +589,9 @@ public class Settings extends BaseSettings {
     // them, are built on that bridge and stop working without it.
     public static final BooleanSetting BLOCK_WEBVIEW_JS_INTERFACES = new BooleanSetting("block_webview_js_interfaces", FALSE);
     public static final BooleanSetting CAMERA_MIC_INDICATOR = new BooleanSetting("camera_mic_indicator", TRUE);
+    // On once the patch is picked, which is the opt-in. A restart, because TikTok works its
+    // signature hash out once and keeps it.
+    public static final BooleanSetting STORE_IDENTITY = new BooleanSetting("store_identity", TRUE, true);
     // Feed toolbar controls. The LIVE button shares HIDE_LIVE_ENTRANCE with the overlay hider.
     public static final BooleanSetting HIDE_FEED_FOLLOW_BUTTON =
             new BooleanSetting("hide_feed_follow_button", FALSE, true);
@@ -660,7 +684,7 @@ public class Settings extends BaseSettings {
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
                 FEED_MUTE_BUTTON_POSITION,
-                SHARE_ACTION_CATALOG, DIAGNOSTIC_REPORT_SALT,
+                SHARE_ACTION_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.
                 SESSION_BUDGET_RESET_HOUR);

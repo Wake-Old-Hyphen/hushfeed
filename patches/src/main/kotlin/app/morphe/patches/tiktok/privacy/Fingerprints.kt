@@ -6,8 +6,38 @@ package app.morphe.patches.tiktok.privacy
 
 import app.morphe.patcher.Fingerprint
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+
+/**
+ * TikTok's own cached lookup of its package: a static method that takes a PackageManager, the
+ * package name and flags, calls {@code getPackageManager().getPackageInfo(name, flags)} once and
+ * keeps the answer in a static PackageInfo field. Every read of TikTok's own signing certificate
+ * that TikTok's Java code makes, the AppLog {@code sig_hash} among them, comes through here. The
+ * obfuscated name held ("V3") across the declared builds but the class did not, so this matches on
+ * shape: exactly one method per fixture.
+ */
+internal object SelfPackageInfoCacheFingerprint : Fingerprint(
+    returnType = "Landroid/content/pm/PackageInfo;",
+    parameters = listOf("Landroid/content/pm/PackageManager;", "Ljava/lang/String;", "I"),
+    custom = { method, _ ->
+        val instructions = method.implementation?.instructions?.toList().orEmpty()
+        val callsGetPackageInfo = instructions.any {
+            ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { ref ->
+                ref.definingClass == "Landroid/content/pm/PackageManager;" &&
+                    ref.name == "getPackageInfo" && ref.parameterTypes.size == 2
+            } == true
+        }
+        val cachesPackageInfo = instructions.any {
+            it.opcode == Opcode.SPUT_OBJECT &&
+                ((it as? ReferenceInstruction)?.reference as? FieldReference)?.type ==
+                "Landroid/content/pm/PackageInfo;"
+        }
+        callsGetPackageInfo && cachesPackageInfo
+    },
+)
 
 /**
  * TikTok's lookup of the Pitaya plugin, cached after the first call. Everything the plugin does
