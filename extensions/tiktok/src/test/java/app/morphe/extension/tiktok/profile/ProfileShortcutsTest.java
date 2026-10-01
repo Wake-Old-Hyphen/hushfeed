@@ -31,6 +31,7 @@ public class ProfileShortcutsTest {
 
     @After public void reset() {
         Settings.HIDDEN_PROFILE_SHORTCUTS.save("");
+        Settings.PROFILE_SHORTCUT_PICKS.save("");
         Settings.PROFILE_SHORTCUT_CATALOG.save("");
     }
 
@@ -115,6 +116,37 @@ public class ProfileShortcutsTest {
         assertEquals(2, row.components.size());
         assertSame(bare, row.components.get(0));
         assertEquals("not a component", row.components.get(1));
+    }
+
+    @Test public void checklistPicksAndTypedNamesHideAlike() {
+        Node row = node("advanced_feature", null,
+                pill("creator_tools", 7, "TikTok Studio"), pill("shop", 3, "Shop"), pill("base_item", 21, "Your orders"));
+        Settings.PROFILE_SHORTCUT_PICKS.save("creator tools");
+        Settings.HIDDEN_PROFILE_SHORTCUTS.save("Shop");
+        ProfileShortcuts.onProfileData(user(row));
+
+        assertEquals(List.of("advanced_feature_base_item"), names(row.components));
+    }
+
+    @Test public void aFullCatalogDropsTheOldestShortcutButNeverAHiddenOne() {
+        for (int batch = 0; batch < 48; batch += 8) {
+            Node row = node("advanced_feature", null);
+            for (int index = batch; index < batch + 8; index++) row.components.add(pill("k" + index, 100 + index, "K " + index));
+            ProfileShortcuts.onProfileData(user(row));
+        }
+        assertEquals(48, ProfileShortcutCatalog.entries().size());
+        Settings.PROFILE_SHORTCUT_PICKS.save("k0");
+        Settings.HIDDEN_PROFILE_SHORTCUTS.save("K 1");
+
+        ProfileShortcuts.onProfileData(user(node("advanced_feature", null, pill("fresh", 900, "Fresh"))));
+
+        List<String> keys = new ArrayList<>();
+        for (ProfileShortcutCatalog.Entry entry : ProfileShortcutCatalog.entries()) keys.add(entry.key);
+        assertEquals(48, keys.size());
+        assertTrue("a picked shortcut stays", keys.contains("k0"));
+        assertTrue("a shortcut hidden by its typed name stays", keys.contains("k1"));
+        assertFalse("the oldest one not hidden makes room", keys.contains("k2"));
+        assertEquals("the new one is listed last", "fresh", keys.get(47));
     }
 
     @Test public void nothingInTheHeaderEscapesTheHook() {

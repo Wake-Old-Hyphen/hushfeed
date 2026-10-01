@@ -168,15 +168,28 @@ public final class ProfileShortcuts {
         }
     }
 
+    /** Typed names and checklist picks hide alike. */
     static Set<String> hiddenKeys() {
         Set<String> keys = new HashSet<>();
-        String stored = Settings.HIDDEN_PROFILE_SHORTCUTS.get();
-        if (stored == null) return keys;
+        addTokens(keys, Settings.HIDDEN_PROFILE_SHORTCUTS.get());
+        addTokens(keys, Settings.PROFILE_SHORTCUT_PICKS.get());
+        return keys;
+    }
+
+    /** What the reader has saved to hide, paused or not, so the catalog never drops one of them. */
+    static Set<String> savedHiddenKeys() {
+        Set<String> keys = new HashSet<>();
+        addTokens(keys, Settings.HIDDEN_PROFILE_SHORTCUTS.savedValue());
+        addTokens(keys, Settings.PROFILE_SHORTCUT_PICKS.savedValue());
+        return keys;
+    }
+
+    private static void addTokens(Set<String> keys, String stored) {
+        if (stored == null) return;
         for (String token : stored.split("[,\\n]")) {
             String key = canonical(token);
             if (!key.isEmpty()) keys.add(key);
         }
-        return keys;
     }
 
     public static String canonical(String value) {

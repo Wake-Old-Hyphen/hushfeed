@@ -5,9 +5,11 @@
 package app.morphe.extension.tiktok.profile;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -35,6 +37,7 @@ public final class ProfileShortcutCatalog {
     static synchronized void observe(List<ProfileShortcuts.Shortcut> shortcuts) {
         if (shortcuts == null || shortcuts.isEmpty()) return;
         LinkedHashMap<String, String> catalog = read();
+        Set<String> hidden = null;
         boolean changed = false;
         for (ProfileShortcuts.Shortcut shortcut : shortcuts) {
             String key = ProfileShortcuts.canonical(shortcut.key());
@@ -43,7 +46,10 @@ public final class ProfileShortcutCatalog {
             if (label.isEmpty()) label = key;
             String known = catalog.get(key);
             if (known == null) {
-                if (catalog.size() >= MAX_ENTRIES) continue;
+                if (catalog.size() >= MAX_ENTRIES) {
+                    if (hidden == null) hidden = ProfileShortcuts.savedHiddenKeys();
+                    if (!dropOldest(catalog, hidden)) continue;
+                }
                 catalog.put(key, label);
                 changed = true;
             } else if (!known.equals(label) && !label.equals(key)) {
@@ -52,6 +58,21 @@ public final class ProfileShortcutCatalog {
             }
         }
         if (changed) Settings.PROFILE_SHORTCUT_CATALOG.save(write(catalog));
+    }
+
+    /**
+     * Makes room for a new shortcut. Every profile visited can bring its own, so a full catalog
+     * drops the one seen first, but never one the reader hides: the checklist has to keep those.
+     */
+    private static boolean dropOldest(Map<String, String> catalog, Set<String> hidden) {
+        for (Iterator<Map.Entry<String, String>> it = catalog.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, String> entry = it.next();
+            if (hidden.contains(entry.getKey())
+                    || hidden.contains(ProfileShortcuts.canonical(entry.getValue()))) continue;
+            it.remove();
+            return true;
+        }
+        return false;
     }
 
     public static synchronized List<Entry> entries() {

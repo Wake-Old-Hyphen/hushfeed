@@ -30,15 +30,16 @@ import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Picks the profile shortcuts to hide from the ones TikTok has sent to this phone (#49). Names
- * typed by hand that TikTok hasn't sent yet are kept as they are.
+ * Picks the profile shortcuts to hide from the ones TikTok has sent to this phone (#49). The
+ * picks are saved apart from the names typed in the row below, so neither rewrites the other,
+ * and a pick the catalog no longer lists is kept.
  */
 @SuppressWarnings("deprecation")
 public final class ProfileShortcutChecklistPreference extends DialogPreference {
     private final List<ProfileShortcutCatalog.Entry> catalog = new ArrayList<>();
     private final Set<String> selected = new LinkedHashSet<>();
     private LinearLayout rows;
-    private String originalHidden = "";
+    private String originalPicks = "";
     private boolean selectionSaved;
 
     public ProfileShortcutChecklistPreference(Context context) {
@@ -63,9 +64,10 @@ public final class ProfileShortcutChecklistPreference extends DialogPreference {
         Context context = getContext();
         catalog.clear();
         catalog.addAll(ProfileShortcutCatalog.entries());
-        originalHidden = Settings.HIDDEN_PROFILE_SHORTCUTS.get();
+        // The saved value, not get(): paused, get() answers the default, and a save would wipe it.
+        originalPicks = Settings.PROFILE_SHORTCUT_PICKS.savedValue();
         selected.clear();
-        selected.addAll(selectedKeys(originalHidden));
+        selected.addAll(selectedKeys(originalPicks));
 
         LinearLayout root = new LinearLayout(context);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -156,10 +158,10 @@ public final class ProfileShortcutChecklistPreference extends DialogPreference {
         AlertDialog dialog = (AlertDialog) getDialog();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
             if (!view.isEnabled()) return;
-            String hidden = buildHidden();
+            String picks = buildPicks();
             setChoicesEnabled(dialog, false);
             boolean accepted = Utils.runOnBackgroundThread(() -> {
-                boolean saved = Settings.HIDDEN_PROFILE_SHORTCUTS.save(hidden);
+                boolean saved = Settings.PROFILE_SHORTCUT_PICKS.save(picks);
                 Utils.runOnMainThread(() -> {
                     if (saved) notifyChanged();
                     if (getDialog() != dialog || !dialog.isShowing()) {
@@ -196,7 +198,7 @@ public final class ProfileShortcutChecklistPreference extends DialogPreference {
     }
 
     private void saveSelection() {
-        if (Settings.HIDDEN_PROFILE_SHORTCUTS.save(buildHidden())) {
+        if (Settings.PROFILE_SHORTCUT_PICKS.save(buildPicks())) {
             notifyChanged();
         } else {
             reportSaveFailure();
@@ -204,26 +206,20 @@ public final class ProfileShortcutChecklistPreference extends DialogPreference {
     }
 
     private Set<String> selectedKeys(String stored) {
+        Set<String> picked = new HashSet<>();
+        for (String token : tokens(stored)) picked.add(ProfileShortcuts.canonical(token));
         Set<String> keys = new HashSet<>();
-        for (String token : tokens(stored)) {
-            String canonical = ProfileShortcuts.canonical(token);
-            for (ProfileShortcutCatalog.Entry entry : catalog) {
-                if (entry.key.equals(canonical) || ProfileShortcuts.canonical(entry.label).equals(canonical)) {
-                    keys.add(entry.key);
-                }
-            }
+        for (ProfileShortcutCatalog.Entry entry : catalog) {
+            if (picked.contains(entry.key)) keys.add(entry.key);
         }
         return keys;
     }
 
-    String buildHidden() {
+    String buildPicks() {
         Set<String> known = new HashSet<>();
-        for (ProfileShortcutCatalog.Entry entry : catalog) {
-            known.add(entry.key);
-            known.add(ProfileShortcuts.canonical(entry.label));
-        }
+        for (ProfileShortcutCatalog.Entry entry : catalog) known.add(entry.key);
         List<String> output = new ArrayList<>();
-        for (String token : tokens(originalHidden)) {
+        for (String token : tokens(originalPicks)) {
             if (!known.contains(ProfileShortcuts.canonical(token))) output.add(token);
         }
         for (ProfileShortcutCatalog.Entry entry : catalog) {

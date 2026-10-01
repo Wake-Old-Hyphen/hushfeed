@@ -35,13 +35,15 @@ import app.morphe.extension.tiktok.settings.Settings;
 public final class BenchmarkRuns {
     static final String SERVICE = "com.benchmark.collection.service.ByteBenchService";
 
+    /** The latest choice asked for. Each queued task applies this, not the value it was queued with. */
+    private static volatile Boolean requested;
+
     private BenchmarkRuns() {
     }
 
     /** From TikTok's main activity, so a change made anywhere is in force from this start. */
     public static void onAppOpened(Activity activity) {
-        Context context = activity.getApplicationContext();
-        Utils.runOnBackgroundThread(() -> apply(context, Settings.STOP_BENCHMARK_RUNS.get()));
+        request(activity.getApplicationContext(), Settings.STOP_BENCHMARK_RUNS.get());
     }
 
     /**
@@ -49,9 +51,22 @@ public final class BenchmarkRuns {
      * comes in rather than being read back.
      */
     public static void settingsChanged(Context context, boolean stop) {
-        Context app = context.getApplicationContext();
-        boolean wanted = stop && !Setting.isPaused();
-        Utils.runOnBackgroundThread(() -> apply(app, wanted));
+        request(context.getApplicationContext(), stop && !Setting.isPaused());
+    }
+
+    /**
+     * Two quick flips run on two pool threads at once, and whichever finished last used to win,
+     * so on then off could leave the service disabled under a switch that reads off. Every task
+     * applies the latest request under one lock instead, so the last to run agrees with the switch.
+     */
+    private static void request(Context app, boolean stop) {
+        requested = stop;
+        Utils.runOnBackgroundThread(() -> {
+            synchronized (BenchmarkRuns.class) {
+                Boolean latest = requested;
+                if (latest != null) apply(app, latest);
+            }
+        });
     }
 
     static int wantedState(boolean stop) {

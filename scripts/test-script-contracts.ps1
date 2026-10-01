@@ -315,6 +315,62 @@ try {
     Assert-True $reportValidation.Valid `
         "A complete result with a declared dependency was rejected: $($reportValidation.Reason)"
 
+    # Exercise the verifier's actual preservation branch against archives, including corruption
+    # with an unchanged length. A resource-table check alone doesn't cover native XRSC files.
+    $verifyTokens = $null
+    $verifyErrors = $null
+    $verifyAst = [System.Management.Automation.Language.Parser]::ParseFile(
+        (Join-Path $PSScriptRoot 'verify-all-patches.ps1'), [ref]$verifyTokens, [ref]$verifyErrors)
+    Assert-True ($verifyErrors.Count -eq 0) 'The all-patches verifier did not parse.'
+    $nativeGuards = @($verifyAst.FindAll({ param($node)
+        $node -is [System.Management.Automation.Language.IfStatementAst] -and
+            $node.Extent.Text.StartsWith('if ($languagePatch.Count -gt 0)')
+    }, $true))
+    Assert-True ($nativeGuards.Count -eq 1) 'The verifier has no single native-language preservation branch.'
+    $nativeGuard = [scriptblock]::Create($nativeGuards[0].Extent.Text)
+    function Invoke-NativeLanguageGuard([string]$Apk, [string]$out, [string]$Default = 'all') {
+        $catalog = [pscustomobject]@{ patches = @([pscustomobject]@{
+            name = 'Remove unused language packs'
+            options = @([pscustomobject]@{ key = 'locales'; default = $Default })
+        }) }
+        $languagePatch = @($catalog.patches)
+        & $nativeGuard 6> $null
+    }
+    function New-LanguageArchive([string]$Name, [System.Collections.IDictionary]$Files) {
+        $path = Join-Path $caseRoot "$Name.apk"
+        $zip = [System.IO.Compression.ZipFile]::Open($path, [System.IO.Compression.ZipArchiveMode]::Create)
+        try {
+            foreach ($key in $Files.Keys) {
+                $stream = $zip.CreateEntry($key).Open()
+                try {
+                    $bytes = [Text.Encoding]::UTF8.GetBytes($Files[$key])
+                    $stream.Write($bytes, 0, $bytes.Length)
+                } finally { $stream.Dispose() }
+            }
+        } finally { $zip.Dispose() }
+        return $path
+    }
+    $nativeEnglish = 'assets/strings#lang_en/en.xrsc'
+    $nativeTurkish = 'assets/strings#lang_tr/tr.xrsc'
+    $nativeStock = New-LanguageArchive 'native-stock' @{ $nativeEnglish = 'English'; $nativeTurkish = 'Turkish' }
+    $nativeSame = New-LanguageArchive 'native-same' @{ $nativeEnglish = 'English'; $nativeTurkish = 'Turkish' }
+    Invoke-NativeLanguageGuard $nativeStock $nativeSame
+    Assert-Throws { Invoke-NativeLanguageGuard $nativeStock $nativeSame 'en' } '*must default to all*' `
+        'An all-patches catalog that silently removed languages was accepted.'
+    $nativeMissing = New-LanguageArchive 'native-missing' @{ $nativeEnglish = 'English' }
+    Assert-Throws { Invoke-NativeLanguageGuard $nativeStock $nativeMissing } "*removed or changed $nativeTurkish*" `
+        'A missing native language file passed the verifier.'
+    $nativeEmpty = New-LanguageArchive 'native-empty' @{ $nativeEnglish = 'English'; $nativeTurkish = '' }
+    Assert-Throws { Invoke-NativeLanguageGuard $nativeStock $nativeEmpty } "*removed or changed $nativeTurkish*" `
+        'A zeroed native language file passed the verifier.'
+    $nativeChanged = New-LanguageArchive 'native-changed' @{ $nativeEnglish = 'English'; $nativeTurkish = 'Changed' }
+    Assert-Throws { Invoke-NativeLanguageGuard $nativeStock $nativeChanged } "*build changed $nativeTurkish*" `
+        'A same-length native language corruption passed the verifier.'
+    $nativeAbsent = New-LanguageArchive 'native-absent' @{ 'AndroidManifest.xml' = 'manifest' }
+    Assert-Throws { Invoke-NativeLanguageGuard $nativeAbsent $nativeSame } '*no native language files*' `
+        'An unexercised native-language verifier reported success.'
+    Write-Host '[scripts] native language preservation contracts passed'
+
     $fakeAdb = Join-Path $caseRoot 'adb.cmd'
     $log = Join-Path $caseRoot 'adb.log'
     $mode = Join-Path $caseRoot 'mode.txt'

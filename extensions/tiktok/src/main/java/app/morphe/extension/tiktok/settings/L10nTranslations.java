@@ -910,8 +910,8 @@ public final class L10nTranslations {
                 "Fehler");
         table.put("Expand activity list",
                 "Aktivitätsliste ausklappen");
-        table.put("Explore",
-                "Entdecken");
+        table.put("Explore or Community",
+                "Entdecken oder Community");
         table.put("Export diagnostic report",
                 "Diagnosebericht exportieren");
         table.put("Export loaded values",
@@ -3935,8 +3935,8 @@ public final class L10nTranslations {
                 "Errores");
         table.put("Expand activity list",
                 "Ampliar la lista de actividad");
-        table.put("Explore",
-                "Explorar");
+        table.put("Explore or Community",
+                "Explorar o Comunidad");
         table.put("Export diagnostic report",
                 "Exportar el informe de diagnóstico");
         table.put("Export loaded values",
@@ -6960,8 +6960,8 @@ public final class L10nTranslations {
                 "Kesalahan");
         table.put("Expand activity list",
                 "Bentangkan daftar aktivitas");
-        table.put("Explore",
-                "Jelajahi");
+        table.put("Explore or Community",
+                "Jelajahi atau Komunitas");
         table.put("Export diagnostic report",
                 "Ekspor laporan diagnostik");
         table.put("Export loaded values",
@@ -9985,8 +9985,8 @@ public final class L10nTranslations {
                 "Errori");
         table.put("Expand activity list",
                 "Espandi l'elenco delle attività");
-        table.put("Explore",
-                "Esplora");
+        table.put("Explore or Community",
+                "Esplora o Community");
         table.put("Export diagnostic report",
                 "Esporta rapporto diagnostico");
         table.put("Export loaded values",
@@ -13010,8 +13010,8 @@ public final class L10nTranslations {
                 "Erros");
         table.put("Expand activity list",
                 "Expandir a lista de atividades");
-        table.put("Explore",
-                "Explorar");
+        table.put("Explore or Community",
+                "Explorar ou Comunidade");
         table.put("Export diagnostic report",
                 "Exportar o relatório de diagnóstico");
         table.put("Export loaded values",
@@ -16184,8 +16184,8 @@ public final class L10nTranslations {
                 "Ошибки");
         table.put("Expand activity list",
                 "Развернуть список активности");
-        table.put("Explore",
-                "Обзор");
+        table.put("Explore or Community",
+                "Обзор или Сообщество");
         table.put("Export diagnostic report",
                 "Экспортировать диагностический отчёт");
         table.put("Export loaded values",
@@ -19320,8 +19320,8 @@ public final class L10nTranslations {
                 "Hatalar");
         table.put("Expand activity list",
                 "Etkinlik listesini genişlet");
-        table.put("Explore",
-                "Keşfet");
+        table.put("Explore or Community",
+                "Keşfet veya Topluluk");
         table.put("Export diagnostic report",
                 "Tanılama raporunu dışa aktar");
         table.put("Export loaded values",

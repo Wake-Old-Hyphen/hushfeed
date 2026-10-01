@@ -226,6 +226,14 @@ public class PrivacySwitchesTest {
         assertEquals("off hands the service back to the manifest",
                 PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, packages.getComponentEnabledSetting(service));
 
+        for (int flip = 0; flip < 20; flip++) {
+            BenchmarkRuns.settingsChanged(context, true);
+            BenchmarkRuns.settingsChanged(context, false);
+        }
+        Utils.awaitBackgroundTasksForTests();
+        assertEquals("quick flips end where the switch was left",
+                PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, packages.getComponentEnabledSetting(service));
+
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
             Settings.STOP_BENCHMARK_RUNS.save(true);
             BenchmarkRuns.onAppOpened(owner.get());

@@ -78,6 +78,12 @@ Morphe Manager 1.32.0 or newer loads Hushfeed on the phone, and morphe-desktop d
 
 ## Troubleshooting
 
+### TikTok stays in English after removing language packs
+
+Remove unused language packs keeps every native TikTok language until you change its Languages to keep option. `all` or a blank option keeps them all. A list such as `en,tr` keeps English and Turkish; `en` keeps only English. English always stays as the fallback. Hushfeed's settings translations are separate from TikTok's native packs.
+
+Pause Hushfeed and importing settings can't restore files removed at patch time. Repatch a clean official APK with every language kept, or with the missing language in the list. Match the installed package name, including the Clone app choice, and use the same signing key. The new version code must be at least the installed one. If you already applied Hide Play Store update offer, keep that patch selected so its raised code stays the same. Install over the existing app to preserve its stored account data.
+
 ### Logging in fails
 
 Login trouble is the most common complaint about any patched TikTok. These are the fixes people report:
@@ -241,7 +247,7 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 | `Remove content credential and card scanner assets` | Empties TikTok's bundled C2PA and Microblink card-scanning assets, the Pitaya AI model libraries, the live-cast dynamic feature, and the ART log monitor probe. Saves about 12.5 MB of storage. |
 | `Remove creation tools` | Empties TikTok's reviewed editor, camera-effect and face-model assets. The Create tab and all recording, editing and effects tools stop working. Saves about 40 MB of storage. Switch: Hushfeed settings > App behavior. |
 | `Remove LIVE extras` | Empties TikTok's link-mic and LIVE match or minigame assets, then skips its gift-effect widget setup. Co-hosting, games and animated gifts may stop. The APK gets about 3 MB smaller. |
-| `Remove unused language packs` | Empties unselected TikTok language bundles while always keeping English. Selected language codes are checked before any file changes. With the default choices it saves about 26 MB of storage. |
+| `Remove unused language packs` | Empties the TikTok language bundles you leave out of Languages to keep, always keeping English. It keeps every language until you list the ones you want, so picking every patch removes none. Listed codes are checked before any file changes. Keeping only English saves about 26 MB of storage. |
 | `Repost diagnostics` | With diagnostic logging on, records a repost request, TikTok's answer, and the next repost-list read without recording the video's ID or note. |
 | `Resource and battery governor` | Stops TikTok listening to the motion sensors it polls for device fingerprinting: the accelerometer, gyroscope, magnetometer, rotation, gravity and linear acceleration sensors. A second switch, off by default, keeps TikTok's phone benchmark from starting in a background process of its own. Switch: Hushfeed settings > Privacy. |
 | `Resume videos after scrolling` | Continues supported videos from where playback stopped when returning after a scroll. Switch: Hushfeed settings > App. |

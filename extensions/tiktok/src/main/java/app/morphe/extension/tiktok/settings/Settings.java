@@ -671,9 +671,11 @@ public class Settings extends BaseSettings {
     public static final StringSetting SHARE_HIDDEN_ITEMS_LIVE =
             new StringSetting("share_hidden_items_live", SHARE_HIDDEN_ITEMS_FOLLOW_VIDEO);
     public static final StringSetting SHARE_ACTION_CATALOG = new StringSetting("share_action_catalog", "");
-    // Profile shortcuts (#49): the pills under your bio. Names or kinds to hide, comma separated,
-    // and the ones TikTok has sent to this phone, which the checklist offers.
+    // Profile shortcuts (#49): the pills under a profile's bio. Names typed to hide, comma separated;
+    // the keys picked in the checklist, kept apart so neither rewrites the other; and the ones
+    // TikTok has sent to this phone, which the checklist offers.
     public static final StringSetting HIDDEN_PROFILE_SHORTCUTS = new StringSetting("hidden_profile_shortcuts", "");
+    public static final StringSetting PROFILE_SHORTCUT_PICKS = new StringSetting("profile_shortcut_picks", "");
     public static final StringSetting PROFILE_SHORTCUT_CATALOG = new StringSetting("profile_shortcut_catalog", "");
     // Package names of the apps added to the Share via row, comma separated, in the order picked.
     public static final StringSetting SHARE_ADDED_APPS = new StringSetting("share_added_apps", "");
