@@ -648,10 +648,15 @@ $unchanged = Get-ManifestDelta -Stock $facts -Patched $facts
 Assert-True (@(ConvertTo-ManifestDeltaEntries -Delta $unchanged).Count -eq 0) `
     'An unchanged manifest produced a delta.'
 
+# Exactly Keep a streak going's three alarm permissions. Anything more means a patch changes the
+# manifest in a way nobody has reviewed here yet.
 $checkedInAllowlist = Read-ManifestDeltaAllowlist -Path (Join-Path $PSScriptRoot 'manifest-delta-allowlist.txt')
-Assert-True (@($checkedInAllowlist | Where-Object { $_ }).Count -eq 0) `
-    ('The checked-in manifest delta allowlist is no longer empty, so the patches now change the ' +
-     "Android manifest: $(@($checkedInAllowlist) -join ', ')")
+Assert-True ((@($checkedInAllowlist | Where-Object { $_ }) -join '; ') -eq (@(
+    'permission-added android.permission.RECEIVE_BOOT_COMPLETED',
+    'permission-added android.permission.SCHEDULE_EXACT_ALARM',
+    'permission-added android.permission.USE_EXACT_ALARM') -join '; ')) `
+    ('The checked-in manifest delta allowlist changed, so the patches now change the Android ' +
+     "manifest in a new way: $(@($checkedInAllowlist) -join ', ')")
 
 $allowlistRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("receipt-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $allowlistRoot | Out-Null

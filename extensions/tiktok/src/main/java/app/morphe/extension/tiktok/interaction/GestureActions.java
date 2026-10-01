@@ -6,11 +6,14 @@
  */
 package app.morphe.extension.tiktok.interaction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
+import android.view.Window;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -62,10 +65,23 @@ public final class GestureActions {
         String action = Settings.DOUBLE_TAP_ACTION.get();
         if ("nothing".equals(action)) return true;
         if (!"comments".equals(action)) return false;
-        if (!openComments(Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid"))) {
+        openOnScreenComments();
+        return true;
+    }
+
+    /**
+     * Opens the comments of the video on screen, for a gesture made on it, or says there are none.
+     *
+     * <p>Not by the playing video's id. That follows the player's progress, which names the new
+     * video only once it starts playing, so right after a swipe it still named the one before and
+     * the press went to that video's button: its comments opened, its "restricted" message showed,
+     * or with no button bound to it Hushfeed's toast did (#63). The id now only breaks a tie.
+     */
+    static void openOnScreenComments() {
+        String playing = Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid");
+        if (!openVisibleComments(playing)) {
             Utils.showToastShort(L10n.t("Comments aren't available for this video"));
         }
-        return true;
     }
 
     /** Eligibility callback from the native edge-speedup component before its 300 ms timer. */
@@ -180,9 +196,7 @@ public final class GestureActions {
             return true;
         }
         if (!"comments".equals(action)) return false;
-        if (!openComments(Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid"))) {
-            Utils.showToastShort(L10n.t("Comments aren't available for this video"));
-        }
+        openOnScreenComments();
         return true;
     }
 
@@ -225,17 +239,109 @@ public final class GestureActions {
     }
 
     public static boolean openComments(String videoId) {
+        return openComments(videoId, false);
+    }
+
+    /**
+     * The button bound to this video. With {@code outsidePagerOnly}, a button in TikTok's feed
+     * pager doesn't count: the screen already said its cell is out of sight.
+     */
+    private static boolean openComments(String videoId, boolean outsidePagerOnly) {
         if (videoId == null || videoId.isEmpty()) return false;
         Map.Entry<Object, CommentControl> hidden = null;
         for (Map.Entry<Object, CommentControl> entry : COMMENTS.entrySet()) {
             CommentControl control = entry.getValue();
             View view = control.view.get();
             if (!videoId.equals(control.videoId) || view == null || !view.isAttachedToWindow()) continue;
+            if (outsidePagerOnly && cellOf(view) != view) continue;
             if (view.isShown() && view.getGlobalVisibleRect(new Rect())) return press(entry.getKey(), view);
             // Clear display can hide the action rail while its native click handler remains usable.
             hidden = entry;
         }
         return hidden != null && press(hidden.getKey(), hidden.getValue().view.get());
+    }
+
+    /** The feed's pager, in the main feed and in a video opened from a profile or a search. */
+    static final String FEED_PAGER = "com.ss.android.ugc.aweme.common.widget.VerticalViewPager";
+
+    /**
+     * Presses the comment button of the video on screen: the one in the window in front whose
+     * cell shows most, the playing id breaking a tie. With nothing on screen to judge by, the
+     * button bound to the playing id, as before, but only off TikTok's pager. On it, a LIVE or
+     * an ad on screen has no comment button, and the playing id there still names the video
+     * before, a page away.
+     */
+    static boolean openVisibleComments(String playingId) {
+        Activity front = Utils.getVisibleActivity();
+        Window window = front == null ? null : front.getWindow();
+        View frontRoot = window == null ? null : window.peekDecorView();
+        Object bestOwner = null;
+        View best = null;
+        String bestId = null;
+        boolean bestInFront = false;
+        boolean bestPlaying = false;
+        float bestShare = 0;
+        Rect visible = new Rect();
+        for (Map.Entry<Object, CommentControl> entry : COMMENTS.entrySet()) {
+            View view = entry.getValue().view.get();
+            if (view == null || !view.isAttachedToWindow()) continue;
+            float share = onScreenShare(cellOf(view), visible);
+            if (share <= 0) continue;
+            boolean inFront = frontRoot != null && view.getRootView() == frontRoot;
+            String id = entry.getValue().videoId;
+            boolean playing = playingId != null && playingId.equals(id);
+            if (best != null && !beats(inFront, share, playing, bestInFront, bestShare, bestPlaying)) continue;
+            bestOwner = entry.getKey();
+            best = view;
+            bestId = id;
+            bestInFront = inFront;
+            bestShare = share;
+            bestPlaying = playing;
+        }
+        if (best == null) return openComments(playingId, true);
+        if (!bestPlaying) {
+            String pressed = bestId;
+            Logger.printDebug(() -> "Comments for the video on screen (" + pressed
+                    + "), the player still names " + playingId);
+        }
+        return press(bestOwner, best);
+    }
+
+    /** The window in front first, then how much of the cell shows, then the playing id. */
+    private static boolean beats(boolean inFront, float share, boolean playing,
+                                 boolean bestInFront, float bestShare, boolean bestPlaying) {
+        if (inFront != bestInFront) return inFront;
+        if (share != bestShare) return share > bestShare;
+        return playing && !bestPlaying;
+    }
+
+    /**
+     * The video cell a comment button sits in: the pager's child above it. The button itself on
+     * a surface without that pager, which then has to be shown to count.
+     */
+    static View cellOf(View view) {
+        View child = view;
+        for (ViewParent parent = view.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (FEED_PAGER.equals(parent.getClass().getName())) return child;
+            child = (View) parent;
+        }
+        return view;
+    }
+
+    /**
+     * How much of the cell is on screen, from 0 to 1. Nothing inside the cell is asked: Clear
+     * display hides the rail of the video being watched, and on some builds lays the cell out
+     * with it already hidden. Everything above the cell has to be shown, which leaves out a feed
+     * behind another tab, or behind a detail page, whose cells keep their last layout.
+     */
+    static float onScreenShare(View cell, Rect visible) {
+        float area = (float) cell.getWidth() * cell.getHeight();
+        ViewParent parent = cell.getParent();
+        if (area <= 0 || cell.getVisibility() != View.VISIBLE || !(parent instanceof View)
+                || !((View) parent).isShown() || !cell.getGlobalVisibleRect(visible)) {
+            return 0;
+        }
+        return visible.width() * (float) visible.height() / area;
     }
 
     /** The Hook status family the comment press reports under. */
@@ -442,11 +548,7 @@ public final class GestureActions {
     }
 
     /** What a left swipe set to comments does; a test stands in its own. */
-    static Runnable swipeCommentsOpener = () -> {
-        if (!openComments(Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid"))) {
-            Utils.showToastShort(L10n.t("Comments aren't available for this video"));
-        }
-    };
+    static Runnable swipeCommentsOpener = GestureActions::openOnScreenComments;
 
     private static Method currentItem;
     private static Class<?> currentItemOwner;

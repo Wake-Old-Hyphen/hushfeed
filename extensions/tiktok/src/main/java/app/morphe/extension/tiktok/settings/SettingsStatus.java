@@ -38,6 +38,8 @@ public class SettingsStatus {
     public static boolean confirmInteractionsEnabled;
     public static void enableConfirmInteractions() { confirmInteractionsEnabled = true; }
     public static boolean feedFilterEnabled = false;
+    /** The LIVE feed's page handler was found, so its rows have something to act on. */
+    public static boolean liveFeedFilterEnabled = false;
     public static boolean feedNavigationEnabled = false;
     public static boolean commentTranslationEnabled = false;
     public static boolean hideCommentQuickReactionsEnabled = false;
@@ -147,6 +149,10 @@ public class SettingsStatus {
 
     public static void enableFeedFilter() {
         feedFilterEnabled = true;
+    }
+
+    public static void enableLiveFeedFilter() {
+        liveFeedFilterEnabled = true;
     }
 
     public static void enableFeedNavigation() {

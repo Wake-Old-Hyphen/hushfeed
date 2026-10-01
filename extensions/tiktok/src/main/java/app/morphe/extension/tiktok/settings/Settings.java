@@ -573,6 +573,23 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_EVENT_BADGE = new BooleanSetting("hide_event_badge", FALSE, true);
     public static final BooleanSetting HIDE_INSERTED_CARDS = new BooleanSetting("hide_inserted_cards", FALSE, true);
     public static final BooleanSetting HIDE_PLAYLIST_VIDEOS = new BooleanSetting("hide_playlist_videos", FALSE, true);
+    // The LIVE feed you swipe through (issue #57). Read on every page TikTok sends, so a change
+    // reaches the next page without a restart.
+    public static final BooleanSetting LIVE_FEED_FILTER = new BooleanSetting("live_feed_filter", FALSE);
+    public static final BooleanSetting LIVE_HIDE_GAMING =
+            new BooleanSetting("live_hide_gaming", FALSE, false, Setting.parent(LIVE_FEED_FILTER));
+    public static final BooleanSetting LIVE_HIDE_SHOPPING =
+            new BooleanSetting("live_hide_shopping", FALSE, false, Setting.parent(LIVE_FEED_FILTER));
+    public static final BooleanSetting LIVE_HIDE_SPONSORED =
+            new BooleanSetting("live_hide_sponsored", FALSE, false, Setting.parent(LIVE_FEED_FILTER));
+    public static final BooleanSetting LIVE_HIDE_VERIFIED =
+            new BooleanSetting("live_hide_verified", FALSE, false, Setting.parent(LIVE_FEED_FILTER));
+    public static final StringSetting LIVE_HIDDEN_CATEGORIES =
+            new StringSetting("live_hidden_categories", "", false, Setting.parent(LIVE_FEED_FILTER));
+    public static final StringSetting LIVE_MIN_MAX_VIEWERS = new StringSetting(
+            "live_min_max_viewers", "0-" + Long.MAX_VALUE, false, Setting.parent(LIVE_FEED_FILTER));
+    public static final StringSetting LIVE_MIN_MAX_FOLLOWERS = new StringSetting(
+            "live_min_max_followers", "0-" + Long.MAX_VALUE, false, Setting.parent(LIVE_FEED_FILTER));
 
     // Privacy.
     public static final BooleanSetting GHOST_MODE = new BooleanSetting("ghost_mode", FALSE);

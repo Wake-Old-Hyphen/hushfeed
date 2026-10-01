@@ -1432,3 +1432,20 @@ Looking for apps,Mencari aplikasi
 No other app takes shared text,Tidak ada aplikasi lain yang menerima teks yang dibagikan
 "Install one, then come back here.","Pasang satu, lalu kembali ke sini."
 No apps match this search,Tidak ada aplikasi yang cocok dengan pencarian ini
+LIVE feed,Feed LIVE
+Filter the LIVE feed,Filter feed LIVE
+"Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.","Sembunyikan LIVE di feed LIVE yang kamu geser, sesuai aturan di bawah. “Kreator yang diblokir” dan “Kreator yang disembunyikan di ponsel ini” juga berlaku di sini, “Kata yang diblokir di keterangan” dicocokkan dengan judul setiap LIVE, dan “Pengecualian kreator” bekerja seperti pada video. Tombol LIVE memilih LIVE pertama sendiri, jadi aturan mulai berlaku dari LIVE berikutnya. Kalau aturan menyembunyikan semua LIVE untuk beberapa saat, satu tetap lolos supaya feed terus memuat."
+Hide gaming LIVEs,Sembunyikan LIVE game
+Hide LIVEs that TikTok tags with a game or a gaming category.,Sembunyikan LIVE yang ditandai TikTok dengan game atau kategori game.
+Hide shopping LIVEs,Sembunyikan LIVE belanja
+Hide LIVEs that sell products or carry a TikTok Shop tag.,Sembunyikan LIVE yang menjual produk atau punya tag TikTok Shop.
+Hide sponsored LIVEs,Sembunyikan LIVE bersponsor
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.,Sembunyikan LIVE yang ditandai TikTok sebagai kemitraan berbayar atau konten promosi.
+Hide verified creators' LIVEs,Sembunyikan LIVE kreator terverifikasi
+Hide LIVEs hosted by verified accounts.,Sembunyikan LIVE dari akun terverifikasi.
+Hidden LIVE categories,Kategori LIVE yang disembunyikan
+"Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.","Kata dipisahkan koma, misalnya musik, chat. LIVE disembunyikan kalau kategori, tag topik, atau nama game-nya mengandung salah satunya. Huruf besar kecil tidak berpengaruh."
+LIVE viewers range,Rentang penonton LIVE
+Show only LIVEs with this many people watching.,Hanya tampilkan LIVE dengan jumlah penonton sebanyak ini.
+LIVE followers range,Rentang pengikut LIVE
+Show only LIVEs from creators with this many followers.,Hanya tampilkan LIVE dari kreator dengan jumlah pengikut sebanyak ini.

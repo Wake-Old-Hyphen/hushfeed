@@ -493,8 +493,11 @@ public final class FeedMute {
             boolean saved = Settings.FEED_MUTED.savedValue();
             lines.add("Mute feed videos: " + (saved ? "on" : "off"));
             if (saved && !Settings.FEED_MUTED.get()) lines.add("Hushfeed is paused, so the feed plays with its sound");
-            lines.add("Mute button on the feed: " + (Settings.FEED_MUTE_BUTTON.get() ? "shown" : "turned off"));
-            lines.add("Feed videos silenced since TikTok started: " + SILENCED.get());
+            // The saved choice, like the line above: Pause reads every switch as off, which would
+            // report a button the reader never turned off.
+            lines.add("Mute button on the feed: " + (Settings.FEED_MUTE_BUTTON.savedValue() ? "shown" : "turned off"));
+            // One player plays many videos, so this counts players, not videos.
+            lines.add("Feed players muted since TikTok started: " + SILENCED.get());
             lines.add("Audio focus requests turned down: " + FOCUS_HELD.get());
             return lines;
         }

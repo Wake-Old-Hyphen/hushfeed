@@ -1435,3 +1435,20 @@ Looking for apps	Procurando apps
 No other app takes shared text	Nenhum outro app aceita texto compartilhado
 Install one, then come back here.	Instale um e depois volte aqui.
 No apps match this search	Nenhum app corresponde a esta pesquisa
+LIVE feed	Feed de LIVE
+Filter the LIVE feed	Filtrar o feed de LIVE
+Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.	Esconder LIVEs do feed de LIVE que você percorre deslizando, com as regras abaixo. “Criadores bloqueados” e “Criadores escondidos neste aparelho” também valem aqui, “Palavras bloqueadas nas legendas” são comparadas com o título de cada LIVE e “Exceções de criadores” funciona como nos vídeos. O botão de LIVE escolhe a primeira LIVE sozinho, então as regras começam na seguinte. Se elas esconderem todas as LIVEs por um tempo, uma passa para o feed continuar carregando.
+Hide gaming LIVEs	Esconder LIVEs de games
+Hide LIVEs that TikTok tags with a game or a gaming category.	Esconder as LIVEs que o TikTok marca com um jogo ou uma categoria de games.
+Hide shopping LIVEs	Esconder LIVEs de compras
+Hide LIVEs that sell products or carry a TikTok Shop tag.	Esconder as LIVEs que vendem produtos ou têm uma etiqueta do TikTok Shop.
+Hide sponsored LIVEs	Esconder LIVEs patrocinadas
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.	Esconder as LIVEs que o TikTok marca como parceria paga ou conteúdo promocional.
+Hide verified creators' LIVEs	Esconder LIVEs de criadores verificados
+Hide LIVEs hosted by verified accounts.	Esconder as LIVEs de contas verificadas.
+Hidden LIVE categories	Categorias de LIVE escondidas
+Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.	Palavras separadas por vírgula, como música, chat. Uma LIVE é escondida quando a categoria, as tags de assunto ou o nome do jogo dela contêm uma delas. Maiúsculas e minúsculas não importam.
+LIVE viewers range	Faixa de espectadores da LIVE
+Show only LIVEs with this many people watching.	Mostrar só LIVEs com essa quantidade de espectadores.
+LIVE followers range	Faixa de seguidores da LIVE
+Show only LIVEs from creators with this many followers.	Mostrar só LIVEs de criadores com essa quantidade de seguidores.

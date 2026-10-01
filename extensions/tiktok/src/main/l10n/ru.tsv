@@ -1276,7 +1276,7 @@ Zero leaves the way out of the hold there every time, which is what it has alway
 Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.	Ноль означает отсутствие лимита. Считает видео, которые Hushfeed пролистал за вас, а не те, что вы пролистали сами, и начинает заново, когда лента перестраивается или вы меняете это число.
 Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.	Ноль показывает уведомление и не трогает ленту. Любое другое значение закрывает ленту на столько минут после достижения лимита. Сообщения, профили и поиск продолжают работать, и ничего в ленте не теряется.
 Zero switches this off. A short reminder after that many minutes of watching, and again after the same again. Time on messages, a profile or search doesn't count, and nothing is shown while the feed is on hold.	Ноль отключает это. Короткое напоминание появляется после стольких минут просмотра и затем повторяется через столько же. Время в сообщениях, профиле или поиске не учитывается, и ничего не показывается, пока лента на паузе.
-Zero switches this off. Count every video that comes up in the feed, however you got to it, and say so once the count is reached. This is separate from the auto-advance session limit under Playback, which only counts videos Hushfeed itself advanced past.	Ноль отключает это. Считать каждое видео, появившееся в ленте, независимо от того, как вы до него добрались, и сообщить об этом по достижении счётчика. Это отдельно от лимита автоперехода за сеанс в разделе «Воспроизведение», который считает только видео, пролистанные самим Hushfeed.
+Zero switches this off. Count every video that comes up in the feed, however you got to it, and say so once the count is reached. This is separate from the auto-advance session limit under Playback, which only counts videos Hushfeed itself advanced past.	Ноль отключает это. Считать каждое видео, появившееся в ленте, независимо от того, как вы до него добрались, и сообщить об этом по достижении счётчика. Это отдельно от лимита автоматического переключения за сеанс в разделе «Воспроизведение», который считает только видео, пролистанные самим Hushfeed.
 Zero switches this off. Count the minutes the player spends running in the feed. Time on messages, a profile or search doesn't count.	Ноль отключает это. Считать минуты, которые плеер работает в ленте. Время в сообщениях, профиле или поиске не учитывается.
 collapsed	свёрнуто
 expanded	развёрнуто
@@ -1314,7 +1314,7 @@ Hide place badges on videos, including cards with multiple places. Videos and yo
 Hide effect and template tags	Скрывать теги эффектов и шаблонов
 Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.	Скрывать теги над описанием видео, которые предлагают попробовать эффект, шаблон, CapCut или ИИ-стиль. У меток геолокации и строки музыки есть собственные переключатели.
 Filter location-tagged videos	Фильтровать видео с метками геолокации
-Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.	Скрывать видео в ленте со значками мест, даже если это не платная реклама. Чтобы оставить видео и скрыть только значок, используйте «Скрывать метки геолокации» в разделе «Лента».
+Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.	Скрывать видео в ленте со значками мест, даже если это не платная реклама. Чтобы оставить видео и скрыть только значок, используйте «Скрывать метки геолокации» в разделе «Экран ленты».
 Location-tagged videos	Видео с метками геолокации
 Extend the heart's touch area into nearby blank space. The icon and row spacing stay the same. Text, Reply and other controls keep their own space.	Расширять область нажатия на сердечко в соседнее пустое пространство. Значок и отступы строки остаются прежними. У текста, кнопки «Ответить» и других элементов управления остаётся собственное место.
 Start with comments. Hide the comment count, sort and close buttons, plus the suggestion area above them. Use Back or swipe down to close comments.	Открывать сразу комментарии. Скрывать счётчик комментариев, кнопки сортировки и закрытия, а также область с подсказками над ними. Чтобы закрыть комментарии, используйте «Назад» или свайп вниз.
@@ -1347,7 +1347,7 @@ this creator	этот автор
 %1$s points|one	%1$s балл
 %1$s points|few	%1$s балла
 %1$s points|many	%1$s баллов
-%1$s s	%1$s s
+%1$s s	%1$s с
 %1$s second	%1$s секунда
 %1$s seconds	%1$s секунд
 %1$s seconds|one	%1$s секунда
@@ -1390,7 +1390,7 @@ The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder 
 Hide TikTok Shop in search	Скрывать TikTok Shop в поиске
 Hide the Products block and product cards in search results.	Скрывать блок «Товары» и карточки товаров в результатах поиска.
 Hide TikTok's Auto scroll button	Скрывать кнопку автопрокрутки TikTok
-Takes TikTok's own Auto scroll action out of the video panel. Auto-advance keeps working.	Убирает собственную функцию автопрокрутки TikTok из панели видео. Автопереход продолжает работать.
+Takes TikTok's own Auto scroll action out of the video panel. Auto-advance keeps working.	Убирает собственную функцию автопрокрутки TikTok из панели видео. Автоматическое переключение продолжает работать.
 Hide the unread badges on the bottom tabs	Скрывать значки непрочитанного на нижних вкладках
 Hide the red counts and dots on every bottom tab, Inbox and Profile included. The inbox itself still shows what came in.	Скрывать красные счётчики и точки на всех нижних вкладках, включая «Входящие» и «Профиль». Сами входящие по-прежнему показывают, что пришло.
 Speed while you hold the video	Скорость при удержании видео
@@ -1561,3 +1561,20 @@ Looking for apps	Поиск приложений
 No other app takes shared text	Ни одно другое приложение не принимает отправленный текст
 Install one, then come back here.	Установите одно и возвращайтесь сюда.
 No apps match this search	Нет приложений, соответствующих этому запросу
+LIVE feed	Лента LIVE
+Filter the LIVE feed	Фильтровать ленту LIVE
+Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.	Скрывать трансляции в ленте LIVE, которую вы листаете, по правилам ниже. «Заблокированные авторы» и «Авторы, скрытые на этом телефоне» действуют и здесь, «Заблокированные слова в подписях» сверяются с названием каждой трансляции, а «Исключения для авторов» работают так же, как для видео. Первую трансляцию кнопка LIVE выбирает сама, поэтому правила начинают действовать со следующей. Если правила долго скрывают всё подряд, одна трансляция всё же покажется, чтобы лента продолжала загружаться.
+Hide gaming LIVEs	Скрывать игровые трансляции
+Hide LIVEs that TikTok tags with a game or a gaming category.	Скрывать трансляции, которые TikTok помечает игрой или игровой категорией.
+Hide shopping LIVEs	Скрывать торговые трансляции
+Hide LIVEs that sell products or carry a TikTok Shop tag.	Скрывать трансляции, где продают товары или есть метка TikTok Shop.
+Hide sponsored LIVEs	Скрывать спонсорские трансляции
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.	Скрывать трансляции, которые TikTok помечает как платное партнёрство или рекламный контент.
+Hide verified creators' LIVEs	Скрывать трансляции верифицированных авторов
+Hide LIVEs hosted by verified accounts.	Скрывать трансляции верифицированных аккаунтов.
+Hidden LIVE categories	Скрытые категории LIVE
+Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.	Через запятую: слова, например музыка, чат. Трансляция скрывается, если её категория, теги темы или название игры содержат одно из них. Регистр не важен.
+LIVE viewers range	Диапазон зрителей LIVE
+Show only LIVEs with this many people watching.	Показывать только трансляции с таким количеством зрителей.
+LIVE followers range	Диапазон подписчиков авторов LIVE
+Show only LIVEs from creators with this many followers.	Показывать только трансляции авторов с таким количеством подписчиков.

@@ -170,9 +170,11 @@ public class GestureActionsTest {
             assertTrue(GestureActions.onLongPress(middleOf(activity)));
             assertEquals(1, clicks[0]);
 
-            // The control for a different video does not count, and the gesture is still
-            // swallowed so a stale 2x hold cannot fire in its place.
+            // A hidden control for a different video does not count (with no feed pager above it
+            // there is nothing on screen to go by), and the gesture is still swallowed so a stale
+            // 2x hold cannot fire in its place.
             GestureActions.bindCommentView(owner, new Params("two"));
+            comments.setVisibility(View.INVISIBLE);
             assertTrue(GestureActions.onLongPress(middleOf(activity)));
             assertEquals(1, clicks[0]);
 

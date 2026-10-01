@@ -37,10 +37,13 @@ public final class L10n {
     private static final class Table {
         final String key;
         final Map<String, String> translations;
+        /** The language the text is shown in: the table's, or English when there is none. */
+        final Locale shown;
 
-        Table(String key, Map<String, String> translations) {
+        Table(String key, Map<String, String> translations, Locale shown) {
             this.key = key;
             this.translations = translations;
+            this.shown = shown;
         }
     }
 
@@ -62,7 +65,7 @@ public final class L10n {
         if (english == null || english.isEmpty()) {
             return english;
         }
-        Map<String, String> translations = tableFor(tags(context));
+        Map<String, String> translations = tableFor(tags(context)).translations;
         if (translations == null) {
             return english;
         }
@@ -105,8 +108,9 @@ public final class L10n {
      * so the one form simply leaves the count unused.
      */
     public static String quantity(Context context, long count, String one, String other, Object... args) {
-        String category = pluralCategory(context, count);
-        String row = pluralRow(category, count, one, other, tableFor(tags(context)));
+        Table table = tableFor(tags(context));
+        String category = pluralCategory(table.shown, count);
+        String row = pluralRow(category, count, one, other, table.translations);
         return format(row, oneForm(category, count) ? one : other, args);
     }
 
@@ -140,9 +144,18 @@ public final class L10n {
         return translated == null || translated.isEmpty() ? key : translated;
     }
 
-    /** The plural category the phone's first language gives {@code count}. */
+    /**
+     * The plural category {@code count} takes in the language the settings are shown in. That
+     * is the table's language, not the phone's first one: a phone set to Japanese and then
+     * Russian reads Russian words, and Japanese rules gave them "1 результатов". A phone with no
+     * table reads English, by English rules.
+     */
     static String pluralCategory(Context context, long count) {
-        Locale locale = locales(context).get(0);
+        return pluralCategory(tableFor(tags(context)).shown, count);
+    }
+
+    /** The plural category {@code locale}'s language gives {@code count}. */
+    static String pluralCategory(Locale locale, long count) {
         if (Build.VERSION.SDK_INT >= 24) {
             try {
                 return android.icu.text.PluralRules.forLocale(locale).select(count);
@@ -224,8 +237,12 @@ public final class L10n {
         return Collections.singletonList(Locale.getDefault());
     }
 
-    /** The first tag with a table, remembered until the phone's languages change. */
-    private static Map<String, String> tableFor(List<String> tags) {
+    /**
+     * The first tag with a table, remembered until the phone's languages change. English ends
+     * the search: it is the text itself, so a phone that lists it ahead of German reads English,
+     * as TikTok does, rather than the first language further down with a table.
+     */
+    private static Table tableFor(List<String> tags) {
         StringBuilder builder = new StringBuilder();
         for (String tag : tags) {
             builder.append(tag).append(',');
@@ -234,17 +251,30 @@ public final class L10n {
 
         Table table = cached;
         if (table != null && key.equals(table.key)) {
-            return table.translations;
+            return table;
         }
 
         Map<String, String> found = null;
+        Locale shown = Locale.ENGLISH;
         for (String tag : tags) {
+            if (tag.equals("en") || tag.startsWith("en-r")) {
+                break;
+            }
             found = L10nTranslations.of(tag);
             if (found != null) {
+                shown = localeOf(tag);
                 break;
             }
         }
-        cached = new Table(key, found);
-        return found;
+        table = new Table(key, found, shown);
+        cached = table;
+        return table;
+    }
+
+    /** A table tag as a locale: "pt-rbr" is Portuguese in Brazil, whose plural rule differs. */
+    private static Locale localeOf(String tag) {
+        int region = tag.indexOf("-r");
+        return region < 0 ? new Locale(tag)
+                : new Locale(tag.substring(0, region), tag.substring(region + 2).toUpperCase(Locale.ROOT));
     }
 }

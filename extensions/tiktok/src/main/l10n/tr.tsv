@@ -1435,3 +1435,20 @@ Looking for apps	Uygulamalar aranıyor
 No other app takes shared text	Paylaşılan metni alan başka uygulama yok
 Install one, then come back here.	Bir tane yükle, sonra buraya dön.
 No apps match this search	Bu aramayla eşleşen uygulama yok
+LIVE feed	CANLI akışı
+Filter the LIVE feed	CANLI akışını filtrele
+Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.	Kaydırarak gezdiğin CANLI akışındaki yayınları aşağıdaki kurallara göre gizle. “Engellenen içerik üreticileri” ve “Bu telefonda gizlenen içerik üreticileri” burada da geçerli, “Engellenen açıklama kelimeleri” her CANLI yayının başlığıyla karşılaştırılır ve “İçerik üretici istisnaları” videolardaki gibi çalışır. İlk yayını CANLI düğmesi kendisi seçer, bu yüzden kurallar bir sonrakinden itibaren geçerli olur. Kurallar bir süre her yayını gizlerse, akış yüklenmeye devam etsin diye biri geçer.
+Hide gaming LIVEs	Oyun CANLI yayınlarını gizle
+Hide LIVEs that TikTok tags with a game or a gaming category.	TikTok'un bir oyunla ya da oyun kategorisiyle etiketlediği CANLI yayınları gizle.
+Hide shopping LIVEs	Alışveriş CANLI yayınlarını gizle
+Hide LIVEs that sell products or carry a TikTok Shop tag.	Ürün satan ya da TikTok Shop etiketi taşıyan CANLI yayınları gizle.
+Hide sponsored LIVEs	Sponsorlu CANLI yayınları gizle
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.	TikTok'un ücretli iş birliği ya da tanıtım içeriği olarak işaretlediği CANLI yayınları gizle.
+Hide verified creators' LIVEs	Doğrulanmış içerik üreticilerinin CANLI yayınlarını gizle
+Hide LIVEs hosted by verified accounts.	Doğrulanmış hesapların CANLI yayınlarını gizle.
+Hidden LIVE categories	Gizlenen CANLI kategorileri
+Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.	Virgülle ayrılmış kelimeler, örneğin müzik, sohbet. Kategorisi, konu etiketleri ya da oyun adı bunlardan birini içeren CANLI yayın gizlenir. Büyük küçük harf fark etmez.
+LIVE viewers range	CANLI izleyici aralığı
+Show only LIVEs with this many people watching.	Yalnızca bu kadar izleyicisi olan CANLI yayınları göster.
+LIVE followers range	CANLI takipçi aralığı
+Show only LIVEs from creators with this many followers.	Yalnızca bu kadar takipçisi olan içerik üreticilerinin CANLI yayınlarını göster.

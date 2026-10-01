@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.interaction.narrowed.NarrowedResult;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.categories.PlaybackPreferenceCategory;
@@ -520,7 +521,7 @@ public class VideoFitTest {
             java.util.List<String> lines = VideoFit.Report.INSTANCE.lines();
             assertEquals("Fit the video to the screen: on", lines.get(0));
             assertEquals("Fill the screen with the video: off", lines.get(1));
-            assertEquals("Asks since TikTok started: 2 resized the video, 1 left it at TikTok's size", lines.get(2));
+            assertEquals("Fit checks since TikTok started: 2 resized the video, 1 left it at TikTok's size", lines.get(2));
             assertEquals("The last 2, oldest first:", lines.get(3));
             String above = ". Above the video: FrameLayout 1080x1500, FrameLayout 1080x2213 (the page); window 1080x2213";
             assertEquals("Fit, feed: TikTok's size 1245x2213, space 1080x1500, made 844x1500" + above + " (2 in a row)",
@@ -530,6 +531,30 @@ public class VideoFitTest {
         } finally {
             Settings.FIT_VIDEO_TO_SCREEN.save(false);
             VideoFit.resetReportForTests();
+        }
+    }
+
+    /** Under Pause both switches read off; the report keeps the choice and says why nothing fits. */
+    @Test public void aPausedReportKeepsTheChoiceAndSaysItIsPaused() {
+        VideoFit.resetReportForTests();
+        Settings.FILL_VIDEO_TO_SCREEN.save(true);
+        PausedProcess.set(true);
+        try {
+            assertEquals(java.util.List.of("Fit the video to the screen: off",
+                    "Fill the screen with the video: on",
+                    "Hushfeed is paused, so videos keep TikTok's size",
+                    "Fit checks since TikTok started: 0 resized the video, 0 left it at TikTok's size"),
+                    VideoFit.Report.INSTANCE.lines());
+        } finally {
+            PausedProcess.set(false);
+            Settings.FILL_VIDEO_TO_SCREEN.save(false);
+        }
+        // Not paused, the line goes.
+        Settings.FIT_VIDEO_TO_SCREEN.save(true);
+        try {
+            assertFalse(VideoFit.Report.INSTANCE.lines().contains("Hushfeed is paused, so videos keep TikTok's size"));
+        } finally {
+            Settings.FIT_VIDEO_TO_SCREEN.save(false);
         }
     }
 
@@ -588,6 +613,45 @@ public class VideoFitTest {
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertEquals(956, video.getLayoutParams().width);
             assertEquals(1700, video.getLayoutParams().height);
+        } finally {
+            Settings.FIT_VIDEO_TO_SCREEN.save(false);
+            VideoFit.resetReportForTests();
+        }
+    }
+
+    public static final class RecordingSpace extends FrameLayout {
+        int removed;
+        RecordingSpace(Context context) { super(context); }
+        @Override public void removeOnLayoutChangeListener(OnLayoutChangeListener listener) {
+            removed++;
+            super.removeOnLayoutChangeListener(listener);
+        }
+    }
+
+    /** A space whose video has gone lets go of its watch on its next pass, at any size. */
+    @Test public void aWatchLetsGoOnceItsVideoLeavesEvenAtTheSameSize() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout page = new FrameLayout(activity);
+            RecordingSpace space = new RecordingSpace(activity);
+            View video = new View(activity);
+            page.addView(space);
+            space.addView(video);
+            page.layout(0, 0, 1080, 2213);
+            space.layout(0, 0, 1080, 1500);
+            video.setLayoutParams(new FrameLayout.LayoutParams(1245, 2213));
+            Settings.FIT_VIDEO_TO_SCREEN.save(true);
+            VideoFit.fitted(video, new Result(1245, 2213, -82.5f, 0f, null));
+            assertEquals(0, space.removed);
+
+            // The page is recycled: the video goes, and the space is laid out again at its size.
+            space.removeView(video);
+            int exactly = View.MeasureSpec.EXACTLY;
+            space.measure(View.MeasureSpec.makeMeasureSpec(1080, exactly),
+                    View.MeasureSpec.makeMeasureSpec(1500, exactly));
+            space.layout(0, 0, 1080, 1500);
+            assertEquals(1, space.removed);
         } finally {
             Settings.FIT_VIDEO_TO_SCREEN.save(false);
             VideoFit.resetReportForTests();

@@ -3,6 +3,8 @@ package app.morphe.extension.tiktok.settings;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.LocaleList;
 
 import app.morphe.extension.shared.Utils;
 
@@ -13,6 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -53,16 +56,16 @@ public class L10nQuantityTest {
                 L10n.quantity(context, 1, "1 result", "%1$d results"));
     }
 
-    @Test @Config(sdk = 28, qualifiers = "pl")
+    @Test
     public void aLanguageWithFewAndManySelectsThoseRows() {
-        Context context = RuntimeEnvironment.getApplication();
-        Utils.setContext(context);
         // ICU's rule for Polish: 1 is one, 2 to 4 are few, 5 to 21 are many, 22 to 24 few again.
-        assertEquals("one", L10n.pluralCategory(context, 1));
-        assertEquals("few", L10n.pluralCategory(context, 3));
-        assertEquals("many", L10n.pluralCategory(context, 5));
-        assertEquals("many", L10n.pluralCategory(context, 21));
-        assertEquals("few", L10n.pluralCategory(context, 22));
+        // Polish has no table yet, so this asks the rule itself; a Polish phone reads English.
+        Locale polish = new Locale("pl");
+        assertEquals("one", L10n.pluralCategory(polish, 1));
+        assertEquals("few", L10n.pluralCategory(polish, 3));
+        assertEquals("many", L10n.pluralCategory(polish, 5));
+        assertEquals("many", L10n.pluralCategory(polish, 21));
+        assertEquals("few", L10n.pluralCategory(polish, 22));
 
         // The table a Polish translator would write: the two English forms plus the two extra.
         Map<String, String> table = new LinkedHashMap<>();
@@ -118,6 +121,29 @@ public class L10nQuantityTest {
         assertEquals("5 результатов", L10n.quantity(context, 5, "1 result", "%1$d results"));
         assertEquals("11 результатов", L10n.quantity(context, 11, "1 result", "%1$d results"));
         assertEquals("0 результатов", L10n.quantity(context, 0, "1 result", "%1$d results"));
+    }
+
+    /**
+     * The rule is the shown language's, not the phone's first one. Japanese has no table, so a
+     * phone set to Japanese and then Russian reads Russian, and Japanese rules (one form for
+     * every count) gave it "1 результатов". A phone whose only language has no table reads
+     * English, and the same mix-up gave it "1 results".
+     */
+    @Test
+    public void theShownLanguagesRulePicksTheForm() {
+        Configuration configuration = new Configuration(
+                RuntimeEnvironment.getApplication().getResources().getConfiguration());
+        configuration.setLocales(new LocaleList(new Locale("ja", "JP"), new Locale("ru", "RU")));
+        Context context = RuntimeEnvironment.getApplication().createConfigurationContext(configuration);
+        assertEquals("1 результат", L10n.quantity(context, 1, "1 result", "%1$d results"));
+        assertEquals("21 результат", L10n.quantity(context, 21, "1 result", "%1$d results"));
+        assertEquals("2 результата", L10n.quantity(context, 2, "1 result", "%1$d results"));
+        assertEquals("5 результатов", L10n.quantity(context, 5, "1 result", "%1$d results"));
+
+        configuration.setLocales(new LocaleList(new Locale("ja", "JP")));
+        context = RuntimeEnvironment.getApplication().createConfigurationContext(configuration);
+        assertEquals("1 result", L10n.quantity(context, 1, "1 result", "%1$d results"));
+        assertEquals("2 results", L10n.quantity(context, 2, "1 result", "%1$d results"));
     }
 
     @Test @Config(sdk = 28, qualifiers = "pt-rBR")

@@ -1230,7 +1230,7 @@ Hide place badges on videos, including cards with multiple places. Videos and yo
 Hide effect and template tags	Nascondi i tag di effetti e modelli
 Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.	Nasconde i tag sopra la descrizione di un video che invitano a provare un effetto, un modello, CapCut o uno stile IA. Le indicazioni di posizione e la riga della musica hanno interruttori propri.
 Filter location-tagged videos	Filtra i video con tag di posizione
-Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.	Nasconde i video del feed con badge di luogo, anche quando non sono annunci a pagamento. Per mantenere il video e nascondere solo il badge, usa "Nascondi le indicazioni di posizione" in Schermata feed.
+Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.	Nasconde i video del feed con badge di luogo, anche quando non sono annunci a pagamento. Per mantenere il video e nascondere solo il badge, usa "Nascondi le indicazioni di posizione" in Schermata del feed.
 Location-tagged videos	Video con tag di posizione
 Extend the heart's touch area into nearby blank space. The icon and row spacing stay the same. Text, Reply and other controls keep their own space.	Estende l'area di tocco del cuore nello spazio vuoto vicino. L'icona e la spaziatura delle righe restano invariate. Testo, Rispondi e gli altri controlli mantengono il proprio spazio.
 Start with comments. Hide the comment count, sort and close buttons, plus the suggestion area above them. Use Back or swipe down to close comments.	Apre direttamente sui commenti. Nasconde il conteggio dei commenti, i pulsanti di ordinamento e chiusura, e l'area dei suggerimenti sopra di essi. Usa Indietro o scorri verso il basso per chiudere i commenti.
@@ -1435,3 +1435,20 @@ Looking for apps	Ricerca delle app in corso
 No other app takes shared text	Nessun'altra app accetta testo condiviso
 Install one, then come back here.	Installane una, poi torna qui.
 No apps match this search	Nessuna app corrisponde a questa ricerca
+LIVE feed	Feed LIVE
+Filter the LIVE feed	Filtra il feed LIVE
+Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.	Nascondi le dirette nel feed LIVE che scorri, secondo le regole qui sotto. “Creator bloccati” e “Creator nascosti su questo telefono” valgono anche qui, “Parole bloccate nelle descrizioni” vengono confrontate con il titolo di ogni LIVE e “Eccezioni creator” funziona come per i video. La prima diretta la sceglie il pulsante LIVE da solo, quindi le regole partono dalla successiva. Se nascondono tutte le dirette per un po', una passa comunque, così il feed continua a caricare.
+Hide gaming LIVEs	Nascondi i LIVE di gaming
+Hide LIVEs that TikTok tags with a game or a gaming category.	Nascondi i LIVE che TikTok contrassegna con un gioco o una categoria gaming.
+Hide shopping LIVEs	Nascondi i LIVE di shopping
+Hide LIVEs that sell products or carry a TikTok Shop tag.	Nascondi i LIVE che vendono prodotti o hanno un tag di TikTok Shop.
+Hide sponsored LIVEs	Nascondi i LIVE sponsorizzati
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.	Nascondi i LIVE che TikTok segnala come partnership retribuita o contenuto promozionale.
+Hide verified creators' LIVEs	Nascondi i LIVE dei creator verificati
+Hide LIVEs hosted by verified accounts.	Nascondi i LIVE degli account verificati.
+Hidden LIVE categories	Categorie LIVE nascoste
+Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.	Parole separate da virgole, ad esempio musica, chat. Un LIVE viene nascosto quando la sua categoria, i suoi tag di argomento o il nome del gioco ne contengono una. Maiuscole e minuscole non contano.
+LIVE viewers range	Intervallo degli spettatori LIVE
+Show only LIVEs with this many people watching.	Mostra solo i LIVE con questo numero di spettatori.
+LIVE followers range	Intervallo dei follower LIVE
+Show only LIVEs from creators with this many followers.	Mostra solo i LIVE dei creator con questo numero di follower.

@@ -1435,3 +1435,20 @@ Looking for apps	Buscando apps
 No other app takes shared text	Ninguna otra app acepta texto compartido
 Install one, then come back here.	Instala una y vuelve aquí.
 No apps match this search	Ninguna app coincide con esta búsqueda
+LIVE feed	Feed de LIVE
+Filter the LIVE feed	Filtrar el feed de LIVE
+Hide rooms in the LIVE feed you swipe through, using the rules below. Blocked creators and Creators hidden on this phone apply here too, Blocked caption words are matched against each LIVE's title, and Creator exceptions works the way it does for videos. The LIVE button picks the first room itself, so the rules start with the next one. If they hide every room for a while, one gets through so the feed keeps loading.	Ocultar transmisiones del feed de LIVE que recorres deslizando, según las reglas de abajo. «Creadores bloqueados» y «Creadores ocultos en este dispositivo» también cuentan aquí, «Palabras bloqueadas en las descripciones» se comparan con el título de cada LIVE y «Excepciones de creadores» funciona igual que con los vídeos. El botón de LIVE elige la primera transmisión por su cuenta, así que las reglas empiezan con la siguiente. Si ocultan todas durante un rato, una se cuela para que el feed siga cargando.
+Hide gaming LIVEs	Ocultar LIVE de videojuegos
+Hide LIVEs that TikTok tags with a game or a gaming category.	Ocultar los LIVE que TikTok marca con un juego o una categoría de videojuegos.
+Hide shopping LIVEs	Ocultar LIVE de compras
+Hide LIVEs that sell products or carry a TikTok Shop tag.	Ocultar los LIVE que venden productos o llevan una etiqueta de TikTok Shop.
+Hide sponsored LIVEs	Ocultar LIVE patrocinados
+Hide LIVEs that TikTok labels as a paid partnership or promotional content.	Ocultar los LIVE que TikTok marca como colaboración pagada o contenido promocional.
+Hide verified creators' LIVEs	Ocultar LIVE de creadores verificados
+Hide LIVEs hosted by verified accounts.	Ocultar los LIVE de cuentas verificadas.
+Hidden LIVE categories	Categorías de LIVE ocultas
+Comma separated words, like music, chat. A LIVE is hidden when its category, topic tags or game name contains one. Case doesn't matter.	Palabras separadas por comas, como música, chat. Un LIVE se oculta cuando su categoría, sus etiquetas de tema o el nombre de su juego contienen una. Da igual mayúsculas y minúsculas.
+LIVE viewers range	Rango de espectadores de LIVE
+Show only LIVEs with this many people watching.	Mostrar solo los LIVE con este número de espectadores.
+LIVE followers range	Rango de seguidores de LIVE
+Show only LIVEs from creators with this many followers.	Mostrar solo los LIVE de creadores con este número de seguidores.

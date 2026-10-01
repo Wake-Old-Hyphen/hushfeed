@@ -279,14 +279,16 @@ public final class VideoFit {
         @Override
         public void onLayoutChange(View space, int left, int top, int right, int bottom,
                                    int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            int width = right - left;
-            int height = bottom - top;
-            if (width <= 0 || height <= 0 || (width == spaceWidth && height == spaceHeight)) return;
+            // A watch whose video left this space goes first, whatever size the pass reported:
+            // a recycled page that never changes size again would keep it forever otherwise.
             View view = video.get();
             if (view == null || view.getParent() != space) {
                 space.removeOnLayoutChangeListener(this);
                 return;
             }
+            int width = right - left;
+            int height = bottom - top;
+            if (width <= 0 || height <= 0 || (width == spaceWidth && height == spaceHeight)) return;
             // After the layout pass that reported the size, not inside it.
             Utils.runOnMainThread(() -> refit(view, this));
         }
@@ -656,10 +658,16 @@ public final class VideoFit {
 
         @Override public List<String> lines() {
             List<String> lines = new ArrayList<>();
-            lines.add("Fit the video to the screen: " + (Settings.FIT_VIDEO_TO_SCREEN.get() ? "on" : "off"));
-            lines.add("Fill the screen with the video: " + (Settings.FILL_VIDEO_TO_SCREEN.get() ? "on" : "off"));
-            // Counted per ask, and the feed asks twice for each video it shows.
-            lines.add("Asks since TikTok started: " + RESIZED.get() + " resized the video, "
+            // The saved choices: Pause reads both as off, and says so on a line of its own.
+            boolean fit = Settings.FIT_VIDEO_TO_SCREEN.savedValue();
+            boolean fill = Settings.FILL_VIDEO_TO_SCREEN.savedValue();
+            lines.add("Fit the video to the screen: " + (fit ? "on" : "off"));
+            lines.add("Fill the screen with the video: " + (fill ? "on" : "off"));
+            if ((fit || fill) && !Settings.FIT_VIDEO_TO_SCREEN.get() && !Settings.FILL_VIDEO_TO_SCREEN.get()) {
+                lines.add("Hushfeed is paused, so videos keep TikTok's size");
+            }
+            // Counted per check, and the feed checks twice for each video it shows.
+            lines.add("Fit checks since TikTok started: " + RESIZED.get() + " resized the video, "
                     + LEFT.get() + " left it at TikTok's size");
             synchronized (DECISIONS) {
                 if (!DECISIONS.isEmpty()) lines.add("The last " + DECISIONS.size() + ", oldest first:");
