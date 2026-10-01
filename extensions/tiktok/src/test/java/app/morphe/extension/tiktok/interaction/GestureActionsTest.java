@@ -416,7 +416,8 @@ public class GestureActionsTest {
             PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
             new InterfacePreferenceCategory(activity, screen);
             for (String key : new String[]{"hide_feed_caption", "hide_feed_music", "hide_feed_action_bar",
-                    "hide_feed_surveys", "hide_status_bar", "hide_sensitive_warnings"}) {
+                    "hide_feed_surveys", "hide_status_bar", "hide_detail_comment_bar",
+                    "hide_sensitive_warnings"}) {
                 assertNotNull(key, screen.findPreference(key));
             }
         } finally {

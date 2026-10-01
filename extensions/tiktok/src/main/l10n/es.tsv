@@ -79,6 +79,7 @@ Added to this account.	Añadidos a esta cuenta.
 Caption languages	Idiomas de subtítulos
 Comma separated account handles or user ids. Their videos stay when only a filter on the kind of post, its labels, age, length or counts would hide them. Ads, blocked creators, words, sounds, countries and caption languages, and seen videos still apply.	Nombres de cuenta o ids de usuario separados por comas. Sus videos se quedan cuando solo un filtro por tipo de publicación, etiquetas, antigüedad, duración o cifras los ocultaría. Los anuncios, los creadores, palabras, sonidos, países e idiomas de subtítulos bloqueados y los videos ya vistos siguen aplicándose.
 Comma separated language codes, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Códigos de idioma separados por comas, como en, es. Se oculta un video cuyo subtítulo original está en otro idioma. Los videos sin subtítulos, o solo con subtítulos traducidos, se quedan siempre.
+Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Nombres separados por comas, tal como aparecen en la fila bajo la biografía de un perfil, como TikTok Studio o Tus pedidos. Reinicia TikTok para que se aplique.
 Couldn't add the older seen videos. Try again.	No se pudieron añadir los vídeos vistos anteriores. Inténtalo de nuevo.
 Couldn't copy the report. Use Save report instead.	No se pudo copiar el informe. Usa «Guardar informe».
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	No se pudieron leer los valores actuales de TikTok (%1$s). Actualiza los valores desde el menú para volver a intentarlo.
@@ -89,6 +90,8 @@ Forget the %1$s videos @%2$s has seen.	Olvidar los %1$s vídeos que ha visto @%2
 Forget the seen video.	Olvidar el vídeo visto.
 Forget the video @%2$s has seen.	Olvidar el vídeo que ha visto @%2$s.
 Got it	Entendido
+Hide profile shortcuts	Ocultar accesos directos del perfil
+Hide profile shortcuts by name	Ocultar accesos directos del perfil por nombre
 Hide the status bar in LIVE rooms	Ocultar la barra de estado en los LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Cuánto de un vídeo ves antes de que se oculte la próxima vez. Con cero cuenta tras unos segundos.
 Later	Más tarde
@@ -97,16 +100,20 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Loading the gate list and TikTok's current values…	Cargando la lista de gates y los valores actuales de TikTok…
 New value	Nuevo valor
 No app on this phone opens that file	Ninguna app de este teléfono abre ese archivo
+No profile shortcuts have been seen yet	Todavía no se ha visto ningún acceso directo del perfil
 One video was recorded before each account kept its own list. It hides nothing until you add it here.	Se registró un vídeo antes de que cada cuenta tuviera su propia lista. No oculta nada hasta que lo añadas aquí.
 Only these caption languages	Solo estos idiomas de subtítulos
 Open	Abrir
+Open your profile once, then return here to choose its shortcuts.	Abre tu perfil una vez y vuelve aquí para elegir sus accesos directos.
 Photos can't be saved to the folder in that file, so your photo folder was kept	Las fotos no se pueden guardar en la carpeta de ese archivo, así que se mantuvo tu carpeta de fotos
+Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Elige los accesos directos que quieres quitar de la fila bajo la biografía de un perfil, como TikTok Studio o Tus pedidos. Reinicia TikTok para que se aplique.
 Preview shortened. Save report keeps the full report.	Vista previa acortada. «Guardar informe» conserva el informe completo.
 Refreshing TikTok's current values…	Actualizando los valores actuales de TikTok…
 Restart TikTok to apply this	Reinicia TikTok para que se aplique
 Save report	Guardar informe
 Stay on the video in full screen	Quedarse en el vídeo a pantalla completa
 Stickers can't be saved to the folder in that file, so your sticker folder was kept	Los stickers no se pueden guardar en la carpeta de ese archivo, así que se mantuvo tu carpeta de stickers
+Stop TikTok's benchmark runs	Detener las pruebas de rendimiento de TikTok
 That creator pattern could stall the feed, so it was skipped: %1$s	Ese patrón de creador podría trabar el feed, así que se omitió: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Ese patrón de creador podría trabar el feed, así que no se añadió: %1$s
 This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.	Esta clave no está en la lista de Hushfeed, así que no se puede comprobar su tipo. Restablece la anulación.
@@ -115,6 +122,7 @@ Activity	Actividad
 Activity center (PIA)	Centro de actividad (PIA)
 Add	Añadir
 Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.	Bloquea al creador con un toque. Cuando TikTok lo confirme, pasa al siguiente video. Aparece un botón pequeño para desbloquear arriba a la izquierda durante dos segundos. También puedes desbloquear más tarde en Privacidad > Cuentas bloqueadas de TikTok.
+TikTok sometimes tests how fast your phone is in a background process of its own, which can hold a lot of memory. This keeps that process from starting. One that's already running stops when TikTok restarts.	TikTok a veces mide la velocidad de tu teléfono en un proceso propio en segundo plano, que puede ocupar mucha memoria. Esto evita que ese proceso se inicie. Si ya se está ejecutando, se detiene cuando TikTok se reinicia.
 TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.	El propio recordatorio diario de tiempo en pantalla de TikTok manda la app a segundo plano en vez de esperar a que lo cierres. Si vuelves enseguida, el recordatorio se queda en pantalla, para que el límite siga a tu alcance. Necesita un límite diario en Ajustes y privacidad de TikTok, en Tiempo y bienestar.
 Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.	Prueba con otra palabra o borra la búsqueda. Los interruptores de parches que no marcaste en Morphe Manager no aparecen.
 Unblock	Desbloquear
@@ -1452,3 +1460,5 @@ LIVE viewers range	Rango de espectadores de LIVE
 Show only LIVEs with this many people watching.	Mostrar solo los LIVE con este número de espectadores.
 LIVE followers range	Rango de seguidores de LIVE
 Show only LIVEs from creators with this many followers.	Mostrar solo los LIVE de creadores con este número de seguidores.
+Hide the comment bar on opened videos	Ocultar la barra de comentarios en los videos abiertos
+Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Quita la barra para escribir un comentario de los videos que abres desde un perfil, un hashtag, un sonido o la búsqueda, para que el video ocupe la pantalla hasta abajo. El botón de comentarios de la derecha sigue abriendo los comentarios.

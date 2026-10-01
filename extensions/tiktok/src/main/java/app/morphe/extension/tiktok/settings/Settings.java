@@ -497,6 +497,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FEED_MUSIC = new BooleanSetting("hide_feed_music", FALSE);
     public static final BooleanSetting HIDE_FEED_ACTION_BAR = new BooleanSetting("hide_feed_action_bar", FALSE);
     public static final BooleanSetting HIDE_FEED_SURVEYS = new BooleanSetting("hide_feed_surveys", FALSE);
+    /** The Add comment bar under a video opened from a profile, a hashtag or a sound, and the strip kept for it (#50). */
+    public static final BooleanSetting HIDE_DETAIL_COMMENT_BAR = new BooleanSetting("hide_detail_comment_bar", FALSE);
     public static final BooleanSetting HIDE_SHARE_GUIDE = new BooleanSetting("hide_share_guide", FALSE);
     public static final BooleanSetting HIDE_RAIL_FOLLOW = new BooleanSetting("hide_rail_follow", FALSE);
     public static final BooleanSetting HIDE_RAIL_LIKE = new BooleanSetting("hide_rail_like", FALSE);
@@ -602,6 +604,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting BLOCK_LOCATION = new BooleanSetting("block_location", TRUE);
     public static final BooleanSetting BLOCK_CLIPBOARD_READS = new BooleanSetting("block_clipboard_reads", TRUE);
     public static final BooleanSetting BLOCK_MOTION_SENSORS = new BooleanSetting("block_motion_sensors", TRUE);
+    // Off by default, unlike the blocks above: it rides on the sensor patch, so picking that
+    // patch is not a choice about the benchmark (#64). Put into effect by BenchmarkRuns.
+    public static final BooleanSetting STOP_BENCHMARK_RUNS = new BooleanSetting("stop_benchmark_runs", FALSE);
     // Off by default: TikTok's own hybrid pages, the shop checkout and the CAPTCHA page among
     // them, are built on that bridge and stop working without it.
     public static final BooleanSetting BLOCK_WEBVIEW_JS_INTERFACES = new BooleanSetting("block_webview_js_interfaces", FALSE);
@@ -666,6 +671,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting SHARE_HIDDEN_ITEMS_LIVE =
             new StringSetting("share_hidden_items_live", SHARE_HIDDEN_ITEMS_FOLLOW_VIDEO);
     public static final StringSetting SHARE_ACTION_CATALOG = new StringSetting("share_action_catalog", "");
+    // Profile shortcuts (#49): the pills under your bio. Names or kinds to hide, comma separated,
+    // and the ones TikTok has sent to this phone, which the checklist offers.
+    public static final StringSetting HIDDEN_PROFILE_SHORTCUTS = new StringSetting("hidden_profile_shortcuts", "");
+    public static final StringSetting PROFILE_SHORTCUT_CATALOG = new StringSetting("profile_shortcut_catalog", "");
     // Package names of the apps added to the Share via row, comma separated, in the order picked.
     public static final StringSetting SHARE_ADDED_APPS = new StringSetting("share_added_apps", "");
     public static final BooleanSetting DISABLE_LONG_PRESS_QUICK_SHARE =
@@ -702,7 +711,7 @@ public class Settings extends BaseSettings {
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
                 FEED_MUTE_BUTTON_POSITION,
-                SHARE_ACTION_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
+                SHARE_ACTION_CATALOG, PROFILE_SHORTCUT_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.
                 SESSION_BUDGET_RESET_HOUR);

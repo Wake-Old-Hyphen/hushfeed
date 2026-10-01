@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 import app.morphe.extension.shared.Logger;
@@ -38,6 +39,8 @@ public final class GestureActions {
     private static final class CommentControl {
         WeakReference<View> view = new WeakReference<>(null);
         String videoId;
+        /** The post bound with the id, for the long press actions that need more than its id. */
+        WeakReference<Object> aweme = new WeakReference<>(null);
     }
 
     private static CommentControl commentControl(Object owner) {
@@ -58,7 +61,9 @@ public final class GestureActions {
 
     public static void bindCommentView(Object owner, Object params) {
         Object aweme = Reflect.property(params, "getAweme", "aweme");
-        commentControl(owner).videoId = Reflect.string(aweme, "getAid", "aid");
+        CommentControl control = commentControl(owner);
+        control.videoId = Reflect.string(aweme, "getAid", "aid");
+        control.aweme = new WeakReference<>(aweme);
     }
 
     public static boolean onDoubleTap() {
@@ -145,8 +150,9 @@ public final class GestureActions {
 
     private static boolean handleLongPress(long delta) {
         if (delta != 0) {
-            // Named, so a post that never reported progress cannot move the video before it.
-            String videoId = Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid");
+            // Named, so a post that never reported progress cannot move the video before it. Right
+            // after a swipe the new video may not have, and the press says so instead.
+            String videoId = Reflect.string(onScreenAweme(), "getAid", "aid");
             if (!FeedSeek.seekBy(videoId, delta)) Utils.showToastShort(L10n.t("Nothing is playing to seek"));
             // The edge belongs to the seek whether or not it worked, so the 2x hold that would
             // otherwise start under the finger does not fire on top of it.
@@ -156,7 +162,7 @@ public final class GestureActions {
         String action = Settings.LONG_PRESS_ACTION.get();
         if ("nothing".equals(action)) return true;
         if ("copy_link".equals(action)) {
-            String link = ExternalDownloader.shareUrl(CurrentVideoAuthor.getAweme());
+            String link = ExternalDownloader.shareUrl(onScreenAweme());
             // The same treatment a shared link gets: TikTok's own link carries the parameters
             // that say who sent it, and the clipboard is somewhere else that goes.
             String clean = link == null ? null : ShareUrlSanitizer.rewriteShareUrl(link);
@@ -174,7 +180,7 @@ public final class GestureActions {
             // share URL like any other: it carries the parameters that say who sent it, and the
             // custom share domain belongs on it too. Only the link this builds from the sound's
             // id has never had a query on it.
-            String sound = soundLink(CurrentVideoAuthor.getAweme());
+            String sound = soundLink(onScreenAweme());
             String clean = sound == null ? null : ShareUrlSanitizer.rewriteShareUrl(sound);
             if (copyToClipboard("TikTok sound", clean)) {
                 if (android.os.Build.VERSION.SDK_INT < 33) {
@@ -186,12 +192,12 @@ public final class GestureActions {
             return true;
         }
         if ("original_sound".equals(action)) {
-            OriginalSoundDownloads.start(CurrentVideoAuthor.getAweme(), Utils.getActivity());
+            OriginalSoundDownloads.start(onScreenAweme(), Utils.getActivity());
             return true;
         }
         if ("youtube_music".equals(action)) {
             Context context = Utils.getActivity();
-            YouTubeMusicSearch.open(CurrentVideoAuthor.getAweme(),
+            YouTubeMusicSearch.open(onScreenAweme(),
                     context != null ? context : Utils.getContext());
             return true;
         }
@@ -272,39 +278,97 @@ public final class GestureActions {
      * before, a page away.
      */
     static boolean openVisibleComments(String playingId) {
+        OnScreen screen = onScreen(playingId);
+        // A feed in front whose cell has no button is a LIVE or an ad: no comments, and nothing
+        // elsewhere stands in for them.
+        if (screen.control == null) return !screen.feedInFront && openComments(playingId, true);
+        String pressed = screen.control.videoId;
+        if (playingId == null || !playingId.equals(pressed)) {
+            Logger.printDebug(() -> "Comments for the video on screen (" + pressed
+                    + "), the player still names " + playingId);
+        }
+        return press(screen.owner, screen.view);
+    }
+
+    /**
+     * The post a long press was made on, for the actions that need more than its comments.
+     *
+     * <p>Not the playing post. Until a new video starts playing, that's still the one before,
+     * so a link copied right after a swipe was that video's (#63). With a feed in front, it's
+     * the post bound to its cell on screen, and none for a cell without a button (a LIVE or an
+     * ad). Anywhere else, or with no button registered in front at all, which a build that
+     * moved the button would look like, it's the playing post as before.
+     */
+    static Object onScreenAweme() {
+        Object playing = CurrentVideoAuthor.getAweme();
+        String playingId = Reflect.string(playing, "getAid", "aid");
+        OnScreen screen = onScreen(playingId);
+        if (!screen.feedInFront) return playing;
+        if (screen.control == null) return screen.registeredInFront ? null : playing;
+        Object aweme = screen.control.aweme.get();
+        if (aweme != null) return aweme;
+        return playingId != null && playingId.equals(screen.control.videoId) ? playing : null;
+    }
+
+    /** What the screen says about the video a gesture was made on. */
+    private static final class OnScreen {
+        /** The comment button of the cell showing most, its assem and its binding; or nulls. */
+        Object owner;
+        View view;
+        CommentControl control;
+        /** The window in front shows a cell of TikTok's feed pager, with a button or without. */
+        boolean feedInFront;
+        /** Some registered button, on screen or not, lives in the window in front. */
+        boolean registeredInFront;
+    }
+
+    /**
+     * The window in front first, then how much of the cell shows, then the playing id. With a
+     * feed in front, only its own cells count: a feed left showing behind it, the main feed
+     * under a video opened from a profile, is out of sight even when its window isn't.
+     */
+    private static OnScreen onScreen(String playingId) {
+        OnScreen screen = new OnScreen();
         Activity front = Utils.getVisibleActivity();
         Window window = front == null ? null : front.getWindow();
         View frontRoot = window == null ? null : window.peekDecorView();
-        Object bestOwner = null;
-        View best = null;
-        String bestId = null;
+        Rect visible = new Rect();
+        screen.feedInFront = showsFeedCell(frontRoot, visible);
         boolean bestInFront = false;
         boolean bestPlaying = false;
         float bestShare = 0;
-        Rect visible = new Rect();
         for (Map.Entry<Object, CommentControl> entry : COMMENTS.entrySet()) {
             View view = entry.getValue().view.get();
             if (view == null || !view.isAttachedToWindow()) continue;
+            boolean inFront = frontRoot != null && view.getRootView() == frontRoot;
+            screen.registeredInFront |= inFront;
+            if (screen.feedInFront && !inFront) continue;
             float share = onScreenShare(cellOf(view), visible);
             if (share <= 0) continue;
-            boolean inFront = frontRoot != null && view.getRootView() == frontRoot;
             String id = entry.getValue().videoId;
             boolean playing = playingId != null && playingId.equals(id);
-            if (best != null && !beats(inFront, share, playing, bestInFront, bestShare, bestPlaying)) continue;
-            bestOwner = entry.getKey();
-            best = view;
-            bestId = id;
+            if (screen.view != null
+                    && !beats(inFront, share, playing, bestInFront, bestShare, bestPlaying)) continue;
+            screen.owner = entry.getKey();
+            screen.view = view;
+            screen.control = entry.getValue();
             bestInFront = inFront;
             bestShare = share;
             bestPlaying = playing;
         }
-        if (best == null) return openComments(playingId, true);
-        if (!bestPlaying) {
-            String pressed = bestId;
-            Logger.printDebug(() -> "Comments for the video on screen (" + pressed
-                    + "), the player still names " + playingId);
+        return screen;
+    }
+
+    /** Whether a cell of TikTok's feed pager shows anywhere under {@code view}. */
+    private static boolean showsFeedCell(View view, Rect visible) {
+        if (!(view instanceof ViewGroup)) return false;
+        ViewGroup group = (ViewGroup) view;
+        boolean pager = FEED_PAGER.equals(group.getClass().getName());
+        for (int i = 0, count = group.getChildCount(); i < count; i++) {
+            View child = group.getChildAt(i);
+            if (pager ? onScreenShare(child, visible) > 0 : showsFeedCell(child, visible)) return true;
         }
-        return press(bestOwner, best);
+        return false;
     }
 
     /** The window in front first, then how much of the cell shows, then the playing id. */

@@ -56,7 +56,6 @@ import java.util.WeakHashMap;
  * time (#58) and never held a real one.
  */
 public final class ShareSheetTools {
-    private static final String APP_PACKAGE = "com.zhiliaoapp.musically";
     /** One family for everything that touches the sheet, so an export reads as one surface. */
     private static final String FAMILY = ShareModelFilter.FAMILY;
     private static final String[] CONTACTS_SECTION_IDS = {"47.0.3:ip5", "47.1.3:iql", "47.1.4:iql"};
@@ -266,7 +265,7 @@ public final class ShareSheetTools {
      */
     private static void addIds(Activity activity, Set<Integer> ids, String[] candidates) {
         for (String name : candidates) {
-            int id = RESOURCE_IDS.resolve(activity.getResources(), APP_PACKAGE, name, false);
+            int id = RESOURCE_IDS.resolve(activity.getResources(), activity.getPackageName(), name, false);
             if (id != 0) ids.add(id);
         }
     }
@@ -317,7 +316,8 @@ public final class ShareSheetTools {
         boolean resolvedAny = false;
         String diagnostic = String.join("|", candidates);
         for (String name : candidates) {
-            int id = RESOURCE_IDS.resolve(activity.getResources(), APP_PACKAGE, name, false);
+            // The running package, not TikTok's: a cloned build renames it, resource table and all (#59).
+            int id = RESOURCE_IDS.resolve(activity.getResources(), activity.getPackageName(), name, false);
             if (id == 0) continue;
             resolvedAny = true;
             for (int root = 0; root < roots.size(); root++) {

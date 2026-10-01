@@ -79,6 +79,7 @@ Added to this account.	Bu hesaba eklendi.
 Caption languages	Altyazı dilleri
 Comma separated account handles or user ids. Their videos stay when only a filter on the kind of post, its labels, age, length or counts would hide them. Ads, blocked creators, words, sounds, countries and caption languages, and seen videos still apply.	Virgülle ayrılmış hesap adları veya kullanıcı kimlikleri. Videoları, yalnızca gönderi türü, etiketleri, yaşı, süresi veya sayılarıyla ilgili bir filtre onları gizleyecekse kalır. Reklamlar, engellenen içerik üreticiler, kelimeler, sesler, ülkeler ve altyazı dilleri ile izlenmiş videolar geçerli olmaya devam eder.
 Comma separated language codes, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Virgülle ayrılmış dil kodları, örneğin en, es. Özgün altyazısı başka bir dilde olan video gizlenir. Altyazısı olmayan ya da yalnızca çevrilmiş altyazısı olan videolar her zaman kalır.
+Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Virgülle ayrılmış adlar, bir profilin biyografisinin altındaki satırda göründüğü gibi, örneğin TikTok Studio veya Siparişlerin. Bunu uygulamak için TikTok'u yeniden başlat.
 Couldn't add the older seen videos. Try again.	Eski görülen videolar eklenemedi. Tekrar dene.
 Couldn't copy the report. Use Save report instead.	Rapor kopyalanamadı. Bunun yerine "Raporu kaydet"i kullan.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	TikTok'un geçerli değerleri okunamadı (%1$s). Yeniden denemek için menüden değerleri yenile.
@@ -89,6 +90,8 @@ Forget the %1$s videos @%2$s has seen.	@%2$s hesabının gördüğü %1$s videoy
 Forget the seen video.	Görülen videoyu unut.
 Forget the video @%2$s has seen.	@%2$s hesabının gördüğü videoyu unut.
 Got it	Anladım
+Hide profile shortcuts	Profil kısayollarını gizle
+Hide profile shortcuts by name	Profil kısayollarını adına göre gizle
 Hide the status bar in LIVE rooms	LIVE odalarında durum çubuğunu gizle
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Bir videonun bir dahaki sefere gizlenmesi için ne kadarını izlemen gerektiği. Sıfır, birkaç saniye sonra sayar.
 Later	Daha sonra
@@ -97,16 +100,20 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Loading the gate list and TikTok's current values…	Gate listesi ve TikTok'un geçerli değerleri yükleniyor…
 New value	Yeni değer
 No app on this phone opens that file	Bu telefonda o dosyayı açan bir uygulama yok
+No profile shortcuts have been seen yet	Henüz hiç profil kısayolu görülmedi
 One video was recorded before each account kept its own list. It hides nothing until you add it here.	Her hesabın kendi listesi olmadan önce bir video kaydedildi. Buraya ekleyene kadar hiçbir şeyi gizlemez.
 Only these caption languages	Yalnızca bu altyazı dilleri
 Open	Aç
+Open your profile once, then return here to choose its shortcuts.	Profilini bir kez aç, sonra kısayollarını seçmek için buraya dön.
 Photos can't be saved to the folder in that file, so your photo folder was kept	Fotoğraflar o dosyadaki klasöre kaydedilemiyor, bu yüzden fotoğraf klasörün korundu
+Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Bir profilin biyografisinin altındaki satırdan kaldırılacak kısayolları seç, örneğin TikTok Studio veya Siparişlerin. Bunu uygulamak için TikTok'u yeniden başlat.
 Preview shortened. Save report keeps the full report.	Önizleme kısaltıldı. "Raporu kaydet" raporun tamamını saklar.
 Refreshing TikTok's current values…	TikTok'un geçerli değerleri yenileniyor…
 Restart TikTok to apply this	Bunu uygulamak için TikTok'u yeniden başlat
 Save report	Raporu kaydet
 Stay on the video in full screen	Tam ekranda videoda kal
 Stickers can't be saved to the folder in that file, so your sticker folder was kept	Çıkartmalar o dosyadaki klasöre kaydedilemiyor, bu yüzden çıkartma klasörün korundu
+Stop TikTok's benchmark runs	TikTok'un performans testlerini durdur
 That creator pattern could stall the feed, so it was skipped: %1$s	Bu içerik üreticisi kalıbı akışı kilitleyebileceği için atlandı: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Bu içerik üreticisi kalıbı akışı kilitleyebileceği için eklenmedi: %1$s
 This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.	Bu anahtar Hushfeed listesinde yok, bu yüzden türü denetlenemiyor. Geçersiz kılmayı sıfırla.
@@ -225,6 +232,7 @@ Clear all suggested accounts	Önerilen tüm hesapları temizle
 Clear the recent events, saved crash reports, a recorded screen layout and the hook status above.	Son olayları, kaydedilen çökme raporlarını, kaydedilmiş bir ekran düzenini ve yukarıdaki kanca durumunu temizle.
 Record a screen's layout	Bir ekranın düzenini kaydet
 Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.	Dokun, sonra gizlemek istediğin şeyin olduğu ekrana git. %1$d saniye sonra Hushfeed o ekranın nasıl kurulduğunu, metnini almadan, tanılama raporu için kaydeder.
+TikTok sometimes tests how fast your phone is in a background process of its own, which can hold a lot of memory. This keeps that process from starting. One that's already running stops when TikTok restarts.	TikTok bazen telefonunun ne kadar hızlı olduğunu kendi arka plan işleminde test eder ve bu işlem çok fazla bellek kullanabilir. Bu ayar o işlemin başlamasını engeller. Zaten çalışan bir işlem, TikTok yeniden başladığında durur.
 Waiting to record. Go to the screen you want recorded.	Kayıt bekleniyor. Kaydedilmesini istediğin ekrana git.
 A screen's layout is recorded. Export the diagnostic report to send it, or tap to record another.	Bir ekran düzeni kaydedildi. Göndermek için tanılama raporunu dışa aktar ya da başka birini kaydetmek için dokun.
 Go to the screen now. Hushfeed records its layout in %1$d seconds.	Şimdi ekrana git. Hushfeed %1$d saniye içinde düzenini kaydeder.
@@ -1452,3 +1460,5 @@ LIVE viewers range	CANLI izleyici aralığı
 Show only LIVEs with this many people watching.	Yalnızca bu kadar izleyicisi olan CANLI yayınları göster.
 LIVE followers range	CANLI takipçi aralığı
 Show only LIVEs from creators with this many followers.	Yalnızca bu kadar takipçisi olan içerik üreticilerinin CANLI yayınlarını göster.
+Hide the comment bar on opened videos	Açılan videolarda yorum çubuğunu gizle
+Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Bir profilden, hashtag'den, sesten veya aramadan açtığın videolardaki yorum yazma çubuğunu kaldır, böylece video ekranı en alta kadar doldurur. Sağdaki yorum düğmesi yorumları açmaya devam eder.

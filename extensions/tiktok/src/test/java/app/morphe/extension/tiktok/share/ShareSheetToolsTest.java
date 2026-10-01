@@ -40,9 +40,9 @@ public class ShareSheetToolsTest {
         Settings.HIDE_SHARE_CONTACTS.save(false);
         Object cache = ReflectionHelpers.getStaticField(ShareSheetTools.class, "RESOURCE_IDS");
         Map<String, Integer> ids = ReflectionHelpers.getField(cache, "ids");
-        ids.put("com.zhiliaoapp.musically:47.0.3:ip5", 0x7f000201);
-        ids.put("com.zhiliaoapp.musically:ibc", 0x7f000101);
-        ids.put("com.zhiliaoapp.musically:47.0.3:v3j", 0x7f000301);
+        ids.put(context.getPackageName() + ":47.0.3:ip5", 0x7f000201);
+        ids.put(context.getPackageName() + ":ibc", 0x7f000101);
+        ids.put(context.getPackageName() + ":47.0.3:v3j", 0x7f000301);
     }
 
     @After public void tearDown() {

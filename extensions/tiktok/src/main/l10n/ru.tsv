@@ -112,6 +112,7 @@ Added to this account.	Добавлено к этому аккаунту.
 Caption languages	Языки субтитров
 Comma separated account handles or user ids. Their videos stay when only a filter on the kind of post, its labels, age, length or counts would hide them. Ads, blocked creators, words, sounds, countries and caption languages, and seen videos still apply.	Через запятую: имена аккаунтов или ID пользователей. Их видео остаются, если скрыть их может только фильтр по типу публикации, её меткам, возрасту, длительности или числовым показателям. Реклама, заблокированные авторы, слова, звуки, страны, языки субтитров и просмотренные видео по-прежнему учитываются.
 Comma separated language codes, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Через запятую: коды языков, например en, es. Видео, чьи исходные субтитры на другом языке, скрываются. Видео без субтитров или только с переведёнными всегда остаются.
+Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Названия через запятую, точно как в строке под описанием профиля, например TikTok Studio или «Ваши заказы». Перезапустите TikTok, чтобы это применить.
 Couldn't add the older seen videos. Try again.	Не удалось добавить старые просмотренные видео. Попробуйте снова.
 Couldn't copy the report. Use Save report instead.	Не удалось скопировать отчёт. Используйте вместо этого «Сохранить отчёт».
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Не удалось прочитать текущие значения TikTok (%1$s). Обновите значения через меню, чтобы попробовать снова.
@@ -125,6 +126,8 @@ Forget the %1$s videos @%2$s has seen.|many	Забыть %1$s видео, про
 Forget the seen video.	Забыть просмотренное видео.
 Forget the video @%2$s has seen.	Забыть видео, просмотренное аккаунтом @%2$s.
 Got it	Понятно
+Hide profile shortcuts	Скрыть ярлыки профиля
+Hide profile shortcuts by name	Скрыть ярлыки профиля по названию
 Hide the status bar in LIVE rooms	Скрывать строку состояния в LIVE-трансляциях
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.	Какую часть видео нужно посмотреть, чтобы оно в следующий раз считалось просмотренным. При значении «0» оно засчитывается уже через несколько секунд.
 Later	Позже
@@ -133,16 +136,20 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Loading the gate list and TikTok's current values…	Загрузка списка переключателей и текущих значений TikTok…
 New value	Новое значение
 No app on this phone opens that file	Ни одно приложение на этом телефоне не открывает такой файл
+No profile shortcuts have been seen yet	Ярлыки профиля пока не встречались
 One video was recorded before each account kept its own list. It hides nothing until you add it here.	Одно видео было записано до того, как у каждого аккаунта появился свой список. Оно ничего не скрывает, пока вы не добавите его сюда.
 Only these caption languages	Только эти языки субтитров
 Open	Открыть
+Open your profile once, then return here to choose its shortcuts.	Откройте свой профиль один раз, затем вернитесь сюда, чтобы выбрать ярлыки.
 Photos can't be saved to the folder in that file, so your photo folder was kept	Фото нельзя сохранить в папку из этого файла, поэтому ваша папка для фото осталась прежней
+Pick the shortcuts to remove from the row under a profile's bio, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Выберите ярлыки, которые нужно убрать из строки под описанием профиля, например TikTok Studio или «Ваши заказы». Перезапустите TikTok, чтобы это применить.
 Preview shortened. Save report keeps the full report.	Превью сокращено. «Сохранить отчёт» сохраняет отчёт полностью.
 Refreshing TikTok's current values…	Обновление текущих значений TikTok…
 Restart TikTok to apply this	Перезапустите TikTok, чтобы это применить
 Save report	Сохранить отчёт
 Stay on the video in full screen	Оставаться на видео в полноэкранном режиме
 Stickers can't be saved to the folder in that file, so your sticker folder was kept	Стикеры нельзя сохранить в папку из этого файла, поэтому ваша папка для стикеров осталась прежней
+Stop TikTok's benchmark runs	Остановить тесты производительности TikTok
 That creator pattern could stall the feed, so it was skipped: %1$s	Этот шаблон автора мог замедлить ленту, поэтому он был пропущен: %1$s
 That creator pattern could stall the feed, so it wasn't added: %1$s	Этот шаблон автора мог замедлить ленту, поэтому он не был добавлен: %1$s
 This key isn't in Hushfeed's list, so its type can't be checked. Reset the override.	Этого ключа нет в списке Hushfeed, поэтому его тип нельзя проверить. Сбросьте переопределение.
@@ -151,6 +158,7 @@ Activity	Активность
 Activity center (PIA)	Центр активности (PIA)
 Add	Добавить
 Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.	Заблокировать автора одним нажатием. После подтверждения TikTok произойдёт переход к следующему видео. Слева вверху на две секунды появится небольшая кнопка «Разблокировать». Разблокировать можно и позже, в TikTok: Конфиденциальность > Заблокированные аккаунты.
+TikTok sometimes tests how fast your phone is in a background process of its own, which can hold a lot of memory. This keeps that process from starting. One that's already running stops when TikTok restarts.	TikTok иногда проверяет скорость телефона в отдельном фоновом процессе, который может занимать много памяти. Этот переключатель не даёт ему запуститься. Уже запущенный процесс остановится после перезапуска TikTok.
 TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.	Собственное дневное напоминание TikTok об экранном времени сворачивает приложение в фон, вместо того чтобы ждать, пока его закроют. Если сразу вернуться, напоминание останется на экране, поэтому лимит по-прежнему можно достичь. Требует дневного лимита, заданного в TikTok в разделе Настройки и конфиденциальность > Время в соцсетях.
 Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.	Попробуйте другое слово или очистите поиск. Переключатели из патчей, которые вы не отметили в Morphe Manager, здесь не показаны.
 Unblock	Разблокировать
@@ -1578,3 +1586,5 @@ LIVE viewers range	Диапазон зрителей LIVE
 Show only LIVEs with this many people watching.	Показывать только трансляции с таким количеством зрителей.
 LIVE followers range	Диапазон подписчиков авторов LIVE
 Show only LIVEs from creators with this many followers.	Показывать только трансляции авторов с таким количеством подписчиков.
+Hide the comment bar on opened videos	Скрывать строку комментария в открытых видео
+Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Убирать строку для ввода комментария под видео, открытыми из профиля, по хештегу, со страницы звука или из поиска, чтобы видео занимало экран до самого низа. Кнопка комментариев справа по-прежнему открывает комментарии.
