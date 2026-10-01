@@ -217,8 +217,10 @@ Assert-True ((Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersi
 
 $allNames = @($catalog.patches | ForEach-Object { $_.name })
 $allDependencies = @(Get-PatchDependencyNames -PatchList $catalog -RequestedNames $allNames)
-Assert-True ($allDependencies.Count -eq 1 -and $allDependencies[0] -eq 'BytecodePatch') `
-    'The real catalog dependency closure did not isolate the internal BytecodePatch.'
+# An unnamed patch is listed by its kind: every unnamed bytecode patch reads BytecodePatch, and
+# the one unnamed resource patch is the manifest half of Keep a streak going.
+Assert-True ((@($allDependencies | Sort-Object) -join ',') -eq 'BytecodePatch,ResourcePatch') `
+    "The real catalog dependency closure was not its two internal patches: $(@($allDependencies) -join ', ')."
 Assert-True (Test-ReportedPatchNames -Expected $allNames `
     -Actual @($allNames + $allDependencies) -AllowedDependencies $allDependencies) `
     'A result that included the real internal dependency was rejected.'

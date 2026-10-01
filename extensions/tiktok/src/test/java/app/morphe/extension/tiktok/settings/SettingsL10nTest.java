@@ -903,6 +903,71 @@ public class SettingsL10nTest {
     }
 
     /**
+     * A language whose plural rule splits everyday counts more finely than English's two forms
+     * carries a row for each extra form, for every count the code words. Russian says
+     * 1 результат, 2 результата, 5 результатов and 21 результат: a count with no few row read
+     * "2 результатов", and with no one row past 1, "21 результатов".
+     */
+    @Test
+    public void everyCountCarriesTheFormsItsLanguageNeeds() throws Exception {
+        Set<String> others = quantityOtherForms();
+        assertTrue("the scan found too few counts to mean anything: " + others.size(), others.size() > 20);
+        List<String> missing = new ArrayList<>();
+        for (String language : L10nTranslations.LANGUAGES) {
+            Map<String, String> table = L10nTranslations.of(language);
+            String[] tag = language.split("-r", 2);
+            android.icu.text.PluralRules rules = android.icu.text.PluralRules.forLocale(tag.length == 2
+                    ? new Locale(tag[0], tag[1].toUpperCase(Locale.ROOT)) : new Locale(tag[0]));
+            Set<String> needed = new LinkedHashSet<>();
+            for (long count = 0; count <= 200; count++) {
+                String category = rules.select(count);
+                // English's forms cover exactly 1 and everything in "other". A one category
+                // that also takes 0 reads fine in the other form; one that takes 21 doesn't.
+                if (!category.equals("other") && !(category.equals("one") && count <= 1)) {
+                    needed.add(category);
+                }
+            }
+            for (String other : others) {
+                for (String category : needed) {
+                    if (!table.containsKey(other + "|" + category)) {
+                        missing.add(language + ": " + other + "|" + category);
+                    }
+                }
+            }
+        }
+        assertEquals("count forms missing from the tsv files:\n" + String.join("\n", missing),
+                0, missing.size());
+    }
+
+    /** The other form of every L10n.quantity call in the source: its second literal argument. */
+    private static Set<String> quantityOtherForms() throws Exception {
+        java.io.File root = new java.io.File("src/main/java/app/morphe/extension/tiktok");
+        if (!root.isDirectory()) root = new java.io.File(
+                "extensions/tiktok/src/main/java/app/morphe/extension/tiktok");
+        assertTrue("could not find the source tree", root.isDirectory());
+        java.util.regex.Pattern call = java.util.regex.Pattern.compile("L10n\\s*\\.\\s*quantity\\s*\\(");
+        Set<String> others = new LinkedHashSet<>();
+        try (java.util.stream.Stream<java.nio.file.Path> files =
+                     java.nio.file.Files.walk(root.toPath())) {
+            for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
+                    .collect(java.util.stream.Collectors.toList())) {
+                String text = new String(java.nio.file.Files.readAllBytes(file),
+                        java.nio.charset.StandardCharsets.UTF_8);
+                byte[] kind = classify(text);
+                java.util.regex.Matcher match = call.matcher(text);
+                while (match.find()) {
+                    if (kind[match.start()] != CODE) continue;
+                    int close = closingBracket(text, kind, match.end() - 1);
+                    if (close < 0) continue;
+                    List<String> forms = arguments(text, kind, match.end(), close);
+                    if (forms.size() >= 2) others.add(forms.get(1));
+                }
+            }
+        }
+        return others;
+    }
+
+    /**
      * A key is a whole phrase, never a lone unit or conjunction. "days", "dp", "or" and "view
      * per like" were keys assembled into sentences in code, which fixed the word order and the
      * agreement to English; each is now a phrase with its number or its list in it.

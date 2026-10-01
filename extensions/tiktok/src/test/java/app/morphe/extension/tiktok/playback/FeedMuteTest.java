@@ -148,6 +148,25 @@ public class FeedMuteTest {
         assertEquals("an unmuted feed engine is left alone", List.of(), calls);
     }
 
+    /** A report of a silent feed says whether the mute was on and what it did (#58). */
+    @Test public void theReportSaysWhetherTheFeedIsMutedAndWhatItSilenced() {
+        assertEquals("FEED MUTE", FeedMute.Report.INSTANCE.title());
+        assertEquals(List.of("Mute feed videos: off", "Mute button on the feed: shown",
+                "Feed videos silenced since TikTok started: 0", "Audio focus requests turned down: 0"),
+                FeedMute.Report.INSTANCE.lines());
+
+        Settings.FEED_MUTED.save(true);
+        FeedMute.onControllerPlay(new Controller(feed.get()), video("501"));
+        Object engine = engine("A", "501");
+        FeedMute.onEnginePlay(engine);
+        FeedMute.onEnginePlay(engine);
+        assertTrue(FeedMute.holdSessionFocus("helper"));
+
+        assertEquals(List.of("Mute feed videos: on", "Mute button on the feed: shown",
+                "Feed videos silenced since TikTok started: 1", "Audio focus requests turned down: 1"),
+                FeedMute.Report.INSTANCE.lines());
+    }
+
     /**
      * Mute switched on from the settings page, with the feed behind it, gives the focus back when
      * the feed returns (S22, 2026-09-28: another app's music stayed paused on the muted feed).

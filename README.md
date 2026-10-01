@@ -13,7 +13,7 @@
 
 Hushfeed is a [Morphe](https://github.com/MorpheApp/morphe-manager) patch bundle for people who want TikTok to behave differently. It can cut feed clutter, guard risky taps, improve downloads and expose controls TikTok leaves buried or unavailable. Every selected patch is configured from one native settings screen inside the app.
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse all 101 patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse all 102 patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed changes often while TikTok moves underneath it. Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, versions [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/) and [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/). Use one of those exact APKs when patching. See [Supported target](#supported-target) for the verified build details.
@@ -47,7 +47,7 @@ If one of the marker switches (Hide Series, say, or Hide playlist videos) emptie
 
 Some regions get extras the rest never see. **Hide the Report button on videos**, under Feed screen, removes the flag button above the creator's picture. **Hide search rewards**, under App, removes the points banner under the search box and the coin counter floating over results. Both are off by default, and neither could be tried on our own phones, so reports on how they behave are welcome.
 
-The settings screen comes in English, German, Spanish, Indonesian, Brazilian Portuguese and Turkish. It follows the language TikTok runs in, which is your phone's language unless you've picked another one for the app.
+The settings screen comes in English, German, Spanish, Italian, Indonesian, Brazilian Portuguese, Russian and Turkish. It follows the language TikTok runs in, which is your phone's language unless you've picked another one for the app.
 
 One-tap blocking skips to the next video as soon as TikTok confirms the block. A compact **Unblock** button appears at the top left for two seconds. You can also unblock later in TikTok's **Privacy > Blocked accounts**. A delayed response won't skip another video if you've already moved on.
 
@@ -105,7 +105,7 @@ That's a split bundle. Morphe Manager merges it into one APK, and AMOLED dark th
 
 ### Can I select every patch at once?
 
-Yes. Every release is patched with all of them selected before it ships, so no two refuse to go in together. The one thing to watch is memory: with AMOLED dark theme selected, raise the manager's limit as step 4 of [Install](#install) says. Hide Play Store update offer also decodes resources, so raise the limit if that patch runs out of memory. Mixing Hushfeed with another TikTok bundle is a different question, and [Moving from Kveld](#moving-from-kveld) covers the overlap we know about.
+Yes. Every release is patched with all of them selected before it ships, so no two refuse to go in together. The one thing to watch is memory: with AMOLED dark theme selected, raise the manager's limit as step 4 of [Install](#install) says. Hide Play Store update offer and Change app name also decode resources, so raise the limit if either one runs out of memory. Mixing Hushfeed with another TikTok bundle is a different question, and [Moving from Kveld](#moving-from-kveld) covers the overlap we know about.
 
 ### Unfollowing a lot of accounts at once
 
@@ -120,7 +120,7 @@ Pausing also turns off your screen-time budget, so a day you've locked refuses i
 A few patches change TikTok with no switch in front of them, and Pause can't reach those:
 
 - Settings itself, which is how you get back to the switch.
-- AMOLED dark theme and Hide Play Store update offer.
+- AMOLED dark theme, Hide Play Store update offer and Change app name.
 - Disable screen capture detection, Disable login requirement, Fix Google login, Enable voice comments and Stop on-device AI profiling.
 - Skip the splash ad, Limit background traffic, Drop the animated image cache and Skip update checks.
 - Block P2P video relay and the four patches that take files out of the app: Remove content credential and card scanner assets, Remove unused language packs, Remove creation tools and Remove LIVE extras.
@@ -172,6 +172,7 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 | `Block installed app scanning` | Answers TikTok's scan of the apps installed on your phone with an empty list. Checks for one named app, which TikTok also uses to open an app you tap, are left alone. Switch: Hushfeed settings > Privacy. |
 | `Block P2P video relay` | Strips TikTok's peer-to-peer CDN libraries so your phone is not used as a relay node for other people's video traffic. The APK gets about 3.5 MB smaller. |
 | `Camera and microphone indicator` | Shows a small mark in the top corner while TikTok has the camera open or is recording sound. A green square for the camera, an orange diamond for the microphone, both when both. It goes when the access ends. Switch: Hushfeed settings > Privacy. |
+| `Change app name` | Shows a name you choose under the app's icon and in Android's app list, so the patched TikTok is easy to tell from another one. Type the name in this patch's options. Inside the app everything still says TikTok. |
 | `Comment publish diagnostics` | Says in the diagnostic report whether a comment send reached TikTok's publish code, what it had in hand, and whether it returned early or handed the comment to the request. A comment that never posts leaves no other trace. |
 | `Comment send fix` | Sends comments TikTok would drop without a word. TikTok checks a send against the most recently opened page, and when that page has already lost its screen it stops the comment and shows nothing. This checks it against the comment panel's own screen instead. |
 | `Comment sort controls` | Shows TikTok's own comment sort sheet on every post, with its hot, newest, media and creator options, instead of the cut-down row an account outside the rollout is given. Switch: Hushfeed settings > Comments. |
@@ -245,7 +246,7 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 | `Resume videos after scrolling` | Continues supported videos from where playback stopped when returning after a scroll. Switch: Hushfeed settings > App. |
 | `Sanitize sharing links` | Removes tracking parameters from TikTok links before they are shared, and can put a host of your choosing in place of tiktok.com. Switch: Hushfeed settings > Privacy. |
 | `Settings` | Adds the Hushfeed settings screen to TikTok and keeps its entry first in Settings and privacy. |
-| `Share sheet tools` | Asks twice before a video is sent to a friend from the share sheet. The check follows the account or conversation instead of the visible name and covers accessibility actions and keyboard input. It can also hide chosen people, share options or the whole Send to row, and a profile's or a LIVE's share sheet can hide a different set from a video's. Switch: Hushfeed settings > Share sheet. |
+| `Share sheet tools` | Hides chosen people, share options or the whole Send to row of the share sheet, and a profile's or a LIVE's share sheet can hide a different set from a video's. Apps you pick can be added to the Share via row. Switch: Hushfeed settings > Share sheet. |
 | `Show author region` | Show the country a video was posted from next to the creator's name on the feed. Switch: Hushfeed settings > Feed screen. |
 | `Show LIVE search` | Shows TikTok's search entry in the LIVE drawer where supported. |
 | `Show the progress bar` | Shows TikTok's native video seekbar where it would normally be hidden, including when one of TikTok's experiments takes it off every video but paid content. Switch: Hushfeed settings > App. |
@@ -344,7 +345,7 @@ The clear-display caption is removed as soon as you turn its switch off. Turning
 
 Inbox category switches identify New followers, Activity, Archive, Tako and Shop from native row data. They work with translated labels. Turning a switch off restores an already loaded row on the next layout.
 
-The Streak section on the Inbox page keeps a message streak going. Enter who to message by their username, pick a time and the message (a 🔥 unless you change it), and Hushfeed sends it once a day through TikTok's own notification reply, even on a day TikTok stays closed. If the phone was off or TikTok's messages didn't start, it tries again a few times, and a message that still didn't go out is sent the next time you open TikTok. Send it now sends today's straight away. Turning it on or picking someone new after today's time has passed starts it tomorrow. It only sends from the account you set it up on, to someone you already have a chat with. It needs the Keep a streak going patch, which is off by default.
+The Streak section on the Inbox page keeps a message streak going. Enter who to message by their username, pick a time and the message (a 🔥 unless you change it), and Hushfeed sends it once a day through TikTok's own notification reply, even on a day TikTok stays closed. If the phone was off or TikTok's messages didn't start, it tries again a few times, and a message that still didn't go out is sent if you open TikTok later that day. Send it now sends today's straight away. Turning it on or picking someone new after today's time has passed starts it tomorrow. It only sends from the account you set it up on, to someone you already have a chat with. It needs the Keep a streak going patch, which is off by default.
 
 <br>
 
@@ -508,7 +509,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Mo
 
 ### Why those versions and not a newer one
 
-Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. On main, 47.0.3, 47.1.3 and 47.1.4 are the declared targets. 47.0.3 stays declared alongside the two 47.1 builds. All 101 patches apply to all three reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
+Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. On main, 47.0.3, 47.1.3 and 47.1.4 are the declared targets. 47.0.3 stays declared alongside the two 47.1 builds. All 102 patches apply to all three reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
 
 Only the global package is declared in the compatibility metadata.
 

@@ -91,8 +91,9 @@ public final class L10n {
      * decision, not {@code count == 1}: Indonesian has no "one" form and takes the other row for
      * 1, and a language with more forms than English (Polish, Russian, Arabic) keeps its extra
      * forms as rows keyed {@code other + "|" + category}, where the category is the CLDR name
-     * ("few", "many", "zero", "two"). A table with no such row falls back to its other form,
-     * which is what every hand-rolled {@code == 1} did for every count above one.
+     * ("few", "many", "zero", "two", and "one" for a one-category count other than 1). A table
+     * with no such row falls back to its other form, which is what every hand-rolled
+     * {@code == 1} did for every count above one.
      */
     public static String quantity(Context context, long count, String one, String other) {
         return quantity(context, count, one, other, new Object[]{count});
@@ -105,18 +106,22 @@ public final class L10n {
      */
     public static String quantity(Context context, long count, String one, String other, Object... args) {
         String category = pluralCategory(context, count);
-        String row = pluralRow(category, one, other, tableFor(tags(context)));
-        return format(row, "one".equals(category) ? one : other, args);
+        String row = pluralRow(category, count, one, other, tableFor(tags(context)));
+        return format(row, oneForm(category, count) ? one : other, args);
     }
 
     /**
-     * The row a category takes: the one form's translation for "one", a {@code |category} row
-     * for a form English does not have, and the other form's translation for everything else.
-     * English itself when the table has no row. Kept apart from the phone so a table with more
-     * forms than any shipped language can be checked without one.
+     * The row a category takes: the one form's translation for a count of 1, a
+     * {@code |category} row for a form English does not have, and the other form's translation
+     * for everything else. English itself when the table has no row. Kept apart from the phone
+     * so a table with more forms than any shipped language can be checked without one.
+     *
+     * <p>The one form says "1" outright, so it only fits 1. A language whose one category takes
+     * other counts as well (Russian's 21 and 101, Brazilian Portuguese's 0) reads those from an
+     * {@code other|one} row, which carries the count, or from its other form when it has none.
      */
-    static String pluralRow(String category, String one, String other, Map<String, String> table) {
-        if ("one".equals(category)) {
+    static String pluralRow(String category, long count, String one, String other, Map<String, String> table) {
+        if (oneForm(category, count)) {
             return rowOrKey(table, one);
         }
         if (!"other".equals(category) && table != null) {
@@ -124,6 +129,10 @@ public final class L10n {
             if (variant != null && !variant.isEmpty()) return variant;
         }
         return rowOrKey(table, other);
+    }
+
+    private static boolean oneForm(String category, long count) {
+        return "one".equals(category) && count == 1;
     }
 
     private static String rowOrKey(Map<String, String> table, String key) {

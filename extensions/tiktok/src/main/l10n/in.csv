@@ -68,7 +68,6 @@ A field value couldn't be read. Check the values and try again.,Nilai kolom tida
 "A host to put in place of tiktok.com when you share or copy a link, like vxtiktok.com. Leave it empty to share TikTok's own links. Only TikTok links are changed, and only the host: nothing is sent anywhere new.","Host pengganti tiktok.com saat kamu membagikan atau menyalin tautan, misalnya vxtiktok.com. Kosongkan untuk membagikan tautan TikTok sendiri. Hanya tautan TikTok yang diubah, dan hanya bagian host-nya, tidak ada yang dikirim ke mana pun."
 "A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.",Label kecil di feed menunjukkan menit atau video yang tersisa dari anggaran hari ini.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.,Mengetuk Beranda atau tab Untuk Kamu saat Untuk Kamu sedang tampil tidak lagi memuat ulang feed. Video yang sedang kamu tonton tetap.
-A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.,Satu ketukan pada orang di baris Kirim ke hanya memilihnya. Ketukan kedua pada orang yang sama dalam %1$d detik mengirim videonya.
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,Video yang kamu jeda tetap dijeda saat kamu kembali ke aplikasi alih-alih diputar lagi. Video yang kamu tinggalkan saat diputar mulai seperti biasa. Berfungsi mulai Android 10.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,"Alamat web yang ditulis seseorang di komentar bisa diketuk, bukan disalin manual. Mengetuk bagian lain dari komentar tetap seperti sebelumnya."
 AI-generated posts,Kiriman buatan AI
@@ -261,7 +260,6 @@ Confirm before following,Konfirmasi sebelum mengikuti
 Confirm before liking,Konfirmasi sebelum menyukai
 Confirm before liking a comment,Konfirmasi sebelum menyukai komentar
 Confirm before liking a story,Konfirmasi sebelum menyukai Story
-Confirm before sending to a friend,Konfirmasi sebelum mengirim ke teman
 Continue supported videos from where you stopped when you scroll back to them.,Lanjutkan video yang didukung dari titik terakhir saat kamu menggulir kembali ke video itu.
 Controls,Kontrol
 Feature gate report copied,Laporan gate disalin
@@ -985,14 +983,12 @@ Subtitles,Subtitel
 System,Sistem
 Feed tabs to keep,Tab feed yang dipertahankan
 Hide the streak button in a chat and the reminder message that goes with it.,Sembunyikan tombol rentetan di obrolan beserta pesan pengingatnya.
-Tap %1$s again to send,Ketuk %1$s lagi untuk mengirim
 Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.,Ketuk ikon hati komentar dua kali dalam %1$d detik. Ketuk dua kali pada komentar juga perlu diulang. Membatalkan suka tetap langsung berlaku.
 Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.,Ketuk ikon hati Story dua kali dalam %1$d detik. Membatalkan suka tetap langsung berlaku.
 Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.,Ketuk Repost di bilah bawah video dua kali dalam %1$d detik. Repost dengan catatan dibiarkan.
 Tap again to follow,Ketuk lagi untuk mengikuti
 Tap again to like,Ketuk lagi untuk menyukai
 Tap again to repost,Ketuk lagi untuk me-repost
-Tap again to send,Ketuk lagi untuk mengirim
 Tap the feed Follow button twice within %1$d seconds.,Ketuk tombol Ikuti di feed dua kali dalam %1$d detik.
 Tap the like heart twice within %1$d seconds. Removing a like stays immediate.,Ketuk ikon hati dua kali dalam %1$d detik. Membatalkan suka tetap langsung berlaku.
 Tap to start the feed,Ketuk untuk memulai feed
@@ -1429,3 +1425,10 @@ Found %1$s in your chats.,%1$s ditemukan di obrolanmu.
 App checks,Pemeriksaan aplikasi
 Look like the store app to TikTok's checks,Tampak seperti aplikasi dari toko bagi pemeriksaan TikTok
 "Answer TikTok's own checks of how it was signed and installed the way the Play Store app would. For follows or likes that undo themselves on a refresh. TikTok can also check from native code this doesn't reach, so it may not help.","Menjawab pemeriksaan TikTok sendiri tentang cara ia ditandatangani dan dipasang seperti yang dilakukan aplikasi Play Store. Untuk follow atau suka yang batal sendiri saat disegarkan. TikTok juga bisa memeriksa dari kode native yang tidak dijangkau ini, jadi mungkin tidak membantu."
+Add apps to Share via,Tambahkan aplikasi ke Bagikan via
+"Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pilih aplikasi untuk ditambahkan ke baris Bagikan via, sebelum Lainnya. Masing-masing mendapat tautan yang sama dengan aplikasi lain."
+Search apps,Cari aplikasi
+Looking for apps,Mencari aplikasi
+No other app takes shared text,Tidak ada aplikasi lain yang menerima teks yang dibagikan
+"Install one, then come back here.","Pasang satu, lalu kembali ke sini."
+No apps match this search,Tidak ada aplikasi yang cocok dengan pencarian ini

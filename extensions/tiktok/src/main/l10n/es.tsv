@@ -67,7 +67,6 @@ A green square in the top corner while TikTok has the camera open, and an orange
 A host to put in place of tiktok.com when you share or copy a link, like vxtiktok.com. Leave it empty to share TikTok's own links. Only TikTok links are changed, and only the host: nothing is sent anywhere new.	Un host que sustituya a tiktok.com al compartir o copiar un enlace, como vxtiktok.com. Déjalo vacío para compartir los enlaces de TikTok. Solo cambian los enlaces de TikTok, y solo el host: no se envía nada a ningún sitio nuevo.
 A small label on the feed shows the minutes or videos left of today's budget, whichever is closer to running out.	Una pequeña etiqueta en el feed muestra los minutos o videos restantes del presupuesto de hoy.
 A tap on Home or on the For You tab while For You is showing no longer reloads it. The video you're on stays.	Tocar Inicio o la pestaña Para ti mientras se muestra Para ti ya no lo recarga. El vídeo que estás viendo se queda.
-A tap on a person in the Send to row only selects them. A second tap on the same person within %1$d seconds sends the video.	Al tocar a una persona en la fila Enviar a solo se la selecciona. Un segundo toque sobre la misma persona antes de %1$d segundos envía el vídeo.
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.	Un vídeo que pausaste sigue en pausa cuando vuelves a la app en lugar de empezar de nuevo. Uno que dejaste reproduciéndose empieza como siempre. Funciona a partir de Android 10.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.	Una dirección web escrita en un comentario se puede tocar en lugar de copiarla a mano. Tocar en cualquier otra parte del comentario sigue haciendo lo de siempre.
 AI-generated posts	Publicaciones generadas por IA
@@ -262,7 +261,6 @@ Confirm before following	Confirmar antes de seguir
 Confirm before liking	Confirmar antes de dar me gusta
 Confirm before liking a comment	Confirmar antes de dar me gusta a un comentario
 Confirm before liking a story	Confirmar antes de dar me gusta a una historia
-Confirm before sending to a friend	Confirmar antes de enviar a un amigo
 Continue supported videos from where you stopped when you scroll back to them.	Continuar los vídeos compatibles desde donde los dejaste cuando vuelvas a ellos.
 Controls	Controles
 Feature gate report copied	Informe de interruptores copiado
@@ -985,14 +983,12 @@ Subtitles	Subtítulos
 System	Sistema
 Feed tabs to keep	Pestañas del feed que mantener
 Hide the streak button in a chat and the reminder message that goes with it.	Ocultar el botón de racha de un chat y el mensaje recordatorio que lo acompaña.
-Tap %1$s again to send	Toca %1$s otra vez para enviar
 Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.	Toca el corazón de un comentario dos veces en menos de %1$d segundos. Un doble toque en el comentario también necesita un segundo. Quitar un me gusta sigue siendo inmediato.
 Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.	Toca el corazón de una historia dos veces en menos de %1$d segundos. Quitar un me gusta sigue siendo inmediato.
 Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.	Toca Repost en la barra bajo un vídeo dos veces en menos de %1$d segundos. Un repost con nota no se toca.
 Tap again to follow	Toca otra vez para seguir
 Tap again to like	Toca otra vez para dar me gusta
 Tap again to repost	Toca otra vez para hacer repost
-Tap again to send	Toca otra vez para enviar
 Tap the feed Follow button twice within %1$d seconds.	Toca el botón Seguir del feed dos veces en menos de %1$d segundos.
 Tap the like heart twice within %1$d seconds. Removing a like stays immediate.	Toca el corazón de me gusta dos veces en menos de %1$d segundos. Quitar un me gusta sigue siendo inmediato.
 Tap to start the feed	Toca para poner el feed en marcha
@@ -1432,3 +1428,10 @@ Found %1$s in your chats.	%1$s está en tus chats.
 App checks	Comprobaciones de la app
 Look like the store app to TikTok's checks	Aparentar ser la app de la tienda ante las comprobaciones de TikTok
 Answer TikTok's own checks of how it was signed and installed the way the Play Store app would. For follows or likes that undo themselves on a refresh. TikTok can also check from native code this doesn't reach, so it may not help.	Responde a las comprobaciones de TikTok sobre cómo se firmó e instaló como lo haría la app de Play Store. Para seguidos o me gusta que se deshacen solos al actualizar. TikTok también puede comprobarlo desde código nativo que esto no alcanza, así que puede que no sirva.
+Add apps to Share via	Añadir apps a Compartir con
+Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.	Elige apps para añadir a la fila Compartir con, antes de Más. Cada una recibe el mismo enlace que las demás apps.
+Search apps	Buscar apps
+Looking for apps	Buscando apps
+No other app takes shared text	Ninguna otra app acepta texto compartido
+Install one, then come back here.	Instala una y vuelve aquí.
+No apps match this search	Ninguna app coincide con esta búsqueda
