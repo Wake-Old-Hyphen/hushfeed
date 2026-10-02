@@ -4,7 +4,15 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **Share:** The logged-in long-press panel was checked on 2026-10-02 with TikTok 47.0.3 and the published 0.66.0 bundle. Opening it showed no "Tap again to send" toast (#58).
+* **Downloads:** Recovery records for unfinished saves survive Android cache clearing. Existing records move only after a verified commit, and unreadable records stay intact.
+
+* **Downloads:** Finishing a download releases its temporary-file ownership even if deletion fails, so later cleanup can reclaim the abandoned file. Mirror retries keep their active ownership.
+
+* **Share:** Named exclusions read the titles TikTok exposes to accessibility. The panel's attachment, layout and draw events recheck late labels and recycled rows, including a reopened dialog (#74).
+
+* **Bundle checks:** The bundle description names all three supported TikTok versions. Verification rejects a description that omits one.
+
+* **Share:** The logged-in long-press panel was checked on 2026-10-02 with TikTok 47.0.3 and an installed Hushfeed 0.66.0 build. Opening it showed no "Tap again to send" toast (#58).
 
 * **Device builds:** Signing keys, including copies and hard links, cannot occupy generated output paths. Both helpers check before cleaning outputs, resolve relative paths from the same working folder and keep the key locked through cleanup.
 
@@ -16,8 +24,12 @@ Every Hushfeed release, newest first.
 
 * **Build checks:** Changes to the Gradle launchers or wrapper JAR now run the catalog contracts and rebuild and apply the bundle before a push.
 
+* **TikTok:** Hide the music line now hides the track name and its "Contains:" song credit on feed and opened videos (#68). The music disc still has its own switch.
+
 * **Build checks:** Runtime code and the inputs that build it now rebuild the release bundle and apply it to every supported APK before a push. Source and published-index changes must go in separate pushes so the source can be checked without replacing a published artifact.
 * **Docs:** The install steps and TikTok badge list all three supported builds. The introduction separates the published bundle from the current source, and explains which patch-time removals need a new APK to undo. The settings tour uses the current Share page, without the removed friend-send confirmation.
+* **Photo saves:** Video quality and Remove sound no longer intercept photo posts that also carry a video model (#71). Download original photos keeps control of still-image saves; selected live-photo motion clips keep TikTok's native route.
+* **Photo saves:** Download video on a photo post now queues original stills before TikTok starts video conversion. Missing originals produce an error, and even one or two images show a file count and Cancel. Live Photo video choices retain their native route (#71).
 
 * **Build checks:** A patch or catalog change now runs the script contracts before the build, including its unnamed dependencies. Each pushed ref uses its own committed catalog, so an unrelated working copy cannot conceal a missing dependency.
 

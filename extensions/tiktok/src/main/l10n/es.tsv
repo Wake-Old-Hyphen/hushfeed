@@ -528,7 +528,7 @@ Hide the magnifying glass at the top right of the feed. Search in Inbox and sugg
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.	Ocultar la lupa de la parte superior de la bandeja de entrada. La búsqueda en el feed y en los comentarios no cambia.
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	Oculta las búsquedas recomendadas antes de escribir en la página de búsqueda de TikTok. Tu historial de búsqueda se conserva. No oculta las sugerencias sobre los comentarios.
 Hide the share prompt after a like	Ocultar la sugerencia de compartir tras un me gusta
-Hide the spinning music cover and the track name beside the caption.	Ocultar la portada giratoria de la música y el nombre de la pista junto a la descripción.
+Hide the track name beside the caption.	Ocultar el nombre de la pista junto a la descripción.
 Hide the status bar	Ocultar la barra de estado
 Hide stories from the feed.	Ocultar historias del feed.
 Hide the whole column on the right, from the avatar down to the music disc.	Ocultar toda la columna derecha, desde la foto hasta el disco de música.
@@ -1046,6 +1046,7 @@ Show only videos with this many likes.	Mostrar solo vídeos con este número de 
 Show only videos with this many shares.	Mostrar solo vídeos compartidos este número de veces.
 Show only videos with this many views.	Mostrar solo vídeos con este número de visualizaciones.
 The original photos aren't available, so TikTok's own save runs instead	Las fotos originales no están disponibles, así que se usa el guardado propio de TikTok
+The original photos aren't available. No video was saved.	Las fotos originales no están disponibles. No se guardó ningún video.
 The override changes no fields. Edit the field values, or reset the override.	La anulación no cambia ningún campo. Edita los valores de los campos o restablece la anulación.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	No se pudo aplicar la anulación: %1$s. Edita los valores de los campos o restablece la anulación.
 The override doesn't say what list to return. Edit the field values, or reset the override.	La anulación no dice qué lista devolver. Edita los valores de los campos o restablece la anulación.
@@ -1299,6 +1300,7 @@ TikTok default (open the creator's profile)	Predeterminado de TikTok (abrir el p
 Saving %1$s of %2$s	Guardando %1$s de %2$s
 Stopping after this file	Se detendrá después de este archivo
 Waiting to save %1$s files	Esperando para guardar %1$s archivos
+Waiting to save one file	Esperando para guardar un archivo
 Save cancelled. Nothing was saved.	Guardado cancelado. No se guardó nada.
 One more save waiting	Un guardado más en espera
 %1$s more saves waiting	%1$s guardados más en espera

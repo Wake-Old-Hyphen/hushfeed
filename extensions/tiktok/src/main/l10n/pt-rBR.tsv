@@ -528,7 +528,7 @@ Hide the magnifying glass at the top right of the feed. Search in Inbox and sugg
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.	Esconder a lupa na parte superior da caixa de entrada. A pesquisa no feed e nos comentários não muda.
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	Oculte as pesquisas recomendadas antes de digitar na página de pesquisa do TikTok. Seu histórico de pesquisa é mantido. Isso não oculta as sugestões acima dos comentários.
 Hide the share prompt after a like	Ocultar o pedido de compartilhar depois de curtir
-Hide the spinning music cover and the track name beside the caption.	Esconder a capa giratória da música e o nome da faixa ao lado da legenda.
+Hide the track name beside the caption.	Esconder o nome da faixa ao lado da legenda.
 Hide the status bar	Esconder a barra de status
 Hide stories from the feed.	Esconder stories do feed.
 Hide the whole column on the right, from the avatar down to the music disc.	Esconder a coluna da direita inteira, da foto até o disco de música.
@@ -1046,6 +1046,7 @@ Show only videos with this many likes.	Mostrar só vídeos com essa quantidade d
 Show only videos with this many shares.	Mostrar só vídeos com essa quantidade de compartilhamentos.
 Show only videos with this many views.	Mostrar só vídeos com essa quantidade de visualizações.
 The original photos aren't available, so TikTok's own save runs instead	As fotos originais não estão disponíveis, então o salvamento do próprio TikTok é usado
+The original photos aren't available. No video was saved.	As fotos originais não estão disponíveis. Nenhum vídeo foi salvo.
 The override changes no fields. Edit the field values, or reset the override.	A substituição não altera nenhum campo. Edite os valores dos campos ou redefina a substituição.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Não foi possível aplicar a substituição: %1$s. Edite os valores dos campos ou redefina a substituição.
 The override doesn't say what list to return. Edit the field values, or reset the override.	A substituição não diz qual lista devolver. Edite os valores dos campos ou redefina a substituição.
@@ -1299,6 +1300,7 @@ TikTok default (open the creator's profile)	Padrão do TikTok (abrir o perfil do
 Saving %1$s of %2$s	Salvando %1$s de %2$s
 Stopping after this file	Parando depois deste arquivo
 Waiting to save %1$s files	Aguardando para salvar %1$s arquivos
+Waiting to save one file	Aguardando para salvar um arquivo
 Save cancelled. Nothing was saved.	Salvamento cancelado. Nada foi salvo.
 One more save waiting	Mais um salvamento aguardando
 %1$s more saves waiting	Mais %1$s salvamentos aguardando

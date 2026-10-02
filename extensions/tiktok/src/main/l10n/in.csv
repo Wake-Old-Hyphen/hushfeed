@@ -527,7 +527,7 @@ Hide the magnifying glass at the top right of the feed. Search in Inbox and sugg
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.,Sembunyikan ikon kaca pembesar di bagian atas Kotak Masuk. Pencarian di feed dan di komentar tidak berubah.
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.,Sembunyikan pencarian yang direkomendasikan sebelum mengetik di halaman pencarian TikTok. Riwayat pencarian tetap ada. Ini tidak menyembunyikan saran di atas komentar.
 Hide the share prompt after a like,Sembunyikan ajakan berbagi setelah suka
-Hide the spinning music cover and the track name beside the caption.,Sembunyikan sampul musik yang berputar dan nama lagu di samping keterangan.
+Hide the track name beside the caption.,Sembunyikan nama lagu di samping keterangan.
 Hide the status bar,Sembunyikan bilah status
 Hide stories from the feed.,Sembunyikan Story dari feed.
 "Hide the whole column on the right, from the avatar down to the music disc.","Sembunyikan seluruh kolom kanan, dari avatar sampai piringan musik."
@@ -1046,6 +1046,7 @@ Show only videos with this many likes.,Hanya tampilkan video dengan jumlah suka 
 Show only videos with this many shares.,Hanya tampilkan video dengan jumlah bagikan sebanyak ini.
 Show only videos with this many views.,Hanya tampilkan video dengan jumlah tayangan sebanyak ini.
 "The original photos aren't available, so TikTok's own save runs instead","Foto aslinya tidak tersedia, jadi TikTok yang menyimpannya"
+The original photos aren't available. No video was saved.,Foto aslinya tidak tersedia. Tidak ada video yang disimpan.
 "The override changes no fields. Edit the field values, or reset the override.","Penimpaan tidak mengubah field apa pun. Ubah nilai field, atau setel ulang penimpaan."
 "The override couldn't be applied: %1$s. Edit the field values, or reset the override.","Penimpaan tidak bisa diterapkan: %1$s. Ubah nilai field, atau setel ulang penimpaan."
 "The override doesn't say what list to return. Edit the field values, or reset the override.","Penimpaan tidak menyebutkan daftar mana yang harus dikembalikan. Ubah nilai field, atau setel ulang penimpaan."
@@ -1297,6 +1298,7 @@ TikTok default (open the creator's profile),Bawaan TikTok (buka profil kreator)
 Saving %1$s of %2$s,Menyimpan %1$s dari %2$s
 Stopping after this file,Berhenti setelah berkas ini
 Waiting to save %1$s files,Menunggu untuk menyimpan %1$s berkas
+Waiting to save one file,Menunggu untuk menyimpan satu berkas
 Save cancelled. Nothing was saved.,Penyimpanan dibatalkan. Tidak ada yang disimpan.
 One more save waiting,Satu penyimpanan lagi menunggu
 %1$s more saves waiting,%1$s penyimpanan lagi menunggu

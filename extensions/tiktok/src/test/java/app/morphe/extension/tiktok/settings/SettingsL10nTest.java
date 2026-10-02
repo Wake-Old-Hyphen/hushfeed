@@ -854,6 +854,34 @@ public class SettingsL10nTest {
     }
 
     @Test
+    public void theMusicLineSummaryDescribesTheLabelInEveryLocale() throws Exception {
+        String summary = "Hide the track name beside the caption.";
+        String oldSummary = "Hide the spinning music cover and the track name beside the caption.";
+        SettingsStatus.videoOverlaysEnabled = true;
+        List<String> locales = new ArrayList<>(languages());
+        locales.add(ENGLISH_BASE);
+        for (String language : locales) {
+            Map<String, String> source = readTable(language);
+            String expected = source.get(summary);
+            assertNotNull(language + " is missing the label summary", expected);
+            assertFalse(language + " still promises to hide the disc", source.containsKey(oldSummary));
+            if (!language.equals(ENGLISH_BASE)) {
+                assertEquals(language, expected, L10nTranslations.of(language).get(summary));
+                assertNotEquals(language + " fell back to English", summary, expected);
+            }
+            String[] tag = language.split("-r", 2);
+            Context context = contextFor(tag[0], tag.length == 1 ? "" : tag[1].toUpperCase(Locale.ROOT));
+            try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+                PreferenceScreen screen = controller.get().getPreferenceManager().createPreferenceScreen(context);
+                new InterfacePreferenceCategory(context, screen);
+                Preference music = screen.findPreference(Settings.HIDE_FEED_MUSIC.key);
+                assertNotNull(language + " has no music-line row", music);
+                assertEquals(language, expected, music.getSummary().toString());
+            }
+        }
+    }
+
+    @Test
     @Config(sdk = 28, qualifiers = "de")
     public void germanShowsOnARealPreferenceUnderTheGermanLocale() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {

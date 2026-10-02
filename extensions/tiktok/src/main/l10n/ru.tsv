@@ -579,7 +579,7 @@ Hide the magnifying glass at the top right of the feed. Search in Inbox and sugg
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.	Скрывать значок лупы вверху Входящих. Поиск в ленте и в комментариях не меняется.
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	Скрывать рекомендованные запросы на странице поиска TikTok, пока вы ничего не ввели. История поиска сохраняется. Это не скрывает подсказки над комментариями.
 Hide the share prompt after a like	Скрывать предложение поделиться после лайка
-Hide the spinning music cover and the track name beside the caption.	Скрывать вращающуюся обложку трека и название композиции рядом с подписью.
+Hide the track name beside the caption.	Скрывать название композиции рядом с подписью.
 Hide the status bar	Скрывать строку состояния
 Hide stories from the feed.	Скрывать истории из ленты.
 Hide the whole column on the right, from the avatar down to the music disc.	Скрывать всю колонку справа, от аватара до музыкального диска.
@@ -1121,6 +1121,7 @@ Show only videos with this many likes.	Показывать только вид�
 Show only videos with this many shares.	Показывать только видео, которыми поделились столько раз.
 Show only videos with this many views.	Показывать только видео с таким количеством просмотров.
 The original photos aren't available, so TikTok's own save runs instead	Оригинальные фото недоступны, поэтому вместо этого используется сохранение средствами TikTok
+The original photos aren't available. No video was saved.	Оригинальные фото недоступны. Видео не было сохранено.
 The override changes no fields. Edit the field values, or reset the override.	Это переопределение не меняет ни одного поля. Измените значения полей или сбросьте переопределение.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Не удалось применить переопределение: %1$s. Измените значения полей или сбросьте переопределение.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Переопределение не указывает, какой список возвращать. Измените значения полей или сбросьте переопределение.
@@ -1410,6 +1411,10 @@ TikTok default (open the creator's profile)	Стандарт TikTok (откры�
 Saving %1$s of %2$s	Сохраняется файл %1$s из %2$s
 Stopping after this file	Остановка после этого файла
 Waiting to save %1$s files	%1$s файлов ожидают сохранения
+Waiting to save %1$s files|one	%1$s файл ожидает сохранения
+Waiting to save %1$s files|few	%1$s файла ожидают сохранения
+Waiting to save %1$s files|many	%1$s файлов ожидают сохранения
+Waiting to save one file	Один файл ожидает сохранения
 Save cancelled. Nothing was saved.	Сохранение отменено. Ничего не сохранено.
 One more save waiting	Ещё одно сохранение в очереди
 %1$s more saves waiting	Ещё %1$s сохранений в очереди

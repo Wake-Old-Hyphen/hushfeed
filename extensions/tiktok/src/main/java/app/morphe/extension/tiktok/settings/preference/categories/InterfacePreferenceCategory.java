@@ -168,7 +168,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(
                     context,
                     "Hide the music line",
-                    "Hide the spinning music cover and the track name beside the caption.",
+                    "Hide the track name beside the caption.",
                     Settings.HIDE_FEED_MUSIC
             ));
         }

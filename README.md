@@ -103,6 +103,8 @@ A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", 
 
 On a post that's one photo with a sound, TikTok's Download asks whether you want a video or the image. That video isn't one TikTok's servers keep. The post only carries the photo and the sound, so TikTok builds the video on your phone and adds its logo, the creator's handle and an end card while it does. Hushfeed's watermark-free saving swaps in the clean copy the server holds for a real video, and there isn't one here. Choose Download image for a clean copy of the photo, and with Advanced downloads, Download original photos saves it as TikTok received it.
 
+Turn on **Download original photos** under **Hushfeed settings > Downloads** to save the selected slides as separate source images. Video quality and Remove sound do not take over photo posts. A selected live photo saved as a motion clip keeps TikTok's native save. If the original images are unavailable, Hushfeed says so before letting the native save run.
+
 ### Patching stops at 24 or 25 percent
 
 The manager has run short of memory. Step 4 of [Install](#install) says which limit to change and what to try if it still stalls.

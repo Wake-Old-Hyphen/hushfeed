@@ -531,7 +531,7 @@ Hide the magnifying glass at the top right of the feed. Search in Inbox and sugg
 Hide the magnifying glass at the top of Inbox. Search on the feed and in comments is unchanged.	Nascondi la lente d'ingrandimento in cima alla Posta in arrivo. La ricerca nel feed e nei commenti resta invariata.
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	Nascondi le ricerche consigliate prima che tu digiti nella pagina di ricerca di TikTok. La tua cronologia delle ricerche resta. Questo non nasconde i suggerimenti sopra i commenti.
 Hide the share prompt after a like	Nascondi l'invito a condividere dopo un Mi piace
-Hide the spinning music cover and the track name beside the caption.	Nascondi la copertina musicale rotante e il nome del brano accanto alla descrizione.
+Hide the track name beside the caption.	Nascondi il nome del brano accanto alla descrizione.
 Hide the status bar	Nascondi la barra di stato
 Hide stories from the feed.	Nascondi le storie dal feed.
 Hide the whole column on the right, from the avatar down to the music disc.	Nascondi l'intera colonna a destra, dall'avatar fino al disco musicale.
@@ -1049,6 +1049,7 @@ Show only videos with this many likes.	Mostra solo i video con questo numero di 
 Show only videos with this many shares.	Mostra solo i video condivisi questo numero di volte.
 Show only videos with this many views.	Mostra solo i video con questo numero di visualizzazioni.
 The original photos aren't available, so TikTok's own save runs instead	Le foto originali non sono disponibili, quindi viene eseguito il salvataggio di TikTok
+The original photos aren't available. No video was saved.	Le foto originali non sono disponibili. Non è stato salvato alcun video.
 The override changes no fields. Edit the field values, or reset the override.	La sovrascrittura non modifica alcun campo. Modifica i valori dei campi oppure reimposta la sovrascrittura.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Non è stato possibile applicare la sovrascrittura: %1$s. Modifica i valori dei campi oppure reimposta la sovrascrittura.
 The override doesn't say what list to return. Edit the field values, or reset the override.	La sovrascrittura non specifica quale lista restituire. Modifica i valori dei campi oppure reimposta la sovrascrittura.
@@ -1299,6 +1300,7 @@ TikTok default (open the creator's profile)	Predefinito di TikTok (apre il profi
 Saving %1$s of %2$s	Salvataggio del file %1$s di %2$s in corso
 Stopping after this file	Interruzione dopo questo file
 Waiting to save %1$s files	%1$s file in attesa di essere salvati
+Waiting to save one file	Un file in attesa di essere salvato
 Save cancelled. Nothing was saved.	Salvataggio annullato. Non è stato salvato nulla.
 One more save waiting	Un altro salvataggio in attesa
 %1$s more saves waiting	%1$s altri salvataggi in attesa

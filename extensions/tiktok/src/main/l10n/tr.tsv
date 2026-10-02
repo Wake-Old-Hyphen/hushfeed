@@ -557,7 +557,7 @@ Hide the search button on the feed	Akıştaki arama düğmesini gizle
 Hide the tab names above the feed	Akışın üstündeki sekme adlarını gizle
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	Akışın üstündeki Takip ettiklerim ve Sana özel adları kaybolur. Akışlar arasında kaydırma ve arama düğmesi olduğu gibi kalır.
 Hide the share prompt after a like	Beğeniden sonra çıkan paylaşım istemini gizle
-Hide the spinning music cover and the track name beside the caption.	Dönen müzik kapağını ve açıklamanın yanındaki parça adını gizle.
+Hide the track name beside the caption.	Açıklamanın yanındaki parça adını gizle.
 Hide the status bar	Durum çubuğunu gizle
 Hide the whole column on the right, from the avatar down to the music disc.	Avatardan müzik diskine kadar sağdaki tüm sütunu gizle.
 Hide this creator on this phone	Bu içerik üreticisini bu telefonda gizle
@@ -1084,6 +1084,7 @@ Show only videos with this many likes.	Yalnızca bu kadar beğenisi olan videola
 Show only videos with this many shares.	Yalnızca bu kadar paylaşımı olan videoları göster.
 Show only videos with this many views.	Yalnızca bu kadar görüntülenmesi olan videoları göster.
 The original photos aren't available, so TikTok's own save runs instead	Orijinal fotoğraflar kullanılamıyor, bu yüzden TikTok'un kendi kaydetme işlemi çalışıyor
+The original photos aren't available. No video was saved.	Orijinal fotoğraflar kullanılamıyor. Video kaydedilmedi.
 The override changes no fields. Edit the field values, or reset the override.	Geçersiz kılma hiçbir alanı değiştirmiyor. Alan değerlerini düzenle ya da geçersiz kılmayı sıfırla.
 The override couldn't be applied: %1$s. Edit the field values, or reset the override.	Geçersiz kılma uygulanamadı: %1$s. Alan değerlerini düzenle ya da geçersiz kılmayı sıfırla.
 The override doesn't say what list to return. Edit the field values, or reset the override.	Geçersiz kılma hangi listenin döndürüleceğini belirtmiyor. Alan değerlerini düzenle ya da geçersiz kılmayı sıfırla.
@@ -1299,6 +1300,7 @@ TikTok default (open the creator's profile)	TikTok varsayılanı (içerik üreti
 Saving %1$s of %2$s	%2$s dosyadan %1$s. kaydediliyor
 Stopping after this file	Bu dosyadan sonra durduruluyor
 Waiting to save %1$s files	%1$s dosya kaydedilmeyi bekliyor
+Waiting to save one file	Bir dosya kaydedilmeyi bekliyor
 Save cancelled. Nothing was saved.	Kaydetme iptal edildi. Hiçbir şey kaydedilmedi.
 One more save waiting	Bir kayıt daha bekliyor
 %1$s more saves waiting	%1$s kayıt daha bekliyor
