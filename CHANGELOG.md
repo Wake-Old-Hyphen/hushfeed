@@ -4,6 +4,16 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **Device builds:** The verification probe checks output ownership before rebuilding and preserves unexpected files in marked folders. Roots, linked paths and unmarked nonempty folders are rejected.
+
+* **Device builds:** Exported BKS keys can use an empty store password and a separate entry password. Both builders verify their output certificate, and in-place installs reject a different installed signer before changing app data.
+
+* **Build checks:** Changes to the Gradle launchers or wrapper JAR now run the catalog contracts and rebuild and apply the bundle before a push.
+
+* **Build checks:** Runtime code and the inputs that build it now rebuild the release bundle and apply it to every supported APK before a push. Source and published-index changes must go in separate pushes so the source can be checked without replacing a published artifact.
+
+* **Build checks:** A patch or catalog change now runs the script contracts before the build, including its unnamed dependencies. Each pushed ref uses its own committed catalog, so an unrelated working copy cannot conceal a missing dependency.
+
 * **TikTok:** The LIVE feed you open with the LIVE button can be filtered now (#57). Feed filter has a LIVE feed section that hides gaming, Shop and sponsored LIVEs, verified creators, categories you name, and rooms outside a viewer or follower range. Blocked creators, Creators hidden on this phone and Blocked caption words carry over (words are matched against each LIVE's title), and Creator exceptions lets chosen creators past the gaming, verified, category and count rules, though never past a block, a blocked word, Shop or sponsored. The first room comes with the LIVE button itself, so the rules start with the one after it. When they hide every room on five pages in a row, one room gets through, because a page with nothing on it makes TikTok ask for the next one about once a second. TikTok's LIVE feed doesn't say when a stream started or when an account was made, so there's no rule for either. The diagnostic report's LIVE FEED section counts pages, rooms and what each rule hid.
 * **TikTok:** A double tap, long press or left swipe set to open comments opens the comments of the video on screen (#63). Right after a swipe it could open the comments of the video before or after it, show that video's "restricted comments" message, or say comments weren't available. It went by the video the player was naming, and the player names a new video only once it starts playing. When what's on screen has no comment button of its own, you get the "not available" message rather than another video's comments.
 * **TikTok:** The other long press choices go by the video on screen too (#63). Copy the video link, Copy the sound link, Save the original sound and Find the sound on YouTube Music took the video before right after a swipe, so a link copied then was that video's. When what's on screen has no comment button of its own, like a LIVE, they say there's nothing there for them instead. Seek from the edges no longer moves the video before either, and if the new one hasn't started playing yet it says nothing is playing. In a video opened from a profile, a comments gesture never reaches the feed behind it.
