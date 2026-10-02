@@ -208,6 +208,10 @@ Camera in use,Kamera sedang dipakai
 Cancel,Batal
 Caption background,Latar keterangan
 Caption text size,Ukuran teks keterangan
+Description text size,Ukuran teks deskripsi
+Author text size,Ukuran nama kreator
+"Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.","Gunakan 0 untuk ukuran TikTok, atau %1$d hingga %2$d. Mengatur ukuran deskripsi di bawah nama kreator dan tetap mengikuti skala font Android."
+"Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.","Gunakan 0 untuk ukuran TikTok, atau %1$d hingga %2$d. Mengatur ukuran nama kreator dan tetap mengikuti skala font Android."
 Captions,Teks
 "Captions, gestures and on-screen controls","Keterangan, gestur, dan kontrol di layar"
 Capture crash reports locally,Rekam laporan mogok di perangkat
@@ -1409,9 +1413,7 @@ Let the last video finish,Biarkan video terakhir selesai
 The feed stops when this video ends.,Feed berhenti saat video ini selesai.
 Streak,Rentetan
 Keep a streak going,Pertahankan rentetan
-"Sends one message a day to the person below at the time below, so a streak with them keeps going on a day you don't open TikTok.","Mengirim satu pesan sehari ke orang di bawah pada jam di bawah, supaya rentetan dengannya tetap berlanjut di hari kamu tidak membuka TikTok."
 Who to message,Kirim ke siapa
-"Their username, like @name. It has to be someone you already have a chat with.","Nama penggunanya, seperti @nama. Harus orang yang sudah punya obrolan denganmu."
 When to send,Kapan dikirim
 The time of day the message goes out.,Jam berapa pesan dikirim setiap hari.
 Message,Pesan
@@ -1421,9 +1423,7 @@ Sends today's message right away. The daily one then waits for tomorrow.,Mengiri
 Turn on Keep a streak going first,Nyalakan Pertahankan rentetan dulu
 Sending the message,Mengirim pesan
 A message is already on its way,Sudah ada pesan yang sedang dikirim
-Sent to @%1$s,Terkirim ke @%1$s
 Enter who to message below to start.,Isi siapa yang dikirimi pesan di bawah untuk mulai.
-Sent today at %1$s. The next one goes tomorrow at %2$s.,Terkirim hari ini pukul %1$s. Berikutnya besok pukul %2$s.
 Next message: today at %1$s.,Pesan berikutnya: hari ini pukul %1$s.
 Next message: tomorrow at %1$s.,Pesan berikutnya: besok pukul %1$s.
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","Tidak ada obrolan dengan @%1$s di akun ini. Buka obrolanmu dengannya sekali, lalu coba lagi."
@@ -1461,3 +1461,14 @@ LIVE followers range,Rentang pengikut LIVE
 Show only LIVEs from creators with this many followers.,Hanya tampilkan LIVE dari kreator dengan jumlah pengikut sebanyak ini.
 Hide the comment bar on opened videos,Sembunyikan bilah komentar di video yang dibuka
 "Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.","Sembunyikan bilah untuk menulis komentar di video yang kamu buka dari profil, hashtag, suara, atau pencarian, agar video memenuhi layar sampai ke bawah. Tombol komentar di kanan tetap membuka komentar."
+Build details,Detail build
+Copy or save patch-time choices and build identity.,Salin atau simpan pilihan saat patch diterapkan dan identitas build.
+Copy build details,Salin detail build
+Save build details,Simpan detail build
+Build details copied to the clipboard,Detail build disalin ke papan klip
+"Sends one message a day to each person below at the time below, so your streaks keep going on days you don't open TikTok.",Mengirim satu pesan per hari ke setiap orang di bawah pada waktu yang ditentukan agar streak tetap berjalan saat kamu tidak membuka TikTok.
+"Their usernames, separated by commas or new lines. Each person must already have a chat with you.","Nama pengguna mereka, dipisahkan dengan koma atau baris baru. Kamu harus sudah memiliki chat dengan setiap orang."
+Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat tersebut tidak akan dicoba lagi hari ini.
+Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat lainnya masih memerlukan pesan.
+"TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok mungkin telah menerima pesan ini. Pengirimannya belum terkonfirmasi, jadi tidak akan dicoba lagi hari ini."
+Nothing was sent. Check the streak settings and try again.,Tidak ada yang dikirim. Periksa pengaturan streak dan coba lagi.

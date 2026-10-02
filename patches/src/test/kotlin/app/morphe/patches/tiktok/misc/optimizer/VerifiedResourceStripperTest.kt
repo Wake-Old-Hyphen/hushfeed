@@ -218,6 +218,7 @@ class VerifiedResourceStripperTest {
             val result = stripVerifiedLanguagePacks(root, selection, listOf(contract))
             assertEquals(0, result.files)
             assertEquals(0L, result.bytes)
+            assertEquals(setOf("en", "tr"), result.retainedLocales)
             assertArrayEquals("english".toByteArray(), english.readBytes())
             assertArrayEquals("turkish".toByteArray(), turkish.readBytes())
         }
@@ -278,6 +279,8 @@ class VerifiedResourceStripperTest {
         assertEquals(7L, first.bytes)
         assertFalse(first.alreadyStripped)
         assertTrue(second.alreadyStripped)
+        assertEquals(setOf("en"), first.retainedLocales)
+        assertEquals(setOf("en"), second.retainedLocales)
         assertArrayEquals("english".toByteArray(), root.resolve("assets/strings#lang_en/en.xrsc").readBytes())
         assertTrue(root.resolve("assets/strings#lang_es/es.xrsc").readBytes().isEmpty())
     }

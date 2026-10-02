@@ -33,6 +33,7 @@ internal data class StripSummary(
     val files: Int,
     val bytes: Long,
     val alreadyStripped: Boolean,
+    val retainedLocales: Set<String>? = null,
 )
 
 internal data class LanguageInventoryContract(
@@ -190,7 +191,7 @@ internal fun stripVerifiedLanguagePacks(
         if (kept.any { it.length() == 0L }) {
             throw PatchException("$patchName: a requested retained language has already been emptied.")
         }
-        return StripSummary(targets.size, 0L, alreadyStripped = true)
+        return StripSummary(targets.size, 0L, alreadyStripped = true, retainedLocales = selected.toSet())
     }
     if (targets.any { it.length() == 0L }) {
         throw PatchException("$patchName: the selected language resource set is only partly stripped.")
@@ -210,7 +211,7 @@ internal fun stripVerifiedLanguagePacks(
 
     val originalBytes = targets.sumOf(File::length)
     targets.forEach { it.writeBytes(byteArrayOf()) }
-    return StripSummary(targets.size, originalBytes, alreadyStripped = false)
+    return StripSummary(targets.size, originalBytes, alreadyStripped = false, retainedLocales = selected.toSet())
 }
 
 private const val LANGUAGE_DIRECTORY_PREFIX = "strings#lang_"

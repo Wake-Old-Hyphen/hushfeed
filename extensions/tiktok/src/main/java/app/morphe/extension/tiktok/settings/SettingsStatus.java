@@ -96,6 +96,7 @@ public class SettingsStatus {
     public static boolean hideCommentEggsEnabled = false;
     public static boolean commentSortControlsEnabled = false;
     public static boolean videoOverlaysEnabled = false;
+    public static boolean feedTextSizeEnabled = false;
     public static boolean shareSheetEnabled = false;
     public static boolean seenVideoFilterEnabled = false;
     public static boolean ghostModeEnabled = false;
@@ -365,6 +366,10 @@ public class SettingsStatus {
 
     public static void enableVideoOverlays() {
         videoOverlaysEnabled = true;
+    }
+
+    public static void enableFeedTextSize() {
+        feedTextSizeEnabled = true;
     }
 
     static {

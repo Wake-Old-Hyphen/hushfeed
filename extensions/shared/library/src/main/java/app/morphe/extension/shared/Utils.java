@@ -116,6 +116,11 @@ public class Utils {
         return ""; // Value is replaced during patching.
     }
 
+    /** Fixed APK facts, independent of runtime settings and diagnostic events. */
+    public static String getBuildMetadata() {
+        return app.morphe.extension.shared.diagnostics.BuildDetails.readMetadata(getContext());
+    }
+
     public static boolean isPreReleasePatches() {
         return getPatchesReleaseVersion().contains("dev");
     }
