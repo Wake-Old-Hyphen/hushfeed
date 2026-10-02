@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **Patching:** A bundle saved under a filename or folder with a plus sign, a space, a percent sign or non-English letters now applies. The patcher used to read `+` as a space and stop with "no such file".
+
 * **Downloads:** Recovery records for unfinished saves survive Android cache clearing. Existing records move only after a verified commit, and unreadable records stay intact.
 
 * **Downloads:** Finishing a download releases its temporary-file ownership even if deletion fails, so later cleanup can reclaim the abandoned file. Mirror retries keep their active ownership.
