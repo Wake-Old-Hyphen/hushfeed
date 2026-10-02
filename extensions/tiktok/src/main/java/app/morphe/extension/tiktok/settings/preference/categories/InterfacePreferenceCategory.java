@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
 import android.preference.PreferenceScreen;
+import android.preference.Preference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,12 +288,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
         }
         if (SettingsStatus.captchaPopupSuppressionEnabled) {
-            addPreference(new TogglePreference(
-                    context,
-                    "Hide CAPTCHA popups",
-                    "Hide the CAPTCHA dialogs raised while you browse or watch LIVE. Login, account verification and any CAPTCHA raised over a follow, like, comment or repost stay visible.",
-                    Settings.HIDE_CAPTCHA_POPUPS
-            ));
+            Preference captcha = new Preference(context);
+            captcha.setTitle(L10n.t(context, "Hide CAPTCHA popups"));
+            captcha.setSummary(L10n.t(context,
+                    "Unavailable on these TikTok builds. All verification challenges stay visible."));
+            captcha.setKey("hushfeed_captcha_unavailable");
+            captcha.setEnabled(false);
+            captcha.setSelectable(false);
+            addPreference(captcha);
         }
         if (SettingsStatus.sensitiveWarningsEnabled) {
             addPreference(new TogglePreference(

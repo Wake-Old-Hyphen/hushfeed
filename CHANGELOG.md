@@ -4,6 +4,12 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **Share:** The logged-in long-press panel was checked on 2026-10-02 with TikTok 47.0.3 and the published 0.66.0 bundle. Opening it showed no "Tap again to send" toast (#58).
+
+* **Device builds:** Signing keys, including copies and hard links, cannot occupy generated output paths. Both helpers check before cleaning outputs, resolve relative paths from the same working folder and keep the key locked through cleanup.
+
+* **CAPTCHA:** Unclassified and unreadable verification challenges stay visible, including on signed-in accounts. The hide switch is unavailable until a browsing scene is validated; shown decisions still appear in diagnostics.
+
 * **Device builds:** The verification probe checks output ownership before rebuilding and preserves unexpected files in marked folders. Roots, linked paths and unmarked nonempty folders are rejected.
 
 * **Device builds:** Exported BKS keys can use an empty store password and a separate entry password. Both builders verify their output certificate, and in-place installs reject a different installed signer before changing app data.
@@ -11,6 +17,7 @@ Every Hushfeed release, newest first.
 * **Build checks:** Changes to the Gradle launchers or wrapper JAR now run the catalog contracts and rebuild and apply the bundle before a push.
 
 * **Build checks:** Runtime code and the inputs that build it now rebuild the release bundle and apply it to every supported APK before a push. Source and published-index changes must go in separate pushes so the source can be checked without replacing a published artifact.
+* **Docs:** The install steps and TikTok badge list all three supported builds. The introduction separates the published bundle from the current source, and explains which patch-time removals need a new APK to undo. The settings tour uses the current Share page, without the removed friend-send confirmation.
 
 * **Build checks:** A patch or catalog change now runs the script contracts before the build, including its unnamed dependencies. Each pushed ref uses its own committed catalog, so an unrelated working copy cannot conceal a missing dependency.
 
