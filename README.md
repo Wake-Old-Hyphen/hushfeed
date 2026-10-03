@@ -18,9 +18,9 @@ Hushfeed is a [Morphe](https://github.com/MorpheApp/morphe-manager) patch bundle
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, versions [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/) and [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use one of those exact APKs when patching. See [Supported target](#supported-target) for the verified build details.
 
-Hushfeed v0.66.0 contains 102 patches for TikTok 47.0.3, 47.1.3 and 47.1.4. New in this one: settings in Italian and Russian, a daily message that keeps a streak going, a name of your own under the app icon, and Look like the store app for follows that undo themselves. It needs Morphe Manager 1.32.0 or newer.
+Hushfeed v0.67.0 contains 106 patches for TikTok 47.0.3, 47.1.3 and 47.1.4. New in this one: a block on TikTok's "Videos you might like" notifications, a switch that keeps new searches out of your history, separate sizes for feed descriptions and creator names, filters for the LIVE feed, and settings in Azerbaijani. It needs Morphe Manager 1.33.0 or newer.
 
-The main branch contains 106 patches, including a block on TikTok's "Videos you might like" notifications, a switch that keeps new searches out of your history, separate sizes for feed descriptions and creator names, filters for the LIVE feed, and settings in Azerbaijani. They need a bundle built from source, which loads in Morphe Manager 1.33.0 or newer. Adding the source in Manager still downloads the published v0.66.0 bundle.
+The main branch contains 106 patches, the same set as v0.67.0.
 
 ## Pick what changes
 
@@ -66,7 +66,7 @@ The compact Unblock action, also rendered from the actual control in a local UI 
 1. Get the TikTok 47.0.3, 47.1.3 or 47.1.4 APK. Google Play only offers the newest build, so take it from APKMirror: [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/) or [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). When you pick that file in Morphe Manager on Android 11 or newer, Manager checks that TikTok's own key signed it and warns you if a different one did. That warning means the file was changed after TikTok published it, so download it again instead of patching it.
 2. Use Morphe Manager 1.33.0 or newer. Manager refuses a bundle built against a patcher newer than its own, and this one is built against patcher 1.15.0, which Manager 1.33.0 was the first to ship. On anything older the bundle won't load.
 3. Add Hushfeed as a source in Morphe Manager. The quickest way is this link on the phone: [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). Some in-app browsers block Android from handing a web link to another app. If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle.
-4. Pick the patches you want and patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key so TikTok stays logged in across updates. AMOLED dark theme rewrites TikTok's color resources, and patching with it on runs slower when the memory limit is low, so give the manager 768 MB or more when it's on. It still finishes at 640 MB, just slower. On a Galaxy S22 patching TikTok 47.1.3 with the recommended patches plus AMOLED takes about 6 1/2 minutes at 640 MB and a little over 6 at 768 MB, and on a Galaxy S25 every patch at once took over an hour at 640 MB before Hushfeed's patches got faster. The recommended patches alone fit in 640 MB, about 5 1/2 minutes on the S22, and recent Manager versions already start capable phones at 1,024 MB. Hide Play Store update offer also decodes the manifest, so raise the limit if that patch runs out of memory. A run that sits at 24 or 25 percent and never moves may also need more memory. Cancel it, raise the limit to at least 768 MB if it's lower and start again. If that still stalls, try 512 MB, which gives the patcher less to hold at once.
+4. Turn on Expert mode in Manager settings to choose optional patches. Manager 1.33.0 shows all 106 Hushfeed patches in ten categories that you can expand or collapse. Pick the patches you want and patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key so TikTok stays logged in across updates. AMOLED dark theme rewrites TikTok's color resources, and patching with it on runs slower when the memory limit is low, so give the manager 768 MB or more when it's on. It still finishes at 640 MB, just slower. On a Galaxy S22 patching TikTok 47.1.3 with the recommended patches plus AMOLED takes about 6 1/2 minutes at 640 MB and a little over 6 at 768 MB, and on a Galaxy S25 every patch at once took over an hour at 640 MB before Hushfeed's patches got faster. The recommended patches alone fit in 640 MB, about 5 1/2 minutes on the S22, and recent Manager versions already start capable phones at 1,024 MB. Hide Play Store update offer also decodes the manifest, so raise the limit if that patch runs out of memory. A run that sits at 24 or 25 percent and never moves may also need more memory. Cancel it, raise the limit to at least 768 MB if it's lower and start again. If that still stalls, try 512 MB, which gives the patcher less to hold at once.
 5. Install the patched APK. Google's 2026-09-30 verification rollout covers participating app stores in Brazil, Indonesia, Singapore and Thailand. Direct sideloads aren't included in that initial phase, and ADB installs are unchanged. See the [official Android FAQ](https://developer.android.com/developer-verification/guides/faq) for current requirements.
 6. Open TikTok and go to Settings and privacy. Hushfeed is the first row. Tap it to find the switches for every patch you selected.
 
@@ -294,6 +294,22 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 
 Each switch controls its own surface. Turning one off doesn't change the others. The search field in Hushfeed settings only finds settings.
 
+### Restore older backups
+
+Watch-history import and the additional restore feedback below are available in source builds and await release.
+
+Backup and restore > **Restore settings** accepts portable settings from an older Hushfeed or another TikTok version. A setting missing from the file keeps its current value. Keys this build can't restore are skipped, and the outcome reports their count separately from missing settings. TikTok's own preferences and local device records stay intact.
+
+Feature Gate Lab rules are checked against the supported TikTok catalogs. Rules whose gates changed return turned off. A backup from a version without a catalog restores its portable settings and leaves the current Lab rules alone. **Undo last change** restores the settings and compatible Lab state from before the import.
+
+### Import watch history
+
+Request [your TikTok data](https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data) in JSON format. Extract the downloaded archive, sign in to the account the export belongs to, then open Hushfeed settings > Feed filter > Seen videos > **Import watch history** and choose the JSON file. The file must be at most 2 MB with at most 10,000 watch-history entries. TXT exports aren't supported yet.
+
+The importer reads the reviewed **Your Activity > Watch History** export layout. It keeps the watch dates, using the phone's time zone at file choice for dates that don't name a zone. **Forget seen videos after** applies to imported history too. Set it to zero before importing if you want to keep older watches. Invalid links and dates, repeated entries, videos already recorded at the same or a newer date, and entries beyond the newest 10,000 videos are skipped. A banner gives the added and skipped counts. Choosing the same file again adds nothing. Links are read locally and never opened or downloaded.
+
+The chosen account stays attached to the import, including when settings recreates while the picker is open. If you switch accounts before the write finishes, the import stops. An unsupported or damaged file leaves saved history unchanged and shows an error. An import that adds history ends Undo for an earlier clear and tells you in the banner. Failed imports and imports that add nothing keep that Undo available. Turn on **Hide videos you have already seen** to filter the imported videos from later feed batches.
+
 ### Pages and navigation
 
 The settings home starts with a live Hushfeed status card and the installed Hushfeed and TikTok versions. Diagnostics is available from that card. Search follows it, then direct buttons for Feed filter, Privacy and Screen time. The full menu remains in four groups. Your feed holds Feed filter, Feed tabs and Feed screen. Watching and sharing holds Playback, Screen time, Comments, Downloads, Share sheet and Inbox. Privacy and system holds Privacy, Region, App, the Feature Gate Lab, Diagnostics and Backup and restore. About sits at the end. A group only appears when the patches you chose give it a page. Search finds any row by its translated title or description, jumps to it and keeps your search when you return.
@@ -514,6 +530,24 @@ pwsh -File scripts/validate-release-facts.ps1 -VerifyPublishedAsset -ArtifactPat
 ```
 
 The check follows the indexed URL, compares its SHA-256 with the local artifact, checks the matching entry in `SHA256SUMS.txt`, and counts the patches inside the published bundle against the number the index advertises.
+
+For an immutable release it also runs GitHub's release and asset attestation checks. Those checks bind the repository, tag, source commit and uploaded file hash. Rebuilding the bundle from that source remains a separate check. Add `-RequireImmutableRelease` when verifying a publication that must be immutable. Existing mutable releases keep the other checks and report that attestation verification was skipped.
+
+An advertised signature must be `patches-<version>.sigstore.json` beside the release bundle and verify with the repository's `cosign.pub`. Verification requires stable Cosign 3.1.3 or newer, checks the public key and transparency proof, and stops on missing inputs or a bad signature. Add `-RequireBundleSignature` when a publication must be signed, or `-Cosign <path>` to name the executable. Both requirement switches need `-VerifyPublishedAsset`. The current release doesn't advertise a signature. Prepare the signing key and final release assets before enabling that requirement.
+
+To verify a downloaded signed bundle directly, use:
+
+```bash
+cosign verify-blob --key cosign.pub --bundle patches-<version>.sigstore.json patches-<version>.mpp
+```
+
+For reviewed universal inputs, `scripts/verify-abi-apks.py` creates an ARM64-only APK, an ARMv7-only APK and an ARM64 copy with one altered P2P-library byte. It runs the complete patch and resource gate on both valid copies and requires the altered copy to be rejected. It preserves the original APK and writes hashes, reports and logs into a new output directory:
+
+```bash
+python scripts/verify-abi-apks.py --apk <universal.apk> --out <new-directory> --desktop-jar <desktop.jar> --bundle patches/build/release/patches-<version>.mpp
+```
+
+`verify-all-patches.ps1 -Force -ProbePackage <package>` qualifies an isolated candidate bundle without changing the production catalog. The candidate bundle must declare the package before the desktop CLI can select its patches. Force alone affects versions and doesn't select patches for an undeclared package. The gate rejects a zero-patch result and still checks every requested patch, actual output identity, resource and native language file. Supported targets need separate compatibility metadata and native acceptance.
 
 That last one needs the Morphe desktop CLI. Set `HUSHFEED_DESKTOP_JAR` to the jar, or put `morphe-desktop-<version>-all.jar` under `HUSHFEED_WORKDIR` or `build/morphe-tools`, and it is found on its own. Without it the check stops rather than passing, because the count is the only part that reads what people actually download. The CLI wants a JDK 21 or newer, which is often not the `java` first on PATH: `HUSHFEED_JAVA` or `JAVA_HOME` says which one to use. When `-Java` names a directory, that directory must contain `bin/java.exe` or `bin/java`. An invalid explicit directory is reported instead of falling back to PATH.
 
