@@ -609,6 +609,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting BLOCK_LOCATION = new BooleanSetting("block_location", TRUE);
     public static final BooleanSetting BLOCK_CLIPBOARD_READS = new BooleanSetting("block_clipboard_reads", TRUE);
     public static final BooleanSetting BLOCK_MOTION_SENSORS = new BooleanSetting("block_motion_sensors", TRUE);
+    // On by default for the same reason, and read at each history write, so no restart.
+    public static final BooleanSetting STOP_SEARCH_HISTORY = new BooleanSetting("stop_search_history", TRUE);
     // Off by default, unlike the blocks above: it rides on the sensor patch, so picking that
     // patch is not a choice about the benchmark (#64). Put into effect by BenchmarkRuns.
     public static final BooleanSetting STOP_BENCHMARK_RUNS = new BooleanSetting("stop_benchmark_runs", FALSE);

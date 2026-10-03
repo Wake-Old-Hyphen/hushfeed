@@ -109,6 +109,7 @@ public class SettingsStatus {
     public static boolean showSeekbarEnabled = false;
     public static boolean sanitizeShareUrlsEnabled = false;
     public static boolean contactListBlockerEnabled = false;
+    public static boolean searchHistoryEnabled = false;
     public static boolean installedAppsBlockerEnabled = false;
     public static boolean locationGovernorEnabled = false;
     public static boolean devicePrivacyGuardEnabled = false;
@@ -119,6 +120,10 @@ public class SettingsStatus {
 
     public static void enableContactListBlocker() {
         contactListBlockerEnabled = true;
+    }
+
+    public static void enableSearchHistory() {
+        searchHistoryEnabled = true;
     }
 
     public static void enableInstalledAppsBlocker() {

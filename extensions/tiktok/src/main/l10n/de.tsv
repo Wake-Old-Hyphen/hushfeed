@@ -1478,3 +1478,5 @@ Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Zuste
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Zustellung unbestätigt: %1$d/%2$d Chats. Die übrigen Chats brauchen noch eine Nachricht.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	TikTok hat diese Nachricht möglicherweise angenommen. Die Zustellung ist unbestätigt, deshalb wird sie heute nicht erneut versucht.
 Nothing was sent. Check the streak settings and try again.	Es wurde nichts gesendet. Prüfe die Streak-Einstellungen und versuche es erneut.
+Don't save new searches	Neue Suchen nicht speichern
+Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.	Halte deine Suchbegriffe aus dem Suchverlauf heraus, den TikTok auf diesem Telefon speichert. Bereits gespeicherte Suchen bleiben, bis du sie löschst, und TikToks Server können weiterhin eigene Aufzeichnungen führen.

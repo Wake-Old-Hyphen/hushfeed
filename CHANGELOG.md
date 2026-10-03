@@ -4,6 +4,14 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Hushfeed's settings come in Azerbaijani (#77). Like the other languages they follow the language TikTok runs in, and it's a first pass, so corrections are welcome.
+
+* **TikTok:** The four resource optimizers accept a universal APK split down to one ABI, such as an arm64-v8a only copy (#43). They used to stop because the other ABI's libraries were missing. Every file the split kept still has to match its reviewed checksum, and a set missing only part of an ABI is still refused.
+
+* **TikTok:** Show author region puts the country on the video you're watching again after you swipe down (#75). TikTok keeps the videos above and below attached while you scroll, and the country was going on the one above, so it only showed after swiping back up.
+
+* **TikTok:** New patch, Stop saving search history, keeps new searches out of the search history TikTok saves on the phone. Its switch, Privacy > Don't save new searches, starts on once the patch is picked. Typed and suggested searches still work, searches you'd already saved stay until you delete them, and turning the switch off or pausing Hushfeed lets TikTok record again. It doesn't touch anything TikTok keeps on its servers.
+
 * **TikTok:** Streaks take several usernames separated by commas or new lines (#73). Each chat has its own attempts, so a recipient that couldn't be found can retry without repeating another chat's message. Duplicate names and names for the same chat are counted once. The sending account is checked again before each message. TikTok's reply receiver doesn't confirm delivery, so the status says delivery is unconfirmed and avoids retrying a chat that may already have received its message, even after the process stops.
 
 * **TikTok:** New patch, Feed text sizes, gives the video description and the creator's name their own sizes on Feed screen, from 8 to 48 (#66). Both start at 0, which keeps TikTok's size, and Android's font scaling still applies. Spoken captions keep their separate size.

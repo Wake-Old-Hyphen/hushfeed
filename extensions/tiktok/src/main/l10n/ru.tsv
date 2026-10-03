@@ -1604,3 +1604,5 @@ Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	До�
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Доставка не подтверждена: %1$d/%2$d чатов. В остальные чаты ещё нужно отправить сообщение.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	TikTok мог принять это сообщение. Доставка не подтверждена, поэтому сегодня повторной попытки не будет.
 Nothing was sent. Check the streak settings and try again.	Ничего не отправлено. Проверьте настройки серии сообщений и попробуйте ещё раз.
+Don't save new searches	Не сохранять новые запросы
+Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.	Не добавлять ваши запросы в историю поиска, которую TikTok хранит на этом телефоне. Уже сохранённые запросы остаются, пока вы их не удалите, а серверы TikTok могут вести собственный учёт.

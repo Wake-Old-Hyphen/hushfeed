@@ -1472,3 +1472,5 @@ Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Pengi
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat lainnya masih memerlukan pesan.
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok mungkin telah menerima pesan ini. Pengirimannya belum terkonfirmasi, jadi tidak akan dicoba lagi hari ini."
 Nothing was sent. Check the streak settings and try again.,Tidak ada yang dikirim. Periksa pengaturan streak dan coba lagi.
+Don't save new searches,Jangan simpan pencarian baru
+"Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.","Jangan masukkan apa yang kamu cari ke riwayat pencarian yang disimpan TikTok di ponsel ini. Pencarian yang sudah ada tetap tersimpan sampai kamu menghapusnya, dan server TikTok mungkin tetap menyimpan catatannya sendiri."

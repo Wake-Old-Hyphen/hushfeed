@@ -1475,3 +1475,5 @@ Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Tesli
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Teslimat doğrulanmadı: %1$d/%2$d sohbet. Kalan sohbetlere hâlâ mesaj gönderilmesi gerekiyor.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	TikTok bu mesajı kabul etmiş olabilir. Teslimat doğrulanmadığı için bugün tekrar denenmeyecek.
 Nothing was sent. Check the streak settings and try again.	Hiçbir şey gönderilmedi. Seri ayarlarını kontrol edip tekrar dene.
+Don't save new searches	Yeni aramaları kaydetme
+Keep what you search for out of the search history TikTok saves on this phone. Searches already there stay until you delete them, and TikTok's servers may still keep their own record.	Aradıklarını TikTok'un bu telefonda kaydettiği arama geçmişinin dışında tut. Zaten kayıtlı aramalar sen silene kadar kalır ve TikTok'un sunucuları kendi kayıtlarını tutmaya devam edebilir.

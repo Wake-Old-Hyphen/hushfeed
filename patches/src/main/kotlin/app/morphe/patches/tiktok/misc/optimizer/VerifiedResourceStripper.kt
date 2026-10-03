@@ -27,6 +27,26 @@ internal data class ResourceProfile(
     }
 
     fun describes(versionName: String?) = onlyVersion == null || onlyVersion == versionName
+
+    /**
+     * This profile, then, when it ships native libraries for more than one ABI, the same files
+     * with only one ABI's libraries kept: what a universal APK split by ABI carries (#43). The
+     * files kept still have to match their reviewed digests; only the absence of a whole ABI is
+     * forgiven, never part of one.
+     */
+    fun withAbiSplits(): List<ResourceProfile> {
+        val abis = files.mapNotNull { abiOf(it.path) }.distinct()
+        if (abis.size < 2) return listOf(this)
+        return listOf(this) + abis.map { kept ->
+            ResourceProfile("$label, $kept only", files.filter { abiOf(it.path).let { abi -> abi == null || abi == kept } }, onlyVersion)
+        }
+    }
+
+    private companion object {
+        private val NATIVE_LIBRARY = Regex("^lib/([^/]+)/")
+
+        fun abiOf(path: String) = NATIVE_LIBRARY.find(path)?.groupValues?.get(1)
+    }
 }
 
 internal data class StripSummary(
@@ -83,7 +103,7 @@ internal fun stripVerifiedResources(
         actual[file.relativePathFrom(root, patchName)] = file
     }
 
-    val matchingPathProfiles = profiles.filter { profile ->
+    val matchingPathProfiles = profiles.flatMap(ResourceProfile::withAbiSplits).filter { profile ->
         profile.describes(versionName) && profile.files.map(ResourceFileContract::path).toSet() == actual.keys
     }
     if (matchingPathProfiles.isEmpty()) {
