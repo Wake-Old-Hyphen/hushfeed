@@ -88,6 +88,7 @@ public class SettingsStatus {
     public static boolean launcherShortcutsEnabled = false;
     public static boolean duetStitchEnabled = false;
     public static boolean notificationControlsEnabled = false;
+    public static boolean suggestedVideoPushBlockEnabled = false;
     public static boolean autoStreakEnabled = false;
     public static boolean hideSuggestedAccountsEnabled = false;
     public static boolean hideInboxStoriesEnabled = false;
@@ -310,6 +311,10 @@ public class SettingsStatus {
 
     public static void enableNotificationControls() {
         notificationControlsEnabled = true;
+    }
+
+    public static void enableSuggestedVideoPushBlock() {
+        suggestedVideoPushBlockEnabled = true;
     }
 
     public static void enableAutoStreak() {

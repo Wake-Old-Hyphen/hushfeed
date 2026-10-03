@@ -201,6 +201,7 @@ Block location,Block location
 Block motion sensors,Block motion sensors
 Block new bottom tabs,Block new bottom tabs
 Block new feed tabs,Block new feed tabs
+Block suggested video notifications,Block suggested video notifications
 "Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts.","Block the creator in one tap. Once TikTok confirms, skip to the next video. A small Unblock button appears at the top left for two seconds. You can also unblock later in TikTok's Privacy > Blocked accounts."
 Block this commenter,Block this commenter
 Block this creator,Block this creator
@@ -1170,6 +1171,7 @@ Stop analytics and tracking,Stop analytics and tracking
 Stop feature gate recording,Stop feature gate recording
 Stop the brand animation that plays over the comments when what someone typed matches an advertiser's trigger.,Stop the brand animation that plays over the comments when what someone typed matches an advertiser's trigger.
 Stop the bubble that asks you to share a video with friends after you like it.,Stop the bubble that asks you to share a video with friends after you like it.
+"Stop the notifications TikTok sends about popular videos it picked for you. Messages, comments, likes, follows and videos from accounts you follow still come through.","Stop the notifications TikTok sends about popular videos it picked for you. Messages, comments, likes, follows and videos from accounts you follow still come through."
 Stop video looping,Stop video looping
 Stop videos at the end instead of replaying them.,Stop videos at the end instead of replaying them.
 Stopped after dismissing %1$s suggested accounts,Stopped after dismissing %1$s suggested accounts

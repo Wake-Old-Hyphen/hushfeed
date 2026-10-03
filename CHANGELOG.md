@@ -2,7 +2,11 @@
 
 Every Hushfeed release, newest first.
 
-## Unreleased
+## 0.67.0 (2026-10-02)
+
+* **TikTok:** New patch, Block suggested video notifications, stops TikTok's "Videos you might like" pushes, the ones about popular videos it picked for you, like "25M+ people viewed". Its switch under Inbox starts on once the patch is in, so they're blocked from the first launch, and turning it off lets them through again. Messages, comments, likes, follows and videos from accounts you follow aren't touched.
+
+* **TikTok:** Hide search rewards (App) now keeps the floating coin off search as well as the points banner (#21). The switch only reached the banner's service before, so the coin stayed and the banner could come back. Now every search rewards piece takes the path TikTok already takes for accounts without rewards. TikTok decides this once per launch, so the switch now asks for a restart after you change it.
 
 * **TikTok:** Hushfeed's settings come in Azerbaijani (#77). Like the other languages they follow the language TikTok runs in, and it's a first pass, so corrections are welcome.
 
@@ -16,40 +20,23 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** New patch, Feed text sizes, gives the video description and the creator's name their own sizes on Feed screen, from 8 to 48 (#66). Both start at 0, which keeps TikTok's size, and Android's font scaling still applies. Spoken captions keep their separate size.
 
-* **Device checks:** The injected-register verifier and the probe's marker and strip recorders no longer wipe a test phone's log buffer, which other checks on the same phone may still be reading. Each run writes its own marker line and counts only what follows it, and it stops with a plain message if the buffer has already rotated past that line.
+* **TikTok:** Build details under About copies or saves build identity and verified patch-time resource choices, even without Diagnostic tools or events. Automatic reports include the same facts. Older APKs show unknown, and runtime settings can't rewrite them. Patching an APK that Hushfeed already patched now stops with an error, so start from TikTok's original APK.
 
-* **Diagnostics:** Build details under About copies or saves build identity and verified patch-time resource choices, even without Diagnostic tools or events. Automatic reports include the same facts. Older APKs show unknown, and runtime settings can't rewrite them. Patching an APK that Hushfeed already patched now stops with an error, so start from TikTok's original APK.
+* **TikTok:** A bundle saved under a filename or folder with a plus sign, a space, a percent sign or non-English letters now applies. The patcher used to read `+` as a space and stop with "no such file".
 
-* **Patching:** A bundle saved under a filename or folder with a plus sign, a space, a percent sign or non-English letters now applies. The patcher used to read `+` as a space and stop with "no such file".
+* **TikTok:** Recovery records for unfinished saves survive Android cache clearing. Existing records move only after a verified commit, and unreadable records stay intact.
 
-* **Downloads:** Recovery records for unfinished saves survive Android cache clearing. Existing records move only after a verified commit, and unreadable records stay intact.
+* **TikTok:** Finishing a download releases its temporary-file ownership even if deletion fails, so later cleanup can reclaim the abandoned file. Mirror retries keep their active ownership.
 
-* **Downloads:** Finishing a download releases its temporary-file ownership even if deletion fails, so later cleanup can reclaim the abandoned file. Mirror retries keep their active ownership.
+* **TikTok:** Share sheet actions you exclude by name are matched on the titles TikTok exposes to accessibility. The panel's attachment, layout and draw events recheck late labels and recycled rows, including a reopened dialog (#74).
 
-* **Share:** Named exclusions read the titles TikTok exposes to accessibility. The panel's attachment, layout and draw events recheck late labels and recycled rows, including a reopened dialog (#74).
-
-* **Bundle checks:** The bundle description names all three supported TikTok versions. Verification rejects a description that omits one.
-
-* **Share:** The logged-in long-press panel was checked on 2026-10-02 with TikTok 47.0.3 and an installed Hushfeed 0.66.0 build. Opening it showed no "Tap again to send" toast (#58).
-
-* **Device builds:** Signing keys, including copies and hard links, cannot occupy generated output paths. Both helpers check before cleaning outputs, resolve relative paths from the same working folder and keep the key locked through cleanup.
-
-* **CAPTCHA:** Unclassified and unreadable verification challenges stay visible, including on signed-in accounts. The hide switch is unavailable until a browsing scene is validated; shown decisions still appear in diagnostics.
-
-* **Device builds:** The verification probe checks output ownership before rebuilding and preserves unexpected files in marked folders. Roots, linked paths and unmarked nonempty folders are rejected.
-
-* **Device builds:** Exported BKS keys can use an empty store password and a separate entry password. Both builders verify their output certificate, and in-place installs reject a different installed signer before changing app data.
-
-* **Build checks:** Changes to the Gradle launchers or wrapper JAR now run the catalog contracts and rebuild and apply the bundle before a push.
+* **TikTok:** CAPTCHA challenges that can't be classified or read stay visible, including on signed-in accounts. Hide CAPTCHA popups is unavailable until a browsing scene is validated, and shown decisions still appear in diagnostics.
 
 * **TikTok:** Hide the music line now hides the track name and its "Contains:" song credit on feed and opened videos (#68). The music disc still has its own switch.
 
-* **Build checks:** Runtime code and the inputs that build it now rebuild the release bundle and apply it to every supported APK before a push. Source and published-index changes must go in separate pushes so the source can be checked without replacing a published artifact.
-* **Docs:** The install steps and TikTok badge list all three supported builds. The introduction separates the published bundle from the current source, and explains which patch-time removals need a new APK to undo. The settings tour uses the current Share page, without the removed friend-send confirmation.
-* **Photo saves:** Video quality and Remove sound no longer intercept photo posts that also carry a video model (#71). Download original photos keeps control of still-image saves; selected live-photo motion clips keep TikTok's native route.
-* **Photo saves:** Download video on a photo post now queues original stills before TikTok starts video conversion. Missing originals produce an error, and even one or two images show a file count and Cancel. Live Photo video choices retain their native route (#71).
-
-* **Build checks:** A patch or catalog change now runs the script contracts before the build, including its unnamed dependencies. Each pushed ref uses its own committed catalog, so an unrelated working copy cannot conceal a missing dependency.
+* **TikTok:** The README's install steps and TikTok badge list all three supported builds, and it explains which patch-time removals need a new APK to undo. The settings tour uses the current Share page, without the removed friend-send confirmation.
+* **TikTok:** Video quality and Remove sound no longer intercept photo posts that also carry a video model (#71). Download original photos keeps control of still-image saves, and selected live-photo motion clips keep TikTok's native route.
+* **TikTok:** Download video on a photo post now queues original stills before TikTok starts video conversion. Missing originals produce an error, and even one or two images show a file count and Cancel. Live Photo video choices retain their native route (#71).
 
 * **TikTok:** The LIVE feed you open with the LIVE button can be filtered now (#57). Feed filter has a LIVE feed section that hides gaming, Shop and sponsored LIVEs, verified creators, categories you name, and rooms outside a viewer or follower range. Blocked creators, Creators hidden on this phone and Blocked caption words carry over (words are matched against each LIVE's title), and Creator exceptions lets chosen creators past the gaming, verified, category and count rules, though never past a block, a blocked word, Shop or sponsored. The first room comes with the LIVE button itself, so the rules start with the one after it. When they hide every room on five pages in a row, one room gets through, because a page with nothing on it makes TikTok ask for the next one about once a second. TikTok's LIVE feed doesn't say when a stream started or when an account was made, so there's no rule for either. The diagnostic report's LIVE FEED section counts pages, rooms and what each rule hid.
 * **TikTok:** A double tap, long press or left swipe set to open comments opens the comments of the video on screen (#63). Right after a swipe it could open the comments of the video before or after it, show that video's "restricted comments" message, or say comments weren't available. It went by the video the player was naming, and the player names a new video only once it starts playing. When what's on screen has no comment button of its own, you get the "not available" message rather than another video's comments.
@@ -61,6 +48,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** Hushfeed works in a second copy of TikTok made with Morphe's Clone app patch (#59). That patch gives the copy a new package name and renames TikTok's own resources to match, so the share sheet tools couldn't find their views, and neither could hiding video overlays, the captions settings, the comment tools or the author line. They now look views up under whatever name the app runs as. Logging in to a cloned TikTok was refused on the first try in testing, so the copy may only be usable logged out.
 * **TikTok:** Remove unused language packs keeps every language now unless you list the ones you want in Languages to keep (#67). It used to keep only English out of the box, so picking every patch in Manager left TikTok in English for everyone else. To keep removing them, set Languages to keep to your codes, such as en or en, tr. If your TikTok lost its language this way, patch it again with this patch off (or with your language listed) and install it over the one you have. You stay signed in.
 * **TikTok:** In Feed tabs, the Explore option is called Explore or Community now (#62). Some accounts see that tab as Community, and unticking Explore hid it with nothing in the list saying so.
+
+* **TikTok:** Hushfeed now needs Morphe Manager 1.33.0 or newer, because it's built against Morphe patcher 1.15.0. Older Managers say the bundle needs a Manager update. In a test with memory held near what Manager gets on a phone (768 MB), patcher 1.14.1 ran out of memory while saving patched TikTok 47.1.4, and 1.15.0 finished.
 
 ## 0.66.0 (2026-10-01)
 

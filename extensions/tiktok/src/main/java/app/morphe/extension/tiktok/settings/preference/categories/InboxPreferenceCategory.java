@@ -33,6 +33,7 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.hideInboxStoriesEnabled
                 || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.notificationControlsEnabled
+                || SettingsStatus.suggestedVideoPushBlockEnabled
                 || SettingsStatus.autoStreakEnabled;
     }
 
@@ -130,8 +131,19 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS
         ));
         }
-        if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled) {
+        if (SettingsStatus.notificationControlsEnabled || SettingsStatus.expandActivityListEnabled
+                || SettingsStatus.suggestedVideoPushBlockEnabled) {
             addPreference(new SectionHeadingPreference(context, "Controls"));
+        }
+        if (SettingsStatus.suggestedVideoPushBlockEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Block suggested video notifications",
+                    "Stop the notifications TikTok sends about popular videos it picked for you. "
+                            + "Messages, comments, likes, follows and videos from accounts you "
+                            + "follow still come through.",
+                    Settings.BLOCK_SUGGESTED_VIDEO_NOTIFICATIONS
+            ));
         }
         if (SettingsStatus.notificationControlsEnabled) {
             addPreference(new TogglePreference(

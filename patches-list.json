@@ -1,5 +1,5 @@
 {
-  "version": "v0.66.0",
+  "version": "v0.67.0",
   "appNames": {
     "com.zhiliaoapp.musically": "TikTok"
   },
@@ -570,6 +570,67 @@
       "description": "Answers TikTok's scan of the apps installed on your phone with an empty list. Checks for one named app, which TikTok also uses to open an app you tap, are left alone. Switch: Hushfeed settings > Privacy.",
       "category": "Privacy",
       "use": false,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.0.3",
+          "47.1.3",
+          "47.1.4"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.0.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024700030,
+                "ARMEABI_V7A": 2024700030,
+                "X86": 2024700030,
+                "X86_64": 2024700030
+              }
+            },
+            {
+              "version": "47.1.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024701030,
+                "ARMEABI_V7A": 2024701030,
+                "X86": 2024701030,
+                "X86_64": 2024701030
+              }
+            },
+            {
+              "version": "47.1.4",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024701040,
+                "ARMEABI_V7A": 2024701040,
+                "X86": 2024701040,
+                "X86_64": 2024701040
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Block suggested video notifications",
+      "description": "Stops TikTok's \"Videos you might like\" notifications, the pushes about popular videos it picked for you. They're blocked from the start, and the switch lets them through again. Messages, comments, likes, follows and posts from accounts you follow aren't touched. Switch: Hushfeed settings > Inbox.",
+      "category": "Inbox",
+      "use": true,
       "dependencies": [
         "BytecodePatch",
         "Settings"

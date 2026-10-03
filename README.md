@@ -1,7 +1,7 @@
 ![Hushfeed. Take back your feed with focused controls for filtering, gestures, playback, downloads and privacy.](assets/readme-hero.png)
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.66.0-6f42c1.svg" /></a>
+  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.67.0-6f42c1.svg" /></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-GPLv3-blue.svg" /></a>
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
@@ -13,14 +13,14 @@
 
 Hushfeed is a [Morphe](https://github.com/MorpheApp/morphe-manager) patch bundle for people who want TikTok to behave differently. It can cut feed clutter, guard risky taps, improve downloads and expose controls TikTok leaves buried or unavailable. Every selected patch is configured from one native settings screen inside the app.
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse the 105 source patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse the 106 source patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, versions [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/) and [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use one of those exact APKs when patching. See [Supported target](#supported-target) for the verified build details.
 
 Hushfeed v0.66.0 contains 102 patches for TikTok 47.0.3, 47.1.3 and 47.1.4. New in this one: settings in Italian and Russian, a daily message that keeps a streak going, a name of your own under the app icon, and Look like the store app for follows that undo themselves. It needs Morphe Manager 1.32.0 or newer.
 
-The main branch contains 105 patches, including unreleased profile-shortcut hiding, a safer native-language default, separate sizes for feed descriptions and creator names, and a switch that stops new searches being saved to history. Those additions need a bundle built from source. Adding the source in Manager still downloads the published v0.66.0 bundle.
+The main branch contains 106 patches, including a block on TikTok's "Videos you might like" notifications, a switch that keeps new searches out of your history, separate sizes for feed descriptions and creator names, filters for the LIVE feed, and settings in Azerbaijani. They need a bundle built from source, which loads in Morphe Manager 1.33.0 or newer. Adding the source in Manager still downloads the published v0.66.0 bundle.
 
 ## Pick what changes
 
@@ -64,7 +64,7 @@ The compact Unblock action, also rendered from the actual control in a local UI 
 ## Install
 
 1. Get the TikTok 47.0.3, 47.1.3 or 47.1.4 APK. Google Play only offers the newest build, so take it from APKMirror: [47.0.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-0-3-release/tiktok-47-0-3-3-android-apk-download/), [47.1.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-3-release/tiktok-47-1-3-android-apk-download/) or [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). When you pick that file in Morphe Manager on Android 11 or newer, Manager checks that TikTok's own key signed it and warns you if a different one did. That warning means the file was changed after TikTok published it, so download it again instead of patching it.
-2. Use Morphe Manager 1.32.0 or newer. Manager refuses a bundle built against a patcher newer than its own, and this one is built against patcher 1.14.1, which Manager 1.32.0 was the first to ship. On anything older the bundle simply will not load.
+2. Use Morphe Manager 1.33.0 or newer. Manager refuses a bundle built against a patcher newer than its own, and this one is built against patcher 1.15.0, which Manager 1.33.0 was the first to ship. On anything older the bundle won't load.
 3. Add Hushfeed as a source in Morphe Manager. The quickest way is this link on the phone: [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). Some in-app browsers block Android from handing a web link to another app. If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle.
 4. Pick the patches you want and patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key so TikTok stays logged in across updates. AMOLED dark theme rewrites TikTok's color resources, and patching with it on runs slower when the memory limit is low, so give the manager 768 MB or more when it's on. It still finishes at 640 MB, just slower. On a Galaxy S22 patching TikTok 47.1.3 with the recommended patches plus AMOLED takes about 6 1/2 minutes at 640 MB and a little over 6 at 768 MB, and on a Galaxy S25 every patch at once took over an hour at 640 MB before Hushfeed's patches got faster. The recommended patches alone fit in 640 MB, about 5 1/2 minutes on the S22, and recent Manager versions already start capable phones at 1,024 MB. Hide Play Store update offer also decodes the manifest, so raise the limit if that patch runs out of memory. A run that sits at 24 or 25 percent and never moves may also need more memory. Cancel it, raise the limit to at least 768 MB if it's lower and start again. If that still stalls, try 512 MB, which gives the patcher less to hold at once.
 5. Install the patched APK. Google's 2026-09-30 verification rollout covers participating app stores in Brazil, Indonesia, Singapore and Thailand. Direct sideloads aren't included in that initial phase, and ADB installs are unchanged. See the [official Android FAQ](https://developer.android.com/developer-verification/guides/faq) for current requirements.
@@ -76,13 +76,13 @@ If Morphe reported "The remote metadata file is unavailable" for Hushfeed v0.51.
 
 ### Which managers can load it
 
-Morphe Manager 1.32.0 or newer loads Hushfeed on the phone, and morphe-desktop does it from a computer. Universal ReVanced Manager can't import a Morphe bundle, so patches picked there never reach TikTok ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)). Use Morphe Manager instead.
+Morphe Manager 1.33.0 or newer loads Hushfeed on the phone, and morphe-desktop does it from a computer. Universal ReVanced Manager can't import a Morphe bundle, so patches picked there never reach TikTok ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)). Use Morphe Manager instead.
 
 ## Troubleshooting
 
 ### TikTok stays in English after removing language packs
 
-On main, Remove unused language packs keeps every native TikTok language until you change its Languages to keep option. Published v0.66.0 starts that option at `en` when you select the patch, so set it to `all` explicitly to retain every language. In source builds, `all` or a blank option keeps them all. A list such as `en,tr` keeps English and Turkish; `en` keeps only English. English always stays as the fallback. Hushfeed's settings translations are separate from TikTok's native packs.
+Remove unused language packs keeps every native TikTok language until you change its Languages to keep option, and `all` or a blank option keeps them all. Before v0.67.0 the option started at `en` when you picked the patch, so if you patched with an older bundle, check that it says `all` or lists the languages you want. A list such as `en,tr` keeps English and Turkish; `en` keeps only English. English always stays as the fallback. Hushfeed's settings translations are separate from TikTok's native packs.
 
 Pause Hushfeed and importing settings can't restore files removed at patch time. Repatch a clean official APK with every language kept, or with the missing language in the list. Match the installed package name, including the Clone app choice, and use the same signing key. The new version code must be at least the installed one. If you already applied Hide Play Store update offer, keep that patch selected so its raised code stays the same. Install over the existing app to preserve its stored account data.
 
@@ -93,7 +93,7 @@ Login trouble is the most common complaint about any patched TikTok. These are t
 - Turn off Private DNS, AdGuard or any other ad blocker while you log in. They can block the addresses TikTok checks a login against.
 - After several failed tries TikTok stops taking new ones for a while. Wait an hour, then try again.
 - Facebook login can't work on a patched build. Facebook checks the app's signing key, and a patched TikTok carries your manager's key instead of TikTok's. Log in with your email or phone number and a code, or with Google.
-- In unreleased source builds, Hide CAPTCHA popups is unavailable and every verification challenge stays visible. The released v0.66.0 build still has the older switch; turn it off and restart TikTok when investigating a stalled login.
+- Since v0.67.0, Hide CAPTCHA popups isn't available and every verification challenge stays visible. Older builds still have the switch, so turn it off and restart TikTok when you're looking into a stalled login.
 
 ### A LIVE auction says bidding is unavailable
 
@@ -181,6 +181,7 @@ The eleven optional patches in the Performance group were measured on a Galaxy S
 | `Block contact list access` | Answers TikTok's reads of your phone contacts with an empty list. Find Friends and People you may know lose access to your contact list. Switch: Hushfeed settings > Privacy. |
 | `Block installed app scanning` | Answers TikTok's scan of the apps installed on your phone with an empty list. Checks for one named app, which TikTok also uses to open an app you tap, are left alone. Switch: Hushfeed settings > Privacy. |
 | `Block P2P video relay` | Strips TikTok's peer-to-peer CDN libraries so your phone is not used as a relay node for other people's video traffic. The APK gets about 3.5 MB smaller. |
+| `Block suggested video notifications` | Stops TikTok's "Videos you might like" notifications, the pushes about popular videos it picked for you. They're blocked from the start, and the switch lets them through again. Messages, comments, likes, follows and posts from accounts you follow aren't touched. Switch: Hushfeed settings > Inbox. |
 | `Camera and microphone indicator` | Shows a small mark in the top corner while TikTok has the camera open or is recording sound. A green square for the camera, an orange diamond for the microphone, both when both. It goes when the access ends. Switch: Hushfeed settings > Privacy. |
 | `Change app name` | Shows a name you choose under the app's icon and in Android's app list, so the patched TikTok is easy to tell from another one. Type the name in this patch's options. Inside the app everything still says TikTok. |
 | `Comment publish diagnostics` | Says in the diagnostic report whether a comment send reached TikTok's publish code, what it had in hand, and whether it returned early or handed the comment to the request. A comment that never posts leaves no other trace. |
@@ -358,6 +359,8 @@ The clear-display caption is removed as soon as you turn its switch off. Turning
 <img src="assets/settings/interface.png" alt="Caption appearance settings" width="300" /> <img src="assets/settings/downloads.png" alt="Subtitle download settings" width="300" />
 
 Inbox category switches identify New followers, Activity, Archive, Tako and Shop from native row data. They work with translated labels. Turning a switch off restores an already loaded row on the next layout.
+
+TikTok sends pushes about popular videos it picked for you, like "25M+ people viewed" with a clip from someone you don't follow. With the Block suggested video notifications patch in, **Block suggested video notifications** under Inbox starts on and drops them before they reach your notification shade. Turn it off to get them back. It only matches TikTok's "Videos you might like" channel, so messages, comments, likes, new followers and videos from accounts you follow arrive as before.
 
 The Streak section on the Inbox page takes one or more usernames, separated by commas or new lines. Pick a time and the message (a 🔥 unless you change it). Each person must already have a chat with you. Hushfeed hands one message per chat to TikTok's own notification reply each day, even when TikTok stays closed. Repeated usernames and names that resolve to the same chat don't get a second message. A failed recipient retries independently, without repeating another chat's accepted message. Send it now attempts the remaining chats straight away. Turning it on or adding someone after the chosen time has passed starts that person's schedule the next day. It only uses the account you set it up on and checks that account again before each message.
 
@@ -546,7 +549,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Mo
 
 ### Why those versions and not a newer one
 
-Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. On main, 47.0.3, 47.1.3 and 47.1.4 are the declared targets. 47.0.3 stays declared alongside the two 47.1 builds. All 105 patches apply to all three reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
+Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds. On main, 47.0.3, 47.1.3 and 47.1.4 are the declared targets. 47.0.3 stays declared alongside the two 47.1 builds. All 106 patches apply to all three reviewed APKs, and the retained 46.2.3, 46.7.3, 46.8.3 and 46.9.3 builds remain regression fixtures rather than advertised targets. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
 
 Only the global package is declared in the compatibility metadata.
 

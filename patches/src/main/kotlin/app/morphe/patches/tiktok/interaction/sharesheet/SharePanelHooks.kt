@@ -156,6 +156,6 @@ internal fun MutableMethod.notifyPanelBound() {
 
 context(patchContext: BytecodePatchContext)
 internal fun hookSharePanel() {
-    val method = resolveSharePanel(patchContext.getAllClassesWithString(PANEL_MARKER))
+    val method = resolveSharePanel(patchContext.classDefByStrings(PANEL_MARKER))
     patchContext.mutableClassDefBy(method.definingClass).findMutableMethodOf(method).notifyPanelBound()
 }
