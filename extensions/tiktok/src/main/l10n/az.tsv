@@ -1497,6 +1497,8 @@ Sends one message a day to each person below at the time below, so your streaks 
 Their usernames, separated by commas or new lines. Each person must already have a chat with you.	Onların istifadəçi adları, vergüllə və ya yeni sətirlərlə ayrılmış. Hər kəsin sizinlə artıq söhbəti olmalıdır.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Çatdırılma təsdiqlənməyib: %1$d/%2$d söhbət. Bu söhbətlər bu gün yenidən cəhd edilməyəcək.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Çatdırılma təsdiqlənməyib: %1$d/%2$d söhbət. Qalan söhbətlərə hələ də mesaj lazımdır.
+Sent to %1$d/%2$d chats. They won't get another message today.	%1$d/%2$d söhbətə göndərildi. Bu gün başqa mesaj almayacaqlar.
+Sent to %1$d/%2$d chats. The rest still need a message.	%1$d/%2$d söhbətə göndərildi. Qalan söhbətlərə hələ də mesaj lazımdır.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	TikTok bu mesajı götürmüş ola bilər. Çatdırılma təsdiqlənməyib, ona görə bu gün yenidən cəhd edilməyəcək.
 Nothing was sent. Check the streak settings and try again.	Heç nə göndərilmədi. Seriya ayarlarını yoxlayın və yenidən cəhd edin.
 Don't save new searches	Yeni axtarışları saxlamayın

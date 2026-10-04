@@ -1497,6 +1497,8 @@ Sends one message a day to each person below at the time below, so your streaks 
 Their usernames, separated by commas or new lines. Each person must already have a chat with you.	Sus nombres de usuario, separados por comas o saltos de línea. Ya debes tener un chat con cada persona.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Entrega sin confirmar: %1$d/%2$d chats. No se volverá a intentar en esos chats hoy.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Entrega sin confirmar: %1$d/%2$d chats. Los demás chats todavía necesitan un mensaje.
+Sent to %1$d/%2$d chats. They won't get another message today.	Enviado a %1$d/%2$d chats. Hoy no recibirán otro mensaje.
+Sent to %1$d/%2$d chats. The rest still need a message.	Enviado a %1$d/%2$d chats. Los demás chats todavía necesitan un mensaje.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	Es posible que TikTok haya aceptado este mensaje. La entrega no está confirmada, así que no se volverá a intentar hoy.
 Nothing was sent. Check the streak settings and try again.	No se envió nada. Revisa los ajustes de rachas e inténtalo de nuevo.
 Don't save new searches	No guardar búsquedas nuevas

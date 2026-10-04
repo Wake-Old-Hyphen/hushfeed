@@ -1500,6 +1500,8 @@ Sends one message a day to each person below at the time below, so your streaks 
 Their usernames, separated by commas or new lines. Each person must already have a chat with you.	Ihre Benutzernamen, durch Kommas oder Zeilenumbrüche getrennt. Mit jeder Person muss bereits ein Chat bestehen.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.	Zustellung unbestätigt: %1$d/%2$d Chats. Für diese Chats gibt es heute keinen weiteren Versuch.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.	Zustellung unbestätigt: %1$d/%2$d Chats. Die übrigen Chats brauchen noch eine Nachricht.
+Sent to %1$d/%2$d chats. They won't get another message today.	An %1$d/%2$d Chats gesendet. Sie bekommen heute keine weitere Nachricht.
+Sent to %1$d/%2$d chats. The rest still need a message.	An %1$d/%2$d Chats gesendet. Die übrigen Chats brauchen noch eine Nachricht.
 TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.	TikTok hat diese Nachricht möglicherweise angenommen. Die Zustellung ist unbestätigt, deshalb wird sie heute nicht erneut versucht.
 Nothing was sent. Check the streak settings and try again.	Es wurde nichts gesendet. Prüfe die Streak-Einstellungen und versuche es erneut.
 Don't save new searches	Neue Suchen nicht speichern

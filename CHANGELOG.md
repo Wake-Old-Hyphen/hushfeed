@@ -4,9 +4,23 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **Verification:** Morphe Manager 1.33.0 displays all 106 patches in their ten categories, with no uncategorized remainder. Every category expands and collapses. This Manager version groups declared categories automatically.
+## 0.67.1 (2026-10-03)
 
-* **Verification:** Full ABI checks exercise both single-ABI inputs and reject altered native libraries on every declared TikTok version. Isolated package qualification rejects empty patch results. Published-asset checks can require GitHub release attestations or a bundle signature verified against a pinned public key, with transparency verification enabled. Their focused contracts run before a push.
+* **TikTok:** Remove unused language packs no longer stops the whole patch run when Languages to keep is left at all and the APK carries a language set that hasn't been checked, like a split bundle merged with a single language. Nothing is removed then, and the patch log says why (#96).
+
+* **TikTok:** The streak line under Keep a streak going says "Sent to 15/15 chats" once TikTok has taken every message. It calls delivery unconfirmed only for a chat whose hand-off hit an error or never finished (#92).
+
+* **TikTok:** The Feed filter page's Show the hide button and Show the block sound button switches now draw their own feed controls even when Show the block button is off. New installs start those two helper switches off, so choosing Block author button doesn't add extra chips until you ask for them (#95).
+
+* **TikTok:** Pause keeps the saved Home long-press shortcut available, so guests can reopen settings and resume Hushfeed after closing the screen. A disabled shortcut stays disabled, ordinary Home taps still work, and TikTok's own long-press action is preserved (#89).
+
+* **TikTok:** Settings on Android 6 use the shipped languages' plural forms, including Russian one, few and many. Missing quantity translations fall back to English with the right singular form. Newer Android versions keep their own ICU rules.
+
+* **TikTok:** What's new keeps its full release history as the text grows. Large notes and international text no longer exceed Java's single-string build limit.
+
+* **TikTok:** Morphe Manager 1.33.0 shows all 106 patches in their ten categories, with nothing left uncategorized. The checks run before each build now cover single-ABI inputs on every supported TikTok version and reject altered native libraries or an empty patch result. Published bundles can be checked against GitHub release attestations or a pinned signing key.
+
+* **TikTok:** Limit background traffic keeps push setup intact by default, including when All is selected. Its optional Skip push setup choice starts off and can stop message and other notifications when enabled. Existing APKs need repatching from TikTok's original APK to restore push setup. Pause can't reverse this patch-time change (#86).
 
 * **TikTok:** Restoring settings now reports keys the current build can't restore, separately from settings missing from an older backup. Portable settings still migrate across TikTok versions, local device state stays intact, and Feature Gate Lab compatibility and Undo keep their existing behavior.
 

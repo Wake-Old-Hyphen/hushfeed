@@ -1494,6 +1494,8 @@ Build details copied to the clipboard,Detail build disalin ke papan klip
 "Their usernames, separated by commas or new lines. Each person must already have a chat with you.","Nama pengguna mereka, dipisahkan dengan koma atau baris baru. Kamu harus sudah memiliki chat dengan setiap orang."
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat tersebut tidak akan dicoba lagi hari ini.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Pengiriman belum terkonfirmasi: %1$d/%2$d chat. Chat lainnya masih memerlukan pesan.
+Sent to %1$d/%2$d chats. They won't get another message today.,Terkirim ke %1$d/%2$d chat. Hari ini tidak akan ada pesan lain.
+Sent to %1$d/%2$d chats. The rest still need a message.,Terkirim ke %1$d/%2$d chat. Chat lainnya masih memerlukan pesan.
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok mungkin telah menerima pesan ini. Pengirimannya belum terkonfirmasi, jadi tidak akan dicoba lagi hari ini."
 Nothing was sent. Check the streak settings and try again.,Tidak ada yang dikirim. Periksa pengaturan streak dan coba lagi.
 Don't save new searches,Jangan simpan pencarian baru
