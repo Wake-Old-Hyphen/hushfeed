@@ -1514,3 +1514,5 @@ Buttons on videos	Schaltflächen auf Videos
 Seen videos put back: %1$s of %2$s	Gesehene Videos zurückgeholt: %1$s von %2$s
 No cleared videos fit the current history limits.	Keine gelöschten Videos passen in die aktuellen Verlaufslimits.
 Putting seen videos back	Gesehene Videos werden zurückgeholt
+# context: a line above the What's new release notes, which come from the English changelog and are not translated.
+These notes are in English.	Diese Hinweise sind auf Englisch.

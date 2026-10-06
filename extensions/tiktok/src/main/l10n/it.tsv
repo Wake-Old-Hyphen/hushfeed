@@ -1511,3 +1511,5 @@ Buttons on videos	Pulsanti sui video
 Seen videos put back: %1$s of %2$s	Video visti ripristinati: %1$s di %2$s
 No cleared videos fit the current history limits.	Nessun video cancellato rientra nei limiti attuali della cronologia.
 Putting seen videos back	Ripristino dei video visti
+# context: a line above the What's new release notes, which come from the English changelog and are not translated.
+These notes are in English.	Queste note sono in inglese.

@@ -1649,3 +1649,5 @@ Buttons on videos	Кнопки на видео
 Seen videos put back: %1$s of %2$s	Восстановлено просмотренных видео: %1$s из %2$s
 No cleared videos fit the current history limits.	Ни одно удалённое видео не укладывается в текущие ограничения истории.
 Putting seen videos back	Восстановление просмотренных видео
+# context: a line above the What's new release notes, which come from the English changelog and are not translated.
+These notes are in English.	Эти заметки на английском языке.

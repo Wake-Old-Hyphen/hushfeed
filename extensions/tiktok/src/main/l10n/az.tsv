@@ -1511,3 +1511,5 @@ Buttons on videos	Videolardakı düymələr
 Seen videos put back: %1$s of %2$s	Bərpa edilən baxılmış videolar: %1$s / %2$s
 No cleared videos fit the current history limits.	Silinmiş videoların heç biri cari tarixçə limitlərinə uyğun gəlmir.
 Putting seen videos back	Baxılmış videolar bərpa edilir
+# context: a line above the What's new release notes, which come from the English changelog and are not translated.
+These notes are in English.	Bu qeydlər ingilis dilindədir.

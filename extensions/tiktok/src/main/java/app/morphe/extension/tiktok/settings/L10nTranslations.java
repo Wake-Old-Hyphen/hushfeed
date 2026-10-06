@@ -56,7 +56,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildAz() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillAz0(table);
         fillAz1(table);
         fillAz2(table);
@@ -2784,15 +2784,17 @@ public final class L10nTranslations {
                 "Unudulacaq saxlanılmış video yox idi");
         table.put("These loaded values are for a different TikTok version.",
                 "Bu yüklənmiş dəyərlər başqa TikTok versiyası üçündür.");
+        table.put("These notes are in English.",
+                "Bu qeydlər ingilis dilindədir.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Bu kataloq girişi artıq mövcud deyil. Lab-ı yeniləyin və yenidən cəhd edin.");
         table.put("This change couldn't be saved. Try again.",
                 "Bu dəyişiklik saxlanıla bilmədi. Yenidən cəhd edin.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Bu konfiqurasiyada bu buildə təhlükəsiz kopyalanıb dəyişdirilə bilən sahə yoxdur.");
     }
 
     private static void fillAz22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Bu konfiqurasiyada bu buildə təhlükəsiz kopyalanıb dəyişdirilə bilən sahə yoxdur.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Bu faylda Lab-ın bir dəfəyə qəbul etdiyindən çox yüklənmiş dəyər var.");
         table.put("This file has no loaded values in it.",
@@ -2911,11 +2913,11 @@ public final class L10nTranslations {
                 "Bugünkü büdcə kilidlənib. Lent %1$s vaxtında yenidən açılır. Mesajlar, profillər və axtarış hələ də işləyir.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Bugünkü büdcə kilidlənib. Bunu %1$s vaxtında yenidən dəyişmək olar.");
-        table.put("Today: %1$d minute",
-                "Bu gün: %1$d dəqiqə");
     }
 
     private static void fillAz23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Bu gün: %1$d dəqiqə");
         table.put("Today: %1$d minutes",
                 "Bu gün: %1$d dəqiqə");
         table.put("Today: %1$d video",
@@ -3034,11 +3036,11 @@ public final class L10nTranslations {
                 "Öz oflayn videolar limitinizdən istifadə edin");
         table.put("Using TikTok's value",
                 "TikTok-un dəyəri istifadə olunur");
-        table.put("Value",
-                "Dəyər");
     }
 
     private static void fillAz24(Map<String, String> table) {
+        table.put("Value",
+                "Dəyər");
         table.put("Value to return",
                 "Qaytarılacaq dəyər");
         table.put("Value: %1$s to %2$s",
@@ -3157,11 +3159,11 @@ public final class L10nTranslations {
                 "Əvvəlki lent quruluşunuz geri qayıtdı. Bütün dəyişiklikləri tətbiq etmək üçün TikTok-u yenidən başladın.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "İdxal bitməzdən əvvəl baxılmış videoların tarixçəsi dəyişdi. Faylı yenidən seçin.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Sıfır fasilədən çıxış yolunu hər dəfə yerində saxlayır, bu həmişə belə olub. Başqa dəyər onun gündə neçə dəfə işləyəcəyini göstərir və onlar bitdikdən sonra fasilə gün yenidən başlayana qədər qalır. Çıxış yolunu tamamilə götürən kilidli büdcə zamanı nəzərə alınmır.");
     }
 
     private static void fillAz25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Sıfır fasilədən çıxış yolunu hər dəfə yerində saxlayır, bu həmişə belə olub. Başqa dəyər onun gündə neçə dəfə işləyəcəyini göstərir və onlar bitdikdən sonra fasilə gün yenidən başlayana qədər qalır. Çıxış yolunu tamamilə götürən kilidli büdcə zamanı nəzərə alınmır.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Sıfır limit yoxdur deməkdir. Hushfeed-in sizin əvəzinizə keçdiyi videoları sayır, özünüzün sürüşdürdüklərinizi yox, lent yenidən qurulanda və ya bu ədədi dəyişəndə yenidən başlayır.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -3181,7 +3183,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildDe() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillDe0(table);
         fillDe1(table);
         fillDe2(table);
@@ -5909,15 +5911,17 @@ public final class L10nTranslations {
                 "Es gab keine gespeicherten Videos zum Vergessen");
         table.put("These loaded values are for a different TikTok version.",
                 "Diese geladenen Werte gehören zu einer anderen TikTok-Version.");
+        table.put("These notes are in English.",
+                "Diese Hinweise sind auf Englisch.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Dieser Katalogeintrag ist nicht mehr verfügbar. Das Labor aktualisieren und es erneut versuchen.");
         table.put("This change couldn't be saved. Try again.",
                 "Diese Änderung konnte nicht gespeichert werden. Versuche es erneut.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Diese Konfiguration hat keine Felder, die sich in diesem Build gefahrlos kopieren und ändern lassen.");
     }
 
     private static void fillDe22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Diese Konfiguration hat keine Felder, die sich in diesem Build gefahrlos kopieren und ändern lassen.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Diese Datei enthält mehr geladene Werte, als das Lab auf einmal annimmt.");
         table.put("This file has no loaded values in it.",
@@ -6036,11 +6040,11 @@ public final class L10nTranslations {
                 "Das heutige Budget ist gesperrt. Der Feed öffnet wieder um %1$s. Nachrichten, Profile und Suche funktionieren weiterhin.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Das heutige Budget ist gesperrt. Änderungen sind wieder ab %1$s möglich.");
-        table.put("Today: %1$d minute",
-                "Heute: %1$d Minute");
     }
 
     private static void fillDe23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Heute: %1$d Minute");
         table.put("Today: %1$d minutes",
                 "Heute: %1$d Minuten");
         table.put("Today: %1$d video",
@@ -6159,11 +6163,11 @@ public final class L10nTranslations {
                 "Eigene Grenze für Offline-Videos verwenden");
         table.put("Using TikTok's value",
                 "TikToks Wert wird verwendet");
-        table.put("Value",
-                "Wert");
     }
 
     private static void fillDe24(Map<String, String> table) {
+        table.put("Value",
+                "Wert");
         table.put("Value to return",
                 "Zurückgegebener Wert");
         table.put("Value: %1$s to %2$s",
@@ -6282,11 +6286,11 @@ public final class L10nTranslations {
                 "Deine vorherige Feed-Einrichtung ist wiederhergestellt. Starte TikTok neu, um alle Änderungen anzuwenden.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Dein Verlauf hat sich vor Abschluss des Imports geändert. Wähle die Datei erneut.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Null lässt den Ausweg aus der Pause jedes Mal stehen, so wie bisher. Alles andere ist die Anzahl der Male pro Tag, die er funktioniert, und wenn sie aufgebraucht sind, bleibt die Pause bestehen, bis der Tag neu beginnt. Wird ignoriert, solange das Limit gesperrt ist, denn das nimmt den Ausweg ganz weg.");
     }
 
     private static void fillDe25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Null lässt den Ausweg aus der Pause jedes Mal stehen, so wie bisher. Alles andere ist die Anzahl der Male pro Tag, die er funktioniert, und wenn sie aufgebraucht sind, bleibt die Pause bestehen, bis der Tag neu beginnt. Wird ignoriert, solange das Limit gesperrt ist, denn das nimmt den Ausweg ganz weg.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Null bedeutet kein Limit. Zählt die Videos, die Hushfeed für dich weitergeschaltet hat, nicht die, die du selbst weggewischt hast, und beginnt neu, wenn der Feed neu aufgebaut wird oder du diese Zahl änderst.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -6306,7 +6310,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildEs() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillEs0(table);
         fillEs1(table);
         fillEs2(table);
@@ -9034,15 +9038,17 @@ public final class L10nTranslations {
                 "No había vídeos guardados que olvidar");
         table.put("These loaded values are for a different TikTok version.",
                 "Estos valores cargados son de otra versión de TikTok.");
+        table.put("These notes are in English.",
+                "Estas notas están en inglés.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Esta entrada del catálogo ya no está disponible. Actualiza el Laboratorio e inténtalo otra vez.");
         table.put("This change couldn't be saved. Try again.",
                 "No se pudo guardar este cambio. Inténtalo de nuevo.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Esta configuración no tiene campos que se puedan copiar y cambiar con seguridad en esta compilación.");
     }
 
     private static void fillEs22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Esta configuración no tiene campos que se puedan copiar y cambiar con seguridad en esta compilación.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Este archivo tiene más valores cargados de los que el Lab acepta de una vez.");
         table.put("This file has no loaded values in it.",
@@ -9161,11 +9167,11 @@ public final class L10nTranslations {
                 "El presupuesto de hoy está bloqueado. El feed se abre otra vez a las %1$s. Los mensajes, los perfiles y la búsqueda siguen funcionando.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "El presupuesto de hoy está bloqueado. Esto se podrá volver a cambiar a las %1$s.");
-        table.put("Today: %1$d minute",
-                "Hoy: %1$d minuto");
     }
 
     private static void fillEs23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Hoy: %1$d minuto");
         table.put("Today: %1$d minutes",
                 "Hoy: %1$d minutos");
         table.put("Today: %1$d video",
@@ -9284,11 +9290,11 @@ public final class L10nTranslations {
                 "Usar tu propio límite de vídeos sin conexión");
         table.put("Using TikTok's value",
                 "Se usa el valor de TikTok");
-        table.put("Value",
-                "Valor");
     }
 
     private static void fillEs24(Map<String, String> table) {
+        table.put("Value",
+                "Valor");
         table.put("Value to return",
                 "Valor que se devuelve");
         table.put("Value: %1$s to %2$s",
@@ -9407,11 +9413,11 @@ public final class L10nTranslations {
                 "Se ha recuperado tu configuración anterior del feed. Reinicia TikTok para aplicar todos los cambios.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Tu historial cambió antes de terminar la importación. Vuelve a elegir el archivo.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Cero deja la salida de la pausa disponible siempre, que es lo de siempre. Cualquier otro valor son las veces al día que funciona, y cuando se agotan la pausa se mantiene hasta que empieza el día siguiente. Se ignora mientras el límite está bloqueado, porque eso quita la salida del todo.");
     }
 
     private static void fillEs25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Cero deja la salida de la pausa disponible siempre, que es lo de siempre. Cualquier otro valor son las veces al día que funciona, y cuando se agotan la pausa se mantiene hasta que empieza el día siguiente. Se ignora mientras el límite está bloqueado, porque eso quita la salida del todo.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Cero significa sin límite. Cuenta los vídeos que Hushfeed pasó por ti, no los que deslizaste tú, y empieza de nuevo cuando el feed se reconstruye o cambias este número.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -9431,7 +9437,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildIn() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillIn0(table);
         fillIn1(table);
         fillIn2(table);
@@ -12159,15 +12165,17 @@ public final class L10nTranslations {
                 "Tidak ada video tersimpan untuk dilupakan");
         table.put("These loaded values are for a different TikTok version.",
                 "Nilai yang dimuat ini untuk versi TikTok yang berbeda.");
+        table.put("These notes are in English.",
+                "Catatan ini dalam bahasa Inggris.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Entri katalog ini sudah tidak tersedia. Segarkan Lab dan coba lagi.");
         table.put("This change couldn't be saved. Try again.",
                 "Perubahan ini tidak dapat disimpan. Coba lagi.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Konfigurasi ini tidak punya bidang yang bisa disalin dan diubah dengan aman di build ini.");
     }
 
     private static void fillIn22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Konfigurasi ini tidak punya bidang yang bisa disalin dan diubah dengan aman di build ini.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Berkas ini berisi lebih banyak nilai yang dimuat daripada yang bisa diterima Lab sekaligus.");
         table.put("This file has no loaded values in it.",
@@ -12286,11 +12294,11 @@ public final class L10nTranslations {
                 "Anggaran hari ini terkunci. Feed terbuka lagi pada %1$s. Pesan, profil dan pencarian tetap berfungsi.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Anggaran hari ini terkunci. Ini bisa diubah lagi pada %1$s.");
-        table.put("Today: %1$d minute",
-                "Hari ini: %1$d menit");
     }
 
     private static void fillIn23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Hari ini: %1$d menit");
         table.put("Today: %1$d minutes",
                 "Hari ini: %1$d menit");
         table.put("Today: %1$d video",
@@ -12409,11 +12417,11 @@ public final class L10nTranslations {
                 "Gunakan batas video offline kamu sendiri");
         table.put("Using TikTok's value",
                 "Memakai nilai TikTok");
-        table.put("Value",
-                "Nilai");
     }
 
     private static void fillIn24(Map<String, String> table) {
+        table.put("Value",
+                "Nilai");
         table.put("Value to return",
                 "Nilai yang dikembalikan");
         table.put("Value: %1$s to %2$s",
@@ -12532,11 +12540,11 @@ public final class L10nTranslations {
                 "Pengaturan feed kamu sebelumnya sudah dipulihkan. Mulai ulang TikTok untuk menerapkan semua perubahan.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Riwayat tontonan berubah sebelum impor selesai. Pilih kembali berkas.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Nol membiarkan jalan keluar dari penahanan selalu tersedia, seperti selama ini. Nilai lain adalah berapa kali sehari jalan itu bekerja, dan begitu habis, penahanan tetap berlaku sampai hari berganti. Diabaikan selama batas dikunci, karena itu menghilangkan jalan keluarnya sama sekali.");
     }
 
     private static void fillIn25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Nol membiarkan jalan keluar dari penahanan selalu tersedia, seperti selama ini. Nilai lain adalah berapa kali sehari jalan itu bekerja, dan begitu habis, penahanan tetap berlaku sampai hari berganti. Diabaikan selama batas dikunci, karena itu menghilangkan jalan keluarnya sama sekali.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Nol berarti tanpa batas. Menghitung video yang dilewati Hushfeed untuk kamu, bukan yang kamu geser sendiri, dan mulai lagi saat feed dibangun ulang atau angka ini diubah.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -12556,7 +12564,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildIt() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillIt0(table);
         fillIt1(table);
         fillIt2(table);
@@ -15284,15 +15292,17 @@ public final class L10nTranslations {
                 "Non c'erano video salvati da dimenticare");
         table.put("These loaded values are for a different TikTok version.",
                 "Questi valori caricati sono per una versione diversa di TikTok.");
+        table.put("These notes are in English.",
+                "Queste note sono in inglese.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Questa voce del catalogo non è più disponibile. Aggiorna il Lab e riprova.");
         table.put("This change couldn't be saved. Try again.",
                 "Non è stato possibile salvare questa modifica. Riprova.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Questa configurazione non ha campi che si possano copiare e modificare in sicurezza in questa build.");
     }
 
     private static void fillIt22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Questa configurazione non ha campi che si possano copiare e modificare in sicurezza in questa build.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Questo file contiene più valori caricati di quanti il Lab ne accetti in una volta sola.");
         table.put("This file has no loaded values in it.",
@@ -15411,11 +15421,11 @@ public final class L10nTranslations {
                 "Il budget di oggi è bloccato. Il feed si riapre alle %1$s. Messaggi, profili e ricerca continuano a funzionare.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Il budget di oggi è bloccato. Potrai modificarlo di nuovo alle %1$s.");
-        table.put("Today: %1$d minute",
-                "Oggi: %1$d minuto");
     }
 
     private static void fillIt23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Oggi: %1$d minuto");
         table.put("Today: %1$d minutes",
                 "Oggi: %1$d minuti");
         table.put("Today: %1$d video",
@@ -15534,11 +15544,11 @@ public final class L10nTranslations {
                 "Usa un limite personalizzato per i video offline");
         table.put("Using TikTok's value",
                 "In uso il valore di TikTok");
-        table.put("Value",
-                "Valore");
     }
 
     private static void fillIt24(Map<String, String> table) {
+        table.put("Value",
+                "Valore");
         table.put("Value to return",
                 "Valore da restituire");
         table.put("Value: %1$s to %2$s",
@@ -15657,11 +15667,11 @@ public final class L10nTranslations {
                 "La tua configurazione precedente del feed è stata ripristinata. Riavvia TikTok per applicare tutte le modifiche.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "La cronologia è cambiata prima del termine dell'importazione. Scegli di nuovo il file.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Zero lascia sempre disponibile la via d'uscita dal blocco, come ha sempre fatto. Qualsiasi altro valore indica quante volte al giorno funziona, e una volta esaurite il blocco resta attivo finché la giornata non ricomincia. Viene ignorato finché il budget è bloccato, perché questo elimina del tutto la via d'uscita.");
     }
 
     private static void fillIt25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Zero lascia sempre disponibile la via d'uscita dal blocco, come ha sempre fatto. Qualsiasi altro valore indica quante volte al giorno funziona, e una volta esaurite il blocco resta attivo finché la giornata non ricomincia. Viene ignorato finché il budget è bloccato, perché questo elimina del tutto la via d'uscita.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Zero significa nessun limite. Conta i video che Hushfeed ha fatto avanzare al posto tuo, non quelli che hai scorso tu stesso, e riparte da zero quando il feed viene ricostruito o cambi questo numero.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -15681,7 +15691,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildPt_rBR() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillPt_rBR0(table);
         fillPt_rBR1(table);
         fillPt_rBR2(table);
@@ -18409,15 +18419,17 @@ public final class L10nTranslations {
                 "Não havia vídeos salvos para esquecer");
         table.put("These loaded values are for a different TikTok version.",
                 "Estes valores carregados são de outra versão do TikTok.");
+        table.put("These notes are in English.",
+                "Estas notas estão em inglês.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Esta entrada do catálogo não está mais disponível. Atualize o Laboratório e tente de novo.");
         table.put("This change couldn't be saved. Try again.",
                 "Não foi possível salvar esta alteração. Tente novamente.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Esta configuração não tem campos que dê para copiar e mudar com segurança nesta build.");
     }
 
     private static void fillPt_rBR22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Esta configuração não tem campos que dê para copiar e mudar com segurança nesta build.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Este arquivo tem mais valores carregados do que o Lab aceita de uma vez.");
         table.put("This file has no loaded values in it.",
@@ -18536,11 +18548,11 @@ public final class L10nTranslations {
                 "O limite de hoje está travado. O feed abre de novo às %1$s. As mensagens, os perfis e a busca continuam funcionando.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "O limite de hoje está travado. Isto poderá ser mudado de novo às %1$s.");
-        table.put("Today: %1$d minute",
-                "Hoje: %1$d minuto");
     }
 
     private static void fillPt_rBR23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Hoje: %1$d minuto");
         table.put("Today: %1$d minutes",
                 "Hoje: %1$d minutos");
         table.put("Today: %1$d video",
@@ -18659,11 +18671,11 @@ public final class L10nTranslations {
                 "Usar o seu próprio limite de vídeos offline");
         table.put("Using TikTok's value",
                 "Usando o valor do TikTok");
-        table.put("Value",
-                "Valor");
     }
 
     private static void fillPt_rBR24(Map<String, String> table) {
+        table.put("Value",
+                "Valor");
         table.put("Value to return",
                 "Valor devolvido");
         table.put("Value: %1$s to %2$s",
@@ -18782,11 +18794,11 @@ public final class L10nTranslations {
                 "Sua configuração anterior do feed foi restaurada. Reinicie o TikTok para aplicar todas as mudanças.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Seu histórico mudou antes do fim da importação. Escolha o arquivo novamente.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Zero deixa a saída da espera disponível sempre, como sempre foi. Qualquer outro valor é quantas vezes por dia ela funciona, e quando acabam a espera continua até o dia recomeçar. Ignorado enquanto o limite está travado, porque isso tira a saída por completo.");
     }
 
     private static void fillPt_rBR25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Zero deixa a saída da espera disponível sempre, como sempre foi. Qualquer outro valor é quantas vezes por dia ela funciona, e quando acabam a espera continua até o dia recomeçar. Ignorado enquanto o limite está travado, porque isso tira a saída por completo.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Zero quer dizer sem limite. Conta os vídeos que o Hushfeed passou por você, não os que você deslizou, e começa de novo quando o feed é reconstruído ou você muda este número.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",
@@ -18806,7 +18818,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildRu() {
-        Map<String, String> table = new HashMap<>(3292);
+        Map<String, String> table = new HashMap<>(3294);
         fillRu0(table);
         fillRu1(table);
         fillRu2(table);
@@ -21791,6 +21803,8 @@ public final class L10nTranslations {
     }
 
     private static void fillRu24(Map<String, String> table) {
+        table.put("These notes are in English.",
+                "Эти заметки на английском языке.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Эта запись каталога больше не доступна. Обновите Lab и повторите попытку.");
         table.put("This change couldn't be saved. Try again.",
@@ -21909,11 +21923,11 @@ public final class L10nTranslations {
                 "Сегодняшний день начался заново. Нажмите ещё раз, чтобы вернуть счётчики.");
         table.put("Today starts again",
                 "Сегодняшний день начинается заново");
-        table.put("Today's budget is locked. The day starts over at %1$s.",
-                "Сегодняшний лимит заблокирован. День начнётся заново в %1$s.");
     }
 
     private static void fillRu25(Map<String, String> table) {
+        table.put("Today's budget is locked. The day starts over at %1$s.",
+                "Сегодняшний лимит заблокирован. День начнётся заново в %1$s.");
         table.put("Today's budget is locked. The feed opens again at %1$s. Messages, profiles and search still work.",
                 "Сегодняшний лимит заблокирован. Лента снова откроется в %1$s. Сообщения, профили и поиск по-прежнему работают.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
@@ -22032,11 +22046,11 @@ public final class L10nTranslations {
                 "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Применяется к следующему субтитру.");
         table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.",
                 "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер имени автора и сохраняет масштаб шрифта Android.");
-        table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.",
-                "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер описания под именем автора и сохраняет масштаб шрифта Android.");
     }
 
     private static void fillRu26(Map<String, String> table) {
+        table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.",
+                "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер описания под именем автора и сохраняет масштаб шрифта Android.");
         table.put("Use Calm feed",
                 "Использовать «Спокойную ленту»");
         table.put("Use Save report for this large report",
@@ -22155,11 +22169,11 @@ public final class L10nTranslations {
                 "Ширина окна, при которой включается макет. Перезапустите TikTok, чтобы это применить.");
         table.put("Words, countries and languages",
                 "Слова, страны и языки");
-        table.put("Working",
-                "Обработка");
     }
 
     private static void fillRu27(Map<String, String> table) {
+        table.put("Working",
+                "Обработка");
         table.put("Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
                 "Сохранять звук видео рядом с ним в виде файла .m4a. На Android 10 и новее аудио хранится отдельно и попадает в Music, в папку с тем же именем, что и ваши видео.");
         table.put("YTDLnis background mode",
@@ -22215,7 +22229,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildTr() {
-        Map<String, String> table = new HashMap<>(3016);
+        Map<String, String> table = new HashMap<>(3018);
         fillTr0(table);
         fillTr1(table);
         fillTr2(table);
@@ -24943,15 +24957,17 @@ public final class L10nTranslations {
                 "Unutulacak kaydedilmiş video yoktu");
         table.put("These loaded values are for a different TikTok version.",
                 "Bu yüklenen değerler farklı bir TikTok sürümüne ait.");
+        table.put("These notes are in English.",
+                "Bu notlar İngilizcedir.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
                 "Bu katalog girişi artık kullanılamıyor. Lab'i yenile ve yeniden dene.");
         table.put("This change couldn't be saved. Try again.",
                 "Bu değişiklik kaydedilemedi. Yeniden dene.");
-        table.put("This configuration has no fields that can be copied and changed safely on this build.",
-                "Bu yapılandırmada, bu sürümde güvenle kopyalanıp değiştirilebilecek bir alan yok.");
     }
 
     private static void fillTr22(Map<String, String> table) {
+        table.put("This configuration has no fields that can be copied and changed safely on this build.",
+                "Bu yapılandırmada, bu sürümde güvenle kopyalanıp değiştirilebilecek bir alan yok.");
         table.put("This file has more loaded values than the Lab takes at once.",
                 "Bu dosyada Lab'in tek seferde aldığından fazla yüklenen değer var.");
         table.put("This file has no loaded values in it.",
@@ -25070,11 +25086,11 @@ public final class L10nTranslations {
                 "Bugünün bütçesi kilitli. Akış %1$s saatinde yeniden açılır. Mesajlar, profiller ve arama çalışmaya devam eder.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Bugünün bütçesi kilitli. Bu, %1$s saatinde yeniden değiştirilebilir.");
-        table.put("Today: %1$d minute",
-                "Bugün: %1$d dakika");
     }
 
     private static void fillTr23(Map<String, String> table) {
+        table.put("Today: %1$d minute",
+                "Bugün: %1$d dakika");
         table.put("Today: %1$d minutes",
                 "Bugün: %1$d dakika");
         table.put("Today: %1$d video",
@@ -25193,11 +25209,11 @@ public final class L10nTranslations {
                 "Kendi çevrimdışı video sınırını kullan");
         table.put("Using TikTok's value",
                 "TikTok'un değeri kullanılıyor");
-        table.put("Value",
-                "Değer");
     }
 
     private static void fillTr24(Map<String, String> table) {
+        table.put("Value",
+                "Değer");
         table.put("Value to return",
                 "Döndürülecek değer");
         table.put("Value: %1$s to %2$s",
@@ -25316,11 +25332,11 @@ public final class L10nTranslations {
                 "Önceki akış düzenin geri geldi. Tüm değişiklikleri uygulamak için TikTok'u yeniden başlat.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "İçe aktarma bitmeden izleme geçmişiniz değişti. Dosyayı yeniden seçin.");
-        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
-                "Sıfır, bekletmeden çıkış yolunu her seferinde yerinde bırakır, ki bu hep yaptığı şeydir. Başka bir değer, çıkışın günde kaç kez çalışacağını belirler ve bunlar bitince bekletme, gün baştan başlayana kadar kalır. Bütçe kilitliyken yok sayılır, çünkü kilit çıkış yolunu tamamen ortadan kaldırır.");
     }
 
     private static void fillTr25(Map<String, String> table) {
+        table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
+                "Sıfır, bekletmeden çıkış yolunu her seferinde yerinde bırakır, ki bu hep yaptığı şeydir. Başka bir değer, çıkışın günde kaç kez çalışacağını belirler ve bunlar bitince bekletme, gün baştan başlayana kadar kalır. Bütçe kilitliyken yok sayılır, çünkü kilit çıkış yolunu tamamen ortadan kaldırır.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
                 "Sıfır, sınır yok demektir. Kendi kaydırdıklarını değil, Hushfeed'in senin için geçtiği videoları sayar ve akış yeniden oluşturulduğunda ya da bu sayıyı değiştirdiğinde baştan başlar.");
         table.put("Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",

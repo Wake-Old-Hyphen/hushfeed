@@ -4,6 +4,15 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Switch rows in Hushfeed's settings change shape when the screen is narrow and the text is large. The switch moves under the text, at the end of the row, and the title and description get the whole width. A German title at twice the text size on a small phone no longer breaks mid-word into four short lines. Wider screens keep the usual layout, and a row scrolled from one shape into the other changes back.
+* **TikTok:** Every Guava request in the build now resolves to 33.7.2, the release outside GHSA-xxph-c9ww-hj94, across the settings, plugin and project graphs rather than only where the catalog's pin reached. Its checksums were verified against Maven Central before the strict dependency check accepted them. Guava stays on the build and patching side: the patch bundle and the extension carry none of it. The check that patch sources don't import Guava directly used to pass without reading a file. It reads them now.
+
+* **TikTok:** What's new now tells you the notes are in English when the rest of the settings are in your language. The notes are also marked as English text for screen readers.
+
+* **TikTok:** Settings search now finds every box in a checklist, ticked or not, so searching "counts" finds Counts under the buttons in the right column list. Opening a box's result opens the list scrolled to that box without changing it. A list that's open when the screen rotates comes back with your unsaved ticks.
+
+* **TikTok:** An edit to the Java extension alone no longer reruns the fingerprint checks against the APK fixtures, since those never read it. Full test commands and release checks still cover every test, and a change to a patch, a test, a dependency or a fixture still reruns them.
+
 * **TikTok:** Hiding the status bar now also removes the black strip TikTok keeps above videos for it, and on Android 14 and older the video draws behind the camera cutout instead of below it. A new Hide the Clear display controls switch takes the close button, progress bar and pause and speed buttons off the screen while Clear display is on, along with the close button photo posts show in the corner. They're back the moment you leave Clear display.
 
 * **TikTok:** Clear Display now hides the stories button above Following when TikTok leaves it up, and puts it back as soon as you leave Clear Display. Pause leaves both the stories button and the top tabs to TikTok. Automatic Clear Display also waits until TikTok has really cleared the screen before it counts a try, so a first video TikTok wasn't ready for still gets cleared.

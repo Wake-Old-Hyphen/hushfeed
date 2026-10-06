@@ -1511,3 +1511,5 @@ Buttons on videos	Botones en los videos
 Seen videos put back: %1$s of %2$s	Vídeos vistos recuperados: %1$s de %2$s
 No cleared videos fit the current history limits.	Ningún vídeo borrado cabe dentro de los límites actuales del historial.
 Putting seen videos back	Recuperando vídeos vistos
+# context: a line above the What's new release notes, which come from the English changelog and are not translated.
+These notes are in English.	Estas notas están en inglés.
