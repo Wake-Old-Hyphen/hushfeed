@@ -906,7 +906,7 @@ Save	Kaydet
 Save SRT files with the video. They go to Movies on Android 11+, Download on Android 10, and your video folder on older versions. On Android 11+ with Save details on, the video moves to Download or Documents and the SRT files stay in Movies.	SRT dosyalarını videoyla birlikte kaydet. Android 11+ sürümlerinde Movies'e, Android 10'da Download'a, daha eski sürümlerde video klasörüne gider. Android 11+ sürümlerinde Ayrıntıları kaydet açıkken video Download veya Documents'a taşınır ve SRT dosyaları Movies'de kalır.
 Save a profile picture on a long press	Uzun basınca profil fotoğrafını kaydet
 Save a story on a long press	Uzun basınca hikayeyi kaydet
-Save every photo in the post as TikTok received it, not as the screen shows it.	Gönderideki her fotoğrafı ekranın gösterdiği gibi değil, TikTok'un aldığı gibi kaydet.
+Save every photo in the post at full size as a JPEG, not as the screen shows it.	Gönderideki her fotoğrafı ekranın gösterdiği gibi değil, tam boyutta JPEG olarak kaydet.
 Save field values	Alan değerlerini kaydet
 Save full report	Raporun tamamını kaydet
 Save media	Medyayı kaydet
@@ -1513,3 +1513,16 @@ No cleared videos fit the current history limits.	Silinen videoların hiçbiri g
 Putting seen videos back	İzlenen videolar geri yükleniyor
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Bu notlar İngilizcedir.
+Still waiting for the file app. Tap to stop waiting.	Dosya uygulaması hâlâ bekleniyor. Beklemeyi bırakmak için dokun.
+Stopped waiting for the file app. Nothing was changed.	Dosya uygulaması artık beklenmiyor. Hiçbir şey değiştirilmedi.
+Stopped waiting for the file app. It hasn't said yet whether the backup was saved.	Dosya uygulaması artık beklenmiyor. Yedeğin kaydedilip kaydedilmediğini henüz bildirmedi.
+The backup wasn't saved. Back up again when the file app is ready.	Yedek kaydedilmedi. Dosya uygulaması hazır olduğunda yeniden yedekle.
+The file app still has the last file. Try again once it lets go, or restart TikTok.	Dosya uygulaması son dosyayı hâlâ tutuyor. Bıraktığında tekrar dene ya da TikTok'u yeniden başlat.
+Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.	Dosya uygulamasının son dosyayı bırakması bekleniyor. Bırakmazsa TikTok'u yeniden başlat.
+Stopped waiting for the file app. Nothing was imported.	Dosya uygulaması artık beklenmiyor. Hiçbir şey içe aktarılmadı.
+The last report is still being saved	Son rapor hâlâ kaydediliyor
+Still waiting for the file app.	Dosya uygulaması hâlâ bekleniyor.
+Stop waiting	Beklemeyi bırak
+Stopped waiting for the file app. Nothing was exported.	Dosya uygulaması artık beklenmiyor. Hiçbir şey dışa aktarılmadı.
+Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Dosya uygulaması artık beklenmiyor. Dışa aktarımın kaydedilip kaydedilmediğini henüz bildirmedi.
+The export wasn't saved. Export again when the file app is ready.	Dışa aktarım kaydedilmedi. Dosya uygulaması hazır olduğunda yeniden dışa aktar.

@@ -103,9 +103,9 @@ A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", 
 
 ### A photo post saved as a video still has TikTok's watermark
 
-On a post that's one photo with a sound, TikTok's Download asks whether you want a video or the image. That video isn't one TikTok's servers keep. The post only carries the photo and the sound, so TikTok builds the video on your phone and adds its logo, the creator's handle and an end card while it does. Hushfeed's watermark-free saving swaps in the clean copy the server holds for a real video, and there isn't one here. Choose Download image for a clean copy of the photo, and with Advanced downloads, Download original photos saves it as TikTok received it.
+On a post that's one photo with a sound, TikTok's Download asks whether you want a video or the image. That video isn't one TikTok's servers keep. The post only carries the photo and the sound, so TikTok builds the video on your phone and adds its logo, the creator's handle and an end card while it does. Hushfeed's watermark-free saving swaps in the clean copy the server holds for a real video, and there isn't one here. Choose Download image for a clean copy of the photo, and with Advanced downloads, Download original photos saves it at the full size TikTok received.
 
-Turn on **Download original photos** under **Hushfeed settings > Downloads** to save the selected slides as separate source images. Video quality and Remove sound do not take over photo posts. A selected live photo saved as a motion clip keeps TikTok's native save. If the original images are unavailable, Hushfeed says so before letting the native save run.
+Turn on **Download original photos** under **Hushfeed settings > Downloads** to save the selected slides as separate source images. TikTok lists each of those photos as a HEIF copy first, a format plenty of galleries and computers can't open and some phones, Samsungs included, can't even decode. So on Android 9 and newer each photo is saved as a full-size JPEG instead, made from the WebP copy TikTok lists beside the HEIF. Video quality and Remove sound don't take over photo posts. A selected live photo saved as a motion clip keeps TikTok's native save. If the original images are unavailable, Hushfeed says so before letting the native save run.
 
 ### Patching stops at 24 or 25 percent
 

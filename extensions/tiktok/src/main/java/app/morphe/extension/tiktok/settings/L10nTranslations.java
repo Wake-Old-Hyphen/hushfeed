@@ -56,7 +56,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildAz() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillAz0(table);
         fillAz1(table);
         fillAz2(table);
@@ -2171,8 +2171,8 @@ public final class L10nTranslations {
                 "Saxlama ləğv edildi. Heç nə saxlanılmadı.");
         table.put("Save details beside the video",
                 "Təfərrüatları videonun yanında saxlayın");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Paylaşımdakı hər fotonu ekranda göründüyü kimi deyil, TikTok-un aldığı kimi saxlayın.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Paylaşımdakı hər fotonu ekranda göründüyü kimi deyil, tam ölçüdə JPEG kimi saxlayın.");
         table.put("Save field values",
                 "Sahə dəyərlərini saxlayın");
     }
@@ -2508,6 +2508,10 @@ public final class L10nTranslations {
                 "Qeyd hələ oxunur. Bir azdan yenidən toxunun.");
         table.put("Still saving the last one",
                 "Sonuncu hələ saxlanılır");
+        table.put("Still waiting for the file app.",
+                "Hələ də fayl tətbiqi gözlənilir.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Hələ də fayl tətbiqi gözlənilir. Gözləməni dayandırmaq üçün toxunun.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "ByteDance AppLog hadisələrinin, AppsFlyer atributunun, açıq Firebase ekran hesabatlarının və qəza hesabatlarının göndərilməsini dayandırın. TikTok-un öz diaqnostikası da onlarla birlikdə susur.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -2536,17 +2540,29 @@ public final class L10nTranslations {
                 "Video təkrarını dayandırın");
         table.put("Stop videos at the end instead of replaying them.",
                 "Videoları təkrar oynatmaq əvəzinə sonunda dayandırın.");
+        table.put("Stop waiting",
+                "Gözləməni dayandır");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "%1$s təklif olunan hesab bağlandıqdan sonra dayandı");
+    }
+
+    private static void fillAz20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Bir təklif olunan hesab bağlandıqdan sonra dayandı");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Fayl tətbiqini gözləmək dayandırıldı. O, ehtiyat nüsxənin saxlanılıb-saxlanılmadığını hələ bildirməyib.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Fayl tətbiqini gözləmək dayandırıldı. O, ixracın saxlanılıb-saxlanılmadığını hələ bildirməyib.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Fayl tətbiqini gözləmək dayandırıldı. Heç nə dəyişdirilmədi.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Fayl tətbiqini gözləmək dayandırıldı. Heç nə ixrac edilmədi.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Fayl tətbiqini gözləmək dayandırıldı. Heç nə idxal edilmədi.");
         table.put("Stopping after this file",
                 "Bu fayldan sonra dayandırılır");
         table.put("Stories",
                 "Hekayələr");
-    }
-
-    private static void fillAz20(Map<String, String> table) {
         table.put("Story",
                 "Hekayə");
         table.put("Story saved to %1$s",
@@ -2651,6 +2667,9 @@ public final class L10nTranslations {
                 "Həmin ehtiyat nüsxə zədələnib və ya yalnız qismən yüklənib. Heç nə dəyişdirilmədi.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Həmin ehtiyat nüsxə tam deyil, ona görə yarımçıq kəsilmiş ola bilər. Heç nə dəyişdirilmədi.");
+    }
+
+    private static void fillAz21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Həmin ayar dəyişikliyi alınmadı. Heç nə dəyişdirilmədi.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -2667,9 +2686,6 @@ public final class L10nTranslations {
                 "Lab bunu yoxlaya bilmir. TikTok onu yazıldığı kimi alır.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "Lab açıla bilmədi. Geri qayıdın və yenidən açın.");
-    }
-
-    private static void fillAz21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "Lab ən çox %1$s qayda saxlayır. Bu dəyişiklik %2$s qayda yaradacaqdı, ona görə heç nə dəyişdirilmədi.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -2688,6 +2704,8 @@ public final class L10nTranslations {
                 "Artıq saxlanılıb yoxlaması alınmadı. Yenidən cəhd edin.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Ehtiyat nüsxə başlamadı və yarımçıq faylı silinə bilmədi. Onu seçdiyiniz qovluqdan silin.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Ehtiyat nüsxə saxlanılmadı. Fayl tətbiqi hazır olanda yenidən ehtiyat nüsxə yaradın.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Kataloqa görə bu açar %1$s, bu əvəzləmə isə %2$s-dir. Əvəzləməni sıfırlayın və yenisini yaradın.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -2698,6 +2716,8 @@ public final class L10nTranslations {
                 "Diaqnostik hesabat saxlanıla bilmədi. Yenidən cəhd edin.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "Seçdiyiniz endirmə tətbiqi quraşdırılmayıb. Endirmələr altında Keçidləri başqa tətbiqə göndərin seçimini yoxlayın.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "İxrac saxlanılmadı. Fayl tətbiqi hazır olanda yenidən ixrac edin.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Lent fasilədən əvvəlki son dəqiqənin dörddə üçündə qaralır ki, ona düşməyəsiniz, çatasınız. Vaxt büdcəsi və çatmaq üçün fasilə lazımdır.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -2708,12 +2728,16 @@ public final class L10nTranslations {
                 "Bu video bitəndə lent dayanır.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Tətbiqə qayıdanda lent yenidən oynamağa başlamazdan əvvəl bir toxunuş gözləyir. Mesajlar, profillər və axtarış hələ də bir toxunuş uzaqlıqdadır.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "Fayl tətbiqi son faylı hələ də saxlayır. O, faylı buraxdıqdan sonra yenidən cəhd edin və ya TikTok-u yenidən başladın.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "hushfeed-safe-mode faylı silinə bilmədi. Hushfeed-i yenidən yandırmaq üçün onu Android/data altında TikTok-un qovluğundan silin.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "Hər iki büdcənin sıfırlandığı saat, 24 saatlıq formatda. Defolt olaraq səhər dörd, çünki saat birdə hələ sürüşdürən adam keçən gecəni yaşayır.");
         table.put("The last one is still waiting to start",
                 "Sonuncunun başlaması hələ gözlənilir");
+        table.put("The last report is still being saved",
+                "Son hesabat hələ saxlanılır");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Canlı fotonun klipi saxlanıla bilmədi. Yenidən cəhd edin.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -2766,6 +2790,9 @@ public final class L10nTranslations {
                 "Mesajın göndərildiyi gün vaxtı.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Video saxlanıla bilmədi. Yenidən cəhd edin və ya Avtomatik seçin.");
+    }
+
+    private static void fillAz22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "Video saxlanıldı, lakin onun qeydi yenilənə bilmədi. Sonrakı saxlama başqa nüsxə yarada bilər.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -2790,9 +2817,6 @@ public final class L10nTranslations {
                 "Bu kataloq girişi artıq mövcud deyil. Lab-ı yeniləyin və yenidən cəhd edin.");
         table.put("This change couldn't be saved. Try again.",
                 "Bu dəyişiklik saxlanıla bilmədi. Yenidən cəhd edin.");
-    }
-
-    private static void fillAz22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Bu konfiqurasiyada bu buildə təhlükəsiz kopyalanıb dəyişdirilə bilən sahə yoxdur.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -2889,6 +2913,9 @@ public final class L10nTranslations {
                 "TikTok-un öz gündəlik ekran vaxtı xatırlatması tətbiqi bağlanmasını gözləmək əvəzinə fona göndərir. Dərhal geri qayıtmaq xatırlatmanı ekranda saxlayır, ona görə limitə çatmaq mümkün qalır. TikTok-un Settings and privacy altında, Time and well-being bölməsində gündəlik limit təyin edilməlidir.");
         table.put("TikTok's own value",
                 "TikTok-un öz dəyəri");
+    }
+
+    private static void fillAz23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "TikTok-un oxut və dayandır düyməsi, eləcə də əvvəlki və növbəti düymələri lentdə görünür. TikTok bunları əks halda yalnız ekran oxuyucudan istifadə edənlərə göstərir. TikTok-un analitikası sətri və ona hər basışı qeyd edir.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -2913,9 +2940,6 @@ public final class L10nTranslations {
                 "Bugünkü büdcə kilidlənib. Lent %1$s vaxtında yenidən açılır. Mesajlar, profillər və axtarış hələ də işləyir.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Bugünkü büdcə kilidlənib. Bunu %1$s vaxtında yenidən dəyişmək olar.");
-    }
-
-    private static void fillAz23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Bu gün: %1$d dəqiqə");
         table.put("Today: %1$d minutes",
@@ -3012,6 +3036,9 @@ public final class L10nTranslations {
                 "Sakit lentdən istifadə edin");
         table.put("Use Save report for this large report",
                 "Bu böyük hesabat üçün Hesabatı saxla düyməsini istifadə edin");
+    }
+
+    private static void fillAz24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Basıb saxlama sürətində oynatmağa davam etmək üçün TikTok-un öz basıb saxla, aşağı çək və burax jestindən istifadə edin, Oxutma başqa sürət təyin etməyibsə 2x.");
         table.put("Use a default playback speed",
@@ -3036,9 +3063,6 @@ public final class L10nTranslations {
                 "Öz oflayn videolar limitinizdən istifadə edin");
         table.put("Using TikTok's value",
                 "TikTok-un dəyəri istifadə olunur");
-    }
-
-    private static void fillAz24(Map<String, String> table) {
         table.put("Value",
                 "Dəyər");
         table.put("Value to return",
@@ -3085,6 +3109,8 @@ public final class L10nTranslations {
                 "Büdcəni yumşaltmaq üçün bir gün gözləyin seçimi açıqdır, ona görə Hushfeed aktiv qalır");
         table.put("Wait before hiding the controls.",
                 "İdarəetmələri gizlətməzdən əvvəl gözləyin.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Fayl tətbiqinin son faylı buraxması gözlənilir. Buraxmasa, TikTok-u yenidən başladın.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Qeyd üçün gözlənilir. Qeyd etmək istədiyiniz ekrana keçin.");
         table.put("Waiting to save %1$s files",
@@ -3133,6 +3159,9 @@ public final class L10nTranslations {
                 "YTDLnis endirmə növü");
         table.put("Yes",
                 "Bəli");
+    }
+
+    private static void fillAz25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "YouTube Music açıla bilmədi. Onu özünüz açın və səsi axtarın.");
         table.put("YouTube Music isn't installed",
@@ -3159,9 +3188,6 @@ public final class L10nTranslations {
                 "Əvvəlki lent quruluşunuz geri qayıtdı. Bütün dəyişiklikləri tətbiq etmək üçün TikTok-u yenidən başladın.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "İdxal bitməzdən əvvəl baxılmış videoların tarixçəsi dəyişdi. Faylı yenidən seçin.");
-    }
-
-    private static void fillAz25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Sıfır fasilədən çıxış yolunu hər dəfə yerində saxlayır, bu həmişə belə olub. Başqa dəyər onun gündə neçə dəfə işləyəcəyini göstərir və onlar bitdikdən sonra fasilə gün yenidən başlayana qədər qalır. Çıxış yolunu tamamilə götürən kilidli büdcə zamanı nəzərə alınmır.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -3183,7 +3209,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildDe() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillDe0(table);
         fillDe1(table);
         fillDe2(table);
@@ -5298,8 +5324,8 @@ public final class L10nTranslations {
                 "Speichern abgebrochen. Es wurde nichts gespeichert.");
         table.put("Save details beside the video",
                 "Details neben dem Video speichern");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Jedes Foto des Beitrags so speichern, wie TikTok es empfangen hat, nicht so, wie der Bildschirm es zeigt.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Jedes Foto des Beitrags in voller Größe als JPEG speichern, nicht so, wie der Bildschirm es zeigt.");
         table.put("Save field values",
                 "Feldwerte speichern");
     }
@@ -5635,6 +5661,10 @@ public final class L10nTranslations {
                 "Der Verlauf wird noch gelesen. Tippe gleich noch einmal.");
         table.put("Still saving the last one",
                 "Das letzte wird noch gespeichert");
+        table.put("Still waiting for the file app.",
+                "Es wird noch auf die Datei-App gewartet.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Es wird noch auf die Datei-App gewartet. Tippe, um nicht mehr zu warten.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "ByteDance-AppLog-Ereignisse, AppsFlyer-Attribution, explizite Firebase-Bildschirmberichte und Absturzmeldungen nicht mehr senden. TikToks eigene Diagnose verstummt damit ebenfalls.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -5663,17 +5693,29 @@ public final class L10nTranslations {
                 "Videoschleife beenden");
         table.put("Stop videos at the end instead of replaying them.",
                 "Videos am Ende anhalten, statt sie zu wiederholen.");
+        table.put("Stop waiting",
+                "Nicht mehr warten");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Nach %1$s entfernten Kontovorschlägen gestoppt");
+    }
+
+    private static void fillDe20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Nach einem entfernten Kontovorschlag gestoppt");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Warten auf die Datei-App beendet. Sie hat noch nicht gemeldet, ob die Sicherung gespeichert wurde.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Warten auf die Datei-App beendet. Sie hat noch nicht gemeldet, ob der Export gespeichert wurde.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Warten auf die Datei-App beendet. Es wurde nichts geändert.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Warten auf die Datei-App beendet. Es wurde nichts exportiert.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Warten auf die Datei-App beendet. Es wurde nichts importiert.");
         table.put("Stopping after this file",
                 "Wird nach dieser Datei beendet");
         table.put("Stories",
                 "Storys");
-    }
-
-    private static void fillDe20(Map<String, String> table) {
         table.put("Story",
                 "Story");
         table.put("Story saved to %1$s",
@@ -5778,6 +5820,9 @@ public final class L10nTranslations {
                 "Diese Einstellungssicherung ist beschädigt oder nur teilweise heruntergeladen. Es wurde nichts geändert.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Diese Einstellungssicherung ist unvollständig und wurde womöglich abgeschnitten. Es wurde nichts geändert.");
+    }
+
+    private static void fillDe21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Diese Änderung hat nicht geklappt. Es wurde nichts geändert.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -5794,9 +5839,6 @@ public final class L10nTranslations {
                 "Das Lab kann das nicht prüfen. TikTok bekommt es genau so, wie du es tippst.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "Das Lab ließ sich nicht öffnen. Geh zurück und öffne es noch einmal.");
-    }
-
-    private static void fillDe21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "Das Lab speichert höchstens %1$s Regeln. Diese Änderung würde %2$s ergeben, daher wurde nichts geändert.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -5815,6 +5857,8 @@ public final class L10nTranslations {
                 "Die Prüfung bereits gespeicherter Videos ist fehlgeschlagen. Versuch es erneut.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Die Sicherung wurde nicht gestartet und ihre unvollständige Datei konnte nicht entfernt werden. Lösche sie aus dem gewählten Ordner.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Die Sicherung wurde nicht gespeichert. Sichere erneut, wenn die Datei-App bereit ist.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Der Katalog nennt für diesen Schlüssel %1$s, diese Überschreibung ist %2$s. Setze die Überschreibung zurück und leg eine neue an.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -5825,6 +5869,8 @@ public final class L10nTranslations {
                 "Der Diagnosebericht ließ sich nicht speichern. Versuch es noch einmal.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "Die gewaehlte Downloader-App ist nicht installiert. Pruefe Links an andere App senden unter Downloads.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "Der Export wurde nicht gespeichert. Exportiere erneut, wenn die Datei-App bereit ist.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Der Feed dunkelt in den letzten drei Viertelminuten vor der Sperre ab, damit man dort ankommt statt darauf zu landen. Braucht ein Zeitbudget und eine Sperre.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -5835,12 +5881,16 @@ public final class L10nTranslations {
                 "Der Feed hält an, wenn dieses Video endet.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Der Feed wartet auf ein Tippen, bevor er wieder abspielt, wenn du zur App zurückkehrst. Nachrichten, Profile und Suche bleiben einen Tipp entfernt.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "Die Datei-App hält die letzte Datei noch fest. Versuch es erneut, sobald sie sie freigibt, oder starte TikTok neu.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "Die Datei hushfeed-safe-mode konnte nicht entfernt werden. Lösche sie im TikTok-Ordner unter Android/data, um Hushfeed wieder einzuschalten.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "Die Stunde, zu der beide Limits zurückgesetzt werden, im 24-Stunden-Format. Standardmäßig vier Uhr morgens, denn wer um eins noch scrollt, hat immer noch gestern Abend.");
         table.put("The last one is still waiting to start",
                 "Das letzte wartet noch auf den Start");
+        table.put("The last report is still being saved",
+                "Der letzte Bericht wird noch gespeichert");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Der Clip des Live-Fotos konnte nicht gespeichert werden. Versuche es erneut.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -5893,6 +5943,9 @@ public final class L10nTranslations {
                 "Die Uhrzeit, zu der die Nachricht rausgeht.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Das Video konnte nicht gespeichert werden. Versuche es noch einmal oder wähle Automatisch.");
+    }
+
+    private static void fillDe22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "Das Video wurde gespeichert, sein Eintrag konnte aber nicht aktualisiert werden. Ein erneutes Speichern kann eine weitere Kopie erstellen.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -5917,9 +5970,6 @@ public final class L10nTranslations {
                 "Dieser Katalogeintrag ist nicht mehr verfügbar. Das Labor aktualisieren und es erneut versuchen.");
         table.put("This change couldn't be saved. Try again.",
                 "Diese Änderung konnte nicht gespeichert werden. Versuche es erneut.");
-    }
-
-    private static void fillDe22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Diese Konfiguration hat keine Felder, die sich in diesem Build gefahrlos kopieren und ändern lassen.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -6016,6 +6066,9 @@ public final class L10nTranslations {
                 "TikToks eigene tägliche Bildschirmzeit-Erinnerung schickt die App in den Hintergrund, statt darauf zu warten, weggetippt zu werden. Kommst du direkt zurück, bleibt die Erinnerung auf dem Bildschirm, damit das Limit erreichbar bleibt. Braucht ein Tageslimit unter TikToks Einstellungen und Datenschutz, unter Zeit und Wohlbefinden.");
         table.put("TikTok's own value",
                 "TikToks eigener Wert");
+    }
+
+    private static void fillDe23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "TikToks Taste für Wiedergabe und Pause sowie die Tasten für das vorherige und das nächste Video erscheinen im Feed. Sonst zeigt TikTok sie nur Menschen, die einen Screenreader nutzen. TikToks Analyse erfasst die Leiste und jeden Druck darauf.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -6040,9 +6093,6 @@ public final class L10nTranslations {
                 "Das heutige Budget ist gesperrt. Der Feed öffnet wieder um %1$s. Nachrichten, Profile und Suche funktionieren weiterhin.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Das heutige Budget ist gesperrt. Änderungen sind wieder ab %1$s möglich.");
-    }
-
-    private static void fillDe23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Heute: %1$d Minute");
         table.put("Today: %1$d minutes",
@@ -6139,6 +6189,9 @@ public final class L10nTranslations {
                 "„Ruhiger Feed“ verwenden");
         table.put("Use Save report for this large report",
                 "Nutze für diesen großen Bericht „Bericht speichern“");
+    }
+
+    private static void fillDe24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "TikToks eigene Geste „Halten, nach unten ziehen, loslassen“ verwenden, um bei der Geschwindigkeit zu bleiben, die beim Halten gilt. Das ist 2x, sofern unter Wiedergabe keine andere eingestellt ist.");
         table.put("Use a default playback speed",
@@ -6163,9 +6216,6 @@ public final class L10nTranslations {
                 "Eigene Grenze für Offline-Videos verwenden");
         table.put("Using TikTok's value",
                 "TikToks Wert wird verwendet");
-    }
-
-    private static void fillDe24(Map<String, String> table) {
         table.put("Value",
                 "Wert");
         table.put("Value to return",
@@ -6212,6 +6262,8 @@ public final class L10nTranslations {
                 "Lockerungen des Budgets einen Tag warten lassen ist an, daher bleibt Hushfeed an");
         table.put("Wait before hiding the controls.",
                 "Wartezeit, bevor die Bedienelemente ausgeblendet werden.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Warte, bis die Datei-App die letzte Datei freigibt. Starte TikTok neu, wenn sie es nicht tut.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Warte auf die Aufzeichnung. Geh zu dem Bildschirm, der aufgezeichnet werden soll.");
         table.put("Waiting to save %1$s files",
@@ -6260,6 +6312,9 @@ public final class L10nTranslations {
                 "YTDLnis-Downloadtyp");
         table.put("Yes",
                 "Ja");
+    }
+
+    private static void fillDe25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "YouTube Music konnte nicht geöffnet werden. Öffne es selbst und suche nach dem Sound.");
         table.put("YouTube Music isn't installed",
@@ -6286,9 +6341,6 @@ public final class L10nTranslations {
                 "Deine vorherige Feed-Einrichtung ist wiederhergestellt. Starte TikTok neu, um alle Änderungen anzuwenden.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Dein Verlauf hat sich vor Abschluss des Imports geändert. Wähle die Datei erneut.");
-    }
-
-    private static void fillDe25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Null lässt den Ausweg aus der Pause jedes Mal stehen, so wie bisher. Alles andere ist die Anzahl der Male pro Tag, die er funktioniert, und wenn sie aufgebraucht sind, bleibt die Pause bestehen, bis der Tag neu beginnt. Wird ignoriert, solange das Limit gesperrt ist, denn das nimmt den Ausweg ganz weg.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -6310,7 +6362,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildEs() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillEs0(table);
         fillEs1(table);
         fillEs2(table);
@@ -8425,8 +8477,8 @@ public final class L10nTranslations {
                 "Guardado cancelado. No se guardó nada.");
         table.put("Save details beside the video",
                 "Guardar detalles junto al video");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Guardar cada foto de la publicación tal como la recibió TikTok, no como la muestra la pantalla.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Guardar cada foto de la publicación a tamaño completo como JPEG, no como la muestra la pantalla.");
         table.put("Save field values",
                 "Guardar los valores de los campos");
     }
@@ -8762,6 +8814,10 @@ public final class L10nTranslations {
                 "Todavía se está leyendo el registro. Toca otra vez dentro de un momento.");
         table.put("Still saving the last one",
                 "Todavía se está guardando el anterior");
+        table.put("Still waiting for the file app.",
+                "Todavía esperando a la app de archivos.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Todavía esperando a la app de archivos. Toca para dejar de esperar.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "Impedir que se envíen los eventos AppLog de ByteDance, la atribución de AppsFlyer, los informes explícitos de pantalla de Firebase y los informes de fallos. Los diagnósticos propios de TikTok se callan con ellos.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -8790,17 +8846,29 @@ public final class L10nTranslations {
                 "Parar la repetición de los vídeos");
         table.put("Stop videos at the end instead of replaying them.",
                 "Parar los vídeos al final en vez de volver a reproducirlos.");
+        table.put("Stop waiting",
+                "Dejar de esperar");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Se detuvo tras descartar %1$s cuentas sugeridas");
+    }
+
+    private static void fillEs20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Se detuvo tras descartar una cuenta sugerida");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Se dejó de esperar a la app de archivos. Todavía no ha dicho si la copia de seguridad se guardó.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Se dejó de esperar a la app de archivos. Todavía no ha dicho si la exportación se guardó.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Se dejó de esperar a la app de archivos. No se cambió nada.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Se dejó de esperar a la app de archivos. No se exportó nada.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Se dejó de esperar a la app de archivos. No se importó nada.");
         table.put("Stopping after this file",
                 "Se detendrá después de este archivo");
         table.put("Stories",
                 "Historias");
-    }
-
-    private static void fillEs20(Map<String, String> table) {
         table.put("Story",
                 "Historia");
         table.put("Story saved to %1$s",
@@ -8905,6 +8973,9 @@ public final class L10nTranslations {
                 "Esa copia de seguridad está dañada o solo se descargó en parte. No se ha cambiado nada.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Esa copia de seguridad está incompleta, así que puede haberse cortado. No se ha cambiado nada.");
+    }
+
+    private static void fillEs21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Ese cambio de ajustes no llegó a aplicarse. No se ha cambiado nada.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -8921,9 +8992,6 @@ public final class L10nTranslations {
                 "El Lab no puede verificar esto. TikTok lo recibe exactamente como lo escribes.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "El Lab no se pudo abrir. Vuelve atrás y ábrelo otra vez.");
-    }
-
-    private static void fillEs21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "El Lab admite como máximo %1$s reglas. Este cambio daría un total de %2$s, así que no se cambió nada.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -8942,6 +9010,8 @@ public final class L10nTranslations {
                 "No se pudieron comprobar los videos ya guardados. Inténtalo de nuevo.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "La copia de seguridad no se inició y no se pudo eliminar el archivo incompleto. Bórralo de la carpeta que elegiste.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "La copia de seguridad no se guardó. Vuelve a hacerla cuando la app de archivos esté lista.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "El catálogo dice que esta clave es %1$s y esta anulación es %2$s. Restablece la anulación y crea una nueva.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -8952,6 +9022,8 @@ public final class L10nTranslations {
                 "No se pudo guardar el informe de diagnóstico. Inténtalo de nuevo.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "La aplicacion de descarga que elegiste no esta instalada. Revisa Enviar enlaces a otra aplicacion en Descargas.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "La exportación no se guardó. Vuelve a exportar cuando la app de archivos esté lista.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "El feed se oscurece en los últimos tres cuartos de minuto antes de la pausa, para que llegues a ella en lugar de caer. Necesita un presupuesto de tiempo y una pausa.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -8962,12 +9034,16 @@ public final class L10nTranslations {
                 "El feed se detiene cuando termine este vídeo.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "El feed espera un toque antes de reproducirse de nuevo cuando vuelves a la app. Mensajes, perfiles y búsqueda siguen a un toque.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "La app de archivos todavía tiene el último archivo. Inténtalo de nuevo cuando lo suelte o reinicia TikTok.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "No se pudo quitar el archivo hushfeed-safe-mode. Bórralo de la carpeta de TikTok dentro de Android/data para volver a activar Hushfeed.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "La hora a la que se reinician ambos límites, en formato de 24 horas. Las cuatro de la madrugada por defecto, porque quien sigue deslizando a la una todavía está en la noche anterior.");
         table.put("The last one is still waiting to start",
                 "El anterior todavía está esperando para empezar");
+        table.put("The last report is still being saved",
+                "Todavía se está guardando el último informe");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "No se pudo guardar el clip de la foto en vivo. Inténtalo de nuevo.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -9020,6 +9096,9 @@ public final class L10nTranslations {
                 "La hora del día a la que sale el mensaje.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "No se pudo guardar el vídeo. Inténtalo otra vez, o elige Automático.");
+    }
+
+    private static void fillEs22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "El video se guardó, pero no se pudo actualizar su registro. Si lo guardas de nuevo, puede crearse otra copia.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -9044,9 +9123,6 @@ public final class L10nTranslations {
                 "Esta entrada del catálogo ya no está disponible. Actualiza el Laboratorio e inténtalo otra vez.");
         table.put("This change couldn't be saved. Try again.",
                 "No se pudo guardar este cambio. Inténtalo de nuevo.");
-    }
-
-    private static void fillEs22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Esta configuración no tiene campos que se puedan copiar y cambiar con seguridad en esta compilación.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -9143,6 +9219,9 @@ public final class L10nTranslations {
                 "El propio recordatorio diario de tiempo en pantalla de TikTok manda la app a segundo plano en vez de esperar a que lo cierres. Si vuelves enseguida, el recordatorio se queda en pantalla, para que el límite siga a tu alcance. Necesita un límite diario en Ajustes y privacidad de TikTok, en Tiempo y bienestar.");
         table.put("TikTok's own value",
                 "Valor propio de TikTok");
+    }
+
+    private static void fillEs23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "El botón de reproducir y pausar de TikTok y sus botones de anterior y siguiente aparecen en el feed. Si no, TikTok solo los muestra a quienes usan un lector de pantalla. Las analíticas de TikTok registran la fila y cada toque en ella.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -9167,9 +9246,6 @@ public final class L10nTranslations {
                 "El presupuesto de hoy está bloqueado. El feed se abre otra vez a las %1$s. Los mensajes, los perfiles y la búsqueda siguen funcionando.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "El presupuesto de hoy está bloqueado. Esto se podrá volver a cambiar a las %1$s.");
-    }
-
-    private static void fillEs23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Hoy: %1$d minuto");
         table.put("Today: %1$d minutes",
@@ -9266,6 +9342,9 @@ public final class L10nTranslations {
                 "Usar Feed tranquilo");
         table.put("Use Save report for this large report",
                 "Usa «Guardar informe» para este informe grande");
+    }
+
+    private static void fillEs24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Usar el gesto propio de TikTok de mantener, deslizar hacia abajo y soltar para seguir a la velocidad de mantener pulsado, que es 2x salvo que elijas otra en Reproducción.");
         table.put("Use a default playback speed",
@@ -9290,9 +9369,6 @@ public final class L10nTranslations {
                 "Usar tu propio límite de vídeos sin conexión");
         table.put("Using TikTok's value",
                 "Se usa el valor de TikTok");
-    }
-
-    private static void fillEs24(Map<String, String> table) {
         table.put("Value",
                 "Valor");
         table.put("Value to return",
@@ -9339,6 +9415,8 @@ public final class L10nTranslations {
                 "Esperar un día para aflojar el presupuesto está activado, así que Hushfeed sigue activo");
         table.put("Wait before hiding the controls.",
                 "Esperar antes de ocultar los controles.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Esperando a que la app de archivos suelte el último archivo. Reinicia TikTok si no lo hace.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Esperando para grabar. Ve a la pantalla que quieres grabar.");
         table.put("Waiting to save %1$s files",
@@ -9387,6 +9465,9 @@ public final class L10nTranslations {
                 "Tipo de descarga de YTDLnis");
         table.put("Yes",
                 "Sí");
+    }
+
+    private static void fillEs25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "No se pudo abrir YouTube Music. Ábrelo tú mismo y busca el sonido.");
         table.put("YouTube Music isn't installed",
@@ -9413,9 +9494,6 @@ public final class L10nTranslations {
                 "Se ha recuperado tu configuración anterior del feed. Reinicia TikTok para aplicar todos los cambios.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Tu historial cambió antes de terminar la importación. Vuelve a elegir el archivo.");
-    }
-
-    private static void fillEs25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Cero deja la salida de la pausa disponible siempre, que es lo de siempre. Cualquier otro valor son las veces al día que funciona, y cuando se agotan la pausa se mantiene hasta que empieza el día siguiente. Se ignora mientras el límite está bloqueado, porque eso quita la salida del todo.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -9437,7 +9515,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildIn() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillIn0(table);
         fillIn1(table);
         fillIn2(table);
@@ -11552,8 +11630,8 @@ public final class L10nTranslations {
                 "Penyimpanan dibatalkan. Tidak ada yang disimpan.");
         table.put("Save details beside the video",
                 "Simpan detail di samping video");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Simpan setiap foto dalam unggahan seperti yang diterima TikTok, bukan seperti yang ditampilkan layar.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Simpan setiap foto dalam unggahan dalam ukuran penuh sebagai JPEG, bukan seperti yang ditampilkan layar.");
         table.put("Save field values",
                 "Simpan nilai bidang");
     }
@@ -11889,6 +11967,10 @@ public final class L10nTranslations {
                 "Catatannya masih dibaca. Ketuk lagi sebentar lagi.");
         table.put("Still saving the last one",
                 "Yang sebelumnya masih disimpan");
+        table.put("Still waiting for the file app.",
+                "Masih menunggu aplikasi file.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Masih menunggu aplikasi file. Ketuk untuk berhenti menunggu.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "Hentikan pengiriman peristiwa AppLog ByteDance, atribusi AppsFlyer, laporan layar Firebase, dan laporan mogok. Diagnostik milik TikTok ikut diam bersamanya.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -11917,17 +11999,29 @@ public final class L10nTranslations {
                 "Hentikan pengulangan video");
         table.put("Stop videos at the end instead of replaying them.",
                 "Hentikan video di akhir, bukan memutarnya ulang.");
+        table.put("Stop waiting",
+                "Berhenti menunggu");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Berhenti setelah menutup %1$s akun yang disarankan");
+    }
+
+    private static void fillIn20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Berhenti setelah menutup satu akun yang disarankan");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Berhenti menunggu aplikasi file. Aplikasi itu belum memberi tahu apakah cadangan sudah tersimpan.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Berhenti menunggu aplikasi file. Aplikasi itu belum memberi tahu apakah ekspor sudah tersimpan.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Berhenti menunggu aplikasi file. Tidak ada yang diubah.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Berhenti menunggu aplikasi file. Tidak ada yang diekspor.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Berhenti menunggu aplikasi file. Tidak ada yang diimpor.");
         table.put("Stopping after this file",
                 "Berhenti setelah berkas ini");
         table.put("Stories",
                 "Cerita");
-    }
-
-    private static void fillIn20(Map<String, String> table) {
         table.put("Story",
                 "Story");
         table.put("Story saved to %1$s",
@@ -12032,6 +12126,9 @@ public final class L10nTranslations {
                 "Cadangan pengaturan itu rusak atau hanya terunduh sebagian. Tidak ada yang diubah.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Cadangan pengaturan itu tidak lengkap, jadi mungkin terpotong. Tidak ada yang diubah.");
+    }
+
+    private static void fillIn21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Perubahan itu tidak berhasil. Tidak ada yang diubah.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -12048,9 +12145,6 @@ public final class L10nTranslations {
                 "Lab tidak bisa memeriksa ini. TikTok menerimanya persis seperti yang kamu ketik.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "Lab tidak bisa dibuka. Kembali lalu buka lagi.");
-    }
-
-    private static void fillIn21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "Lab menyimpan paling banyak %1$s aturan. Perubahan ini akan membuat jumlahnya %2$s, jadi tidak ada yang diubah.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -12069,6 +12163,8 @@ public final class L10nTranslations {
                 "Pemeriksaan video tersimpan gagal. Coba lagi.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Pencadangan tidak dimulai dan file yang belum lengkap tidak dapat dihapus. Hapus dari folder yang kamu pilih.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Cadangan tidak tersimpan. Cadangkan lagi saat aplikasi file sudah siap.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Katalog menyebut kunci ini %1$s dan penimpaan ini %2$s. Setel ulang penimpaan lalu buat yang baru.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -12079,6 +12175,8 @@ public final class L10nTranslations {
                 "Laporan diagnostik tidak bisa disimpan. Coba lagi.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "Aplikasi pengunduh yang kamu pilih tidak terpasang. Periksa Kirim tautan ke aplikasi lain di Unduhan.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "Ekspor tidak tersimpan. Ekspor lagi saat aplikasi file sudah siap.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Feed meredup selama tiga perempat menit terakhir sebelum jeda, agar kamu tiba di sana, bukan mendarat. Butuh anggaran waktu dan jeda.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -12089,12 +12187,16 @@ public final class L10nTranslations {
                 "Feed berhenti saat video ini selesai.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Feed menunggu satu ketukan sebelum mulai memutar lagi saat kamu kembali ke aplikasi. Pesan, profil, dan pencarian tetap satu ketukan.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "Aplikasi file masih memegang file terakhir. Coba lagi setelah dilepas, atau mulai ulang TikTok.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "File hushfeed-safe-mode tidak bisa dihapus. Hapus dari folder TikTok di dalam Android/data untuk mengaktifkan Hushfeed lagi.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "Jam saat kedua batas disetel ulang, dalam format 24 jam. Pukul empat pagi secara bawaan, karena orang yang masih menggulir pukul satu sebenarnya masih di malam sebelumnya.");
         table.put("The last one is still waiting to start",
                 "Yang sebelumnya masih menunggu untuk dimulai");
+        table.put("The last report is still being saved",
+                "Laporan terakhir masih disimpan");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Klip foto langsung tidak bisa disimpan. Coba lagi.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -12147,6 +12249,9 @@ public final class L10nTranslations {
                 "Jam berapa pesan dikirim setiap hari.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Videonya tidak bisa disimpan. Coba lagi, atau pilih Otomatis.");
+    }
+
+    private static void fillIn22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "Video telah disimpan, tetapi catatannya tidak dapat diperbarui. Penyimpanan berikutnya mungkin membuat salinan lain.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -12171,9 +12276,6 @@ public final class L10nTranslations {
                 "Entri katalog ini sudah tidak tersedia. Segarkan Lab dan coba lagi.");
         table.put("This change couldn't be saved. Try again.",
                 "Perubahan ini tidak dapat disimpan. Coba lagi.");
-    }
-
-    private static void fillIn22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Konfigurasi ini tidak punya bidang yang bisa disalin dan diubah dengan aman di build ini.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -12270,6 +12372,9 @@ public final class L10nTranslations {
                 "Pengingat waktu layar harian milik TikTok sendiri mengirim aplikasi ke latar belakang, bukan menunggu ditutup. Kalau kamu langsung kembali, pengingatnya tetap di layar, jadi batasnya tetap bisa dijangkau. Perlu batas harian di Pengaturan dan privasi TikTok, di bagian Waktu dan kesehatan.");
         table.put("TikTok's own value",
                 "Nilai milik TikTok");
+    }
+
+    private static void fillIn23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "Tombol putar dan jeda TikTok serta tombol sebelumnya dan berikutnya muncul di feed. Selain itu TikTok hanya menampilkannya kepada pengguna pembaca layar. Analitik TikTok mencatat baris ini dan setiap ketukan di atasnya.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -12294,9 +12399,6 @@ public final class L10nTranslations {
                 "Anggaran hari ini terkunci. Feed terbuka lagi pada %1$s. Pesan, profil dan pencarian tetap berfungsi.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Anggaran hari ini terkunci. Ini bisa diubah lagi pada %1$s.");
-    }
-
-    private static void fillIn23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Hari ini: %1$d menit");
         table.put("Today: %1$d minutes",
@@ -12393,6 +12495,9 @@ public final class L10nTranslations {
                 "Gunakan Feed tenang");
         table.put("Use Save report for this large report",
                 "Gunakan Simpan laporan untuk laporan besar ini");
+    }
+
+    private static void fillIn24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Pakai gestur bawaan TikTok, tahan lalu tarik ke bawah dan lepas, untuk tetap di kecepatan tahan, yaitu 2x kecuali kamu memilih yang lain di Pemutaran.");
         table.put("Use a default playback speed",
@@ -12417,9 +12522,6 @@ public final class L10nTranslations {
                 "Gunakan batas video offline kamu sendiri");
         table.put("Using TikTok's value",
                 "Memakai nilai TikTok");
-    }
-
-    private static void fillIn24(Map<String, String> table) {
         table.put("Value",
                 "Nilai");
         table.put("Value to return",
@@ -12466,6 +12568,8 @@ public final class L10nTranslations {
                 "Tunggu sehari untuk melonggarkan anggaran aktif, jadi Hushfeed tetap aktif");
         table.put("Wait before hiding the controls.",
                 "Tunggu sebelum kontrol disembunyikan.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Menunggu aplikasi file melepas file terakhir. Mulai ulang TikTok jika tidak dilepas.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Menunggu untuk merekam. Buka layar yang ingin kamu rekam.");
         table.put("Waiting to save %1$s files",
@@ -12514,6 +12618,9 @@ public final class L10nTranslations {
                 "Jenis unduhan YTDLnis");
         table.put("Yes",
                 "Ya");
+    }
+
+    private static void fillIn25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "YouTube Music tidak bisa dibuka. Buka sendiri lalu cari suaranya.");
         table.put("YouTube Music isn't installed",
@@ -12540,9 +12647,6 @@ public final class L10nTranslations {
                 "Pengaturan feed kamu sebelumnya sudah dipulihkan. Mulai ulang TikTok untuk menerapkan semua perubahan.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Riwayat tontonan berubah sebelum impor selesai. Pilih kembali berkas.");
-    }
-
-    private static void fillIn25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Nol membiarkan jalan keluar dari penahanan selalu tersedia, seperti selama ini. Nilai lain adalah berapa kali sehari jalan itu bekerja, dan begitu habis, penahanan tetap berlaku sampai hari berganti. Diabaikan selama batas dikunci, karena itu menghilangkan jalan keluarnya sama sekali.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -12564,7 +12668,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildIt() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillIt0(table);
         fillIt1(table);
         fillIt2(table);
@@ -14679,8 +14783,8 @@ public final class L10nTranslations {
                 "Salvataggio annullato. Non è stato salvato nulla.");
         table.put("Save details beside the video",
                 "Salva i dettagli insieme al video");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Salva ogni foto del post così come l'ha ricevuta TikTok, non come la mostra lo schermo.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Salva ogni foto del post a dimensione piena in JPEG, non come la mostra lo schermo.");
         table.put("Save field values",
                 "Salva i valori dei campi");
     }
@@ -15016,6 +15120,10 @@ public final class L10nTranslations {
                 "Lettura della cronologia ancora in corso. Tocca di nuovo tra poco.");
         table.put("Still saving the last one",
                 "L'ultimo è ancora in fase di salvataggio");
+        table.put("Still waiting for the file app.",
+                "Ancora in attesa dell'app dei file.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Ancora in attesa dell'app dei file. Tocca per smettere di aspettare.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "Impedisce l'invio degli eventi AppLog di ByteDance, dell'attribuzione AppsFlyer, dei rapporti espliciti sulle schermate di Firebase e delle segnalazioni di arresto anomalo. Anche la diagnostica interna di TikTok si interrompe con questa opzione.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -15044,17 +15152,29 @@ public final class L10nTranslations {
                 "Interrompi la riproduzione in loop dei video");
         table.put("Stop videos at the end instead of replaying them.",
                 "Ferma i video alla fine invece di farli ripartire.");
+        table.put("Stop waiting",
+                "Smetti di aspettare");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Interrotto dopo aver ignorato %1$s account suggeriti");
+    }
+
+    private static void fillIt20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Interrotto dopo aver ignorato un account suggerito");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Attesa dell'app dei file interrotta. Non ha ancora detto se il backup è stato salvato.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Attesa dell'app dei file interrotta. Non ha ancora detto se l'esportazione è stata salvata.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Attesa dell'app dei file interrotta. Non è stato modificato nulla.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Attesa dell'app dei file interrotta. Non è stato esportato nulla.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Attesa dell'app dei file interrotta. Non è stato importato nulla.");
         table.put("Stopping after this file",
                 "Interruzione dopo questo file");
         table.put("Stories",
                 "Storie");
-    }
-
-    private static void fillIt20(Map<String, String> table) {
         table.put("Story",
                 "Storia");
         table.put("Story saved to %1$s",
@@ -15159,6 +15279,9 @@ public final class L10nTranslations {
                 "Questo backup delle impostazioni è danneggiato o scaricato solo in parte. Non è stato modificato nulla.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Questo backup delle impostazioni è incompleto e potrebbe essere stato interrotto. Non è stato modificato nulla.");
+    }
+
+    private static void fillIt21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Questa modifica delle impostazioni non è andata a buon fine. Non è stato modificato nulla.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -15175,9 +15298,6 @@ public final class L10nTranslations {
                 "Il Lab non può verificarlo. TikTok lo riceve esattamente come lo digiti.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "Non è stato possibile aprire il Lab. Torna indietro e riprova ad aprirlo.");
-    }
-
-    private static void fillIt21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "Il Lab conserva al massimo %1$s regole. Questa modifica ne produrrebbe %2$s, quindi non è stato cambiato nulla.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -15196,6 +15316,8 @@ public final class L10nTranslations {
                 "Il controllo dei video già salvati non è riuscito. Riprova.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Il backup non è stato avviato e non è stato possibile rimuovere il suo file parziale. Eliminalo dalla cartella che hai scelto.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Il backup non è stato salvato. Ripeti il backup quando l'app dei file è pronta.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Il catalogo indica che questa chiave è %1$s, mentre questa sovrascrittura è %2$s. Reimposta la sovrascrittura e creane una nuova.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -15206,6 +15328,8 @@ public final class L10nTranslations {
                 "Il rapporto diagnostico non è stato salvato. Riprova.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "L'app di download scelta non è installata. Controlla \"Invia i link a un'altra app\" in Download.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "L'esportazione non è stata salvata. Esporta di nuovo quando l'app dei file è pronta.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Il feed si scurisce gradualmente negli ultimi quarantacinque secondi prima del blocco, così ci arrivi invece di caderci dentro. Richiede un budget di tempo e un blocco a cui arrivare.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -15216,12 +15340,16 @@ public final class L10nTranslations {
                 "Il feed si ferma quando questo video finisce.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Quando torni nell'app, il feed aspetta un tocco prima di riprendere a riprodurre. Messaggi, profili e ricerca restano a un tocco di distanza.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "L'app dei file ha ancora l'ultimo file. Riprova quando lo rilascia oppure riavvia TikTok.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "Non è stato possibile rimuovere il file hushfeed-safe-mode. Eliminalo dalla cartella di TikTok sotto Android/data per riattivare Hushfeed.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "L'ora in cui entrambi i budget si azzerano, in formato 24 ore. Di default le quattro del mattino, perché chi scrolla ancora all'una di notte sta ancora vivendo la serata di ieri.");
         table.put("The last one is still waiting to start",
                 "L'ultimo è ancora in attesa di iniziare");
+        table.put("The last report is still being saved",
+                "L'ultimo rapporto è ancora in fase di salvataggio");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Non è stato possibile salvare il clip della Live Photo. Riprova.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -15274,6 +15402,9 @@ public final class L10nTranslations {
                 "L'orario in cui viene inviato il messaggio.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Non è stato possibile salvare il video. Riprova oppure scegli Automatico.");
+    }
+
+    private static void fillIt22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "Il video è stato salvato, ma non è stato possibile aggiornare il suo registro. Un salvataggio successivo potrebbe crearne un'altra copia.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -15298,9 +15429,6 @@ public final class L10nTranslations {
                 "Questa voce del catalogo non è più disponibile. Aggiorna il Lab e riprova.");
         table.put("This change couldn't be saved. Try again.",
                 "Non è stato possibile salvare questa modifica. Riprova.");
-    }
-
-    private static void fillIt22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Questa configurazione non ha campi che si possano copiare e modificare in sicurezza in questa build.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -15397,6 +15525,9 @@ public final class L10nTranslations {
                 "Il promemoria giornaliero sul tempo di utilizzo di TikTok manda l'app in background invece di aspettare di essere chiuso. Tornando subito indietro, il promemoria resta sullo schermo, così il limite resta raggiungibile. Richiede un limite giornaliero impostato in TikTok, in Impostazioni e privacy, sotto Tempo e benessere.");
         table.put("TikTok's own value",
                 "Il valore originale di TikTok");
+    }
+
+    private static void fillIt23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "Il pulsante di riproduzione e pausa di TikTok e i pulsanti per il video precedente e successivo compaiono nel feed. Altrimenti TikTok li mostra solo a chi usa uno screen reader. Le analisi di TikTok registrano la barra e ogni tocco su di essa.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -15421,9 +15552,6 @@ public final class L10nTranslations {
                 "Il budget di oggi è bloccato. Il feed si riapre alle %1$s. Messaggi, profili e ricerca continuano a funzionare.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Il budget di oggi è bloccato. Potrai modificarlo di nuovo alle %1$s.");
-    }
-
-    private static void fillIt23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Oggi: %1$d minuto");
         table.put("Today: %1$d minutes",
@@ -15520,6 +15648,9 @@ public final class L10nTranslations {
                 "Usa \"Feed tranquillo\"");
         table.put("Use Save report for this large report",
                 "Usa Salva rapporto per questo rapporto di grandi dimensioni");
+    }
+
+    private static void fillIt24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Usa il gesto originale di TikTok (tieni premuto, trascina verso il basso, rilascia) per continuare a riprodurre alla velocità di pressione prolungata, 2x salvo diversa impostazione in Riproduzione.");
         table.put("Use a default playback speed",
@@ -15544,9 +15675,6 @@ public final class L10nTranslations {
                 "Usa un limite personalizzato per i video offline");
         table.put("Using TikTok's value",
                 "In uso il valore di TikTok");
-    }
-
-    private static void fillIt24(Map<String, String> table) {
         table.put("Value",
                 "Valore");
         table.put("Value to return",
@@ -15593,6 +15721,8 @@ public final class L10nTranslations {
                 "\"Aspetta un giorno prima di allentare il budget\" è attivo, quindi Hushfeed resta attivo");
         table.put("Wait before hiding the controls.",
                 "Tempo di attesa prima di nascondere i controlli.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "In attesa che l'app dei file rilasci l'ultimo file. Riavvia TikTok se non lo fa.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "In attesa di registrare. Vai alla schermata che vuoi registrare.");
         table.put("Waiting to save %1$s files",
@@ -15641,6 +15771,9 @@ public final class L10nTranslations {
                 "Tipo di download di YTDLnis");
         table.put("Yes",
                 "Sì");
+    }
+
+    private static void fillIt25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "Non è stato possibile aprire YouTube Music. Aprila manualmente e cerca l'audio.");
         table.put("YouTube Music isn't installed",
@@ -15667,9 +15800,6 @@ public final class L10nTranslations {
                 "La tua configurazione precedente del feed è stata ripristinata. Riavvia TikTok per applicare tutte le modifiche.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "La cronologia è cambiata prima del termine dell'importazione. Scegli di nuovo il file.");
-    }
-
-    private static void fillIt25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Zero lascia sempre disponibile la via d'uscita dal blocco, come ha sempre fatto. Qualsiasi altro valore indica quante volte al giorno funziona, e una volta esaurite il blocco resta attivo finché la giornata non ricomincia. Viene ignorato finché il budget è bloccato, perché questo elimina del tutto la via d'uscita.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -15691,7 +15821,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildPt_rBR() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillPt_rBR0(table);
         fillPt_rBR1(table);
         fillPt_rBR2(table);
@@ -17806,8 +17936,8 @@ public final class L10nTranslations {
                 "Salvamento cancelado. Nada foi salvo.");
         table.put("Save details beside the video",
                 "Salvar detalhes junto ao vídeo");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Salvar cada foto da publicação como o TikTok a recebeu, não como a tela a mostra.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Salvar cada foto da publicação em tamanho completo como JPEG, não como a tela a mostra.");
         table.put("Save field values",
                 "Salvar os valores dos campos");
     }
@@ -18143,6 +18273,10 @@ public final class L10nTranslations {
                 "O registro ainda está sendo lido. Toque de novo daqui a pouco.");
         table.put("Still saving the last one",
                 "O anterior ainda está sendo salvo");
+        table.put("Still waiting for the file app.",
+                "Ainda aguardando o app de arquivos.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Ainda aguardando o app de arquivos. Toque para parar de esperar.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "Impedir o envio dos eventos AppLog da ByteDance, da atribuição do AppsFlyer, dos relatórios explícitos de tela do Firebase e dos relatórios de falha. Os diagnósticos do próprio TikTok se calam junto.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -18171,17 +18305,29 @@ public final class L10nTranslations {
                 "Parar a repetição dos vídeos");
         table.put("Stop videos at the end instead of replaying them.",
                 "Parar os vídeos no fim em vez de tocá-los de novo.");
+        table.put("Stop waiting",
+                "Parar de esperar");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Parou após dispensar %1$s contas sugeridas");
+    }
+
+    private static void fillPt_rBR20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Parou após dispensar uma conta sugerida");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "A espera pelo app de arquivos foi interrompida. Ele ainda não informou se o backup foi salvo.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "A espera pelo app de arquivos foi interrompida. Ele ainda não informou se a exportação foi salva.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "A espera pelo app de arquivos foi interrompida. Nada foi alterado.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "A espera pelo app de arquivos foi interrompida. Nada foi exportado.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "A espera pelo app de arquivos foi interrompida. Nada foi importado.");
         table.put("Stopping after this file",
                 "Parando depois deste arquivo");
         table.put("Stories",
                 "Stories");
-    }
-
-    private static void fillPt_rBR20(Map<String, String> table) {
         table.put("Story",
                 "Story");
         table.put("Story saved to %1$s",
@@ -18286,6 +18432,9 @@ public final class L10nTranslations {
                 "Esse backup está danificado ou só foi baixado em parte. Nada foi alterado.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Esse backup está incompleto, então pode ter sido cortado. Nada foi alterado.");
+    }
+
+    private static void fillPt_rBR21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Essa mudança de configuração não chegou a valer. Nada foi alterado.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -18302,9 +18451,6 @@ public final class L10nTranslations {
                 "O Lab não consegue verificar isso. O TikTok recebe exatamente como você digitou.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "O Lab não abriu. Volte e abra de novo.");
-    }
-
-    private static void fillPt_rBR21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "O Lab mantém no máximo %1$s regras. Esta alteração resultaria em %2$s, então nada foi alterado.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -18323,6 +18469,8 @@ public final class L10nTranslations {
                 "Falha ao verificar os vídeos já salvos. Tente novamente.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "O backup não foi iniciado e não foi possível remover o arquivo incompleto. Exclua-o da pasta que você escolheu.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "O backup não foi salvo. Faça o backup de novo quando o app de arquivos estiver pronto.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "O catálogo diz que esta chave é %1$s e esta substituição é %2$s. Redefina a substituição e crie uma nova.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -18333,6 +18481,8 @@ public final class L10nTranslations {
                 "Não foi possível salvar o relatório de diagnóstico. Tente de novo.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "O aplicativo de download que voce escolheu nao esta instalado. Verifique Enviar links para outro aplicativo em Downloads.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "A exportação não foi salva. Exporte de novo quando o app de arquivos estiver pronto.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "O feed escurece nos últimos três quartos de minuto antes da pausa, para que você chegue a ela em vez de cair nela. Precisa de um orçamento de tempo e uma pausa.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -18343,12 +18493,16 @@ public final class L10nTranslations {
                 "O feed para quando este vídeo terminar.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "O feed espera um toque antes de reproduzir de novo quando você volta ao app. Mensagens, perfis e busca continuam a um toque.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "O app de arquivos ainda está com o último arquivo. Tente de novo quando ele liberar ou reinicie o TikTok.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "Não foi possível remover o arquivo hushfeed-safe-mode. Apague-o da pasta do TikTok em Android/data para ativar o Hushfeed de novo.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "A hora em que os dois limites zeram, no relógio de 24 horas. Quatro da manhã por padrão, porque quem ainda está rolando à uma continua na noite anterior.");
         table.put("The last one is still waiting to start",
                 "O anterior ainda está esperando para começar");
+        table.put("The last report is still being saved",
+                "O último relatório ainda está sendo salvo");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "O clipe da foto ao vivo não pôde ser salvo. Tente novamente.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -18401,6 +18555,9 @@ public final class L10nTranslations {
                 "O horário do dia em que a mensagem é enviada.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Não foi possível salvar o vídeo. Tente de novo, ou escolha Automático.");
+    }
+
+    private static void fillPt_rBR22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "O vídeo foi salvo, mas seu registro não pôde ser atualizado. Salvar novamente pode criar outra cópia.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -18425,9 +18582,6 @@ public final class L10nTranslations {
                 "Esta entrada do catálogo não está mais disponível. Atualize o Laboratório e tente de novo.");
         table.put("This change couldn't be saved. Try again.",
                 "Não foi possível salvar esta alteração. Tente novamente.");
-    }
-
-    private static void fillPt_rBR22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Esta configuração não tem campos que dê para copiar e mudar com segurança nesta build.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -18524,6 +18678,9 @@ public final class L10nTranslations {
                 "O próprio lembrete diário de tempo de tela do TikTok manda o app para o segundo plano em vez de esperar ser dispensado. Se você voltar logo em seguida, o lembrete fica na tela, para o limite continuar ao alcance. Precisa de um limite diário em Configurações e privacidade do TikTok, em Tempo e bem-estar.");
         table.put("TikTok's own value",
                 "Valor do próprio TikTok");
+    }
+
+    private static void fillPt_rBR23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "O botão de reproduzir e pausar do TikTok e os botões de anterior e próximo aparecem no feed. Fora isso, o TikTok só os mostra para quem usa um leitor de tela. As análises do TikTok registram a fileira e cada toque nela.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -18548,9 +18705,6 @@ public final class L10nTranslations {
                 "O limite de hoje está travado. O feed abre de novo às %1$s. As mensagens, os perfis e a busca continuam funcionando.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "O limite de hoje está travado. Isto poderá ser mudado de novo às %1$s.");
-    }
-
-    private static void fillPt_rBR23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Hoje: %1$d minuto");
         table.put("Today: %1$d minutes",
@@ -18647,6 +18801,9 @@ public final class L10nTranslations {
                 "Usar Feed tranquilo");
         table.put("Use Save report for this large report",
                 "Use “Salvar relatório” para este relatório grande");
+    }
+
+    private static void fillPt_rBR24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Usar o gesto do próprio TikTok de segurar, puxar para baixo e soltar para continuar na velocidade de segurar, que é 2x a menos que você escolha outra em Reprodução.");
         table.put("Use a default playback speed",
@@ -18671,9 +18828,6 @@ public final class L10nTranslations {
                 "Usar o seu próprio limite de vídeos offline");
         table.put("Using TikTok's value",
                 "Usando o valor do TikTok");
-    }
-
-    private static void fillPt_rBR24(Map<String, String> table) {
         table.put("Value",
                 "Valor");
         table.put("Value to return",
@@ -18720,6 +18874,8 @@ public final class L10nTranslations {
                 "Esperar um dia para afrouxar o limite está ligado, então o Hushfeed continua ligado");
         table.put("Wait before hiding the controls.",
                 "Esperar antes de limpar a tela.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Aguardando o app de arquivos liberar o último arquivo. Reinicie o TikTok se ele não liberar.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Aguardando para gravar. Vá até a tela que você quer gravar.");
         table.put("Waiting to save %1$s files",
@@ -18768,6 +18924,9 @@ public final class L10nTranslations {
                 "Tipo de download do YTDLnis");
         table.put("Yes",
                 "Sim");
+    }
+
+    private static void fillPt_rBR25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "O YouTube Music não pôde ser aberto. Abra você mesmo e procure o som.");
         table.put("YouTube Music isn't installed",
@@ -18794,9 +18953,6 @@ public final class L10nTranslations {
                 "Sua configuração anterior do feed foi restaurada. Reinicie o TikTok para aplicar todas as mudanças.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "Seu histórico mudou antes do fim da importação. Escolha o arquivo novamente.");
-    }
-
-    private static void fillPt_rBR25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Zero deixa a saída da espera disponível sempre, como sempre foi. Qualquer outro valor é quantas vezes por dia ela funciona, e quando acabam a espera continua até o dia recomeçar. Ignorado enquanto o limite está travado, porque isso tira a saída por completo.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",
@@ -18818,7 +18974,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildRu() {
-        Map<String, String> table = new HashMap<>(3294);
+        Map<String, String> table = new HashMap<>(3320);
         fillRu0(table);
         fillRu1(table);
         fillRu2(table);
@@ -21157,8 +21313,8 @@ public final class L10nTranslations {
                 "Сохранение отменено. Ничего не сохранено.");
         table.put("Save details beside the video",
                 "Сохранять детали рядом с видео");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Сохранять каждое фото публикации в том виде, в каком его получил TikTok, а не как оно показано на экране.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Сохранять каждое фото публикации в полном размере в формате JPEG, а не как оно показано на экране.");
         table.put("Save field values",
                 "Сохранить значения полей");
         table.put("Save full report",
@@ -21512,6 +21668,10 @@ public final class L10nTranslations {
                 "Запись всё ещё читается. Нажмите ещё раз через момент.");
         table.put("Still saving the last one",
                 "Последнее всё ещё сохраняется");
+        table.put("Still waiting for the file app.",
+                "Приложение для файлов всё ещё не ответило.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Приложение для файлов всё ещё не ответило. Нажмите, чтобы перестать ждать.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "Останавливать отправку событий ByteDance AppLog, атрибуции AppsFlyer, явных отчётов об экранах Firebase и отчётов о сбоях. Вместе с ними замолкает и собственная диагностика TikTok.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -21540,10 +21700,25 @@ public final class L10nTranslations {
                 "Останавливать зацикливание видео");
         table.put("Stop videos at the end instead of replaying them.",
                 "Останавливать видео в конце вместо повторного воспроизведения.");
+        table.put("Stop waiting",
+                "Перестать ждать");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Остановлено после %1$s отклонённых предложенных аккаунтов");
         table.put("Stopped after dismissing one suggested account",
                 "Остановлено после одного отклонённого предложенного аккаунта");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранена ли резервная копия.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранён ли экспорт.");
+    }
+
+    private static void fillRu22(Map<String, String> table) {
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Ожидание приложения для файлов остановлено. Ничего не изменено.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Ожидание приложения для файлов остановлено. Ничего не экспортировано.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Ожидание приложения для файлов остановлено. Ничего не импортировано.");
         table.put("Stopping after this file",
                 "Остановка после этого файла");
         table.put("Stories",
@@ -21554,9 +21729,6 @@ public final class L10nTranslations {
                 "История сохранена в %1$s");
         table.put("Streak",
                 "Серия");
-    }
-
-    private static void fillRu22(Map<String, String> table) {
         table.put("Structured value observed",
                 "Обнаружено структурированное значение");
         table.put("Subtitle language",
@@ -21661,6 +21833,9 @@ public final class L10nTranslations {
                 "Эта резервная копия настроек содержит список правил ленты, превышающий размер, который принимает Hushfeed. Ничего не изменено.");
         table.put("That settings backup holds a value Hushfeed can't read. Nothing was altered.",
                 "Эта резервная копия настроек содержит значение, которое Hushfeed не может прочитать. Ничего не изменено.");
+    }
+
+    private static void fillRu23(Map<String, String> table) {
         table.put("That settings backup holds more Feature Gate Lab rules than the Lab takes. Nothing was altered.",
                 "Эта резервная копия настроек содержит больше правил Feature Gate Lab, чем принимает Lab. Ничего не изменено.");
         table.put("That settings backup is damaged or only partly downloaded. Nothing was altered.",
@@ -21677,9 +21852,6 @@ public final class L10nTranslations {
                 "Строка «Активность» с лайками и комментариями к вашим публикациям исчезает из Входящих. Уведомления о них по-прежнему приходят.");
         table.put("The Archive row leaves the Inbox. Archived chats are kept.",
                 "Строка «Архив» исчезает из Входящих. Архивные чаты сохраняются.");
-    }
-
-    private static void fillRu23(Map<String, String> table) {
         table.put("The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.",
                 "Названия Подписки и Рекомендации над лентой исчезают. Переключение между лентами свайпом и кнопка поиска остаются как есть.");
         table.put("The Lab can't check this. TikTok gets it exactly as typed.",
@@ -21704,6 +21876,8 @@ public final class L10nTranslations {
                 "Проверка уже сохранённых не удалась. Повторите попытку.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Резервное копирование не началось, и не удалось удалить его неполный файл. Удалите его из выбранной папки.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Резервная копия не сохранена. Создайте её снова, когда приложение для файлов будет готово.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Каталог указывает для этого ключа значение %1$s, а для этого переопределения значение %2$s. Сбросьте переопределение и создайте новое.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -21714,6 +21888,8 @@ public final class L10nTranslations {
                 "Не удалось сохранить диагностический отчёт. Повторите попытку.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "Выбранное приложение-загрузчик не установлено. Проверьте «Отправлять ссылки в другое приложение» в разделе «Загрузки».");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "Экспорт не сохранён. Экспортируйте снова, когда приложение для файлов будет готово.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Лента гаснет в последние три четверти минуты перед паузой, чтобы вы пришли к ней, а не упёрлись в неё внезапно. Нужны лимит времени и пауза, до которой можно дойти.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -21724,12 +21900,16 @@ public final class L10nTranslations {
                 "Лента останавливается, когда это видео заканчивается.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Лента ждёт одного нажатия, прежде чем снова начать воспроизведение, когда вы возвращаетесь в приложение. Сообщения, профили и поиск по-прежнему в одном нажатии от вас.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "Приложение для файлов всё ещё держит последний файл. Повторите попытку, когда оно его отпустит, или перезапустите TikTok.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "Не удалось удалить файл hushfeed-safe-mode. Удалите его из папки TikTok в Android/data, чтобы снова включить Hushfeed.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "Час, когда сбрасываются оба лимита, по 24-часовому формату. По умолчанию четыре утра, потому что тот, кто всё ещё листает ленту в час ночи, всё ещё живёт вчерашним вечером.");
         table.put("The last one is still waiting to start",
                 "Последнее всё ещё ожидает начала");
+        table.put("The last report is still being saved",
+                "Последний отчёт всё ещё сохраняется");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Не удалось сохранить клип live-фото. Повторите попытку.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -21776,6 +21956,9 @@ public final class L10nTranslations {
                 "Не удалось сохранить стикер. Повторите попытку.");
         table.put("The story couldn't be saved. Try again.",
                 "Не удалось сохранить историю. Повторите попытку.");
+    }
+
+    private static void fillRu24(Map<String, String> table) {
         table.put("The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.",
                 "Палец вниз на любом комментарии блокирует автора комментария вместо того, чтобы выразить «не нравится». Комментарий гаснет, появляется баннер отмены, а повторное нажатие снимает блокировку.");
         table.put("The time of day the message goes out.",
@@ -21800,9 +21983,6 @@ public final class L10nTranslations {
                 "Не было сохранённых видео для забывания");
         table.put("These loaded values are for a different TikTok version.",
                 "Эти загруженные значения относятся к другой версии TikTok.");
-    }
-
-    private static void fillRu24(Map<String, String> table) {
         table.put("These notes are in English.",
                 "Эти заметки на английском языке.");
         table.put("This catalog entry is no longer available. Refresh the Lab and try again.",
@@ -21899,6 +22079,9 @@ public final class L10nTranslations {
                 "TikTok работает так, будто он не пропатчен. Ваши настройки остаются как есть.");
         table.put("TikTok sometimes tests how fast your phone is in a background process of its own, which can hold a lot of memory. This keeps that process from starting. One that's already running stops when TikTok restarts.",
                 "TikTok иногда проверяет скорость телефона в отдельном фоновом процессе, который может занимать много памяти. Этот переключатель не даёт ему запуститься. Уже запущенный процесс остановится после перезапуска TikTok.");
+    }
+
+    private static void fillRu25(Map<String, String> table) {
         table.put("TikTok's messages didn't start in time. It tries again at %1$s.",
                 "Сообщения TikTok не запустились вовремя. Попытка повторится в %1$s.");
         table.put("TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.",
@@ -21923,9 +22106,6 @@ public final class L10nTranslations {
                 "Сегодняшний день начался заново. Нажмите ещё раз, чтобы вернуть счётчики.");
         table.put("Today starts again",
                 "Сегодняшний день начинается заново");
-    }
-
-    private static void fillRu25(Map<String, String> table) {
         table.put("Today's budget is locked. The day starts over at %1$s.",
                 "Сегодняшний лимит заблокирован. День начнётся заново в %1$s.");
         table.put("Today's budget is locked. The feed opens again at %1$s. Messages, profiles and search still work.",
@@ -22022,6 +22202,9 @@ public final class L10nTranslations {
                 "Снять блокировку с этого автора комментария");
         table.put("Unblocked %1$s",
                 "Блокировка снята: %1$s");
+    }
+
+    private static void fillRu26(Map<String, String> table) {
         table.put("Undo",
                 "Отменить");
         table.put("Undo clearing seen videos",
@@ -22046,9 +22229,6 @@ public final class L10nTranslations {
                 "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Применяется к следующему субтитру.");
         table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.",
                 "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер имени автора и сохраняет масштаб шрифта Android.");
-    }
-
-    private static void fillRu26(Map<String, String> table) {
         table.put("Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.",
                 "Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер описания под именем автора и сохраняет масштаб шрифта Android.");
         table.put("Use Calm feed",
@@ -22125,6 +22305,8 @@ public final class L10nTranslations {
                 "«Ждать день перед тем, как ослабить лимит» включено, поэтому Hushfeed остаётся включённым");
         table.put("Wait before hiding the controls.",
                 "Задержка перед скрытием элементов управления.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Ждём, пока приложение для файлов отпустит последний файл. Если этого не произойдёт, перезапустите TikTok.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Ожидание записи. Перейдите к экрану, который нужно записать.");
         table.put("Waiting to save %1$s files",
@@ -22143,6 +22325,9 @@ public final class L10nTranslations {
                 "История импортирована для аккаунта, который выбрал файл. Вернитесь в него, чтобы её увидеть.");
         table.put("Watching and sharing",
                 "Просмотр и отправка");
+    }
+
+    private static void fillRu27(Map<String, String> table) {
         table.put("WebP, exactly as TikTok sent it",
                 "WebP, точно как прислал TikTok");
         table.put("What TikTok gets",
@@ -22169,9 +22354,6 @@ public final class L10nTranslations {
                 "Ширина окна, при которой включается макет. Перезапустите TikTok, чтобы это применить.");
         table.put("Words, countries and languages",
                 "Слова, страны и языки");
-    }
-
-    private static void fillRu27(Map<String, String> table) {
         table.put("Working",
                 "Обработка");
         table.put("Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.",
@@ -22229,7 +22411,7 @@ public final class L10nTranslations {
     }
 
     private static Map<String, String> buildTr() {
-        Map<String, String> table = new HashMap<>(3018);
+        Map<String, String> table = new HashMap<>(3044);
         fillTr0(table);
         fillTr1(table);
         fillTr2(table);
@@ -24344,8 +24526,8 @@ public final class L10nTranslations {
                 "Kaydetme iptal edildi. Hiçbir şey kaydedilmedi.");
         table.put("Save details beside the video",
                 "Ayrıntıları videonun yanına kaydet");
-        table.put("Save every photo in the post as TikTok received it, not as the screen shows it.",
-                "Gönderideki her fotoğrafı ekranın gösterdiği gibi değil, TikTok'un aldığı gibi kaydet.");
+        table.put("Save every photo in the post at full size as a JPEG, not as the screen shows it.",
+                "Gönderideki her fotoğrafı ekranın gösterdiği gibi değil, tam boyutta JPEG olarak kaydet.");
         table.put("Save field values",
                 "Alan değerlerini kaydet");
     }
@@ -24681,6 +24863,10 @@ public final class L10nTranslations {
                 "Kayıt hâlâ okunuyor. Birazdan yeniden dokun.");
         table.put("Still saving the last one",
                 "Bir önceki hâlâ kaydediliyor");
+        table.put("Still waiting for the file app.",
+                "Dosya uygulaması hâlâ bekleniyor.");
+        table.put("Still waiting for the file app. Tap to stop waiting.",
+                "Dosya uygulaması hâlâ bekleniyor. Beklemeyi bırakmak için dokun.");
         table.put("Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.",
                 "ByteDance AppLog olaylarının, AppsFlyer ilişkilendirmesinin, açık Firebase ekran raporlarının ve çökme raporlarının gönderilmesini durdur. TikTok'un kendi tanılaması da bunlarla birlikte susar.");
         table.put("Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.",
@@ -24709,17 +24895,29 @@ public final class L10nTranslations {
                 "Video döngüsünü durdur");
         table.put("Stop videos at the end instead of replaying them.",
                 "Videoları yeniden oynatmak yerine sonunda durdur.");
+        table.put("Stop waiting",
+                "Beklemeyi bırak");
         table.put("Stopped after dismissing %1$s suggested accounts",
                 "Önerilen %1$s hesap kapatıldıktan sonra durdu");
+    }
+
+    private static void fillTr20(Map<String, String> table) {
         table.put("Stopped after dismissing one suggested account",
                 "Önerilen bir hesap kapatıldıktan sonra durdu");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the backup was saved.",
+                "Dosya uygulaması artık beklenmiyor. Yedeğin kaydedilip kaydedilmediğini henüz bildirmedi.");
+        table.put("Stopped waiting for the file app. It hasn't said yet whether the export was saved.",
+                "Dosya uygulaması artık beklenmiyor. Dışa aktarımın kaydedilip kaydedilmediğini henüz bildirmedi.");
+        table.put("Stopped waiting for the file app. Nothing was changed.",
+                "Dosya uygulaması artık beklenmiyor. Hiçbir şey değiştirilmedi.");
+        table.put("Stopped waiting for the file app. Nothing was exported.",
+                "Dosya uygulaması artık beklenmiyor. Hiçbir şey dışa aktarılmadı.");
+        table.put("Stopped waiting for the file app. Nothing was imported.",
+                "Dosya uygulaması artık beklenmiyor. Hiçbir şey içe aktarılmadı.");
         table.put("Stopping after this file",
                 "Bu dosyadan sonra durduruluyor");
         table.put("Stories",
                 "Hikayeler");
-    }
-
-    private static void fillTr20(Map<String, String> table) {
         table.put("Story",
                 "Hikaye");
         table.put("Story saved to %1$s",
@@ -24824,6 +25022,9 @@ public final class L10nTranslations {
                 "Bu ayar yedeği hasarlı ya da yalnızca bir kısmı indirilmiş. Hiçbir şey değiştirilmedi.");
         table.put("That settings backup is incomplete, so it may have been cut short. Nothing was altered.",
                 "Bu ayar yedeği eksik, yarıda kesilmiş olabilir. Hiçbir şey değiştirilmedi.");
+    }
+
+    private static void fillTr21(Map<String, String> table) {
         table.put("That settings change didn't go through. Nothing was altered.",
                 "Bu ayar değişikliği uygulanamadı. Hiçbir şey değiştirilmedi.");
         table.put("That sticker is in a format Hushfeed can't read",
@@ -24840,9 +25041,6 @@ public final class L10nTranslations {
                 "Lab bunu denetleyemiyor. TikTok bunu tam yazıldığı gibi alır.");
         table.put("The Lab couldn't open. Go back and open it again.",
                 "Lab açılamadı. Geri dön ve yeniden aç.");
-    }
-
-    private static void fillTr21(Map<String, String> table) {
         table.put("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",
                 "Lab en fazla %1$s kural tutar. Bu değişiklikle %2$s olacaktı, bu yüzden hiçbir şey değiştirilmedi.");
         table.put("The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.",
@@ -24861,6 +25059,8 @@ public final class L10nTranslations {
                 "Önceden kaydedilen videolar kontrol edilemedi. Yeniden deneyin.");
         table.put("The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.",
                 "Yedekleme başlamadı ve eksik dosyası kaldırılamadı. Seçtiğin klasörden sil.");
+        table.put("The backup wasn't saved. Back up again when the file app is ready.",
+                "Yedek kaydedilmedi. Dosya uygulaması hazır olduğunda yeniden yedekle.");
         table.put("The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.",
                 "Kataloğa göre bu anahtar %1$s, bu geçersiz kılma ise %2$s. Geçersiz kılmayı sıfırla ve yenisini oluştur.");
         table.put("The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.",
@@ -24871,6 +25071,8 @@ public final class L10nTranslations {
                 "Tanılama raporu kaydedilemedi. Yeniden dene.");
         table.put("The downloader app you chose isn't installed. Check Send links to another app under Downloads.",
                 "Seçtiğin indirme uygulaması yüklü değil. İndirmeler altındaki Bağlantıları başka bir uygulamaya gönder ayarını kontrol et.");
+        table.put("The export wasn't saved. Export again when the file app is ready.",
+                "Dışa aktarım kaydedilmedi. Dosya uygulaması hazır olduğunda yeniden dışa aktar.");
         table.put("The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.",
                 "Akış, bekletmeden önceki son kırk beş saniye boyunca kararır, böylece bekletmeye birden çarpmak yerine yavaşça varırsın. Bir süre bütçesi ve varılacak bir bekletme gerekir.");
         table.put("The feed doesn't end. This is a fine time to leave it.",
@@ -24881,12 +25083,16 @@ public final class L10nTranslations {
                 "Bu video bitince akış durur.");
         table.put("The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.",
                 "Uygulamaya döndüğünde akış yeniden oynamaya başlamadan önce tek bir dokunuş bekler. Mesajlar, profiller ve arama hâlâ bir dokunuş uzakta.");
+        table.put("The file app still has the last file. Try again once it lets go, or restart TikTok.",
+                "Dosya uygulaması son dosyayı hâlâ tutuyor. Bıraktığında tekrar dene ya da TikTok'u yeniden başlat.");
         table.put("The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.",
                 "hushfeed-safe-mode dosyası kaldırılamadı. Hushfeed'i yeniden açmak için onu Android/data altındaki TikTok klasöründen sil.");
         table.put("The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.",
                 "İki bütçenin de sıfırlandığı saat, 24 saatlik düzende. Varsayılan sabahın dördüdür, çünkü saat birde hâlâ kaydıran biri dün geceyi yaşıyordur.");
         table.put("The last one is still waiting to start",
                 "Bir önceki hâlâ başlamayı bekliyor");
+        table.put("The last report is still being saved",
+                "Son rapor hâlâ kaydediliyor");
         table.put("The live photo's clip couldn't be saved. Try again.",
                 "Canlı fotoğrafın klibi kaydedilemedi. Tekrar deneyin.");
         table.put("The loaded-values file you chose couldn't be read. Try again.",
@@ -24939,6 +25145,9 @@ public final class L10nTranslations {
                 "Mesajın gönderileceği saat.");
         table.put("The video couldn't be saved. Try again, or choose Automatic.",
                 "Video kaydedilemedi. Yeniden dene ya da Otomatik'i seç.");
+    }
+
+    private static void fillTr22(Map<String, String> table) {
         table.put("The video was saved, but its record couldn't be updated. A later save may make another copy.",
                 "Video kaydedildi, ancak kaydı güncellenemedi. Daha sonra yeniden kaydetmek başka bir kopya oluşturabilir.");
         table.put("The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.",
@@ -24963,9 +25172,6 @@ public final class L10nTranslations {
                 "Bu katalog girişi artık kullanılamıyor. Lab'i yenile ve yeniden dene.");
         table.put("This change couldn't be saved. Try again.",
                 "Bu değişiklik kaydedilemedi. Yeniden dene.");
-    }
-
-    private static void fillTr22(Map<String, String> table) {
         table.put("This configuration has no fields that can be copied and changed safely on this build.",
                 "Bu yapılandırmada, bu sürümde güvenle kopyalanıp değiştirilebilecek bir alan yok.");
         table.put("This file has more loaded values than the Lab takes at once.",
@@ -25062,6 +25268,9 @@ public final class L10nTranslations {
                 "TikTok'un kendi günlük ekran süresi hatırlatması, kapatılmayı beklemek yerine uygulamayı arka plana gönderir. Hemen geri dönersen hatırlatma ekranda kalır, böylece limit ulaşılabilir kalır. TikTok'un Ayarlar ve gizlilik bölümünde, Süre ve esenlik altında günlük bir limit ister.");
         table.put("TikTok's own value",
                 "TikTok'un kendi değeri");
+    }
+
+    private static void fillTr23(Map<String, String> table) {
         table.put("TikTok's play and pause button and its previous and next buttons appear on the feed. TikTok otherwise shows them only to people who use a screen reader. TikTok's analytics note the row and each press on it.",
                 "TikTok'un oynat ve duraklat düğmesi ile önceki ve sonraki düğmeleri akışta görünür. Aksi halde TikTok bunları yalnızca ekran okuyucu kullananlara gösterir. TikTok'un analizleri satırı ve üzerindeki her dokunuşu kaydeder.");
         table.put("TikTok's server can put an account into an experiment that empties the Favorites tab on your profile. Keep the tab and its saved videos.",
@@ -25086,9 +25295,6 @@ public final class L10nTranslations {
                 "Bugünün bütçesi kilitli. Akış %1$s saatinde yeniden açılır. Mesajlar, profiller ve arama çalışmaya devam eder.");
         table.put("Today's budget is locked. This can be changed again at %1$s.",
                 "Bugünün bütçesi kilitli. Bu, %1$s saatinde yeniden değiştirilebilir.");
-    }
-
-    private static void fillTr23(Map<String, String> table) {
         table.put("Today: %1$d minute",
                 "Bugün: %1$d dakika");
         table.put("Today: %1$d minutes",
@@ -25185,6 +25391,9 @@ public final class L10nTranslations {
                 "Sakin akışı kullan");
         table.put("Use Save report for this large report",
                 "Bu büyük rapor için \"Raporu kaydet\"i kullan");
+    }
+
+    private static void fillTr24(Map<String, String> table) {
         table.put("Use TikTok's own hold, pull down and release gesture to keep playing at the hold speed, 2x unless Playback sets another.",
                 "Basılı tutma hızında kalmak için TikTok'un kendi basılı tut, aşağı çek ve bırak hareketini kullan. Oynatma altında başka bir hız seçilmedikçe 2x'tir.");
         table.put("Use a default playback speed",
@@ -25209,9 +25418,6 @@ public final class L10nTranslations {
                 "Kendi çevrimdışı video sınırını kullan");
         table.put("Using TikTok's value",
                 "TikTok'un değeri kullanılıyor");
-    }
-
-    private static void fillTr24(Map<String, String> table) {
         table.put("Value",
                 "Değer");
         table.put("Value to return",
@@ -25258,6 +25464,8 @@ public final class L10nTranslations {
                 "Bütçeyi gevşetmek için bir gün bekle açık, bu yüzden Hushfeed açık kalıyor");
         table.put("Wait before hiding the controls.",
                 "Kontrolleri gizlemeden önce bekle.");
+        table.put("Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.",
+                "Dosya uygulamasının son dosyayı bırakması bekleniyor. Bırakmazsa TikTok'u yeniden başlat.");
         table.put("Waiting to record. Go to the screen you want recorded.",
                 "Kayıt bekleniyor. Kaydedilmesini istediğin ekrana git.");
         table.put("Waiting to save %1$s files",
@@ -25306,6 +25514,9 @@ public final class L10nTranslations {
                 "YTDLnis indirme türü");
         table.put("Yes",
                 "Evet");
+    }
+
+    private static void fillTr25(Map<String, String> table) {
         table.put("YouTube Music couldn't be opened. Open it yourself and search for the sound.",
                 "YouTube Music açılamadı. Kendiniz açıp sesi arayın.");
         table.put("YouTube Music isn't installed",
@@ -25332,9 +25543,6 @@ public final class L10nTranslations {
                 "Önceki akış düzenin geri geldi. Tüm değişiklikleri uygulamak için TikTok'u yeniden başlat.");
         table.put("Your seen history changed before the import finished. Choose the file again.",
                 "İçe aktarma bitmeden izleme geçmişiniz değişti. Dosyayı yeniden seçin.");
-    }
-
-    private static void fillTr25(Map<String, String> table) {
         table.put("Zero leaves the way out of the hold there every time, which is what it has always done. Anything else is how many times a day it works, and once they are gone the hold stays up until the day starts over. Ignored while the budget is locked, which takes the way out away entirely.",
                 "Sıfır, bekletmeden çıkış yolunu her seferinde yerinde bırakır, ki bu hep yaptığı şeydir. Başka bir değer, çıkışın günde kaç kez çalışacağını belirler ve bunlar bitince bekletme, gün baştan başlayana kadar kalır. Bütçe kilitliyken yok sayılır, çünkü kilit çıkış yolunu tamamen ortadan kaldırır.");
         table.put("Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",

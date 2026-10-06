@@ -1563,13 +1563,21 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         narrowSwitchRowsPutTheSwitchUnderTheTextAndGiveTheTextTheRow();
     }
 
-    /** A wide list at the normal size keeps the switch beside the whole text block. */
-    @Test public void wideSwitchRowsKeepTheSwitchBesideTheText() throws Exception {
+    /**
+     * A wide list keeps the switch beside the whole text block, at twice the text size too. At
+     * the normal size even a 320 dp list keeps this shape, so only the large size shows the width
+     * deciding: the same rows at a 320 dp phone's width move the switch under the text.
+     */
+    @Test @Config(qualifiers = "de-rDE-w960dp-h800dp-night-mdpi")
+    public void wideSwitchRowsKeepTheSwitchBesideTheText() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
+            var configuration = activity.getResources().getConfiguration();
+            configuration.fontScale = 2.0f;
+            activity.getResources().updateConfiguration(configuration, activity.getResources().getDisplayMetrics());
             TikTokPreferenceFragment page = attachSection(activity, "COMMENTS");
-            layout(page.getView(), 480, 960);
+            layout(page.getView(), 960, 800);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             ListView list = page.getView().findViewById(android.R.id.list);
             int rows = 0;
@@ -1578,8 +1586,14 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
                 if (findSwitch(row) == null) continue;
                 assertSwitchRowBesideTheText(row);
                 View text = (View) row.findViewById(android.R.id.title).getParent();
-                assertTrue("the text block runs under the switch",
-                        text.getRight() <= row.findViewById(android.R.id.widget_frame).getLeft());
+                View widget = row.findViewById(android.R.id.widget_frame);
+                assertTrue("the text block runs under the switch", text.getRight() <= widget.getLeft());
+
+                app.morphe.extension.tiktok.settings.preference.SettingsUi.reflowSwitchRow(row, 320);
+                assertSame("at a 320 dp phone's width this text size keeps the switch beside the text, "
+                        + "so the wide list proved nothing", text, widget.getParent());
+                app.morphe.extension.tiktok.settings.preference.SettingsUi.reflowSwitchRow(row, list.getWidth());
+                assertSwitchRowBesideTheText(row);
                 rows++;
             }
             assertTrue("no switch row was on screen, so this proves nothing", rows > 0);

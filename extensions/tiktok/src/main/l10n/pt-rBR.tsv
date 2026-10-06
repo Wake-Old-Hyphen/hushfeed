@@ -870,7 +870,7 @@ Save	Salvar
 Save SRT files with the video. They go to Movies on Android 11+, Download on Android 10, and your video folder on older versions. On Android 11+ with Save details on, the video moves to Download or Documents and the SRT files stay in Movies.	Salvar os arquivos SRT junto com o vídeo. Eles vão para Movies no Android 11 ou superior, para Download no Android 10 e para sua pasta de vídeos em versões mais antigas. No Android 11 ou superior, com Salvar detalhes ativado, o vídeo vai para Download ou Documents e os arquivos SRT ficam em Movies.
 Save a profile picture on a long press	Salvar uma foto de perfil com um toque longo
 Save a story on a long press	Salvar um story com um toque longo
-Save every photo in the post as TikTok received it, not as the screen shows it.	Salvar cada foto da publicação como o TikTok a recebeu, não como a tela a mostra.
+Save every photo in the post at full size as a JPEG, not as the screen shows it.	Salvar cada foto da publicação em tamanho completo como JPEG, não como a tela a mostra.
 Save field values	Salvar os valores dos campos
 Save full report	Salvar relatório completo
 Save media	Salvar a mídia
@@ -1513,3 +1513,16 @@ No cleared videos fit the current history limits.	Nenhum vídeo apagado cabe nos
 Putting seen videos back	Restaurando vídeos vistos
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Estas notas estão em inglês.
+Still waiting for the file app. Tap to stop waiting.	Ainda aguardando o app de arquivos. Toque para parar de esperar.
+Stopped waiting for the file app. Nothing was changed.	A espera pelo app de arquivos foi interrompida. Nada foi alterado.
+Stopped waiting for the file app. It hasn't said yet whether the backup was saved.	A espera pelo app de arquivos foi interrompida. Ele ainda não informou se o backup foi salvo.
+The backup wasn't saved. Back up again when the file app is ready.	O backup não foi salvo. Faça o backup de novo quando o app de arquivos estiver pronto.
+The file app still has the last file. Try again once it lets go, or restart TikTok.	O app de arquivos ainda está com o último arquivo. Tente de novo quando ele liberar ou reinicie o TikTok.
+Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.	Aguardando o app de arquivos liberar o último arquivo. Reinicie o TikTok se ele não liberar.
+Stopped waiting for the file app. Nothing was imported.	A espera pelo app de arquivos foi interrompida. Nada foi importado.
+The last report is still being saved	O último relatório ainda está sendo salvo
+Still waiting for the file app.	Ainda aguardando o app de arquivos.
+Stop waiting	Parar de esperar
+Stopped waiting for the file app. Nothing was exported.	A espera pelo app de arquivos foi interrompida. Nada foi exportado.
+Stopped waiting for the file app. It hasn't said yet whether the export was saved.	A espera pelo app de arquivos foi interrompida. Ele ainda não informou se a exportação foi salva.
+The export wasn't saved. Export again when the file app is ready.	A exportação não foi salva. Exporte de novo quando o app de arquivos estiver pronto.

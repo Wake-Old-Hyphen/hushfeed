@@ -1017,7 +1017,7 @@ Save again,Save again
 Save build details,Save build details
 Save cancelled. Nothing was saved.,Save cancelled. Nothing was saved.
 Save details beside the video,Save details beside the video
-"Save every photo in the post as TikTok received it, not as the screen shows it.","Save every photo in the post as TikTok received it, not as the screen shows it."
+"Save every photo in the post at full size as a JPEG, not as the screen shows it.","Save every photo in the post at full size as a JPEG, not as the screen shows it."
 Save field values,Save field values
 Save full report,Save full report
 Save media,Save media
@@ -1181,6 +1181,8 @@ Sticker saved to %1$s,Sticker saved to %1$s
 Still here. Nothing is waiting.,Still here. Nothing is waiting.
 Still reading the record. Tap again in a moment.,Still reading the record. Tap again in a moment.
 Still saving the last one,Still saving the last one
+Still waiting for the file app.,Still waiting for the file app.
+Still waiting for the file app. Tap to stop waiting.,Still waiting for the file app. Tap to stop waiting.
 "Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them.","Stop ByteDance AppLog events, AppsFlyer attribution, explicit Firebase screen reports and crash reporting from being sent. TikTok's own diagnostics go quiet with them."
 "Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included.","Stop TikTok asking the screen to run at the frame rate of the video it's playing. On a 90 or 120 Hz phone that ask slows the whole app down to the video's rate, scrolling included."
 "Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone.","Stop TikTok listening to the accelerometer, gyroscope, magnetometer and the other motion sensors it uses to fingerprint the phone."
@@ -1195,8 +1197,14 @@ Stop the bubble that asks you to share a video with friends after you like it.,S
 "Stop the notifications TikTok sends about popular videos it picked for you. Messages, comments, likes, follows and videos from accounts you follow still come through.","Stop the notifications TikTok sends about popular videos it picked for you. Messages, comments, likes, follows and videos from accounts you follow still come through."
 Stop video looping,Stop video looping
 Stop videos at the end instead of replaying them.,Stop videos at the end instead of replaying them.
+Stop waiting,Stop waiting
 Stopped after dismissing %1$s suggested accounts,Stopped after dismissing %1$s suggested accounts
 Stopped after dismissing one suggested account,Stopped after dismissing one suggested account
+Stopped waiting for the file app. It hasn't said yet whether the backup was saved.,Stopped waiting for the file app. It hasn't said yet whether the backup was saved.
+Stopped waiting for the file app. It hasn't said yet whether the export was saved.,Stopped waiting for the file app. It hasn't said yet whether the export was saved.
+Stopped waiting for the file app. Nothing was changed.,Stopped waiting for the file app. Nothing was changed.
+Stopped waiting for the file app. Nothing was exported.,Stopped waiting for the file app. Nothing was exported.
+Stopped waiting for the file app. Nothing was imported.,Stopped waiting for the file app. Nothing was imported.
 Stopping after this file,Stopping after this file
 Stories,Stories
 Story,Story
@@ -1268,19 +1276,23 @@ The activity status control leaves the Inbox header. Whether others see you as a
 "The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged.","The add people icon leaves the Inbox header. Only the shortcut goes, so friend suggestions elsewhere are unchanged."
 The already-saved check failed. Try again.,The already-saved check failed. Try again.
 The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.,The backup didn't start and its partial file couldn't be removed. Delete it from the folder you chose.
+The backup wasn't saved. Back up again when the file app is ready.,The backup wasn't saved. Back up again when the file app is ready.
 The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.,The catalog says this key is %1$s and this override is %2$s. Reset the override and make a new one.
 The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.,The comment button also opens a video's comments with its caption at the top. The caption over the video goes away while this is on.
 The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnostic report couldn't be saved yet. Try again in a moment.
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.,The downloader app you chose isn't installed. Check Send links to another app under Downloads.
+The export wasn't saved. Export again when the file app is ready.,The export wasn't saved. Export again when the file app is ready.
 "The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.","The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at."
 The feed doesn't end. This is a fine time to leave it.,The feed doesn't end. This is a fine time to leave it.
 The feed is open again,The feed is open again
 The feed stops when this video ends.,The feed stops when this video ends.
 "The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away.","The feed waits for one tap before it starts playing again when you come back to the app. Messages, profiles and search are still one tap away."
+"The file app still has the last file. Try again once it lets go, or restart TikTok.","The file app still has the last file. Try again once it lets go, or restart TikTok."
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.
 "The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.","The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night."
 The last one is still waiting to start,The last one is still waiting to start
+The last report is still being saved,The last report is still being saved
 The live photo's clip couldn't be saved. Try again.,The live photo's clip couldn't be saved. Try again.
 The loaded-values file you chose couldn't be read. Try again.,The loaded-values file you chose couldn't be read. Try again.
 The message didn't go through. It tries again at %1$s.,The message didn't go through. It tries again at %1$s.
@@ -1462,6 +1474,7 @@ Views range,Views range
 Wait a day to loosen the budget,Wait a day to loosen the budget
 "Wait a day to loosen the budget is on, so Hushfeed stays on","Wait a day to loosen the budget is on, so Hushfeed stays on"
 Wait before hiding the controls.,Wait before hiding the controls.
+Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.,Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.
 Waiting to record. Go to the screen you want recorded.,Waiting to record. Go to the screen you want recorded.
 Waiting to save %1$s files,Waiting to save %1$s files
 Waiting to save one file,Waiting to save one file

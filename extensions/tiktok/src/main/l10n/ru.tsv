@@ -942,7 +942,7 @@ Save	Сохранить
 Save SRT files with the video. They go to Movies on Android 11+, Download on Android 10, and your video folder on older versions. On Android 11+ with Save details on, the video moves to Download or Documents and the SRT files stay in Movies.	Сохранять файлы SRT вместе с видео. Они сохраняются в Movies на Android 11+, в Download на Android 10 и в папку с видео на более старых версиях. На Android 11+ при включённой функции «Сохранять детали рядом с видео» видео перемещается в Download или Documents, а файлы SRT остаются в Movies.
 Save a profile picture on a long press	Сохранять фото профиля долгим нажатием
 Save a story on a long press	Сохранять историю долгим нажатием
-Save every photo in the post as TikTok received it, not as the screen shows it.	Сохранять каждое фото публикации в том виде, в каком его получил TikTok, а не как оно показано на экране.
+Save every photo in the post at full size as a JPEG, not as the screen shows it.	Сохранять каждое фото публикации в полном размере в формате JPEG, а не как оно показано на экране.
 Save field values	Сохранить значения полей
 Save full report	Сохранить полный отчёт
 Save media	Сохранение медиафайлов
@@ -1651,3 +1651,16 @@ No cleared videos fit the current history limits.	Ни одно удалённо
 Putting seen videos back	Восстановление просмотренных видео
 # context: a line above the What's new release notes, which come from the English changelog and are not translated.
 These notes are in English.	Эти заметки на английском языке.
+Still waiting for the file app. Tap to stop waiting.	Приложение для файлов всё ещё не ответило. Нажмите, чтобы перестать ждать.
+Stopped waiting for the file app. Nothing was changed.	Ожидание приложения для файлов остановлено. Ничего не изменено.
+Stopped waiting for the file app. It hasn't said yet whether the backup was saved.	Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранена ли резервная копия.
+The backup wasn't saved. Back up again when the file app is ready.	Резервная копия не сохранена. Создайте её снова, когда приложение для файлов будет готово.
+The file app still has the last file. Try again once it lets go, or restart TikTok.	Приложение для файлов всё ещё держит последний файл. Повторите попытку, когда оно его отпустит, или перезапустите TikTok.
+Waiting for the file app to let go of the last file. Restart TikTok if it doesn't.	Ждём, пока приложение для файлов отпустит последний файл. Если этого не произойдёт, перезапустите TikTok.
+Stopped waiting for the file app. Nothing was imported.	Ожидание приложения для файлов остановлено. Ничего не импортировано.
+The last report is still being saved	Последний отчёт всё ещё сохраняется
+Still waiting for the file app.	Приложение для файлов всё ещё не ответило.
+Stop waiting	Перестать ждать
+Stopped waiting for the file app. Nothing was exported.	Ожидание приложения для файлов остановлено. Ничего не экспортировано.
+Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Ожидание приложения для файлов остановлено. Оно ещё не сообщило, сохранён ли экспорт.
+The export wasn't saved. Export again when the file app is ready.	Экспорт не сохранён. Экспортируйте снова, когда приложение для файлов будет готово.
