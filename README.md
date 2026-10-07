@@ -115,6 +115,10 @@ The manager has run short of memory. Step 4 of [Install](#install) says which li
 
 That's a split bundle. Morphe Manager merges it into one APK, and AMOLED dark theme works on that. The desktop CLI merges it differently, and the dark theme and Custom launcher icon refuse the result, which [Why you have to fetch that APK yourself](#why-you-have-to-fetch-that-apk-yourself) explains.
 
+### Profile and Inbox are pure black, but I didn't pick AMOLED dark theme
+
+That's TikTok. On TikTok 47.1.4 its own dark mode paints Profile and Inbox black, while comments, share and search stay dark gray. A build without AMOLED dark theme shows the same colors with Hushfeed paused, and its color table matches TikTok's original one for one. AMOLED dark theme is what turns those gray sheets black as well.
+
 ### Can I select every patch at once?
 
 Yes. Every release is patched with all of them selected before it ships, so no two refuse to go in together. The one thing to watch is memory: with AMOLED dark theme selected, raise the manager's limit as step 4 of [Install](#install) says. Hide Play Store update offer, Change app name and Custom launcher icon also decode resources, so raise the limit if one of them runs out of memory. Mixing Hushfeed with another TikTok bundle is a different question, and [Moving from Kveld](#moving-from-kveld) covers the overlap we know about.

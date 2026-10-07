@@ -48,6 +48,8 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** Feed filter has a new Hide unpersonalized For You videos switch. It hides the fill-in videos TikTok pads For You with when it hasn't picked anything for you, the ones it sends from its for_you_page_999 pool with no reason attached. If a whole batch is fill-in, the batch stays, so the feed never stalls on it. The filter report counts each For You batch by the pool TikTok says it came from, next to how many the switch took out. Creator exceptions get through it the same way they get through the other preference filters.
 
+* **Docs:** The FAQ explains the pure black Profile and Inbox some people see without AMOLED dark theme. It comes from TikTok 47.1.4's own dark mode, and a build without that patch shows the same colors with Hushfeed paused (#69).
+
 ## 0.68.0 (2026-10-06)
 
 * **TikTok:** Download original photos saves every photo as a JPEG (#105). TikTok lists each photo as a HEIF copy first, so they were landing as .heif files that a lot of gallery apps and computers can't open, and some phones, Samsungs included, can't decode TikTok's HEIF at all. Hushfeed now takes the WebP copy TikTok lists beside each HEIF and saves it again as a full-size JPEG on Android 9 and newer. When TikTok lists a JPEG copy, that one is saved byte for byte instead. A photo that can't be converted keeps the file TikTok sent, and so does one with see-through parts. The setting's description says JPEG now too, and story photos work the same way.
