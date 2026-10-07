@@ -4,6 +4,16 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Show where a video was posted now works on videos where TikTok hides the post time, which is most of For You unless Always show publish date is on. It also shows on videos you open from search, a creator's profile or a shared link, and it switches to the right country as soon as an opened video starts instead of keeping the one from the feed. A long name gets shortened a little so the country isn't cut off along with it.
+
+* **TikTok:** In Feature Gate Lab, turning overrides on from a gate's own page now unlocks its Forced result switch right away. Before, it stayed greyed out until you left the page and came back.
+
+* **TikTok:** Feature Gate Lab has 13 new reviewed presets for features other TikTok mods unlock by flag. There's repost with a comment, the profile banner with the new profile layout, live photo, camera and audio comments, comments saved to Favorites, comment sort and dislike styles, message bubble colors with the Inbox archive and sharing to more chats at once, Manage topics, visual search, AI Self, the long-press menu on every post, TikTok's own hold to speed up, its background play and auto-scroll, and post dates in the feed. Every preset was checked against 47.0.3, 47.1.3 and 47.1.4. Show See translation was 47.1.3 only and now covers all three. The list shows just the presets for the TikTok you have installed. Some of these features also depend on what TikTok's servers allow for your account.
+
+* **TikTok:** Remove ads now also catches creator posts TikTok runs as ads. They don't carry TikTok's ad flag, so they were getting through, but TikTok marks them in the post's commerce details and Hushfeed reads the same mark TikTok does. The filter report counts them under AdSignals. Skip the splash ad also stops the startup tasks that preload TopView takeover ads and ask the server for a real-time splash.
+
+* **TikTok:** Feed filter has a new Hide unpersonalized For You videos switch. It hides the fill-in videos TikTok pads For You with when it hasn't picked anything for you, the ones it sends from its for_you_page_999 pool with no reason attached. If a whole batch is fill-in, the batch stays, so the feed never stalls on it. The filter report counts each For You batch by the pool TikTok says it came from, next to how many the switch took out. Creator exceptions get through it the same way they get through the other preference filters.
+
 ## 0.68.0 (2026-10-06)
 
 * **TikTok:** Download original photos saves every photo as a JPEG (#105). TikTok lists each photo as a HEIF copy first, so they were landing as .heif files that a lot of gallery apps and computers can't open, and some phones, Samsungs included, can't decode TikTok's HEIF at all. Hushfeed now takes the WebP copy TikTok lists beside each HEIF and saves it again as a full-size JPEG on Android 9 and newer. When TikTok lists a JPEG copy, that one is saved byte for byte instead. A photo that can't be converted keeps the file TikTok sent, and so does one with see-through parts. The setting's description says JPEG now too, and story photos work the same way.

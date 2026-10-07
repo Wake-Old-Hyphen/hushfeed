@@ -1372,7 +1372,6 @@ Changes in Hushfeed %1$s,Perubahan di Hushfeed %1$s
 Reviewed presets,Preset teruji
 Show See translation,Tampilkan Lihat terjemahan
 Reviewed for TikTok %1$s,Diuji untuk TikTok %1$s
-%1$s (TikTok %2$s),%1$s (TikTok %2$s)
 Value: %1$s to %2$s,Nilai: %1$s menjadi %2$s
 The presets couldn't load. Open the Lab again.,Preset tidak dapat dimuat. Buka Lab lagi.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.,Terapkan mengaktifkan penggantian ini. Batalkan perubahan Lab terakhir mengembalikan aturan sebelumnya sampai kamu mengubah hal lain di Lab.
@@ -1521,3 +1520,21 @@ Stop waiting,Berhenti menunggu
 Stopped waiting for the file app. Nothing was exported.,Berhenti menunggu aplikasi file. Tidak ada yang diekspor.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.,Berhenti menunggu aplikasi file. Aplikasi itu belum memberi tahu apakah ekspor sudah tersimpan.
 The export wasn't saved. Export again when the file app is ready.,Ekspor tidak tersimpan. Ekspor lagi saat aplikasi file sudah siap.
+Hide unpersonalized For You videos,Sembunyikan video Untuk Kamu yang tidak dipersonalisasi
+"Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.","Sembunyikan video pengisi yang dikirim TikTok ke Untuk Kamu tanpa dipilih untukmu. Jika satu kumpulan isinya pengisi semua, kumpulan itu tetap ditampilkan agar feed tidak kosong."
+Unpersonalized For You videos,Video Untuk Kamu yang tidak dipersonalisasi
+Reviewed presets for TikTok %1$s,Preset teruji untuk TikTok %1$s
+No presets have been reviewed for TikTok %1$s yet,Belum ada preset yang diuji untuk TikTok %1$s
+Repost with a comment,Posting ulang dengan komentar
+Profile banner and new profile layout,Banner profil dan tata letak profil baru
+"Comment with live photos, the camera or audio","Berkomentar dengan foto live, kamera, atau audio"
+Save comments to Favorites,Simpan komentar ke Favorit
+Comment sort and dislike styles,Urutan komentar dan gaya tidak suka
+"Message bubble colors, Inbox archive and sharing to more chats","Warna gelembung pesan, arsip Kotak Masuk, dan berbagi ke lebih banyak chat"
+Manage topics,Kelola topik
+Visual search,Pencarian visual
+AI Self,AI Self
+Long-press menu on every post,Menu tekan lama di setiap postingan
+TikTok's hold to speed up,Tahan untuk mempercepat dari TikTok
+TikTok's background play and auto-scroll,Putar di latar belakang dan gulir otomatis dari TikTok
+Post dates in the feed,Tanggal postingan di feed

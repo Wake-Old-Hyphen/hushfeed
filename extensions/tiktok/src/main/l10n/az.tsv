@@ -1375,7 +1375,6 @@ Changes in Hushfeed %1$s	Hushfeed %1$s versiyasındakı dəyişikliklər
 Reviewed presets	Yoxlanılmış hazır ayarlar
 Show See translation	Tərcüməyə bax düyməsini göstərin
 Reviewed for TikTok %1$s	TikTok %1$s üçün yoxlanılıb
-%1$s (TikTok %2$s)	%1$s (TikTok %2$s)
 Value: %1$s to %2$s	Dəyər: %1$s - %2$s
 The presets couldn't load. Open the Lab again.	Hazır ayarlar yüklənə bilmədi. Lab-ı yenidən açın.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Tətbiq etmək bu əvəzləmələri yandırır. Son Lab dəyişikliyini geri qaytarın seçimi Lab-da başqa bir şeyi dəyişənə qədər əvvəlki qaydalarınızı geri qaytarır.
@@ -1526,3 +1525,21 @@ Stop waiting	Gözləməni dayandır
 Stopped waiting for the file app. Nothing was exported.	Fayl tətbiqini gözləmək dayandırıldı. Heç nə ixrac edilmədi.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Fayl tətbiqini gözləmək dayandırıldı. O, ixracın saxlanılıb-saxlanılmadığını hələ bildirməyib.
 The export wasn't saved. Export again when the file app is ready.	İxrac saxlanılmadı. Fayl tətbiqi hazır olanda yenidən ixrac edin.
+Hide unpersonalized For You videos	Fərdiləşdirilməmiş Sənin üçün videolarını gizlədin
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	TikTok-un Sənin üçün lentinə sizin üçün seçmədən göndərdiyi doldurucu videoları gizlədin. Bütün partiya doldurucudursa, lent boş qalmasın deyə saxlanılır.
+Unpersonalized For You videos	Fərdiləşdirilməmiş Sənin üçün videoları
+Reviewed presets for TikTok %1$s	TikTok %1$s üçün yoxlanılmış hazır ayarlar
+No presets have been reviewed for TikTok %1$s yet	TikTok %1$s üçün hələ yoxlanılmış hazır ayar yoxdur
+Repost with a comment	Şərhlə yenidən paylaşın
+Profile banner and new profile layout	Profil banneri və yeni profil görünüşü
+Comment with live photos, the camera or audio	Canlı fotolar, kamera və ya səslə şərh yazın
+Save comments to Favorites	Şərhləri Sevimlilərə saxlayın
+Comment sort and dislike styles	Şərh sıralaması və bəyənməmə üslubları
+Message bubble colors, Inbox archive and sharing to more chats	Mesaj balonu rəngləri, Gələnlər arxivi və daha çox söhbətə paylaşma
+Manage topics	Mövzuları idarə edin
+Visual search	Vizual axtarış
+AI Self	AI Self
+Long-press menu on every post	Hər paylaşımda uzun basma menyusu
+TikTok's hold to speed up	TikTok-un basıb saxlayaraq sürətləndirməsi
+TikTok's background play and auto-scroll	TikTok-un arxa planda oynatma və avtomatik sürüşdürməsi
+Post dates in the feed	Lentdə paylaşım tarixləri

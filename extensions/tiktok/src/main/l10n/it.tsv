@@ -1375,7 +1375,6 @@ Changes in Hushfeed %1$s	Novità in Hushfeed %1$s
 Reviewed presets	Preset verificati
 Show See translation	Mostra "Vedi traduzione"
 Reviewed for TikTok %1$s	Verificato per TikTok %1$s
-%1$s (TikTok %2$s)	%1$s (TikTok %2$s)
 Value: %1$s to %2$s	Valore: da %1$s a %2$s
 The presets couldn't load. Open the Lab again.	Non è stato possibile caricare i preset. Apri di nuovo il Lab.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Applica attiva queste sovrascritture. "Annulla l'ultima modifica del Lab" ripristina le tue regole precedenti finché non cambi qualcos'altro nel Lab.
@@ -1526,3 +1525,21 @@ Stop waiting	Smetti di aspettare
 Stopped waiting for the file app. Nothing was exported.	Attesa dell'app dei file interrotta. Non è stato esportato nulla.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Attesa dell'app dei file interrotta. Non ha ancora detto se l'esportazione è stata salvata.
 The export wasn't saved. Export again when the file app is ready.	L'esportazione non è stata salvata. Esporta di nuovo quando l'app dei file è pronta.
+Hide unpersonalized For You videos	Nascondi i video di “Per te” non personalizzati
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Nasconde i video di riempimento che TikTok manda in “Per te” senza sceglierli per te. Se un intero blocco è di riempimento, resta, così il feed non rimane vuoto.
+Unpersonalized For You videos	Video di “Per te” non personalizzati
+Reviewed presets for TikTok %1$s	Preset verificati per TikTok %1$s
+No presets have been reviewed for TikTok %1$s yet	Non ci sono ancora preset verificati per TikTok %1$s
+Repost with a comment	Ripubblica con un commento
+Profile banner and new profile layout	Banner del profilo e nuovo layout del profilo
+Comment with live photos, the camera or audio	Commenta con foto live, la fotocamera o l'audio
+Save comments to Favorites	Salva i commenti nei Preferiti
+Comment sort and dislike styles	Ordinamento dei commenti e stili di Non mi piace
+Message bubble colors, Inbox archive and sharing to more chats	Colori delle bolle dei messaggi, archivio della Posta in arrivo e condivisione con più chat
+Manage topics	Gestisci argomenti
+Visual search	Ricerca visiva
+AI Self	AI Self
+Long-press menu on every post	Menu a pressione prolungata su ogni post
+TikTok's hold to speed up	Tieni premuto per accelerare di TikTok
+TikTok's background play and auto-scroll	Riproduzione in background e scorrimento automatico di TikTok
+Post dates in the feed	Date dei post nel feed

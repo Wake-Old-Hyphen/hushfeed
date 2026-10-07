@@ -1378,7 +1378,6 @@ Changes in Hushfeed %1$s	Änderungen in Hushfeed %1$s
 Reviewed presets	Geprüfte Vorlagen
 Show See translation	Übersetzung anzeigen einblenden
 Reviewed for TikTok %1$s	Geprüft für TikTok %1$s
-%1$s (TikTok %2$s)	%1$s (TikTok %2$s)
 Value: %1$s to %2$s	Wert: %1$s zu %2$s
 The presets couldn't load. Open the Lab again.	Die Vorlagen konnten nicht geladen werden. Öffne das Lab erneut.
 Apply enables these overrides. Undo last Lab change puts your previous rules back until you change anything else in the Lab.	Anwenden aktiviert diese Überschreibungen. „Letzte Lab-Änderung rückgängig machen“ holt deine bisherigen Regeln zurück, bis du im Lab etwas anderes änderst.
@@ -1529,3 +1528,21 @@ Stop waiting	Nicht mehr warten
 Stopped waiting for the file app. Nothing was exported.	Warten auf die Datei-App beendet. Es wurde nichts exportiert.
 Stopped waiting for the file app. It hasn't said yet whether the export was saved.	Warten auf die Datei-App beendet. Sie hat noch nicht gemeldet, ob der Export gespeichert wurde.
 The export wasn't saved. Export again when the file app is ready.	Der Export wurde nicht gespeichert. Exportiere erneut, wenn die Datei-App bereit ist.
+Hide unpersonalized For You videos	Nicht personalisierte „Für dich“-Videos ausblenden
+Hide the fill-in videos TikTok sends to For You without picking them for you. When a whole batch is fill-in, it stays so the feed doesn't run dry.	Lückenfüller-Videos ausblenden, die TikTok in „Für dich“ schickt, ohne sie für dich auszuwählen. Besteht ein ganzer Schwung nur aus Lückenfüllern, bleibt er, damit der Feed nicht leerläuft.
+Unpersonalized For You videos	Nicht personalisierte „Für dich“-Videos
+Reviewed presets for TikTok %1$s	Geprüfte Vorlagen für TikTok %1$s
+No presets have been reviewed for TikTok %1$s yet	Für TikTok %1$s wurden noch keine Vorlagen geprüft
+Repost with a comment	Mit Kommentar reposten
+Profile banner and new profile layout	Profilbanner und neues Profillayout
+Comment with live photos, the camera or audio	Mit Live-Fotos, der Kamera oder Audio kommentieren
+Save comments to Favorites	Kommentare in Favoriten speichern
+Comment sort and dislike styles	Kommentarsortierung und Dislike-Stile
+Message bubble colors, Inbox archive and sharing to more chats	Farben der Nachrichtenblasen, Posteingangsarchiv und Teilen an mehr Chats
+Manage topics	Themen verwalten
+Visual search	Visuelle Suche
+AI Self	AI Self
+Long-press menu on every post	Menü bei langem Drücken auf jedem Beitrag
+TikTok's hold to speed up	TikToks Halten zum Beschleunigen
+TikTok's background play and auto-scroll	TikToks Hintergrundwiedergabe und automatisches Scrollen
+Post dates in the feed	Beitragsdaten im Feed

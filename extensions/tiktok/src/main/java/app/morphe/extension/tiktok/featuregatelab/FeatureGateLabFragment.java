@@ -1311,28 +1311,28 @@ public final class FeatureGateLabFragment extends Fragment {
     private void showPresets() {
         if (getActivity() == null) return;
         try {
-            JSONObject presets = FeatureGateLabStore.reviewedPresets();
-            List<String> builds = new ArrayList<>();
+            // Only the installed build's presets. With every preset reviewed for each catalog
+            // build, listing them all put three copies of each row on the screen, two of which
+            // could only say they weren't for this TikTok.
+            String build = app.morphe.extension.shared.BuildNames.runningBuild();
+            JSONObject version = FeatureGateLabStore.reviewedPresets().optJSONObject(build);
+            if (version == null || version.length() == 0) {
+                postToast(L10n.f(getContext(), "No presets have been reviewed for TikTok %1$s yet", build));
+                return;
+            }
             List<String> ids = new ArrayList<>();
             List<String> labels = new ArrayList<>();
-            java.util.Iterator<String> versions = presets.keys();
-            while (versions.hasNext()) {
-                String build = versions.next();
-                JSONObject version = presets.getJSONObject(build);
-                java.util.Iterator<String> names = version.keys();
-                while (names.hasNext()) {
-                    String id = names.next();
-                    builds.add(build);
-                    ids.add(id);
-                    String title = version.getJSONObject(id).getString("title");
-                    // One sentence to translate, not pieces glued in English word order.
-                    labels.add(L10n.f(getContext(), "%1$s (TikTok %2$s)", L10n.t(getContext(), title), build));
-                }
+            java.util.Iterator<String> names = version.keys();
+            while (names.hasNext()) {
+                String id = names.next();
+                ids.add(id);
+                String title = version.getJSONObject(id).getString("title");
+                labels.add(L10n.t(getContext(), title));
             }
             AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(L10n.t(getContext(), "Reviewed presets"))
+                    .setTitle(L10n.f(getContext(), "Reviewed presets for TikTok %1$s", build))
                     .setItems(labels.toArray(new String[0]),
-                            (ignored, index) -> showPreset(builds.get(index), ids.get(index)))
+                            (ignored, index) -> showPreset(build, ids.get(index)))
                     .setNegativeButton(L10n.t(getContext(), "Cancel"), null).create();
             showStyled(dialog);
         } catch (Exception error) {
