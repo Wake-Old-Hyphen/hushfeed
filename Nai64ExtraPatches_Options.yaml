@@ -5,7 +5,7 @@
 hushfeed_options:
   - name: "Remove unused language packs"
     options:
-      languages: "en"
+      Languages to keep : "en"
 # Nai64ExtraPatches_Options.yaml
 # PRIORITY RULE: Hushfeed wins. Any Nai64 patch overlapping a Hushfeed patch
 # is disabled below so Hushfeed owns that surface.
