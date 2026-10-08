@@ -55,7 +55,8 @@ import java.util.WeakHashMap;
  *                         the floating card in search results
  *   id/k_5                the Live entrance, top left, 158 px square, no description
  *   id/liy                the interaction area over the video: the right-hand column's slots,
- *                         the caption block and the music row
+ *                         the caption block and the music row. 47.1.x's llj is the column
+ *                         alone: the caption frame bqv and videomusiccoverblock sit beside it
  *   id/f7u                the root of every feed survey card; the cell's survey ViewStubs
  *                         carry no inflatedId, so the card keeps its own layout id. All
  *                         seven layouts those stubs inflate have it on 47.0.3, where 46.2.3
@@ -131,6 +132,19 @@ public final class VideoOverlayHider {
      */
     private static final String[] ANCHOR_IDS = {"47.0.3:bql", "47.1.3:bqv", "47.1.4:bqv"};
     /**
+     * The spinning music disc at the bottom right, beside the rail's column. On 47.1.4 the
+     * anchor's frame above also holds the caption and the music row, and neither sits in the
+     * column, so the fade reaches them through these two (S22, 2026-10-08).
+     */
+    private static final String[] MUSIC_COVER_IDS = {"videomusiccoverblock"};
+    /**
+     * The full-width search bar under the caption ("Search · ..."). On 47.1.4 it sits in its own
+     * container beside the cell's interaction area, outside both the column and the anchor's
+     * frame, so neither the fade nor Clear display reached it (S22, 2026-10-08). The music disc
+     * is laid out above it, which is how its name is found on each build.
+     */
+    private static final String[] SEARCH_BAR_IDS = {"47.0.3:lim", "47.1.3:ll8", "47.1.4:ll8"};
+    /**
      * The blank TikTok keeps above the video on tall screens, as tall as the status bar, so the
      * bar never covers the picture. With the bar hidden it's only a black strip (#97).
      */
@@ -182,6 +196,7 @@ public final class VideoOverlayHider {
     private static WeakReference<View> rescaleRoot = new WeakReference<>(null);
     private static final ViewTreeObserver.OnPreDrawListener RESCALE = () -> {
         reapplyScale();
+        reapplyFade();
         return true;
     };
     /** The row under each rail button holding its count, without the button itself. */
@@ -240,6 +255,8 @@ public final class VideoOverlayHider {
     private static final int CLEAR_PHOTO_EXIT_TARGET = STATUS_BAR_SPACER_TARGET + 1;
     private static final int BOTTOM_TABS_TARGET = CLEAR_PHOTO_EXIT_TARGET + 1;
     private static final int ANCHOR_TARGET = BOTTOM_TABS_TARGET + 1;
+    private static final int MUSIC_COVER_TARGET = ANCHOR_TARGET + 1;
+    private static final int SEARCH_BAR_TARGET = MUSIC_COVER_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -262,8 +279,9 @@ public final class VideoOverlayHider {
     private static final Map<View, Float> FADED_HERE = new WeakHashMap<>();
 
     /**
-     * Views faded to the chosen opacity (#84): the alpha each had before, and the alpha this class
-     * wrote, so a value TikTok wrote since (an animation ending) is told apart from our own.
+     * Views faded to the chosen opacity (#84): the alpha each had before, the alpha this class
+     * wrote, so a value TikTok wrote since (an animation ending) is told apart from our own, and
+     * the fraction it was faded by, for the pre-draw pass that fades such a value again.
      */
     private static final Map<View, float[]> FADED_TO = new WeakHashMap<>();
 
@@ -474,6 +492,9 @@ public final class VideoOverlayHider {
                 wanted[CLEAR_SEEK_BAR_TARGET] = clearControls;
                 wanted[CLEAR_PHOTO_EXIT_TARGET] = clearControls;
                 wanted[ANCHOR_TARGET] = anchor;
+                // Only ever faded, never hidden by a switch of its own.
+                wanted[MUSIC_COVER_TARGET] = false;
+                wanted[SEARCH_BAR_TARGET] = anchor;
                 wanted[STATUS_BAR_SPACER_TARGET] = statusBar;
                 for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
                     wanted[RAIL_TARGET_START + i] = rail[i] || carry;
@@ -613,7 +634,12 @@ public final class VideoOverlayHider {
         if (view.getScaleY() != scale) view.setScaleY(scale);
     }
 
-    /** Keeps the scaled icons for the pre-draw pass, and the pass itself on the root. */
+    /**
+     * Keeps the scaled icons for the pre-draw pass, and the pass itself on the root while
+     * anything is scaled or faded. The fade needs it too: Clear display ending animates the
+     * caption, the rail and the search bar back to full opacity, and no layout follows, so
+     * they stayed at full until the next video (S22, 2026-10-08).
+     */
     private static void rememberScaled(List<View> scaled, float touchScale, View root) {
         SCALED.clear();
         scaleWanted = touchScale;
@@ -623,7 +649,7 @@ public final class VideoOverlayHider {
             }
         }
         View watched = rescaleRoot.get();
-        if (touchScale != 1f) {
+        if (touchScale != 1f || !FADED_TO.isEmpty()) {
             if (watched != root && root != null) {
                 if (watched != null && watched.getViewTreeObserver().isAlive()) {
                     watched.getViewTreeObserver().removeOnPreDrawListener(RESCALE);
@@ -664,6 +690,30 @@ public final class VideoOverlayHider {
         }
     }
 
+    /** When the frame pass last said what it faded again, so the log is not written per frame. */
+    private static long refadeLoggedAt;
+
+    /** The pre-draw pass: every faded view TikTok has written its own opacity to, faded again. */
+    static void reapplyFade() {
+        if (FADED_TO.isEmpty()) return;
+        int corrected = 0;
+        for (Map.Entry<View, float[]> entry : FADED_TO.entrySet()) {
+            View view = entry.getKey();
+            float[] held = entry.getValue();
+            if (view == null || !view.isAttachedToWindow() || view.getAlpha() == held[1]) continue;
+            held[0] = view.getAlpha();
+            held[1] = held[0] * held[2];
+            view.setAlpha(held[1]);
+            corrected++;
+        }
+        long now = SystemClock.uptimeMillis();
+        if (corrected > 0 && now - refadeLoggedAt > 2000L) {
+            refadeLoggedAt = now;
+            final int put = corrected;
+            Logger.printDebug(() -> "Fade put back on " + put + " views TikTok had written");
+        }
+    }
+
     private static void updateRailButtonsWanted(boolean[] rail) {
         rail[0] = Settings.HIDE_RAIL_FOLLOW.get();
         rail[1] = Settings.HIDE_RAIL_LIKE.get();
@@ -674,7 +724,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[ANCHOR_TARGET + 1][];
+        String[][] targets = new String[SEARCH_BAR_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -697,6 +747,8 @@ public final class VideoOverlayHider {
         targets[CLEAR_PHOTO_EXIT_TARGET] = CLEAR_PHOTO_EXIT_IDS;
         targets[BOTTOM_TABS_TARGET] = BOTTOM_TABS_IDS;
         targets[ANCHOR_TARGET] = ANCHOR_IDS;
+        targets[MUSIC_COVER_TARGET] = MUSIC_COVER_IDS;
+        targets[SEARCH_BAR_TARGET] = SEARCH_BAR_IDS;
         return targets;
     }
 
@@ -809,10 +861,18 @@ public final class VideoOverlayHider {
                     // The progress bar only goes see-through, so a drag along the bottom edge
                     // still seeks while it's out of sight (#84).
                     if (target == CLEAR_SEEK_BAR_TARGET) setTransparent(view, wanted);
-                    else if (target == ANCHOR_TARGET) setHidden(view, wanted, View.INVISIBLE);
-                    else if (target == ACTION_BAR_TARGET) {
-                        // The rail, caption and music row share this column. Fully faded it goes
-                        // the way Clear display takes it, so nothing invisible takes a tap.
+                    else if (target == ANCHOR_TARGET || target == MUSIC_COVER_TARGET
+                            || target == SEARCH_BAR_TARGET) {
+                        // 47.1.x keeps the caption frame, the music disc and the search bar
+                        // beside the column, so they fade here; on 47.0.3 the column holds the
+                        // caption frame, and a second fade inside it would square the opacity.
+                        // Invisible rather than gone, so the caption doesn't move.
+                        boolean gone = wanted || fadeLevel == 0;
+                        setFaded(view, gone || insideFaded(view) ? 100 : fadeLevel);
+                        setHidden(view, gone, View.INVISIBLE);
+                    } else if (target == ACTION_BAR_TARGET) {
+                        // The rail's column (on 47.0.3 also the caption and music row). Fully faded
+                        // it goes the way Clear display takes it, so nothing invisible takes a tap.
                         boolean gone = wanted || fadeLevel == 0;
                         setFaded(view, gone ? 100 : fadeLevel);
                         setHidden(view, gone);
@@ -1109,14 +1169,23 @@ public final class VideoOverlayHider {
             return;
         }
         if (held == null) {
-            held = new float[]{view.getAlpha(), view.getAlpha()};
+            held = new float[]{view.getAlpha(), view.getAlpha(), 1f};
             FADED_TO.put(view, held);
         } else if (view.getAlpha() != held[1]) {
             // TikTok wrote its own value since the last pass; that is the new look to fade.
             held[0] = view.getAlpha();
         }
-        held[1] = held[0] * percent / 100f;
+        held[2] = percent / 100f;
+        held[1] = held[0] * held[2];
         if (view.getAlpha() != held[1]) view.setAlpha(held[1]);
+    }
+
+    /** Whether a view sits inside one this class has faded, which already fades it too. */
+    private static boolean insideFaded(View view) {
+        for (android.view.ViewParent parent = view.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (FADED_TO.containsKey((View) parent)) return true;
+        }
+        return false;
     }
 
     /** Lets a test stand in for a TikTok resource id, which only the real APK resolves. */

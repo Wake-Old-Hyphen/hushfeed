@@ -48,7 +48,7 @@ val p2pRelayBlockerPatch = rawResourcePatch(
 @Suppress("unused")
 val coreAssetDebloatPatch = rawResourcePatch(
     name = "Remove content credential and card scanner assets",
-    description = "Empties TikTok's bundled C2PA and Microblink card-scanning assets, the Pitaya AI model libraries, the live-cast dynamic feature, and the ART log monitor probe. Saves about 12.5 MB of storage.",
+    description = "Empties TikTok's bundled C2PA and Microblink card-scanning assets, the Pitaya AI model libraries and the Python runtime they run on, the live-cast dynamic feature, and the ART log monitor probe. Saves about 19 MB of storage.",
     default = false,
 ) {
     category("Performance")
@@ -62,7 +62,8 @@ val coreAssetDebloatPatch = rawResourcePatch(
         // libbytemonitor is needed by libbytebench, which the whole video editor stack loads,
         // so emptying it killed the app the moment the Create tab opened (S22, 2026-09-17);
         // libprofiler is needed by the crash handler's npth_ref_monitor and reschecker, and
-        // libAndroidPitayaCore by nine Pitaya modules. All three stay.
+        // libAndroidPitayaCore by nine Pitaya modules. All three stay. The Python runtime's five
+        // libraries name only one another, and only Pitaya's feature dex, emptied here, loads them.
         val nativeFiles = listOf(
             "lib/arm64-v8a/libtt_c2pa_sdk.so",
             "lib/arm64-v8a/libtt_c2pa_sdk_d.so",
@@ -84,6 +85,16 @@ val coreAssetDebloatPatch = rawResourcePatch(
             "lib/armeabi-v7a/libdex_df_live_cast.so",
             "lib/arm64-v8a/libartlog_monitor.so",
             "lib/armeabi-v7a/libartlog_monitor.so",
+            "lib/arm64-v8a/libpythonA.so",
+            "lib/arm64-v8a/libBDPythonVM.so",
+            "lib/arm64-v8a/libBDMicroPythonVM.so",
+            "lib/arm64-v8a/libpy-numpy.so",
+            "lib/arm64-v8a/libpy-cv-numpycv.so",
+            "lib/armeabi-v7a/libpythonA.so",
+            "lib/armeabi-v7a/libBDPythonVM.so",
+            "lib/armeabi-v7a/libBDMicroPythonVM.so",
+            "lib/armeabi-v7a/libpy-numpy.so",
+            "lib/armeabi-v7a/libpy-cv-numpycv.so",
         )
         val result = stripVerifiedResources(
             get("."),
@@ -397,6 +408,72 @@ private val liveCastFiles4714 = listOf(
     file("lib/armeabi-v7a/libdex_df_live_cast.so", "c8320f1bb23d3d7b8b06edda0b8b9ce580bbbbfe73c5a238cad9b7e363e2e8d1"),
 )
 
+// Pitaya's Python runtime, read off every fixture on 2026-10-08. The five libraries only link one
+// another, and the one thing that names them outside that set is libdex_df_pitaya's dex, which
+// this strip empties too (libreschecker lists two of them, as it lists TTNativeML). 46.9.3's
+// arm64 set is the one every 47.x build ships, and 47.0.3's armeabi-v7a set is 47.1.x's. The
+// split bundles carry the arm64 set at these bytes and none of the armeabi-v7a one.
+private val pythonArm64Files4623 = listOf(
+    file("lib/arm64-v8a/libpythonA.so", "58af75e7357f058835bad57215bfc71cd81cd9c222b11178a7e42ed83476ab4a"),
+    file("lib/arm64-v8a/libBDPythonVM.so", "e93bfd8a5ebfcecd410e8d699dda219ce914b7fb340abcaffcbcf03a2bbf40c5"),
+    file("lib/arm64-v8a/libBDMicroPythonVM.so", "2d3d039e80ac7f9b4c93b39deb0d423bee6b8bf0b1d98ad9274a1617f3b421ae"),
+    file("lib/arm64-v8a/libpy-numpy.so", "f8ad783cf2e588003554f7e04c8a6af556c0e5c3aa8ed5f06dc62563aaeb92e4"),
+    file("lib/arm64-v8a/libpy-cv-numpycv.so", "e4ff01f71766ee1bf05033066aa9c676cb37944ab160467ebae7171031c3e491"),
+)
+
+private val pythonArmeabiFiles4623 = listOf(
+    file("lib/armeabi-v7a/libpythonA.so", "417fba8d2f470bc0dc8f81f137edf4ed1e287682cb053aadcf924a7c2c4872ae"),
+    file("lib/armeabi-v7a/libBDPythonVM.so", "0aabb31a91d28bff0409bdb484117a40b2a9e1be6661b1cedee72e0122503bde"),
+    file("lib/armeabi-v7a/libBDMicroPythonVM.so", "32916a221b0025bbc7a550da931e4c8e42224dea930146a8aa8534cdcfa857fa"),
+    file("lib/armeabi-v7a/libpy-numpy.so", "ab38f64f7fc4bcb0ea676458893e3dd1c839b81aceb9531fc2cbbbbba841f198"),
+    file("lib/armeabi-v7a/libpy-cv-numpycv.so", "649c46cab5078cf4a6c6220cb59e81fc3325a2aceb8920d316d3d40c9cd9712b"),
+)
+
+private val pythonArm64Files4673 = listOf(
+    file("lib/arm64-v8a/libpythonA.so", "b64a04f94b0af582c97489312627cf2452a254b8ef9f9aa82570c103554aa7e4"),
+    file("lib/arm64-v8a/libBDPythonVM.so", "e97443b652af9ecdf396b5ed372e13c26b5c5a4fbac6f89f6014f54becdb9b5f"),
+    file("lib/arm64-v8a/libBDMicroPythonVM.so", "e47dc47d68b9179aacf530dc20ca2cc6c07447002948b59fa2233e3faf29a50f"),
+    file("lib/arm64-v8a/libpy-numpy.so", "24927708429326db6fe3a932bc01ea7cece3df9fe10b2c05b3d7ebac1655f026"),
+    file("lib/arm64-v8a/libpy-cv-numpycv.so", "cdc18e984d43bfec4a9ef606ee3ef654f91a809e90340cb610668287daf42f1c"),
+)
+
+private val pythonArm64Files4683 = listOf(
+    file("lib/arm64-v8a/libpythonA.so", "b64a04f94b0af582c97489312627cf2452a254b8ef9f9aa82570c103554aa7e4"),
+    file("lib/arm64-v8a/libBDPythonVM.so", "b3a9a85d8525bda4100c9cbf0ef6f72f44a474b78ee6233a7596c8b92b962e6c"),
+    file("lib/arm64-v8a/libBDMicroPythonVM.so", "4a2a24668396f6f3a6c094ea5484fb98680e4bc4bf20ee178862bac75838862f"),
+    file("lib/arm64-v8a/libpy-numpy.so", "24927708429326db6fe3a932bc01ea7cece3df9fe10b2c05b3d7ebac1655f026"),
+    file("lib/arm64-v8a/libpy-cv-numpycv.so", "cdc18e984d43bfec4a9ef606ee3ef654f91a809e90340cb610668287daf42f1c"),
+)
+
+private val pythonArm64Files4693 = listOf(
+    file("lib/arm64-v8a/libpythonA.so", "b64a04f94b0af582c97489312627cf2452a254b8ef9f9aa82570c103554aa7e4"),
+    file("lib/arm64-v8a/libBDPythonVM.so", "dab0e910387292b1471329b92452013f4572fe15de8db9f5947b3b14cf9254c4"),
+    file("lib/arm64-v8a/libBDMicroPythonVM.so", "096c7a0dc264e67da014cec7d7d2fd18129040381bd934ac643d604f4410a29b"),
+    file("lib/arm64-v8a/libpy-numpy.so", "24927708429326db6fe3a932bc01ea7cece3df9fe10b2c05b3d7ebac1655f026"),
+    file("lib/arm64-v8a/libpy-cv-numpycv.so", "d8faa75b0b5acd7450182ecb3f8201a6783bdc834c18784d5e7ae15142fe1f2a"),
+)
+
+private val pythonArmeabiFiles4693 = listOf(
+    file("lib/armeabi-v7a/libpythonA.so", "ab27865b2778888a3ea941c9bc9081ec9cb3c1ff4d27e7f8e745a642c9164e83"),
+    file("lib/armeabi-v7a/libBDPythonVM.so", "c61c26d58588fb898802f1d88b97e08443a086e2b406a4a59d7e9aad0854e681"),
+    file("lib/armeabi-v7a/libBDMicroPythonVM.so", "f6cfe9e2a461045578791b43131dabfccf72543c389ac470f28596345893feed"),
+    file("lib/armeabi-v7a/libpy-numpy.so", "805cc5441d1209901c6a0eaf1eec371f4fce1ca43b5356f4461db0e6d3998e0d"),
+    file("lib/armeabi-v7a/libpy-cv-numpycv.so", "d6dd70139ddc8be6e312bb1c07ae0c3a0c592428e7c3e5b823c2b3e7e230790c"),
+)
+
+private val pythonArmeabiFiles4703 = listOf(
+    file("lib/armeabi-v7a/libpythonA.so", "ab27865b2778888a3ea941c9bc9081ec9cb3c1ff4d27e7f8e745a642c9164e83"),
+    file("lib/armeabi-v7a/libBDPythonVM.so", "43ddecc4a35aaeca5107f044c5619f55ba2fa9e44b319510b167d0fda0bb8048"),
+    file("lib/armeabi-v7a/libBDMicroPythonVM.so", "d13e83b23c603b4f7079be7e0c6ddd147327f173d845f3dd935eb321e6f030da"),
+    file("lib/armeabi-v7a/libpy-numpy.so", "4fcd5dbdcd75d71d72d6300f0020686d7986bc89d95c8fba4fefc2980db4e35a"),
+    file("lib/armeabi-v7a/libpy-cv-numpycv.so", "c2f6a1648cb37e700f123d19dae30f5121e90bceafc75f12c9d039c3e810d284"),
+)
+
+private val pythonFiles4703 = pythonArm64Files4693 + pythonArmeabiFiles4703
+
+/** The Python runtime's armeabi-v7a paths, none of which a split bundle carries. */
+private val pythonArmeabiPaths = pythonArmeabiFiles4703.map { it.path }.toTypedArray()
+
 // APKMirror also sells 46.2.3 and 47.0.3 as split bundles (tiktok-46-2-3-2 and tiktok-47-0-3-2,
 // "arm64-v8a + armeabi-v7a", 120-640dpi). Morphe Manager and the desktop CLI merge every split in
 // one, and every file the merged APK shares with the universal APK is byte-identical: all of the
@@ -420,22 +497,26 @@ private fun bundleOf(profile: ResourceProfile, vararg absent: String): ResourceP
 
 private val coreAssets4623 = ResourceProfile(
     "TikTok 46.2.3",
-    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4623 + monitorFiles4623 + liveCastFiles4623,
+    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4623 + monitorFiles4623 + liveCastFiles4623 +
+        pythonArm64Files4623 + pythonArmeabiFiles4623,
 )
 
 private val coreAssets4703 = ResourceProfile(
     "TikTok 47.0.3",
-    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4703 + monitorFiles4703 + liveCastFiles4703,
+    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4703 + monitorFiles4703 + liveCastFiles4703 +
+        pythonFiles4703,
 )
 
 private val coreAssets4713 = ResourceProfile(
     "TikTok 47.1.3",
-    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4713 + monitorFiles4703 + liveCastFiles4713,
+    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4713 + monitorFiles4703 + liveCastFiles4713 +
+        pythonFiles4703,
 )
 
 private val coreAssets4714 = ResourceProfile(
     "TikTok 47.1.4",
-    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4714 + monitorFiles4703 + liveCastFiles4714,
+    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4714 + monitorFiles4703 + liveCastFiles4714 +
+        pythonFiles4703,
 )
 
 internal val coreAssetProfiles = listOf(
@@ -450,18 +531,22 @@ internal val coreAssetProfiles = listOf(
         "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
         "lib/armeabi-v7a/libdex_df_pitaya.so",
         "lib/armeabi-v7a/libdex_df_live_cast.so",
+        *pythonArmeabiPaths,
     ),
     ResourceProfile(
         "TikTok 46.7.3",
-        microblinkFiles + c2paArm64Files + pitayaFiles4673 + monitorFiles4673 + liveCastFiles4673,
+        microblinkFiles + c2paArm64Files + pitayaFiles4673 + monitorFiles4673 + liveCastFiles4673 +
+            pythonArm64Files4673,
     ),
     ResourceProfile(
         "TikTok 46.8.3",
-        microblinkFiles + c2paArm64Files + pitayaFiles4683 + monitorFiles4683 + liveCastFiles4683,
+        microblinkFiles + c2paArm64Files + pitayaFiles4683 + monitorFiles4683 + liveCastFiles4683 +
+            pythonArm64Files4683,
     ),
     ResourceProfile(
         "TikTok 46.9.3",
-        microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4693 + monitorFiles4693 + liveCastFiles4693,
+        microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles4693 + monitorFiles4693 + liveCastFiles4693 +
+            pythonArm64Files4693 + pythonArmeabiFiles4693,
     ),
     coreAssets4703,
     bundleOf(
@@ -473,6 +558,7 @@ internal val coreAssetProfiles = listOf(
         "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
         "lib/armeabi-v7a/libdex_df_pitaya.so",
         "lib/armeabi-v7a/libdex_df_live_cast.so",
+        *pythonArmeabiPaths,
     ),
     coreAssets4713,
     bundleOf(
@@ -484,6 +570,7 @@ internal val coreAssetProfiles = listOf(
         "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
         "lib/armeabi-v7a/libdex_df_pitaya.so",
         "lib/armeabi-v7a/libdex_df_live_cast.so",
+        *pythonArmeabiPaths,
     ),
     coreAssets4714,
     bundleOf(
@@ -496,6 +583,7 @@ internal val coreAssetProfiles = listOf(
         "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
         "lib/armeabi-v7a/libdex_df_pitaya.so",
         "lib/armeabi-v7a/libdex_df_live_cast.so",
+        *pythonArmeabiPaths,
     ),
 )
 

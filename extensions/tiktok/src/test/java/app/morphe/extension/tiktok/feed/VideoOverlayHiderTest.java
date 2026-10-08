@@ -1748,6 +1748,208 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    /**
+     * 47.1.4 keeps the caption frame and the music disc beside the rail's column, so fading the
+     * column alone left the caption and the disc at full opacity (S22, 2026-10-08). On 47.0.3
+     * the caption frame sits inside the column and fades with it, once.
+     */
+    @Test
+    public void theCaptionFrameAndMusicDiscFadeBesideTheColumnAndOnlyOnceInsideIt() {
+        int column471 = 0x7f0a0d11, frame471 = 0x7f0a0d12, disc = 0x7f0a0d13, frame403 = 0x7f0a0d14;
+        resolveFadeIds();
+        VideoOverlayHider.resolveForTests("47.1.4:llj", column471);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", frame471);
+        VideoOverlayHider.resolveForTests("videomusiccoverblock", disc);
+        VideoOverlayHider.resolveForTests("47.0.3:bql", frame403);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            // 47.1.4: three siblings in the cell.
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(FADE_CELL_ID);
+            View column = new View(activity);
+            column.setId(column471);
+            View frame = new View(activity);
+            frame.setId(frame471);
+            frame.setClickable(true);
+            View cover = new View(activity);
+            cover.setId(disc);
+            cell.addView(column);
+            cell.addView(frame);
+            cell.addView(cover);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(cell);
+            activity.setContentView(root);
+
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the column", 0.5f, column.getAlpha(), 0f);
+            assertEquals("the caption frame beside it", 0.5f, frame.getAlpha(), 0f);
+            assertEquals("the music disc beside it", 0.5f, cover.getAlpha(), 0f);
+            assertEquals("a faded caption still takes taps", View.VISIBLE, frame.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(0);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, column.getVisibility());
+            assertEquals("0 takes the caption away without moving it", View.INVISIBLE, frame.getVisibility());
+            assertEquals(View.INVISIBLE, cover.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            for (View view : new View[]{column, frame, cover}) {
+                assertEquals("100 puts everything back", View.VISIBLE, view.getVisibility());
+                assertEquals(1f, view.getAlpha(), 0f);
+            }
+
+            // 47.0.3: the caption frame inside the column.
+            FrameLayout oldCell = new FrameLayout(activity);
+            oldCell.setId(FADE_CELL_ID);
+            FrameLayout oldColumn = new FrameLayout(activity);
+            oldColumn.setId(FADE_COLUMN_ID);
+            View oldFrame = new View(activity);
+            oldFrame.setId(frame403);
+            oldColumn.addView(oldFrame);
+            oldCell.addView(oldColumn);
+            FrameLayout oldRoot = new FrameLayout(activity);
+            oldRoot.addView(oldCell);
+            activity.setContentView(oldRoot);
+
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.5f, oldColumn.getAlpha(), 0f);
+            assertEquals("inside the faded column it isn't faded twice", 1f, oldFrame.getAlpha(), 0f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("a second pass keeps it once", 1f, oldFrame.getAlpha(), 0f);
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(1f, oldColumn.getAlpha(), 0f);
+            assertEquals(View.VISIBLE, oldFrame.getVisibility());
+        } finally {
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            clearFadeIds();
+            VideoOverlayHider.resolveForTests("47.1.4:llj", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+            VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
+            VideoOverlayHider.resolveForTests("47.0.3:bql", 0);
+        }
+    }
+
+    /**
+     * 47.1.4's full-width search bar under the caption sits in a container of its own, so it
+     * stayed at full opacity under a faded caption and stayed tappable in Clear display (S22,
+     * 2026-10-08). It fades with the controls, and Clear display or 0 take it out of reach
+     * without moving the caption above it.
+     */
+    @Test
+    public void theSearchBarUnderTheCaptionFadesAndLeavesWithClearDisplay() {
+        int barId = 0x7f0a0d15;
+        resolveFadeIds();
+        VideoOverlayHider.resolveForTests("47.1.4:ll8", barId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(FADE_CELL_ID);
+            View bar = new View(activity);
+            bar.setId(barId);
+            bar.setClickable(true);
+            cell.addView(bar);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(cell);
+            activity.setContentView(root);
+
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.5f, bar.getAlpha(), 0f);
+            assertEquals("a faded bar still takes taps", View.VISIBLE, bar.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(0);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("0 takes it away without moving the caption", View.INVISIBLE, bar.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+            assertEquals(1f, bar.getAlpha(), 0f);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 1));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("Clear display leaves no bar to tap by accident", View.INVISIBLE, bar.getVisibility());
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 1));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 1));
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            clearFadeIds();
+            VideoOverlayHider.resolveForTests("47.1.4:ll8", 0);
+        }
+    }
+
+    /**
+     * Clear display ending animates the controls back to full opacity, and no layout follows,
+     * so the fade was gone until the next video (S22, 2026-10-08). The next frame fades what
+     * TikTok wrote, and back at 100 the frame pass leaves TikTok's own values alone.
+     */
+    @Test
+    public void theFadeComesBackOnTheNextFrameAfterTikTokWritesItsOwnOpacity() {
+        int barId = 0x7f0a0d16;
+        resolveFadeIds();
+        VideoOverlayHider.resolveForTests("47.1.4:ll8", barId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(FADE_CELL_ID);
+            View bar = new View(activity);
+            bar.setId(barId);
+            cell.addView(bar);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(cell);
+            activity.setContentView(root);
+            View content = activity.findViewById(android.R.id.content);
+
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.5f, bar.getAlpha(), 0f);
+
+            // Restore display's animation ends on 1, then midway through the next one on 0.6.
+            bar.setAlpha(1f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("faded again before the frame", 0.5f, bar.getAlpha(), 0f);
+            bar.setAlpha(0.6f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals(0.3f, bar.getAlpha(), 0.0001f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("its own value is left as it is", 0.3f, bar.getAlpha(), 0.0001f);
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            bar.setAlpha(0.8f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("100 must not keep rewriting TikTok's own opacity", 0.8f, bar.getAlpha(), 0f);
+        } finally {
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            clearFadeIds();
+            VideoOverlayHider.resolveForTests("47.1.4:ll8", 0);
+        }
+    }
+
     @Test
     public void theFadeFollowsRecycledViewsAndTikToksOwnAlphaWrites() {
         resolveFadeIds();

@@ -56,7 +56,8 @@ public class InboxLayoutLifecycleTest {
                 Settings.HIDE_INBOX_MESSAGE_REQUESTS, Settings.HIDE_INBOX_NEW_FOLLOWERS,
                 Settings.HIDE_INBOX_ACTIVITY, Settings.HIDE_INBOX_ARCHIVE, Settings.HIDE_INBOX_TAKO,
                 Settings.HIDE_INBOX_SHOP, Settings.HIDE_INBOX_ADD_PEOPLE, Settings.HIDE_INBOX_SEARCH,
-                Settings.HIDE_INBOX_ACTIVITY_STATUS};
+                Settings.HIDE_INBOX_ACTIVITY_STATUS, Settings.HIDE_INBOX_BULLETIN_BOARDS,
+                Settings.HIDE_INBOX_GROUP_CHAT_BANNER};
         for (BooleanSetting setting : switches) setting.save(false);
         Settings.HIDE_INBOX_CUSTOM_TITLES.save("");
         String packageName = RuntimeEnvironment.getApplication().getPackageName();
@@ -73,6 +74,8 @@ public class InboxLayoutLifecycleTest {
             inbox.owner.close();
         }
         for (BooleanSetting setting : switches) setting.save(false);
+        Settings.HIDE_INBOX_BULLETIN_BOARDS.resetToDefault();
+        Settings.HIDE_INBOX_GROUP_CHAT_BANNER.resetToDefault();
         Settings.HIDE_INBOX_CUSTOM_TITLES.save("");
         SettingsStatus.inboxFilterEnabled = false;
     }
@@ -239,6 +242,42 @@ public class InboxLayoutLifecycleTest {
         assertRow(group, true);
         assertRow(requests, true);
         assertRow(sayHi, false);
+    }
+
+    /**
+     * A Bulletin board cell is told apart by the model, not by its layout. Whatever root it is
+     * drawn on, its own switch hides it, the conversations switch still hides it where it shares
+     * a chat's root, and a view recycled for a conversation forgets it at the next bind.
+     */
+    @Test public void aBulletinBoardRowFollowsItsOwnSwitchOnAnyRootAndLetsGoWhenRecycled() {
+        Inbox inbox = openInbox();
+        LinearLayout row = new LinearLayout(inbox.activity);
+        inbox.rows.addView(row, new LinearLayout.LayoutParams(-1, 72));
+
+        reshape(inbox, row, "47.0.3:uy5", "47.0.3:brb", "Bulletin board");
+        InboxFilter.onRowBound(new Holder(row), 0, new Bulletin());
+        inbox.layout();
+        assertRow(row, false);
+        Settings.HIDE_INBOX_BULLETIN_BOARDS.save(true);
+        inbox.layout();
+        assertRow(row, true);
+
+        reshape(inbox, row, "47.0.3:w1f", "user_name", "Bulletin board");
+        InboxFilter.onRowBound(new Holder(row), 1, new Bulletin());
+        inbox.layout();
+        assertRow(row, true);
+        Settings.HIDE_INBOX_BULLETIN_BOARDS.save(false);
+        inbox.layout();
+        assertRow(row, false);
+        Settings.HIDE_INBOX_CONVERSATIONS.save(true);
+        inbox.layout();
+        assertRow(row, true);
+
+        Settings.HIDE_INBOX_CONVERSATIONS.save(false);
+        Settings.HIDE_INBOX_BULLETIN_BOARDS.save(true);
+        InboxFilter.onRowBound(new Holder(row), 2, new Object());
+        inbox.layout();
+        assertRow(row, false);
     }
 
     /**
@@ -456,6 +495,15 @@ public class InboxLayoutLifecycleTest {
 
     private static final class Archive {
         public String itemUniqueId() { return "archive_entrance"; }
+    }
+
+    /** InboxEntrancePod as the model shows it: the cell's server id is all that names this row. */
+    private static final class Bulletin {
+        public final Cell entranceCell = new Cell();
+        static final class Cell {
+            public final int cellId;
+            Cell() { cellId = 15; }
+        }
     }
 
     private static final class Inbox {

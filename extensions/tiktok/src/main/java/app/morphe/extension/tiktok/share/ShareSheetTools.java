@@ -239,9 +239,9 @@ public final class ShareSheetTools {
         List<String> hidden = entries(ShareModelFilter.hiddenItems());
         boolean hideContacts = Settings.HIDE_SHARE_CONTACTS.get();
         if (section != null) setVisible(section, !hideContacts);
-        if (!hideContacts) hideByLabel(contacts, hidden);
-        hideByLabel(channels, hidden);
-        hideByLabel(actions, hidden);
+        if (!hideContacts) hideByLabel("contacts", contacts, hidden);
+        hideByLabel("channels", channels, hidden);
+        hideByLabel("actions", actions, hidden);
     }
 
     /**
@@ -299,15 +299,34 @@ public final class ShareSheetTools {
         }
     }
 
-    private static void hideByLabel(View list, List<String> hidden) {
+    /**
+     * TikTok's small share sheet lost every row but "Share with" once anything was hidden (#120),
+     * on a server layout no test account here gets. The debug line names each cell as it goes,
+     * with its row and shape, so a diagnostic export shows which row held what. A contact's label
+     * is a person's name, so that row's stays out of the log.
+     */
+    private static void hideByLabel(String row, View list, List<String> hidden) {
         if (!(list instanceof ViewGroup)) {
             return;
         }
         ViewGroup group = (ViewGroup) list;
         for (int index = 0; index < group.getChildCount(); index++) {
             View cell = group.getChildAt(index);
-            setCellHidden(cell, matches(hidden, labelOf(cell)));
+            String label = labelOf(cell);
+            boolean hide = matches(hidden, label);
+            if (hide && cell != null && cell.getVisibility() != View.GONE) {
+                int position = index;
+                String named = "contacts".equals(row) ? "a person" : "\"" + label + "\"";
+                Logger.printDebug(() -> "Share sheet hides " + row + " cell " + position + " " + named + " ("
+                        + cell.getClass().getSimpleName() + ", " + childCount(cell) + " children) in "
+                        + list.getClass().getSimpleName() + " of " + group.getChildCount());
+            }
+            setCellHidden(cell, hide);
         }
+    }
+
+    private static int childCount(View view) {
+        return view instanceof ViewGroup ? ((ViewGroup) view).getChildCount() : 0;
     }
 
     /**

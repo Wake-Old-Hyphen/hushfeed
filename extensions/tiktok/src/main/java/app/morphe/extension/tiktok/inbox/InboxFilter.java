@@ -283,7 +283,11 @@ public final class InboxFilter {
         }
 
         if (hasId(activity, row, CHAT_ROW_IDS)) {
-            return Settings.HIDE_INBOX_CONVERSATIONS.get()
+            // A pod the model named (Bulletin board, say) can be drawn on a chat's root. Its own
+            // switch hides it as well, and the conversations switch still does what it always did.
+            BooleanSetting named = SYSTEM_ROWS.get(row);
+            return (named != null && named.get())
+                    || Settings.HIDE_INBOX_CONVERSATIONS.get()
                     || matchesCustomList(textOf(findWithin(activity, row, USER_ROW_TITLE_IDS)));
         }
 

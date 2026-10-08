@@ -17,6 +17,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.navigation.MainNewIntentFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -55,6 +56,7 @@ private const val SEARCH_LYNX_CARDS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/ti
 private const val LIVE_FEED_FILTER_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/LiveFeedFilter;"
 private const val FEED_ITEM_LIST_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/feed/model/FeedItemList;"
 private const val FILTERED_COUNT_PILL_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/FilteredCountPill;"
+private const val LINKED_VIDEO_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/LinkedVideo;"
 
 @Suppress("unused")
 val feedFilterPatch = bytecodePatch(
@@ -106,6 +108,17 @@ val feedFilterPatch = bytecodePatch(
         MainActivityOnCreateFingerprint.method.addInstruction(
             0,
             "invoke-static/range { p0 .. p0 }, $FILTERED_COUNT_PILL_CLASS_DESCRIPTOR->install(Landroid/app/Activity;)V",
+        )
+
+        // The video a link from outside TikTok opens gets past the rules (#117). A cold start
+        // carries the link in the activity's intent, and the running app gets it in onNewIntent.
+        MainActivityOnCreateFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p1 }, $LINKED_VIDEO_CLASS_DESCRIPTOR->onCreate(Landroid/app/Activity;Landroid/os/Bundle;)V",
+        )
+        MainNewIntentFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p1 .. p1 }, $LINKED_VIDEO_CLASS_DESCRIPTOR->onNewIntent(Landroid/content/Intent;)V",
         )
 
         MainFeedResponseFingerprint.method.let { method ->

@@ -57,6 +57,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.hdUploadEnabled
                 || SettingsStatus.refreshRateEnabled
                 || SettingsStatus.launcherShortcutsEnabled
+                || SettingsStatus.firstLaunchSetupEnabled
                 || SettingsStatus.screenCaptureEnabled
                 || SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.storeIdentityEnabled;
@@ -234,7 +235,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         // the store check on Privacy, under a heading of its own.
         if (SettingsStatus.screenCaptureEnabled || SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.refreshRateEnabled || SettingsStatus.launcherShortcutsEnabled
-                || SettingsStatus.storeIdentityEnabled) {
+                || SettingsStatus.firstLaunchSetupEnabled || SettingsStatus.storeIdentityEnabled) {
             addPreference(new SectionHeadingPreference(context, "System"));
         }
         if (SettingsStatus.screenCaptureEnabled) {
@@ -276,6 +277,16 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "the icon still opens the app, and a shortcut you pinned yourself "
                             + "stays where you put it.",
                     Settings.HIDE_LAUNCHER_SHORTCUTS
+            ));
+        }
+        if (SettingsStatus.firstLaunchSetupEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Skip TikTok's setup screens",
+                    "Leave out the interest picker, the language and gender questions, the creators "
+                            + "to follow, the swipe up tutorial and TikTok's notification page when TikTok "
+                            + "runs its setup. Consent, age and sign-in screens still show.",
+                    Settings.SKIP_FIRST_LAUNCH_SETUP
             ));
         }
         if (SettingsStatus.storeIdentityEnabled) {
