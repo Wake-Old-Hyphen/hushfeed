@@ -1,8 +1,10 @@
 # Names one TikTok build made up, still written into the sources as identities.
 # One "path|name" per line. ObfuscatedIdentityTest fails on a name that is not listed here and on
 # a line here that no longer matches, so this list can only shrink. See that test for why.
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|omp
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|omq
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|omr
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|opg
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|oph
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|opi
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|pvp

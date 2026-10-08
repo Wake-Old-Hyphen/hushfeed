@@ -19,6 +19,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
+import app.morphe.extension.tiktok.settings.preference.PopupLabelChecklistPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.SwitchListPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
@@ -47,12 +48,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.avatarRingsEnabled
                 || SettingsStatus.alwaysShowPublishDateEnabled
                 || SettingsStatus.authorRegionEnabled
+                || SettingsStatus.engagementRateEnabled
                 || SettingsStatus.hideFeedLiveButtonEnabled
                 || SettingsStatus.hideFeedSearchButtonEnabled
                 || SettingsStatus.feedFilterEnabled
                 || SettingsStatus.promotionalBannersEnabled
                 || SettingsStatus.captchaPopupSuppressionEnabled
                 || SettingsStatus.sensitiveWarningsEnabled
+                || SettingsStatus.popupLabelsEnabled
                 || SettingsStatus.subtitleToolsEnabled
                 || SettingsStatus.blockAuthorEnabled
                 || SettingsStatus.notInterestedEnabled
@@ -210,6 +213,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     private void addVideoInfo(Context context) {
         boolean any = SettingsStatus.alwaysShowPublishDateEnabled
                 || SettingsStatus.authorRegionEnabled
+                || SettingsStatus.engagementRateEnabled
                 || SettingsStatus.feedTextSizeEnabled
                 || SettingsStatus.videoOverlaysEnabled;
         if (!any) return;
@@ -239,6 +243,18 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Always show the publish date in video author information. Restart TikTok to apply this.",
                     Settings.ALWAYS_SHOW_PUBLISH_DATE
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show the time to the second",
+                    "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.",
+                    Settings.PUBLISH_DATE_EXACT_TIME
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show dates on profile grids",
+                    "Show the day each video was posted under its view count on profile grids.",
+                    Settings.PUBLISH_DATE_ON_GRID
+            ));
         }
         if (SettingsStatus.authorRegionEnabled) {
             addPreference(new TogglePreference(
@@ -252,6 +268,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show the handle instead of the name",
                     "Show @username beside a video instead of the display name the creator chose.",
                     Settings.SHOW_AUTHOR_HANDLE
+            ));
+        }
+        if (SettingsStatus.engagementRateEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Show engagement rate",
+                    "Show likes, comments, shares and saves as a percentage of views, next to the creator's name and after the view count on profile grids.",
+                    Settings.SHOW_ENGAGEMENT_RATE
             ));
         }
         if (SettingsStatus.videoOverlaysEnabled) {
@@ -372,6 +396,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         boolean any = SettingsStatus.promotionalBannersEnabled
                 || SettingsStatus.captchaPopupSuppressionEnabled
                 || SettingsStatus.sensitiveWarningsEnabled
+                || SettingsStatus.popupLabelsEnabled
                 || SettingsStatus.videoOverlaysEnabled;
         if (!any) return;
         addPreference(new SectionHeadingPreference(context, "Popups"));
@@ -392,6 +417,15 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             captcha.setEnabled(false);
             captcha.setSelectable(false);
             addPreference(captcha);
+        }
+        if (SettingsStatus.popupLabelsEnabled) {
+            addPreference(new PopupLabelChecklistPreference(context));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the LIVE bubble",
+                    "Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.",
+                    Settings.HIDE_LIVE_BUBBLE
+            ));
         }
         if (SettingsStatus.sensitiveWarningsEnabled) {
             addPreference(new TogglePreference(
@@ -454,6 +488,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.",
                     Settings.HIDE_CLEAR_DISPLAY_CONTROLS
             ));
+            addPreference(new NumberInputPreference(
+                    context,
+                    "Fade the video controls",
+                    "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
+                    Settings.FADE_CONTROLS_OPACITY, "%1$s%%"
+            ));
         }
     }
 
@@ -463,9 +503,19 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.longPressSpeedLockEnabled
                 || SettingsStatus.disableLongPressQuickShareEnabled
                 || SettingsStatus.disableLongPressRepostEnabled
-                || SettingsStatus.confirmInteractionsEnabled;
+                || SettingsStatus.confirmInteractionsEnabled
+                || SettingsStatus.videoOverlaysEnabled;
         if (!any) return;
         addPreference(new SectionHeadingPreference(context, "Gestures"));
+        if (SettingsStatus.videoOverlaysEnabled) {
+            addPreference(new TogglePreference(context, "Swipe for brightness and volume",
+                    "Drag up or down along the left edge of a video to change the screen brightness, or along "
+                            + "the right edge to change the volume. Swiping anywhere else still scrolls the feed.",
+                    Settings.SWIPE_LEVELS));
+            addPreference(new NumberInputPreference(context, "Edge strip width",
+                    "How wide each edge strip is, as a percent of the screen width.",
+                    Settings.SWIPE_LEVELS_STRIP_PERCENT, "%1$s%%"));
+        }
         if (SettingsStatus.doubleTapEnabled) {
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
                     new String[]{"TikTok default", "Do nothing", "Open comments"},
@@ -480,9 +530,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new ChoicePreference(context, "Long press", Settings.LONG_PRESS_ACTION,
                     new String[]{"TikTok default (hold to speed up, quick share)", "Do nothing",
                             "Open comments", "Save the original sound", "Copy the video link",
-                            "Copy the sound link", "Find the sound on YouTube Music"},
+                            "Copy the sound link", "Find the sound on YouTube Music",
+                            "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
+                            "Save the video's cover"},
                     new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
-                            "copy_sound_link", "youtube_music"}));
+                            "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
             addPreference(new TogglePreference(context, "Seek from the edges",
                     "Press and hold the left or right third of the screen to jump back or forward. "
                             + "The middle third keeps the Long press action.", Settings.EDGE_SEEK));

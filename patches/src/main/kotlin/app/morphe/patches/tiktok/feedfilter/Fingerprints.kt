@@ -925,6 +925,21 @@ internal object RecUserCardInsertFingerprint : Fingerprint(
     custom = { method, _ -> method.isRecUserCardInsertion() },
 )
 
+/**
+ * The Lemon8 card handler's request builder, a LIZJ(handler, FeedCardInsertData, List) that
+ * answers a list of card type requests. Every card-insert handler has this shape, and the one
+ * that keeps the not-interested time of the Lemon8 big card is the only one with this key.
+ */
+internal object Lemon8CardRequestFingerprint : Fingerprint(
+    returnType = "Ljava/util/List;",
+    parameters = listOf(
+        "L",
+        "Lcom/ss/android/ugc/feed/platform/cardinsert/data/FeedCardInsertData;",
+        "Ljava/util/List;",
+    ),
+    strings = listOf("fyp_big_card_not_interested_time"),
+)
+
 /** Loads the Lynx view behind an inserted card, which happens before any list filter runs. */
 internal object FeedLynxCardLoadFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
