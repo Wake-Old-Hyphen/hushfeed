@@ -126,7 +126,7 @@ public class OfflineVideoExpiryTest {
             Preference row = find(with, TITLE);
             assertNotNull(row);
             String summary = String.valueOf(row.getSummary());
-            assertTrue(summary, summary.startsWith("TikTok throws out the videos it saved for offline viewing"));
+            assertTrue(summary, summary.startsWith("TikTok removes videos saved for offline viewing"));
             assertTrue("the restart note is missing: " + summary, summary.contains("Restart TikTok"));
         } finally {
             SettingsStatus.customOfflineVideosEnabled = offline;

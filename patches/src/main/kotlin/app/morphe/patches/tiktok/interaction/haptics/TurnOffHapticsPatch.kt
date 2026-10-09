@@ -58,9 +58,9 @@ internal val LONG_CLICKS = mapOf(
 @Suppress("unused")
 val turnOffHapticsPatch = bytecodePatch(
     name = "Turn off haptics",
-    description = "Stops the short vibrations TikTok plays on its own taps and gestures, the " +
-        "long press buzz included. Your keyboard and your phone's own haptics stay. Off until " +
-        "you turn it on. Switch: Hushfeed settings > App.",
+    description = "Stops the little vibrations TikTok makes when you tap or hold things. Your " +
+        "keyboard and your phone's own vibrations stay. Starts off. Turn it on in Hushfeed " +
+        "settings > App.",
 ) {
     category("Interaction")
     dependsOn(settingsPatch, sharedExtensionPatch)

@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Morphe Manager'daki tüm yama açıklamaları sade bir İngilizceyle yeniden yazıldı. Artık her biri yamanın neyi değiştirdiğini, onu neden isteyebileceğini, düğmesinin açık mı kapalı mı başladığını ve Hushfeed ayarlarında nerede olduğunu söylüyor. Bazı yama seçenekleri de daha anlaşılır oldu ve Skip push setup artık Skip notification setup adını taşıyor.
+
+* **TikTok:** Hushfeed ayarlarındaki satırlar sade İngilizceyle yeniden yazıldı. Privacy, Comments, Downloads, Feed filter, Screen time, Region ve diğer sayfalar artık teknik terimler olmadan her anahtarın ne yaptığını ve neyi fark edeceğini söylüyor. Birkaç başlık da değişti, örneğin Stop TikTok's speed tests ve Clean up shared links.
+
+* **TikTok:** Birkaç mesaj ve durum satırı da daha sade oldu, örneğin Ghost mode durumu, Hook status açıklaması, proxy parolası bildirimi ve dosya adı önizlemesi.
+
+* **TikTok:** Morphe Manager'daki Dark background color seçeneği artık "onaltılık kod" yerine "renk kodu" diyor ve siyahın OLED ekranlarda bu pikselleri tamamen kapattığını açıklıyor.
+
+## 0.70.0 (2026-10-09)
+
 * **TikTok:** Hushfeed artık yalnızca TikTok 47.1.4'ü destekliyor. 47.0.3 veya 47.1.3 kullanıyorsan 47.1.4 APK'sını APKMirror'dan indir ve Morphe Manager'da aynı imza anahtarıyla yamala, böylece oturumun ve ayarların korunur. Feature Gate Lab, düğmesi 47.1.4'te hâlâ bulunan her geçersiz kılmayı korur ve gerisini her zamanki bildirimiyle kapatır.
 
 * **TikTok:** Özel çevrimdışı video sınırının Hushfeed ayarları > İndirilenler altında yeni bir anahtarı var, Çevrimdışı videoları sen silene kadar tut. Sen açana kadar kapalı (#123). TikTok, çevrimdışı izlemek için kaydettiği videoları belirli bir süre sonra, bazen yalnızca iki gün sonra atar ve tek seferde kaydedilen bir liste de tek seferde kaybolur, izlenmiş olsun olmasın. Anahtar açıkken videolar, sen TikTok'un Çevrimdışı videolar ayarlarından silene kadar kalır, yeni bir set almanın yolu da bu. Telefonunda yer azaldığında TikTok izlediğin videoları yine de silebilir, daha düşük bir sınır seçmek de listeyi yine kısaltır. Çevrimdışı video sınırının altındaki depolama satırına göz kulak ol. Anahtar, TikTok'un bir sonraki açılışında devreye girer.

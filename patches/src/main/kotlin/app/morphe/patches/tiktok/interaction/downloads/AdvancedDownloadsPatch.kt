@@ -266,12 +266,9 @@ internal fun MutableMethod.interceptPhotoVideoConversion() {
 @Suppress("unused")
 val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
-    description = "Adds download quality choices, original Photo Mode images, separate audio " +
-        "files and optional video details. A photo post can also save as one video with its " +
-        "sound and no TikTok logo. It can check for an existing saved video before downloading " +
-        "another copy, and mark the videos it saved on profile grids. Long presses can save " +
-        "profile pictures and stories. Nothing changes until you turn an option on. Switch: " +
-        "Hushfeed settings > Downloads.",
+    description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
+        "sound on its own or a photo post as one video, and hold a profile picture or story to " +
+        "save it. Starts off. Turn it on in Hushfeed settings > Downloads.",
 ) {
     category("Downloads")
     compatibleWith(*AppCompatibilities.tiktok())

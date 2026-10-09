@@ -4,6 +4,28 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **Project:** Failed preference-test saves now retain the underlying logs and file state.
+
+* **Project:** Kept settings search and translated descriptions aligned with renamed rows, and updated their wording checks.
+
+* Documented the original 47.1.4 manifest, verified signer, SDK entry points, network security and backup rules, with a reusable sanitized inventory.
+
+* **Project:** Added measured TikTok network, CPU, background and battery observations from a physical phone, with sanitized datasets and a CPU chart. The report distinguishes the paused modified APK from an official build and records capture gaps, overlapping VPN counters and follow-up patch checks. The README now explains Pause's limits more clearly.
+
+* **Project:** Added a repeatable protocol for measuring TikTok traffic, background work and battery use, with a source map for the controls that can affect each result.
+
+* **Project:** Added app and patch development notes plus a TikTok audit covering ad routes, upstream issue evidence, tracking scope, factory onboarding, signed-in controls, and patch opportunities.
+
+* **TikTok:** Every patch description in Morphe Manager is rewritten in plain English. Each one now says what the patch changes, why you might want it, and whether its switch starts on or off and where to find it in Hushfeed settings. A few patch options read more clearly too, and Skip push setup is now called Skip notification setup.
+
+* **TikTok:** The rows in Hushfeed settings are reworded in plain English. Privacy, Comments, Downloads, Feed filter, Screen time, Region and other pages now say what each switch does and what you'll notice, without technical terms. A few titles changed too, like Stop TikTok's speed tests and Clean up shared links.
+
+* **TikTok:** A handful of messages and status lines are plainer too, like the Ghost mode status, the Hook status explanation, the proxy password notice and the file name preview.
+
+* **TikTok:** The Dark background color option in Morphe Manager now says "color code" instead of "hex code", and explains that black turns those pixels off completely on OLED screens.
+
+## 0.70.0 (2026-10-09)
+
 * **TikTok:** Hushfeed now supports TikTok 47.1.4 only. If you're on 47.0.3 or 47.1.3, download the 47.1.4 APK from APKMirror and patch it in Morphe Manager with the same signing key, so your login and settings carry over. Feature Gate Lab keeps each override whose switch 47.1.4 still has and turns the rest off with its usual notice.
 
 * **TikTok:** Custom offline videos limit has a new switch in Hushfeed settings > Downloads, Keep offline videos until you delete them. It's off until you turn it on (#123). TikTok throws out the videos it saved for offline viewing after a set time, sometimes only two days, and a list saved in one go disappears in one go, watched or not. With the switch on they stay until you delete them in TikTok's Offline videos settings, which is also how you get a fresh set. TikTok can still clear ones you've already watched when your phone runs low on space, and picking a lower limit still trims the list. Keep an eye on the storage line under the offline videos limit. The switch takes effect the next time TikTok starts.

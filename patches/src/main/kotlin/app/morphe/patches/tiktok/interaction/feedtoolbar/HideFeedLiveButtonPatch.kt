@@ -27,9 +27,8 @@ private object LiveIconEnabledFingerprint : Fingerprint(
 @Suppress("unused")
 val hideFeedLiveButtonPatch = bytecodePatch(
     name = "Hide feed LIVE button",
-    description = "Hide the LIVE button at the top left of video feeds. " +
-        "Shares its switch with the LIVE entrance option of Hide video overlays, and stops the " +
-        "button before it is built rather than hiding it once it is on screen. Switch: Hushfeed settings > Feed screen.",
+    description = "Removes the LIVE button from the top left of the feed, for a cleaner " +
+        "screen. Starts off. Turn it on in Hushfeed settings > Feed screen.",
     default = true,
 ) {
     category("Feed")

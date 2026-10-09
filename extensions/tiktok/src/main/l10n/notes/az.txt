@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Morphe Manager-dəki bütün yamaq təsvirləri sadə ingilis dilində yenidən yazılıb. İndi hər biri yamağın nəyi dəyişdiyini, onu niyə istəyə biləcəyini, açarının açıq və ya bağlı başladığını və Hushfeed ayarlarında harada olduğunu deyir. Bəzi yamaq seçimləri də daha aydın yazılıb, Skip push setup isə indi Skip notification setup adlanır.
+
+* **TikTok:** Hushfeed ayarlarındakı sətirlər sadə ingiliscə ilə yenidən yazıldı. Privacy, Comments, Downloads, Feed filter, Screen time, Region və digər səhifələr indi texniki terminlər olmadan hər açarın nə etdiyini və nəyi hiss edəcəyinizi deyir. Bir neçə başlıq da dəyişdi, məsələn Stop TikTok's speed tests və Clean up shared links.
+
+* **TikTok:** Bir neçə mesaj və status sətri də sadələşdirildi, məsələn Ghost mode statusu, Hook status izahı, proksi parolu bildirişi və fayl adı önbaxışı.
+
+* **TikTok:** Morphe Manager-dəki Dark background color seçimi indi "hex kod" əvəzinə "rəng kodu" deyir və qaranın OLED ekranlarda həmin pikselləri tamamilə söndürdüyünü izah edir.
+
+## 0.70.0 (2026-10-09)
+
 * **TikTok:** Hushfeed indi yalnız TikTok 47.1.4-ü dəstəkləyir. 47.0.3 və ya 47.1.3 istifadə edirsənsə, 47.1.4 APK-sını APKMirror-dan endir və Morphe Manager-də eyni imza açarı ilə yamala ki, girişin və ayarların qalsın. Feature Gate Lab 47.1.4-də hələ də olan açarların dəyişikliklərini saxlayır, qalanlarını isə adi bildirişi ilə söndürür.
 
 * **TikTok:** Fərdi oflayn videolar limitinin Hushfeed ayarları > Endirmələr bölməsində yeni açarı var, Oflayn videoları siz silənə qədər saxlayın. Siz yandırana qədər söndürülüdür (#123). TikTok oflayn baxış üçün saxladığı videoları müəyyən vaxtdan sonra, bəzən cəmi iki gündən sonra atır və bir dəfəyə saxlanan siyahı da bir dəfəyə yox olur, baxılıb-baxılmamasından asılı olmayaraq. Açar yanılı olanda onlar siz TikTok-un Oflayn videolar ayarlarında silənə qədər qalır, yeni dəst almağın yolu da budur. Telefonunuzda yer azalanda TikTok baxdığınız videoları yenə də silə bilər, daha aşağı limit seçmək də siyahını yenə qısaldır. Oflayn videolar limitinin altındakı yaddaş sətrinə göz qoyun. Açar TikTok növbəti dəfə açılanda işə düşür.

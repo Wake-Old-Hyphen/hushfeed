@@ -28,9 +28,9 @@ private const val EXTENSION_CLASS_DESCRIPTOR =
 @Suppress("unused")
 val commentSortControlsPatch = bytecodePatch(
     name = "Comment sort controls",
-    description = "Shows TikTok's own comment sort sheet on every post, with its hot, newest, " +
-        "media and creator options, instead of the cut-down row an account outside the rollout " +
-        "is given. Off until you turn it on. Switch: Hushfeed settings > Comments.",
+    description = "Shows TikTok's full comment sort menu on every video, with hot, newest, " +
+        "media and creator options, even when your account only got a cut-down version. Starts " +
+        "off. Turn it on in Hushfeed settings > Comments.",
 ) {
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)

@@ -859,12 +859,12 @@ public class SettingsPagesTest {
                     .simSpoofEnabled;
             try {
                 app.morphe.extension.tiktok.settings.SettingsStatus.simSpoofEnabled = false;
-                assertTrue("a bundle without the patch still promised the operator rows",
-                        !summaryOfSimSwitch(activity).contains("operator"));
+                assertTrue("a bundle without the patch still promised the carrier rows",
+                        !summaryOfSimSwitch(activity).contains("carrier"));
 
                 app.morphe.extension.tiktok.settings.SettingsStatus.simSpoofEnabled = true;
-                assertTrue("a bundle with the patch stopped naming the operator rows",
-                        summaryOfSimSwitch(activity).contains("operator"));
+                assertTrue("a bundle with the patch stopped naming the carrier rows",
+                        summaryOfSimSwitch(activity).contains("carrier"));
             } finally {
                 app.morphe.extension.tiktok.settings.SettingsStatus.simSpoofEnabled = original;
             }

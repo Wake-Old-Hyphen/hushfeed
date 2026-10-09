@@ -960,8 +960,10 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                     null,
                     FEATURE_GATE_LAB_KEY,
                     L10n.t(context, "Feature Gate Lab"),
-                    L10n.t(context, "Search and override gates"),
-                    L10n.t(context, "Settings")
+                    L10n.t(context, "Advanced. Find and force the hidden switches TikTok uses "
+                            + "to test features."),
+                    L10n.t(context, "Settings"),
+                    "override gates"
             ));
         }
         // Pause Hushfeed sits on the master menu too, and it is what a reader asking whether a
@@ -1257,7 +1259,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             SettingsMenuPreference featureGateLab = new SettingsMenuPreference(
                     context,
                     L10n.t(context, "Feature Gate Lab"),
-                    L10n.t(context, "Search and override gates"),
+                    L10n.t(context, "Advanced. Find and force the hidden switches TikTok uses "
+                            + "to test features."),
                     SettingsMenuPreference.Icon.LAB,
                     0,
                     preference -> {

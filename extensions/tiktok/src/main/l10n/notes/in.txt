@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Semua deskripsi patch di Morphe Manager ditulis ulang dalam bahasa Inggris yang sederhana. Masing-masing kini menjelaskan apa yang diubah patch, kenapa kamu mungkin menginginkannya, dan apakah sakelarnya mulai menyala atau mati serta letaknya di pengaturan Hushfeed. Beberapa opsi patch juga lebih jelas, dan Skip push setup kini bernama Skip notification setup.
+
+* **TikTok:** Baris di pengaturan Hushfeed ditulis ulang dalam bahasa Inggris yang sederhana. Privacy, Comments, Downloads, Feed filter, Screen time, Region, dan halaman lain kini menjelaskan tanpa istilah teknis apa yang dilakukan tiap sakelar dan apa yang akan kamu rasakan. Beberapa judul juga berubah, misalnya Stop TikTok's speed tests dan Clean up shared links.
+
+* **TikTok:** Beberapa pesan dan baris status juga lebih mudah dipahami, misalnya status mode Ghost, penjelasan Hook status, pemberitahuan kata sandi proxy, dan pratinjau nama file.
+
+* **TikTok:** Opsi Dark background color di Morphe Manager kini menyebut "kode warna", bukan "kode hex", dan menjelaskan bahwa hitam mematikan piksel itu sepenuhnya di layar OLED.
+
+## 0.70.0 (2026-10-09)
+
 * **TikTok:** Hushfeed kini hanya mendukung TikTok 47.1.4. Jika kamu memakai 47.0.3 atau 47.1.3, unduh APK 47.1.4 dari APKMirror lalu patch di Morphe Manager dengan kunci penandatanganan yang sama, agar login dan pengaturanmu tetap ada. Feature Gate Lab mempertahankan setiap override yang sakelarnya masih ada di 47.1.4 dan mematikan sisanya dengan pemberitahuan seperti biasa.
 
 * **TikTok:** Batas video offline kustom punya sakelar baru di pengaturan Hushfeed > Unduhan, Simpan video offline sampai kamu menghapusnya. Sakelarnya mati sampai kamu menyalakannya (#123). TikTok membuang video yang disimpannya untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, dan daftar yang disimpan sekaligus juga hilang sekaligus, sudah ditonton atau belum. Dengan sakelar ini aktif, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok, dan begitu juga cara mendapatkan set baru. TikTok masih bisa menghapus video yang sudah kamu tonton saat penyimpanan ponselmu hampir penuh, dan memilih batas yang lebih rendah tetap memangkas daftarnya. Perhatikan baris penyimpanan di bawah batas video offline. Sakelar ini berlaku saat TikTok dibuka berikutnya.

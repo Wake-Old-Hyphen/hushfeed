@@ -55,7 +55,7 @@ public class SearchSettingsClarityTest {
 
     @Test public void commentHeartTargetSaysWhatGetsEasierWithoutChangingTheRowLayout() {
         assertRow("COMMENTS", "larger_comment_like_target", "Easier comment likes", "heart");
-        assertRow("COMMENTS", "larger_comment_like_target", "Easier comment likes", "blank space");
+        assertRow("COMMENTS", "larger_comment_like_target", "Easier comment likes", "empty space");
     }
 
     @Test public void otherSearchControlsNameTheirOwnSurface() {

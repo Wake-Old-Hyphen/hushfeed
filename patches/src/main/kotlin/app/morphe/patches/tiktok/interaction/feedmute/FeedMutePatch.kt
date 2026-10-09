@@ -143,12 +143,9 @@ internal fun resolveFeedMuteMembers(
 @Suppress("unused")
 val feedMutePatch = bytecodePatch(
     name = "Mute feed videos",
-    description = "Adds a switch that mutes feed videos without touching the phone's volume. " +
-        "Show the mute button on videos adds a movable button that does the same, and it also " +
-        "shows on a video opened from a profile, a hashtag or a sound, where it mutes that one " +
-        "too. While muted, music from another app keeps playing, and DMs, stories and LIVE keep " +
-        "their sound. Both switches are off until you turn them on. Switches: Hushfeed settings " +
-        "> Playback, and Feed screen for the button.",
+    description = "Mutes feed videos without changing your phone's volume, so music from " +
+        "another app keeps playing. You can also add a mute button on videos. Starts off. Turn it " +
+        "on in Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch, blockAuthorPatch)

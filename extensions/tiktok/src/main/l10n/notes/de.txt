@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Alle Patch-Beschreibungen in Morphe Manager sind neu in einfachem Englisch geschrieben. Jede sagt jetzt, was der Patch ändert, warum du ihn willst und ob sein Schalter an oder aus startet und wo er in den Hushfeed-Einstellungen liegt. Ein paar Patch-Optionen sind auch klarer formuliert, und Skip push setup heißt jetzt Skip notification setup.
+
+* **TikTok:** Die Zeilen in den Hushfeed-Einstellungen sind in einfachem Englisch neu formuliert. Privacy, Comments, Downloads, Feed filter, Screen time, Region und weitere Seiten sagen jetzt ohne Fachbegriffe, was jeder Schalter tut und was du davon merkst. Ein paar Titel haben sich auch geändert, zum Beispiel Stop TikTok's speed tests und Clean up shared links.
+
+* **TikTok:** Ein paar Meldungen und Statuszeilen sind ebenfalls verständlicher, etwa der Ghost-Modus-Status, die Erklärung zu Hook status, der Hinweis zum Proxy-Passwort und die Vorschau des Dateinamens.
+
+* **TikTok:** Die Option Dark background color in Morphe Manager sagt jetzt „Farbcode“ statt „Hex-Code“ und erklärt, dass Schwarz diese Pixel auf OLED-Bildschirmen komplett ausschaltet.
+
+## 0.70.0 (2026-10-09)
+
 * **TikTok:** Hushfeed unterstützt jetzt nur noch TikTok 47.1.4. Wenn du 47.0.3 oder 47.1.3 nutzt, lade die APK von 47.1.4 bei APKMirror herunter und patche sie in Morphe Manager mit demselben Signaturschlüssel, damit Anmeldung und Einstellungen erhalten bleiben. Das Feature Gate Lab behält jede Überschreibung, deren Schalter es in 47.1.4 noch gibt, und schaltet die übrigen mit seinem üblichen Hinweis aus.
 
 * **TikTok:** Eigenes Limit für Offline-Videos hat einen neuen Schalter unter Hushfeed-Einstellungen > Downloads, Offline-Videos behalten, bis du sie löschst. Er ist aus, bis du ihn einschaltest (#123). TikTok wirft die Videos, die es zum Offline-Ansehen gespeichert hat, nach einer festen Zeit weg, manchmal schon nach zwei Tagen, und eine Liste, die auf einmal gespeichert wurde, verschwindet auch auf einmal, ob angesehen oder nicht. Mit dem Schalter bleiben sie, bis du sie in TikToks Einstellungen für Offline-Videos löschst, und so bekommst du auch neue. Schon angesehene kann TikTok weiterhin entfernen, wenn der Speicher deines Handys knapp wird, und ein niedrigeres Limit kürzt die Liste weiterhin. Behalte die Speicherzeile unter dem Limit für Offline-Videos im Blick. Der Schalter wirkt ab dem nächsten Start von TikTok.

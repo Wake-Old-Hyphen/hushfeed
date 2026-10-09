@@ -439,11 +439,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 addPreference(new TogglePreference(
                         context,
                         "Hide TikTok's wind-down screens",
-                        "Stop the bedtime wind-down, the breathing exercise and the daily limit screen "
-                                + "TikTok puts over the feed. It only works on an account TikTok knows is an "
-                                + "adult's. A teen's account keeps them, and so does one Family Pairing links "
-                                + "to a parent. With Leave when TikTok says time is up on, the daily limit "
-                                + "screen still comes up so that switch can act on it.",
+                        "Stops the bedtime wind-down, the breathing exercise and the daily "
+                                + "limit screen TikTok puts over the feed. Works only on "
+                                + "accounts TikTok knows belong to adults. Teen accounts, and "
+                                + "ones a parent links with Family Pairing, keep them. With "
+                                + "Leave when TikTok says time is up on, the daily limit screen "
+                                + "still shows so that switch can work.",
                         Settings.HIDE_WIND_DOWN_SCREENS
                 ));
             }
@@ -452,8 +453,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new TogglePreference(
                     context,
                     "Skip content warnings",
-                    "Play videos TikTok has classified without the overlay asking to be tapped "
-                            + "through first.",
+                    "Plays videos that TikTok covers with a content warning without asking you "
+                            + "to tap through first.",
                     Settings.HIDE_SENSITIVE_WARNINGS
             ));
             // Left out with its hook on a build where the risk model getter wasn't found.

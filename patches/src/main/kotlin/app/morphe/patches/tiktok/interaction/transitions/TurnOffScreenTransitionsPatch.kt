@@ -51,8 +51,9 @@ internal fun screenTransitionsInstallIndex(method: Method): Int {
 @Suppress("unused")
 val turnOffScreenTransitionsPatch = bytecodePatch(
     name = "Turn off screen transitions",
-    description = "Opens and closes TikTok's screens without their slide. Swipes inside a screen " +
-        "still follow your finger. Off until you turn it on. Switch: Hushfeed settings > App.",
+    description = "Opens and closes TikTok's screens without the sliding animation, so moving " +
+        "around feels quicker. Swipes still follow your finger. Starts off. Turn it on in " +
+        "Hushfeed settings > App.",
 ) {
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
