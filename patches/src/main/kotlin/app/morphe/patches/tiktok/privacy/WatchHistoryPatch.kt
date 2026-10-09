@@ -82,7 +82,6 @@ val watchHistoryPatch = bytecodePatch(
         "your Watch history. Your views stop adding to view counts and For You has less to learn from, " +
         "while likes, follows, searches and TikTok's usage logs still reach it. Off until you turn it on. " +
         "Switch: Hushfeed settings > Privacy.",
-    default = false,
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

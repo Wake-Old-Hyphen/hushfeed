@@ -17,6 +17,7 @@ import app.morphe.extension.shared.settings.preference.LogExportFilterPreference
 import app.morphe.extension.tiktok.Utils;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.FeatureGateRecorderPreference;
+import app.morphe.extension.tiktok.settings.preference.FeedCapturePreference;
 import app.morphe.extension.tiktok.settings.preference.HookStatusPreference;
 import app.morphe.extension.tiktok.settings.preference.ScreenLayoutPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
@@ -96,6 +97,10 @@ public class DebugPreferenceCategory extends ConditionalPreferenceCategory {
                             "Clear the recent events, saved crash reports, a recorded screen layout and the hook status above."),
                     L10n.t(context, "Diagnostic data cleared. Tap again to put it back."));
             addPreference(clearLogs);
+
+            // A file of its own rather than a part of the report, so it sits after the rows
+            // that make and clear the report.
+            addPreference(new FeedCapturePreference(context));
         }
 
         // The recorder used to sit on the master menu as the one row without an icon tile. It

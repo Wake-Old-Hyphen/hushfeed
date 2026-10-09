@@ -58,7 +58,7 @@ val customLauncherIconPatch = resourcePatch(
         "in the note's place.",
     default = false,
 ) {
-    category("Settings")
+    category("Interface")
     compatibleWith(*AppCompatibilities.tiktok())
     val style by stringOption(
         key = "iconStyle",

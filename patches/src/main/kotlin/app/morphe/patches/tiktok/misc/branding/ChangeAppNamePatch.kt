@@ -25,7 +25,7 @@ val changeAppNamePatch = resourcePatch(
         "Inside the app everything still says TikTok.",
     default = false,
 ) {
-    category("Settings")
+    category("Interface")
     compatibleWith(*AppCompatibilities.tiktok())
     val appName by stringOption(
         key = "appName",

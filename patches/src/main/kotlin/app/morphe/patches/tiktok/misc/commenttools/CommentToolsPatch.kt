@@ -128,16 +128,17 @@ internal fun applyAfterCommentToolsPreflight(vararg resolve: () -> CommentToolsW
 @Suppress("unused")
 val commentToolsPatch = bytecodePatch(
     name = "Comment tools",
-    description = "Hides comments that contain chosen words or come from chosen accounts, turns " +
-        "the thumbs down on each comment into a block button that shows the block symbol, " +
-        "makes links tappable, can show a poll's results before you vote and can hide pictures, polls, surveys or TikTok's suggested-search banner above comments. " +
-        "Compact comment header removes the count, controls and suggestion space above the list. " +
-        "Another switch hides the photo, @ and gift buttons in the comment box. " +
-        "Easier comment likes extends the heart's touch area into nearby blank space without changing row spacing. " +
-        "A separate search box filters comments already loaded on the video. Tapping more under a video can open " +
-        "its comments with the caption at the top, and the comment button can open them that way too. " +
-        "Brings Double-tap controls with it, which opens the comments. Each tool has its own switch in Hushfeed settings > Comments.",
-    default = false,
+    description = "Hides comments that contain chosen words or come from chosen accounts. It can " +
+        "also turn the thumbs down on each comment into a block button that shows the block " +
+        "symbol, make links tappable, show a poll's results before you vote and hide pictures, " +
+        "polls, surveys or TikTok's suggested-search banner above comments. Compact comment " +
+        "header removes the count, controls and suggestion space above the list. Another switch " +
+        "hides the photo, @ and gift buttons in the comment box. Easier comment likes extends " +
+        "the heart's touch area into nearby blank space without changing row spacing. A separate " +
+        "search box filters comments already loaded on the video. Tapping more under a video can " +
+        "open its comments with the caption at the top, and the comment button can open them " +
+        "that way too. Brings Double-tap controls with it, which opens the comments. Every " +
+        "switch is off until you turn it on. Switches: Hushfeed settings > Comments.",
 ) {
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch, doubleTapPatch)

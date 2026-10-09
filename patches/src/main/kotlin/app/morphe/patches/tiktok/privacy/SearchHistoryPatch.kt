@@ -90,10 +90,10 @@ internal fun MutableMethod.skipWhenHistoryOff() = guardAtEntry(
 @Suppress("unused")
 val searchHistoryPatch = bytecodePatch(
     name = "Stop saving search history",
-    description = "Stops TikTok adding your new searches to the search history it saves on " +
-        "the phone. Searches you already made stay until you delete them, and this doesn't " +
-        "change what TikTok keeps on its servers. Switch: Hushfeed settings > Privacy.",
-    default = false,
+    description = "Stops TikTok adding your new searches to the search history it saves on the " +
+        "phone. Searches you already made stay until you delete them, and this doesn't change " +
+        "what TikTok keeps on its servers. Off until you turn it on. Switch: Hushfeed settings > " +
+        "Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

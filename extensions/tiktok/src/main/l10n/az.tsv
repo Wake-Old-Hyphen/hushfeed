@@ -310,6 +310,18 @@ Confirm before liking a story	Hekayəni bəyənməzdən əvvəl təsdiq istəyin
 Continue supported videos from where you stopped when you scroll back to them.	Dəstəklənən videolara geri sürüşdürəndə onları dayandığınız yerdən davam etdirin.
 Controls	İdarəetmələr
 Feature gate report copied	Funksiya qapısı hesabatı kopyalandı
+# context: Diagnostics, the feed capture row (its titles and summaries) and its toasts
+Capture the feed	Lenti qeydə alın
+Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.	Başlamaq üçün toxunun, sonra lentdəki problem görünənə qədər sürüşdürün və saxlamaq üçün bura qayıdın. Faylda başlıqlar və adlar olmur, videolar və yaradıcılar yalnız qısa kodlarla göstərilir. Paylaşmazdan əvvəl onu oxuyun.
+Stop and save the feed capture	Lent qeydini dayandırın və saxlayın
+Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Lent filtrlərinin saxladığı və gizlətdiyi qeydə alınır. Dayandırıb %1$s qovluğunda saxlamaq üçün toxunun.
+Save the feed capture	Lent qeydini saxlayın
+The last feed capture wasn't saved. Tap to try again.	Son lent qeydi saxlanılmadı. Yenidən cəhd etmək üçün toxunun.
+Feed capture started. Scroll until the problem shows up, then come back here to stop.	Lent qeydi başladı. Problem görünənə qədər sürüşdürün, sonra dayandırmaq üçün bura qayıdın.
+The feed capture is still being saved	Lent qeydi hələ saxlanılır
+Feed capture saved to %1$s. Read it before you share it.	Lent qeydi %1$s yerinə saxlanıldı. Paylaşmazdan əvvəl onu oxuyun.
+The feed capture couldn't be saved. Tap the row to try again.	Lent qeydi saxlanıla bilmədi. Yenidən cəhd etmək üçün sətirə toxunun.
+Couldn't start saving the feed capture. Try again in a moment.	Lent qeydini saxlamağa başlamaq alınmadı. Bir azdan yenidən cəhd edin.
 Copy a quick report or save the full report as a file.	Qısa hesabatı kopyalayın və ya tam hesabatı fayl kimi saxlayın.
 Copy comments without username	Şərhləri istifadəçi adı olmadan kopyalayın
 Copy only the comment text when using TikTok's copy comment action.	TikTok-un şərhi kopyalama əməliyyatından istifadə edəndə yalnız şərhin mətnini kopyalayın.
@@ -1490,7 +1502,7 @@ LIVE followers range	LIVE izləyən aralığı
 Show only LIVEs from creators with this many followers.	Yalnız bu qədər izləyicisi olan yaradıcıların LIVE-larını göstərin.
 Hide the comment bar on opened videos	Açılmış videolarda şərh panelini gizlədin
 Hide the Clear display controls	Təmiz ekran idarəetmələrini gizlədin
-While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.	Təmiz ekran açıq olanda aşağıdakı irəliləmə zolağını, bağlama düyməsini, fasilə və sürət düymələrini də gizlədin. Videoda irəli-geri keçmək üçün yenə də aşağı kənar boyunca sürüşdürə bilərsiniz. Təmiz ekrandan çıxmaq üçün videonu basıb saxlayın və Ekranı bərpa et düyməsinə toxunun.
+While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	Təmiz ekran açıq olanda aşağıdakı irəliləmə zolağını, bağlama düyməsini, fasilə və sürət düymələrini də gizlədin. Videoda irəli-geri keçmək üçün yenə də aşağı kənar boyunca sürüşdürə bilərsiniz. Təmiz ekrandan çıxmaq üçün videonu basıb saxlayın və Ekranı bərpa et düyməsinə toxunun. Ekranda çimdik jesti ilə də çıxmaq mümkündür.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Video ekranı aşağıya qədər doldursun deyə, profildən, heşteqdən, səsdən və ya axtarışdan açdığınız videolardan Add comment panelini çıxarın. Sağdakı şərh düyməsi yenə də şərhləri açır.
 Build details	Build təfərrüatları
 Copy or save patch-time choices and build identity.	Yamaq zamanı seçimləri və build kimliyini kopyalayın və ya saxlayın.

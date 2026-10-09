@@ -352,6 +352,18 @@ Confirm before liking a story	Подтверждать перед лайком �
 Continue supported videos from where you stopped when you scroll back to them.	Продолжать поддерживаемые видео с того места, где вы остановились, когда вы пролистываете назад к ним.
 Controls	Элементы управления
 Feature gate report copied	Отчёт о переключателях скопирован
+# context: Diagnostics, the feed capture row (its titles and summaries) and its toasts
+Capture the feed	Записать ленту
+Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.	Нажмите, чтобы начать, листайте, пока не появится проблема в ленте, и вернитесь сюда, чтобы сохранить запись. В файле нет субтитров и имён, а видео и авторы указаны только короткими кодами. Прочитайте файл, прежде чем делиться им.
+Stop and save the feed capture	Остановить и сохранить запись ленты
+Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Идёт запись того, что фильтры ленты оставляют и скрывают. Нажмите, чтобы остановить и сохранить её в %1$s.
+Save the feed capture	Сохранить запись ленты
+The last feed capture wasn't saved. Tap to try again.	Последняя запись ленты не сохранена. Нажмите, чтобы повторить попытку.
+Feed capture started. Scroll until the problem shows up, then come back here to stop.	Запись ленты началась. Листайте, пока не появится проблема, затем вернитесь сюда, чтобы остановить её.
+The feed capture is still being saved	Запись ленты всё ещё сохраняется
+Feed capture saved to %1$s. Read it before you share it.	Запись ленты сохранена в %1$s. Прочитайте её, прежде чем делиться.
+The feed capture couldn't be saved. Tap the row to try again.	Не удалось сохранить запись ленты. Нажмите на строку, чтобы повторить попытку.
+Couldn't start saving the feed capture. Try again in a moment.	Не удалось начать сохранение записи ленты. Попробуйте снова через минуту.
 Copy a quick report or save the full report as a file.	Скопируйте краткий отчёт или сохраните полный отчёт в файл.
 Copy comments without username	Копировать комментарии без имени пользователя
 Copy only the comment text when using TikTok's copy comment action.	Копировать только текст комментария при использовании функции TikTok «Копировать комментарий».
@@ -1628,7 +1640,7 @@ LIVE followers range	Диапазон подписчиков авторов LIVE
 Show only LIVEs from creators with this many followers.	Показывать только трансляции авторов с таким количеством подписчиков.
 Hide the comment bar on opened videos	Скрывать строку комментария в открытых видео
 Hide the Clear display controls	Скрывать кнопки чистого вида
-While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.	В чистом виде также скрывать полосу прогресса, кнопку закрытия и кнопки паузы и скорости внизу. По нижнему краю по-прежнему можно провести пальцем, чтобы перемотать видео. Чтобы выйти из чистого вида, нажмите на видео и удерживайте, затем выберите «Восстановить экран».
+While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	В чистом виде также скрывать полосу прогресса, кнопку закрытия и кнопки паузы и скорости внизу. По нижнему краю по-прежнему можно провести пальцем, чтобы перемотать видео. Чтобы выйти из чистого вида, нажмите на видео и удерживайте, затем выберите «Восстановить экран» или сведите пальцы на экране.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Убирать строку для ввода комментария под видео, открытыми из профиля, по хештегу, со страницы звука или из поиска, чтобы видео занимало экран до самого низа. Кнопка комментариев справа по-прежнему открывает комментарии.
 Build details	Сведения о сборке
 Copy or save patch-time choices and build identity.	Скопируйте или сохраните выбранные при применении патчей параметры и данные о сборке.

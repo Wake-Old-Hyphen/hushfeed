@@ -304,6 +304,18 @@ Confirm before liking a story	Confirmar antes de curtir um story
 Continue supported videos from where you stopped when you scroll back to them.	Continuar os vídeos compatíveis de onde você parou quando voltar a eles.
 Controls	Controles
 Feature gate report copied	Relatório de gates copiado
+# context: Diagnostics, the feed capture row (its titles and summaries) and its toasts
+Capture the feed	Gravar o feed
+Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.	Toque para começar, role até o problema do feed aparecer e volte aqui para salvar. O arquivo não traz legendas nem nomes, e vídeos e criadores aparecem só como códigos curtos. Leia o arquivo antes de compartilhar.
+Stop and save the feed capture	Parar e salvar a gravação do feed
+Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Gravando o que os filtros do feed mantêm e ocultam. Toque para parar e salvar em %1$s.
+Save the feed capture	Salvar a gravação do feed
+The last feed capture wasn't saved. Tap to try again.	A última gravação do feed não foi salva. Toque para tentar de novo.
+Feed capture started. Scroll until the problem shows up, then come back here to stop.	Gravação do feed iniciada. Role até o problema aparecer e depois volte aqui para parar.
+The feed capture is still being saved	A gravação do feed ainda está sendo salva
+Feed capture saved to %1$s. Read it before you share it.	Gravação do feed salva em %1$s. Leia antes de compartilhar.
+The feed capture couldn't be saved. Tap the row to try again.	Não foi possível salvar a gravação do feed. Toque na linha para tentar de novo.
+Couldn't start saving the feed capture. Try again in a moment.	Não foi possível começar a salvar a gravação do feed. Tente de novo em breve.
 Copy a quick report or save the full report as a file.	Copie um relatório rápido ou salve o relatório completo como arquivo.
 Copy comments without username	Copiar comentários sem o nome de usuário
 Copy only the comment text when using TikTok's copy comment action.	Copiar só o texto do comentário ao usar a ação de copiar comentário do TikTok.
@@ -1490,7 +1502,7 @@ LIVE followers range	Faixa de seguidores da LIVE
 Show only LIVEs from creators with this many followers.	Mostrar só LIVEs de criadores com essa quantidade de seguidores.
 Hide the comment bar on opened videos	Esconder a barra de comentários nos vídeos abertos
 Hide the Clear display controls	Esconder os controles da tela limpa
-While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.	Com a tela limpa ativada, esconde também a barra de progresso, o botão de fechar e os botões de pausa e velocidade na parte de baixo. Você ainda pode arrastar pela borda de baixo para avançar ou voltar no vídeo. Para sair da tela limpa, toque e segure o vídeo e toque em Restaurar tela.
+While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	Com a tela limpa ativada, esconde também a barra de progresso, o botão de fechar e os botões de pausa e velocidade na parte de baixo. Você ainda pode arrastar pela borda de baixo para avançar ou voltar no vídeo. Para sair da tela limpa, toque e segure o vídeo e toque em Restaurar tela, ou faça um gesto de pinça na tela.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Tire a barra para adicionar comentário dos vídeos que você abre por um perfil, uma hashtag, um som ou pela pesquisa, para o vídeo ocupar a tela até embaixo. O botão de comentários à direita continua abrindo os comentários.
 Build details	Detalhes da compilação
 Copy or save patch-time choices and build identity.	Copie ou salve as opções escolhidas ao aplicar os patches e a identidade da compilação.

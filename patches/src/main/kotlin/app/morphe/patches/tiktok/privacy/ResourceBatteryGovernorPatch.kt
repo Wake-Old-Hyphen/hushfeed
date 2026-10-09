@@ -21,10 +21,11 @@ private const val LISTENER_AND_SENSOR = "Landroid/hardware/SensorEventListener;L
 @Suppress("unused")
 val resourceBatteryGovernorPatch = bytecodePatch(
     name = "Resource and battery governor",
-    description = "Stops TikTok listening to the motion sensors it polls for device fingerprinting: the accelerometer, gyroscope, magnetometer, rotation, gravity and linear acceleration sensors. " +
-        "A second switch, off by default, keeps TikTok's phone benchmark from starting in a background process of its own. " +
-        "Switch: Hushfeed settings > Privacy.",
-    default = false,
+    description = "Stops TikTok listening to the motion sensors it polls for device " +
+        "fingerprinting: the accelerometer, gyroscope, magnetometer, rotation, gravity and " +
+        "linear acceleration sensors. A second switch keeps TikTok's phone benchmark from " +
+        "starting in a background process of its own. Both are off until you turn them on. " +
+        "Switches: Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

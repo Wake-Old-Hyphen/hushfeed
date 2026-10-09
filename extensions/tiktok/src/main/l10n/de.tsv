@@ -307,6 +307,18 @@ Confirm before liking a story	Vor dem Liken einer Story bestätigen
 Continue supported videos from where you stopped when you scroll back to them.	Unterstützte Videos dort fortsetzen, wo du aufgehört hast, wenn du zu ihnen zurückscrollst.
 Controls	Steuerung
 Feature gate report copied	Gate-Bericht kopiert
+# context: Diagnostics, the feed capture row (its titles and summaries) and its toasts
+Capture the feed	Feed aufzeichnen
+Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.	Tippe zum Starten, scrolle dann, bis das Problem im Feed auftritt, und komm hierher zurück, um es zu speichern. Die Datei enthält keine Untertitel oder Namen, Videos und Creator erscheinen nur als kurze Codes. Lies sie, bevor du sie teilst.
+Stop and save the feed capture	Feed-Aufzeichnung beenden und speichern
+Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.	Es wird aufgezeichnet, was die Feed-Filter behalten und ausblenden. Tippe, um die Aufzeichnung zu beenden und unter %1$s zu speichern.
+Save the feed capture	Feed-Aufzeichnung speichern
+The last feed capture wasn't saved. Tap to try again.	Die letzte Feed-Aufzeichnung wurde nicht gespeichert. Tippe, um es noch einmal zu versuchen.
+Feed capture started. Scroll until the problem shows up, then come back here to stop.	Feed-Aufzeichnung gestartet. Scrolle, bis das Problem auftritt, und komm dann zum Beenden hierher zurück.
+The feed capture is still being saved	Die Feed-Aufzeichnung wird noch gespeichert
+Feed capture saved to %1$s. Read it before you share it.	Feed-Aufzeichnung gespeichert unter %1$s. Lies sie, bevor du sie teilst.
+The feed capture couldn't be saved. Tap the row to try again.	Die Feed-Aufzeichnung konnte nicht gespeichert werden. Tippe auf die Zeile, um es noch einmal zu versuchen.
+Couldn't start saving the feed capture. Try again in a moment.	Das Speichern der Feed-Aufzeichnung ließ sich nicht starten. Versuche es gleich noch einmal.
 Copy a quick report or save the full report as a file.	Einen Kurzbericht kopieren oder den vollständigen Bericht als Datei speichern.
 Copy comments without username	Kommentare ohne Nutzernamen kopieren
 Copy only the comment text when using TikTok's copy comment action.	Beim Kopieren eines Kommentars über TikTok nur den Kommentartext übernehmen.
@@ -1493,7 +1505,7 @@ LIVE followers range	Spanne der LIVE-Follower
 Show only LIVEs from creators with this many followers.	Nur LIVEs von Creatorn mit so vielen Followern zeigen.
 Hide the comment bar on opened videos	Kommentarleiste bei geöffneten Videos ausblenden
 Hide the Clear display controls	Steuerelemente der freien Ansicht ausblenden
-While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.	Bei freier Ansicht auch den Fortschrittsbalken, die Schließen-Schaltfläche und die Pause- und Tempo-Schaltflächen unten ausblenden. Du kannst trotzdem am unteren Rand entlang ziehen, um im Video zu spulen. Um die freie Ansicht zu verlassen, halte das Video gedrückt und tippe auf Anzeige wiederherstellen.
+While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	Bei freier Ansicht auch den Fortschrittsbalken, die Schließen-Schaltfläche und die Pause- und Tempo-Schaltflächen unten ausblenden. Du kannst trotzdem am unteren Rand entlang ziehen, um im Video zu spulen. Um die freie Ansicht zu verlassen, halte das Video gedrückt und tippe auf Anzeige wiederherstellen. Du kannst auch zwei Finger auf dem Bildschirm zusammenziehen.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Blende die Kommentarleiste unter Videos aus, die du über ein Profil, einen Hashtag, einen Sound oder die Suche öffnest, damit das Video den Bildschirm bis ganz unten füllt. Die Kommentar-Schaltfläche rechts öffnet die Kommentare weiterhin.
 Build details	Build-Informationen
 Copy or save patch-time choices and build identity.	Kopiere oder speichere die beim Patchen gewählten Optionen und die Build-Kennung.

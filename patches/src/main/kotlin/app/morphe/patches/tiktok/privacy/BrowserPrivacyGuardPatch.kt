@@ -42,8 +42,9 @@ private val navigationMethods = mapOf(
 @Suppress("unused")
 val browserPrivacyGuardPatch = bytecodePatch(
     name = "In-app browser privacy guard",
-    description = "Keeps TikTok's JavaScript bridge off external pages in its in-app browser while leaving Activity center, Watch history, shop checkout and CAPTCHA working. The switch is off until you turn it on. Switch: Hushfeed settings > Privacy.",
-    default = false,
+    description = "Keeps TikTok's JavaScript bridge off external pages in its in-app browser " +
+        "while leaving Activity center, Watch history, shop checkout and CAPTCHA working. Off " +
+        "until you turn it on. Switch: Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

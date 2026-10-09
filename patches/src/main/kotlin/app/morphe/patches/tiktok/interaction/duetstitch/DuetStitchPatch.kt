@@ -66,10 +66,10 @@ private object AuthorStitchSettingFingerprint : Fingerprint(
 val duetStitchPatch = bytecodePatch(
     name = "Allow Duet and Stitch",
     description = "Ignores the creator's Duet and Stitch setting so the entries appear for " +
-        "videos that closed them. Everything else the app checks still applies: a photo " +
-        "post, a private video or one with music it may not reuse is still refused, and " +
-        "whether the upload is accepted is the server's decision, not the app's. Switch: Hushfeed settings > Share sheet.",
-    default = false,
+        "videos that closed them. Everything else the app checks still applies: a photo post, a " +
+        "private video or one with music it may not reuse is still refused, and whether the " +
+        "upload is accepted is the server's decision, not the app's. Off until you turn it on. " +
+        "Switch: Hushfeed settings > Share sheet.",
 ) {
     category("Downloads")
     dependsOn(settingsPatch, sharedExtensionPatch)

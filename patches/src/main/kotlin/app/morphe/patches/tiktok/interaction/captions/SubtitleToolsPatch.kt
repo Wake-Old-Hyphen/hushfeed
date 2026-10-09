@@ -39,8 +39,9 @@ private object ClearTransitionFingerprint : Fingerprint(
 @Suppress("unused")
 val subtitleToolsPatch = bytecodePatch(
     name = "Subtitle tools",
-    description = "Saves subtitle files beside downloaded videos and adds caption size, background, and clear-display options. Switch: Hushfeed settings > Feed screen.",
-    default = false,
+    description = "Saves subtitle files beside downloaded videos and adds caption size, " +
+        "background and clear-display options. Nothing changes until you turn an option on. " +
+        "Switches: Hushfeed settings > Feed screen, and Downloads for subtitle files.",
 ) {
     category("Playback")
     compatibleWith(*AppCompatibilities.tiktok())

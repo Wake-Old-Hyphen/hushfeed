@@ -82,13 +82,13 @@ private fun Method.isAdaptionHelper(parameters: Int): Boolean {
 @Suppress("unused")
 val videoFitPatch = bytecodePatch(
     name = "Fit the video to the screen",
-    description = "Puts the whole of a vertical video on screen instead of cropping it to " +
-        "the window. On a 9:16 phone nothing changes, because the video already fills it. " +
-        "On a Fold opened up, a squarer phone or a split view the sides or the ends stop " +
-        "being cut off. A second switch, Fill the screen with the video, does the opposite " +
-        "and crops the video until it covers the screen, for the phones where TikTok leaves " +
-        "a black strip under a 9:16 video. Switches: Hushfeed settings > Playback.",
-    default = false,
+    description = "Puts the whole of a vertical video on screen instead of cropping it to the " +
+        "window. On a 9:16 phone nothing changes, because the video already fills it. On a Fold " +
+        "opened up, a squarer phone or a split view the sides or the ends stop being cut off. A " +
+        "second switch, Fill the screen with the video, does the opposite and crops the video " +
+        "until it covers the screen, for the phones where TikTok leaves a black strip under a " +
+        "9:16 video. Both are off until you turn them on. Switches: Hushfeed settings > " +
+        "Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)

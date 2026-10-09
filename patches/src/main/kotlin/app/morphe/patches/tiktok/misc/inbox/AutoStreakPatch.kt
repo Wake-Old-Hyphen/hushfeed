@@ -142,7 +142,6 @@ val autoStreakPatch = bytecodePatch(
         "message streaks with them keep going on days you don't open TikTok. The message goes " +
         "through TikTok's own notification reply. Adds the exact alarm and start at boot " +
         "permissions the daily alarm needs. Off until you turn it on: Hushfeed settings > Inbox.",
-    default = false,
 ) {
     category("Inbox")
     dependsOn(settingsPatch, sharedExtensionPatch, autoStreakManifestPatch)

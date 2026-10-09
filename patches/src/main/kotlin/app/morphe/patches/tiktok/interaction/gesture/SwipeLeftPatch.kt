@@ -76,8 +76,8 @@ internal object MainPagerTouchFingerprint : Fingerprint(
 val swipeLeftPatch = bytecodePatch(
     name = "Swipe-left controls",
     description = "Lets a left swipe on a feed video do nothing or open its comments instead of " +
-        "opening the creator's profile. Switch: Hushfeed settings > Feed screen.",
-    default = false,
+        "opening the creator's profile. It keeps TikTok's own swipe until you pick another. " +
+        "Switch: Hushfeed settings > Feed screen.",
 ) {
     category("Interaction")
     compatibleWith(*AppCompatibilities.tiktok())

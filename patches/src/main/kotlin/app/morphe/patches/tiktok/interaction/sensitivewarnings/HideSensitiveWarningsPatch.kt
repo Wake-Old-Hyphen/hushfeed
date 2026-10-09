@@ -46,11 +46,10 @@ internal object AwemeRiskModelFingerprint : Fingerprint(
 @Suppress("unused")
 val hideSensitiveWarningsPatch = bytecodePatch(
     name = "Skip content warnings",
-    description = "Play videos TikTok has classified without the warning " +
-        "overlay asking to be tapped through first. A second switch takes away the Check sources banner " +
-        "on videos TikTok marks as unverified, and the warnings it shows when you share one. " +
-        "Switches: Hushfeed settings > Feed screen.",
-    default = false,
+    description = "Plays videos TikTok has classified without the warning overlay asking to be " +
+        "tapped through first. A second switch takes away the Check sources banner on videos " +
+        "TikTok marks as unverified, and the warnings it shows when you share one. Both are off " +
+        "until you turn them on. Switches: Hushfeed settings > Feed screen.",
 ) {
     category("Feed")
     dependsOn(settingsPatch, sharedExtensionPatch)

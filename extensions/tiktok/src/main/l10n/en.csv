@@ -294,6 +294,7 @@ Caption text size,Caption text size
 Captions,Captions
 "Captions, gestures and on-screen controls","Captions, gestures and on-screen controls"
 Capture crash reports locally,Capture crash reports locally
+Capture the feed,Capture the feed
 Changed,Changed
 Changes in Hushfeed %1$s,Changes in Hushfeed %1$s
 Changes to %1$s at %2$s,Changes to %1$s at %2$s
@@ -405,6 +406,7 @@ Couldn't save the settings backup. Try again.,Couldn't save the settings backup.
 Couldn't save these choices. Try again.,Couldn't save these choices. Try again.
 Couldn't save this override. Try again.,Couldn't save this override. Try again.
 Couldn't send the feedback. Try again in a moment.,Couldn't send the feedback. Try again in a moment.
+Couldn't start saving the feed capture. Try again in a moment.,Couldn't start saving the feed capture. Try again in a moment.
 Couldn't start the Lab change. Try again in a moment.,Couldn't start the Lab change. Try again in a moment.
 Couldn't start the export. Try again in a moment.,Couldn't start the export. Try again in a moment.
 Couldn't start the import. Try again in a moment.,Couldn't start the import. Try again in a moment.
@@ -519,6 +521,8 @@ Feature gate override saved,Feature gate override saved
 Feature gate report copied,Feature gate report copied
 Feed and navigation,Feed and navigation
 Feed button size,Feed button size
+Feed capture saved to %1$s. Read it before you share it.,Feed capture saved to %1$s. Read it before you share it.
+"Feed capture started. Scroll until the problem shows up, then come back here to stop.","Feed capture started. Scroll until the problem shows up, then come back here to stop."
 Feed filter,Feed filter
 Feed screen,Feed screen
 Feed tabs,Feed tabs
@@ -1148,6 +1152,7 @@ Reading watch history,Reading watch history
 Record a screen's layout,Record a screen's layout
 Recorded gate reads (%1$d),Recorded gate reads (%1$d)
 "Recording gate reads. Use a feature, then return here to stop.","Recording gate reads. Use a feature, then return here to stop."
+Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.,Recording what the feed filters keep and hide. Tap to stop and save it in %1$s.
 Recovered an interrupted settings change. Restart TikTok to apply this.,Recovered an interrupted settings change. Restart TikTok to apply this.
 Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
@@ -1240,6 +1245,7 @@ Save seen history to a file,Save seen history to a file
 Save subtitles beside videos,Save subtitles beside videos
 "Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here.","Save the caption, creator, link and publication date in a TXT file. On Android 10 and later, the pair uses Download or Documents under the same folder name. Applies to saves handled here."
 Save the cover as well,Save the cover as well
+Save the feed capture,Save the feed capture
 Save the frame on screen as a photo,Save the frame on screen as a photo
 Save the latest available TikTok crash report for diagnostic export.,Save the latest available TikTok crash report for diagnostic export.
 Save the original sound,Save the original sound
@@ -1444,6 +1450,7 @@ Stop TikTok's benchmark runs,Stop TikTok's benchmark runs
 Stop a long press on Like from opening TikTok's repost action.,Stop a long press on Like from opening TikTok's repost action.
 Stop a long press on Share from opening TikTok's quick share action.,Stop a long press on Share from opening TikTok's quick share action.
 Stop analytics and tracking,Stop analytics and tracking
+Stop and save the feed capture,Stop and save the feed capture
 Stop feature gate recording,Stop feature gate recording
 Stop search results playing on their own,Stop search results playing on their own
 "Stop sending TikTok's activity reports, so friends don't see a green dot or Active now while you're in the app. It works only while Ghost mode is on. The same report brings back your friends' status, so theirs may stop updating for you while it's on. Your last status can stay visible for a while.","Stop sending TikTok's activity reports, so friends don't see a green dot or Active now while you're in the app. It works only while Ghost mode is on. The same report brings back your friends' status, so theirs may stop updating for you while it's on. Your last status can stay visible for a while."
@@ -1492,6 +1499,7 @@ Tap again to repost,Tap again to repost
 Tap the feed Follow button twice within %1$d seconds.,Tap the feed Follow button twice within %1$d seconds.
 Tap the like heart twice within %1$d seconds. Removing a like stays immediate.,Tap the like heart twice within %1$d seconds. Removing a like stays immediate.
 Tap to start the feed,Tap to start the feed
+"Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it.","Tap to start, then scroll until the feed problem shows up and come back here to save it. The file has no captions or names, and videos and creators appear only as short codes. Read it before you share it."
 "Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report.","Tap, then go to the screen with what you want hidden. After %1$d seconds Hushfeed records how that screen is built, without any of its text, for the diagnostic report."
 Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.,Tapping more under a video opens its comments with the whole caption at the top instead of spreading the caption over the video. A tap on the caption itself does the same. Photo posts keep TikTok's own page for this.
 Technical details,Technical details
@@ -1559,6 +1567,8 @@ The diagnostic report couldn't be saved yet. Try again in a moment.,The diagnost
 The diagnostic report couldn't be saved. Try again.,The diagnostic report couldn't be saved. Try again.
 The downloader app you chose isn't installed. Check Send links to another app under Downloads.,The downloader app you chose isn't installed. Check Send links to another app under Downloads.
 The export wasn't saved. Export again when the file app is ready.,The export wasn't saved. Export again when the file app is ready.
+The feed capture couldn't be saved. Tap the row to try again.,The feed capture couldn't be saved. Tap the row to try again.
+The feed capture is still being saved,The feed capture is still being saved
 "The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at.","The feed dims over the last three quarters of a minute before the hold, so you arrive at it rather than land on it. Needs a time budget and a hold to arrive at."
 The feed doesn't end. This is a fine time to leave it.,The feed doesn't end. This is a fine time to leave it.
 The feed is locked,The feed is locked
@@ -1570,6 +1580,7 @@ The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder 
 The frame couldn't be read. Try again.,The frame couldn't be read. Try again.
 The frame couldn't be saved. Try again.,The frame couldn't be saved. Try again.
 "The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night.","The hour both budgets reset, on a 24 hour clock. Four in the morning by default, because someone still scrolling at one is having last night."
+The last feed capture wasn't saved. Tap to try again.,The last feed capture wasn't saved. Tap to try again.
 The last one is still waiting to start,The last one is still waiting to start
 The last report is still being saved,The last report is still being saved
 The live photo's clip couldn't be saved. Try again.,The live photo's clip couldn't be saved. Try again.
@@ -1818,7 +1829,7 @@ What's new,What's new
 When to send,When to send
 "When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.","When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later."
 "When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.","When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual."
-"While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display."
+"While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
 Who to message,Who to message
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.

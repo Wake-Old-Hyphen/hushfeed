@@ -68,8 +68,8 @@ internal fun MutableMethod.handConfigurationChangesToSplitView() = addInstructio
 @Suppress("unused")
 val foldableSplitViewPatch = bytecodePatch(
     name = "Foldable split comment view",
-    description = "Shows comments beside the video on windows wider than a configurable threshold. Off by default. Switch: Hushfeed settings > App.",
-    default = false,
+    description = "Shows comments beside the video on windows wider than a width you set. Off " +
+        "until you turn it on. Switch: Hushfeed settings > App.",
 ) {
     category("Comments")
     compatibleWith(*AppCompatibilities.tiktok())

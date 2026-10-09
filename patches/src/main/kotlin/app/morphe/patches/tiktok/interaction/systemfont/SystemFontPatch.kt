@@ -49,10 +49,10 @@ val systemFontPatch = bytecodePatch(
     description = "Draws TikTok's text in your device's font instead of TikTok Sans. The icons, " +
         "the gift animations and the @ and # glyphs keep their own fonts. A second switch draws " +
         "every emoji with your device's emoji font instead of filling in the newest ones with " +
-        "Google's. Both are off by default. Restart after changing. Switches: Hushfeed settings > App.",
-    default = false,
+        "Google's. Both are off until you turn them on. Restart TikTok after changing them. " +
+        "Switches: Hushfeed settings > App.",
 ) {
-    category("Performance")
+    category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
     compatibleWith(*AppCompatibilities.tiktok())

@@ -70,7 +70,6 @@ val blockAuthorPatch = bytecodePatch(
         "Hushfeed keeps it clear of system bars, cutouts and TikTok's bottom tabs when the " +
         "window changes. A local action shows Undo only after its setting was saved. All " +
         "controls hide while comments are open. Switch: Hushfeed settings > Feed screen.",
-    default = false,
 ) {
     category("Interaction")
     dependsOn(settingsPatch, sharedExtensionPatch, sessionPlaybackBridgePatch)

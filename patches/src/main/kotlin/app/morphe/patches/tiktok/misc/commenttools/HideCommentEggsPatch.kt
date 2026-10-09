@@ -134,8 +134,8 @@ private val MOVES = setOf(Opcode.MOVE, Opcode.MOVE_FROM16, Opcode.MOVE_16)
 val hideCommentEggsPatch = bytecodePatch(
     name = "Hide comment popup ads",
     description = "Stops the brand animation that plays over the comment sheet when a comment " +
-        "matches an advertiser's trigger word or emoji. Switch: Hushfeed settings > Comments.",
-    default = false,
+        "matches an advertiser's trigger word or emoji. Off until you turn it on. Switch: " +
+        "Hushfeed settings > Comments.",
 ) {
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)

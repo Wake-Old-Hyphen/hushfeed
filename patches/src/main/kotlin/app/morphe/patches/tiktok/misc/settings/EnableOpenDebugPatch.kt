@@ -23,9 +23,10 @@ private const val CRASH_CAPTURE_INITIALIZER =
 @Suppress("unused")
 val enableOpenDebugPatch = bytecodePatch(
     name = "Diagnostic tools",
-    description = "Adds diagnostic logging, a 15-minute log that stops by itself, filtered reports and local TikTok crash capture. " +
-        "The switches are under Diagnostics in Hushfeed settings. Switch: Hushfeed settings > Diagnostics.",
-    default = false,
+    description = "Adds diagnostic logging, a 15-minute log that stops by itself, filtered " +
+        "reports, a feed capture and local TikTok crash capture, for when you report a problem. " +
+        "Logging and crash capture are off until you turn them on. Switches: Hushfeed settings > " +
+        "Diagnostics.",
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch, settingsPatch)

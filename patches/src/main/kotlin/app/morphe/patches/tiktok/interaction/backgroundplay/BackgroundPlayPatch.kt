@@ -127,13 +127,13 @@ internal fun List<Instruction>.readsKevaBoolean(index: Int, key: String): Boolea
 val backgroundPlayPatch = bytecodePatch(
     name = "Keep playing in the background",
     description = "Keeps TikTok's own background play on, whatever its server says, so the video " +
-        "you're watching keeps playing after you leave the app or turn the screen off, and TikTok's " +
-        "media notification pauses and resumes it. It also covers photo posts and the videos on your " +
-        "own profile, private ones included, which TikTok leaves out. A feed video plays to its end, " +
-        "because TikTok doesn't loop or move on in the feed while it's in the background, and another " +
-        "app's sound still pauses it. TikTok's own background play switch in the long-press menu " +
-        "stays on while this is on. Off by default. Restart TikTok after changing it. Switch: Hushfeed settings > Playback.",
-    default = false,
+        "you're watching keeps playing after you leave the app or turn the screen off, and " +
+        "TikTok's media notification pauses and resumes it. It also covers photo posts and the " +
+        "videos on your own profile, private ones included, which TikTok leaves out. A feed " +
+        "video plays to its end, because TikTok doesn't loop or move on in the feed while it's " +
+        "in the background, and another app's sound still pauses it. TikTok's own background " +
+        "play switch in the long-press menu stays on while this is on. Off until you turn it on. " +
+        "Restart TikTok after changing it. Switch: Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)

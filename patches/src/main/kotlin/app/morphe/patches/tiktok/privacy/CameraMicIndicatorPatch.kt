@@ -46,8 +46,10 @@ private val MIC_STOP = setOf(
 @Suppress("unused")
 val cameraMicIndicatorPatch = bytecodePatch(
     name = "Camera and microphone indicator",
-    description = "Shows a small mark in the top corner while TikTok has the camera open or is recording sound. A green square for the camera, an orange diamond for the microphone, both when both. It goes when the access ends. Switch: Hushfeed settings > Privacy.",
-    default = false,
+    description = "Shows a small mark in the top corner while TikTok has the camera open or is " +
+        "recording sound. A green square for the camera, an orange diamond for the microphone, " +
+        "both when both. It goes when the access ends. Off until you turn it on. Switch: " +
+        "Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)

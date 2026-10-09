@@ -18,8 +18,9 @@ private const val RESOLVER = "Landroid/content/ContentResolver;"
 @Suppress("unused")
 val contactListBlockerPatch = bytecodePatch(
     name = "Block contact list access",
-    description = "Answers TikTok's reads of your phone contacts with an empty list. Find Friends and People you may know lose access to your contact list. Switch: Hushfeed settings > Privacy.",
-    default = false,
+    description = "Answers TikTok's reads of your phone contacts with an empty list. Find " +
+        "Friends and People you may know lose access to your contact list. Off until you turn it " +
+        "on. Switch: Hushfeed settings > Privacy.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
