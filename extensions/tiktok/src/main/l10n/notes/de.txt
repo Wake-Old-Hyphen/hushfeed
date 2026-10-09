@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Hushfeed unterstützt jetzt nur noch TikTok 47.1.4. Wenn du 47.0.3 oder 47.1.3 nutzt, lade die APK von 47.1.4 bei APKMirror herunter und patche sie in Morphe Manager mit demselben Signaturschlüssel, damit Anmeldung und Einstellungen erhalten bleiben. Das Feature Gate Lab behält jede Überschreibung, deren Schalter es in 47.1.4 noch gibt, und schaltet die übrigen mit seinem üblichen Hinweis aus.
+
+* **TikTok:** Eigenes Limit für Offline-Videos hat einen neuen Schalter unter Hushfeed-Einstellungen > Downloads, Offline-Videos behalten, bis du sie löschst. Er ist aus, bis du ihn einschaltest (#123). TikTok wirft die Videos, die es zum Offline-Ansehen gespeichert hat, nach einer festen Zeit weg, manchmal schon nach zwei Tagen, und eine Liste, die auf einmal gespeichert wurde, verschwindet auch auf einmal, ob angesehen oder nicht. Mit dem Schalter bleiben sie, bis du sie in TikToks Einstellungen für Offline-Videos löschst, und so bekommst du auch neue. Schon angesehene kann TikTok weiterhin entfernen, wenn der Speicher deines Handys knapp wird, und ein niedrigeres Limit kürzt die Liste weiterhin. Behalte die Speicherzeile unter dem Limit für Offline-Videos im Blick. Der Schalter wirkt ab dem nächsten Start von TikTok.
+
+* **TikTok:** Profil-Verknüpfungen ausblenden hat unter App einen neuen Schalter, Thoughts auf Profilen ausblenden, der aus bleibt, bis du ihn einschaltest (#122). Er blendet die Thoughts-Blase aus, die TikTok über ein Profilbild setzt, und auf deinem eigenen Profil die Aufforderung, einen zu teilen. Starte TikTok neu, nachdem du ihn geändert hast.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Ein TikTok-Videolink, den du öffnest, zeigt jetzt sein Video auch dann, wenn ein Feed-Filter es ausblenden würde, etwa Bereits gesehene Videos ausblenden bei einem Video, das du schon angesehen hast (#117). TikTok lädt ein verlinktes Video als eigene Feed-Seite, deshalb blieb nach dem Herausfiltern nur TikToks Fehlerbildschirm übrig. Nur dieses eine Video kommt an den Filtern vorbei, und nur für eine Minute nach dem Link. Links zu Fotobeiträgen und die älteren `m.tiktok.com/v/<id>.html`-Links der mobilen Website zählen ebenfalls als ein Beitrag, hier und bei `Feed sperren`.

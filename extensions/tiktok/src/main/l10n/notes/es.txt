@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Hushfeed ahora solo es compatible con TikTok 47.1.4. Si usas 47.0.3 o 47.1.3, descarga el APK de 47.1.4 desde APKMirror y parchéalo en Morphe Manager con la misma clave de firma, para que tu sesión y tus ajustes se conserven. El Laboratorio de interruptores conserva cada cambio cuyo interruptor sigue existiendo en 47.1.4 y desactiva el resto con su aviso habitual.
+
+* **TikTok:** Límite personalizado de vídeos sin conexión tiene un interruptor nuevo en Ajustes de Hushfeed > Descargas, Conservar los videos sin conexión hasta que los borres. Está apagado hasta que lo actives (#123). TikTok tira los vídeos que guardó para ver sin conexión después de un tiempo fijo, a veces solo dos días, y una lista guardada de una vez desaparece de una vez, los hayas visto o no. Con el interruptor activado se quedan hasta que los borres en los ajustes de Vídeos sin conexión de TikTok, y así también consigues una tanda nueva. TikTok todavía puede quitar los que ya viste cuando tu teléfono se queda sin espacio, y elegir un límite más bajo sigue recortando la lista. Vigila la línea de almacenamiento debajo del límite de vídeos sin conexión. El interruptor se aplica la próxima vez que se abra TikTok.
+
+* **TikTok:** Ocultar accesos directos del perfil tiene un interruptor nuevo en Aplicación, Ocultar Thoughts en los perfiles, desactivado hasta que lo actives (#122). Oculta la burbuja de Thoughts que TikTok pone sobre la foto de un perfil y, en tu propio perfil, la invitación a compartir uno. Reinicia TikTok después de cambiarlo.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Un enlace a un vídeo de TikTok que abres ahora muestra su vídeo aunque un filtro del feed lo ocultaría, como Ocultar los vídeos que ya has visto con uno que viste antes (#117). TikTok carga un vídeo enlazado como una página de feed propia, así que al filtrarlo ahí quedaba la pantalla de error de TikTok. Solo ese vídeo pasa los filtros, y solo durante un minuto después del enlace. Los enlaces a publicaciones de fotos y los enlaces antiguos del sitio móvil `m.tiktok.com/v/<id>.html` también cuentan como una sola publicación, aquí y para `Bloquear el feed`.

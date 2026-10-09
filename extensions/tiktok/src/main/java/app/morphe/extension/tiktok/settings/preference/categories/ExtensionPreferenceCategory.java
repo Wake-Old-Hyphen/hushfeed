@@ -220,6 +220,15 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "such as TikTok Studio or Your orders. Restart TikTok to apply this.",
                     Settings.HIDDEN_PROFILE_SHORTCUTS
             ));
+            if (SettingsStatus.profileThoughtsEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide Thoughts on profiles",
+                        "Hide the Thoughts bubble TikTok shows above a profile picture, and the "
+                                + "prompt to share one on your own profile. Restart TikTok to apply this.",
+                        Settings.HIDE_PROFILE_THOUGHTS
+                ));
+            }
         }
         if (SettingsStatus.hdUploadEnabled) {
             addPreference(new SectionHeadingPreference(context, "Posting"));

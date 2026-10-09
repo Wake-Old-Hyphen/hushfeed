@@ -39,8 +39,9 @@ import java.util.WeakHashMap;
  * Share sheet tools: hiding of chosen people or share options, or the whole "Send to" row.
  *
  * Ids were read off the live view hierarchy with the share sheet open. TikTok 47.0.3 moved
- * the panel into its own window and renamed all four anchors. The 46.x names (ibc, u3t, dqr,
- * a59) are not kept as fallbacks: on 47.0.3 each of them names some other view.
+ * the panel into its own window and renamed all four anchors, and every build since renames
+ * them again. Only 47.1.4's names are looked up; an older build's name (46.x's ibc, u3t, dqr,
+ * a59) names some other view there.
  * <pre>
  *   ip5   frame around the "Send to" contacts row
  *   v3j   the contacts list; each child is the contact cell, content description
@@ -60,10 +61,10 @@ import java.util.WeakHashMap;
 public final class ShareSheetTools {
     /** One family for everything that touches the sheet, so an export reads as one surface. */
     private static final String FAMILY = ShareModelFilter.FAMILY;
-    private static final String[] CONTACTS_SECTION_IDS = {"47.0.3:ip5", "47.1.3:iql", "47.1.4:iql"};
-    private static final String[] CONTACTS_LIST_IDS = {"47.0.3:v3j", "47.1.3:v71", "47.1.4:v71"};
-    private static final String[] CHANNELS_LIST_IDS = {"47.0.3:dwr", "47.1.3:dxb", "47.1.4:dxb"};
-    private static final String[] ACTIONS_LIST_IDS = {"47.0.3:a5t", "47.1.3:a5u", "47.1.4:a5u"};
+    private static final String[] CONTACTS_SECTION_IDS = {"47.1.4:iql"};
+    private static final String[] CONTACTS_LIST_IDS = {"47.1.4:v71"};
+    private static final String[] CHANNELS_LIST_IDS = {"47.1.4:dxb"};
+    private static final String[] ACTIONS_LIST_IDS = {"47.1.4:a5u"};
 
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
 

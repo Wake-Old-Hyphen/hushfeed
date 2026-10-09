@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Hushfeed kini hanya mendukung TikTok 47.1.4. Jika kamu memakai 47.0.3 atau 47.1.3, unduh APK 47.1.4 dari APKMirror lalu patch di Morphe Manager dengan kunci penandatanganan yang sama, agar login dan pengaturanmu tetap ada. Feature Gate Lab mempertahankan setiap override yang sakelarnya masih ada di 47.1.4 dan mematikan sisanya dengan pemberitahuan seperti biasa.
+
+* **TikTok:** Batas video offline kustom punya sakelar baru di pengaturan Hushfeed > Unduhan, Simpan video offline sampai kamu menghapusnya. Sakelarnya mati sampai kamu menyalakannya (#123). TikTok membuang video yang disimpannya untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, dan daftar yang disimpan sekaligus juga hilang sekaligus, sudah ditonton atau belum. Dengan sakelar ini aktif, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok, dan begitu juga cara mendapatkan set baru. TikTok masih bisa menghapus video yang sudah kamu tonton saat penyimpanan ponselmu hampir penuh, dan memilih batas yang lebih rendah tetap memangkas daftarnya. Perhatikan baris penyimpanan di bawah batas video offline. Sakelar ini berlaku saat TikTok dibuka berikutnya.
+
+* **TikTok:** Sembunyikan pintasan profil punya sakelar baru di bawah Aplikasi, Sembunyikan Thoughts di profil, yang mati sampai kamu menyalakannya (#122). Sakelar ini menyembunyikan gelembung Thoughts yang TikTok pasang di atas foto profil, dan di profilmu sendiri ajakan untuk membagikannya. Mulai ulang TikTok setelah kamu mengubahnya.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Tautan video TikTok yang kamu buka kini menampilkan videonya meski filter feed akan menyembunyikannya, seperti Sembunyikan video yang sudah kamu tonton untuk video yang pernah kamu tonton (#117). TikTok memuat video bertautan sebagai halaman feed tersendiri, jadi menyaringnya malah menyisakan layar error TikTok di situ. Hanya video itu yang lolos dari filter, dan hanya selama semenit setelah tautan dibuka. Tautan ke postingan foto dan tautan lama situs seluler `m.tiktok.com/v/<id>.html` juga dihitung sebagai satu postingan, di sini maupun untuk `Kunci feed`.

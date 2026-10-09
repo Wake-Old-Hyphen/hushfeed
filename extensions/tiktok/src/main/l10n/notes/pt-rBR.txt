@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** O Hushfeed agora suporta apenas o TikTok 47.1.4. Se você usa o 47.0.3 ou o 47.1.3, baixe o APK do 47.1.4 no APKMirror e aplique os patches no Morphe Manager com a mesma chave de assinatura, para manter seu login e suas configurações. O Laboratório de gates mantém cada alteração cujo interruptor ainda existe no 47.1.4 e desliga as demais com o aviso de sempre.
+
+* **TikTok:** Limite personalizado de vídeos offline tem uma chave nova em Configurações do Hushfeed > Downloads, Manter vídeos offline até você apagá-los. Ela vem desligada até você ligar (#123). O TikTok joga fora os vídeos que salvou para assistir offline depois de um tempo fixo, às vezes só dois dias, e uma lista salva de uma vez some de uma vez, assistida ou não. Com a chave ligada eles ficam até você apagá-los nas configurações de Vídeos offline do TikTok, e é assim também que você ganha um lote novo. O TikTok ainda pode remover os que você já assistiu quando o celular fica sem espaço, e escolher um limite menor continua cortando a lista. Fique de olho na linha de armazenamento embaixo do limite de vídeos offline. A chave vale a partir da próxima vez que o TikTok abrir.
+
+* **TikTok:** Esconder atalhos do perfil tem uma chave nova em Aplicativo, Esconder o Thoughts nos perfis, desligada até você ligar (#122). Ela esconde o balão do Thoughts que o TikTok coloca acima da foto de um perfil e, no seu próprio perfil, o convite para compartilhar um. Reinicie o TikTok depois de mudar.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Um link de vídeo do TikTok que você abre agora mostra o vídeo mesmo quando um filtro do feed o esconderia, como Esconder os vídeos que você já viu para um vídeo que você assistiu antes (#117). O TikTok carrega um vídeo de link como uma página de feed própria, então filtrá-lo deixava a tela de erro do TikTok no lugar. Só esse vídeo passa pelos filtros, e só por um minuto depois do link. Links de publicações de fotos e os links antigos do site para celular, `m.tiktok.com/v/<id>.html`, também contam como uma publicação, aqui e para `Bloquear o feed`.

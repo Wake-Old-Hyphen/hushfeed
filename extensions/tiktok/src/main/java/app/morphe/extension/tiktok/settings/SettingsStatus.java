@@ -228,6 +228,13 @@ public class SettingsStatus {
         customOfflineVideosEnabled = true;
     }
 
+    /** Custom offline videos limit found the offline lifetime on this build and hooked it. */
+    public static boolean keepOfflineVideosEnabled = false;
+
+    public static void enableKeepOfflineVideos() {
+        keepOfflineVideosEnabled = true;
+    }
+
     public static void enableSimSpoof() {
         simSpoofEnabled = true;
     }
@@ -519,6 +526,13 @@ public class SettingsStatus {
 
     public static void enableGroupChatBanner() {
         groupChatBannerEnabled = true;
+    }
+
+    /** Hide profile shortcuts found the profile picture's Thoughts bubble on this build and hooked it. */
+    public static boolean profileThoughtsEnabled = false;
+
+    public static void enableProfileThoughts() {
+        profileThoughtsEnabled = true;
     }
 
     static {

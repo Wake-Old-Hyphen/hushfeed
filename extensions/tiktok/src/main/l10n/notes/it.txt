@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Hushfeed ora supporta solo TikTok 47.1.4. Se usi 47.0.3 o 47.1.3, scarica l'APK di 47.1.4 da APKMirror e patchalo in Morphe Manager con la stessa chiave di firma, così accesso e impostazioni restano. Feature Gate Lab mantiene ogni modifica il cui interruttore esiste ancora in 47.1.4 e disattiva le altre con il solito avviso.
+
+* **TikTok:** Limite personalizzato dei video offline ha un nuovo interruttore in Impostazioni di Hushfeed > Download, Tieni i video offline finché non li elimini. È spento finché non lo attivi (#123). TikTok butta via i video che ha salvato per la visione offline dopo un tempo fisso, a volte solo due giorni, e una lista salvata in una volta sparisce in una volta, che tu li abbia guardati o no. Con l'interruttore attivo restano finché non li elimini nelle impostazioni Video offline di TikTok, ed è anche così che ottieni una serie nuova. TikTok può ancora togliere quelli che hai già guardato quando il telefono resta a corto di spazio, e scegliere un limite più basso accorcia ancora la lista. Tieni d'occhio la riga dello spazio sotto il limite dei video offline. L'interruttore vale dal prossimo avvio di TikTok.
+
+* **TikTok:** Nascondi le scorciatoie del profilo ha un nuovo interruttore in App, Nascondi Thoughts sui profili, disattivato finché non lo attivi (#122). Nasconde la nuvoletta Thoughts che TikTok mette sopra l'immagine di un profilo e, sul tuo profilo, l'invito a condividerne uno. Riavvia TikTok dopo averlo cambiato.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Un link a un video di TikTok che apri ora mostra il video anche quando un filtro del feed lo nasconderebbe, come Nascondi i video che hai già visto per uno che hai guardato prima (#117). TikTok carica un video collegato come una pagina del feed a sé, quindi filtrarlo lasciava lì la schermata di errore di TikTok. Solo quel video supera i filtri, e solo per un minuto dopo il link. I link ai post di foto e i vecchi link `m.tiktok.com/v/<id>.html` del sito mobile contano come un solo post, qui e per `Blocca il feed`.

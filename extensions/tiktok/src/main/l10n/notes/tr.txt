@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Hushfeed artık yalnızca TikTok 47.1.4'ü destekliyor. 47.0.3 veya 47.1.3 kullanıyorsan 47.1.4 APK'sını APKMirror'dan indir ve Morphe Manager'da aynı imza anahtarıyla yamala, böylece oturumun ve ayarların korunur. Feature Gate Lab, düğmesi 47.1.4'te hâlâ bulunan her geçersiz kılmayı korur ve gerisini her zamanki bildirimiyle kapatır.
+
+* **TikTok:** Özel çevrimdışı video sınırının Hushfeed ayarları > İndirilenler altında yeni bir anahtarı var, Çevrimdışı videoları sen silene kadar tut. Sen açana kadar kapalı (#123). TikTok, çevrimdışı izlemek için kaydettiği videoları belirli bir süre sonra, bazen yalnızca iki gün sonra atar ve tek seferde kaydedilen bir liste de tek seferde kaybolur, izlenmiş olsun olmasın. Anahtar açıkken videolar, sen TikTok'un Çevrimdışı videolar ayarlarından silene kadar kalır, yeni bir set almanın yolu da bu. Telefonunda yer azaldığında TikTok izlediğin videoları yine de silebilir, daha düşük bir sınır seçmek de listeyi yine kısaltır. Çevrimdışı video sınırının altındaki depolama satırına göz kulak ol. Anahtar, TikTok'un bir sonraki açılışında devreye girer.
+
+* **TikTok:** Profil kısayollarını gizle'nin Uygulama altında yeni bir anahtarı var, Profillerde Thoughts'u gizle, sen açana kadar kapalı (#122). TikTok'un bir profil fotoğrafının üstüne koyduğu Thoughts balonunu ve kendi profilinde bir tane paylaşma önerisini gizler. Değiştirdikten sonra TikTok'u yeniden başlat.
+
 ## 0.69.0 (2026-10-08)
 
 * **TikTok:** Açtığın bir TikTok video bağlantısı, bir akış filtresi onu gizleyecek olsa bile artık videosunu gösteriyor, örneğin daha önce izlediğin bir video için Daha önce gördüğün videoları gizle (#117). TikTok bağlantıyla gelen videoyu kendi başına bir akış sayfası olarak yüklüyor, bu yüzden filtreyle elenince orada TikTok'un hata ekranı kalıyordu. Filtrelerden yalnızca o tek video geçiyor, o da bağlantıdan sonra sadece bir dakika boyunca. Fotoğraf gönderilerine giden bağlantılar ve mobil sitenin eski `m.tiktok.com/v/<id>.html` bağlantıları da hem burada hem de `Akışı kilitle` için tek bir gönderi sayılıyor.

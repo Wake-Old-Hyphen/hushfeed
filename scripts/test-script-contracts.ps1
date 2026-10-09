@@ -226,12 +226,15 @@ Assert-Throws { Resolve-PatchVerificationTarget -Stock $futureStock -Target $tar
     'A future build was accepted without force.'
 Assert-True (Resolve-PatchVerificationTarget -Stock $futureStock -Target $target -Force).Forced `
     'An explicitly forced future build was not marked forced.'
-Assert-True ((@($target.PackageVersions) -join ',') -eq '47.0.3,47.1.3,47.1.4' -and $target.PackageVersion -eq '47.1.4') `
+Assert-True ((@($target.PackageVersions) -join ',') -eq '47.1.4' -and $target.PackageVersion -eq '47.1.4') `
     "The catalog versions were not resolved: $(@($target.PackageVersions) -join ', ')."
 Assert-True ((Format-VersionList -Versions @('47.0.3')) -eq '47.0.3' -and
     (Format-VersionList -Versions @('47.0.3', '47.1.3')) -eq '47.0.3 and 47.1.3' -and
     (Format-VersionList -Versions @('1.0', '2.0', '3.0')) -eq '1.0, 2.0 and 3.0') 'A version list was not written as a sentence.'
-Assert-True ((Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.0.3' }) -Target $target) -eq '47.0.3' -and
+$twoTargets = [pscustomobject]@{ PackageVersions = @('47.1.4', '47.2.3'); PackageVersion = '47.2.3' }
+Assert-True ((Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.1.4' }) -Target $twoTargets) -eq '47.1.4' -and
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.1.4' }) -Target $target) -eq '47.1.4' -and
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.0.3' }) -Target $target) -eq '47.1.4' -and
     (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.2.3' }) -Target $target) -eq '47.1.4' -and
     (Get-DeclaredReportVersion -Report $null -Target $target) -eq '47.1.4') `
     'A report was held to a version other than the declared one it names.'

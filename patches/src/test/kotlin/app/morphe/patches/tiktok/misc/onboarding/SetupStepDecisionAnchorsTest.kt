@@ -85,8 +85,7 @@ class SetupStepDecisionAnchorsTest {
             checkHook(version, decision, step)
 
             val ids = stepIds(app)
-            val expected = if (version == "47.0.3") STEP_IDS - "push_page_advance" else STEP_IDS
-            assertEquals("$version: setup step ids", expected.sorted(), ids.sorted())
+            assertEquals("$version: setup step ids", STEP_IDS.sorted(), ids.sorted())
             assertTrue("$version: every skipped step exists", SKIPPED.all { it in ids })
         }
     }
