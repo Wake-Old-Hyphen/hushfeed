@@ -697,6 +697,53 @@ public class AuthorRegionTest {
     }
 
     /**
+     * TikTok's launcher entry is a second MainActivity under the feed's, and a theme change can
+     * resume it for a moment while the feed stays in front and gets no new resume. The hook went
+     * with it, taking the country off the feed's row, and the install its onCreate posted ran
+     * after it had stopped again.
+     */
+    @Test
+    public void aBuriedMainActivityResumedForAMomentHandsTheCountryBack() throws Exception {
+        Method reset = CurrentVideoAuthor.class.getDeclaredMethod("resetForTests");
+        reset.setAccessible(true);
+        reset.invoke(null);
+        Settings.SHOW_AUTHOR_HANDLE.save(false);
+        Settings.SHOW_AUTHOR_REGION.save(true);
+        try (ActivityController<MainActivity> feed = Robolectric.buildActivity(MainActivity.class).setup().visible();
+             ActivityController<MainActivity> launcher = Robolectric.buildActivity(MainActivity.class).create()) {
+            LinearLayout row = feedRow("aittaac");
+            feed.get().setContentView(row);
+            Utils.setContext(feed.get());
+            AuthorRegion.install(feed.get());
+            feed.pause().resume();
+            play(new Clip("feed", "aittaac", "aittaac", "AZ"));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            layOut(row.getRootView());
+            row.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("aittaac · AZ", ((TextView) row.getChildAt(0)).getText().toString());
+
+            launcher.get().setContentView(feedRow("aittaac"));
+            AuthorRegion.install(launcher.get());
+            // Recreated, the buried copy is resumed for a moment and stopped again, and the
+            // install its onCreate posted runs after that.
+            launcher.start().resume().pause().stop();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+            assertEquals("the feed in front lost its country",
+                    "aittaac · AZ", ((TextView) row.getChildAt(0)).getText().toString());
+            ((TextView) row.getChildAt(0)).setText("aittaac");
+            row.getViewTreeObserver().dispatchOnGlobalLayout();
+            assertEquals("the feed's hook stayed on the buried copy",
+                    "aittaac · AZ", ((TextView) row.getChildAt(0)).getText().toString());
+        } finally {
+            AuthorRegion.restore();
+            Settings.SHOW_AUTHOR_HANDLE.resetToDefault();
+            Settings.SHOW_AUTHOR_REGION.resetToDefault();
+            reset.invoke(null);
+        }
+    }
+
+    /**
      * A detail page started with no feed behind it (a video restored after the process was killed) is hooked from its own onCreate.
      * It lays out while the feed's video is still the current one, and its own video starting is
      * what puts the right country on it.

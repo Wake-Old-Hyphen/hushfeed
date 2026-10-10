@@ -91,7 +91,9 @@ public final class CaptionLanguageFilter implements IFilter {
         String trimmed = value.trim();
         if (trimmed.isEmpty()) return null;
         for (String entry : trimmed.split(SEPARATOR)) {
-            if (primary(entry) != null) continue;
+            // "en,,es" left a blank entry, which the filter skips, and the check refused the list
+            // with an empty name in its message. The country check skips blanks the same way.
+            if (entry.isEmpty() || primary(entry) != null) continue;
             return L10n.f(
                     "%1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.",
                     entry.trim());

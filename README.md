@@ -1,7 +1,7 @@
 ![Hushfeed. Take back your feed with focused controls for filtering, gestures, playback, downloads and privacy.](assets/readme-hero.png)
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.70.1-6f42c1.svg" /></a>
+  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.70.0-6f42c1.svg" /></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-GPLv3-blue.svg" /></a>
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
@@ -23,14 +23,14 @@
 
 Hushfeed is a [Morphe](https://github.com/MorpheApp/morphe-manager) patch bundle for people who want TikTok to behave differently. It can cut feed clutter, guard risky taps, improve downloads and expose controls TikTok leaves buried or unavailable. Every selected patch is configured from one native settings screen inside the app.
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse the 130 source patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Tour the settings](#settings-tour) | [Browse the 131 source patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the verified build details.
 
-Hushfeed v0.69.0 contains 130 patches for TikTok 47.0.3, 47.1.3 and 47.1.4. New in this one: picture-in-picture, App lock, Lock the feed and Block popups, a fade for the controls over videos, a first video that waits for your tap, and What's new in your phone's language. It needs Morphe Manager 1.34.0 or newer.
+Hushfeed v0.70.0 contains 130 patches for TikTok 47.1.4. New in this one: a shorter settings home with search, simple mode picking 107 patches with their switches off, switches for the side menu button and Thoughts on profiles, offline videos that stay until you delete them, and languages TikTok's automatic translation leaves alone. It needs Morphe Manager 1.34.0 or newer.
 
-The main branch contains 130 patches, the same set as v0.69.0.
+The main branch contains 131 patches, one more than v0.70.0.
 
 ## Pick what changes
 
@@ -76,7 +76,7 @@ The compact Unblock action, also rendered from the actual control in a local UI 
 1. Get the TikTok 47.1.4 APK. Google Play only offers the newest build, so take it from APKMirror: [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). When you pick that file in Morphe Manager on Android 11 or newer, Manager checks that TikTok's own key signed it and warns you if a different one did. That warning means the file was changed after TikTok published it, so download it again instead of patching it.
 2. Use Morphe Manager 1.34.0 or newer. Manager refuses a bundle built against a patcher newer than its own, and this one is built against patcher 1.15.1, which Manager 1.34.0 was the first to ship. On anything older the bundle won't load.
 3. Add Hushfeed as a source in Morphe Manager. The quickest way is this link on the phone: [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). Some in-app browsers block Android from handing a web link to another app. If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle.
-4. Pick the patches. Simple mode in Morphe Manager selects 107 of the 130 Hushfeed patches, and every switch they add starts off, so TikTok looks and works as it ships until you turn something on in Hushfeed settings. You only need Expert mode in Manager settings for the other 23, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 130 Hushfeed patches in eleven categories that you can expand or collapse. Patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key so TikTok stays logged in across updates. AMOLED dark theme rewrites TikTok's color resources, and patching with it on runs slower when the memory limit is low, so give the manager 768 MB or more when it's on. It still finishes at 640 MB, just slower. On a Galaxy S22 patching TikTok 47.1.3 with v0.69.0's smaller recommended set plus AMOLED took about 6 1/2 minutes at 640 MB and a little over 6 at 768 MB, and on a Galaxy S25 every patch at once took over an hour at 640 MB before Hushfeed's patches got faster. That smaller set alone fit in 640 MB, about 5 1/2 minutes on the S22, and recent Manager versions already start capable phones at 1,024 MB. Hide Play Store update offer also decodes the manifest, so raise the limit if that patch runs out of memory. A run that sits at 24 or 25 percent and never moves may also need more memory. Cancel it, raise the limit to at least 768 MB if it's lower and start again. If that still stalls, try 512 MB, which gives the patcher less to hold at once.
+4. Pick the patches. Simple mode in Morphe Manager selects 114 of the 131 Hushfeed patches, and every switch they add starts off, so TikTok looks and works as it ships until you turn something on in Hushfeed settings. You only need Expert mode in Manager settings for the other 17, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 131 Hushfeed patches in eleven categories that you can expand or collapse. Patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key so TikTok stays logged in across updates. AMOLED dark theme rewrites TikTok's color resources, and patching with it on runs slower when the memory limit is low, so give the manager 768 MB or more when it's on. It still finishes at 640 MB, just slower. On a Galaxy S22 patching TikTok 47.1.3 with v0.69.0's smaller recommended set plus AMOLED took about 6 1/2 minutes at 640 MB and a little over 6 at 768 MB, and on a Galaxy S25 every patch at once took over an hour at 640 MB before Hushfeed's patches got faster. That smaller set alone fit in 640 MB, about 5 1/2 minutes on the S22, and recent Manager versions already start capable phones at 1,024 MB. Hide Play Store update offer also decodes the manifest, so raise the limit if that patch runs out of memory. A run that sits at 24 or 25 percent and never moves may also need more memory. Cancel it, raise the limit to at least 768 MB if it's lower and start again. If that still stalls, try 512 MB, which gives the patcher less to hold at once.
 5. Install the patched APK. Google's 2026-09-30 verification rollout covers participating app stores in Brazil, Indonesia, Singapore and Thailand. Direct sideloads aren't included in that initial phase, and ADB installs are unchanged. See the [official Android FAQ](https://developer.android.com/developer-verification/guides/faq) for current requirements.
 6. Open TikTok and go to Settings and privacy. Hushfeed is the first row. Tap it to find the switches for every patch you selected. If you're signed out, long-press **Home** on the bottom bar to open Hushfeed settings without going through Profile or signing in. Keep both **Settings** and **Feed tab navigation** selected when patching to use this shortcut.
 
@@ -169,14 +169,13 @@ A few patches change TikTok with no switch in front of them, and Pause can't rea
 
 - Settings itself, which is how you get back to the switch.
 - AMOLED dark theme, Hide Play Store update offer, Change app name and Custom launcher icon.
-- Disable screen capture detection, Disable login requirement, Fix Google login, Enable voice comments and Stop on-device AI profiling.
-- Skip the splash ad, Limit background traffic, Drop the animated image cache and Skip update checks.
+- Disable screen capture detection, Disable login requirement and Fix Google login.
 - Block P2P video relay and the four patches that take files out of the app: Remove content credential and card scanner assets, Remove unused language packs, Remove creation tools and Remove LIVE extras.
 - In Downloads, the folder and file name you picked still apply, as do the fallback to a clean video address and the save button on stickers.
 
 While paused, TikTok's own bottom bar comes back, + button included. If Remove creation tools was patched in, the camera and editor behind that button still won't work, because their files were taken out when the app was patched.
 
-Since v0.67.1, Limit background traffic keeps push setup intact unless you enable Skip push setup in that patch's options. The option starts off even when you select All. If you patched with v0.67.0 and selected this patch, repatch TikTok's original APK with v0.67.1 to get push setup back. Pausing Hushfeed leaves that change in place, so a fresh patch is the way back. If you'd rather have a switch you can turn back off, Notification controls has Turn off push notifications.
+Since v0.67.1, Limit background traffic keeps push setup intact unless you enable Skip notification setup in that patch's options. The option starts off even when you select All. If you patched with v0.67.0 and selected this patch, repatch TikTok's original APK with a newer Hushfeed to get push setup back. In builds after v0.70.0 the option only acts while the patch's switch in Hushfeed settings > App is on, so turning that switch off or pausing Hushfeed brings notifications back after a restart. Notification controls also has Turn off push notifications.
 
 ### TikTok closes right after it opens
 
@@ -209,11 +208,11 @@ Playback quality chooses among the video streams TikTok offers. It doesn't cap t
 
 Eleven patches that were optional and in the Performance group at the time were measured on a Galaxy S22 running TikTok 47.0.3, each added to what was then the recommended set plus Hide Play Store update offer, after a cold start and eight videos. None of them, alone or all together, moved TikTok's total memory use beyond the spread between runs of the same build, which was about 150 MB around a median of 1,040 MB. With all of them on, loaded code fell by about 13 MB and the APK got about 85 MB smaller. The five that remove files say in their rows how much storage they save. Most of TikTok's memory is its own code and libraries, and no patch shrinks those. Turn off screen transitions came later and wasn't part of that run.
 
-Simple mode in Morphe Manager selects 107 of these patches. Each row below says what the patch changes, why you might want it, and whether its switch starts on or off and where to find it. Most switches start off, so TikTok looks and works the way it ships until you turn something on. The other 23 stay out of the default selection, and you pick them in Expert mode.
+Simple mode in Morphe Manager selects 114 of these patches. Each row below says what the patch changes, why you might want it, and whether its switch starts on or off and where to find it. Most switches start off, so TikTok looks and works the way it ships until you turn something on. The other 17 stay out of the default selection, and you pick them in Expert mode.
 
 - Change app name, Custom launcher icon, Hide Play Store update offer, Look like the store app and Run beside the store app change the app's name, icon, signature, package or version code.
 - AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras and Remove unused language packs change TikTok's files while patching. Only a fresh patch takes that back.
-- Drop the animated image cache, Enable voice comments, Limit background traffic, Skip the splash ad, Skip update checks, Stop on-device AI profiling and Trust user certificates change TikTok with no switch in front of them.
+- Trust user certificates changes TikTok with no switch in front of it.
 - Feature Gate Recorder, Hide the risk control CAPTCHA and Network request report only record what TikTok does, for research.
 - Region spoof changes the region TikTok sees on every read, sign-in included. Skip first-launch setup only helps when it's picked before TikTok's first start, so its switch starts on.
 
@@ -253,14 +252,14 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 | `Disable the long press repost` | Stops a long press on Like from opening TikTok's repost option, so you don't repost by accident. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Double-tap controls` | Lets a double tap on a video open its comments or do nothing, instead of liking it, so you don't like videos by accident. Starts off. Pick an action in Hushfeed settings > Feed screen. |
 | `Downloads` | Saves videos and photos without TikTok's watermark, even when the creator turned downloads off. You can also choose the folders and file names. On by default. Turn it off in Hushfeed settings > Downloads. |
-| `Drop the animated image cache` | Makes TikTok keep only the frame on screen for stickers and GIFs instead of every frame, so they use less memory and still play smoothly. It has no switch, so only patching again without it undoes it. |
-| `Enable voice comments` | Turns on TikTok's voice comments, so you can record and post a spoken comment, for accounts that don't have them yet. It has no switch and hasn't been tried on a real account, so it may not work. |
+| `Drop the animated image cache` | Lets you make TikTok keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Starts off. Turn it on in Hushfeed settings > App. |
+| `Enable voice comments` | Lets you turn on TikTok's voice comments, so you can record and post a spoken comment, for accounts that don't have them yet. It hasn't been tried on a real account, so it may not work. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Expand activity list` | Shows the whole Activity and New followers lists in the Inbox, so you don't have to tap View all. Starts off. Turn it on in Hushfeed settings > Inbox. |
 | `Feature Gate Lab` | Adds an advanced page that lists the hidden settings TikTok uses to test features and lets you change them. It's for people who like to experiment. Starts off. Turn it on in Hushfeed settings > Diagnostics. |
 | `Feature Gate Recorder` | Records which hidden TikTok settings the app reads while you use it, and which ones changed. It's a research tool and changes nothing in TikTok. Start a recording in Hushfeed settings > Diagnostics. |
 | `Feed filter` | Hides ads in the feed, and lets you hide other things you don't want to see, like LIVEs, Shop posts, AI videos or videos with words, creators or sounds you pick. Hiding ads is on by default. Everything else starts off in Hushfeed settings > Feed filter. |
 | `Feed tab navigation` | Lets you hide feed and bottom tabs you don't use, rename the bottom tabs, choose the tab TikTok opens on and stop For You reloading when you tap Home. Starts off, except holding Home to open Hushfeed settings. Find it in Hushfeed settings > Feed tabs. |
-| `Feed text sizes` | Lets you make video descriptions and creator names bigger or smaller, so they're easier to read. Starts off. Pick a size in Hushfeed settings > Feed screen. |
+| `Feed text sizes` | Lets you make video descriptions, creator names and post dates bigger or smaller, so they're easier to read. Starts off. Pick a size in Hushfeed settings > Feed screen. |
 | `Fit the video to the screen` | Shows the whole video instead of cutting off its sides on folding phones, squarer screens and split screen. A second switch does the opposite and fills the screen. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Fix Google login` | Makes Sign in with Google work in the patched app, where it would otherwise fail. Works as soon as you patch it in, with no switch. |
 | `Foldable split comment view` | On a folding phone or tablet, shows comments beside the video instead of over it when the screen is wide enough. Starts off. Turn it on in Hushfeed settings > App. |
@@ -292,7 +291,7 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 | `Keep the Favorites tab` | Keeps the Favorites tab and your saved videos on your profile when TikTok tries out a version of the app that hides them. On by default. Turn it off in Hushfeed settings > App. |
 | `Keep the screen's refresh rate` | Stops TikTok slowing your screen down to the video's frame rate, so scrolling stays smooth on 90 or 120 Hz phones. Starts off. Turn it on in Hushfeed settings > App. |
 | `Lift text length limits` | Lets you write longer comments, repost notes and bios than the app normally allows. TikTok can still refuse one that's too long. Starts off. Turn it on in Hushfeed settings > Comments. |
-| `Limit background traffic` | Stops TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. It has no switch, so only patching again without it undoes it. |
+| `Limit background traffic` | Lets you stop TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. Starts off. Turn it on in Hushfeed settings > App. |
 | `LIVE controls` | Stops a LIVE in the feed from opening by itself after a countdown, and can show a LIVE's exact viewer count instead of a rounded one. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Location access governor` | Gives TikTok no location when it asks, so it can't see where you are from your phone's location services. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Long-press controls` | Lets a long press on a video do something else, like open the comments, copy the link, save the sound or the frame on screen, or set a sleep timer. Starts off. Pick an action in Hushfeed settings > Feed screen. |
@@ -332,10 +331,11 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 | `SIM spoof` | Makes TikTok see the SIM country and carrier you choose. It may not change your region, since TikTok also goes by your internet connection and account. Starts off. Turn it on in Hushfeed settings > Region. |
 | `Skip content warnings` | Plays videos without the warning screen you'd have to tap through first, and can hide the Check sources banner on unverified videos. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Skip first-launch setup` | Skips TikTok's setup screens on a fresh install, like the interest picker and the swipe tutorial. Sign-in and age screens still show. Its switch is on once picked, since setup runs before you can reach settings. Turn it off in Hushfeed settings > App. |
-| `Skip the splash ad` | Stops the full-screen ad TikTok can show while it starts up. It has no switch, so only patching again without it brings the ad back. |
-| `Skip update checks` | Stops two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work. It has no switch, so only patching again undoes it. |
+| `Skip passkey sign-in` | Lets you sign in another way, like your password or a code by email or text, when TikTok wants a passkey. Password managers won't hand a passkey to a patched app, so that step can't finish here. With the switch on, TikTok treats your phone as one without passkeys. Starts off. Turn it on in Hushfeed settings > App. |
+| `Skip the splash ad` | Lets you stop the full-screen ad TikTok can show while it starts up. Starts off. Turn it on in Hushfeed settings > App. |
+| `Skip update checks` | Lets you stop two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work. Starts off. Turn it on in Hushfeed settings > App. |
 | `Stay on the video in full screen` | When a video ends in TikTok's full screen view, it stays on that video instead of moving to the next one. Swiping still moves on. Starts off. Turn it on in Hushfeed settings > Playback. |
-| `Stop on-device AI profiling` | Stops TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there. It has no switch, so only patching again without it undoes it. |
+| `Stop on-device AI profiling` | Lets you stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Stop recording watch history` | Stops TikTok adding the videos you watch to your Watch history. The catch: your views stop counting, and For You learns less about what you like. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Stop saving search history` | Stops TikTok saving your new searches on your phone. Older searches stay until you delete them, and TikTok's servers may keep their own record. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Stop search autoplay` | Stops videos in search results from playing by themselves. Each one shows its cover until you open it, so searching stays quiet. Starts off. Turn it on in Hushfeed settings > App. |
@@ -459,7 +459,7 @@ Select `Subtitle tools` in the patcher, then enable subtitle downloads under Dow
 
 Caption appearance and the clear display option are under Feed & layout > Feed screen:
 
-Fade the video controls sets the opacity of the buttons, caption and tabs over the video from 0 to 100. Faded controls still take taps. At 0, the buttons and caption are hidden and the tabs stay at 10.
+Fade the video controls sets the opacity of the buttons, caption and tabs over the video from 0 to 100. Faded controls still take taps. In Clear display the buttons and caption stay on screen at that level, and taps go through them to the video, so a press and hold or a pinch still gets you out. At 0, the buttons and caption are hidden and the tabs stay at 10.
 
 The clear-display caption is removed as soon as you turn its switch off. Turning it back on restores the current cue when its video is still on screen.
 
@@ -479,7 +479,7 @@ TikTok's reply receiver doesn't confirm delivery. The status line says how many 
 
 Playback has an optional default speed for every new video. A manual choice lasts until you change videos. To add 2.5x, enter it in Speed menu choices and restart TikTok. An empty list restores TikTok's menu.
 
-Select `Automatic video advance` in the patcher, then turn on Auto-advance videos in Playback and restart. The option re-enables native auto-scroll if TikTok turns it off, and it puts TikTok's own Auto scroll action in the video actions panel, which otherwise only appears for accounts in that rollout. Auto-advance in search results, just below it, also turns on TikTok's own auto scroll for videos opened from search. Use the Playback switch to disable it.
+Select `Automatic video advance` in the patcher, then turn on Auto-advance videos in Playback and restart. The option re-enables TikTok's Auto scroll if TikTok turns it off, and it puts TikTok's own Auto scroll action in the video actions panel, which otherwise only appears for accounts in that rollout. Auto-advance in search results, just below it, also turns on TikTok's own Auto scroll for videos opened from search. Use the Playback switch to disable it.
 
 Auto-advance session limit is zero by default. A positive value counts videos that finish while Hushfeed started scrolling, not prefetches or manual swipes. Recreating the feed or changing the limit starts a new count. Saving the same number, changing another setting or returning from the background keeps the existing count, including a reached limit. Hushfeed shows a brief notice when it stops.
 
@@ -549,7 +549,7 @@ Feature Gate Lab saves its master switch immediately. Its menu can reset overrid
 
 The Lab can also bring back a missing See translation link. Open the Lab menu, choose Reviewed presets, then Show See translation. The preview lists both values before you apply them. Turn on the Lab's overrides switch and restart TikTok to use the preset. Undo last Lab change restores the previous rules. On the 47.1.3 test account, `feed_translation_reverse` and `cla_translate_button_weaken_v2` were both 1. Setting both to 0 brought the link back, and either one alone didn't.
 
-The same menu has presets for features other TikTok mods turn on by flag: repost with a comment, the profile banner and new profile layout, live photo, camera and audio comments, comments saved to Favorites, comment sort and dislike styles, message bubble colors, the Inbox archive and sharing to more chats at once, Manage topics, visual search, AI Self, the long-press menu on every post, TikTok's own hold to speed up, background play and auto-scroll, and post dates in the feed. The list shows the presets for the TikTok version you have installed, and opening one checks its keys against that build before Apply is offered. Some of those features also need TikTok's servers to allow them for your account.
+The same menu has presets for features other TikTok mods turn on by flag: repost with a comment, the profile banner and new profile layout, live photo, camera and audio comments, comments saved to Favorites, comment sort and dislike styles, message bubble colors, the Inbox archive and sharing to more chats at once, Manage topics, visual search, AI Self, the long-press menu on every post, TikTok's own hold to speed up, background play and Auto scroll, and post dates in the feed. The list shows the presets for the TikTok version you have installed, and opening one checks its keys against that build before Apply is offered. Some of those features also need TikTok's servers to allow them for your account.
 
 The Lab uses a compact toolbar so more gates fit on small screens. Tap the warning icon beside Apply overrides for the explanation and account warning. Source and view tabs scroll sideways when larger text needs more room.
 
@@ -706,7 +706,7 @@ APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Mo
 
 ### Why that version and not a newer one
 
-Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds, so Hushfeed declares one target, the newest stable TikTok it's been checked against. On main that's 47.1.4. When a newer build is supported, the previous one is dropped in the same release, so every build and check runs against a single APK. All 130 patches apply to the reviewed APK. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
+Patches use named components where TikTok retains them and code patterns where names are stripped. Both can change between builds, so Hushfeed declares one target, the newest stable TikTok it's been checked against. On main that's 47.1.4. When a newer build is supported, the previous one is dropped in the same release, so every build and check runs against a single APK. All 131 patches apply to the reviewed APK. Another build can fail loudly when an anchor moves or, worse, accept the wrong shape.
 
 Only the global package is declared in the compatibility metadata.
 

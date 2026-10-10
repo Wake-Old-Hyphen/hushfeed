@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Pudarkan kontrol video sekarang juga berlaku di Tampilan bersih. Antara 1 dan 99, Tampilan bersih membiarkan tombol dan keterangan tetap di layar pada tingkat yang kamu pilih alih-alih menghilangkannya, dan ketukan pada keduanya diteruskan ke video, jadi tidak ada yang terbuka tanpa sengaja. Tekan lama atau cubit tetap mengeluarkanmu dari Tampilan bersih, dan di luar itu kontrol yang dipudarkan tetap menerima ketukan seperti sebelumnya (#84).
+
+* **TikTok:** Senyapkan video feed sekarang tetap membuat feed tanpa suara setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya, video berikutnya bisa berbunyi sampai kamu keluar dari feed lalu kembali.
+
+* **TikTok:** Tampilkan jumlah yang disaring dan sakelar yang menyembunyikan bagian Kotak Masuk tetap berfungsi setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya keduanya bisa berhenti sampai TikTok dimulai ulang.
+
+* **TikTok:** Tekan lama Beranda untuk pengaturan Hushfeed tetap berfungsi setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya fitur ini berhenti sampai TikTok dimulai ulang.
+
+* **TikTok:** Memulihkan cadangan tidak lagi menyalakan Proksi jaringan atau mengganti alamat proksi yang sudah kamu punya, jadi cadangan buatan orang lain tidak bisa mengalirkan lalu lintas TikTok-mu lewat server mereka. Di ponsel yang belum punya proksi, alamatnya ikut dengan sakelar mati, dan ada catatan setelah pemulihan yang memberitahukannya.
+
+* **TikTok:** Jangan terjemahkan otomatis bahasa ini sekarang membiarkan bahasa Mandarin Tradisional seperti aslinya saat kamu mengetik zh-Hant, zh-TW, zh-HK, atau zh-MO, sedangkan zh-Hans-TW tetap berarti Mandarin Sederhana. Sebelumnya, entri itu malah melindungi bahasa Mandarin Sederhana (#121).
+
+* **TikTok:** Hide feed LIVE button sekarang tetap bisa di-patch pada build TikTok yang tombol menu sampingnya tidak ditemukan. Bagian itu dilewati, dan baris Sembunyikan tombol menu samping hanya muncul kalau tombolnya ditemukan (#128).
+
+* **TikTok:** Pencarian setelan sekarang menemukan Detail build dan Yang baru. Beberapa hasil, seperti Feature Gate Lab dan Lisensi, sekarang menyebut grupnya, dan pencarian yang hanya berisi tanda baca menampilkan Tidak ada setelan yang cocok.
+
+* **TikTok:** Pemberitahuan di bagian bawah setelan Hushfeed sekarang tertutup saat kamu mengetuknya, dan ketukan itu tidak lagi mengenai setelan di bawahnya. TalkBack membacakan tindakannya sebagai Tutup.
+
+* **TikTok:** Jeda sekarang menjelaskan dengan kata-kata sederhana apa yang tetap ada selama aktif. Pengaturanmu tetap tersimpan, begitu juga perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi. Auto scroll milik TikTok juga kini ditulis sama di setiap baris.
+
+* **TikTok:** Daftar bahasa di Filter feed dan Komentar sekarang menerima koma berlebih, seperti en,,es. Dulu daftarnya ditolak dengan nama kosong di pesannya.
+
+* **TikTok:** Kalau menyalin detail build gagal, pesannya sekarang menyuruhmu memakai Simpan detail build.
+
+* **TikTok:** Yang baru tidak lagi menampilkan tanda backtick yang tersisa di sekitar nama setelan.
+
+* **TikTok:** Pemilih waktu untuk Kapan dikirim di Pertahankan rentetan sekarang terbuka gelap atau terang sesuai setelan Hushfeed.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling, dan Enable voice comments kini masing-masing punya sakelar di pengaturan Hushfeed, jadi Jeda juga mematikannya dan mode sederhana Morphe Manager kini ikut memilihnya. Setiap sakelar itu mulai dalam keadaan mati. Kalau sebelumnya kamu sudah mem-patch dengan salah satu patch ini, nyalakan sakelarnya setelah memperbarui agar tetap berfungsi. Lewati iklan pembuka, Lewati pemeriksaan pembaruan, Batasi lalu lintas latar belakang, dan Simpan satu bingkai gambar animasi di cache ada di Performa di bagian Aplikasi. Hentikan profiling AI di perangkat ada di Privasi, dan Izinkan komentar suara ada di Komentar.
+
+* **TikTok:** Patch baru, Skip passkey sign-in, ikut dipilih mode sederhana Morphe Manager dengan sakelarnya mati (#102). Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch, jadi akun yang punya kunci sandi bisa tertahan di langkah kunci sandi TikTok. Nyalakan Masuk tanpa kunci sandi di pengaturan Hushfeed > Aplikasi, lalu TikTok menganggap ponselmu tidak punya kunci sandi dan menawarkan cara masuk lainnya, seperti kata sandimu atau kode lewat email atau SMS. Kalau kamu sedang keluar dari akun, tekan lama Beranda untuk membuka pengaturan Hushfeed.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Ukuran nama kreator kini juga mengatur ukuran tanggal unggah di sebelah nama kreator, jadi keduanya tetap sama besar (#66).
+
 * **TikTok:** Pengaturan Komentar punya baris baru, Jangan terjemahkan otomatis bahasa ini. Barisnya kosong sampai kamu mengisinya (#121). Ketik kode bahasa seperti `es, de`, dan saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa itu tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya, dan daftar Jangan terjemahkan milik TikTok sendiri tidak berubah.
 
 * **TikTok:** Simpan video offline sampai kamu menghapusnya sekarang mencakup dua cara lagi TikTok mengosongkan daftarmu. Saat sakelar menyala, Auto adjust TikTok tidak lagi menurunkan batas video offline atau memangkas daftar saat TikTok dimulai, dan pembersihan yang dijalankan TikTok saat ujicoba menyalakan video offline secara bawaan berakhir dilewati (#123). Mulai ulang TikTok setelah kamu mengubah sakelar.
@@ -16,11 +52,7 @@
 
 * **TikTok:** Opsi Dark background color di Morphe Manager kini menyebut "kode warna", bukan "kode hex", dan menjelaskan bahwa hitam mematikan piksel itu sepenuhnya di layar OLED.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** Pengaturan Hushfeed kini dibuka dengan status ringkas dan pencarian di atas tujuh grup. Halaman yang berkaitan berada bersama, sementara cadangan, diagnostik, dan Feature Gate Lab ada di Aplikasi & pengaturan lanjutan. Tentang Hushfeed menyatukan detail build dan lisensi. Pencarian tetap membawamu langsung ke pengaturan, dan pilihan yang tersimpan tetap ada. Keterangan Jeda kini menjelaskan bahwa pengaturan tersimpan dan perubahan yang tertanam dalam APK tetap ada.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** Hushfeed kini hanya mendukung TikTok 47.1.4. Jika kamu memakai 47.0.3 atau 47.1.3, unduh APK 47.1.4 dari APKMirror lalu patch di Morphe Manager dengan kunci penandatanganan yang sama, agar login dan pengaturanmu tetap ada. Feature Gate Lab mempertahankan setiap override yang sakelarnya masih ada di 47.1.4 dan mematikan sisanya dengan pemberitahuan seperti biasa.
 

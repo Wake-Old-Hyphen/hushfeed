@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import android.app.Activity;
 import android.view.Gravity;
@@ -167,5 +168,60 @@ public class FilteredCountPillTest {
         assertNull(FilteredCountPill.pillForTests());
         assertNull(pill.getParent());
         controller = Robolectric.buildActivity(Activity.class).create().start().resume();
+    }
+
+    /**
+     * TikTok's launcher entry is a second MainActivity under the feed's. Changing TikTok's
+     * appearance recreates both, the buried one last, and the label went with the newest one and
+     * stayed there, so the feed showed no count until TikTok restarted. The Home long press had
+     * the same fault (S22, 47.1.4, Dark then Light).
+     */
+    @Test
+    public void aThemeChangeLeavesTheLabelOnTheFeedInFront() {
+        Settings.FILTERED_COUNT_PILL.save(true);
+        FeedFilterCounters.removedItems("FeedItemList", 2, "AdsFilter");
+        controller.start().resume().visible();
+        // The feed's copy goes behind the settings page that changed the theme.
+        controller.pause().stop();
+        ActivityController<Activity> launcher = Robolectric.buildActivity(Activity.class).create();
+        try {
+            FilteredCountPill.install(launcher.get());
+            // Recreated last, the launcher's copy is resumed for a moment and stopped again.
+            launcher.start().resume().pause().stop();
+
+            controller.restart().start().resume().visible();
+            layout();
+
+            TextView pill = FilteredCountPill.pillForTests();
+            assertNotNull(pill);
+            assertSame("the label stayed on the buried copy",
+                    controller.get().findViewById(android.R.id.content), pill.getParent());
+            assertEquals(View.VISIBLE, pill.getVisibility());
+            assertEquals("2 filtered out", pill.getText().toString());
+        } finally {
+            launcher.destroy();
+        }
+    }
+
+    /** The buried copy can also blink on while the feed stays resumed and gets no new resume. */
+    @Test
+    public void aBuriedMainActivityResumedForAMomentHandsTheLabelBack() {
+        Settings.FILTERED_COUNT_PILL.save(true);
+        FeedFilterCounters.removedItems("FeedItemList", 2, "AdsFilter");
+        controller.start().resume().visible();
+        ActivityController<Activity> launcher = Robolectric.buildActivity(Activity.class).create();
+        try {
+            FilteredCountPill.install(launcher.get());
+            launcher.start().resume().pause().stop();
+            layout();
+
+            TextView pill = FilteredCountPill.pillForTests();
+            assertNotNull(pill);
+            assertSame("the feed in front lost its label",
+                    controller.get().findViewById(android.R.id.content), pill.getParent());
+            assertEquals(View.VISIBLE, pill.getVisibility());
+        } finally {
+            launcher.destroy();
+        }
     }
 }

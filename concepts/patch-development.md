@@ -6,7 +6,7 @@ This guide maps the TikTok app Hushfeed modifies to the code and release checks 
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-The source snapshot in this checkout says version 0.70.1 and contains 130 patch entries. The published source index, patches-bundle.json, still names 0.69.0. This is the release sequence described in CONTRIBUTING.md: publish and verify a bundle before changing the source index. Do not hand-edit the index to make the versions match.
+The source snapshot in this checkout says version 0.70.0 and contains 131 patch entries, one more than the published 0.70.0 bundle that patches-bundle.json names. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
 
 ## Target app and version boundary
 
@@ -84,7 +84,7 @@ The Morphe Gradle plugin and the default extension namespace are configured in s
 
 The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, telemetry, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
 
-The current catalog's 130 patches are grouped as follows:
+The current catalog's 131 patches are grouped as follows:
 
 | Manager category | Patches |
 | --- | ---: |
@@ -98,7 +98,7 @@ The current catalog's 130 patches are grouped as follows:
 | Playback | 20 |
 | Privacy | 16 |
 | Search | 4 |
-| Settings | 13 |
+| Settings | 14 |
 
 The [patch catalog](../patches-list.json) has the complete names and plain-English descriptions. Keep the prose in that generated catalog aligned with the README's patch table and the in-app setting title. The build's documentation checks compare those sources.
 
@@ -112,7 +112,7 @@ Settings.java declares runtime setting keys, types, defaults, and availability r
 
 An install-time Morphe patch option is different from an in-app setting. For example, AMOLED dark theme has a color option applied while building the patched APK. Advanced downloads depends on the Settings patch and exposes runtime switches in TikTok's Hushfeed settings. The generated catalog lists those dependencies and patch options.
 
-The detailed in-app settings pages are separate from Morphe Manager's patch categories. Quiet Index groups these pages on the home screen in source version 0.70.1; their category classes and persisted setting keys remain the same:
+The detailed in-app settings pages are separate from Morphe Manager's patch categories. Quiet Index groups these pages on the home screen in source version 0.70.0; their category classes and persisted setting keys remain the same:
 
 | Settings page | Category class |
 | --- | --- |
@@ -134,13 +134,13 @@ Translations live in extensions/tiktok/src/main/l10n/. The generator scripts/gen
 
 ## Settings design concepts
 
-Design study v0.1.0, October 9, 2026. Quiet Index was selected and is implemented in source version 0.70.1. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys. The published bundle remains 0.69.0, so the source redesign awaits publication.
+Design study v0.1.0, October 9, 2026. Quiet Index was selected and is implemented in source version 0.70.0. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys. The published bundle remains 0.69.0, so the source redesign awaits publication.
 
 The previous home repeated Feed filter, Privacy and Screen time as shortcuts above their full rows. Quiet Index replaces that stack with a compact status beside the Hushfeed title, search and seven groups. About Hushfeed sits separately below the groups. Detailed controls remain on their existing pages.
 
 | Concept | Preview | Navigation tradeoff |
 | --- | --- | --- |
-| Quiet Index | [Open mockup](assets/settings-design-2026-10-09/quiet-index.png) | Selected and implemented in source 0.70.1. Seven grouped destinations keep the home compact. Related pages move one level deeper. |
+| Quiet Index | [Open mockup](assets/settings-design-2026-10-09/quiet-index.png) | Selected and implemented in source 0.70.0. Seven grouped destinations keep the home compact. Related pages move one level deeper. |
 | Three-domain Workspace | [Open mockup](assets/settings-design-2026-10-09/three-domain-workspace.png) | Experience, Privacy and Tools divide the library. Less scrolling, but users need to learn which tab owns a setting. |
 | Focused Controls | [Open mockup](assets/settings-design-2026-10-09/focused-controls.png) | Expandable groups expose common controls in place. Faster adjustments, but expansion state and accidental changes need attention. |
 
@@ -167,7 +167,7 @@ Search still indexes individual controls and checklist members, including retain
 
 The home uses a black base with small outline icons, quiet separators and restrained accents. Compact rows replace the large icon tiles and repeated shortcuts. Detailed pages retain their grouped controls. The mockup uses a 390 by 844 logical frame. Android layout must still be checked at the supported font scales, translated label lengths and light theme.
 
-The compact status has Active, Paused and Restart pending text states. Tapping it opens App & advanced, which holds the detailed status, recovery actions and Pause. The Pause description and paused summary now say that runtime changes pause while saved settings and changes built into the APK remain. They no longer describe Pause as an unpatched app. Mockup switch positions are examples, not captured device settings. No protection score or battery-saving claim is part of the design.
+The compact status has Active, Paused and Restart pending text states. Tapping it opens App & advanced, which holds the detailed status, recovery actions and Pause. The Pause description and paused summary say that Hushfeed's switches pause while saved settings and the changes made when patching, like the app's name or icon, stay. They no longer describe Pause as an unpatched app. Mockup switch positions are examples, not captured device settings. No protection score or battery-saving claim is part of the design.
 
 The mockups establish hierarchy and category coverage. They are not evidence of native layout or device acceptance. Use the implementation's rendered screenshots and recorded checks for font scaling, accessibility, interaction and localization. Final build and supported-device acceptance were still in progress when this source note was updated.
 

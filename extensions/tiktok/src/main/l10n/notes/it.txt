@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Attenua i controlli del video ora funziona anche con la Vista pulita. Tra 1 e 99, la Vista pulita lascia i pulsanti e la descrizione sullo schermo al livello che hai scelto invece di toglierli, e un tocco su di essi arriva al video, così niente si apre per sbaglio. Tenere premuto o pizzicare ti fa ancora uscire dalla Vista pulita, e fuori da essa i controlli attenuati ricevono i tocchi come prima (#84).
+
+* **TikTok:** Disattiva l'audio dei video nel feed ora tiene il feed muto anche dopo che passi TikTok tra chiaro e scuro. Prima i video successivi potevano partire con l'audio finché non uscivi dal feed e ci tornavi.
+
+* **TikTok:** Mostra quanti sono stati filtrati e gli interruttori che nascondono parti della Posta in arrivo continuano a funzionare quando passi TikTok da chiaro a scuro o viceversa. Prima potevano smettere di funzionare finché non riavviavi TikTok.
+
+* **TikTok:** Tieni premuto su Home per le impostazioni di Hushfeed continua a funzionare quando passi TikTok da chiaro a scuro o viceversa. Prima smetteva di funzionare finché non riavviavi TikTok.
+
+* **TikTok:** Ripristinare un backup non attiva più il Proxy di rete e non sostituisce l'indirizzo proxy che hai già, così un backup fatto da qualcun altro non può far passare il tuo traffico TikTok dal suo server. Su un telefono senza proxy configurato, l'indirizzo arriva con l'interruttore spento, e una nota dopo il ripristino lo dice.
+
+* **TikTok:** Non tradurre automaticamente queste lingue ora lascia il cinese tradizionale com'è stato scritto quando inserisci zh-Hant, zh-TW, zh-HK o zh-MO, mentre zh-Hans-TW resta cinese semplificato. Prima quelle voci proteggevano invece il cinese semplificato (#121).
+
+* **TikTok:** Hide feed LIVE button ora si applica anche su una build di TikTok in cui il pulsante del menu laterale non si trova. Quella parte viene saltata, e la riga Nascondi il pulsante del menu laterale compare solo quando il pulsante è stato trovato (#128).
+
+* **TikTok:** La ricerca nelle impostazioni ora trova Dettagli della build e Novità. Alcuni risultati, come Feature Gate Lab e Licenze, ora indicano il gruppo in cui si trovano, e una ricerca fatta solo di punteggiatura mostra Nessuna impostazione corrispondente.
+
+* **TikTok:** L'avviso che compare in basso nelle impostazioni di Hushfeed ora si chiude quando lo tocchi, e il tocco non finisce più sull'impostazione sotto. TalkBack legge la sua azione come Chiudi.
+
+* **TikTok:** Pausa ora spiega con parole semplici cosa resta mentre è attiva. Le impostazioni restano salvate, e restano anche le modifiche fatte con la patch, come il nome o l'icona dell'app. Inoltre l'Auto scroll di TikTok ora è scritto allo stesso modo in ogni riga.
+
+* **TikTok:** Gli elenchi di lingue in Filtro del feed e Commenti ora accettano una virgola in più, come en,,es. Prima rifiutavano l'elenco con un nome vuoto nel messaggio.
+
+* **TikTok:** Se la copia dei dettagli della build non riesce, il messaggio ora ti dice di usare Salva dettagli della build.
+
+* **TikTok:** Novità non mostra più apici inversi superflui intorno ai nomi delle impostazioni.
+
+* **TikTok:** Il selettore dell'ora per Quando inviare in Mantieni viva una serie ora si apre scuro o chiaro come le impostazioni di Hushfeed.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ed Enable voice comments ora hanno ciascuna un interruttore in Impostazioni di Hushfeed, quindi Pausa spegne anche loro e la modalità semplice di Morphe Manager ora le sceglie. Ognuno di questi interruttori parte disattivato. Se avevi già applicato una di queste patch, attiva il suo interruttore dopo l'aggiornamento perché continui a funzionare. Salta l'annuncio di avvio, Salta i controlli degli aggiornamenti, Limita il traffico in background e Memorizza un solo fotogramma delle immagini animate sono in Prestazioni, dentro App. Ferma la profilazione IA sul dispositivo è in Privacy e Consenti i commenti vocali è in Commenti.
+
+* **TikTok:** Nuova patch, Skip passkey sign-in, scelta dalla modalità semplice di Morphe Manager con l'interruttore spento (#102). I gestori di password non danno una passkey a un'app modificata, quindi un account con una passkey poteva bloccarsi al passaggio della passkey di TikTok. Attiva Accedi senza passkey in Impostazioni di Hushfeed > App e TikTok tratterà il tuo telefono come uno senza passkey, offrendo gli altri modi che ha per accedere, come la password o un codice via email o SMS. Se sei disconnesso, tieni premuto su Home per aprire le impostazioni di Hushfeed.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Dimensione del nome del creator ora cambia anche la dimensione della data di pubblicazione accanto al nome, così i due restano della stessa grandezza (#66).
+
 * **TikTok:** Le impostazioni dei commenti hanno una riga nuova, Non tradurre automaticamente queste lingue. Resta vuota finché non la compili (#121). Scrivi codici lingua come `es, de`, e quando TikTok traduce per te, le didascalie e i commenti in quelle lingue restano come sono stati scritti. Vedi traduzione funziona ancora quando lo tocchi, e l'elenco Non tradurre di TikTok non cambia.
 
 * **TikTok:** Tieni i video offline finché non li elimini ora copre altri due modi in cui TikTok svuotava la tua lista. Con l'interruttore attivo, l'Auto adjust di TikTok non abbassa più il limite dei video offline né accorcia la lista all'avvio di TikTok, e viene saltata la pulizia che TikTok esegue quando finisce il suo test di attivazione dei video offline per impostazione predefinita (#123). Riavvia TikTok dopo aver cambiato l'interruttore.
@@ -16,11 +52,7 @@
 
 * **TikTok:** L'opzione Dark background color in Morphe Manager ora dice "codice colore" invece di "codice esadecimale" e spiega che il nero spegne completamente quei pixel sugli schermi OLED.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** Le impostazioni di Hushfeed ora si aprono con uno stato compatto e la ricerca sopra sette gruppi. Le pagine correlate sono insieme, con backup, diagnostica e Feature Gate Lab sotto App e opzioni avanzate. Informazioni su Hushfeed raccoglie i dettagli della build e le licenze. La ricerca ti porta ancora direttamente alla singola impostazione e le tue scelte salvate restano. La descrizione di Pausa ora chiarisce che le impostazioni salvate e le modifiche integrate nell'APK rimangono.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** Hushfeed ora supporta solo TikTok 47.1.4. Se usi 47.0.3 o 47.1.3, scarica l'APK di 47.1.4 da APKMirror e patchalo in Morphe Manager con la stessa chiave di firma, così accesso e impostazioni restano. Feature Gate Lab mantiene ogni modifica il cui interruttore esiste ancora in 47.1.4 e disattiva le altre con il solito avviso.
 

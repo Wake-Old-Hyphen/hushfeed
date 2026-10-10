@@ -135,6 +135,9 @@ public class CreatorPatternTest {
                 // Held to the start, the fifth wildcard is still one too many, and multiline
                 // mode lets ^ match after every break, so it isn't held to the start at all.
                 "^.*.*.*.*.*z", "(?m)^\\w+ \\w+ \\w+ \\w+$",
+                // Lookarounds, atomic groups and possessive repeats are read as groups and
+                // repeats like any other, so what they wrap is still refused.
+                "(?=(a+)+)b", "(?<!x)(a|ab)*c", "(?>a+)+", "(a++)+", "(?:a*+b?)+",
         };
         for (String source : refused) {
             assertTrue("not refused: " + source, AdvancedFeedRules.couldStall(source));
@@ -149,6 +152,9 @@ public class CreatorPatternTest {
                 // to the start cost what three loose ones do; (?-x) turns comment mode off; and
                 // a ] straight after [ is a member of the class.
                 ".*shop.*|.*store.*", "^\\w+ \\w+ \\w+ \\w+$", "(?-x)shop", "[](]x", "[^]a]+",
+                // A lookaround is one group: (?<= and (?<! aren't taken for a named group, and a
+                // possessive or lazy suffix isn't taken for a second repeat.
+                "(?<=@)news", "(?<!fan)shop", "(?=.*shop)\\w+", "(?!bot)\\w+", "a++b", "(?>shop|store)\\d*?",
         };
         for (String source : kept) {
             assertFalse("refused: " + source, AdvancedFeedRules.couldStall(source));

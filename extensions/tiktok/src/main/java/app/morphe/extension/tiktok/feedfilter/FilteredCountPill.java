@@ -5,10 +5,8 @@
 package app.morphe.extension.tiktok.feedfilter;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +21,7 @@ import java.lang.ref.WeakReference;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.FeedFilterCounters;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.navigation.FrontWindow;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -36,14 +35,33 @@ import app.morphe.extension.tiktok.wellbeing.SessionBudget;
  * check rather than the one that assumes the feed when it can't tell. It reads the running count on the feed window's layout passes, which
  * playback keeps coming, and only sets its text when the number has moved, so it can't start a
  * layout loop of its own.
+ *
+ * <p>It goes on the main activity that is resumed, not the newest one created: TikTok's launcher
+ * entry is a second MainActivity under the feed's, and changing TikTok's appearance recreates it
+ * last, which took the label to the buried copy until TikTok was restarted.
  */
 public final class FilteredCountPill {
     /** Under TikTok's top tabs, which end about this far below the status bar on 47.x. */
     private static final int BELOW_STATUS_BAR_DP = 56;
     private static final int SIDE_DP = 12;
 
-    private static WeakReference<Activity> activityReference = new WeakReference<>(null);
-    private static WeakReference<Application> followed = new WeakReference<>(null);
+    /**
+     * The main activity in front. The main activity alone holds the feed with its tabs; Settings
+     * opens in another, so a switch turned on there takes effect when the feed comes back.
+     */
+    private static final FrontWindow FRONT = new FrontWindow(false, new FrontWindow.Listener() {
+        @Override public void onFront(Activity activity) {
+            refresh(activity);
+        }
+
+        @Override public void onGone(Activity activity) {
+            try {
+                detach();
+            } catch (Throwable error) {
+                Logger.printException(() -> "Could not take the filtered count off the feed", error);
+            }
+        }
+    });
     private static WeakReference<TextView> pillReference = new WeakReference<>(null);
     private static final ViewTreeObserver.OnGlobalLayoutListener SYNC = FilteredCountPill::sync;
     /** The count the label says now, or -1 before it has said one. Main thread only. */
@@ -56,38 +74,10 @@ public final class FilteredCountPill {
     public static void install(Activity activity) {
         try {
             if (activity == null) return;
-            activityReference = new WeakReference<>(activity);
-            follow(activity.getApplication());
+            FRONT.add(activity);
         } catch (Throwable error) {
             Logger.printException(() -> "Could not follow the feed for the filtered count", error);
         }
-    }
-
-    private static void follow(Application application) {
-        if (application == null || followed.get() == application) return;
-        followed = new WeakReference<>(application);
-        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            // The main activity alone holds the feed with its tabs; Settings opens in another, so
-            // a switch turned on there takes effect when the feed comes back.
-            @Override public void onActivityResumed(Activity resumed) {
-                if (activityReference.get() == resumed) refresh(resumed);
-            }
-
-            @Override public void onActivityDestroyed(Activity destroyed) {
-                if (activityReference.get() != destroyed) return;
-                try {
-                    detach();
-                } catch (Throwable error) {
-                    Logger.printException(() -> "Could not take the filtered count off the feed", error);
-                }
-            }
-
-            @Override public void onActivityCreated(Activity created, Bundle state) { }
-            @Override public void onActivityStarted(Activity started) { }
-            @Override public void onActivityPaused(Activity paused) { }
-            @Override public void onActivityStopped(Activity stopped) { }
-            @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
-        });
     }
 
     /** Puts the label on the feed, or takes it off, as the switch now says. Main thread. */
@@ -125,7 +115,7 @@ public final class FilteredCountPill {
     /** Shows the label with the current count while the feed is on screen, and hides it otherwise. */
     static void sync() {
         TextView pill = pillReference.get();
-        Activity activity = activityReference.get();
+        Activity activity = FRONT.get();
         if (pill == null || activity == null) return;
         try {
             long count = FeedFilterCounters.sessionRemoved();

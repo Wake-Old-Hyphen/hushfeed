@@ -104,6 +104,7 @@ Separate handles or user IDs with commas. Their videos stay when a filter on pos
 Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Dil kodlarını vergüllə ayırın, məsələn en, es. Orijinal başlığı başqa dildə olan video gizlədilir. Başlığı olmayan və ya yalnız tərcümə olunmuş başlığı olan videolar həmişə qalır.
 Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Profilin bio hissəsinin altındakı sətirdə göstərildiyi kimi vergüllə ayrılmış adlar, məsələn TikTok Studio və ya Your orders. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Couldn't add the older seen videos. Try again.	Daha köhnə izlənmiş videoları əlavə etmək alınmadı. Yenidən cəhd edin.
+Couldn't copy the build details. Use Save build details instead.	Build təfərrüatlarını kopyalamaq alınmadı. Əvəzinə Build təfərrüatlarını saxlayın düyməsini istifadə edin.
 Couldn't copy the report. Use Save report instead.	Hesabatı kopyalamaq alınmadı. Əvəzinə Hesabatı saxla düyməsini istifadə edin.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	TikTok-un cari dəyərlərini oxumaq alınmadı (%1$s). Yenidən cəhd etmək üçün menyudan dəyərləri yeniləyin.
 Couldn't restart TikTok. Close it and open it again.	TikTok-u yenidən başlatmaq alınmadı. Onu bağlayıb yenidən açın.
@@ -243,7 +244,7 @@ Caption text size	Başlıq mətninin ölçüsü
 Description text size	Təsvir mətninin ölçüsü
 Author text size	Müəllif mətninin ölçüsü
 Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.	TikTok-un ölçüsü üçün 0 və ya %1$d - %2$d aralığında dəyər istifadə edin. Müəllifin adının altındakı təsvirin ölçüsünü təyin edir və Android-in şrift miqyasını saxlayır.
-Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.	TikTok-un ölçüsü üçün 0 və ya %1$d - %2$d aralığında dəyər istifadə edin. Müəllifin adının ölçüsünü təyin edir və Android-in şrift miqyasını saxlayır.
+Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.	TikTok-un ölçüsü üçün 0 və ya %1$d - %2$d aralığında dəyər istifadə edin. Müəllifin adının və yanındakı paylaşım tarixinin ölçüsünü təyin edir və Android-in şrift miqyasını saxlayır.
 Captions	Başlıqlar
 Captions, gestures and on-screen controls	Başlıqlar, jestlər və ekrandakı idarəetmələr
 Capture crash reports locally	Qəza hesabatlarını yerli olaraq toplayın
@@ -716,6 +717,8 @@ TikTok's own daily screen-time reminder sends the app to the background instead 
 Try a different word or clear the search. Switches from patches you didn't tick in Morphe Manager aren't listed.	Başqa söz yoxlayın və ya axtarışı təmizləyin. Morphe Manager-də işarələmədiyiniz yamaqlardan olan açarlar siyahıya daxil edilmir.
 Use Save report for this large report	Bu böyük hesabat üçün Hesabatı saxla düyməsini istifadə edin
 Video player settings	Video pleyer ayarları
+The network proxy from that file is off. Check its address before you turn it on	Həmin fayldan gələn şəbəkə proksisi söndürülüb. Onu açmazdan əvvəl ünvanını yoxlayın
+Your network proxy was kept, since a backup can't change it	Şəbəkə proksiniz saxlanıldı, çünki ehtiyat nüsxə onu dəyişə bilməz
 Videos can't be saved to the folder in that file, so your video folder was kept	Videolar həmin fayldakı qovluğa saxlanıla bilmir, ona görə video qovluğunuz saxlanıldı
 Views range	Baxış aralığı
 Minimum	Minimum
@@ -1316,12 +1319,12 @@ TikTok refused the follow with code %1$s	TikTok izləməni %1$s kodu ilə rədd 
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok izləməni %1$s kodu ilə rədd etdi. Səbəb gizlədilmiş CAPTCHA ola bilər.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok izləməni rədd etdi: %1$s Səbəb gizlədilmiş CAPTCHA ola bilər.
 Hushfeed is paused	Hushfeed durdurulub
-Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.	Hushfeed-in tətbiq işləyərkən etdiyi dəyişikliklər dayandırılıb. Ayarlarınız saxlanılır. APK-ya daxil edilmiş dəyişikliklər qalır.
+Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Hushfeed-in açarları dayandırılıb. Ayarlarınız saxlanılır. Yamaqlayanda edilən dəyişikliklər, məsələn tətbiqin adı və ya ikonu, qalır.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok başladıqdan sonra bir dəqiqə ərzində üç dəfə bağlandı, ona görə Hushfeed özünü durdurdu. Ayarlarınız olduğu kimi qalır.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Android/data altında TikTok-un qovluğundakı hushfeed-safe-mode adlı fayl Hushfeed-i durdurdu. Ayarlarınız olduğu kimi qalır.
 Turn Hushfeed back on	Hushfeed-i yenidən yandırın
 Pause Hushfeed	Hushfeed-i durdurun
-Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.	TikTok-u yenidən başladandan sonra tətbiq işləyərkən edilən dəyişiklikləri dayandırın. Ayarlarınız saxlanılır. APK-ya daxil edilmiş dəyişikliklər qalır.
+Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	TikTok yenidən başladıqdan sonra Hushfeed-in açarlarını dayandırın. Ayarlarınız saxlanılır. Yamaqlayanda edilən dəyişikliklər, məsələn tətbiqin adı və ya ikonu, qalır.
 Hushfeed turns back on when TikTok restarts.	TikTok yenidən başlayanda Hushfeed yenidən yanır.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	hushfeed-safe-mode faylı silinə bilmədi. Hushfeed-i yenidən yandırmaq üçün onu Android/data altında TikTok-un qovluğundan silin.
 Hide TikTok Shop in search	Axtarışda TikTok Shop-u gizlədin
@@ -1553,7 +1556,7 @@ Visual search	Vizual axtarış
 AI Self	AI Self
 Long-press menu on every post	Hər paylaşımda uzun basma menyusu
 TikTok's hold to speed up	TikTok-un basıb saxlayaraq sürətləndirməsi
-TikTok's background play and auto-scroll	TikTok-un arxa planda oynatma və avtomatik sürüşdürməsi
+TikTok's background play and Auto scroll	TikTok-un arxa planda oynatma və avtomatik sürüşdürməsi
 Post dates in the feed	Lentdə paylaşım tarixləri
 Show exact counts	Dəqiq rəqəmləri göstər
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Sayları tam rəqəmlə göstərir, məsələn, 1.2M əvəzinə 1.234.567.
@@ -1631,7 +1634,7 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Hələ heç bir pop-up görünməyib
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	TikTok-dan bir müddət istifadə edin. Pop-up, TikTok onu ilk dəfə göstərməyə çalışdıqdan sonra burada görünür.
 Fade the video controls	Video idarəetmələrini solğunlaşdır
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Videonun üzərindəki düymələri, başlığı və tabları gizlətmək əvəzinə bu səviyyəyə qədər solğunlaşdırır. 100 onları TikTok-un çəkdiyi kimi saxlayır. Solğun idarəetmələr toxunuşları yenə qəbul edir. 0-da düymələr və başlıq gizlənir, tablar isə 10-da qalır.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Videonun üzərindəki düymələri, başlığı və tabları gizlətmək əvəzinə bu səviyyəyə qədər solğunlaşdırır. 100 onları TikTok-un çəkdiyi kimi saxlayır. Solğun idarəetmələr toxunuşları yenə qəbul edir. Təmiz ekranda düymələr və başlıq bu səviyyədə ekranda qalır, toxunuşlar isə onlardan keçib videoya çatır. 0-da düymələr və başlıq gizlənir, tablar isə 10-da qalır.
 Loop a story	Hekayəni təkrarla
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Hekayə bitəndə növbətiyə keçmək əvəzinə başdan yenidən oxut. Keçmək üçün toxunun və ya sürüşdürün.
 Hold a photo story	Foto hekayəni saxla
@@ -1783,7 +1786,7 @@ Video frame	Video kadrı
 Hide the LIVE bubble	LIVE qabarcığını gizlədin
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.	TikTok-un sizi LIVE-a yönləndirmək üçün lentin yuxarısında göstərdiyi qabarcığı dayandırın.
 Auto-advance in search results	Axtarış nəticələrində avtomatik keçid
-Also turns on TikTok's own auto scroll for videos opened from search. Restart TikTok to apply this.	Axtarışdan açılan videolar üçün TikTok-un öz avtomatik sürüşdürməsini də aktivləşdirir. Tətbiq etmək üçün TikTok-u yenidən başladın.
+Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.	Axtarışdan açılan videolar üçün TikTok-un öz avtomatik sürüşdürməsini də aktivləşdirir. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Use system emoji	Sistem emojilərindən istifadə edin
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.	Bütün emojiləri telefonunuzun öz emoji şriftində göstərir. Telefonunuzda hələ olmayan ən yeni emojilər qutu kimi və ya parçalanmış görünə bilər.
 Open shared videos alone	Paylaşılan videoları ayrıca aç
@@ -1888,3 +1891,19 @@ Budgets and reminders	Limitlər və xatırlatmalar
 %1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Bu dilləri avtomatik tərcümə etməyin
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Dil kodlarını vergüllə ayırın, məsələn es, de. TikTok sizin yerinizə tərcümə edəndə bu dillərdəki başlıqlar və şərhlər yazıldığı kimi qalır. Tərcüməyə bax düyməsinə toxunanda isə yenə işləyir. TikTok-un öz Tərcümə etmə siyahısı olduğu kimi qalır.
+Performance	Performans
+Skip the splash ad	Açılış reklamını ötür
+Stop the full-screen ad TikTok can show while it starts up.	TikTok-un açılarkən göstərə biləcəyi tam ekran reklamı dayandırır.
+Skip update checks	Yeniləmə yoxlamalarını ötür
+Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.	TikTok-un yeniləmələri yoxlamaq üçün istifadə etdiyi iki arxa fon tapşırığını dayandırır, onlardan biri telefon işə düşəndə işləyir. Tətbiqdaxili bəzi yeniləmə bildirişləri görünməyə bilər. Play Store yeniləmələri işləməyə davam edir.
+Limit background traffic	Arxa fon trafikini məhdudlaşdır
+Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.	TikTok-un növbəti videoları əvvəlcədən yükləməsini və bildirişləri qurmasını dayandırır. Bu açıq olduqca mesajlar da daxil olmaqla heç bir bildiriş almayacaqsınız. Videoların başlaması bir az çox çəkə bilər.
+Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.	TikTok-un növbəti videoları əvvəlcədən yükləməsini dayandırır. Daha az məlumat sərf edir, amma videoların başlaması bir az çox çəkə bilər.
+Cache one frame of animated images	Animasiyalı şəkillərin yalnız bir kadrını keşlə
+Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.	Animasiyalı stikerlər və GIF-lər üçün bütün kadrlar əvəzinə yalnız ekrandakı kadrı saxlayır ki, daha az yaddaş istifadə etsinlər. Bundan sonra yüklənənlərə tətbiq olunur.
+Stop on-device AI profiling	Cihazdaxili süni intellekt profilləşdirməsini dayandır
+Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.	TikTok-un daxili süni intellekt mühərrikinin işə düşməsinin qarşısını alır ki, o, TikTok-un istifadəniz haqqında qeydə aldığı hər şeyin surətini almasın. TikTok mühərrik yoxmuş kimi işləyir.
+Allow voice comments	Səsli şərhlərə icazə ver
+Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Hələ olmayan hesablarda TikTok-un səsli şərh yazmaq üçün düyməsini göstərir. Real hesabda sınaqdan keçirilməyib, ona görə də işləməyə bilər.
+Sign in without a passkey	Passkey olmadan daxil olun
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok telefonunuza passkey dəstəkləməyən telefon kimi baxır, ona görə də daxil olanda bunun əvəzinə parolunuzu və ya e-poçt ya da SMS ilə gələn kodu soruşur. Parol menecerləri yamaqlanmış tətbiqə passkey vermir.

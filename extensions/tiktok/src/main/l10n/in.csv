@@ -105,6 +105,7 @@ Caption languages,Bahasa takarir
 "Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.","Pisahkan kode bahasa dengan koma, misalnya en, es. Video yang keterangan aslinya berbahasa lain disembunyikan. Video tanpa keterangan, atau hanya dengan keterangan terjemahan, selalu tetap tampil."
 "Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Nama dipisahkan koma, persis seperti yang ditampilkan baris di bawah bio profil, seperti TikTok Studio atau Pesananmu. Mulai ulang TikTok agar berlaku."
 Couldn't add the older seen videos. Try again.,Tidak dapat menambahkan video lama yang dilihat. Coba lagi.
+Couldn't copy the build details. Use Save build details instead.,Detail build tidak bisa disalin. Gunakan Simpan detail build.
 Couldn't copy the report. Use Save report instead.,Laporan tidak bisa disalin. Gunakan Simpan laporan.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.,Tidak bisa membaca nilai TikTok saat ini (%1$s). Perbarui nilai dari menu untuk mencoba lagi.
 Couldn't restart TikTok. Close it and open it again.,Tidak bisa memulai ulang TikTok. Tutup lalu buka lagi.
@@ -238,7 +239,7 @@ Caption text size,Ukuran teks keterangan
 Description text size,Ukuran teks deskripsi
 Author text size,Ukuran nama kreator
 "Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.","Gunakan 0 untuk ukuran TikTok, atau %1$d hingga %2$d. Mengatur ukuran deskripsi di bawah nama kreator dan tetap mengikuti skala font Android."
-"Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.","Gunakan 0 untuk ukuran TikTok, atau %1$d hingga %2$d. Mengatur ukuran nama kreator dan tetap mengikuti skala font Android."
+"Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.","Gunakan 0 untuk ukuran TikTok, atau %1$d hingga %2$d. Mengatur ukuran nama kreator dan tanggal unggah di sebelahnya, dan tetap mengikuti skala font Android."
 Captions,Teks
 "Captions, gestures and on-screen controls","Keterangan, gestur, dan kontrol di layar"
 Capture crash reports locally,Rekam laporan mogok di perangkat
@@ -686,6 +687,8 @@ Likes range,Rentang suka
 Shares range,Rentang bagikan
 Use Save report for this large report,Gunakan Simpan laporan untuk laporan besar ini
 Video player settings,Setelan pemutar video
+The network proxy from that file is off. Check its address before you turn it on,Proksi jaringan dari file itu mati. Periksa alamatnya sebelum kamu menyalakannya
+"Your network proxy was kept, since a backup can't change it","Proksi jaringanmu dipertahankan, karena cadangan tidak bisa mengubahnya"
 "Videos can't be saved to the folder in that file, so your video folder was kept","Video tidak bisa disimpan ke folder di file itu, jadi folder videomu tetap dipakai"
 Views range,Rentang tayangan
 Minimum,Minimum
@@ -1313,12 +1316,12 @@ TikTok refused the follow with code %1$s,TikTok menolak permintaan mengikuti den
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok menolak permintaan mengikuti dengan kode %1$s. CAPTCHA yang disembunyikan bisa jadi penyebabnya.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok menolak permintaan mengikuti: %1$s CAPTCHA yang disembunyikan bisa jadi penyebabnya.
 Hushfeed is paused,Hushfeed dijeda
-Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.,Perubahan Hushfeed yang diterapkan saat aplikasi berjalan sedang dijeda. Pengaturanmu tetap tersimpan. Perubahan yang tertanam dalam APK tetap ada.
+"Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.","Sakelar Hushfeed sedang dijeda. Pengaturanmu tetap tersimpan. Perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi, tetap ada."
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok tertutup tiga kali dalam satu menit setelah dibuka, jadi Hushfeed menjeda dirinya sendiri. Pengaturanmu tetap seperti semula."
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.,File bernama hushfeed-safe-mode di folder TikTok di dalam Android/data menjeda Hushfeed. Pengaturanmu tetap seperti semula.
 Turn Hushfeed back on,Aktifkan Hushfeed lagi
 Pause Hushfeed,Jeda Hushfeed
-Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.,Jeda perubahan yang diterapkan saat aplikasi berjalan setelah TikTok dimulai ulang. Pengaturanmu tetap tersimpan. Perubahan yang tertanam dalam APK tetap ada.
+"Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.","Jeda sakelar Hushfeed setelah TikTok dimulai ulang. Pengaturanmu tetap tersimpan. Perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi, tetap ada."
 Hushfeed turns back on when TikTok restarts.,Hushfeed aktif lagi saat TikTok dimulai ulang.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,File hushfeed-safe-mode tidak bisa dihapus. Hapus dari folder TikTok di dalam Android/data untuk mengaktifkan Hushfeed lagi.
 Hide TikTok Shop in search,Sembunyikan TikTok Shop di pencarian
@@ -1547,7 +1550,7 @@ Visual search,Pencarian visual
 AI Self,AI Self
 Long-press menu on every post,Menu tekan lama di setiap postingan
 TikTok's hold to speed up,Tahan untuk mempercepat dari TikTok
-TikTok's background play and auto-scroll,Putar di latar belakang dan gulir otomatis dari TikTok
+TikTok's background play and Auto scroll,Putar di latar belakang dan gulir otomatis dari TikTok
 Post dates in the feed,Tanggal postingan di feed
 Show exact counts,Tampilkan angka persis
 "Show counts as full numbers, like 1,234,567 instead of 1.2M.","Tampilkan angka secara lengkap, misalnya 1.234.567, bukan 1.2M."
@@ -1624,7 +1627,7 @@ Block popups,Blokir popup
 No popups have been seen yet,Belum ada popup yang terlihat
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.,Pakai TikTok sebentar. Sebuah popup muncul di sini setelah TikTok pertama kali mencoba menampilkannya.
 Fade the video controls,Pudarkan kontrol video
-"Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.","Memudarkan tombol, keterangan, dan tab di atas video sampai tingkat ini, bukan menyembunyikannya. Pada 100, semuanya tampil seperti gambar TikTok. Kontrol yang pudar tetap menerima ketukan. Pada 0 tombol dan keterangan disembunyikan, dan tab tetap di 10."
+"Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.","Memudarkan tombol, keterangan, dan tab di atas video sampai tingkat ini, bukan menyembunyikannya. Pada 100, semuanya tampil seperti gambar TikTok. Kontrol yang pudar tetap menerima ketukan. Di Tampilan bersih, tombol dan keterangan tetap terlihat di tingkat ini, dan ketukan diteruskan ke video di belakangnya. Pada 0 tombol dan keterangan disembunyikan, dan tab tetap di 10."
 Loop a story,Ulangi story
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,"Memutar ulang story dari awal saat selesai, bukan pindah ke story berikutnya. Ketuk atau geser untuk lanjut."
 Hold a photo story,Tahan story foto
@@ -1776,7 +1779,7 @@ Video frame,Bingkai video
 Hide the LIVE bubble,Sembunyikan gelembung LIVE
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.,Hentikan gelembung yang dimunculkan TikTok di atas feed untuk mengarahkanmu ke sebuah LIVE.
 Auto-advance in search results,Maju otomatis di hasil pencarian
-Also turns on TikTok's own auto scroll for videos opened from search. Restart TikTok to apply this.,Juga menyalakan gulir otomatis TikTok sendiri untuk video yang dibuka dari pencarian. Mulai ulang TikTok untuk menerapkannya.
+Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.,Juga menyalakan gulir otomatis TikTok sendiri untuk video yang dibuka dari pencarian. Mulai ulang TikTok untuk menerapkannya.
 Use system emoji,Gunakan emoji sistem
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.,Menampilkan semua emoji dengan font emoji ponselmu sendiri. Emoji terbaru yang belum ada di ponselmu bisa tampil sebagai kotak atau terpecah.
 Open shared videos alone,Buka video yang dibagikan secara terpisah
@@ -1879,3 +1882,19 @@ Budgets and reminders,Batas dan pengingat
 "%1$s, %2$s","%1$s, %2$s"
 Don't auto translate these languages,Jangan terjemahkan otomatis bahasa ini
 "Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.","Pisahkan kode bahasa dengan koma, misalnya es, de. Saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa ini tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya. Daftar Jangan terjemahkan milik TikTok sendiri tetap seperti semula."
+Performance,Performa
+Skip the splash ad,Lewati iklan pembuka
+Stop the full-screen ad TikTok can show while it starts up.,Hentikan iklan layar penuh yang bisa ditampilkan TikTok saat dibuka.
+Skip update checks,Lewati pemeriksaan pembaruan
+"Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.","Hentikan dua tugas latar belakang yang dipakai TikTok untuk memeriksa pembaruan, salah satunya saat ponsel dinyalakan. Beberapa pemberitahuan pembaruan di dalam aplikasi mungkin tidak muncul lagi. Pembaruan lewat Play Store tetap berfungsi."
+Limit background traffic,Batasi lalu lintas latar belakang
+"Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.","Hentikan TikTok memuat video berikutnya lebih awal dan menyiapkan notifikasi. Selama ini aktif, kamu tidak akan menerima notifikasi, termasuk pesan. Video mungkin butuh waktu sedikit lebih lama untuk mulai."
+"Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.","Hentikan TikTok memuat video berikutnya lebih awal. Kuota lebih hemat, tetapi video mungkin butuh waktu sedikit lebih lama untuk mulai."
+Cache one frame of animated images,Simpan satu bingkai gambar animasi di cache
+"Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.","Simpan hanya bingkai yang tampil di layar untuk stiker animasi dan GIF, bukan setiap bingkai, agar memakai lebih sedikit memori. Berlaku untuk yang dimuat berikutnya."
+Stop on-device AI profiling,Hentikan profiling AI di perangkat
+"Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.","Cegah mesin AI bawaan TikTok berjalan, sehingga mesin itu tidak mendapat salinan semua yang dicatat TikTok tentang penggunaanmu. TikTok berjalan seolah mesin itu tidak ada."
+Allow voice comments,Izinkan komentar suara
+"Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.","Tampilkan tombol TikTok untuk merekam komentar suara di akun yang belum memilikinya. Ini belum dicoba di akun sungguhan, jadi mungkin tidak berfungsi."
+Sign in without a passkey,Masuk tanpa kunci sandi
+"TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.","TikTok menganggap ponselmu tidak punya kunci sandi, jadi saat masuk TikTok meminta kata sandimu atau kode lewat email atau SMS. Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch."

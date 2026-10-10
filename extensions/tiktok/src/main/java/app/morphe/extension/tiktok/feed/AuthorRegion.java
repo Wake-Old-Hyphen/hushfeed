@@ -7,9 +7,7 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
-import android.app.Application;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,6 +21,7 @@ import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.interaction.GestureActions;
+import app.morphe.extension.tiktok.navigation.FrontWindow;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -67,7 +66,21 @@ public final class AuthorRegion {
     private static String decoratedHandle;
     private static String decoratedRegion;
 
-    private static WeakReference<Application> followed = new WeakReference<>(null);
+    /**
+     * A video opened from search, a profile or a sound plays in its own activity, with the same
+     * author row, and the hook only watched the main feed's window, so those videos never got a
+     * country (#75). The hook moves to whichever feed window comes to the front. TikTok's
+     * launcher entry is a second MainActivity under the feed's, and a theme change resumes it for
+     * a moment while the feed can stay in front, so the hook goes back to the feed when it pauses.
+     */
+    private static final FrontWindow FRONT = new FrontWindow(true, new FrontWindow.Listener() {
+        @Override public void onFront(Activity activity) {
+            if (activity != activityReference.get()) installNow(activity);
+        }
+
+        @Override public void onGone(Activity activity) {
+        }
+    });
 
     /** The region is read by reflection, so it is resolved once per video, not per frame. */
     private static WeakReference<Object> regionAweme = new WeakReference<>(null);
@@ -79,40 +92,18 @@ public final class AuthorRegion {
     private AuthorRegion() {
     }
 
-    /** Called from the patched {@code MainActivity.onCreate} and {@code DetailActivity.onCreate}; the work is posted. */
+    /**
+     * Called from the patched {@code MainActivity.onCreate} and {@code DetailActivity.onCreate};
+     * the work is posted. A copy recreated behind the window in front runs it after it has
+     * stopped again, and leaves the hook where it is.
+     */
     public static void install(Activity activity) {
         if (activity == null) {
             return;
         }
+        FRONT.add(activity);
         Utils.runOnMainThread(() -> {
-            follow(activity.getApplication());
-            installNow(activity);
-        });
-    }
-
-    /**
-     * A video opened from search, a profile or a sound plays in its own activity, with the same
-     * author row, and the hook only watched the main feed's window, so those videos never got a
-     * country (#75). The hook moves to whichever feed window comes to the front.
-     */
-    private static void follow(Application application) {
-        if (application == null || followed.get() == application) {
-            return;
-        }
-        followed = new WeakReference<>(application);
-        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            @Override public void onActivityResumed(Activity resumed) {
-                if (FeedVisibility.isFeedWindow(resumed) && resumed != activityReference.get()) {
-                    installNow(resumed);
-                }
-            }
-
-            @Override public void onActivityCreated(Activity created, Bundle state) { }
-            @Override public void onActivityStarted(Activity started) { }
-            @Override public void onActivityPaused(Activity paused) { }
-            @Override public void onActivityStopped(Activity stopped) { }
-            @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
-            @Override public void onActivityDestroyed(Activity destroyed) { }
+            if (FRONT.mayTake(activity)) installNow(activity);
         });
     }
 

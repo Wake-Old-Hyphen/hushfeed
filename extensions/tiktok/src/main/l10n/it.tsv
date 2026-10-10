@@ -107,6 +107,7 @@ Separate handles or user IDs with commas. Their videos stay when a filter on pos
 Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Separa i codici lingua con virgole, come en, es. Un video la cui didascalia originale è in un'altra lingua viene nascosto. I video senza didascalia, o con solo quella tradotta, restano sempre.
 Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Nomi separati da virgole, esattamente come li mostra la riga sotto la bio di un profilo, come TikTok Studio o I tuoi ordini. Riavvia TikTok per applicare la modifica.
 Couldn't add the older seen videos. Try again.	Non è stato possibile aggiungere i video già visti più vecchi. Riprova.
+Couldn't copy the build details. Use Save build details instead.	Non è stato possibile copiare i dettagli della build. Usa invece Salva dettagli della build.
 Couldn't copy the report. Use Save report instead.	Non è stato possibile copiare il rapporto. Usa invece Salva rapporto.
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Non è stato possibile leggere i valori attuali di TikTok (%1$s). Aggiorna i valori dal menu per riprovare.
 Couldn't restart TikTok. Close it and open it again.	Non è stato possibile riavviare TikTok. Chiudi l'app e riaprila.
@@ -242,7 +243,7 @@ Caption text size	Dimensione del testo dei sottotitoli
 Description text size	Dimensione del testo della descrizione
 Author text size	Dimensione del nome del creator
 Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.	Usa 0 per la dimensione di TikTok, oppure da %1$d a %2$d. Modifica la dimensione della descrizione sotto il nome del creator e mantiene il ridimensionamento dei caratteri di Android.
-Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.	Usa 0 per la dimensione di TikTok, oppure da %1$d a %2$d. Modifica la dimensione del nome del creator e mantiene il ridimensionamento dei caratteri di Android.
+Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.	Usa 0 per la dimensione di TikTok, oppure da %1$d a %2$d. Modifica la dimensione del nome del creator e della data di pubblicazione accanto, e mantiene il ridimensionamento dei caratteri di Android.
 Captions	Sottotitoli
 Captions, gestures and on-screen controls	Sottotitoli, gesti e controlli sullo schermo
 Capture crash reports locally	Salva le segnalazioni di arresto anomalo in locale
@@ -690,6 +691,8 @@ Likes range	Intervallo dei Mi piace
 Shares range	Intervallo delle condivisioni
 Use Save report for this large report	Usa Salva rapporto per questo rapporto di grandi dimensioni
 Video player settings	Impostazioni del lettore video
+The network proxy from that file is off. Check its address before you turn it on	Il proxy di rete di quel file è spento. Controlla il suo indirizzo prima di attivarlo
+Your network proxy was kept, since a backup can't change it	Il tuo proxy di rete è stato mantenuto, perché un backup non può cambiarlo
 Videos can't be saved to the folder in that file, so your video folder was kept	I video non possono essere salvati nella cartella indicata in quel file, quindi è stata mantenuta la tua cartella video
 Views range	Intervallo delle visualizzazioni
 Minimum	Minimo
@@ -1316,12 +1319,12 @@ TikTok refused the follow with code %1$s	TikTok ha rifiutato il follow con codic
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok ha rifiutato il follow con codice %1$s. La causa potrebbe essere un CAPTCHA nascosto.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok ha rifiutato il follow: %1$s La causa potrebbe essere un CAPTCHA nascosto.
 Hushfeed is paused	Hushfeed è in pausa
-Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.	Le modifiche di Hushfeed applicate durante l'esecuzione sono in pausa. Le impostazioni restano salvate. Le modifiche integrate nell'APK rimangono.
+Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Gli interruttori di Hushfeed sono in pausa. Le impostazioni restano salvate. Le modifiche fatte con la patch, come il nome o l'icona dell'app, restano.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok si è chiuso tre volte entro un minuto dall'avvio, quindi Hushfeed si è messo in pausa da solo. Le tue impostazioni restano come sono.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Un file chiamato hushfeed-safe-mode nella cartella di TikTok sotto Android/data ha messo in pausa Hushfeed. Le tue impostazioni restano come sono.
 Turn Hushfeed back on	Riattiva Hushfeed
 Pause Hushfeed	Metti in pausa Hushfeed
-Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.	Sospendi le modifiche applicate durante l'esecuzione dopo il riavvio di TikTok. Le impostazioni restano salvate. Le modifiche integrate nell'APK rimangono.
+Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Sospendi gli interruttori di Hushfeed dopo il riavvio di TikTok. Le impostazioni restano salvate. Le modifiche fatte con la patch, come il nome o l'icona dell'app, restano.
 Hushfeed turns back on when TikTok restarts.	Hushfeed si riattiva quando TikTok viene riavviato.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	Non è stato possibile rimuovere il file hushfeed-safe-mode. Eliminalo dalla cartella di TikTok sotto Android/data per riattivare Hushfeed.
 Hide TikTok Shop in search	Nascondi TikTok Shop nella ricerca
@@ -1553,7 +1556,7 @@ Visual search	Ricerca visiva
 AI Self	AI Self
 Long-press menu on every post	Menu a pressione prolungata su ogni post
 TikTok's hold to speed up	Tieni premuto per accelerare di TikTok
-TikTok's background play and auto-scroll	Riproduzione in background e scorrimento automatico di TikTok
+TikTok's background play and Auto scroll	Riproduzione in background e scorrimento automatico di TikTok
 Post dates in the feed	Date dei post nel feed
 Show exact counts	Mostra i numeri esatti
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Mostra i numeri per intero, ad esempio 1.234.567 invece di 1.2M.
@@ -1631,7 +1634,7 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Nessun popup visto finora
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	Usa TikTok per un po'. Un popup compare qui dopo che TikTok prova a mostrarlo per la prima volta.
 Fade the video controls	Attenua i controlli del video
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Attenua i pulsanti, la didascalia e le schede sopra il video fino a questo livello invece di nasconderli. Con 100 restano come li disegna TikTok. I controlli attenuati rispondono ancora al tocco. Con 0 i pulsanti e la didascalia vengono nascosti, mentre le schede restano a 10.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Attenua i pulsanti, la didascalia e le schede sopra il video fino a questo livello invece di nasconderli. Con 100 restano come li disegna TikTok. I controlli attenuati rispondono ancora al tocco. Nella vista pulita i pulsanti e la didascalia restano sullo schermo a questo livello, e i tocchi li attraversano fino al video. Con 0 i pulsanti e la didascalia vengono nascosti, mentre le schede restano a 10.
 Loop a story	Ripeti una storia
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Riavvia una storia dall'inizio quando finisce invece di passare alla successiva. Tocca o scorri per andare avanti.
 Hold a photo story	Mantieni una storia con foto
@@ -1783,7 +1786,7 @@ Video frame	Fotogramma del video
 Hide the LIVE bubble	Nascondi la bolla LIVE
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.	Ferma la bolla che TikTok fa comparire in cima al feed per portarti a una LIVE.
 Auto-advance in search results	Avanzamento automatico nei risultati di ricerca
-Also turns on TikTok's own auto scroll for videos opened from search. Restart TikTok to apply this.	Attiva anche lo scorrimento automatico di TikTok per i video aperti dalla ricerca. Riavvia TikTok per applicarlo.
+Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.	Attiva anche lo scorrimento automatico di TikTok per i video aperti dalla ricerca. Riavvia TikTok per applicarlo.
 Use system emoji	Usa le emoji di sistema
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.	Mostra tutte le emoji con il set di emoji del tuo telefono. Le emoji più recenti che il telefono non ha ancora possono apparire come un riquadro o a pezzi.
 Open shared videos alone	Apri i video condivisi da soli
@@ -1888,3 +1891,19 @@ Budgets and reminders	Limiti e promemoria
 %1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Non tradurre automaticamente queste lingue
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Separa i codici lingua con virgole, come es, de. Quando TikTok traduce per te, le didascalie e i commenti in queste lingue restano come sono stati scritti. Vedi traduzione funziona ancora quando lo tocchi. L'elenco Non tradurre di TikTok resta com'è.
+Performance	Prestazioni
+Skip the splash ad	Salta l'annuncio di avvio
+Stop the full-screen ad TikTok can show while it starts up.	Blocca l'annuncio a schermo intero che TikTok può mostrare all'avvio.
+Skip update checks	Salta i controlli degli aggiornamenti
+Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.	Ferma le due attività in background che TikTok usa per cercare aggiornamenti, una delle quali all'accensione del telefono. Alcuni avvisi di aggiornamento nell'app potrebbero non comparire più. Gli aggiornamenti dal Play Store funzionano ancora.
+Limit background traffic	Limita il traffico in background
+Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.	Impedisce a TikTok di caricare in anticipo i prossimi video e di configurare le notifiche. Finché è attivo non riceverai notifiche, nemmeno per i messaggi. I video potrebbero metterci un po' di più a partire.
+Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.	Impedisce a TikTok di caricare in anticipo i prossimi video. Usa meno dati, ma i video potrebbero metterci un po' di più a partire.
+Cache one frame of animated images	Memorizza un solo fotogramma delle immagini animate
+Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.	Conserva solo il fotogramma sullo schermo per sticker animati e GIF invece di tutti i fotogrammi, così usano meno memoria. Vale per i prossimi che vengono caricati.
+Stop on-device AI profiling	Ferma la profilazione IA sul dispositivo
+Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.	Impedisce l'avvio del motore IA integrato di TikTok, così non riceve una copia di tutto ciò che TikTok registra sul tuo utilizzo. TikTok funziona come se il motore non ci fosse.
+Allow voice comments	Consenti i commenti vocali
+Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Mostra il pulsante di TikTok per registrare un commento vocale sugli account che non lo hanno ancora. Non è stato provato su un account reale, quindi potrebbe non funzionare.
+Sign in without a passkey	Accedi senza passkey
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok tratta il tuo telefono come uno senza passkey, quindi per accedere chiede la password o un codice via email o SMS. I gestori di password non danno una passkey a un'app modificata.

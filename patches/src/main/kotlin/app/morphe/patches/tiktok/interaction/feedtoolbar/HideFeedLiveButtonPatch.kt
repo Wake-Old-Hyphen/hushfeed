@@ -9,12 +9,14 @@ package app.morphe.patches.tiktok.interaction.feedtoolbar
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
+import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import com.android.tools.smali.dexlib2.iface.Method
 
 private const val LIVE_ICON_GENERATOR_DESCRIPTOR =
@@ -79,18 +81,44 @@ val hideFeedLiveButtonPatch = bytecodePatch(
             "hideFeedLiveButtonEnabled",
         )
 
-        val sidebarGenerators = SidebarIconViewFingerprint.matchAllOrNull().orEmpty()
-        if (sidebarGenerators.size != 1) {
-            throw PatchException(
-                "Hide feed LIVE button: expected one side menu button, found ${sidebarGenerators.size}.",
-            )
-        }
-        val sidebarEnabled = sidebarGenerators.single().classDef.methods.filter(::isToolbarEnabledCheck)
-        if (sidebarEnabled.size != 1) {
-            throw PatchException(
-                "Hide feed LIVE button: expected one side menu enabled check, found ${sidebarEnabled.size}.",
-            )
-        }
-        sidebarEnabled.single().overrideToolbarButtonEnabled("hideFeedSidebarButtonEnabled")
+        hookSidebarButtonOn(packageMetadata.versionName)
     }
+}
+
+/**
+ * The side menu button (#128), and whether it went in. Required on a declared build, where the
+ * anchors test holds it, and left out with a note on any other, so a reworked toolbar there
+ * doesn't take the LIVE switch down with it. Its settings row shows only when the hook went in.
+ * Takes the version so a test can stand in for a build that isn't declared.
+ */
+internal fun BytecodePatchContext.hookSidebarButtonOn(versionName: String): Boolean {
+    try {
+        hookSidebarButton()
+    } catch (problem: Exception) {
+        if (versionName in declaredVersions()) throw problem
+        println("[Hide feed LIVE button] Left out the side menu button on $versionName: ${problem.message}")
+        return false
+    }
+    SettingsStatusLoadFingerprint.method.addInstruction(
+        0,
+        "invoke-static {}, " +
+            "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableHideFeedSidebarButton()V",
+    )
+    return true
+}
+
+private fun BytecodePatchContext.hookSidebarButton() {
+    val sidebarGenerators = SidebarIconViewFingerprint.matchAllOrNull().orEmpty()
+    if (sidebarGenerators.size != 1) {
+        throw PatchException(
+            "Hide feed LIVE button: expected one side menu button, found ${sidebarGenerators.size}.",
+        )
+    }
+    val sidebarEnabled = sidebarGenerators.single().classDef.methods.filter(::isToolbarEnabledCheck)
+    if (sidebarEnabled.size != 1) {
+        throw PatchException(
+            "Hide feed LIVE button: expected one side menu enabled check, found ${sidebarEnabled.size}.",
+        )
+    }
+    sidebarEnabled.single().overrideToolbarButtonEnabled("hideFeedSidebarButtonEnabled")
 }

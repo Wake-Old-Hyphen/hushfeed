@@ -214,6 +214,16 @@ public class Settings extends BaseSettings {
             new BooleanSetting("fill_video_to_screen", FALSE);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
+    // The four Performance patches, in the default selection because each hook asks one of these
+    // first. Off until the reader turns one on, and a paused build answers off. The splash, update
+    // and traffic hooks act on TikTok's startup tasks, so they need a restart. The animated image
+    // cache is read as each sticker or GIF is built, so it reaches the next one without one.
+    public static final BooleanSetting SKIP_SPLASH_AD = new BooleanSetting("skip_splash_ad", FALSE, true);
+    public static final BooleanSetting SKIP_UPDATE_CHECKS = new BooleanSetting("skip_update_checks", FALSE, true);
+    public static final BooleanSetting LIMIT_BACKGROUND_TRAFFIC =
+            new BooleanSetting("limit_background_traffic", FALSE, true);
+    public static final BooleanSetting DROP_ANIMATED_IMAGE_CACHE =
+            new BooleanSetting("drop_animated_image_cache", FALSE);
     /** Keep playing in the background (#52). TikTok reads its gate once a process, so a restart applies it. */
     public static final BooleanSetting BACKGROUND_PLAY = new BooleanSetting("background_play", FALSE, true);
     public static final BooleanSetting HIDE_LAUNCHER_SHORTCUTS =
@@ -651,7 +661,9 @@ public class Settings extends BaseSettings {
     /**
      * How see-through the controls over the video are drawn, as a percentage: 100 leaves them as
      * TikTok draws them, lower fades the rail, caption, music row and tabs while they keep taking
-     * taps, and 0 hides the rail and caption the way Clear display does (#84).
+     * taps, and 0 hides the rail and caption the way Clear display does (#84). In Clear display a
+     * level between keeps the rail and caption in sight at that level and lets taps through them
+     * to the video (VideoOverlayHider, TapThroughControls).
      */
     public static final IntegerSetting FADE_CONTROLS_OPACITY =
             new IntegerSetting("fade_controls_opacity", 100).withRange(0, 100);
@@ -776,6 +788,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting GHOST_HIDE_ONLINE_STATUS =
             new BooleanSetting("ghost_hide_online_status", FALSE, false, Setting.parent(GHOST_MODE));
     public static final BooleanSetting DISABLE_ANALYTICS = new BooleanSetting("disable_analytics", FALSE);
+    // Stop on-device AI profiling, in the default selection with this off. TikTok starts the
+    // engine during launch, so a restart applies it.
+    public static final BooleanSetting STOP_AI_PROFILING = new BooleanSetting("stop_ai_profiling", FALSE, true);
     // One switch per device-access patch, off by default: the patches are in the default selection,
     // so TikTok reads as it ships until the reader turns a block on. Each is read at the
     // intercepted call, so none needs a restart.
@@ -808,6 +823,9 @@ public class Settings extends BaseSettings {
     // The store those installer reads name, by package. A restart for the same reason (#112).
     public static final StringSetting STORE_IDENTITY_INSTALLER =
             new StringSetting("store_identity_installer", "com.android.vending", true);
+    // Skip passkey sign-in (#102), in the default selection with this off. Read each time a
+    // sign-in screen asks whether this phone can use passkeys, so no restart.
+    public static final BooleanSetting SKIP_PASSKEY_SIGN_IN = new BooleanSetting("skip_passkey_sign_in", FALSE);
     // App lock. Off until the reader turns it on, and read as each screen starts, so no restart.
     // The delay is whole minutes TikTok may spend in the background before it asks again.
     public static final BooleanSetting APP_LOCK = new BooleanSetting("app_lock", FALSE);
@@ -823,6 +841,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_LIVE_RING = new BooleanSetting("hide_live_ring", FALSE);
     // Lift text length limits: comments, repost notes and the bio.
     public static final BooleanSetting LIFT_LENGTH_LIMITS = new BooleanSetting("lift_length_limits", FALSE);
+    // Enable voice comments, in the default selection with this off. A restart, since TikTok may
+    // keep the answer for a comment box it has already built.
+    public static final BooleanSetting ENABLE_VOICE_COMMENTS = new BooleanSetting("enable_voice_comments", FALSE, true);
     public static final BooleanSetting KEEP_FAVORITES_TAB =
             new BooleanSetting("keep_favorites_tab", TRUE, true);
     /** The Following and For You names above the feed; the pager under them keeps swiping (issue #32). */

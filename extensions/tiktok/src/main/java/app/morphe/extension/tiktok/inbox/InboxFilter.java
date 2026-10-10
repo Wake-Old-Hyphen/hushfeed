@@ -27,6 +27,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
+import app.morphe.extension.tiktok.navigation.FrontWindow;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -142,13 +143,29 @@ public final class InboxFilter {
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);
     private static final GlobalLayoutHook LAYOUT_HOOK = new GlobalLayoutHook();
 
+    /**
+     * The main activity in front. TikTok's launcher entry is a second MainActivity under the
+     * feed's, and changing TikTok's appearance recreates it last, so the newest one created is
+     * the buried copy: the filter followed it and the Inbox in front went unfiltered until TikTok
+     * restarted. The filter moves to whichever main activity resumes.
+     */
+    private static final FrontWindow FRONT = new FrontWindow(false, new FrontWindow.Listener() {
+        @Override public void onFront(Activity activity) {
+            installNow(activity);
+        }
+
+        @Override public void onGone(Activity activity) {
+        }
+    });
+
     private InboxFilter() {
     }
 
     /**
      * Called from the patched {@code MainActivity.onCreate}, before the activity's own
      * onCreate body has run. The work is posted so it happens once the window content
-     * exists, whatever TikTok does in between.
+     * exists, whatever TikTok does in between. A copy recreated behind the one in front runs it
+     * after it has stopped again, and leaves the filter where it is.
      *
      * @param activity the TikTok main activity
      */
@@ -156,7 +173,10 @@ public final class InboxFilter {
         if (activity == null) {
             return;
         }
-        Utils.runOnMainThread(() -> installNow(activity));
+        FRONT.add(activity);
+        Utils.runOnMainThread(() -> {
+            if (FRONT.mayTake(activity)) installNow(activity);
+        });
     }
 
     private static void installNow(Activity activity) {

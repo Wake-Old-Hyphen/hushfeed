@@ -38,7 +38,8 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
 
     private static boolean hasTracking() {
         return SettingsStatus.disableTelemetryEnabled || SettingsStatus.ghostModeEnabled
-                || SettingsStatus.searchHistoryEnabled || SettingsStatus.watchHistoryEnabled;
+                || SettingsStatus.searchHistoryEnabled || SettingsStatus.watchHistoryEnabled
+                || SettingsStatus.aiProfilingEnabled;
     }
 
     private static boolean hasDeviceAccess() {
@@ -88,6 +89,16 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     "Stops TikTok from sending usage reports, ad tracking and crash reports. "
                             + "TikTok's own diagnostic tools go quiet too.",
                     Settings.DISABLE_ANALYTICS
+            ));
+        }
+        if (SettingsStatus.aiProfilingEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Stop on-device AI profiling",
+                    "Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of "
+                            + "everything TikTok logs about your use. TikTok works as if the engine "
+                            + "weren't there.",
+                    Settings.STOP_AI_PROFILING
             ));
         }
         if (SettingsStatus.ghostModeEnabled) {

@@ -1,5 +1,5 @@
 {
-  "version": "v0.70.1",
+  "version": "v0.70.0",
   "appNames": {
     "com.zhiliaoapp.musically": "TikTok"
   },
@@ -1368,10 +1368,13 @@
     },
     {
       "name": "Drop the animated image cache",
-      "description": "Makes TikTok keep only the frame on screen for stickers and GIFs instead of every frame, so they use less memory and still play smoothly. It has no switch, so only patching again without it undoes it.",
+      "description": "Lets you make TikTok keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Performance",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"
@@ -1404,10 +1407,13 @@
     },
     {
       "name": "Enable voice comments",
-      "description": "Turns on TikTok's voice comments, so you can record and post a spoken comment, for accounts that don't have them yet. It has no switch and hasn't been tried on a real account, so it may not work.",
+      "description": "Lets you turn on TikTok's voice comments, so you can record and post a spoken comment, for accounts that don't have them yet. It hasn't been tried on a real account, so it may not work. Starts off. Turn it on in Hushfeed settings > Comments.",
       "category": "Comments",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"
@@ -1634,7 +1640,7 @@
     },
     {
       "name": "Feed text sizes",
-      "description": "Lets you make video descriptions and creator names bigger or smaller, so they're easier to read. Starts off. Pick a size in Hushfeed settings > Feed screen.",
+      "description": "Lets you make video descriptions, creator names and post dates bigger or smaller, so they're easier to read. Starts off. Pick a size in Hushfeed settings > Feed screen.",
       "category": "Interface",
       "use": true,
       "dependencies": [
@@ -2918,10 +2924,13 @@
     },
     {
       "name": "Limit background traffic",
-      "description": "Stops TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. It has no switch, so only patching again without it undoes it.",
+      "description": "Lets you stop TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Performance",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"
@@ -2954,7 +2963,7 @@
         {
           "key": "skipPushSetup",
           "title": "Skip notification setup",
-          "description": "Stops TikTok setting up notifications, so you won't get any, messages included. Pausing Hushfeed won't bring them back. Patch again with this off to get them back.",
+          "description": "With this on, the Limit background traffic switch in Hushfeed settings also stops TikTok setting up notifications, so you won't get any, messages included. Turn the switch off or pause Hushfeed to get them back.",
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
@@ -4451,11 +4460,53 @@
       "options": []
     },
     {
+      "name": "Skip passkey sign-in",
+      "description": "Lets you sign in another way, like your password or a code by email or text, when TikTok wants a passkey. Password managers won't hand a passkey to a patched app, so that step can't finish here. With the switch on, TikTok treats your phone as one without passkeys. Starts off. Turn it on in Hushfeed settings > App.",
+      "category": "Settings",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.1.4"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.1.4",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024701040,
+                "ARMEABI_V7A": 2024701040,
+                "X86": 2024701040,
+                "X86_64": 2024701040
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Skip the splash ad",
-      "description": "Stops the full-screen ad TikTok can show while it starts up. It has no switch, so only patching again without it brings the ad back.",
+      "description": "Lets you stop the full-screen ad TikTok can show while it starts up. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Performance",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"
@@ -4488,10 +4539,13 @@
     },
     {
       "name": "Skip update checks",
-      "description": "Stops two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work. It has no switch, so only patching again undoes it.",
+      "description": "Lets you stop two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work. Starts off. Turn it on in Hushfeed settings > App.",
       "category": "Performance",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"
@@ -4563,10 +4617,13 @@
     },
     {
       "name": "Stop on-device AI profiling",
-      "description": "Stops TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there. It has no switch, so only patching again without it undoes it.",
+      "description": "Lets you stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there. Starts off. Turn it on in Hushfeed settings > Privacy.",
       "category": "Privacy",
-      "use": false,
-      "dependencies": [],
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
           "47.1.4"

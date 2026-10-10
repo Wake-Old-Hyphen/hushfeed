@@ -270,6 +270,110 @@ public class SettingsSearchQueryTest {
                 search(search, "github").contains("Hushfeed"));
     }
 
+    /**
+     * Build details sat on About Hushfeed outside every walked category, so "build" found nothing
+     * and the empty state blamed unticked patches. The hand-indexed rows also all said they were
+     * in "Settings", which is no page a reader can find.
+     */
+    @Test public void handIndexedRowsAreFoundAndNameTheirPage() throws Exception {
+        TikTokPreferenceFragment search = attachSearch();
+        assertTrue("Build details is not indexed", search(search, "build details").contains("Build details"));
+        assertEquals("About Hushfeed", category(search, "Build details"));
+        assertEquals("About Hushfeed", category(search, "Hushfeed"));
+        assertEquals("App & advanced", category(search, "Pause Hushfeed"));
+    }
+
+    /**
+     * A hand-indexed About row has no section to open, so opening it fell through to the master
+     * menu. It lands on About Hushfeed with the row as the target.
+     */
+    @Test public void openingFoundBuildDetailsLandsOnAboutHushfeed() throws Exception {
+        TikTokPreferenceFragment search = attachSearch();
+        search(search, "build details");
+        Preference result = null;
+        PreferenceScreen screen = search.getPreferenceScreen();
+        for (int position = 0; position < screen.getPreferenceCount(); position++) {
+            Preference candidate = screen.getPreference(position);
+            if (candidate.getTitle() != null && "Build details".contentEquals(candidate.getTitle())) {
+                result = candidate;
+                break;
+            }
+        }
+        assertNotNull(result);
+        assertTrue(result.getOnPreferenceClickListener().onPreferenceClick(result));
+        search.getActivity().getFragmentManager().executePendingTransactions();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        android.app.Fragment opened = search.getActivity().getFragmentManager()
+                .findFragmentById(android.R.id.content);
+        assertTrue(opened instanceof TikTokPreferenceFragment);
+        assertEquals("ABOUT", opened.getArguments().getString("morphe_settings_hub"));
+        assertEquals("action_build_details", opened.getArguments().getString("morphe_settings_target_key"));
+    }
+
+    /** What's new leaves About Hushfeed once its notes are read, and its result goes with it. */
+    @Test public void whatsNewIsNotFoundWhenThereIsNothingNew() throws Exception {
+        // Unpatched, the release version is empty, so nothing is pending.
+        TikTokPreferenceFragment search = attachSearch();
+        assertFalse(search(search, "release notes").contains("What's new"));
+    }
+
+    /** While its notes are unread, What's new is found under About Hushfeed and opens there. */
+    @Test public void whatsNewIsFoundWhileItsNotesAreUnread() throws Exception {
+        // A release with its own bundled notes. With nothing dismissed yet, only the installed
+        // release's section counts as unread, so a version with no section would find nothing.
+        TikTokPreferenceFragment.setReleaseVersionForTests("0.70.0");
+        try {
+            TikTokPreferenceFragment search = attachSearch();
+            assertTrue("What's new is not indexed while pending",
+                    search(search, "release notes").contains("What's new"));
+            assertEquals("About Hushfeed", category(search, "What's new"));
+
+            Preference result = null;
+            PreferenceScreen screen = search.getPreferenceScreen();
+            for (int position = 0; position < screen.getPreferenceCount(); position++) {
+                Preference candidate = screen.getPreference(position);
+                if (candidate.getTitle() != null && "What's new".contentEquals(candidate.getTitle())) {
+                    result = candidate;
+                    break;
+                }
+            }
+            assertNotNull(result);
+            assertTrue(result.getOnPreferenceClickListener().onPreferenceClick(result));
+            search.getActivity().getFragmentManager().executePendingTransactions();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            android.app.Fragment opened = search.getActivity().getFragmentManager()
+                    .findFragmentById(android.R.id.content);
+            assertTrue(opened instanceof TikTokPreferenceFragment);
+            assertEquals("ABOUT", opened.getArguments().getString("morphe_settings_hub"));
+            assertEquals("action_release_notes", opened.getArguments().getString("morphe_settings_target_key"));
+        } finally {
+            TikTokPreferenceFragment.setReleaseVersionForTests(null);
+        }
+    }
+
+    /** "???" folds to nothing, and the page said Start typing under a box with text in it. */
+    @Test public void aQueryOfOnlyPunctuationSaysNothingMatched() throws Exception {
+        TikTokPreferenceFragment search = attachSearch();
+        java.util.List<String> titles = search(search, "???");
+        assertTrue("punctuation alone was answered with " + titles, titles.contains("No matching settings"));
+        assertFalse(titles.contains("Start typing"));
+        assertTrue(search(search, "  ").contains("Start typing"));
+    }
+
+    private static String category(TikTokPreferenceFragment fragment, String wanted) throws Exception {
+        java.lang.reflect.Field field = TikTokPreferenceFragment.class.getDeclaredField("searchIndex");
+        field.setAccessible(true);
+        for (Object entry : (java.util.List<?>) field.get(fragment)) {
+            java.lang.reflect.Field title = entry.getClass().getDeclaredField("title");
+            title.setAccessible(true);
+            if (!wanted.equals(title.get(entry))) continue;
+            java.lang.reflect.Field category = entry.getClass().getDeclaredField("category");
+            category.setAccessible(true);
+            return (String) category.get(entry);
+        }
+        throw new AssertionError(wanted + " is not in the index at all");
+    }
+
     @Test public void openingAFoundBackupRowLandsOnDiagnostics() throws Exception {
         TikTokPreferenceFragment search = attachSearch();
         java.lang.reflect.Field field = TikTokPreferenceFragment.class.getDeclaredField("searchIndex");

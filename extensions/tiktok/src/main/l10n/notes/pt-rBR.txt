@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Esmaecer os controles do vídeo agora funciona com a Tela limpa. Entre 1 e 99, a Tela limpa mantém os botões e a legenda na tela no nível que você escolheu em vez de tirá-los, e um toque neles vai para o vídeo, então nada abre sem querer. Tocar e segurar ou fazer um gesto de pinça ainda tira você da Tela limpa, e fora dela os controles esmaecidos recebem toques como antes (#84).
+
+* **TikTok:** Silenciar os vídeos do feed agora mantém o feed sem som depois que você troca o TikTok entre claro e escuro. Antes, os próximos vídeos podiam tocar com som até você sair do feed e voltar.
+
+* **TikTok:** Mostrar quantos foram filtrados e as chaves que ocultam partes da Caixa de entrada continuam funcionando quando você troca o TikTok entre claro e escuro. Antes, podiam parar até o TikTok ser reiniciado.
+
+* **TikTok:** Toque e segure Início para abrir as configurações do Hushfeed continua funcionando quando você troca o TikTok entre claro e escuro. Antes, parava até o TikTok ser reiniciado.
+
+* **TikTok:** Restaurar um backup não liga mais o Proxy de rede nem substitui o endereço de proxy que você já tem, então um backup feito por outra pessoa não consegue mandar seu tráfego do TikTok pelo servidor dela. Num celular sem proxy configurado, o endereço vem junto com a chave desligada, e um aviso depois da restauração explica isso.
+
+* **TikTok:** Não traduzir automaticamente estes idiomas agora deixa o chinês tradicional como foi escrito quando você digita zh-Hant, zh-TW, zh-HK ou zh-MO, enquanto zh-Hans-TW continua sendo chinês simplificado. Antes, essas entradas protegiam o chinês simplificado no lugar dele (#121).
+
+* **TikTok:** Hide feed LIVE button agora também é aplicado numa versão do TikTok em que o botão do menu lateral não é encontrado. Essa parte é pulada, e a linha Esconder o botão do menu lateral só aparece quando o botão foi encontrado (#128).
+
+* **TikTok:** A busca nas configurações agora encontra Detalhes da compilação e Novidades. Alguns resultados, como Laboratório de gates e Licenças, agora mostram o grupo em que estão, e uma busca feita só de pontuação mostra Nenhuma configuração combina.
+
+* **TikTok:** O aviso que aparece na parte de baixo das configurações do Hushfeed agora fecha quando você toca nele, e o toque não cai mais na configuração embaixo. O TalkBack lê a ação dele como Fechar.
+
+* **TikTok:** Pausar agora explica em palavras simples o que continua enquanto está ligado. Suas configurações continuam salvas, e as alterações feitas ao aplicar o patch também, como o nome ou o ícone do app. O Auto scroll do TikTok também aparece escrito do mesmo jeito em todas as linhas agora.
+
+* **TikTok:** As listas de idiomas em Filtro do feed e Comentários agora aceitam uma vírgula a mais, como en,,es. Antes elas recusavam a lista com um nome vazio na mensagem.
+
+* **TikTok:** Se copiar os detalhes da compilação falhar, a mensagem agora diz para usar Salvar detalhes da compilação.
+
+* **TikTok:** Novidades não mostra mais crases soltas em volta dos nomes das configurações.
+
+* **TikTok:** O seletor de horário de Quando enviar em Manter uma sequência agora abre escuro ou claro, igual às configurações do Hushfeed.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling e Enable voice comments agora têm cada um uma chave em Configurações do Hushfeed, então Pausar também os desliga e o modo simples do Morphe Manager agora os escolhe. Cada uma dessas chaves começa desligada. Se você já tinha aplicado algum desses patches, ligue a chave dele depois de atualizar para que continue funcionando. Pular o anúncio de abertura, Pular verificações de atualização, Limitar o tráfego em segundo plano e Guardar só um quadro das imagens animadas ficam em Desempenho, dentro de Aplicativo. Parar o perfilamento por IA no aparelho fica em Privacidade e Permitir comentários de voz fica em Comentários.
+
+* **TikTok:** Novo patch, Skip passkey sign-in, escolhido pelo modo simples do Morphe Manager com a chave desligada (#102). Gerenciadores de senhas não entregam uma chave de acesso a um app modificado, então uma conta com chave de acesso podia travar na etapa de chave de acesso do TikTok. Ligue Entrar sem chave de acesso em Configurações do Hushfeed > Aplicativo e o TikTok trata seu celular como um aparelho sem chaves de acesso, oferecendo as outras formas que ele tem de entrar, como sua senha ou um código por e-mail ou SMS. Se você estiver desconectado, toque e segure Início para abrir as configurações do Hushfeed.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Tamanho do nome do criador agora também ajusta a data de publicação ao lado do nome, para que os dois fiquem do mesmo tamanho (#66).
+
 * **TikTok:** As configurações de comentários têm uma linha nova, Não traduzir automaticamente estes idiomas. Ela fica vazia até você preenchê-la (#121). Digite códigos de idioma como `es, de`, e quando o TikTok traduz para você, legendas e comentários nesses idiomas ficam como foram escritos. Ver tradução continua funcionando quando você toca nele, e a lista própria do TikTok de idiomas que não se traduzem não muda.
 
 * **TikTok:** Manter vídeos offline até você apagá-los agora cobre mais duas formas de o TikTok esvaziar sua lista. Com a chave ligada, o Auto adjust do TikTok não reduz mais o seu limite de vídeos offline nem corta a lista quando o TikTok inicia, e a limpeza que o TikTok faz quando termina o teste de ativar vídeos offline por padrão é ignorada (#123). Reinicie o TikTok depois de mudar a chave.
@@ -16,11 +52,7 @@
 
 * **TikTok:** A opção Dark background color no Morphe Manager agora diz "código de cor" em vez de "código hex" e explica que o preto desliga totalmente esses pixels em telas OLED.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** As configurações do Hushfeed agora abrem com um status compacto e a busca acima de sete grupos. As páginas relacionadas ficam juntas, com backups, diagnóstico e Feature Gate Lab em App e opções avançadas. Sobre o Hushfeed reúne os detalhes da compilação e as licenças. A busca ainda leva você direto à configuração, e suas escolhas salvas continuam lá. A descrição de Pausar agora explica que as configurações salvas e as alterações incorporadas ao APK permanecem.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** O Hushfeed agora suporta apenas o TikTok 47.1.4. Se você usa o 47.0.3 ou o 47.1.3, baixe o APK do 47.1.4 no APKMirror e aplique os patches no Morphe Manager com a mesma chave de assinatura, para manter seu login e suas configurações. O Laboratório de gates mantém cada alteração cujo interruptor ainda existe no 47.1.4 e desliga as demais com o aviso de sempre.
 

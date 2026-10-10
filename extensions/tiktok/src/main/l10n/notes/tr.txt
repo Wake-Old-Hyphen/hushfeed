@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Video kontrollerini soluklaştır artık Temiz ekranla da çalışıyor. 1 ile 99 arasında Temiz ekran, düğmeleri ve açıklamayı kaldırmak yerine seçtiğin seviyede ekranda tutuyor ve onlara dokunmak videoya gidiyor, böylece hiçbir şey yanlışlıkla açılmıyor. Basılı tutmak ya da iki parmağını birbirine yaklaştırmak seni yine Temiz ekrandan çıkarıyor, onun dışında soluk kontroller eskisi gibi dokunuşları alıyor (#84).
+
+* **TikTok:** Akış videolarının sesini kapat, TikTok'u açık ve koyu arasında değiştirdikten sonra da akışı sessiz tutuyor. Önceden, akıştan çıkıp geri dönene kadar sonraki videolar sesli oynayabiliyordu.
+
+* **TikTok:** Kaç tanesinin filtrelendiğini göster ve Gelen Kutusu'nun bölümlerini gizleyen anahtarlar, TikTok'u açık ve koyu tema arasında değiştirdikten sonra da çalışıyor. Önceden TikTok yeniden başlatılana kadar çalışmayı bırakabiliyorlardı.
+
+* **TikTok:** Hushfeed ayarları için Ana Sayfa'ya basılı tut, TikTok'u açık ve koyu tema arasında değiştirdikten sonra da çalışıyor. Önceden TikTok yeniden başlatılana kadar çalışmıyordu.
+
+* **TikTok:** Bir yedeği geri yüklemek artık Ağ proxy'sini açmıyor ya da zaten olan proxy adresini değiştirmiyor, böylece başkasının hazırladığı bir yedek TikTok trafiğini kendi sunucusundan geçiremez. Henüz proxy kurulmamış bir telefonda adres anahtar kapalı olarak geliyor ve geri yüklemeden sonra bir not bunu söylüyor.
+
+* **TikTok:** Bu dilleri otomatik çevirme artık zh-Hant, zh-TW, zh-HK veya zh-MO yazdığında Geleneksel Çince'yi yazıldığı gibi bırakıyor, zh-Hans-TW ise yine Basitleştirilmiş Çince anlamına geliyor. Önceden bu girişler bunun yerine Basitleştirilmiş Çince'yi koruyordu (#121).
+
+* **TikTok:** Hide feed LIVE button artık yan menü düğmesinin bulunamadığı bir TikTok sürümüne de uygulanıyor. O kısım atlanıyor ve Yan menü düğmesini gizle satırı yalnızca düğme bulunduysa görünüyor (#128).
+
+* **TikTok:** Ayarlarda arama artık Derleme ayrıntıları ve Yenilikler'i buluyor. Feature Gate Lab ve Lisanslar gibi bazı sonuçlar artık bulundukları grubu gösteriyor, yalnızca noktalama işaretlerinden oluşan bir arama ise Eşleşen ayar yok diyor.
+
+* **TikTok:** Hushfeed ayarlarının altında çıkan bildirim artık dokununca kapanıyor ve dokunuş altındaki ayara gitmiyor. TalkBack bu eylemi Kapat olarak okuyor.
+
+* **TikTok:** Duraklat artık açıkken neyin kaldığını sade bir dille anlatıyor. Ayarların kayıtlı kalır, yamalarken yapılan değişiklikler de kalır, uygulamanın adı ya da simgesi gibi. TikTok'un Auto scroll özelliği de artık her satırda aynı yazılıyor.
+
+* **TikTok:** Akış filtresi ve Yorumlar'daki dil listeleri artık en,,es gibi fazladan bir virgülü kabul ediyor. Önceden liste, mesajda boş bir adla reddediliyordu.
+
+* **TikTok:** Derleme ayrıntılarını kopyalama başarısız olursa, mesaj artık Derleme ayrıntılarını kaydet seçeneğini kullanmanı söylüyor.
+
+* **TikTok:** Yenilikler artık ayar adlarının etrafında fazladan ters tırnak göstermiyor.
+
+* **TikTok:** Bir seriyi sürdür altındaki Ne zaman gönderilsin için saat seçici artık Hushfeed ayarlarına uyarak koyu ya da açık açılıyor.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ve Enable voice comments artık Hushfeed ayarlarında kendi anahtarına sahip, yani Duraklat bunları da kapatıyor ve Morphe Manager'ın basit modu artık bunları da seçiyor. Bu anahtarların her biri kapalı başlıyor. Daha önce bu yamalardan biriyle yamaladıysan, çalışmaya devam etmesi için güncellemeden sonra anahtarını aç. Açılış reklamını atla, Güncelleme kontrollerini atla, Arka plan trafiğini sınırla ve Hareketli görsellerin tek karesini önbelleğe al, Uygulama sayfasında Performans altında. Cihaz üstü yapay zeka profillemesini durdur Gizlilik altında, Sesli yorumlara izin ver ise Yorumlar altında.
+
+* **TikTok:** Yeni yama, Skip passkey sign-in, Morphe Manager'ın basit modunda anahtarı kapalı olarak seçiliyor (#102). Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermiyor, bu yüzden geçiş anahtarı olan bir hesap TikTok'un geçiş anahtarı adımında takılı kalabiliyordu. Hushfeed ayarları > Uygulama altında Geçiş anahtarı olmadan giriş yap anahtarını aç, TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür ve şifren ya da e-posta veya SMS ile gelen bir kod gibi diğer giriş yollarını sunar. Oturumun kapalıysa Hushfeed ayarlarını açmak için Ana Sayfa'ya basılı tut.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** İçerik üreticisinin ad boyutu artık adın yanındaki paylaşım tarihini de boyutlandırıyor, böylece ikisi aynı boyutta kalıyor (#66).
+
 * **TikTok:** Yorum ayarlarında yeni bir satır var, Bu dilleri otomatik çevirme. Sen doldurana kadar boştur (#121). `es, de` gibi dil kodları yaz, TikTok senin için çevirdiğinde bu dillerdeki açıklamalar ve yorumlar yazıldığı gibi kalır. Çeviriyi gör'e dokunduğunda yine çalışır, TikTok'un kendi Çevirme listesi ise değişmez.
 
 * **TikTok:** Çevrimdışı videoları sen silene kadar tut artık TikTok'un listeni boşalttığı iki yolu daha kapsıyor. Anahtar açıkken TikTok'un Auto adjust özelliği TikTok açılırken çevrimdışı video sınırını düşürmez ve listeyi kırpmaz, TikTok'un çevrimdışı videoları varsayılan olarak açan denemesi bittiğinde yaptığı temizlik de atlanır (#123). Anahtarı değiştirdikten sonra TikTok'u yeniden başlat.
@@ -16,11 +52,7 @@
 
 * **TikTok:** Morphe Manager'daki Dark background color seçeneği artık "onaltılık kod" yerine "renk kodu" diyor ve siyahın OLED ekranlarda bu pikselleri tamamen kapattığını açıklıyor.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** Hushfeed ayarları artık yedi grubun üzerinde küçük bir durum göstergesi ve aramayla açılıyor. İlgili sayfalar bir arada. Yedekler, tanılama ve Feature Gate Lab, Uygulama ve gelişmiş ayarlar altında. Hushfeed hakkında bölümünde derleme ayrıntıları ve lisanslar bir arada. Arama yine doğrudan ayara götürüyor ve kayıtlı seçimlerin korunuyor. Duraklatma açıklaması artık kayıtlı ayarların ve APK'ya işlenmiş değişikliklerin kaldığını açıklıyor.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** Hushfeed artık yalnızca TikTok 47.1.4'ü destekliyor. 47.0.3 veya 47.1.3 kullanıyorsan 47.1.4 APK'sını APKMirror'dan indir ve Morphe Manager'da aynı imza anahtarıyla yamala, böylece oturumun ve ayarların korunur. Feature Gate Lab, düğmesi 47.1.4'te hâlâ bulunan her geçersiz kılmayı korur ve gerisini her zamanki bildirimiyle kapatır.
 

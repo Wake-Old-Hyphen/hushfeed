@@ -45,7 +45,7 @@ import java.io.File;
 public class PauseSettingsScreenTest {
     private static final String BACK_ON_AT_RESTART = "Hushfeed turns back on when TikTok restarts.";
     private static final String SWITCH_SUMMARY =
-            "Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.";
+            "Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.";
 
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
@@ -249,7 +249,7 @@ public class PauseSettingsScreenTest {
             assertTrue("no Pause Hushfeed switch on App & advanced", row instanceof TogglePreference);
             assertEquals("Pause Hushfeed", String.valueOf(row.getTitle()));
             assertTrue(String.valueOf(row.getSummary()).contains(
-                    "Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain."));
+                    "Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay."));
             assertFalse(String.valueOf(row.getSummary()).contains("as if it weren't patched"));
             assertFalse(((TogglePreference) row).isChecked());
         }

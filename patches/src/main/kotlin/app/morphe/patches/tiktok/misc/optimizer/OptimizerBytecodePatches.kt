@@ -5,14 +5,20 @@
  */
 package app.morphe.patches.tiktok.misc.optimizer
 
+import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
-import app.morphe.patches.tiktok.shared.requireRegisters
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.shared.returnBooleanWhenOn
+import app.morphe.patches.tiktok.shared.returnVoidWhenOn
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
 import app.morphe.util.returnEarly
@@ -22,163 +28,256 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
+/** Where the four Performance patches ask whether their switch is on. */
+internal const val PERFORMANCE_SWITCHES = "Lapp/morphe/extension/tiktok/misc/PerformanceSwitches;"
+private const val SETTINGS_STATUS = "Lapp/morphe/extension/tiktok/settings/SettingsStatus;"
+
+internal const val SPLASH_AD_SWITCH = "$PERFORMANCE_SWITCHES->skipSplashAd()Z"
+internal const val BACKGROUND_TRAFFIC_SWITCH = "$PERFORMANCE_SWITCHES->limitBackgroundTraffic()Z"
+internal const val UPDATE_CHECKS_SWITCH = "$PERFORMANCE_SWITCHES->skipUpdateChecks()Z"
+
+private const val SPLASH = "Skip the splash ad"
+private const val TRAFFIC = "Limit background traffic"
+private const val ANIMATED_CACHE = "Drop the animated image cache"
+private const val UPDATE_CHECKS = "Skip update checks"
+
 @Suppress("unused")
 val instantLaunchSplashBlockerPatch = bytecodePatch(
     name = "Skip the splash ad",
-    description = "Stops the full-screen ad TikTok can show while it starts up. It has no " +
-        "switch, so only patching again without it brings the ad back.",
-    default = false,
+    description = "Lets you stop the full-screen ad TikTok can show while it starts up. Starts " +
+        "off. Turn it on in Hushfeed settings > App.",
 ) {
     category("Performance")
+    dependsOn(sharedExtensionPatch, settingsPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        // DeferredSplashAdManagerPreloadTask (47.1.x) only calls SplashAdManagerPreloadTask.run.
-        val voidMethods = listOf(
-            SplashPreloadTaskFingerprint.method,
-            SplashPreloadEntryFingerprint.method,
-            TopViewPreloadTaskFingerprint.method,
-            RealTimeSplashTaskFingerprint.method,
+        installSplashAdSwitch()
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, $SETTINGS_STATUS->enableSkipSplashAd()V",
         )
-        fun reviewedBooleanMethods(classDescriptor: String, expectedCounts: List<Int>, boundary: String) =
-            mutableClassDefBy(classDescriptor).methods.filter { method ->
-                method.returnType == "Z" && method.parameterTypes.isEmpty() &&
-                    AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.FINAL.isSet(method.accessFlags)
-            }.also { methods ->
-                val counts = methods.map {
-                    it.implementationOrPatchException("Instant Launch & Splash Blocker").instructions.count()
-                }.sorted()
-                if (counts != expectedCounts.sorted()) {
-                    throw PatchException(
-                        "Instant Launch & Splash Blocker: $boundary has unreviewed Boolean method shapes: $counts.",
-                    )
-                }
-            }
+    }
+}
 
-        val fixedBooleanMethods = reviewedBooleanMethods(
-            SPLASH_SETTING_DESCRIPTOR,
-            listOf(9, 11),
-            "SplashSettingServiceImpl",
-        ) + reviewedBooleanMethods(
-            REALTIME_SPLASH_DESCRIPTOR,
-            listOf(3),
-            "RealTimeSplashManagerImpl",
-        )
-        val splashService = mutableClassDefBy(SPLASH_SERVICE_DESCRIPTOR)
-        val serviceGates = splashService.methods.filter { method ->
+/**
+ * Skip the splash ad's hooks, without its settings row, so a test can put them on a build that
+ * carries no extension. The four preload tasks return at once and every reviewed splash gate
+ * answers no, all of them only while the switch is on.
+ */
+context(patchContext: BytecodePatchContext)
+internal fun installSplashAdSwitch() {
+    // DeferredSplashAdManagerPreloadTask (47.1.x) only calls SplashAdManagerPreloadTask.run.
+    val voidMethods = listOf(
+        SplashPreloadTaskFingerprint.method,
+        SplashPreloadEntryFingerprint.method,
+        TopViewPreloadTaskFingerprint.method,
+        RealTimeSplashTaskFingerprint.method,
+    )
+    fun reviewedBooleanMethods(classDescriptor: String, expectedCounts: List<Int>, boundary: String) =
+        patchContext.mutableClassDefBy(classDescriptor).methods.filter { method ->
             method.returnType == "Z" && method.parameterTypes.isEmpty() &&
                 AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.FINAL.isSet(method.accessFlags)
-        }
-        val serviceGateInstructionCounts = serviceGates.map {
-            it.implementationOrPatchException("Instant Launch & Splash Blocker").instructions.count()
-        }
-        if (!isReviewedSplashGateShape(serviceGateInstructionCounts)) {
-            throw PatchException(
-                "Instant Launch & Splash Blocker: SplashAdServiceImpl has unreviewed Boolean method shapes: " +
-                    serviceGateInstructionCounts.sorted().joinToString(),
-            )
+        }.also { methods ->
+            val counts = methods.map {
+                it.implementationOrPatchException("Instant Launch & Splash Blocker").instructions.count()
+            }.sorted()
+            if (counts != expectedCounts.sorted()) {
+                throw PatchException(
+                    "Instant Launch & Splash Blocker: $boundary has unreviewed Boolean method shapes: $counts.",
+                )
+            }
         }
 
-        (fixedBooleanMethods + serviceGates).forEach {
-            it.requireRegisters("Instant Launch & Splash Blocker", 1)
-        }
-        voidMethods.forEach { it.returnEarly() }
-        (fixedBooleanMethods + serviceGates).forEach { it.returnEarly(false) }
+    val fixedBooleanMethods = reviewedBooleanMethods(
+        SPLASH_SETTING_DESCRIPTOR,
+        listOf(9, 11),
+        "SplashSettingServiceImpl",
+    ) + reviewedBooleanMethods(
+        REALTIME_SPLASH_DESCRIPTOR,
+        listOf(3),
+        "RealTimeSplashManagerImpl",
+    )
+    val splashService = patchContext.mutableClassDefBy(SPLASH_SERVICE_DESCRIPTOR)
+    val serviceGates = splashService.methods.filter { method ->
+        method.returnType == "Z" && method.parameterTypes.isEmpty() &&
+            AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.FINAL.isSet(method.accessFlags)
     }
+    val serviceGateInstructionCounts = serviceGates.map {
+        it.implementationOrPatchException("Instant Launch & Splash Blocker").instructions.count()
+    }
+    if (!isReviewedSplashGateShape(serviceGateInstructionCounts)) {
+        throw PatchException(
+            "Instant Launch & Splash Blocker: SplashAdServiceImpl has unreviewed Boolean method shapes: " +
+                serviceGateInstructionCounts.sorted().joinToString(),
+        )
+    }
+
+    voidMethods.forEach { it.returnVoidWhenOn(SPLASH, SPLASH_AD_SWITCH) }
+    (fixedBooleanMethods + serviceGates).forEach { it.returnBooleanWhenOn(SPLASH, SPLASH_AD_SWITCH, false) }
 }
 
 @Suppress("unused")
 val networkTrafficGovernorPatch = bytecodePatch(
     name = "Limit background traffic",
-    description = "Stops TikTok loading upcoming videos ahead of time, which uses less data " +
-        "in the background, but videos may take a moment longer to start. It has no switch, so " +
-        "only patching again without it undoes it.",
-    default = false,
+    description = "Lets you stop TikTok loading upcoming videos ahead of time, which uses less " +
+        "data in the background, but videos may take a moment longer to start. Starts off. Turn " +
+        "it on in Hushfeed settings > App.",
 ) {
     category("Performance")
+    dependsOn(sharedExtensionPatch, settingsPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     val skipPushSetup by booleanOption(
         "skipPushSetup",
         default = false,
         title = "Skip notification setup",
-        description = "Stops TikTok setting up notifications, so you won't get any, messages " +
-            "included. Pausing Hushfeed won't bring them back. Patch again with this off to get them " +
-            "back.",
+        description = "With this on, the Limit background traffic switch in Hushfeed settings " +
+            "also stops TikTok setting up notifications, so you won't get any, messages included. " +
+            "Turn the switch off or pause Hushfeed to get them back.",
         required = false,
     )
 
     execute {
-        val bufferGate = BufferPreloadGateFingerprint.method
-        bufferGate.requireRegisters("Network & Background Traffic Governor", 1)
-        bufferGate.returnEarly(false)
-        if (skipPushSetup == true) InitPushTaskFingerprint.method.returnEarly()
+        val skipsPush = skipsPushSetup(skipPushSetup)
+        limitBackgroundTraffic(skipsPush)
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, $SETTINGS_STATUS->enableLimitBackgroundTraffic()V",
+        )
+        if (skipsPush) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, $SETTINGS_STATUS->enableSkipPushSetup()V",
+            )
+        }
     }
+}
+
+/** Only an explicit yes skips push setup: a missing or null option leaves it to TikTok (#86). */
+internal fun skipsPushSetup(option: Boolean?): Boolean = option == true
+
+/**
+ * Limit background traffic's hooks, without its settings row, so a test can put them on a build
+ * that carries no extension. Both ask the patch's one switch: the buffer preload gate answers no
+ * with it on, and the push setup task, hooked only when the option asks for it, returns at once.
+ */
+context(patchContext: BytecodePatchContext)
+internal fun limitBackgroundTraffic(skipPushSetup: Boolean) {
+    BufferPreloadGateFingerprint.method.returnBooleanWhenOn(TRAFFIC, BACKGROUND_TRAFFIC_SWITCH, false)
+    if (skipPushSetup) InitPushTaskFingerprint.method.returnVoidWhenOn(TRAFFIC, BACKGROUND_TRAFFIC_SWITCH)
 }
 
 @Suppress("unused")
 val runtimeMemoryGovernorPatch = bytecodePatch(
     name = "Drop the animated image cache",
-    description = "Makes TikTok keep only the frame on screen for stickers and GIFs instead " +
-        "of every frame, so they use less memory and still play smoothly. It has no switch, so " +
-        "only patching again without it undoes it.",
-    default = false,
+    description = "Lets you make TikTok keep only the frame on screen for animated stickers and " +
+        "GIFs instead of every frame, so they use less memory. Starts off. Turn it on in " +
+        "Hushfeed settings > App.",
 ) {
     category("Performance")
+    dependsOn(sharedExtensionPatch, settingsPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        // Fresco's keep-last-frame cache (caching strategy 3) holds the one frame on screen,
-        // which is also the frame the next one is composed onto. The earlier version nulled the
-        // FrescoFrameCache reads instead, so every frame walked back toward the first and
-        // nothing was saved, since the preparer still filled the cache (#100).
-        val factory = AnimatedDrawableFactoryFingerprint.method
-        val strategy = factory.cachingStrategyRead()
-            ?: throw PatchException("Drop the animated image cache: the caching strategy read has an unreviewed shape.")
-        if (strategy.keepLastClass == FRESCO_FRAME_CACHE_DESCRIPTOR) {
-            throw PatchException("Drop the animated image cache: strategy $KEEP_LAST_FRAME_STRATEGY builds FrescoFrameCache.")
-        }
-        val keepLast = mutableClassDefBy(strategy.keepLastClass)
-        val fieldTypes = keepLast.fields.map { it.type }
-        if (fieldTypes.size != 2 || fieldTypes.count { it == "I" } != 1 || fieldTypes.count { it.startsWith("L") } != 1) {
-            throw PatchException("Drop the animated image cache: ${strategy.keepLastClass} isn't the keep-last-frame cache.")
-        }
-
-        // The preparer decodes frames ahead into the cache. The keep-last cache drops them, so
-        // each would be decoded twice, and composed from frames it no longer holds.
-        val builderCall = factory.backendBuilderCall()
-            ?: throw PatchException("Drop the animated image cache: no animation backend builder call.")
-        val builder = mutableClassDefBy(factory.definingClass).methods.single {
-            it.name == builderCall.name && it.parameterTypes.map(CharSequence::toString) == builderCall.parameterTypes.map(CharSequence::toString) &&
-                it.returnType == builderCall.returnType
-        }
-        val gate = builder.framePreparerGateIndex()
-            ?: throw PatchException("Drop the animated image cache: the frame preparer gate has an unreviewed shape.")
-        val gateRegister = builder.getInstruction<OneRegisterInstruction>(gate).registerA
-
-        builder.addInstruction(gate, "const/16 v$gateRegister, 0x0")
-        factory.addInstruction(strategy.resultIndex + 1, "const/16 v${strategy.register}, $KEEP_LAST_FRAME_STRATEGY")
+        installAnimatedImageCacheSwitch()
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, $SETTINGS_STATUS->enableAnimatedImageCache()V",
+        )
     }
+}
+
+/**
+ * Drop the animated image cache's hooks, without its settings row. With the switch on, Fresco's
+ * factory builds the keep-last-frame cache (caching strategy 3), which holds the one frame on
+ * screen, and the backend builder skips the frame preparer. The earlier version nulled the
+ * FrescoFrameCache reads instead, so every frame walked back toward the first and nothing was
+ * saved, since the preparer still filled the cache (#100). With the switch off both values are
+ * TikTok's own.
+ */
+context(patchContext: BytecodePatchContext)
+internal fun installAnimatedImageCacheSwitch() {
+    val factory = AnimatedDrawableFactoryFingerprint.method
+    val strategy = factory.cachingStrategyRead()
+        ?: throw PatchException("$ANIMATED_CACHE: the caching strategy read has an unreviewed shape.")
+    if (strategy.keepLastClass == FRESCO_FRAME_CACHE_DESCRIPTOR) {
+        throw PatchException("$ANIMATED_CACHE: strategy $KEEP_LAST_FRAME_STRATEGY builds FrescoFrameCache.")
+    }
+    val keepLast = patchContext.mutableClassDefBy(strategy.keepLastClass)
+    val fieldTypes = keepLast.fields.map { it.type }
+    if (fieldTypes.size != 2 || fieldTypes.count { it == "I" } != 1 || fieldTypes.count { it.startsWith("L") } != 1) {
+        throw PatchException("$ANIMATED_CACHE: ${strategy.keepLastClass} isn't the keep-last-frame cache.")
+    }
+
+    // The preparer decodes frames ahead into the cache. The keep-last cache drops them, so
+    // each would be decoded twice, and composed from frames it no longer holds.
+    val builderCall = factory.backendBuilderCall()
+        ?: throw PatchException("$ANIMATED_CACHE: no animation backend builder call.")
+    val builder = patchContext.mutableClassDefBy(factory.definingClass).methods.single {
+        it.name == builderCall.name && it.parameterTypes.map(CharSequence::toString) == builderCall.parameterTypes.map(CharSequence::toString) &&
+            it.returnType == builderCall.returnType
+    }
+    val gate = builder.framePreparerGateIndex()
+        ?: throw PatchException("$ANIMATED_CACHE: the frame preparer gate has an unreviewed shape.")
+    val gateRegister = builder.getInstruction<OneRegisterInstruction>(gate).registerA
+
+    // Both values pass through the switch, which hands TikTok's own back while it's off. Nothing
+    // may jump straight to either insertion point, or that path would skip the question.
+    // framePreparerGateIndex only looks at branches, so the gate is checked again here for
+    // switch cases and exception handlers, as is the instruction after the strategy read.
+    if (builder.isBranchTarget(gate)) {
+        throw PatchException("$ANIMATED_CACHE: a switch case or handler lands on the frame preparer gate.")
+    }
+    if (factory.isBranchTarget(strategy.resultIndex + 1)) {
+        throw PatchException("$ANIMATED_CACHE: a branch lands right after the caching strategy read.")
+    }
+    val framesToPrepare = passThrough(gateRegister, "framesToPrepare")
+    val cachingStrategy = passThrough(strategy.register, "cachingStrategy")
+    builder.addInstructions(gate, framesToPrepare)
+    factory.addInstructions(strategy.resultIndex + 1, cachingStrategy)
+}
+
+/**
+ * Hands the int in [register] to [bridge], an `(I)I` method of the Performance switches, and
+ * puts its answer back in the same register. A one-register range call reaches any register
+ * and needs no scratch one.
+ */
+internal fun passThrough(register: Int, bridge: String): String {
+    if (register > 255) throw PatchException("$ANIMATED_CACHE: v$register is out of move-result's reach.")
+    return """
+        invoke-static/range {v$register .. v$register}, $PERFORMANCE_SWITCHES->$bridge(I)I
+        move-result v$register
+    """
 }
 
 @Suppress("unused")
 val updatePromptSuppressorPatch = bytecodePatch(
     name = "Skip update checks",
-    description = "Stops two background tasks TikTok uses to check for updates, one of them " +
-        "when your phone starts. Some in-app update prompts may stop. Play Store updates still " +
-        "work. It has no switch, so only patching again undoes it.",
-    default = false,
+    description = "Lets you stop two background tasks TikTok uses to check for updates, one of " +
+        "them when your phone starts. Some in-app update prompts may stop. Play Store updates " +
+        "still work. Starts off. Turn it on in Hushfeed settings > App.",
 ) {
     category("Performance")
+    dependsOn(sharedExtensionPatch, settingsPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        val methods = listOf(
-            UpdateBackgroundTaskFingerprint.method,
-            UpdateBootFinishedTaskFingerprint.method,
+        installUpdateCheckSwitch()
+        SettingsStatusLoadFingerprint.method.addInstruction(
+            0,
+            "invoke-static {}, $SETTINGS_STATUS->enableSkipUpdateChecks()V",
         )
-        methods.forEach { it.returnEarly() }
     }
+}
+
+/** Skip update checks' hooks, without its settings row: both tasks return at once with the switch on. */
+context(patchContext: BytecodePatchContext)
+internal fun installUpdateCheckSwitch() {
+    listOf(
+        UpdateBackgroundTaskFingerprint.method,
+        UpdateBootFinishedTaskFingerprint.method,
+    ).forEach { it.returnVoidWhenOn(UPDATE_CHECKS, UPDATE_CHECKS_SWITCH) }
 }
 
 /** Bytecode half of LIVE Stream Suite Optimizer. It is selected only through the resource patch. */

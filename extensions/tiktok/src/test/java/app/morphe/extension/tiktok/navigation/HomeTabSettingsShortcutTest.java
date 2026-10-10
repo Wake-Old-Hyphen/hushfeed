@@ -50,15 +50,20 @@ public class HomeTabSettingsShortcutTest {
         activity = owner.get();
         Utils.setContext(activity);
         PausedProcess.set(false);
-        FrameLayout content = new FrameLayout(activity);
-        FrameLayout bar = new FrameLayout(activity);
-        home = new View(activity);
-        home.setId(HOME_ID);
-        home.setOnClickListener(view -> taps.incrementAndGet());
-        bar.addView(home, new FrameLayout.LayoutParams(216, 138));
-        content.addView(bar, new FrameLayout.LayoutParams(-1, 138, Gravity.BOTTOM));
-        activity.setContentView(content);
+        home = addHomeTab(activity);
         FeedVisibility.resolveForTests(activity.getPackageName(), "47.1.4:oph", HOME_ID);
+    }
+
+    private View addHomeTab(Activity into) {
+        FrameLayout content = new FrameLayout(into);
+        FrameLayout bar = new FrameLayout(into);
+        View tab = new View(into);
+        tab.setId(HOME_ID);
+        tab.setOnClickListener(view -> taps.incrementAndGet());
+        bar.addView(tab, new FrameLayout.LayoutParams(216, 138));
+        content.addView(bar, new FrameLayout.LayoutParams(-1, 138, Gravity.BOTTOM));
+        into.setContentView(content);
+        return tab;
     }
 
     @After public void tearDown() {
@@ -207,6 +212,51 @@ public class HomeTabSettingsShortcutTest {
         assertTrue(rebuilt.performLongClick());
         assertNotNull(nextStarted());
         assertFalse("the old tab kept the long press", home.isLongClickable());
+    }
+
+    /**
+     * TikTok's launcher entry is a second MainActivity under the feed's. Changing TikTok's
+     * appearance recreates both, the buried one last, and the shortcut followed the newest one, so
+     * Home lost its long press until TikTok restarted (S22, 47.1.4, Dark then Light).
+     */
+    @Test public void aThemeChangeLeavesTheLongPressOnTheFeedInFront() {
+        installAndResume();
+        // The feed's copy goes behind the settings page that changed the theme.
+        owner.pause().stop();
+        ActivityController<Activity> launcher = Robolectric.buildActivity(Activity.class).create();
+        try {
+            View buried = addHomeTab(launcher.get());
+            HomeTabSettingsShortcut.install(launcher.get());
+            // Recreated last, the launcher's copy is resumed for a moment and stopped again.
+            launcher.start().resume().visible().pause().stop();
+
+            owner.restart().start().resume();
+            layoutPass();
+
+            assertTrue("Home lost its long press after a theme change", home.performLongClick());
+            assertNotNull(nextStarted());
+            assertFalse("the buried copy kept the long press", buried.isLongClickable());
+        } finally {
+            launcher.destroy();
+        }
+    }
+
+    /** The buried copy can also blink on while the feed stays resumed and gets no new resume. */
+    @Test public void aBuriedMainActivityResumedForAMomentHandsTheLongPressBack() {
+        installAndResume();
+        ActivityController<Activity> launcher = Robolectric.buildActivity(Activity.class).create();
+        try {
+            View buried = addHomeTab(launcher.get());
+            HomeTabSettingsShortcut.install(launcher.get());
+            launcher.start().resume().visible().pause().stop();
+            layoutPass();
+
+            assertTrue("the feed in front lost its long press", home.performLongClick());
+            assertNotNull(nextStarted());
+            assertFalse(buried.isLongClickable());
+        } finally {
+            launcher.destroy();
+        }
     }
 
     private void installAndResume() {

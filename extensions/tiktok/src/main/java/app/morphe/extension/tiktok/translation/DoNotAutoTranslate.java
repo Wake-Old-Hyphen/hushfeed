@@ -4,8 +4,11 @@
  */
 package app.morphe.extension.tiktok.translation;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import app.morphe.extension.shared.Logger;
@@ -29,6 +32,10 @@ public final class DoNotAutoTranslate {
     private static final String ZH = "zh";
     /** TikTok tags Chinese items with the script, so the plain code alone matched none of them. */
     private static final String ZH_HANS = "zh-Hans";
+    private static final String ZH_HANT = "zh-Hant";
+    /** Where Traditional characters are the default, for an entry that names no script. */
+    private static final Set<String> TRADITIONAL_REGIONS = new HashSet<>(
+            Arrays.asList("tw", "hk", "mo"));
 
     private static String parsedFrom;
     private static Set<String> parsed = Collections.emptySet();
@@ -72,7 +79,11 @@ public final class DoNotAutoTranslate {
         return !excludedCodes().isEmpty();
     }
 
-    /** The codes to add: each entry's primary subtag, and zh also as TikTok's zh-Hans. */
+    /**
+     * The codes to add: each entry's primary subtag, and zh also with its script the way TikTok
+     * spells it. zh-Hant or zh-TW used to add zh-Hans, leaving Simplified alone instead of the
+     * Traditional the entry named.
+     */
     static synchronized Set<String> excludedCodes() {
         String value = Settings.DONT_AUTO_TRANSLATE_LANGUAGES.get();
         if (value == null) value = "";
@@ -80,16 +91,28 @@ public final class DoNotAutoTranslate {
         Set<String> codes = new LinkedHashSet<>();
         String trimmed = value.trim();
         if (!trimmed.isEmpty()) {
-            for (String entry : trimmed.split("\s*[,\n]\s*")) {
+            for (String entry : trimmed.split("\\s*[,\\n]\\s*")) {
                 if (codes.size() >= CaptionLanguageFilter.MAX_ENTRIES) break;
                 String code = CaptionLanguageFilter.primary(entry);
                 if (code == null) continue;
                 codes.add(code);
-                if (code.equals(ZH)) codes.add(ZH_HANS);
+                if (code.equals(ZH)) codes.add(traditional(entry) ? ZH_HANT : ZH_HANS);
             }
         }
         parsedFrom = value;
         parsed = Collections.unmodifiableSet(codes);
         return parsed;
+    }
+
+    /** The script decides when the entry names one (zh-Hans-TW is Simplified), else the region. */
+    private static boolean traditional(String entry) {
+        String[] subtags = entry.trim().toLowerCase(Locale.ROOT).split("[-_]");
+        boolean region = false;
+        for (int index = 1; index < subtags.length; index++) {
+            if (subtags[index].equals("hant")) return true;
+            if (subtags[index].equals("hans")) return false;
+            if (TRADITIONAL_REGIONS.contains(subtags[index])) region = true;
+        }
+        return region;
     }
 }

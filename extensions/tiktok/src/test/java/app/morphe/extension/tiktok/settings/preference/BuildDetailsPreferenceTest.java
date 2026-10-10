@@ -157,7 +157,7 @@ public class BuildDetailsPreferenceTest {
         }
     }
 
-    @Test public void deniedClipboardShowsTheExistingTranslatedSaveFallback() {
+    @Test public void deniedClipboardPointsToSaveBuildDetails() {
         try (var owner = root()) {
             Context denied = new ContextWrapper(owner.get()) {
                 @Override public Object getSystemService(String name) {
@@ -170,7 +170,8 @@ public class BuildDetailsPreferenceTest {
             ShadowToast.reset();
             ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_POSITIVE).performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals("Couldn't copy the report. Use Save report instead.", String.valueOf(ShadowToast.getTextOfLatestToast()));
+            assertEquals("Couldn't copy the build details. Use Save build details instead.",
+                    String.valueOf(ShadowToast.getTextOfLatestToast()));
         }
     }
 

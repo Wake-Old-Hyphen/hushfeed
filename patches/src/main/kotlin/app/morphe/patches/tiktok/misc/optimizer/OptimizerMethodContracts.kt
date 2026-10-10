@@ -12,6 +12,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstructio
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.SwitchPayload
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
@@ -92,6 +93,28 @@ internal fun Method.framePreparerGateIndex(): Int? {
         branch != null && addresses[i] + branch.codeOffset == gateAddress
     }
     return if (targeted) null else gate
+}
+
+/**
+ * Whether anything in the method lands on the instruction at [index]: a branch, a switch case or
+ * an exception handler. Code put in front of such an instruction would be skipped on that path.
+ */
+internal fun Method.isBranchTarget(index: Int): Boolean {
+    val body = implementation ?: return false
+    val instructions = body.instructions.toList()
+    val addresses = instructions.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    val target = addresses.getOrNull(index) ?: return false
+    val branched = instructions.indices.any { i ->
+        val branch = instructions[i] as? OffsetInstruction ?: return@any false
+        val landing = addresses[i] + branch.codeOffset
+        if (branch.opcode == Opcode.PACKED_SWITCH || branch.opcode == Opcode.SPARSE_SWITCH) {
+            val payload = instructions.getOrNull(addresses.indexOf(landing)) as? SwitchPayload
+            payload?.switchElements?.any { addresses[i] + it.offset == target } == true
+        } else {
+            landing == target
+        }
+    }
+    return branched || body.tryBlocks.any { block -> block.exceptionHandlers.any { it.handlerCodeAddress == target } }
 }
 
 /** The backend builder call in the factory: the last call on its own class before the drawable is made. */

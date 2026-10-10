@@ -4,6 +4,42 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Fade the video controls now works with Clear display. Set between 1 and 99, Clear display keeps the buttons and caption on screen at the level you picked instead of taking them away, and a tap on them goes to the video, so nothing opens by accident. Press and hold or pinch still takes you out of Clear display, and outside it faded controls take taps as before (#84).
+
+* **TikTok:** Mute feed videos keeps the feed quiet after you switch TikTok between light and dark. Before, the next videos could play with sound until you left the feed and came back.
+
+* **TikTok:** Show how many were filtered and the switches that hide parts of the Inbox keep working after you switch TikTok between light and dark. Before, they could stop until TikTok was restarted.
+
+* **TikTok:** Long-press Home for Hushfeed settings keeps working after you switch TikTok between light and dark. Before, it stopped until TikTok was restarted.
+
+* **TikTok:** Restoring a backup no longer turns on the Network proxy or replaces the proxy address you already have, so a backup someone else made can't send your TikTok traffic through their server. On a phone with no proxy set up yet, the address comes along with the switch off, and a note after the restore says so.
+
+* **TikTok:** Don't auto translate these languages now keeps Traditional Chinese as it was written when you type zh-Hant, zh-TW, zh-HK or zh-MO, while zh-Hans-TW still means Simplified. Before, those entries protected Simplified Chinese instead (#121).
+
+* **TikTok:** Hide feed LIVE button still patches on a TikTok build where the side menu button can't be found. It skips that part, and the Hide the side menu button row only shows when the button was found (#128).
+
+* **TikTok:** Settings search now finds Build details and What's new. A few results, like Feature Gate Lab and Licenses, now name the group they're in, and a search made only of punctuation says No matching settings.
+
+* **TikTok:** The notice that shows at the bottom of Hushfeed settings now closes when you tap it, and the tap no longer lands on the setting under it. TalkBack reads its action as Close.
+
+* **TikTok:** Pause now says in plain words what stays while it's on. Your settings stay saved, and so do changes made when you patched, like the app's name or icon. TikTok's Auto scroll is also written the same way on every row now.
+
+* **TikTok:** The language lists in Feed filter and Comments now accept an extra comma, like en,,es. They used to refuse the list with a blank name in the message.
+
+* **TikTok:** If copying the build details fails, the message now tells you to use Save build details instead.
+
+* **TikTok:** What's new no longer shows stray backticks around setting names.
+
+* **TikTok:** The time picker for When to send in Keep a streak going now opens dark or light to match Hushfeed settings.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling and Enable voice comments now each have a switch in Hushfeed settings, so Pause turns them off too and Morphe Manager's simple mode now picks them. Each of those switches starts off. If you patched with any of these before, turn its switch on after you update to keep it working. Skip the splash ad, Skip update checks, Limit background traffic and Cache one frame of animated images are under Performance in App. Stop on-device AI profiling is in Privacy and Allow voice comments is in Comments.
+
+* **TikTok:** New patch, Skip passkey sign-in, in Morphe Manager's simple mode with its switch off (#102). Password managers won't hand a passkey to a patched app, so an account with a passkey could get stuck at TikTok's passkey step. Turn on Sign in without a passkey in Hushfeed settings > App and TikTok treats your phone as one without passkeys, so it offers its other ways to sign in, like your password or a code by email or text. If you're signed out, long-press Home to open Hushfeed settings.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Author text size now sizes the post date next to the creator's name too, so the two stay the same size (#66).
+
 * **TikTok:** Comments settings has a new row, Don't auto translate these languages. It's empty until you fill it in (#121). Type language codes like `es, de`, and when TikTok translates for you, captions and comments in those languages stay as they were written. See translation still works when you tap it, and TikTok's own Don't translate list isn't changed.
 
 * **TikTok:** Keep offline videos until you delete them now covers two more ways TikTok cleared your list. With the switch on, TikTok's Auto adjust no longer lowers your offline videos limit or trims the list when TikTok starts, and the clean-up TikTok runs when its test of turning offline videos on by default ends is skipped (#123). Restart TikTok after you change the switch.
@@ -20,11 +56,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** The Dark background color option in Morphe Manager now says "color code" instead of "hex code", and explains that black turns those pixels off completely on OLED screens.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** The Hushfeed settings home now shows a compact status and search above seven groups. Related pages sit together, with backups, diagnostics and the Feature Gate Lab under App & advanced. About Hushfeed keeps build details and licenses in one place. Search still takes you straight to a setting, and your saved choices carry over. Pause now explains that saved settings and changes built into the APK remain.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** Hushfeed now supports TikTok 47.1.4 only. If you're on 47.0.3 or 47.1.3, download the 47.1.4 APK from APKMirror and patch it in Morphe Manager with the same signing key, so your login and settings carry over. Feature Gate Lab keeps each override whose switch 47.1.4 still has and turns the rest off with its usual notice.
 

@@ -66,7 +66,11 @@ import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 @SuppressWarnings("deprecation")
 public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private static final String FEATURE_GATE_LAB_KEY = "action_feature_gate_lab";
-    private static final String PAUSE_SUMMARY = "Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.";
+    private static final String PAUSE_SUMMARY = "Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.";
+    /** A switch from a patch left unticked in the Manager is on no page and in no index, and
+     *  nothing else on the screen says so (#29 looked for Fill without its patch). */
+    private static final String NO_MATCHES_SUMMARY = "Try a different word or clear the search. "
+            + "Switches from patches you didn't tick in Morphe Manager aren't listed.";
     private static final int REQUEST_DOWNLOAD_PATH_FOLDER = 8841;
     private static final String ARG_SECTION = "morphe_settings_section";
     private static final String ARG_HUB = "morphe_settings_hub";
@@ -821,10 +825,18 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
 
         // Folding happens before the empty check: a query of nothing but accent marks is not
         // empty as typed but folds away to nothing, and every setting contains "".
-        String normalizedQuery = normalizeSearchText(query == null ? "" : query.trim());
+        String typed = query == null ? "" : query.trim();
+        String normalizedQuery = normalizeSearchText(typed);
         if (normalizedQuery.isEmpty()) {
-            if (searchInput != null) searchInput.hideResultCount();
-            addSearchState("Start typing", "Search by name, description or category.");
+            if (typed.isEmpty()) {
+                if (searchInput != null) searchInput.hideResultCount();
+                addSearchState("Start typing", "Search by name, description or category.");
+            } else {
+                // "???" folds to nothing as well. Start typing, under a box with text in it,
+                // read as if the search had ignored it.
+                if (searchInput != null) searchInput.showResultCount(0);
+                addSearchState("No matching settings", NO_MATCHES_SUMMARY);
+            }
             return;
         }
 
@@ -852,10 +864,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         matches.addAll(insideWords);
         if (searchInput != null) searchInput.showResultCount(matches.size());
         if (matches.isEmpty()) {
-            // A switch from a patch left unticked in the Manager is on no page and in no index, and
-            // nothing else on the screen says so (#29 looked for Fill without its patch).
-            addSearchState("No matching settings", "Try a different word or clear the search. Switches "
-                    + "from patches you didn't tick in Morphe Manager aren't listed.");
+            addSearchState("No matching settings", NO_MATCHES_SUMMARY);
             return;
         }
 
@@ -874,6 +883,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                     Utils.openLink(MorpheTikTokAboutPreference.SOURCE_URL);
                 } else if (BaseSettings.PAUSED.key.equals(result.key)) {
                     openHub(Hub.APP_ADVANCED, result.key);
+                } else if (BuildDetailsPreference.KEY.equals(result.key)
+                        || ReleaseNotes.KEY.equals(result.key)) {
+                    openHub(Hub.ABOUT, result.key);
                 } else {
                     openSection(result.section, result.key, result.member);
                 }
@@ -970,6 +982,18 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
     }
 
+    /** Set by tests, which see Utils' empty release version and so never a pending What's new. */
+    private static volatile String releaseVersionForTests;
+
+    public static void setReleaseVersionForTests(String version) {
+        releaseVersionForTests = version;
+    }
+
+    private static String releaseVersion() {
+        String forTests = releaseVersionForTests;
+        return forTests != null ? forTests : Utils.getPatchesReleaseVersion();
+    }
+
     private List<SearchResult> buildSearchIndex(Context context, boolean featureGateLabInstalled) {
         List<SearchResult> results = new ArrayList<>();
         PreferenceScreen scratch = getPreferenceManager().createPreferenceScreen(context);
@@ -991,9 +1015,13 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             indexRows(results, category, section, categoryTitle);
             scratch.removePreference(category);
         }
-        // This row opens its own fragment from the master menu rather than living in one of the
-        // section categories walked above. Without an explicit entry, both its title and its
-        // summary returned zero results on a patched phone even though the row was visible.
+        // The rows below sit on the App & advanced and About Hushfeed pages, outside the section
+        // categories walked above, so each is indexed by hand. Their category line names the
+        // page a reader finds them on; it said "Settings" for all of them, which is no page.
+        String appAdvanced = L10n.t(context, Hub.APP_ADVANCED.title);
+        String about = L10n.t(context, Hub.ABOUT.title);
+        // Without an explicit entry, the Lab's title and summary returned zero results on a
+        // patched phone even though the row was visible.
         if (featureGateLabInstalled) {
             results.add(new SearchResult(
                     null,
@@ -1001,36 +1029,55 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                     L10n.t(context, "Feature Gate Lab"),
                     L10n.t(context, "Advanced. Find and force the hidden switches TikTok uses "
                             + "to test features."),
-                    L10n.t(context, "Settings"),
+                    appAdvanced,
                     "override gates"
             ));
         }
-        // Pause Hushfeed lives under App & advanced and is what a reader asking whether a
-        // problem is Hushfeed's searches for.
+        // Pause Hushfeed is what a reader asking whether a problem is Hushfeed's searches for.
         results.add(new SearchResult(
                 null,
                 BaseSettings.PAUSED.key,
                 L10n.t(context, "Pause Hushfeed"),
                 L10n.t(context, PAUSE_SUMMARY),
-                L10n.t(context, "Settings")
+                appAdvanced
         ));
-        // The About row sits on the master menu beside the Lab, so it is indexed the same way.
         // Its summary carries the bundle version, which is what a reporter searches for.
         results.add(new SearchResult(
                 null,
                 MorpheTikTokAboutPreference.KEY,
                 "Hushfeed",
                 MorpheTikTokAboutPreference.currentSummary(context).toString(),
-                L10n.t(context, "Settings")
+                about
         ));
-        // Somebody looking for "licence" or "notice" is looking for exactly one thing, and it
-        // sits on the master menu beside About rather than inside a section.
+        // Searching "build" or "patches" found nothing, and the empty state then blamed patches
+        // left unticked in Morphe Manager, while the row that lists them sat on About Hushfeed.
+        results.add(new SearchResult(
+                null,
+                BuildDetailsPreference.KEY,
+                L10n.t(context, "Build details"),
+                L10n.t(context, BuildDetailsPreference.SUMMARY),
+                about,
+                "version"
+        ));
+        // What's new is on About Hushfeed only until its notes are read, and so is its result.
+        String releaseVersion = releaseVersion();
+        if (ReleaseNotes.pending(context, releaseVersion)) {
+            results.add(new SearchResult(
+                    null,
+                    ReleaseNotes.KEY,
+                    L10n.t(context, "What's new"),
+                    L10n.f(context, "Changes in Hushfeed %1$s", ReleaseNotes.rowVersion(context, releaseVersion)),
+                    about,
+                    "release notes changelog"
+            ));
+        }
+        // Somebody looking for "licence" or "notice" is looking for exactly one thing.
         results.add(new SearchResult(
                 null,
                 LicensesPreference.KEY,
                 LicensesPreference.title(context),
                 LicensesPreference.summary(context),
-                L10n.t(context, "Settings")
+                about
         ));
         return results;
     }
@@ -1292,7 +1339,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     }
 
     private void addReleaseNotes(Context context, PreferenceScreen screen) {
-        String releaseVersion = Utils.getPatchesReleaseVersion();
+        String releaseVersion = releaseVersion();
         if (!ReleaseNotes.pending(context, releaseVersion)) return;
         SettingsMenuPreference notes = new SettingsMenuPreference(context, "What's new",
                 L10n.f(context, "Changes in Hushfeed %1$s", ReleaseNotes.rowVersion(context, releaseVersion)),

@@ -137,6 +137,9 @@ public class SettingsStatus {
     public static boolean followStatusEnabled = false;
     public static boolean copyIdsEnabled = false;
     public static boolean hideFeedLiveButtonEnabled = false;
+    /** The side menu half of Hide feed LIVE button, which a build other than the declared one
+     *  can leave out while the LIVE half still applies. */
+    public static boolean hideFeedSidebarButtonEnabled = false;
     public static boolean hideFeedSearchButtonEnabled = false;
     public static boolean showSeekbarEnabled = false;
     public static boolean sanitizeShareUrlsEnabled = false;
@@ -505,6 +508,10 @@ public class SettingsStatus {
         hideFeedLiveButtonEnabled = true;
     }
 
+    public static void enableHideFeedSidebarButton() {
+        hideFeedSidebarButtonEnabled = true;
+    }
+
     public static void enableHideFeedSearchButton() {
         hideFeedSearchButtonEnabled = true;
     }
@@ -540,6 +547,65 @@ public class SettingsStatus {
 
     public static void enableProfileThoughts() {
         profileThoughtsEnabled = true;
+    }
+
+    /** Skip the splash ad put its switch in front of the splash tasks and gates. */
+    public static boolean skipSplashAdEnabled = false;
+
+    public static void enableSkipSplashAd() {
+        skipSplashAdEnabled = true;
+    }
+
+    /** Skip update checks put its switch in front of the two update check tasks. */
+    public static boolean skipUpdateChecksEnabled = false;
+
+    public static void enableSkipUpdateChecks() {
+        skipUpdateChecksEnabled = true;
+    }
+
+    /** Limit background traffic put its switch in front of the buffer preload gate. */
+    public static boolean limitBackgroundTrafficEnabled = false;
+
+    public static void enableLimitBackgroundTraffic() {
+        limitBackgroundTrafficEnabled = true;
+    }
+
+    /**
+     * Limit background traffic was patched with Skip notification setup, so its switch stops
+     * push setup too, and the row says so. Only ever set alongside the flag above.
+     */
+    public static boolean skipPushSetupEnabled = false;
+
+    public static void enableSkipPushSetup() {
+        skipPushSetupEnabled = true;
+    }
+
+    /** Drop the animated image cache put its switch in front of Fresco's cache choice. */
+    public static boolean animatedImageCacheEnabled = false;
+
+    public static void enableAnimatedImageCache() {
+        animatedImageCacheEnabled = true;
+    }
+
+    /** Stop on-device AI profiling put its switch in front of the Pitaya start-up. */
+    public static boolean aiProfilingEnabled = false;
+
+    public static void enableAiProfiling() {
+        aiProfilingEnabled = true;
+    }
+
+    /** Enable voice comments put its switch in front of TikTok's voice comment gate. */
+    public static boolean voiceCommentsEnabled = false;
+
+    public static void enableVoiceComments() {
+        voiceCommentsEnabled = true;
+    }
+
+    /** Skip passkey sign-in put its switch in front of TikTok's passkey support check. */
+    public static boolean passkeySignInEnabled = false;
+
+    public static void enablePasskeySignIn() {
+        passkeySignInEnabled = true;
     }
 
     static {

@@ -92,16 +92,24 @@ public class SearchSettingsClarityTest {
     /**
      * #128. The side menu row names the menu it takes away and says a restart applies it. TikTok
      * builds that button with no view id, so the video overlay hider can't reach it: without the
-     * LIVE patch's toolbar check the row would be a switch that does nothing, and it isn't shown.
+     * LIVE patch's toolbar check on the side menu the row would be a switch that does nothing, and
+     * it isn't shown. That check has its own flag, since a build the patch doesn't declare can
+     * leave it out while the LIVE half applies.
      */
     @Test public void sideMenuButtonRowNamesTheMenuAndNeedsTheToolbarCheck() {
         assertRow("INTERFACE", "hide_feed_sidebar_button", "Hide the side menu button", "TikTok Minis");
         assertRow("INTERFACE", "hide_feed_sidebar_button", "Hide the side menu button", "Restart TikTok");
 
+        SettingsStatus.hideFeedSidebarButtonEnabled = false;
+        onPage("INTERFACE", page -> assertNull("the side menu row outlived its toolbar check",
+                page.findPreference("hide_feed_sidebar_button")));
+
+        SettingsStatus.hideFeedSidebarButtonEnabled = true;
         SettingsStatus.hideFeedLiveButtonEnabled = false;
         onPage("INTERFACE", page -> {
             assertNotNull("the LIVE row stays with the overlay hider", page.findPreference("hide_live_entrance"));
-            assertNull("the side menu row needs the toolbar check", page.findPreference("hide_feed_sidebar_button"));
+            assertNotNull("the side menu row follows its own flag, not the LIVE half's",
+                    page.findPreference("hide_feed_sidebar_button"));
         });
     }
 

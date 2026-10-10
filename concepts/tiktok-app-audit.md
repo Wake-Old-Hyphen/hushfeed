@@ -209,7 +209,7 @@ The 38.3.3 package requested both Google Play advertising-ID access and Android'
 | Block advertising ID | Returns a blank advertising ID and the limited-tracking answer to the hooked reads | Patch is selected by default. Its runtime switch starts off | Other identifiers and server-side account matching remain possible |
 | Block clipboard reads | Returns empty or false results for intercepted clipboard calls | Patch is selected by default. Its runtime switch starts off | Copying a TikTok link still works |
 | Hide VPN | Hides VPN transport and common tunnel interfaces from hooked calls | Patch is selected by default. Its runtime switch starts off | It changes what TikTok sees and can break features that check VPN state |
-| Stop on-device AI profiling | Prevents TikTok's Pitaya on-device engine from starting through the hooked providers | Patch is not selected by default. It has no runtime switch | This does not turn off server-side recommendations or ad personalization |
+| Stop on-device AI profiling | Prevents TikTok's Pitaya on-device engine from starting through the hooked providers | Patch is selected by default. Its runtime switch starts off and takes effect after a restart | This does not turn off server-side recommendations or ad personalization |
 | Network request report | Counts TikTok Retrofit calls by heuristic domain bucket and host kind, with request-body sizes | Patch is not selected by default | It does not count media downloads or other companies' SDK traffic, and does not record response bodies |
 | In-app browser privacy guard | Keeps TikTok JavaScript bridges on trusted app pages and withholds them on external pages | Patch is selected by default. Its runtime switch starts off | It is not a general cookie blocker or a network request blocker |
 
@@ -217,7 +217,7 @@ The source lives under [privacy patches](../patches/src/main/kotlin/app/morphe/p
 
 ### Other Hushfeed customization areas
 
-Ad and privacy work sits inside a wider set of user controls. The generated catalog has 130 patch entries in this source snapshot. The [patch development map](patch-development.md) records the full category counts and settings pages.
+Ad and privacy work sits inside a wider set of user controls. The generated catalog has 131 patch entries in this source snapshot. The [patch development map](patch-development.md) records the full category counts and settings pages.
 
 | Area | Examples already present in Hushfeed | Likely annoyance it addresses |
 | --- | --- | --- |

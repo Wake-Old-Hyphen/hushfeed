@@ -8,10 +8,13 @@ import app.morphe.Fixtures
 import app.morphe.patcher.Patcher
 import app.morphe.patcher.PatcherConfig
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.writer.io.MemoryDataStore
 import com.android.tools.smali.dexlib2.writer.pool.DexPool
 import kotlinx.coroutines.runBlocking
@@ -23,7 +26,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-/** Applies the real patch. Shape-only optimizer tests did not detect push shutdown under All. */
+/**
+ * Applies the real hooks. Shape-only optimizer tests did not detect push shutdown under All.
+ *
+ * <p>The patch itself registers a settings row, which needs the extension this suite runs
+ * without, so the probe puts on the same hooks the patch does, through the function the patch
+ * calls, with the option resolved the way the patch resolves it.
+ */
 class BackgroundPushSetupTest {
     @get:Rule val temporary = TemporaryFolder()
 
@@ -37,14 +46,17 @@ class BackgroundPushSetupTest {
     }
 
     @Test
-    fun `old selections gain an optional push choice that stays off under All`() {
+    fun `the push choice stays off under All and the patch joins the default selection`() {
         assertEquals("Limit background traffic", networkTrafficGovernorPatch.name)
-        assertFalse(networkTrafficGovernorPatch.default)
+        assertTrue("its switch starts off, so simple mode can pick it", networkTrafficGovernorPatch.default)
         val option = networkTrafficGovernorPatch.options["skipPushSetup"]
         assertEquals(false, option.default)
         assertFalse(option.required)
         option.reset()
         assertEquals(false, option.value)
+        assertFalse(skipsPushSetup(null))
+        assertFalse(skipsPushSetup(false))
+        assertTrue(skipsPushSetup(true))
     }
 
     @Test
@@ -55,6 +67,8 @@ class BackgroundPushSetupTest {
                 option?.reset()
                 if (value == "false") networkTrafficGovernorPatch.options.set("skipPushSetup", false)
                 if (value == "null") networkTrafficGovernorPatch.options.set<Boolean>("skipPushSetup", null)
+                val skips = skipsPushSetup(option?.value as Boolean?)
+                assertFalse("$value asked for push setup to be skipped", skips)
                 Fixtures.forEachDeclared { apk ->
                     val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
                     val original = container.dexEntryNames.asSequence()
@@ -63,14 +77,13 @@ class BackgroundPushSetupTest {
                     val before = encoded(original)
                     var checked = false
                     val probe = bytecodePatch(name = "push setup preservation probe") {
-                        dependsOn(networkTrafficGovernorPatch)
                         execute {
+                            val buffer = BufferPreloadGateFingerprint.method.implementation!!.instructions.toList()
+                            limitBackgroundTraffic(skips)
                             assertArrayEquals("${apk.name}: push setup changed with $value", before,
                                 encoded(classDefBy(PUSH_OWNER)))
-                            val buffer = BufferPreloadGateFingerprint.method.implementation!!.instructions.toList()
-                            assertEquals(Opcode.CONST_4, buffer[0].opcode)
-                            assertEquals(0, (buffer[0] as NarrowLiteralInstruction).narrowLiteral)
-                            assertEquals(Opcode.RETURN, buffer[1].opcode)
+                            assertSwitched(apk.name, buffer, BufferPreloadGateFingerprint.method.implementation!!.instructions.toList(),
+                                listOf(Opcode.CONST_4, Opcode.RETURN))
                             checked = true
                         }
                     }
@@ -88,22 +101,23 @@ class BackgroundPushSetupTest {
     }
 
     @Test
-    fun `push shutdown requires an explicit true option on every declared host`() {
+    fun `push shutdown requires an explicit true option and goes through the switch on every declared host`() {
         val option = networkTrafficGovernorPatch.options.values.singleOrNull { it.name == "skipPushSetup" }
         try {
             networkTrafficGovernorPatch.options.set("skipPushSetup", true)
+            val skips = skipsPushSetup(option?.value as Boolean?)
+            assertTrue("an explicit true skips push setup", skips)
             Fixtures.forEachDeclared { apk ->
                 var checked = false
                 val probe = bytecodePatch(name = "explicit push shutdown probe") {
-                    dependsOn(networkTrafficGovernorPatch)
                     execute {
                         val push = InitPushTaskFingerprint.method.implementation!!.instructions.toList()
-                        assertEquals(Opcode.RETURN_VOID, push.first().opcode)
-                        assertTrue("the original task body was erased", push.size > 1)
                         val buffer = BufferPreloadGateFingerprint.method.implementation!!.instructions.toList()
-                        assertEquals(Opcode.CONST_4, buffer[0].opcode)
-                        assertEquals(0, (buffer[0] as NarrowLiteralInstruction).narrowLiteral)
-                        assertEquals(Opcode.RETURN, buffer[1].opcode)
+                        limitBackgroundTraffic(skips)
+                        assertSwitched(apk.name, push, InitPushTaskFingerprint.method.implementation!!.instructions.toList(),
+                            listOf(Opcode.RETURN_VOID))
+                        assertSwitched(apk.name, buffer, BufferPreloadGateFingerprint.method.implementation!!.instructions.toList(),
+                            listOf(Opcode.CONST_4, Opcode.RETURN))
                         checked = true
                     }
                 }
@@ -117,6 +131,27 @@ class BackgroundPushSetupTest {
         } finally {
             option?.reset()
         }
+    }
+
+    /**
+     * The method asks Limit background traffic's switch before anything else, leaves through
+     * [answer] when it says yes, and otherwise runs every instruction it had before.
+     */
+    private fun assertSwitched(where: String, before: List<Instruction>, after: List<Instruction>, answer: List<Opcode>) {
+        val call = after[0].getReference<MethodReference>()
+        assertEquals("$where: asks the switch first", Opcode.INVOKE_STATIC, after[0].opcode)
+        assertEquals("$where: the switch", BACKGROUND_TRAFFIC_SWITCH,
+            "${call!!.definingClass}->${call.name}(${call.parameterTypes.joinToString("")})${call.returnType}")
+        assertEquals(Opcode.MOVE_RESULT, after[1].opcode)
+        assertEquals(Opcode.IF_EQZ, after[2].opcode)
+        assertEquals("$where: the answer with the switch on", answer, after.subList(3, 3 + answer.size).map { it.opcode })
+        if (answer.first() == Opcode.CONST_4) {
+            assertEquals("$where: answers no", 0, (after[3] as NarrowLiteralInstruction).narrowLiteral)
+        }
+        // The guard's label sits on a nop, and TikTok's own code follows it unchanged.
+        assertEquals(Opcode.NOP, after[3 + answer.size].opcode)
+        assertEquals("$where: TikTok's own code is still behind the switch",
+            before.map { it.opcode }, after.drop(4 + answer.size).map { it.opcode })
     }
 
     private fun encoded(classDef: ClassDef): ByteArray {
@@ -133,4 +168,3 @@ class BackgroundPushSetupTest {
         const val PUSH_OWNER = "Lcom/ss/android/ugc/aweme/legoImp/task/InitPushTask;"
     }
 }
-

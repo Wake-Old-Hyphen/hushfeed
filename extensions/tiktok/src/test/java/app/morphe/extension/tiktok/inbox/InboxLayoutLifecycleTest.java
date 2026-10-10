@@ -403,6 +403,60 @@ public class InboxLayoutLifecycleTest {
         assertEquals("the queue never delivered the install", View.GONE, inbox.search.getVisibility());
     }
 
+    /**
+     * TikTok's launcher entry is a second MainActivity under the feed's. Changing TikTok's
+     * appearance recreates both, the buried one last, and the filter's posted install followed the
+     * newest one, so the Inbox in front went unfiltered until TikTok restarted. The Home long press
+     * had the same fault (S22, 47.1.4, Dark then Light).
+     */
+    @Test public void aThemeChangeLeavesTheFilterOnTheInboxInFront() {
+        Settings.HIDE_INBOX_SEARCH.save(true);
+        Inbox feed = new Inbox();
+        inboxes.add(feed);
+        InboxFilter.install(feed.activity);
+        feed.owner.pause().resume();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        // The feed's copy goes behind the settings page that changed the theme.
+        feed.owner.pause().stop();
+        Inbox launcher = new Inbox(Robolectric.buildActivity(Activity.class).create());
+        inboxes.add(launcher);
+        InboxFilter.install(launcher.activity);
+        // Recreated last, the launcher's copy is resumed for a moment and stopped again, and the
+        // install its onCreate posted runs after that.
+        launcher.owner.start().resume().pause().stop();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        feed.owner.restart().start().resume();
+        // The recreated Inbox comes up with TikTok's own header.
+        feed.search.setVisibility(View.VISIBLE);
+        feed.layout();
+        assertEquals("the Inbox in front went unfiltered after a theme change",
+                View.GONE, feed.search.getVisibility());
+        launcher.layout();
+        assertEquals("the buried copy kept the filter", View.VISIBLE, launcher.search.getVisibility());
+    }
+
+    /** The buried copy can also blink on while the Inbox stays in front and gets no new resume. */
+    @Test public void aBuriedMainActivityResumedForAMomentHandsTheFilterBack() {
+        Settings.HIDE_INBOX_SEARCH.save(true);
+        Inbox feed = new Inbox();
+        inboxes.add(feed);
+        InboxFilter.install(feed.activity);
+        feed.owner.pause().resume();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        Inbox launcher = new Inbox(Robolectric.buildActivity(Activity.class).create());
+        inboxes.add(launcher);
+        InboxFilter.install(launcher.activity);
+        launcher.owner.start().resume().pause().stop();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+
+        feed.search.setVisibility(View.VISIBLE);
+        feed.layout();
+        assertEquals("the Inbox in front lost its filter", View.GONE, feed.search.getVisibility());
+    }
+
     private Inbox openInbox() {
         Inbox inbox = new Inbox();
         inboxes.add(inbox);
@@ -507,12 +561,24 @@ public class InboxLayoutLifecycleTest {
     }
 
     private static final class Inbox {
-        final ActivityController<Activity> owner = Robolectric.buildActivity(Activity.class).setup().visible();
-        final Activity activity = owner.get();
-        final LinearLayout rows = new LinearLayout(activity);
-        final View tab = new View(activity), addPeople = new View(activity), search = new View(activity), status = new View(activity);
+        final ActivityController<Activity> owner;
+        final Activity activity;
+        final LinearLayout rows;
+        final View tab, addPeople, search, status;
 
         Inbox() {
+            this(Robolectric.buildActivity(Activity.class).setup().visible());
+        }
+
+        /** On an activity left wherever the caller put it, created at least. */
+        Inbox(ActivityController<Activity> owner) {
+            this.owner = owner;
+            activity = owner.get();
+            rows = new LinearLayout(activity);
+            tab = new View(activity);
+            addPeople = new View(activity);
+            search = new View(activity);
+            status = new View(activity);
             LinearLayout root = new LinearLayout(activity);
             root.setOrientation(LinearLayout.VERTICAL);
             tab.setId(id("47.1.4:opi"));

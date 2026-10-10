@@ -146,6 +146,7 @@ Separate handles or user IDs with commas. Their videos stay when a filter on pos
 Separate language codes with commas, like en, es. A video whose original caption is in another language is hidden. Videos with no caption, or only translated ones, always stay.	Разделяйте коды языков запятыми, например en, es. Видео, у которого исходное описание на другом языке, скрывается. Видео без описания или только с переведённым остаются всегда.
 Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.	Названия через запятую, точно как в строке под описанием профиля, например TikTok Studio или «Ваши заказы». Перезапустите TikTok, чтобы это применить.
 Couldn't add the older seen videos. Try again.	Не удалось добавить старые просмотренные видео. Попробуйте снова.
+Couldn't copy the build details. Use Save build details instead.	Не удалось скопировать сведения о сборке. Используйте вместо этого «Сохранить сведения о сборке».
 Couldn't copy the report. Use Save report instead.	Не удалось скопировать отчёт. Используйте вместо этого «Сохранить отчёт».
 Couldn't read TikTok's current values (%1$s). Refresh values from the menu to try again.	Не удалось прочитать текущие значения TikTok (%1$s). Обновите значения через меню, чтобы попробовать снова.
 Couldn't restart TikTok. Close it and open it again.	Не удалось перезапустить TikTok. Закройте приложение и откройте его снова.
@@ -287,7 +288,7 @@ Caption text size	Размер текста субтитров
 Description text size	Размер текста описания
 Author text size	Размер имени автора
 Use 0 for TikTok's size, or %1$d to %2$d. Sizes the description below the author's name and keeps Android's font scaling.	Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер описания под именем автора и сохраняет масштаб шрифта Android.
-Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.	Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер имени автора и сохраняет масштаб шрифта Android.
+Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.	Используйте 0 для размера TikTok или значение от %1$d до %2$d. Меняет размер имени автора и даты публикации рядом с ним и сохраняет масштаб шрифта Android.
 Captions	Субтитры
 Captions, gestures and on-screen controls	Субтитры, жесты и элементы на экране
 Capture crash reports locally	Сохранять отчёты о сбоях локально
@@ -750,6 +751,8 @@ Likes range	Диапазон лайков
 Shares range	Диапазон репостов
 Use Save report for this large report	Используйте «Сохранить отчёт» для этого большого отчёта
 Video player settings	Настройки видеоплеера
+The network proxy from that file is off. Check its address before you turn it on	Сетевой прокси из этого файла выключен. Проверьте его адрес, прежде чем включать
+Your network proxy was kept, since a backup can't change it	Ваш сетевой прокси сохранён, так как резервная копия не может его менять
 Videos can't be saved to the folder in that file, so your video folder was kept	Видео нельзя сохранить в папку из этого файла, поэтому ваша папка для видео осталась прежней
 Views range	Диапазон просмотров
 Minimum	Минимум
@@ -1436,12 +1439,12 @@ TikTok refused the follow with code %1$s	TikTok отклонил подписк�
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok отклонил подписку с кодом %1$s. Причиной может быть скрытая CAPTCHA.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok отклонил подписку: %1$s Причиной может быть скрытая CAPTCHA.
 Hushfeed is paused	Hushfeed на паузе
-Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.	Изменения Hushfeed, применяемые во время работы приложения, приостановлены. Ваши настройки сохранены. Изменения, встроенные в APK, остаются.
+Hushfeed's switches are paused. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Переключатели Hushfeed приостановлены. Ваши настройки сохранены. Изменения, сделанные при патчинге, например название или значок приложения, остаются.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok закрылся три раза в течение минуты после запуска, поэтому Hushfeed поставил себя на паузу. Ваши настройки остаются как есть.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Файл с именем hushfeed-safe-mode в папке TikTok в Android/data поставил Hushfeed на паузу. Ваши настройки остаются как есть.
 Turn Hushfeed back on	Снова включить Hushfeed
 Pause Hushfeed	Поставить Hushfeed на паузу
-Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.	Приостановить изменения во время работы приложения после перезапуска TikTok. Ваши настройки сохранятся. Изменения, встроенные в APK, останутся.
+Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.	Приостановить переключатели Hushfeed после перезапуска TikTok. Ваши настройки сохранятся. Изменения, сделанные при патчинге, например название или значок приложения, останутся.
 Hushfeed turns back on when TikTok restarts.	Hushfeed снова включится при перезапуске TikTok.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	Не удалось удалить файл hushfeed-safe-mode. Удалите его из папки TikTok в Android/data, чтобы снова включить Hushfeed.
 Hide TikTok Shop in search	Скрывать TikTok Shop в поиске
@@ -1691,7 +1694,7 @@ Visual search	Визуальный поиск
 AI Self	AI Self
 Long-press menu on every post	Меню долгого нажатия на каждой публикации
 TikTok's hold to speed up	Ускорение удержанием от TikTok
-TikTok's background play and auto-scroll	Фоновое воспроизведение и автопрокрутка от TikTok
+TikTok's background play and Auto scroll	Фоновое воспроизведение и автопрокрутка от TikTok
 Post dates in the feed	Даты публикаций в ленте
 Show exact counts	Показывать точные числа
 Show counts as full numbers, like 1,234,567 instead of 1.2M.	Показывает числа полностью, например 1 234 567 вместо 1.2M.
@@ -1772,7 +1775,7 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Всплывающих окон пока не было
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	Попользуйтесь TikTok какое-то время. Окно появится здесь, когда TikTok впервые попытается его показать.
 Fade the video controls	Приглушить кнопки поверх видео
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Приглушает кнопки, подпись и вкладки поверх видео до этого уровня вместо того, чтобы скрывать их. При 100 всё выглядит так, как рисует TikTok. Приглушённые кнопки по-прежнему реагируют на нажатия. При 0 кнопки и подпись скрыты, а вкладки остаются на 10.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Приглушает кнопки, подпись и вкладки поверх видео до этого уровня вместо того, чтобы скрывать их. При 100 всё выглядит так, как рисует TikTok. Приглушённые кнопки по-прежнему реагируют на нажатия. В чистом виде кнопки и подпись остаются на экране с этим уровнем, а нажатия проходят сквозь них к видео. При 0 кнопки и подпись скрыты, а вкладки остаются на 10.
 Loop a story	Повторять историю
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Когда история заканчивается, она запускается заново, а не переключается на следующую. Чтобы перейти дальше, коснитесь экрана или проведите пальцем.
 Hold a photo story	Удерживать историю с фото
@@ -1948,7 +1951,7 @@ Video frame	Кадр из видео
 Hide the LIVE bubble	Скрыть пузырь LIVE
 Stop the bubble TikTok floats at the top of the feed to point you to a LIVE.	Отключает пузырь, который TikTok показывает вверху ленты, чтобы позвать вас в LIVE.
 Auto-advance in search results	Автопереход в результатах поиска
-Also turns on TikTok's own auto scroll for videos opened from search. Restart TikTok to apply this.	Также включает собственную автопрокрутку TikTok для видео, открытых из поиска. Перезапустите TikTok, чтобы применить.
+Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.	Также включает собственную автопрокрутку TikTok для видео, открытых из поиска. Перезапустите TikTok, чтобы применить.
 Use system emoji	Использовать системные эмодзи
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.	Показывает все эмодзи шрифтом эмодзи вашего телефона. Самые новые эмодзи, которых в телефоне ещё нет, могут выглядеть как квадрат или распасться на части.
 Open shared videos alone	Открывать видео по ссылке отдельно
@@ -2056,3 +2059,19 @@ Budgets and reminders	Лимиты и напоминания
 %1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Не переводить эти языки автоматически
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Разделяйте коды языков запятыми, например es, de. Когда TikTok переводит за вас, описания и комментарии на этих языках остаются как написаны. «Посмотреть перевод» по-прежнему работает, если нажать. Собственный список TikTok «Не переводить» остаётся как есть.
+Performance	Производительность
+Skip the splash ad	Пропускать рекламу при запуске
+Stop the full-screen ad TikTok can show while it starts up.	Не даёт TikTok показывать полноэкранную рекламу при запуске.
+Skip update checks	Пропускать проверку обновлений
+Stop the two background tasks TikTok uses to check for updates, one of them when your phone starts. Some in-app update prompts may stop. Play Store updates still work.	Останавливает две фоновые задачи, которыми TikTok проверяет обновления, одна из них запускается при включении телефона. Некоторые подсказки об обновлении в приложении могут перестать появляться. Обновления через Play Store продолжат работать.
+Limit background traffic	Ограничить фоновый трафик
+Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.	Не даёт TikTok заранее загружать следующие видео и настраивать уведомления. Пока это включено, вы не будете получать уведомления, в том числе о сообщениях. Видео могут начинаться чуть позже.
+Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.	Не даёт TikTok заранее загружать следующие видео. Расходуется меньше трафика, но видео могут начинаться чуть позже.
+Cache one frame of animated images	Кэшировать один кадр анимированных изображений
+Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.	Хранит для анимированных стикеров и GIF только кадр на экране, а не все кадры, чтобы они занимали меньше памяти. Действует для следующих загруженных.
+Stop on-device AI profiling	Остановить профилирование ИИ на устройстве
+Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.	Не даёт запускаться встроенному ИИ-движку TikTok, чтобы он не получал копию всего, что TikTok записывает о вашем использовании. TikTok работает так, будто этого движка нет.
+Allow voice comments	Разрешить голосовые комментарии
+Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Показывает кнопку TikTok для записи голосового комментария в аккаунтах, где её ещё нет. Это не проверялось на настоящем аккаунте, поэтому может не сработать.
+Sign in without a passkey	Входить без ключа доступа
+TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok считает ваш телефон устройством без ключей доступа, поэтому при входе запрашивает пароль или код по электронной почте или SMS. Менеджеры паролей не передают ключ доступа пропатченному приложению.

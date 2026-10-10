@@ -28,11 +28,13 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
     public static boolean isAvailable() {
         return SettingsStatus.commentToolsEnabled
                 || SettingsStatus.commentTranslationEnabled
+                || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
                 || SettingsStatus.commentSortControlsEnabled
-                || SettingsStatus.lengthLimitsEnabled;
+                || SettingsStatus.lengthLimitsEnabled
+                || SettingsStatus.voiceCommentsEnabled;
     }
 
     @Override
@@ -43,6 +45,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
     @Override
     public void addPreferences(Context context) {
         boolean reading = SettingsStatus.commentTranslationEnabled
+                || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled;
@@ -236,14 +239,25 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.BLOCK_FROM_COMMENT
             ));
         }
-        if (SettingsStatus.lengthLimitsEnabled) {
+        if (SettingsStatus.lengthLimitsEnabled || SettingsStatus.voiceCommentsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Writing"));
+        }
+        if (SettingsStatus.lengthLimitsEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Lift text length limits",
                     "Let comments, repost notes and your bio run past the length TikTok's app stops at. "
                             + "TikTok's servers can still turn down a long one.",
                     Settings.LIFT_LENGTH_LIMITS
+            ));
+        }
+        if (SettingsStatus.voiceCommentsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Allow voice comments",
+                    "Show TikTok's button for recording a spoken comment, on accounts that don't "
+                            + "have it yet. It hasn't been tried on a real account, so it may not work.",
+                    Settings.ENABLE_VOICE_COMMENTS
             ));
         }
     }

@@ -12,20 +12,24 @@ import android.os.Looper;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.EarlySwitch;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
  * Location reads answered with nothing while the switch is on.
  *
  * <p>The last known location comes back null and an update request is dropped on the floor, so
- * its listener never hears anything. The switch is off by default, so a read before the settings
- * context exists goes through.
+ * its listener never hears anything. A read before the settings context exists takes the switch
+ * straight from the saved file.
  */
 @SuppressWarnings({"unused", "deprecation"})
 public final class LocationGovernor {
+    /** {@link Settings#BLOCK_LOCATION}'s key, for the read before the settings context. */
+    static final String SWITCH_KEY = "block_location";
 
     private static boolean blocks(String what) {
-        if (Utils.getContext() == null || !Settings.BLOCK_LOCATION.get()) return false;
+        boolean on = Utils.getContext() != null ? Settings.BLOCK_LOCATION.get() : EarlySwitch.isOn(SWITCH_KEY);
+        if (!on) return false;
         Logger.printInfo(() -> "Location governor: blocked " + what);
         return true;
     }

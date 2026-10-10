@@ -460,6 +460,26 @@ public class FeedMuteTest {
         assertTrue(FeedMute.holdPageFocus("P"));
     }
 
+    /**
+     * TikTok's launcher entry is an alias of the main activity, and a theme change recreates the
+     * buried copy too. It resumes and pauses for a moment while the feed stays resumed in front,
+     * and that pause took the feed out of front, so the next video played with sound.
+     */
+    @Test public void aBuriedMainActivityPausingLeavesTheFeedMuted() {
+        Settings.FEED_MUTED.save(true);
+        var buried = Robolectric.buildActivity(Activity.class).create().start().resume();
+        buried.pause().stop();
+        FeedMute.onControllerPlay(new Controller(feed.get()), video("701"));
+        FeedMute.onEnginePlay(engine("B", "701"));
+        assertEquals("the feed's next video", "B mute", lastFor("B"));
+        assertTrue(FeedMute.holdPageFocus("P"));
+        buried.destroy();
+
+        feed.pause();
+        assertFalse("with no feed window resumed, the focus goes through", FeedMute.holdPageFocus("P"));
+        feed.resume();
+    }
+
     @Test public void mutingMidVideoGivesUpTheFocusTheFeedHeld() {
         Object engine = engine("A", "501");
         FeedMute.onControllerPlay(new Controller(feed.get()), video("501"));

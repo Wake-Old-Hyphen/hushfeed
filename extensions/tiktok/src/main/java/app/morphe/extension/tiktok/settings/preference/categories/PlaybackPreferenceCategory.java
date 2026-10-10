@@ -64,7 +64,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "Auto-advance keeps working.",
                     Settings.AUTO_ADVANCE_HIDE_PANEL_ACTION));
             addPreference(new TogglePreference(context, "Auto-advance in search results",
-                    "Also turns on TikTok's own auto scroll for videos opened from search. "
+                    "Also turns on TikTok's own Auto scroll for videos opened from search. "
                             + "Restart TikTok to apply this.",
                     Settings.AUTO_ADVANCE_SEARCH));
         }

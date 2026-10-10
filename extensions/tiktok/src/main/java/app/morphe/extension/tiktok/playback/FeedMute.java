@@ -84,6 +84,12 @@ public final class FeedMute {
 
     /** TikTok's screens between their onStart and onStop. None means TikTok is in the background. */
     private static final WeakHashMap<Activity, Boolean> STARTED = new WeakHashMap<>();
+    /**
+     * Feed windows resumed now. TikTok's launcher entry is an alias of MainActivity, so a theme
+     * change recreates a buried copy too, and that copy resumes and pauses for a moment while the
+     * feed's stays resumed. Main thread only.
+     */
+    private static final WeakHashMap<Activity, Boolean> RESUMED_FEED = new WeakHashMap<>();
     /** The feed's activity is the one in front. Main thread writes, any thread reads. */
     private static volatile boolean feedInFront;
     /** The last video a controller asked to play was a feed video. */
@@ -121,6 +127,7 @@ public final class FeedMute {
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityResumed(Activity resumed) {
                 if (!isFeedHost(resumed)) return;
+                RESUMED_FEED.put(resumed, Boolean.TRUE);
                 feedInFront = true;
                 remuteFeedEngines();
                 if (refreshOwed) {
@@ -130,7 +137,10 @@ public final class FeedMute {
             }
 
             @Override public void onActivityPaused(Activity paused) {
-                if (isFeedHost(paused)) feedInFront = false;
+                if (!isFeedHost(paused)) return;
+                RESUMED_FEED.remove(paused);
+                // A buried copy pausing leaves the feed in front, still muted.
+                feedInFront = !RESUMED_FEED.isEmpty();
             }
 
             @Override public void onActivityCreated(Activity created, Bundle state) { }
@@ -147,7 +157,9 @@ public final class FeedMute {
                 }
             }
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
-            @Override public void onActivityDestroyed(Activity destroyed) { }
+            @Override public void onActivityDestroyed(Activity destroyed) {
+                RESUMED_FEED.remove(destroyed);
+            }
         });
     }
 
@@ -567,6 +579,7 @@ public final class FeedMute {
         synchronized (STARTED) {
             STARTED.clear();
         }
+        RESUMED_FEED.clear();
         lastSessionHelper = new WeakReference<>(null);
         lastPageHelper = new WeakReference<>(null);
         feedInFront = false;

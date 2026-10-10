@@ -50,6 +50,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.authorRegionEnabled
                 || SettingsStatus.engagementRateEnabled
                 || SettingsStatus.hideFeedLiveButtonEnabled
+                || SettingsStatus.hideFeedSidebarButtonEnabled
                 || SettingsStatus.hideFeedSearchButtonEnabled
                 || SettingsStatus.feedFilterEnabled
                 || SettingsStatus.promotionalBannersEnabled
@@ -228,7 +229,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             descriptionSize.zeroMeans("TikTok's size");
             addPreference(descriptionSize);
             NumberInputPreference authorSize = new NumberInputPreference(context, "Author text size",
-                    L10n.f(context, "Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and keeps Android's font scaling.",
+                    L10n.f(context, "Use 0 for TikTok's size, or %1$d to %2$d. Sizes the author's name and the post date next to it, and keeps Android's font scaling.",
                             FeedTextSize.MIN_TEXT_SIZE, FeedTextSize.MAX_TEXT_SIZE),
                     Settings.FEED_AUTHOR_TEXT_SIZE, "%1$s point", "%1$s points") {
                 @Override protected int clamp(int value) { return FeedTextSize.clampSize(value); }
@@ -297,6 +298,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     private void addAroundTheVideo(Context context) {
         boolean any = SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.hideFeedLiveButtonEnabled
+                || SettingsStatus.hideFeedSidebarButtonEnabled
                 || SettingsStatus.hideFeedSearchButtonEnabled
                 || SettingsStatus.feedFilterEnabled;
         if (!any) return;
@@ -311,7 +313,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         }
         // TikTok builds the side menu button in code with no view id, so only the LIVE patch's
         // toolbar check can take it away; the video overlay hider has nothing to find it by.
-        if (SettingsStatus.hideFeedLiveButtonEnabled) {
+        // A build the patch doesn't declare can leave that check out, so the row has its flag.
+        if (SettingsStatus.hideFeedSidebarButtonEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Hide the side menu button",
@@ -533,7 +536,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new NumberInputPreference(
                     context,
                     "Fade the video controls",
-                    "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
+                    "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
                     Settings.FADE_CONTROLS_OPACITY, "%1$s%%"
             ));
         }

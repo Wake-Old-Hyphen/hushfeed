@@ -51,6 +51,33 @@ public class VideoOverlayHiderTest {
         Utils.setContext(context);
     }
 
+    /**
+     * Leaving a faded Clear display holds the whole level until TikTok's own opacity is back at
+     * full (#84). A control TikTok rests lower never gets there, so the hold lets go after a second
+     * and the control goes back to a share of TikTok's opacity.
+     */
+    @Test
+    public void theWholeLevelLetsGoOfAControlTikTokRestsBelowFull() {
+        View control = new View(context);
+        VideoOverlayHider.setFaded(control, 50, true);
+        control.setAlpha(0f);
+        VideoOverlayHider.setFaded(control, 50, true);
+        assertEquals("kept in sight while TikTok clears it", 0.5f, control.getAlpha(), 0f);
+
+        control.setAlpha(0.6f);
+        VideoOverlayHider.setFaded(control, 50, false);
+        assertEquals("held while TikTok's restore runs", 0.5f, control.getAlpha(), 0f);
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofMillis(500));
+        VideoOverlayHider.setFaded(control, 50, false);
+        assertEquals(0.5f, control.getAlpha(), 0f);
+
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofMillis(600));
+        VideoOverlayHider.setFaded(control, 50, false);
+        assertEquals("half of the 0.6 TikTok rests it at", 0.3f, control.getAlpha(), 1e-6f);
+        VideoOverlayHider.setFaded(control, 100);
+        assertEquals(0.6f, control.getAlpha(), 1e-6f);
+    }
+
     @Test
     public void turningTheSwitchOffPutsTheViewBack() {
         View caption = new View(context);
@@ -1087,6 +1114,54 @@ public class VideoOverlayHiderTest {
             Settings.HIDE_RAIL_LIKE.save(false);
             Settings.HIDE_STATUS_BAR.save(false);
         }
+    }
+
+    /**
+     * TikTok's launcher entry is a second MainActivity under the feed's, and a theme change can
+     * resume it for a moment while the feed stays in front and gets no new resume. The layout
+     * listener went with that resume and with the install its onCreate posted, and the feed in
+     * front got its LIVE entrance back on the next layout.
+     */
+    @Test
+    public void aBuriedMainActivityResumedForAMomentHandsTheHidesBack() {
+        int liveId = 0x7f0a0e41;
+        VideoOverlayHider.resolveForTests("47.1.4:kam", liveId);
+        Settings.HIDE_LIVE_ENTRANCE.save(true);
+        try (var feed = Robolectric.buildActivity(
+                     com.ss.android.ugc.aweme.main.MainActivity.class).create();
+             var launcher = Robolectric.buildActivity(
+                     com.ss.android.ugc.aweme.main.MainActivity.class).create()) {
+            View live = liveEntrance(feed.get(), liveId);
+            VideoOverlayHider.install(feed.get());
+            feed.start().resume();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            layOut(feed.get());
+            assertEquals(View.GONE, live.getVisibility());
+
+            liveEntrance(launcher.get(), liveId);
+            VideoOverlayHider.install(launcher.get());
+            // Recreated, the buried copy is resumed for a moment and stopped again, and the
+            // install its onCreate posted runs after that.
+            launcher.start().resume().pause().stop();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+
+            // TikTok shows the entrance again, and the feed's next layout takes it away.
+            live.setVisibility(View.VISIBLE);
+            layOut(feed.get());
+            assertEquals("the feed in front got its LIVE entrance back",
+                    View.GONE, live.getVisibility());
+        } finally {
+            Settings.HIDE_LIVE_ENTRANCE.resetToDefault();
+        }
+    }
+
+    private static View liveEntrance(Activity activity, int id) {
+        FrameLayout root = new FrameLayout(activity);
+        View live = new View(activity);
+        live.setId(id);
+        root.addView(live);
+        activity.setContentView(root);
+        return live;
     }
 
     @Test

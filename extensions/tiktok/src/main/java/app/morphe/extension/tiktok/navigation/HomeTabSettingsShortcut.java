@@ -5,9 +5,7 @@
 package app.morphe.extension.tiktok.navigation;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +30,27 @@ import app.morphe.extension.tiktok.settings.TikTokActivityHook;
  * <p>The tab bar is rebuilt now and then (a tab filter change, a configuration change), so the
  * listener is checked on each layout pass of the main activity, and switching the setting off
  * takes it away again the next time the feed is laid out.
+ *
+ * <p>TikTok's launcher entry is an alias of MainActivity, so the task can hold two of them, the
+ * launcher's under the feed's. Changing TikTok's appearance recreates both, the buried one last,
+ * and following the newest one left Home without its long press until TikTok was restarted. The
+ * shortcut follows the main activity that is resumed instead ({@link FrontWindow}).
  */
 public final class HomeTabSettingsShortcut {
     private static final GlobalLayoutHook LAYOUT = new GlobalLayoutHook();
-    private static WeakReference<Application> followed = new WeakReference<>(null);
-    private static WeakReference<Activity> activityReference = new WeakReference<>(null);
+    /**
+     * The main activity in front, out of every one the patched MainActivity.onCreate handed in.
+     * The main activity alone has the tab bar; a creator's video opens in another one.
+     */
+    private static final FrontWindow FRONT = new FrontWindow(false, new FrontWindow.Listener() {
+        @Override public void onFront(Activity activity) {
+            track(activity);
+        }
+
+        @Override public void onGone(Activity activity) {
+            LAYOUT.detach();
+        }
+    });
     /** The tab the listener is on, so a rebuilt tab gets it again and an old one is let go. */
     private static WeakReference<View> attached = new WeakReference<>(null);
     /** A tab that was long-clickable before this touched it, so it is never taken over. */
@@ -64,41 +78,21 @@ public final class HomeTabSettingsShortcut {
     public static void install(Context context) {
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
-            Activity activity = (Activity) context;
-            activityReference = new WeakReference<>(activity);
-            follow(activity.getApplication());
+            FRONT.add((Activity) context);
         } catch (Throwable error) {
             Logger.printException(() -> "Could not follow the Home tab", error);
         }
     }
 
-    private static void follow(Application application) {
-        if (application == null || followed.get() == application) return;
-        followed = new WeakReference<>(application);
-        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            // The main activity alone has the tab bar; a creator's video opens in another one.
-            @Override public void onActivityResumed(Activity resumed) {
-                if (activityReference.get() != resumed) return;
-                ViewGroup root = resumed.findViewById(android.R.id.content);
-                if (root != null) LAYOUT.install(root, HomeTabSettingsShortcut::apply);
-                apply();
-            }
-
-            @Override public void onActivityDestroyed(Activity destroyed) {
-                if (activityReference.get() == destroyed) LAYOUT.detach();
-            }
-
-            @Override public void onActivityCreated(Activity created, Bundle state) { }
-            @Override public void onActivityStarted(Activity started) { }
-            @Override public void onActivityPaused(Activity paused) { }
-            @Override public void onActivityStopped(Activity stopped) { }
-            @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
-        });
+    private static void track(Activity activity) {
+        ViewGroup root = activity.findViewById(android.R.id.content);
+        if (root != null) LAYOUT.install(root, HomeTabSettingsShortcut::apply);
+        apply();
     }
 
     static void apply() {
         try {
-            Activity activity = activityReference.get();
+            Activity activity = FRONT.get();
             if (activity == null || activity.isFinishing()) {
                 LAYOUT.detach();
                 return;
@@ -133,8 +127,7 @@ public final class HomeTabSettingsShortcut {
 
     static void resetForTests() {
         LAYOUT.detach();
-        followed = new WeakReference<>(null);
-        activityReference = new WeakReference<>(null);
+        FRONT.resetForTests();
         attached = new WeakReference<>(null);
         refused = new WeakReference<>(null);
     }

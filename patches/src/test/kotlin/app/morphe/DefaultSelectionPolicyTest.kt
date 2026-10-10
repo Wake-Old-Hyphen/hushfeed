@@ -21,12 +21,9 @@ class DefaultSelectionPolicyTest {
         "Block P2P video relay" to "takes the relay's files out of the APK while patching",
         "Change app name" to "changes the name Android shows for the app",
         "Custom launcher icon" to "changes the launcher icon",
-        "Drop the animated image cache" to "changes TikTok with no switch in front of it",
-        "Enable voice comments" to "flips TikTok's own gate with no switch and hasn't been checked on a device",
         "Feature Gate Recorder" to "a developer tool for reading TikTok's feature gates",
         "Hide Play Store update offer" to "raises the version code, so a lower-coded build won't install over it",
         "Hide the risk control CAPTCHA" to "sits on TikTok's account verification path and only records for now",
-        "Limit background traffic" to "changes TikTok with no switch in front of it",
         "Look like the store app" to "answers TikTok's signature and installer checks as the store app",
         "Network request report" to "a research tool that counts every API request, with no switch",
         "Region spoof" to "rewrites every locale and timezone read, sign-in included, and its store region switch is experimental",
@@ -36,9 +33,6 @@ class DefaultSelectionPolicyTest {
         "Remove unused language packs" to "takes files out of the APK while patching",
         "Run beside the store app" to "registers a cloned package under TikTok's own name",
         "Skip first-launch setup" to "only helps with its switch on, since setup runs before settings can be reached",
-        "Skip the splash ad" to "changes TikTok with no switch in front of it",
-        "Skip update checks" to "changes TikTok with no switch in front of it",
-        "Stop on-device AI profiling" to "changes TikTok with no switch in front of it",
         "Trust user certificates" to "lets any user-installed certificate read TikTok's traffic, with no switch",
     )
 

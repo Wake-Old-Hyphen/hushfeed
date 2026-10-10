@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Video idarəetmələrini solğunlaşdır indi Təmiz ekranla da işləyir. 1 ilə 99 arasında olanda Təmiz ekran düymələri və başlığı götürmək əvəzinə seçdiyiniz səviyyədə ekranda saxlayır, onlara toxunuş isə videoya gedir, buna görə heç nə təsadüfən açılmır. Basıb saxlamaq və ya çimdik jesti sizi yenə Təmiz ekrandan çıxarır, ondan kənarda isə solğunlaşdırılmış idarəetmələr əvvəlki kimi toxunuşları qəbul edir (#84).
+
+* **TikTok:** Lent videolarını səssiz edin indi TikTok-u açıq və tünd arasında dəyişdikdən sonra da lenti səssiz saxlayır. Əvvəllər lentdən çıxıb geri qayıdana qədər növbəti videolar səslə oynaya bilirdi.
+
+* **TikTok:** Neçəsinin süzüldüyünü göstərin və Gələnlər bölməsinin hissələrini gizlədən açarlar TikTok-u açıq və tünd görünüş arasında dəyişdikdən sonra da işləyir. Əvvəllər onlar TikTok yenidən başladılana qədər işləməyi dayandıra bilirdi.
+
+* **TikTok:** Hushfeed ayarları üçün Ana səhifəni uzun basın TikTok-u açıq və tünd görünüş arasında dəyişdikdən sonra da işləyir. Əvvəllər TikTok yenidən başladılana qədər işləmirdi.
+
+* **TikTok:** Ehtiyat nüsxəni bərpa etmək artıq Şəbəkə proksisini açmır və artıq olan proksi ünvanınızı əvəz etmir, ona görə də başqasının hazırladığı ehtiyat nüsxə TikTok trafikinizi onun serverindən keçirə bilməz. Hələ proksi qurulmamış telefonda ünvan açar söndürülü halda gəlir və bərpadan sonra bu barədə qeyd göstərilir.
+
+* **TikTok:** Bu dilləri avtomatik tərcümə etməyin indi zh-Hant, zh-TW, zh-HK və ya zh-MO yazanda ənənəvi Çin dilini yazıldığı kimi saxlayır, zh-Hans-TW isə yenə sadələşdirilmiş Çin dili deməkdir. Əvvəllər bu girişlər bunun əvəzinə sadələşdirilmiş Çin dilini qoruyurdu (#121).
+
+* **TikTok:** Hide feed LIVE button indi yan menyu düyməsinin tapılmadığı TikTok versiyasına da tətbiq olunur. O hissə ötürülür, Yan menyu düyməsini gizlədin sətri isə yalnız düymə tapılanda görünür (#128).
+
+* **TikTok:** Ayarlarda axtarış indi Build təfərrüatları və Yeniliklər bölmələrini tapır. Feature Gate Lab və Lisenziyalar kimi bəzi nəticələr indi olduqları qrupu göstərir, yalnız durğu işarələrindən ibarət axtarış isə Uyğun ayar yoxdur yazır.
+
+* **TikTok:** Hushfeed ayarlarının altında görünən bildiriş indi ona toxunanda bağlanır və toxunuş artıq altındakı ayara düşmür. TalkBack onun əməliyyatını Bağlayın kimi oxuyur.
+
+* **TikTok:** Fasilə indi açıq olanda nəyin qaldığını sadə sözlərlə izah edir. Ayarlarınız saxlanılır, yamaqlayanda edilən dəyişikliklər də, məsələn tətbiqin adı və ya ikonu, qalır. TikTok-un Auto scroll funksiyası da indi hər sətirdə eyni cür yazılır.
+
+* **TikTok:** Lent filtri və Şərhlər bölmələrindəki dil siyahıları indi en,,es kimi əlavə vergülü qəbul edir. Əvvəllər siyahı mesajda boş adla rədd edilirdi.
+
+* **TikTok:** Build təfərrüatlarını kopyalamaq alınmasa, mesaj indi Build təfərrüatlarını saxlayın seçimindən istifadə etməyi deyir.
+
+* **TikTok:** Yeniliklər daha ayar adlarının ətrafında lazımsız tərs dırnaq işarələri göstərmir.
+
+* **TikTok:** Seriyanı davam etdirin bölməsindəki Nə vaxt göndərilsin üçün vaxt seçicisi indi Hushfeed ayarlarına uyğun olaraq tünd və ya açıq açılır.
+
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling və Enable voice comments indi Hushfeed ayarlarında hər biri öz açarına malikdir, ona görə də Fasilə onları da söndürür və Morphe Manager-in sadə rejimi indi onları da seçir. Bu açarların hər biri söndürülmüş başlayır. Əvvəllər bu yamalardan biri ilə yamaqlamısınızsa, işləməyə davam etməsi üçün yenilədikdən sonra onun açarını yandırın. Açılış reklamını ötür, Yeniləmə yoxlamalarını ötür, Arxa fon trafikini məhdudlaşdır və Animasiyalı şəkillərin yalnız bir kadrını keşlə Tətbiq səhifəsində Performans bölməsindədir. Cihazdaxili süni intellekt profilləşdirməsini dayandır Məxfilik bölməsində, Səsli şərhlərə icazə ver isə Şərhlər bölməsindədir.
+
+* **TikTok:** Yeni yama, Skip passkey sign-in, Morphe Manager-in sadə rejimində açarı söndürülü halda seçilir (#102). Parol menecerləri yamaqlanmış tətbiqə passkey vermir, ona görə də passkey-i olan hesab TikTok-un passkey addımında ilişib qala bilərdi. Hushfeed ayarları > Tətbiq bölməsində Passkey olmadan daxil olun açarını yandırın, TikTok telefonunuza passkey dəstəkləməyən telefon kimi baxacaq və daxil olmağın başqa yollarını, məsələn parolunuzu və ya e-poçt ya da SMS ilə gələn kodu təklif edəcək. Hesabdan çıxmısınızsa, Hushfeed ayarlarını açmaq üçün Ana səhifəni uzun basın.
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Müəllif mətninin ölçüsü indi müəllifin adının yanındakı paylaşım tarixinin ölçüsünü də dəyişir, ona görə ikisi eyni ölçüdə qalır (#66).
+
 * **TikTok:** Şərhlər ayarlarında yeni sıra var, Bu dilləri avtomatik tərcümə etməyin. Siz doldurmayana qədər boşdur (#121). `es, de` kimi dil kodları yazın, TikTok sizin yerinizə tərcümə edəndə bu dillərdəki başlıqlar və şərhlər yazıldığı kimi qalır. Tərcüməyə bax toxunanda yenə işləyir, TikTok-un öz Tərcümə etmə siyahısı isə dəyişmir.
 
 * **TikTok:** Oflayn videoları siz silənə qədər saxlayın indi TikTok-un siyahını təmizlədiyi daha iki yolu əhatə edir. Açar aktiv olanda TikTok-un Auto adjust funksiyası TikTok açılanda oflayn video limitini azaltmır və siyahını kəsmir, oflayn videoları standart olaraq aktiv edən sınaq bitəndə TikTok-un işlətdiyi təmizləmə isə atlanır (#123). Açarı dəyişdikdən sonra TikTok-u yenidən başlat.
@@ -16,11 +52,7 @@
 
 * **TikTok:** Morphe Manager-dəki Dark background color seçimi indi "hex kod" əvəzinə "rəng kodu" deyir və qaranın OLED ekranlarda həmin pikselləri tamamilə söndürdüyünü izah edir.
 
-## 0.70.1 (2026-10-09)
-
 * **TikTok:** Hushfeed ayarları indi yeddi qrupun üstündə yığcam status və axtarışla açılır. Əlaqəli səhifələr bir yerdədir, ehtiyat nüsxələr, diaqnostika və Feature Gate Lab isə Tətbiq və əlavə ayarlar bölməsindədir. Hushfeed haqqında bölməsində quruluş məlumatları və lisenziyalar bir yerdədir. Axtarış sizi yenə birbaşa ayara aparır və saxlanmış seçimləriniz qorunur. Dayandırma mətni indi saxlanmış ayarların və APK-ya daxil edilmiş dəyişikliklərin qaldığını izah edir.
-
-## 0.70.0 (2026-10-09)
 
 * **TikTok:** Hushfeed indi yalnız TikTok 47.1.4-ü dəstəkləyir. 47.0.3 və ya 47.1.3 istifadə edirsənsə, 47.1.4 APK-sını APKMirror-dan endir və Morphe Manager-də eyni imza açarı ilə yamala ki, girişin və ayarların qalsın. Feature Gate Lab 47.1.4-də hələ də olan açarların dəyişikliklərini saxlayır, qalanlarını isə adi bildirişi ilə söndürür.
 

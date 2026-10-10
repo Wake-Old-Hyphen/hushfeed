@@ -26,6 +26,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
+import app.morphe.extension.tiktok.navigation.FrontWindow;
 import app.morphe.extension.tiktok.navigation.NavigationTabsFilter;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -274,17 +275,34 @@ public final class VideoOverlayHider {
     private static final Map<View, Float> FADED_HERE = new WeakHashMap<>();
 
     /**
-     * Views faded to the chosen opacity (#84): the alpha each had before, the alpha this class
-     * wrote, so a value TikTok wrote since (an animation ending) is told apart from our own, and
-     * the fraction it was faded by, for the pre-draw pass that fades such a value again.
+     * Views faded to the chosen opacity (#84), each with five numbers: [0] the alpha TikTok last
+     * gave it, [1] the alpha this class wrote, so a value TikTok wrote since (an animation ending)
+     * is told apart from our own, [2] the fraction it is faded by, [3] whether that fraction is
+     * the whole opacity rather than a share of TikTok's, and [4] whether the last pass asked for
+     * that. The pre-draw pass reads them to fade a value TikTok wrote again.
      */
     private static final Map<View, float[]> FADED_TO = new WeakHashMap<>();
+    /**
+     * When each view still held at the whole level stopped being asked for it. A control TikTok
+     * rests below full opacity after Clear display (or hides by opacity) never reaches 1, so the
+     * hold lets go after {@link #WHOLE_HOLD_MS} either way, well past TikTok's restore animation.
+     */
+    private static final Map<View, Long> HELD_SINCE = new WeakHashMap<>();
+    private static final long WHOLE_HOLD_MS = 1000;
 
     /** The lowest opacity the tabs are faded to, so the way around the app stays findable. */
     static final int NAVIGATION_FADE_FLOOR = 10;
 
     /** The opacity the current pass fades the controls to, 100 meaning not at all. */
     private static int fadeLevel = 100;
+
+    /**
+     * Whether the current pass is in Clear display with the fade between 0 and 100 (#84). The
+     * controls the fade covers then stay in sight at that level, whatever opacity TikTok's own
+     * Clear display gives them, and a finger goes through them to the video; see
+     * {@link TapThroughControls}.
+     */
+    private static boolean fadedClear;
 
     /**
      * How long a status bar may stay visible before it is hidden again on Android 11 and
@@ -308,15 +326,36 @@ public final class VideoOverlayHider {
     private static final Map<View, Boolean> CUTOUT_OPENED = new WeakHashMap<>();
     private static final GlobalLayoutHook LAYOUT_HOOK = new GlobalLayoutHook();
 
+    /**
+     * Moves the one layout listener to whichever feed window is in front: a detail pager as it
+     * opens, the main activity again as the user comes back to it. TikTok's launcher entry is a
+     * second MainActivity under the feed's, and a theme change resumes it for a moment while the
+     * feed can stay in front, so the listener goes back to the feed when that copy pauses.
+     */
+    private static final FrontWindow FRONT = new FrontWindow(true, new FrontWindow.Listener() {
+        @Override public void onFront(Activity activity) {
+            installNow(activity);
+        }
+
+        @Override public void onGone(Activity activity) {
+        }
+    });
+
     private VideoOverlayHider() {
     }
 
-    /** Called from the patched {@code MainActivity.onCreate}; the work is posted. */
+    /**
+     * Called from the patched {@code MainActivity.onCreate}; the work is posted. A copy recreated
+     * behind the feed runs it after it has stopped again, and leaves the hides where they are.
+     */
     public static void install(Activity activity) {
         if (activity == null) {
             return;
         }
-        Utils.runOnMainThread(() -> installNow(activity));
+        FRONT.add(activity);
+        Utils.runOnMainThread(() -> {
+            if (FRONT.mayTake(activity)) installNow(activity);
+        });
     }
 
     private static void installNow(Activity activity) {
@@ -345,18 +384,14 @@ public final class VideoOverlayHider {
     }
 
     /**
-     * Moves the one layout listener to whichever feed window comes to the front: a detail pager
-     * as it opens, the main activity again as the user comes back to it. Registered once per
-     * application, from the main activity's own install.
+     * Gives a window the brightness back as it pauses. Registered once per application, from
+     * the first install; {@link #FRONT} moves the layout listener.
      */
     private static void follow(Application application) {
         if (application == null || followed.get() == application) return;
         followed = new WeakReference<>(application);
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-            @Override public void onActivityResumed(Activity resumed) {
-                if (FeedVisibility.isFeedWindow(resumed)) installNow(resumed);
-            }
-
+            @Override public void onActivityResumed(Activity resumed) { }
             @Override public void onActivityCreated(Activity created, Bundle state) { }
             @Override public void onActivityStarted(Activity started) { }
             @Override public void onActivityPaused(Activity paused) { EdgeSwipeLevels.onPaused(paused); }
@@ -424,8 +459,18 @@ public final class VideoOverlayHider {
             // the tabs and (with the controls hidden) TikTok's ordinary progress bar (#84).
             // Carried over, they stay away across the swipe.
             boolean carry = !HushfeedPause.isPaused() && RememberClearDisplayPatch.isCarryingClear();
-            boolean tabStrip = !detailPager && !HushfeedPause.isPaused()
+            boolean clearLive = !HushfeedPause.isPaused()
                     && (RememberClearDisplayPatch.isClearDisplayNow() || carry);
+            // The fade belongs to the overlay patch: a value saved before a repatch without it
+            // does nothing, and Pause answers the stock look.
+            fadeLevel = HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled ? 100
+                    : Math.max(0, Math.min(100, Settings.FADE_CONTROLS_OPACITY.get()));
+            // With the fade set, Clear display keeps the controls it covers in sight at that
+            // level instead of taking them away, and lets taps through them (#84). Across a
+            // carried swipe the incoming video's controls show the same way rather than going.
+            fadedClear = clearLive && fadeLevel > 0 && fadeLevel < 100;
+            boolean carryHides = carry && !fadedClear;
+            boolean tabStrip = !detailPager && clearLive;
             // The comment bar is the opened post's own; the main feed has the tabs there. TikTok
             // leaves it up in Clear display on a photo or video opened from search or a profile
             // (#84), so it goes then too and comes back with the controls. A video opens in the
@@ -434,17 +479,14 @@ public final class VideoOverlayHider {
             // window it's in: only an opened post has the bar, and the strip under it is left
             // alone wherever the bar isn't found (see the pairing after the walk).
             boolean detailCommentBar = (detailPager && Settings.HIDE_DETAIL_COMMENT_BAR.get())
-                    || (!HushfeedPause.isPaused() && (RememberClearDisplayPatch.isClearDisplayNow() || carry));
-            boolean anchor = !HushfeedPause.isPaused()
-                    && (RememberClearDisplayPatch.isClearDisplayNow() || carry);
+                    || clearLive;
+            // The faded Clear display keeps the anchor row and the search bar in sight but out of
+            // reach, which is what hiding them was for.
+            boolean anchor = clearLive && !fadedClear;
             // Asked for here and confirmed after the walk by TikTok's own bar being on screen,
             // which it shows only in Clear display; see gateClearControls.
             boolean clearControls = !HushfeedPause.isPaused() && Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get();
             boolean statusBar = Settings.HIDE_STATUS_BAR.get();
-            // The fade belongs to the overlay patch: a value saved before a repatch without it
-            // does nothing, and Pause answers the stock look.
-            fadeLevel = HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled ? 100
-                    : Math.max(0, Math.min(100, Settings.FADE_CONTROLS_OPACITY.get()));
             boolean counts = Settings.HIDE_RAIL_COUNTS.get();
             boolean[] rail = TRAVERSAL.rail;
             updateRailButtonsWanted(rail);
@@ -471,8 +513,8 @@ public final class VideoOverlayHider {
                 int[] ids = TRAVERSAL.ids;
                 boolean[] hidden = TRAVERSAL.hidden;
                 boolean[] wanted = TRAVERSAL.wanted;
-                wanted[CAPTION_TARGET] = caption || carry;
-                wanted[MUSIC_TARGET] = music || carry;
+                wanted[CAPTION_TARGET] = caption || carryHides;
+                wanted[MUSIC_TARGET] = music || carryHides;
                 wanted[ACTION_BAR_TARGET] = actionBar;
                 wanted[SURVEY_TARGET] = surveys;
                 wanted[TAB_STRIP_TARGET] = tabStrip;
@@ -492,12 +534,12 @@ public final class VideoOverlayHider {
                 wanted[SEARCH_BAR_TARGET] = anchor;
                 wanted[STATUS_BAR_SPACER_TARGET] = statusBar;
                 for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
-                    wanted[RAIL_TARGET_START + i] = rail[i] || carry;
+                    wanted[RAIL_TARGET_START + i] = rail[i] || carryHides;
                 }
                 for (int i = 0; i < RAIL_COUNT_ROW_IDS.length; i++) {
                     boolean hideCount = counts || rail[RAIL_COUNT_BUTTON_INDEX[i]];
-                    wanted[COUNT_ROW_TARGET_START + i] = hideCount || carry;
-                    wanted[COUNT_TEXT_TARGET_START + i] = hideCount || carry;
+                    wanted[COUNT_ROW_TARGET_START + i] = hideCount || carryHides;
+                    wanted[COUNT_TEXT_TARGET_START + i] = hideCount || carryHides;
                 }
 
                 int candidateAt = 0;
@@ -530,6 +572,7 @@ public final class VideoOverlayHider {
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
                             touchScale != 1f);
+                    if (fadedClear && TapThroughControls.anyMarked()) TapThroughControls.watch(activity);
                     // The size goes on the icon inside each button, not the button. The slots
                     // are packed with no room between them, so a grown button lands on its
                     // neighbours; an icon grown from its bottom edge stays inside its slot at
@@ -695,10 +738,16 @@ public final class VideoOverlayHider {
         for (Map.Entry<View, float[]> entry : FADED_TO.entrySet()) {
             View view = entry.getKey();
             float[] held = entry.getValue();
-            if (view == null || !view.isAttachedToWindow() || view.getAlpha() == held[1]) continue;
-            held[0] = view.getAlpha();
-            held[1] = held[0] * held[2];
-            view.setAlpha(held[1]);
+            if (view == null || !view.isAttachedToWindow()) continue;
+            // A hold past its time is let go here too, though TikTok wrote nothing since.
+            boolean holding = held[3] != 0f && held[4] == 0f;
+            if (view.getAlpha() == held[1] && !holding) continue;
+            if (view.getAlpha() != held[1]) held[0] = view.getAlpha();
+            settleWhole(view, held);
+            float next = fadedAlpha(held);
+            held[1] = next;
+            if (view.getAlpha() == next) continue;
+            view.setAlpha(next);
             corrected++;
         }
         long now = SystemClock.uptimeMillis();
@@ -862,13 +911,15 @@ public final class VideoOverlayHider {
                         // beside the column, so they fade here. Invisible rather than gone, so
                         // the caption doesn't move.
                         boolean gone = wanted || fadeLevel == 0;
-                        setFaded(view, gone ? 100 : fadeLevel);
+                        setFaded(view, gone ? 100 : fadeLevel, fadedClear);
+                        TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone, View.INVISIBLE);
                     } else if (target == ACTION_BAR_TARGET) {
                         // The rail's column. Fully faded it goes the way Clear display takes it,
                         // so nothing invisible takes a tap.
                         boolean gone = wanted || fadeLevel == 0;
-                        setFaded(view, gone ? 100 : fadeLevel);
+                        setFaded(view, gone ? 100 : fadeLevel, fadedClear);
+                        TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone);
                     } else if (target == TAB_STRIP_TARGET || target == BOTTOM_TABS_TARGET) {
                         setFaded(view, wanted ? 100 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
@@ -1146,11 +1197,22 @@ public final class VideoOverlayHider {
     }
 
     /**
-     * Fades a view to {@code percent} of the opacity it had, leaving it touchable, or puts back
-     * one this class faded. Every pass writes it again: views are recycled and re-bound, and
-     * TikTok writes alpha itself (an animation ends by writing its own value back).
+     * Fades a view to {@code percent} of the opacity it had, or puts back one this class faded.
+     * Every pass writes it again: views are recycled and re-bound, and TikTok writes alpha itself
+     * (an animation ends by writing its own value back). Whether it still takes taps is
+     * {@link TapThroughControls}'s business.
      */
     static void setFaded(View view, int percent) {
+        setFaded(view, percent, false);
+    }
+
+    /**
+     * The same, and with {@code whole} the view is drawn at {@code percent} itself rather than at
+     * that share of TikTok's opacity. TikTok's Clear display takes its own to 0, and the faded
+     * Clear display keeps the controls in sight at the chosen level (#84). Putting the view back
+     * gives it the opacity TikTok last wrote, so in Clear display that's TikTok's cleared look.
+     */
+    static void setFaded(View view, int percent, boolean whole) {
         if (view == null) {
             return;
         }
@@ -1163,15 +1225,55 @@ public final class VideoOverlayHider {
             return;
         }
         if (held == null) {
-            held = new float[]{view.getAlpha(), view.getAlpha(), 1f};
+            held = new float[]{view.getAlpha(), view.getAlpha(), 1f, 0f, 0f};
             FADED_TO.put(view, held);
         } else if (view.getAlpha() != held[1]) {
             // TikTok wrote its own value since the last pass; that is the new look to fade.
             held[0] = view.getAlpha();
         }
         held[2] = percent / 100f;
-        held[1] = held[0] * held[2];
+        held[4] = whole ? 1f : 0f;
+        settleWhole(view, held);
+        held[1] = fadedAlpha(held);
         if (view.getAlpha() != held[1]) view.setAlpha(held[1]);
+    }
+
+    /**
+     * Keeps a view at the whole level while asked, and after that until TikTok's own opacity is
+     * back at full. Leaving Clear display, TikTok animates the controls up from 0, and a share of
+     * that would drop them to nothing and bring them back; held, they stay where they were. The
+     * hold ends at full opacity or after {@link #WHOLE_HOLD_MS}, whichever comes first.
+     */
+    private static void settleWhole(View view, float[] held) {
+        if (held[4] != 0f || held[3] == 0f || held[0] >= 1f) {
+            held[3] = held[4];
+            HELD_SINCE.remove(view);
+            return;
+        }
+        long now = SystemClock.uptimeMillis();
+        Long since = HELD_SINCE.get(view);
+        if (since == null) {
+            HELD_SINCE.put(view, now);
+        } else if (now - since > WHOLE_HOLD_MS) {
+            held[3] = 0f;
+            HELD_SINCE.remove(view);
+        }
+    }
+
+    private static float fadedAlpha(float[] held) {
+        return held[3] != 0f ? held[2] : held[0] * held[2];
+    }
+
+    /**
+     * Whether a finger goes through the faded controls right now: Clear display (live, or carried
+     * across a swipe) with the fade between 0 and 100, not paused, and the overlay patch in. Asked
+     * on every finger down, so it reads the live state rather than the last pass's.
+     */
+    static boolean tapsGoThroughNow() {
+        if (HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled) return false;
+        int level = Settings.FADE_CONTROLS_OPACITY.get();
+        return level > 0 && level < 100 && (RememberClearDisplayPatch.isClearDisplayNow()
+                || RememberClearDisplayPatch.isCarryingClear());
     }
 
     /** Lets a test stand in for a TikTok resource id, which only the real APK resolves. */
