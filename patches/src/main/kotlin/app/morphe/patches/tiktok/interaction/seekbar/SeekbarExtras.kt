@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.interaction.seekbar
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.misc.popups.writes
 import app.morphe.patches.tiktok.shared.callThroughLocals
 import app.morphe.patches.tiktok.shared.objectIn
 import app.morphe.patches.tiktok.shared.valueIn
@@ -178,6 +179,18 @@ internal fun Method.jumpedTo(index: Int): Boolean {
         flow.exceptional.any { index in it }
 }
 
+/**
+ * Whether the event's constructor leaves its percent, position and video (p1 to p4) as they came
+ * in, so they still hold them at its return.
+ */
+internal fun Method.keepsEventArguments(): Boolean {
+    val code = implementation ?: return false
+    val parameterRegisters = 1 + parameterTypes.sumOf { if (it.toString() == "J" || it.toString() == "D") 2 else 1 }
+    val self = code.registerCount - parameterRegisters
+    val kept = (self + 1)..(self + 4)
+    return code.instructions.none { instruction -> kept.any { instruction.writes(it) } }
+}
+
 /** Records each progress event at the end of its constructor: the percent, the position and the video. */
 internal fun MutableMethod.recordProgressTick() {
     val returns = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }
@@ -186,6 +199,9 @@ internal fun MutableMethod.recordProgressTick() {
     }
     if (jumpedTo(returns.single().index)) {
         throw PatchException("$PATCH: a branch in the progress event's constructor goes straight to its return")
+    }
+    if (!keepsEventArguments()) {
+        throw PatchException("$PATCH: the progress event's constructor reuses its percent, position or video registers")
     }
     // p1 the percent, p2 and p3 the wide position, p4 the video, as progressEvent() requires.
     addInstructions(

@@ -28,7 +28,7 @@ import org.junit.Test
  * the handle its width, height and corner once, each from a register nothing reads afterwards
  * and that no branch jumps straight to. PlayerController's progress callback builds one progress
  * event, whose percent it works out from the position times 100, and the event's constructor ends
- * in one return.
+ * in one return with its percent, position and video still in the registers they came in.
  */
 class SeekbarExtrasAnchorsTest {
     @Test
@@ -91,6 +91,7 @@ class SeekbarExtrasAnchorsTest {
             val returns = instructions.indices.filter { instructions[it].opcode == Opcode.RETURN_VOID }
             assertEquals("${apk.name}: the event's constructor returns in ${returns.size} places", 1, returns.size)
             assertFalse("${apk.name}: a branch goes straight to the event's return", constructor.jumpedTo(returns.single()))
+            assertTrue("${apk.name}: the event's constructor reuses its percent, position or video", constructor.keepsEventArguments())
         }
     }
 
