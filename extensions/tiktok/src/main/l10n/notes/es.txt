@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Seguir reproduciendo en segundo plano ahora puede volver a empezar un video cuando termina, así no tienes que tocar Reproducir en la notificación cada vez. Activa Repetir en segundo plano en Reproducción. Una llamada o el sonido de otra app lo siguen pausando (#99).
+
 * **TikTok:** El disco de música puede volver a girar. TikTok 47.1.4 lo deja quieto de fábrica, así que Pantalla del feed ahora tiene Hacer girar el disco de música, y Mantener quieto el disco de música si prefieres que nunca gire. Los dos necesitan reiniciar (#68).
 
 * **TikTok:** Mostrar la barra de progreso tiene dos interruptores nuevos en Reproducción, los dos desactivados al principio. Mostrar el tiempo junto a la barra de progreso añade el tiempo reproducido y la duración del video al final de la barra, y Control más grande en la barra de progreso dibuja un control más grande sobre una línea un poco más gruesa (#90).

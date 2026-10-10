@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Im Hintergrund weiterspielen kann ein Video jetzt von vorn starten, wenn es endet, damit du nicht jedes Mal in der Benachrichtigung auf Abspielen tippen musst. Schalte unter Wiedergabe Im Hintergrund wiederholen ein. Ein Anruf oder der Ton einer anderen App hält es weiterhin an (#99).
+
 * **TikTok:** Die Musikscheibe kann sich wieder drehen. TikTok 47.1.4 hält sie von Haus aus still, deshalb gibt es in der Feed-Ansicht jetzt Musikscheibe drehen lassen, und Musikscheibe stillhalten, falls sie sich nie drehen soll. Beide brauchen einen Neustart (#68).
 
 * **TikTok:** Fortschrittsbalken anzeigen hat zwei neue Schalter unter Wiedergabe, beide anfangs aus. Zeit neben dem Fortschrittsbalken anzeigen setzt die abgespielte Zeit und die Länge des Videos ans Ende des Balkens, und Größerer Griff am Fortschrittsbalken zeichnet einen größeren Griff auf einer etwas dickeren Linie (#90).

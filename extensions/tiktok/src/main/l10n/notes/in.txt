@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Tetap putar di latar belakang sekarang bisa memulai ulang video saat selesai, jadi kamu tidak perlu menekan Putar di notifikasi setiap kali. Aktifkan Putar ulang di latar belakang di Pemutaran. Panggilan atau suara aplikasi lain tetap menjedanya (#99).
+
 * **TikTok:** Piringan musik bisa berputar lagi. TikTok 47.1.4 membuatnya diam sejak awal, jadi Layar feed sekarang punya Putar piringan musik, dan Biarkan piringan musik diam kalau kamu tidak ingin piringan itu berputar sama sekali. Keduanya perlu mulai ulang (#68).
 
 * **TikTok:** Tampilkan bilah progres punya dua tombol baru di Pemutaran, keduanya mati di awal. Tampilkan waktu di samping bilah progres menambahkan waktu yang sudah diputar dan durasi video di ujung bilah, dan Pegangan bilah progres lebih besar menggambar pegangan yang lebih besar di garis yang sedikit lebih tebal (#90).

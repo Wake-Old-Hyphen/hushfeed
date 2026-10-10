@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Arka planda oynatmaya devam et artık bir video bittiğinde onu baştan başlatabiliyor, böylece her seferinde bildirimdeki Oynat düğmesine basmanız gerekmiyor. Oynatma altında Arka planda yeniden oynat seçeneğini açın. Bir arama ya da başka bir uygulamanın sesi onu yine duraklatır (#99).
+
 * **TikTok:** Müzik diski yeniden dönebiliyor. TikTok 47.1.4 onu baştan sabit tutuyor, bu yüzden Akış ekranı artık Müzik diskini döndür seçeneğine sahip, hiç dönmesini istemiyorsanız Müzik diskini sabit tut da var. İkisi de yeniden başlatma gerektiriyor (#68).
 
 * **TikTok:** İlerleme çubuğunu göster için Oynatma altında iki yeni anahtar var, ikisi de başta kapalı. Süreyi ilerleme çubuğunun yanında göster, çubuğun sonuna oynatılan süreyi ve videonun uzunluğunu ekliyor, Daha büyük ilerleme çubuğu tutamacı ise biraz daha kalın bir çizgi üzerinde daha büyük bir tutamaç çiziyor (#90).

@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Continua la riproduzione in background ora può far ripartire un video quando finisce, così non devi premere Riproduci nella notifica ogni volta. Attiva Ripeti in background in Riproduzione. Una chiamata o l'audio di un'altra app lo mettono ancora in pausa (#99).
+
 * **TikTok:** Il disco musicale può girare di nuovo. TikTok 47.1.4 lo tiene fermo di serie, quindi in Schermata del feed ora c'è Fai girare il disco musicale, e Tieni fermo il disco musicale se preferisci che non giri mai. Entrambi richiedono un riavvio (#68).
 
 * **TikTok:** Mostra la barra di avanzamento ha due nuovi interruttori in Riproduzione, entrambi spenti all'inizio. Mostra il tempo accanto alla barra di avanzamento aggiunge il tempo riprodotto e la durata del video alla fine della barra, e Cursore più grande nella barra di avanzamento disegna un cursore più grande su una linea un po' più spessa (#90).
