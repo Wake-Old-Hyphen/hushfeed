@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** El nuevo interruptor Botón de traducir en los comentarios, en Comentarios, muestra el propio botón de traducir de TikTok junto al número de comentarios. Un toque traduce todos los comentarios y respuestas, y otro devuelve los originales (#85). Empieza desactivado.
+
 * **TikTok:** Controles ocultos ya no deja una línea fina en la parte de abajo de cada video nuevo durante unos segundos (#84). Era la línea fina del borde superior de la barra de pestañas, que se quedaba cuando las pestañas desaparecían.
 
 * **TikTok:** Ocultar la barra de estado en los LIVE mantiene fuera la franja negra de arriba durante todo el LIVE (#137). Antes se rendía después de que TikTok volviera a poner la franja unas cuantas veces, por ejemplo al abrir y cerrar paneles sobre la transmisión. El nuevo interruptor Mostrar el LIVE bajo la barra de estado deja que un LIVE llegue hasta el borde superior con la hora y los iconos encima, si prefieres conservar la barra. Empieza desactivado.

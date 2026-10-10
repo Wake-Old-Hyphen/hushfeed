@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Der neue Schalter Übersetzen-Schaltfläche in Kommentaren unter Kommentare zeigt TikToks eigene Übersetzen-Schaltfläche neben der Kommentaranzahl. Ein Tippen übersetzt alle Kommentare und Antworten, ein weiteres holt die Originale zurück (#85). Er ist anfangs aus.
+
 * **TikTok:** Freie Ansicht lässt am unteren Rand jedes neuen Videos nicht mehr ein paar Sekunden lang eine dünne Linie stehen (#84). Das war die feine Linie oben an der Tab-Leiste, die zurückblieb, wenn die Tabs verschwanden.
 
 * **TikTok:** Statusleiste in LIVE-Räumen ausblenden hält den schwarzen Streifen oben für das ganze LIVE fern (#137). Bisher gab es auf, nachdem TikTok den Streifen ein paar Mal zurückgesetzt hatte, etwa wenn sich Panels über dem Stream öffnen und schließen. Der neue Schalter LIVE unter der Statusleiste zeigen lässt ein LIVE bis zum oberen Rand reichen, mit Uhr und Symbolen darüber, falls du die Leiste lieber behältst. Er ist anfangs aus.

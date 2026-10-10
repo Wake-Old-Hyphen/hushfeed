@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Il nuovo interruttore Pulsante Traduci nei commenti, in Commenti, mostra il pulsante di traduzione di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti e le risposte, un altro riporta gli originali (#85). Parte spento.
+
 * **TikTok:** Vista pulita non lascia più una linea sottile in fondo a ogni nuovo video per qualche secondo (#84). Era la linea sottile sul bordo superiore della barra delle schede, che restava lì quando le schede sparivano.
 
 * **TikTok:** Nascondi la barra di stato nelle stanze LIVE tiene lontana la striscia nera in alto per tutto il LIVE (#137). Prima si arrendeva dopo che TikTok rimetteva la striscia un po' di volte, per esempio quando i pannelli si aprono e si chiudono sopra la diretta. Il nuovo interruttore Mostra il LIVE sotto la barra di stato lascia che un LIVE arrivi fino al bordo superiore con l'ora e le icone sopra, se preferisci tenere la barra. Parte spento.

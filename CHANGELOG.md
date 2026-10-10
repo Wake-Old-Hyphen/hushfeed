@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** A new Translate button in comments switch under Comments shows TikTok's own translate button next to the comment count. One tap translates every comment and reply, and another brings the originals back (#85). It starts off.
+
 * **TikTok:** Clear display no longer leaves a thin line across the bottom of each new video for a few seconds (#84). It was the hairline along the top of the tab bar, which stayed behind when the tabs went away.
 
 * **TikTok:** Hide the status bar in LIVE rooms keeps the black strip at the top away for the whole LIVE (#137). It used to give up after TikTok put the strip back a few times, like when panels open and close over the stream. A new Show a LIVE under the status bar switch lets a LIVE reach the top edge with the clock and icons over it, if you'd rather keep the bar. It starts off.

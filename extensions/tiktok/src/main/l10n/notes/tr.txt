@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Yorumlar altındaki yeni Yorumlarda çeviri düğmesi anahtarı, TikTok'un kendi çeviri düğmesini yorum sayısının yanında gösteriyor. Bir dokunuş tüm yorumları ve yanıtları çeviriyor, bir dokunuş daha orijinalleri geri getiriyor (#85). Başta kapalı.
+
 * **TikTok:** Temiz ekran artık her yeni videonun altında birkaç saniyeliğine ince bir çizgi bırakmıyor (#84). Bu, sekme çubuğunun üst kenarındaki ince çizgiydi ve sekmeler kaybolunca geride kalıyordu.
 
 * **TikTok:** LIVE odalarında durum çubuğunu gizle, üstteki siyah şeridi LIVE boyunca uzak tutuyor (#137). Önceden TikTok şeridi birkaç kez geri koyduktan sonra, mesela yayının üstünde paneller açılıp kapandığında, pes ediyordu. Yeni LIVE'ı durum çubuğunun altında göster anahtarı, bir LIVE'ın saat ve simgeler üstünde kalacak şekilde üst kenara kadar uzanmasını sağlıyor. Çubuğu tutmak isterseniz bunu kullanın. Başta kapalı.
