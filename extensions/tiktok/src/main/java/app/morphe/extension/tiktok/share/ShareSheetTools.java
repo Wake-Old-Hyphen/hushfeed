@@ -9,6 +9,7 @@ package app.morphe.extension.tiktok.share;
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -43,7 +44,8 @@ import java.util.WeakHashMap;
  * them again. Only 47.1.4's names are looked up; an older build's name (46.x's ibc, u3t, dqr,
  * a59) names some other view there.
  * <pre>
- *   ip5   frame around the "Send to" contacts row
+ *   ip5   frame around the "Send to" contacts row, and around any other row TikTok ranks
+ *         first (the compact long-press sheet's actions row, #120)
  *   v3j   the contacts list; each child is the contact cell, content description
  *         = the display name, and is itself clickable
  *   dwr   the share channels row (Repost, Copy link, SMS, Facebook, ...)
@@ -70,6 +72,9 @@ public final class ShareSheetTools {
 
     /** Original layout width of each cell this class has shrunk, so it can be restored. */
     private static final WeakHashMap<View, Integer> ORIGINAL_WIDTHS = new WeakHashMap<>();
+
+    /** Children of the Send to frame hidden here because the frame also holds a row that stays. */
+    private static final WeakHashMap<View, Boolean> HIDDEN_SECTION_CHILDREN = new WeakHashMap<>();
 
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);
     private static final GlobalLayoutHook LAYOUT_HOOK = new GlobalLayoutHook();
@@ -239,7 +244,7 @@ public final class ShareSheetTools {
     private static void applyRows(View section, View contacts, View channels, View actions) {
         List<String> hidden = entries(ShareModelFilter.hiddenItems());
         boolean hideContacts = Settings.HIDE_SHARE_CONTACTS.get();
-        if (section != null) setVisible(section, !hideContacts);
+        setSectionHidden(section, hideContacts, actions, channels);
         if (!hideContacts) hideByLabel("contacts", contacts, hidden);
         hideByLabel("channels", channels, hidden);
         hideByLabel("actions", actions, hidden);
@@ -328,6 +333,57 @@ public final class ShareSheetTools {
 
     private static int childCount(View view) {
         return view instanceof ViewGroup ? ((ViewGroup) view).getChildCount() : 0;
+    }
+
+    /**
+     * The Send to frame is not only the Send to row. TikTok's panel adds every widget ranked at
+     * the top into that same frame, and on the compact long-press sheet the actions row ranks at
+     * the top too, so hiding the frame took Report, Download and the rest with it and left only
+     * Share with (#120). When the frame holds the actions or apps row, it stays up and only its
+     * other children go. Only children hidden here are shown again when the setting goes off.
+     */
+    static void setSectionHidden(View section, boolean hidden, View actions, View channels) {
+        if (section == null) {
+            return;
+        }
+        View keepActions = childHolding(section, actions);
+        View keepChannels = childHolding(section, channels);
+        boolean holdsRow = keepActions != null || keepChannels != null;
+        if (section instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) section;
+            for (int index = 0; index < group.getChildCount(); index++) {
+                View child = group.getChildAt(index);
+                setSectionChildHidden(child, hidden && holdsRow && child != keepActions && child != keepChannels);
+            }
+        }
+        setVisible(section, !hidden || holdsRow);
+    }
+
+    private static void setSectionChildHidden(View child, boolean hidden) {
+        if (child == null) {
+            return;
+        }
+        if (hidden) {
+            if (child.getVisibility() != View.GONE) {
+                HIDDEN_SECTION_CHILDREN.put(child, Boolean.TRUE);
+                child.setVisibility(View.GONE);
+            }
+        } else if (HIDDEN_SECTION_CHILDREN.remove(child) != null) {
+            child.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /** The direct child of section that holds row, or null when row sits elsewhere. */
+    private static View childHolding(View section, View row) {
+        View view = row;
+        while (view != null) {
+            ViewParent parent = view.getParent();
+            if (parent == section) {
+                return view;
+            }
+            view = parent instanceof View ? (View) parent : null;
+        }
+        return null;
     }
 
     /**
