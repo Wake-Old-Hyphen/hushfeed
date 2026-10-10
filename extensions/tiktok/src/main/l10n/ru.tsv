@@ -1084,6 +1084,10 @@ Show the country a video was posted from next to the creator's name.	Показ�
 Show the current spoken caption while the other controls are hidden.	Показывать текущую произносимую строку субтитров, пока остальные элементы управления скрыты.
 Show the handle instead of the name	Показывать @имя вместо отображаемого имени
 Show the progress bar	Показывать полосу прогресса
+Show the time beside the progress bar	Показывать время рядом с полосой прогресса
+Show the time played and the video's length at the end of the progress bar while it's on screen.	Показывать прошедшее время и длину видео в конце полосы прогресса, пока она на экране.
+Bigger progress bar handle	Крупный ползунок полосы прогресса
+Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	Рисовать ползунок крупнее, а полосу прогресса чуть толще, чтобы было легче видеть, где вы сейчас.
 Show the progress bar thumbnail	Показывать превью на полосе прогресса
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Показывать списки «Активность» и «Новые подписчики» целиком, не останавливаясь на кнопке «Смотреть все».
 Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.	Показывать видео целиком, не обрезая его по размеру окна. На вытянутом телефоне, где оно и так помещается, ничего не меняется. На развёрнутом складном телефоне, более квадратном экране или в режиме разделённого экрана края или концы видео перестают обрезаться.

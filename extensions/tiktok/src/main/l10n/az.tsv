@@ -1039,6 +1039,10 @@ Show the current spoken caption while the other controls are hidden.	Digər idar
 Show the handle instead of the name	Ad əvəzinə istifadəçi adını göstərin
 Show the hide button on videos	Videolarda gizlətmə düyməsini göstərin
 Show the progress bar	İrəliləyiş panelini göstərin
+Show the time beside the progress bar	İrəliləyiş panelinin yanında vaxtı göstərin
+Show the time played and the video's length at the end of the progress bar while it's on screen.	İrəliləyiş paneli ekranda olanda onun sonunda keçən vaxtı və videonun uzunluğunu göstərin.
+Bigger progress bar handle	Daha böyük irəliləyiş paneli tutacağı
+Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	İrəliləyiş panelində daha böyük tutacaq və bir az qalın xətt çəkin ki, harada olduğunuzu görmək asan olsun.
 Show the progress bar thumbnail	İrəliləyiş paneli önizləmə şəklini göstərin
 Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.	Mövcud olduqda axtarış girişini TikTok-un LIVE çəkməcəsində göstərin. Bu, video şərhlərinə axtarış qutusu əlavə etmir.
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Fəaliyyət və Yeni izləyicilər siyahılarının hamısını Hamısına bax düyməsində dayanmaq əvəzinə göstərin.

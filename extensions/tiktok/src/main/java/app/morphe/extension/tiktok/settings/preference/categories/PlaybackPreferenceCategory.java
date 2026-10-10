@@ -139,6 +139,20 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Show TikTok's own progress bar on videos where it's normally hidden.",
                     Settings.SHOW_SEEKBAR
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show the time beside the progress bar",
+                    "Show the time played and the video's length at the end of the progress bar "
+                            + "while it's on screen.",
+                    Settings.SEEKBAR_TIME
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Bigger progress bar handle",
+                    "Draw a larger handle and a slightly thicker line on the progress bar, so it's "
+                            + "easier to see where you are.",
+                    Settings.SEEKBAR_BIG_HANDLE
+            ));
         }
         if (SettingsStatus.seekbarThumbnailEnabled) {
             addPreference(new TogglePreference(

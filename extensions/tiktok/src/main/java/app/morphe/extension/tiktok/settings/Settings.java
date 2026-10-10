@@ -463,6 +463,10 @@ public class Settings extends BaseSettings {
     /** Offline videos stay until you clear them, instead of expiring after TikTok's lifetime (#123). */
     public static final BooleanSetting KEEP_OFFLINE_VIDEOS = new BooleanSetting("keep_offline_videos", FALSE, true);
     public static final BooleanSetting SHOW_SEEKBAR = new BooleanSetting("show_seekbar", TRUE);
+    /** The time played and the video's length at the end of the progress bar (#90). */
+    public static final BooleanSetting SEEKBAR_TIME = new BooleanSetting("seekbar_time", FALSE);
+    /** A larger handle and a slightly thicker line on the progress bar at rest (#90). */
+    public static final BooleanSetting SEEKBAR_BIG_HANDLE = new BooleanSetting("seekbar_big_handle", FALSE);
     public static final BooleanSetting SHOW_SEEKBAR_THUMBNAIL = new BooleanSetting(
             "show_seekbar_thumbnail",
             TRUE

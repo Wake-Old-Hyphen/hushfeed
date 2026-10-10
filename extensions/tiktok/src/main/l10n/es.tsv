@@ -1006,6 +1006,10 @@ Show the country a video was posted from next to the creator's name.	Mostrar el 
 Show the current spoken caption while the other controls are hidden.	Mostrar el subtítulo que se está diciendo mientras los demás controles están ocultos.
 Show the handle instead of the name	Mostrar el nombre de usuario en vez del nombre
 Show the progress bar	Mostrar la barra de progreso
+Show the time beside the progress bar	Mostrar el tiempo junto a la barra de progreso
+Show the time played and the video's length at the end of the progress bar while it's on screen.	Mostrar el tiempo reproducido y la duración del vídeo al final de la barra de progreso mientras está en pantalla.
+Bigger progress bar handle	Control más grande en la barra de progreso
+Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	Dibujar un control más grande y una línea algo más gruesa en la barra de progreso, para que sea más fácil ver por dónde vas.
 Show the progress bar thumbnail	Mostrar la miniatura de la barra de progreso
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Mostrar las listas completas de Actividad y Nuevos seguidores en vez de pararse en un botón de Ver todo.
 Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.	Mostrar el vídeo entero en vez de recortarlo a la ventana. En un móvil alto no cambia nada, porque ya cabe. En un plegable abierto, en una pantalla más cuadrada o en vista dividida dejan de cortarse los lados o los extremos.
