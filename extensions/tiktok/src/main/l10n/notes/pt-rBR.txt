@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Tela limpa não deixa mais uma linha fina na parte de baixo de cada vídeo novo por alguns segundos (#84). Era a linha fina na borda de cima da barra de abas, que ficava para trás quando as abas sumiam.
+
 * **TikTok:** Ocultar a barra de status nas LIVEs mantém a faixa preta de cima longe durante a LIVE inteira (#137). Antes ele desistia depois que o TikTok colocava a faixa de volta algumas vezes, como quando painéis abrem e fecham sobre a transmissão. A nova chave Mostrar a LIVE sob a barra de status deixa a LIVE chegar até a borda de cima com o relógio e os ícones por cima, se você preferir manter a barra. Ela começa desligada.
 
 * **TikTok:** Toque duplo agora faz tudo o que o Toque longo faz, como copiar o link ou salvar o quadro, e o Toque longo ganhou a opção Curtir o vídeo (#136). Uma curtida pelo toque longo funciona como a do próprio TikTok e nunca tira uma curtida.

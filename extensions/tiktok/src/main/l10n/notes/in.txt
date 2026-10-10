@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Tampilan bersih tidak lagi meninggalkan garis tipis di bagian bawah setiap video baru selama beberapa detik (#84). Itu garis halus di tepi atas bilah tab, yang tertinggal saat tabnya hilang.
+
 * **TikTok:** Sembunyikan bilah status di ruang LIVE menjauhkan strip hitam di atas selama LIVE berlangsung (#137). Dulu fitur ini menyerah setelah TikTok memasang strip itu lagi beberapa kali, misalnya saat panel dibuka dan ditutup di atas siaran. Tombol baru Tampilkan LIVE di bawah bilah status membiarkan LIVE sampai ke tepi atas dengan jam dan ikon di atasnya, kalau kamu lebih suka bilahnya tetap ada. Awalnya mati.
 
 * **TikTok:** Ketuk dua kali sekarang bisa melakukan semua yang bisa dilakukan Tekan lama, seperti menyalin tautan atau menyimpan bingkai, dan Tekan lama punya pilihan baru Sukai video (#136). Suka lewat tekan lama bekerja seperti milik TikTok sendiri dan tidak pernah membatalkan suka.

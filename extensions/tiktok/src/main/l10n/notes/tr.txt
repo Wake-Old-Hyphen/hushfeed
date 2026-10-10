@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Temiz ekran artık her yeni videonun altında birkaç saniyeliğine ince bir çizgi bırakmıyor (#84). Bu, sekme çubuğunun üst kenarındaki ince çizgiydi ve sekmeler kaybolunca geride kalıyordu.
+
 * **TikTok:** LIVE odalarında durum çubuğunu gizle, üstteki siyah şeridi LIVE boyunca uzak tutuyor (#137). Önceden TikTok şeridi birkaç kez geri koyduktan sonra, mesela yayının üstünde paneller açılıp kapandığında, pes ediyordu. Yeni LIVE'ı durum çubuğunun altında göster anahtarı, bir LIVE'ın saat ve simgeler üstünde kalacak şekilde üst kenara kadar uzanmasını sağlıyor. Çubuğu tutmak isterseniz bunu kullanın. Başta kapalı.
 
 * **TikTok:** Çift dokunma artık Uzun basmanın yaptığı her şeyi yapabiliyor, mesela bağlantıyı kopyalamak ya da kareyi kaydetmek. Uzun basmada da yeni Videoyu beğen seçeneği var (#136). Uzun basmayla beğeni TikTok'un kendi beğenisi gibi çalışıyor ve bir beğeniyi asla geri almıyor.

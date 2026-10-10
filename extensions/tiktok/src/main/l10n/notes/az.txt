@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Təmiz ekran artıq hər yeni videonun altında bir neçə saniyəlik nazik xətt qoymur (#84). Bu, tab panelinin üst kənarındakı incə xətt idi və tablar gedəndə geridə qalırdı.
+
 * **TikTok:** LIVE otaqlarında status panelini gizlədin yuxarıdakı qara zolağı bütün LIVE boyunca uzaqda saxlayır (#137). Əvvəllər TikTok zolağı bir neçə dəfə geri qaytardıqdan sonra, məsələn yayımın üstündə panellər açılıb bağlananda, bu işləməyi dayandırırdı. Yeni LIVE-ı status panelinin altında göstərin açarı LIVE-ın yuxarı kənara qədər uzanmasına imkan verir, saat və ikonlar onun üstündə qalır. Paneli saxlamaq istəyirsinizsə, bunu seçin. Açar əvvəlcə söndürülüb.
 
 * **TikTok:** İki dəfə toxunma artıq Uzun basmanın etdiyi hər şeyi edə bilir, məsələn linki kopyalamaq və ya kadrı saxlamaq, Uzun basmada isə yeni Videonu bəyənin seçimi var (#136). Uzun basma ilə bəyənmə TikTok-un özününkü kimi işləyir və bəyənməni heç vaxt geri götürmür.
