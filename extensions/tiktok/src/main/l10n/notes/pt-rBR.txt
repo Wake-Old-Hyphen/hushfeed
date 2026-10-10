@@ -1,5 +1,13 @@
 ## Unreleased
 
+* **TikTok:** As configurações de comentários têm uma linha nova, Não traduzir automaticamente estes idiomas. Ela fica vazia até você preenchê-la (#121). Digite códigos de idioma como `es, de`, e quando o TikTok traduz para você, legendas e comentários nesses idiomas ficam como foram escritos. Ver tradução continua funcionando quando você toca nele, e a lista própria do TikTok de idiomas que não se traduzem não muda.
+
+* **TikTok:** Manter vídeos offline até você apagá-los agora cobre mais duas formas de o TikTok esvaziar sua lista. Com a chave ligada, o Auto adjust do TikTok não reduz mais o seu limite de vídeos offline nem corta a lista quando o TikTok inicia, e a limpeza que o TikTok faz quando termina o teste de ativar vídeos offline por padrão é ignorada (#123). Reinicie o TikTok depois de mudar a chave.
+
+* **TikTok:** Ao restaurar um backup de configurações feito em uma versão mais antiga do TikTok, agora voltam as substituições do Feature Gate Lab que ainda servem para esta versão. As que não servem ficam guardadas, mas desligadas.
+
+* **TikTok:** Tela do feed tem uma chave nova, Esconder o botão do menu lateral, desligada até você ligar. Ela tira o botão no canto superior esquerdo do feed, ao lado de LIVE, que abre o menu lateral do TikTok com Seus pedidos, TikTok Minis e mais. Reinicie o TikTok depois de mudar (#128).
+
 * **TikTok:** Todas as descrições de patches no Morphe Manager foram reescritas em inglês simples. Cada uma agora diz o que o patch muda, por que você pode querer usá-lo e se o interruptor começa ligado ou desligado e onde ele fica nas configurações do Hushfeed. Algumas opções de patch também ficaram mais claras, e Skip push setup agora se chama Skip notification setup.
 
 * **TikTok:** As linhas das configurações do Hushfeed foram reescritas em inglês simples. Privacy, Comments, Downloads, Feed filter, Screen time, Region e outras páginas agora dizem, sem termos técnicos, o que cada chave faz e o que você vai notar. Alguns títulos também mudaram, como Stop TikTok's speed tests e Clean up shared links.
@@ -7,6 +15,10 @@
 * **TikTok:** Alguns avisos e linhas de status também ficaram mais claros, como o status do modo Ghost, a explicação do Hook status, o aviso da senha do proxy e a prévia do nome do arquivo.
 
 * **TikTok:** A opção Dark background color no Morphe Manager agora diz "código de cor" em vez de "código hex" e explica que o preto desliga totalmente esses pixels em telas OLED.
+
+## 0.70.1 (2026-10-09)
+
+* **TikTok:** As configurações do Hushfeed agora abrem com um status compacto e a busca acima de sete grupos. As páginas relacionadas ficam juntas, com backups, diagnóstico e Feature Gate Lab em App e opções avançadas. Sobre o Hushfeed reúne os detalhes da compilação e as licenças. A busca ainda leva você direto à configuração, e suas escolhas salvas continuam lá. A descrição de Pausar agora explica que as configurações salvas e as alterações incorporadas ao APK permanecem.
 
 ## 0.70.0 (2026-10-09)
 

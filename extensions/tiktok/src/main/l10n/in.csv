@@ -95,7 +95,6 @@ A tap on Home or on the For You tab while For You is showing no longer reloads i
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,Video yang kamu jeda tetap dijeda saat kamu kembali ke aplikasi alih-alih diputar lagi. Video yang kamu tinggalkan saat diputar mulai seperti biasa. Berfungsi mulai Android 10.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,"Alamat web yang ditulis seseorang di komentar bisa diketuk, bukan disalin manual. Mengetuk bagian lain dari komentar tetap seperti sebelumnya."
 AI-generated posts,Kiriman buatan AI
-About,Tentang
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.,"Nilai yang dipaksa berlaku untuk salinan TikTok ini, akun mana pun yang masuk. Nilai itu tidak bisa melewati pemeriksaan yang dilakukan server."
 Add older seen videos to this account,Tambahkan video lama yang dilihat ke akun ini
 Added %1$s older seen videos to this account,%1$s video lama yang dilihat ditambahkan ke akun ini
@@ -443,7 +442,6 @@ Filter settings,Pengaturan filter
 Filter the list,Saring daftar
 Filter: %1$s,Filter: %1$s
 "Filters, translation and copy options","Filter, terjemahan, dan opsi salin"
-Find a setting by name or description,Temukan setelan berdasarkan nama atau deskripsi
 First caller,Pemanggil pertama
 First rejection:,Penolakan pertama:
 Fit the video to the screen,Sesuaikan video dengan layar
@@ -539,6 +537,8 @@ The Activity row of likes and comments on your posts leaves the Inbox. Notificat
 The Archive row leaves the Inbox. Archived chats are kept.,Baris Arsip hilang dari Kotak Masuk. Obrolan yang diarsipkan tetap tersimpan.
 Hide the LIVE button,Sembunyikan tombol LIVE
 Hide the LIVE button in the top left corner of the feed.,Sembunyikan tombol LIVE di pojok kiri atas feed.
+Hide the side menu button,Sembunyikan tombol menu samping
+"Hide the button at the top left of the feed that opens TikTok's side menu, with Your orders, TikTok Minis and more.","Sembunyikan tombol di pojok kiri atas feed yang membuka menu samping TikTok, berisi Pesananmu, TikTok Minis, dan lainnya."
 Hide LIVE videos from the feed.,Sembunyikan video LIVE dari feed.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.,Baris Permintaan pesan hilang dari Kotak Masuk. Permintaan tetap masuk dan menunggu di sana sampai kamu mematikan ini.
 The New followers row leaves the top of the Inbox. The accounts still follow you.,Baris Pengikut baru hilang dari bagian atas Kotak Masuk. Akun-akun itu tetap mengikutimu.
@@ -668,7 +668,6 @@ A long press on Share plays the video at the hold speed instead of opening the q
 Hold speed on Favorites,Kecepatan tahan di Favorit
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,Tekan lama pada Favorit memutar video dengan kecepatan tahan alih-alih menawarkan koleksi baru. Perlu Tekan lama pada bawaan TikTok dan Lompat dari tepi layar mati.
 Lowest,Terendah
-Make TikTok yours.,Jadikan TikTok milikmu.
 Manager,Manajer
 Marked as not interested,Ditandai tidak tertarik
 Match locale and timezone to country,Samakan lokal dan zona waktu dengan negara
@@ -806,7 +805,6 @@ Press and hold a profile picture to save the full size original to your photo de
 "Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.","Tekan dan tahan Story untuk menyimpannya. Story tidak punya tombol simpan sendiri, dan menahannya adalah cara TikTok menjeda, jadi gestur itu diambil alih."
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.,Tekan dan tahan sepertiga kiri atau kanan layar untuk melompat mundur atau maju. Sepertiga bagian tengah tetap memakai aksi Tekan lama.
 Privacy,Privasi
-Privacy and system,Privasi dan sistem
 Profile,Profil
 Profile picture saved to %1$s,Foto profil disimpan ke %1$s
 Profile share actions,Tindakan berbagi profil
@@ -1220,7 +1218,6 @@ Video saved,Video disimpan
 "Video saved in %1$s, but only %2$s of %3$s subtitles came with it","Video disimpan di %1$s, tapi cuma %2$s dari %3$s subtitel yang ikut"
 Video saved with %1$s subtitles in %2$s,Video disimpan dengan %1$s subtitel di %2$s
 Wait before hiding the controls.,Tunggu sebelum kontrol disembunyikan.
-Watching and sharing,Menonton dan berbagi
 "WebP, exactly as TikTok sent it","WebP, persis seperti yang dikirim TikTok"
 What TikTok gets,Yang didapat TikTok
 "When TikTok requests this key, return the selected value below","Saat TikTok meminta kunci ini, kembalikan nilai yang dipilih di bawah"
@@ -1232,7 +1229,6 @@ Window width needed to enable the layout. Restart TikTok to apply this.,Lebar je
 YTDLnis background mode,Mode latar belakang YTDLnis
 YTDLnis download type,Jenis unduhan YTDLnis
 Yes,Ya
-Your feed,Feed kamu
 Your filters hid everything TikTok just sent. Most were %1$s.,Filtermu menyembunyikan semua yang baru dikirim TikTok. Sebagian besar %1$s.
 "Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.","Filtermu menyembunyikan semua yang dikirim TikTok, %1$d kali berturut-turut. Sebagian besar %2$s."
 "Your operator's name, like T-Mobile.","Nama operatormu, misalnya T-Mobile."
@@ -1317,12 +1313,12 @@ TikTok refused the follow with code %1$s,TikTok menolak permintaan mengikuti den
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.,TikTok menolak permintaan mengikuti dengan kode %1$s. CAPTCHA yang disembunyikan bisa jadi penyebabnya.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.,TikTok menolak permintaan mengikuti: %1$s CAPTCHA yang disembunyikan bisa jadi penyebabnya.
 Hushfeed is paused,Hushfeed dijeda
-TikTok runs as if it weren't patched. Your settings stay as they are.,TikTok berjalan seolah tidak di-patch. Pengaturanmu tetap seperti semula.
+Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.,Perubahan Hushfeed yang diterapkan saat aplikasi berjalan sedang dijeda. Pengaturanmu tetap tersimpan. Perubahan yang tertanam dalam APK tetap ada.
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok tertutup tiga kali dalam satu menit setelah dibuka, jadi Hushfeed menjeda dirinya sendiri. Pengaturanmu tetap seperti semula."
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.,File bernama hushfeed-safe-mode di folder TikTok di dalam Android/data menjeda Hushfeed. Pengaturanmu tetap seperti semula.
 Turn Hushfeed back on,Aktifkan Hushfeed lagi
 Pause Hushfeed,Jeda Hushfeed
-"From the next start TikTok runs as if it weren't patched, so you can tell whether a problem comes from Hushfeed. Your settings stay as they are.","Mulai pembukaan berikutnya, TikTok berjalan seolah tidak di-patch, jadi kamu bisa tahu apakah masalahnya dari Hushfeed. Pengaturanmu tetap seperti semula."
+Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.,Jeda perubahan yang diterapkan saat aplikasi berjalan setelah TikTok dimulai ulang. Pengaturanmu tetap tersimpan. Perubahan yang tertanam dalam APK tetap ada.
 Hushfeed turns back on when TikTok restarts.,Hushfeed aktif lagi saat TikTok dimulai ulang.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.,File hushfeed-safe-mode tidak bisa dihapus. Hapus dari folder TikTok di dalam Android/data untuk mengaktifkan Hushfeed lagi.
 Hide TikTok Shop in search,Sembunyikan TikTok Shop di pencarian
@@ -1866,3 +1862,20 @@ Keep offline videos until you delete them,Simpan video offline sampai kamu mengh
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok menghapus video yang disimpan untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, sudah ditonton atau belum. Saat ini menyala, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok. TikTok masih bisa menghapus yang sudah ditonton saat ruang ponselmu menipis."
 Hide Thoughts on profiles,Sembunyikan Thoughts di profil
 "Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.","Sembunyikan gelembung Thoughts yang TikTok tampilkan di atas foto profil, dan ajakan untuk membagikannya di profilmu sendiri. Mulai ulang TikTok agar berlaku."
+Feed & layout,Feed & tata letak
+"Filters, tabs and on-screen controls","Filter, tab, dan kontrol di layar"
+Comments & inbox,Komentar & kotak masuk
+"Filters, translation and inbox controls","Filter, terjemahan, dan kontrol kotak masuk"
+Downloads & sharing,Unduhan & berbagi
+"Files, subtitles and share sheet","Berkas, subtitel, dan menu berbagi"
+App & advanced,Aplikasi & pengaturan lanjutan
+"Region, backups and diagnostics","Wilayah, cadangan, dan diagnostik"
+About Hushfeed,Tentang Hushfeed
+"Version, changes and licenses","Versi, perubahan, dan lisensi"
+Customize,Sesuaikan
+Active,Aktif
+Paused,Dijeda
+Budgets and reminders,Batas dan pengingat
+"%1$s, %2$s","%1$s, %2$s"
+Don't auto translate these languages,Jangan terjemahkan otomatis bahasa ini
+"Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.","Pisahkan kode bahasa dengan koma, misalnya es, de. Saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa ini tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya. Daftar Jangan terjemahkan milik TikTok sendiri tetap seperti semula."

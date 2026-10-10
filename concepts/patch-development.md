@@ -6,7 +6,7 @@ This guide maps the TikTok app Hushfeed modifies to the code and release checks 
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-The source snapshot in this checkout says version 0.70.0 and contains 130 patch entries. The published source index, patches-bundle.json, still names 0.69.0. This is the release sequence described in CONTRIBUTING.md: publish and verify a bundle before changing the source index. Do not hand-edit the index to make the versions match.
+The source snapshot in this checkout says version 0.70.1 and contains 130 patch entries. The published source index, patches-bundle.json, still names 0.69.0. This is the release sequence described in CONTRIBUTING.md: publish and verify a bundle before changing the source index. Do not hand-edit the index to make the versions match.
 
 ## Target app and version boundary
 
@@ -112,7 +112,7 @@ Settings.java declares runtime setting keys, types, defaults, and availability r
 
 An install-time Morphe patch option is different from an in-app setting. For example, AMOLED dark theme has a color option applied while building the patched APK. Advanced downloads depends on the Settings patch and exposes runtime switches in TikTok's Hushfeed settings. The generated catalog lists those dependencies and patch options.
 
-The current in-app settings pages are separate from Morphe Manager's patch categories:
+The detailed in-app settings pages are separate from Morphe Manager's patch categories. Quiet Index groups these pages on the home screen in source version 0.70.1; their category classes and persisted setting keys remain the same:
 
 | Settings page | Category class |
 | --- | --- |
@@ -131,6 +131,45 @@ The current in-app settings pages are separate from Morphe Manager's patch categ
 | Region | SimSpoofPreferenceCategory |
 
 Translations live in extensions/tiktok/src/main/l10n/. The generator scripts/gen-l10n.py refreshes the English base table and generated translation class. Run it after editing translation tables. The tests compare the sources and generated output.
+
+## Settings design concepts
+
+Design study v0.1.0, October 9, 2026. Quiet Index was selected and is implemented in source version 0.70.1. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys. The published bundle remains 0.69.0, so the source redesign awaits publication.
+
+The previous home repeated Feed filter, Privacy and Screen time as shortcuts above their full rows. Quiet Index replaces that stack with a compact status beside the Hushfeed title, search and seven groups. About Hushfeed sits separately below the groups. Detailed controls remain on their existing pages.
+
+| Concept | Preview | Navigation tradeoff |
+| --- | --- | --- |
+| Quiet Index | [Open mockup](assets/settings-design-2026-10-09/quiet-index.png) | Selected and implemented in source 0.70.1. Seven grouped destinations keep the home compact. Related pages move one level deeper. |
+| Three-domain Workspace | [Open mockup](assets/settings-design-2026-10-09/three-domain-workspace.png) | Experience, Privacy and Tools divide the library. Less scrolling, but users need to learn which tab owns a setting. |
+| Focused Controls | [Open mockup](assets/settings-design-2026-10-09/focused-controls.png) | Expandable groups expose common controls in place. Faster adjustments, but expansion state and accidental changes need attention. |
+
+### Category coverage for Quiet Index
+
+| Home destination | Existing pages and actions |
+| --- | --- |
+| Feed & layout | Feed filter, Feed tabs, Feed screen |
+| Playback | Playback |
+| Privacy | Privacy |
+| Comments & inbox | Comments, Inbox |
+| Downloads & sharing | Downloads, Share sheet |
+| Screen time | Screen time |
+| App & advanced | App, Region, Backup and restore, Diagnostics, Feature Gate Lab, Pause Hushfeed |
+| About Hushfeed | Build details, pending What's new, attribution and licenses |
+
+The tabbed concept puts Region beside Privacy. Its Tools tab owns App, maintenance and About. The expandable concept combines Playback with Screen time, puts Region beside Privacy, and keeps maintenance under Tools & backup. Those are proposed groupings, not new patch behavior.
+
+### Native implementation
+
+TikTokPreferenceFragment owns the new group routes through its Hub enum. Existing Section routes still open the detailed pages built by the category classes above. SettingsMenuPreference supplies compact home rows. SettingsHeaderPreference holds the title and compact status, with SettingsSearchEntryPreference beneath it. Opening a related page retains its group in the Back stack. Playback, Privacy and Screen time keep their direct entry points from home.
+
+Search still indexes individual controls and checklist members, including retained aliases for renamed settings. A result opens the existing page and scrolls to the matching row. Pause results open App & advanced. Group visibility follows the available pages from the installed patches. This is a navigation change. It leaves persisted setting keys, defaults, dependency explanations, backup and undo behavior in their existing owners.
+
+The home uses a black base with small outline icons, quiet separators and restrained accents. Compact rows replace the large icon tiles and repeated shortcuts. Detailed pages retain their grouped controls. The mockup uses a 390 by 844 logical frame. Android layout must still be checked at the supported font scales, translated label lengths and light theme.
+
+The compact status has Active, Paused and Restart pending text states. Tapping it opens App & advanced, which holds the detailed status, recovery actions and Pause. The Pause description and paused summary now say that runtime changes pause while saved settings and changes built into the APK remain. They no longer describe Pause as an unpatched app. Mockup switch positions are examples, not captured device settings. No protection score or battery-saving claim is part of the design.
+
+The mockups establish hierarchy and category coverage. They are not evidence of native layout or device acceptance. Use the implementation's rendered screenshots and recorded checks for font scaling, accessibility, interaction and localization. Final build and supported-device acceptance were still in progress when this source note was updated.
 
 ## Adding or changing a patch
 

@@ -1,5 +1,13 @@
 ## Unreleased
 
+* **TikTok:** Los ajustes de comentarios tienen una fila nueva, No traducir automáticamente estos idiomas. Está vacía hasta que la rellenes (#121). Escribe códigos de idioma como `es, de`, y cuando TikTok traduce por ti, las descripciones y los comentarios en esos idiomas se quedan como se escribieron. Ver traducción sigue funcionando cuando lo tocas, y la lista propia de TikTok de idiomas que no se traducen no cambia.
+
+* **TikTok:** Conservar los videos sin conexión hasta que los borres ahora cubre dos formas más en las que TikTok vaciaba tu lista. Con el interruptor activado, el Auto adjust de TikTok ya no baja tu límite de videos sin conexión ni recorta la lista al iniciar TikTok, y se omite la limpieza que TikTok hace cuando termina su prueba de activar los videos sin conexión por defecto (#123). Reinicia TikTok después de cambiar el interruptor.
+
+* **TikTok:** Al restaurar una copia de seguridad de ajustes hecha en una versión anterior de TikTok, ahora vuelven las anulaciones de Feature Gate Lab que todavía encajan con esta versión. Las que no encajan se conservan, pero desactivadas.
+
+* **TikTok:** Pantalla del feed tiene un interruptor nuevo, Ocultar el botón del menú lateral, desactivado hasta que lo actives. Quita el botón de la esquina superior izquierda del feed, junto a LIVE, que abre el menú lateral de TikTok con Tus pedidos, TikTok Minis y más. Reinicia TikTok después de cambiarlo (#128).
+
 * **TikTok:** Todas las descripciones de parches en Morphe Manager están reescritas en un inglés sencillo. Cada una dice ahora qué cambia el parche, por qué te puede interesar y si su interruptor empieza encendido o apagado y dónde está en los ajustes de Hushfeed. Algunas opciones de parches también se leen más claras, y Skip push setup ahora se llama Skip notification setup.
 
 * **TikTok:** Las filas de los ajustes de Hushfeed están reescritas en un inglés sencillo. Privacy, Comments, Downloads, Feed filter, Screen time, Region y otras páginas ahora dicen sin términos técnicos qué hace cada interruptor y qué notarás. Algunos títulos también cambiaron, como Stop TikTok's speed tests y Clean up shared links.
@@ -7,6 +15,10 @@
 * **TikTok:** Algunos mensajes y líneas de estado también son más claros, como el estado del modo Ghost, la explicación de Hook status, el aviso de la contraseña del proxy y la vista previa del nombre de archivo.
 
 * **TikTok:** La opción Dark background color de Morphe Manager ahora dice "código de color" en lugar de "código hex" y explica que el negro apaga por completo esos píxeles en las pantallas OLED.
+
+## 0.70.1 (2026-10-09)
+
+* **TikTok:** Los ajustes de Hushfeed ahora se abren con un estado compacto y la búsqueda encima de siete grupos. Las páginas relacionadas están juntas, con las copias de seguridad, el diagnóstico y Feature Gate Lab en App y opciones avanzadas. Acerca de Hushfeed reúne los detalles de la compilación y las licencias. La búsqueda sigue llevándote directamente al ajuste y tus elecciones guardadas se conservan. La descripción de Pausa ahora aclara que los ajustes guardados y los cambios integrados en el APK permanecen.
 
 ## 0.70.0 (2026-10-09)
 

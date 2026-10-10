@@ -149,6 +149,21 @@ val customOfflineVideosLimitPatch = bytecodePatch(
             null
         }
 
+        // The same switch keeps TikTok's Auto adjust and its default-on clean-up from trimming or
+        // clearing the list at start (#123). All three are required together on a declared build
+        // and left out together, with a note, on any other.
+        val tierGuards = try {
+            Triple(
+                AutoAdjustBootFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) },
+                AutoAdjustRollbackFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) },
+                DefaultEnableStateFingerprint.method.also { it.defaultEnableCleanupReturnIndex(PATCH_NAME) },
+            )
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep offline videos through Auto adjust on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
+
         settingsStatus.addInstruction(
             0,
             "invoke-static {}, " +
@@ -176,6 +191,11 @@ val customOfflineVideosLimitPatch = bytecodePatch(
         )
 
         if (lifetime != null) {
+            tierGuards?.let { (autoAdjust, rollback, defaultEnable) ->
+                autoAdjust.keepThroughAutoAdjust(PATCH_NAME)
+                rollback.keepThroughAutoAdjust(PATCH_NAME)
+                defaultEnable.keepThroughDefaultEnableCleanup(PATCH_NAME)
+            }
             lifetime.keepOfflineVideos(PATCH_NAME)
             settingsStatus.addInstruction(
                 0,

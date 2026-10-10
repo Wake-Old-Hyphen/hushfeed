@@ -57,6 +57,18 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.COMMENT_BATCH_TRANSLATION
             ));
         }
+        if (SettingsStatus.doNotAutoTranslateEnabled) {
+            addPreference(new InputTextPreference(
+                    context,
+                    "Don't auto translate these languages",
+                    "Separate language codes with commas, like es, de. When TikTok translates for you, "
+                            + "captions and comments in these languages stay as they were written. "
+                            + "See translation still works when you tap it. TikTok's own Don't translate "
+                            + "list stays the way it is.",
+                    Settings.DONT_AUTO_TRANSLATE_LANGUAGES)
+                    .withCheck(app.morphe.extension.tiktok.translation.DoNotAutoTranslate::languageProblem)
+                    .withNameKeyboard());
+        }
         if (SettingsStatus.commentSortControlsEnabled) {
             addPreference(new TogglePreference(
                     context,

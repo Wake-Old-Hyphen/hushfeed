@@ -4,17 +4,13 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **Project:** Failed preference-test saves now retain the underlying logs and file state.
+* **TikTok:** Comments settings has a new row, Don't auto translate these languages. It's empty until you fill it in (#121). Type language codes like `es, de`, and when TikTok translates for you, captions and comments in those languages stay as they were written. See translation still works when you tap it, and TikTok's own Don't translate list isn't changed.
 
-* **Project:** Kept settings search and translated descriptions aligned with renamed rows, and updated their wording checks.
+* **TikTok:** Keep offline videos until you delete them now covers two more ways TikTok cleared your list. With the switch on, TikTok's Auto adjust no longer lowers your offline videos limit or trims the list when TikTok starts, and the clean-up TikTok runs when its test of turning offline videos on by default ends is skipped (#123). Restart TikTok after you change the switch.
 
-* Documented the original 47.1.4 manifest, verified signer, SDK entry points, network security and backup rules, with a reusable sanitized inventory.
+* **TikTok:** Restoring a settings backup made on an older TikTok build now brings back the Feature Gate Lab overrides that still fit this build. The ones that don't are kept but turned off.
 
-* **Project:** Added measured TikTok network, CPU, background and battery observations from a physical phone, with sanitized datasets and a CPU chart. The report distinguishes the paused modified APK from an official build and records capture gaps, overlapping VPN counters and follow-up patch checks. The README now explains Pause's limits more clearly.
-
-* **Project:** Added a repeatable protocol for measuring TikTok traffic, background work and battery use, with a source map for the controls that can affect each result.
-
-* **Project:** Added app and patch development notes plus a TikTok audit covering ad routes, upstream issue evidence, tracking scope, factory onboarding, signed-in controls, and patch opportunities.
+* **TikTok:** Feed screen has a new switch, Hide the side menu button, off until you turn it on. It takes away the button at the top left of the feed, next to LIVE, that opens TikTok's side menu with Your orders, TikTok Minis and more. Restart TikTok after you change it (#128).
 
 * **TikTok:** Every patch description in Morphe Manager is rewritten in plain English. Each one now says what the patch changes, why you might want it, and whether its switch starts on or off and where to find it in Hushfeed settings. A few patch options read more clearly too, and Skip push setup is now called Skip notification setup.
 
@@ -23,6 +19,10 @@ Every Hushfeed release, newest first.
 * **TikTok:** A handful of messages and status lines are plainer too, like the Ghost mode status, the Hook status explanation, the proxy password notice and the file name preview.
 
 * **TikTok:** The Dark background color option in Morphe Manager now says "color code" instead of "hex code", and explains that black turns those pixels off completely on OLED screens.
+
+## 0.70.1 (2026-10-09)
+
+* **TikTok:** The Hushfeed settings home now shows a compact status and search above seven groups. Related pages sit together, with backups, diagnostics and the Feature Gate Lab under App & advanced. About Hushfeed keeps build details and licenses in one place. Search still takes you straight to a setting, and your saved choices carry over. Pause now explains that saved settings and changes built into the APK remain.
 
 ## 0.70.0 (2026-10-09)
 

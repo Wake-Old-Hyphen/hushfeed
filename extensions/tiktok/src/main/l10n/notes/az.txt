@@ -1,5 +1,13 @@
 ## Unreleased
 
+* **TikTok:** Şərhlər ayarlarında yeni sıra var, Bu dilləri avtomatik tərcümə etməyin. Siz doldurmayana qədər boşdur (#121). `es, de` kimi dil kodları yazın, TikTok sizin yerinizə tərcümə edəndə bu dillərdəki başlıqlar və şərhlər yazıldığı kimi qalır. Tərcüməyə bax toxunanda yenə işləyir, TikTok-un öz Tərcümə etmə siyahısı isə dəyişmir.
+
+* **TikTok:** Oflayn videoları siz silənə qədər saxlayın indi TikTok-un siyahını təmizlədiyi daha iki yolu əhatə edir. Açar aktiv olanda TikTok-un Auto adjust funksiyası TikTok açılanda oflayn video limitini azaltmır və siyahını kəsmir, oflayn videoları standart olaraq aktiv edən sınaq bitəndə TikTok-un işlətdiyi təmizləmə isə atlanır (#123). Açarı dəyişdikdən sonra TikTok-u yenidən başlat.
+
+* **TikTok:** Köhnə TikTok versiyasında hazırlanmış ayarlar ehtiyat nüsxəsini bərpa etdikdə, bu versiyaya hələ də uyğun gələn Feature Gate Lab əvəzləmələri geri qayıdır. Uyğun gəlməyənlər saxlanılır, amma söndürülür.
+
+* **TikTok:** Lent ekranında yeni açar var, Yan menyu düyməsini gizlədin, siz yandırana qədər söndürülü qalır. O, lentin yuxarı sol küncündə LIVE-ın yanındakı, TikTok-un Your orders, TikTok Minis və başqalarının olduğu yan menyusunu açan düyməni götürür. Dəyişdirdikdən sonra TikTok-u yenidən başladın (#128).
+
 * **TikTok:** Morphe Manager-dəki bütün yamaq təsvirləri sadə ingilis dilində yenidən yazılıb. İndi hər biri yamağın nəyi dəyişdiyini, onu niyə istəyə biləcəyini, açarının açıq və ya bağlı başladığını və Hushfeed ayarlarında harada olduğunu deyir. Bəzi yamaq seçimləri də daha aydın yazılıb, Skip push setup isə indi Skip notification setup adlanır.
 
 * **TikTok:** Hushfeed ayarlarındakı sətirlər sadə ingiliscə ilə yenidən yazıldı. Privacy, Comments, Downloads, Feed filter, Screen time, Region və digər səhifələr indi texniki terminlər olmadan hər açarın nə etdiyini və nəyi hiss edəcəyinizi deyir. Bir neçə başlıq da dəyişdi, məsələn Stop TikTok's speed tests və Clean up shared links.
@@ -7,6 +15,10 @@
 * **TikTok:** Bir neçə mesaj və status sətri də sadələşdirildi, məsələn Ghost mode statusu, Hook status izahı, proksi parolu bildirişi və fayl adı önbaxışı.
 
 * **TikTok:** Morphe Manager-dəki Dark background color seçimi indi "hex kod" əvəzinə "rəng kodu" deyir və qaranın OLED ekranlarda həmin pikselləri tamamilə söndürdüyünü izah edir.
+
+## 0.70.1 (2026-10-09)
+
+* **TikTok:** Hushfeed ayarları indi yeddi qrupun üstündə yığcam status və axtarışla açılır. Əlaqəli səhifələr bir yerdədir, ehtiyat nüsxələr, diaqnostika və Feature Gate Lab isə Tətbiq və əlavə ayarlar bölməsindədir. Hushfeed haqqında bölməsində quruluş məlumatları və lisenziyalar bir yerdədir. Axtarış sizi yenə birbaşa ayara aparır və saxlanmış seçimləriniz qorunur. Dayandırma mətni indi saxlanmış ayarların və APK-ya daxil edilmiş dəyişikliklərin qaldığını izah edir.
 
 ## 0.70.0 (2026-10-09)
 

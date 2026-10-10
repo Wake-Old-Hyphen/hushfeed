@@ -309,6 +309,16 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     Settings.HIDE_LIVE_ENTRANCE
             ));
         }
+        // TikTok builds the side menu button in code with no view id, so only the LIVE patch's
+        // toolbar check can take it away; the video overlay hider has nothing to find it by.
+        if (SettingsStatus.hideFeedLiveButtonEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the side menu button",
+                    "Hide the button at the top left of the feed that opens TikTok's side menu, with Your orders, TikTok Minis and more.",
+                    Settings.HIDE_FEED_SIDEBAR_BUTTON
+            ));
+        }
         if (SettingsStatus.hideFeedSearchButtonEnabled) {
             addPreference(new TogglePreference(
                     context,

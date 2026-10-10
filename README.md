@@ -1,7 +1,7 @@
 ![Hushfeed. Take back your feed with focused controls for filtering, gestures, playback, downloads and privacy.](assets/readme-hero.png)
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.70.0-6f42c1.svg" /></a>
+  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.70.1-6f42c1.svg" /></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-GPLv3-blue.svg" /></a>
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
@@ -159,7 +159,7 @@ TikTok already does this. Open your profile, tap Following, then Manage at the r
 
 ### Is it Hushfeed? Pause it and see
 
-Hushfeed settings > Pause Hushfeed turns off supported runtime features from the next start. Your settings stay exactly as they were, and switching Pause off brings them back after a restart. A diagnostic export made while paused says so at the top.
+Hushfeed settings > App & advanced > Pause Hushfeed turns off supported runtime features from the next start. Your settings stay exactly as they were, and switching Pause off brings them back after a restart. A diagnostic export made while paused says so at the top.
 
 Pause doesn't restore the original APK. The static changes below remain, and startup behavior can differ by Hushfeed version. If a problem persists while paused, compare with an identified official build before ruling out every patch.
 
@@ -270,7 +270,7 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 | `Hide CAPTCHA popups` | Notes in Hushfeed's diagnostic report when TikTok shows a verification puzzle. Its hide switch isn't available on this TikTok version, so every puzzle still shows. Works as soon as you patch it in. |
 | `Hide comment popup ads` | Stops the brand animation that pops up over the comments when someone types a word or emoji an advertiser paid for. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Hide feed follow button` | Removes the + follow button under creators' pictures on the feed, so you don't follow someone by accident. Starts off. Turn it on in Hushfeed settings > Feed screen. |
-| `Hide feed LIVE button` | Removes the LIVE button from the top left of the feed, for a cleaner screen. Starts off. Turn it on in Hushfeed settings > Feed screen. |
+| `Hide feed LIVE button` | Removes the LIVE button and the side menu button from the top left of the feed, for a cleaner screen. Each has its own switch, and both start off. Turn them on in Hushfeed settings > Feed screen. |
 | `Hide feed save button` | Removes the save button from the right side of the feed, for a cleaner screen. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Hide feed search button` | Removes the search button from the top right of the feed, for a cleaner screen. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Hide floating promotions` | Hides the floating promotion badges, coins and timers on the feed, and can hide the rewards button on your profile. Starts off. Turn it on in Hushfeed settings > Feed screen, and App for the rewards button. |
@@ -343,7 +343,7 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 | `Story controls` | Lets a story replay when it ends instead of moving on, and keeps a photo story on screen until you tap or swipe. Starts off. Turn it on in Hushfeed settings > Playback. |
 | `Subtitle tools` | Lets you make captions bigger, change their background and keep them in clear display, and save subtitle files with downloaded videos. Starts off. Turn it on in Hushfeed settings > Feed screen, and Downloads for subtitle files. |
 | `Swipe-left controls` | Lets a left swipe on a video open its comments or do nothing, instead of opening the creator's profile. Starts off. Pick an action in Hushfeed settings > Feed screen. |
-| `Translate comments` | Translates comments as they load, using TikTok's own translator, so you don't have to tap Translate on each one. Starts off. Turn it on in Hushfeed settings > Comments. |
+| `Translate comments` | Translates comments as they load, using TikTok's own translator, so you don't have to tap Translate on each one. Starts off. Turn it on in Hushfeed settings > Comments, where a second row lists languages TikTok's automatic translation should leave alone. |
 | `Trust user certificates` | Lets TikTok trust security certificates you install yourself, so a tool like mitmproxy can show what the app sends. The risk: anyone who gets a certificate onto your phone can read TikTok's traffic too. Use it only on a test phone. |
 | `Turn off haptics` | Stops the little vibrations TikTok makes when you tap or hold things. Your keyboard and your phone's own vibrations stay. Starts off. Turn it on in Hushfeed settings > App. |
 | `Turn off screen transitions` | Opens and closes TikTok's screens without the sliding animation, so moving around feels quicker. Swipes still follow your finger. Starts off. Turn it on in Hushfeed settings > App. |
@@ -356,14 +356,14 @@ Simple mode in Morphe Manager selects 107 of these patches. Each row below says 
 
 | What you want to change | Setting and location |
 | --- | --- |
-| The `Search: ...` suggestion above a video's comments | Comments > **Hide search suggestions above comments**. Restart TikTok after changing it. |
-| A box for finding text or usernames in loaded comments | Comments > **Search within comments**. This adds Hushfeed's own filter, not TikTok search. |
-| Save the loaded comments and replies to a file | Comments > **Export comments**, then Export CSV or Export JSON under the search box. It needs **Search within comments**, and it saves the replies you've opened. |
-| Recommended searches shown before typing on TikTok's search page | App > **Hide suggestions on the search page**. Search history stays. |
+| The `Search: ...` suggestion above a video's comments | Comments & inbox > Comments > **Hide search suggestions above comments**. Restart TikTok after changing it. |
+| A box for finding text or usernames in loaded comments | Comments & inbox > Comments > **Search within comments**. This adds Hushfeed's own filter, not TikTok search. |
+| Save the loaded comments and replies to a file | Comments & inbox > Comments > **Export comments**, then Export CSV or Export JSON under the search box. It needs **Search within comments**, and it saves the replies you've opened. |
+| Recommended searches shown before typing on TikTok's search page | App & advanced > App > **Hide suggestions on the search page**. Search history stays. |
 | New searches being added to your search history | Privacy > **Don't save new searches** (needs the Stop saving search history patch). Saved searches stay until you delete them on TikTok's search page, and TikTok may still keep its own record on its servers. |
-| The magnifying glass at the top of the feed | Feed screen > **Hide the search button on the feed**. |
-| The magnifying glass at the top of Inbox | Inbox > **Hide the Inbox search button**. |
-| A `Search this image` prompt over a video | Feed screen > **Hide Search this image prompts**. |
+| The magnifying glass at the top of the feed | Feed & layout > Feed screen > **Hide the search button on the feed**. |
+| The magnifying glass at the top of Inbox | Comments & inbox > Inbox > **Hide the Inbox search button**. |
+| A `Search this image` prompt over a video | Feed & layout > Feed screen > **Hide Search this image prompts**. |
 
 Each switch controls its own surface. Turning one off doesn't change the others. The search field in Hushfeed settings only finds settings.
 
@@ -371,7 +371,7 @@ Each switch controls its own surface. Turning one off doesn't change the others.
 
 Watch-history import and the additional restore feedback below are available in source builds and await release.
 
-Backup and restore > **Restore settings** accepts portable settings from an older Hushfeed or another TikTok version. A setting missing from the file keeps its current value. Keys this build can't restore are skipped, and the outcome reports their count separately from missing settings. TikTok's own preferences and local device records stay intact.
+App & advanced > Backup and restore > **Restore settings** accepts portable settings from an older Hushfeed or another TikTok version. A setting missing from the file keeps its current value. Keys this build can't restore are skipped, and the outcome reports their count separately from missing settings. TikTok's own preferences and local device records stay intact.
 
 Feature Gate Lab rules are checked against the supported TikTok catalogs. Rules whose gates changed return turned off. A backup from a version without a catalog restores its portable settings and leaves the current Lab rules alone. **Undo last change** restores the settings and compatible Lab state from before the import.
 
@@ -379,7 +379,7 @@ Feature Gate Lab rules are checked against the supported TikTok catalogs. Rules 
 
 In source builds, **Undo clearing seen videos** restores only records that still fit the current retention period and 10,000-video limit. The result reports a partial restoration or explains when none can be kept. The merge runs in the background, and a storage error keeps Undo available.
 
-Request [your TikTok data](https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data) in JSON format. Extract the downloaded archive, sign in to the account the export belongs to, then open Hushfeed settings > Feed filter > Seen videos > **Import watch history** and choose the JSON file. The file must be at most 2 MB with at most 10,000 watch-history entries. TXT exports aren't supported yet.
+Request [your TikTok data](https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data) in JSON format. Extract the downloaded archive, sign in to the account the export belongs to, then open Hushfeed settings > Feed & layout > Feed filter > Seen videos > **Import watch history** and choose the JSON file. The file must be at most 2 MB with at most 10,000 watch-history entries. TXT exports aren't supported yet.
 
 The importer reads the reviewed **Your Activity > Watch History** export layout. It keeps the watch dates, using the phone's time zone at file choice for dates that don't name a zone. **Forget seen videos after** applies to imported history too. Set it to zero before importing if you want to keep older watches. Invalid links and dates, repeated entries, videos already recorded at the same or a newer date, and entries beyond the newest 10,000 videos are skipped. A banner gives the added and skipped counts. Choosing the same file again adds nothing. Links are read locally and never opened or downloaded.
 
@@ -389,11 +389,23 @@ To take your seen videos to another phone or account, use **Save seen history to
 
 ### Pages and navigation
 
-The settings home starts with a live Hushfeed status card and the installed Hushfeed and TikTok versions. Diagnostics is available from that card. Search follows it, then direct buttons for Feed filter, Privacy and Screen time. The full menu remains in four groups. Your feed holds Feed filter, Feed tabs and Feed screen. Watching and sharing holds Playback, Screen time, Comments, Downloads, Share sheet and Inbox. Privacy and system holds Privacy, Region, App, the Feature Gate Lab, Diagnostics and Backup and restore. About sits at the end. A group only appears when the patches you chose give it a page. Search finds any row by its translated title or description, jumps to it and keeps your search when you return.
+Source builds use a compact settings home. Hushfeed's status sits beside its name, with search directly below and seven groups for the controls. About Hushfeed sits at the bottom with build details and licenses. Tap the status to open App & advanced, where Pause and recovery controls live.
+
+| Group | Pages and controls |
+| --- | --- |
+| Feed & layout | Feed filter, Feed tabs and Feed screen |
+| Playback | Speed, quality and playback behavior |
+| Privacy | Tracking, device access and links |
+| Comments & inbox | Comments and Inbox |
+| Downloads & sharing | Downloads and Share sheet |
+| Screen time | Daily budgets, reminders and the hold |
+| App & advanced | App, Region, Backup and restore, Diagnostics, Feature Gate Lab and Pause Hushfeed |
+
+A group with no available pages stays hidden. Search finds any row by its translated title or description, jumps to it and keeps your search when you return. The Back button returns through the group you opened.
 
 Inside a page, rows sit under headings that say what they are about. Feed filter starts with Calm feed, a reversible preset that hides ads, Shop posts, LIVE interruptions and paid promotions without changing ordinary content choices. The individual controls follow under Kinds of post, Limits, Creators and sounds, Words, countries and languages, LIVE feed, Seen videos and Advanced. The caption word and LIVE category editors have a sample box that shows which rule matches a line of text before you save. Feed screen starts with the right column, where one checklist row hides any of the six buttons and the counts. Buttons on videos comes next, with a switch for each control Hushfeed can draw on a video, and every one of them starts off. Video info, Around the video, Popups, Captions, Clear display and Gestures follow. Playback runs from Auto-advance through Staying on a video, Player and Speed to Quality, and App keeps the layout, search, profile and system switches. Screen time is the daily budgets, the reminder and the hold. Backup and restore is Back up, Restore, Reset and Undo.
 
-The pages use grouped controls on an AMOLED background. The home page uses pink section icons and muted group labels, and each section keeps pink headings. Search has a framed field above its results. Light mode follows TikTok's theme, including the space behind the system bars. Larger text wraps across lines without clipping headers, captions or editor labels, and the three home shortcuts become full-width rows before their names can split. Invalid values stay in the editor with an inline explanation and clear as soon as you type again. Undo, restart and a refused change's reason stay inside settings in a banner with a full-size button. It stays for at least ten seconds and respects Android's longer accessibility timeout. Feed Undo and Unblock also respect that setting. Changing font size or navigation mode keeps the settings page you were using and its Back history. If a page can't finish loading, Hushfeed replaces the half-built controls with a page that says so, with Retry as the way forward and Back as the way out. These screenshots come from native Android views rendered by the local test suite. Enabled controls and values are test fixtures.
+The home page uses plain rows with small outline icons on an AMOLED background. Related controls keep their grouped pages, and search has a framed field above its results. Light mode follows TikTok's theme, including the space behind the system bars. Longer labels and larger text can wrap without squeezing the status into the title. Invalid values stay in the editor with an inline explanation and clear as soon as you type again. Undo, restart and a refused change's reason stay inside settings in a banner with a full-size button. It stays for at least ten seconds and respects Android's longer accessibility timeout. Feed Undo and Unblock also respect that setting. Changing font size or navigation mode keeps the settings page you were using and its Back history. If a page can't finish loading, Hushfeed replaces the half-built controls with a page that says so, with Retry as the way forward and Back as the way out. These screenshots come from native Android views rendered by the local test suite. Enabled controls and values are test fixtures.
 
 <img src="assets/settings/settings.png" alt="Hushfeed settings home" width="260" /> <img src="assets/settings/playback-sound.png" alt="The Player card on the Playback page" width="260" /> <img src="assets/settings/playback-sound-light.png" alt="The Player card on the Playback page in light mode" width="260" />
 
@@ -443,9 +455,9 @@ picker with its real Apply and Cancel actions:
 Hushfeed saves what the app already has. The download reads the addresses TikTok itself fetched for the video you are watching, on the session you are already signed in with, so there is no separate request pretending to be a browser and nothing to keep in step with the site. That is the difference between this and a scraper. Through August 2026 yt-dlp had to rewrite its TikTok extractor twice and re-implement browser impersonation, and it broke again on 1 September. Cobalt has not shipped since April. None of that is a promise that saving always works. TikTok can change what it hands the app, and when it does the saver changes with the patches. It just means the thing most likely to break in a scraper is not part of how this works.
 
 
-Select `Subtitle tools` in the patcher, then enable subtitle downloads in Downloads. Captioned videos and their SRT files share the same filename stem. Language names can use Unicode, and filename collisions keep separate tracks. Android 11 and later save the pair in Movies, and Android 10 uses Download. The selected subfolder still applies. A failed subtitle transfer leaves the saved video intact and reports the partial result.
+Select `Subtitle tools` in the patcher, then enable subtitle downloads under Downloads & sharing > Downloads. Captioned videos and their SRT files share the same filename stem. Language names can use Unicode, and filename collisions keep separate tracks. Android 11 and later save the pair in Movies, and Android 10 uses Download. The selected subfolder still applies. A failed subtitle transfer leaves the saved video intact and reports the partial result.
 
-Caption appearance and the clear display option are on the Feed screen page:
+Caption appearance and the clear display option are under Feed & layout > Feed screen:
 
 Fade the video controls sets the opacity of the buttons, caption and tabs over the video from 0 to 100. Faded controls still take taps. At 0, the buttons and caption are hidden and the tabs stay at 10.
 
@@ -455,9 +467,9 @@ The clear-display caption is removed as soon as you turn its switch off. Turning
 
 Inbox category switches identify New followers, Activity, Archive, Tako and Shop from native row data. They work with translated labels. Turning a switch off restores an already loaded row on the next layout.
 
-TikTok sends pushes about popular videos it picked for you, like "25M+ people viewed" with a clip from someone you don't follow. With the Block suggested video notifications patch in, **Block suggested video notifications** under Inbox starts on and drops them before they reach your notification shade. Turn it off to get them back. It only matches TikTok's "Videos you might like" channel, so messages, comments, likes, new followers and videos from accounts you follow arrive as before.
+TikTok sends pushes about popular videos it picked for you, like "25M+ people viewed" with a clip from someone you don't follow. With the Block suggested video notifications patch in, **Block suggested video notifications** under Comments & inbox > Inbox starts on and drops them before they reach your notification shade. Turn it off to get them back. It only matches TikTok's "Videos you might like" channel, so messages, comments, likes, new followers and videos from accounts you follow arrive as before.
 
-**Turn off push notifications**, also under Inbox, goes further. It comes with the Notification controls patch and stays off until you turn it on. TikTok's push service isn't set up when the app starts, and nothing TikTok posts reaches the notification shade unless it's ongoing, like media controls. TikTok's wake locks are skipped too, apart from the ones for a LIVE you're hosting and for background work that shows its own notification. You won't hear about new messages until you open TikTok, and a notification dropped while it's on doesn't come back later. Push setup happens at startup, so the switch takes effect after a restart, and turning it off or pausing Hushfeed sets push up again the next time TikTok starts.
+**Turn off push notifications**, also under Comments & inbox > Inbox, goes further. It comes with the Notification controls patch and stays off until you turn it on. TikTok's push service isn't set up when the app starts, and nothing TikTok posts reaches the notification shade unless it's ongoing, like media controls. TikTok's wake locks are skipped too, apart from the ones for a LIVE you're hosting and for background work that shows its own notification. You won't hear about new messages until you open TikTok, and a notification dropped while it's on doesn't come back later. Push setup happens at startup, so the switch takes effect after a restart, and turning it off or pausing Hushfeed sets push up again the next time TikTok starts.
 
 The Streak section on the Inbox page takes one or more usernames, separated by commas or new lines. Pick a time and the message (a 🔥 unless you change it). Each person must already have a chat with you. Hushfeed hands one message per chat to TikTok's own notification reply each day, even when TikTok stays closed. Repeated usernames and names that resolve to the same chat don't get a second message. A failed recipient retries independently, without repeating another chat's accepted message. Send it now attempts the remaining chats straight away. Turning it on or adding someone after the chosen time has passed starts that person's schedule the next day. It only uses the account you set it up on and checks that account again before each message.
 
@@ -479,7 +491,7 @@ With `Advanced downloads`, **Save details beside the video** writes a TXT file c
 
 **Tag saved videos with their details** writes the same details into the MP4 itself. The caption's first line becomes the title and the whole caption the description, the creator goes in as the artist, and the link is kept as a comment beside the publication date. Media players and tools like ffprobe read them from there. If a video's layout is one the tags can't be written into, it's saved without them.
 
-**Show download progress**, under Downloads, adds a progress bar while a video saves. It shows a percentage when the video stream's size is known, then stays busy while the sound is fetched or the file is prepared and written. The switch starts off. It also works with Automatic quality. A save finished before the share sheet closes skips the progress row and shows its result. Screen readers hear the start once; changing percentages stay quiet.
+**Show download progress**, under Downloads & sharing > Downloads, adds a progress bar while a video saves. It shows a percentage when the video stream's size is known, then stays busy while the sound is fetched or the file is prepared and written. The switch starts off. It also works with Automatic quality. A save finished before the share sheet closes skips the progress row and shows its result. Screen readers hear the start once; changing percentages stay quiet.
 
 <img src="assets/settings/single-save-progress.png" alt="A single video save at 50 percent" width="328" />
 
@@ -529,7 +541,7 @@ When something on screen needs hiding and nobody can see it on their own phone, 
 
 Capture the feed, under Clear diagnostic data, is for a feed problem that's easier to show than to describe. Tap it, scroll until the problem shows up, then come back and tap it again. Hushfeed saves a text file to Download/Hushfeed (the app's own Documents folder before Android 10) with a line for every list the feed filters handled while it ran. Each line says where the list came from and how many videos went in and came out, with the rules that were on. Under it every video gets its verdict and the rule that hid it. A list TikTok reads again unchanged is only counted. The file keeps about 4 MB of events. On a long capture the oldest go first, and the file says how many it dropped. Nothing is recorded until you start a capture. Videos and creators show up only as short codes made fresh for each capture, and the file has no captions, names, handles or web addresses. Read it before you share it anyway. If the file can't be written, the row keeps the capture and offers to save it again.
 
-Build details is always under About. Copy or save it even when Diagnostic tools wasn't selected or there are no events to report. It lists the bundle's source identity, the patcher used to apply it and the choices made while patching, including the AMOLED color and retained native languages. Older APKs show unknown for facts they didn't record. Pause, settings imports and Clear diagnostic data can't change these APK facts. Automatic reports include them when there's matching diagnostic data. Reports stay local. Use an original TikTok APK when applying patches again.
+Build details is always under About Hushfeed. Copy or save it even when Diagnostic tools wasn't selected or there are no events to report. It lists the bundle's source identity, the patcher used to apply it and the choices made while patching, including the AMOLED color and retained native languages. Older APKs show unknown for facts they didn't record. Pause, settings imports and Clear diagnostic data can't change these APK facts. Automatic reports include them when there's matching diagnostic data. Reports stay local. Use an original TikTok APK when applying patches again.
 
 <img src="assets/settings/diagnostics.png" alt="Diagnostics and report controls" width="300" /> <img src="assets/settings/diagnostics-light.png" alt="Diagnostics in light mode" width="300" />
 
@@ -765,7 +777,7 @@ Hushfeed stands on a lot of other people's work, and the licence asks that this 
 
 Files that came from another project keep their original notices, and files written here say so in their header. A test holds every source file the bundle ships to having one, so a file cannot arrive without saying where it came from.
 
-The notices are also in the app, under Settings, About, Licenses, because Morphe asks that they reach the person using the software and not just the person reading the source.
+The notices are also in the app, under Hushfeed settings > About Hushfeed > Licenses, because Morphe asks that they reach the person using the software and not just the person reading the source.
 
 ## Privacy
 
@@ -792,4 +804,4 @@ A feed capture file follows the same rules. Video and creator ids go in as short
 
 ## License
 
-GPLv3, inherited from the projects Hushfeed was built on. See [LICENSE](LICENSE) and [NOTICE](NOTICE). The same notices are reachable on a patched phone under Settings, About, Licenses.
+GPLv3, inherited from the projects Hushfeed was built on. See [LICENSE](LICENSE) and [NOTICE](NOTICE). The same notices are reachable on a patched phone under Hushfeed settings > About Hushfeed > Licenses.

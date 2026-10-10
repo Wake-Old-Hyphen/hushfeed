@@ -133,7 +133,6 @@ A tap on Home or on the For You tab while For You is showing no longer reloads i
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.	Видео, которое вы поставили на паузу, останется на паузе, когда вы вернётесь в приложение, вместо того чтобы начаться заново. Видео, которое проигрывалось, продолжится как обычно. Это работает на Android 10 и новее.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.	По веб-адресу, оставленному кем-то в комментарии, можно нажать, вместо того чтобы копировать его вручную. Нажатие в любом другом месте комментария работает как раньше.
 AI-generated posts	Публикации, созданные ИИ
-About	О программе
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.	Принудительное значение действует для этой копии TikTok независимо от того, какой аккаунт выполнил вход. Проверку на стороне сервера оно обойти не может.
 Add older seen videos to this account	Добавить старые просмотренные видео к этому аккаунту
 Added %1$s older seen videos to this account	Добавлено %1$s старых просмотренных видео к этому аккаунту
@@ -496,7 +495,6 @@ Filter settings	Настройки фильтра
 Filter the list	Отфильтровать список
 Filter: %1$s	Фильтр: %1$s
 Filters, translation and copy options	Фильтры, перевод и параметры копирования
-Find a setting by name or description	Найти настройку по названию или описанию
 First caller	Первый вызывающий
 First rejection:	Первое отклонение:
 Fit the video to the screen	Вписывать видео в экран
@@ -601,6 +599,8 @@ The Activity row of likes and comments on your posts leaves the Inbox. Notificat
 The Archive row leaves the Inbox. Archived chats are kept.	Строка «Архив» исчезает из Входящих. Архивные чаты сохраняются.
 Hide the LIVE button	Скрывать кнопку LIVE
 Hide the LIVE button in the top left corner of the feed.	Скрывать кнопку LIVE в левом верхнем углу ленты.
+Hide the side menu button	Скрывать кнопку бокового меню
+Hide the button at the top left of the feed that opens TikTok's side menu, with Your orders, TikTok Minis and more.	Скрывать кнопку в левом верхнем углу ленты, которая открывает боковое меню TikTok с разделами «Ваши заказы», TikTok Minis и другими.
 Hide LIVE videos from the feed.	Скрывать видео LIVE из ленты.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.	Строка «Запросы на сообщения» исчезает из Входящих. Запросы продолжают поступать и ждут там, пока вы не выключите это.
 The New followers row leaves the top of the Inbox. The accounts still follow you.	Строка «Новые подписчики» исчезает сверху Входящих. Аккаунты по-прежнему подписаны на вас.
@@ -732,7 +732,6 @@ A long press on Share plays the video at the hold speed instead of opening the q
 Hold speed on Favorites	Скорость удержания на «Избранное»
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.	Долгое нажатие на «Избранное» воспроизводит видео на скорости удержания вместо предложения новой коллекции. Для этого в настройке «Долгое нажатие» должно быть выбрано «Стандарт TikTok», а настройка «Перематывать от краёв экрана» должна быть выключена.
 Lowest	Самое низкое
-Make TikTok yours.	Сделайте TikTok своим.
 Manager	Менеджер
 Marked as not interested	Отмечено как «не интересно»
 Match locale and timezone to country	Подстраивать язык и часовой пояс под страну
@@ -870,7 +869,6 @@ Press and hold a profile picture to save the full size original to your photo de
 Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.	Нажмите и удерживайте историю, чтобы сохранить её. У историй нет собственной кнопки сохранения, а удержание в TikTok обычно ставит их на паузу, поэтому это действие использует тот же жест.
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.	Нажмите и удерживайте левую или правую треть экрана, чтобы перемотать назад или вперёд. Средняя треть сохраняет действие долгого нажатия.
 Privacy	Конфиденциальность
-Privacy and system	Конфиденциальность и система
 Profile	Профиль
 Profile picture saved to %1$s	Фото профиля сохранено в %1$s
 Profile share actions	Действия «Поделиться» в профиле
@@ -1316,7 +1314,6 @@ Video saved	Видео сохранено
 Video saved in %1$s, but only %2$s of %3$s subtitles came with it	Видео сохранено в %1$s, но из %3$s субтитров пришло только %2$s
 Video saved with %1$s subtitles in %2$s	Видео с %1$s субтитрами сохранено в %2$s
 Wait before hiding the controls.	Задержка перед скрытием элементов управления.
-Watching and sharing	Просмотр и отправка
 WebP, exactly as TikTok sent it	WebP, точно как прислал TikTok
 What TikTok gets	Что получает TikTok
 When TikTok requests this key, return the selected value below	Когда TikTok запрашивает этот ключ, возвращать выбранное ниже значение
@@ -1328,7 +1325,6 @@ Write the video's sound beside it as an .m4a. Android 10 and later file audio se
 YTDLnis background mode	Фоновый режим YTDLnis
 YTDLnis download type	Тип загрузки YTDLnis
 Yes	Да
-Your feed	Ваша лента
 Your filters hid everything TikTok just sent. Most were %1$s.	Ваши фильтры скрыли всё, что только что прислал TikTok. В основном это было %1$s.
 Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.	Ваши фильтры скрыли всё, что прислал TikTok, %1$d раз подряд. В основном это было %2$s.
 Your operator's name, like T-Mobile.	Название вашего оператора, например T-Mobile.
@@ -1440,12 +1436,12 @@ TikTok refused the follow with code %1$s	TikTok отклонил подписк�
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok отклонил подписку с кодом %1$s. Причиной может быть скрытая CAPTCHA.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok отклонил подписку: %1$s Причиной может быть скрытая CAPTCHA.
 Hushfeed is paused	Hushfeed на паузе
-TikTok runs as if it weren't patched. Your settings stay as they are.	TikTok работает так, будто он не пропатчен. Ваши настройки остаются как есть.
+Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.	Изменения Hushfeed, применяемые во время работы приложения, приостановлены. Ваши настройки сохранены. Изменения, встроенные в APK, остаются.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok закрылся три раза в течение минуты после запуска, поэтому Hushfeed поставил себя на паузу. Ваши настройки остаются как есть.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Файл с именем hushfeed-safe-mode в папке TikTok в Android/data поставил Hushfeed на паузу. Ваши настройки остаются как есть.
 Turn Hushfeed back on	Снова включить Hushfeed
 Pause Hushfeed	Поставить Hushfeed на паузу
-From the next start TikTok runs as if it weren't patched, so you can tell whether a problem comes from Hushfeed. Your settings stay as they are.	Начиная со следующего запуска TikTok будет работать так, будто он не пропатчен, чтобы вы могли понять, связана ли проблема с Hushfeed. Ваши настройки остаются как есть.
+Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.	Приостановить изменения во время работы приложения после перезапуска TikTok. Ваши настройки сохранятся. Изменения, встроенные в APK, останутся.
 Hushfeed turns back on when TikTok restarts.	Hushfeed снова включится при перезапуске TikTok.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	Не удалось удалить файл hushfeed-safe-mode. Удалите его из папки TikTok в Android/data, чтобы снова включить Hushfeed.
 Hide TikTok Shop in search	Скрывать TikTok Shop в поиске
@@ -2041,3 +2037,22 @@ Keep offline videos until you delete them	Хранить офлайн-видео
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok удаляет видео, сохранённые для просмотра офлайн, через определённое время, иногда всего через два дня, просмотрены они или нет. Когда это включено, они остаются, пока вы сами не удалите их в настройках офлайн-видео TikTok. TikTok всё же может удалить просмотренные, если на телефоне мало места.
 Hide Thoughts on profiles	Скрывать Thoughts в профилях
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	Скрывать облачко Thoughts, которое TikTok показывает над фото профиля, а в вашем профиле и предложение поделиться им. Перезапустите TikTok, чтобы это применить.
+
+# context: Quiet Index settings categories and compact runtime status.
+Feed & layout	Лента и оформление
+Filters, tabs and on-screen controls	Фильтры, вкладки и элементы на экране
+Comments & inbox	Комментарии и входящие
+Filters, translation and inbox controls	Фильтры, перевод и настройки входящих
+Downloads & sharing	Загрузки и отправка
+Files, subtitles and share sheet	Файлы, субтитры и меню «Поделиться»
+App & advanced	Приложение и дополнительные настройки
+Region, backups and diagnostics	Регион, резервные копии и диагностика
+About Hushfeed	О Hushfeed
+Version, changes and licenses	Версия, изменения и лицензии
+Customize	Настроить
+Active	Активен
+Paused	На паузе
+Budgets and reminders	Лимиты и напоминания
+%1$s, %2$s	%1$s, %2$s
+Don't auto translate these languages	Не переводить эти языки автоматически
+Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Разделяйте коды языков запятыми, например es, de. Когда TikTok переводит за вас, описания и комментарии на этих языках остаются как написаны. «Посмотреть перевод» по-прежнему работает, если нажать. Собственный список TikTok «Не переводить» остаётся как есть.

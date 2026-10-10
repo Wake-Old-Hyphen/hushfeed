@@ -94,7 +94,6 @@ A tap on Home or on the For You tab while For You is showing no longer reloads i
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.	Duraklattığın bir video, uygulamaya döndüğünde yeniden başlamak yerine duraklatılmış kalır. Oynarken bıraktığın bir video her zamanki gibi başlar. Android 10 ve sonrasında çalışır.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.	Birinin yoruma bıraktığı web adresine, elle kopyalamak yerine dokunulabilir. Yorumun başka bir yerine dokunmak yine eskiden ne yapıyorsa onu yapar.
 AI-generated posts	Yapay zeka ile üretilmiş gönderiler
-About	Hakkında
 A forced value applies to this copy of TikTok whichever account is signed in. It can't get past a check the server makes.	Zorlanan bir değer, hangi hesap oturum açmış olursa olsun bu TikTok kopyası için geçerlidir. Sunucunun yaptığı bir denetimi aşamaz.
 Add older seen videos to this account	Eski görülen videoları bu hesaba ekle
 Added %1$s older seen videos to this account	%1$s eski görülen video bu hesaba eklendi
@@ -458,7 +457,6 @@ Filter settings	Filtre ayarları
 Filter the list	Listeyi filtrele
 Filter: %1$s	Filtre: %1$s
 Filters, translation and copy options	Filtreler, çeviri ve kopyalama seçenekleri
-Find a setting by name or description	Ada veya açıklamaya göre ayar bul
 First caller	İlk çağıran
 First rejection:	İlk ret:
 Fit the video to the screen	Videoyu ekrana sığdır
@@ -564,6 +562,8 @@ Hide the Full screen button over videos. Playback and automatic rotation keep wo
 Hide the Inbox search button	Gelen Kutusu arama düğmesini gizle
 Hide the LIVE button	CANLI düğmesini gizle
 Hide the LIVE button in the top left corner of the feed.	Akışın sol üst köşesindeki CANLI düğmesini gizle.
+Hide the side menu button	Yan menü düğmesini gizle
+Hide the button at the top left of the feed that opens TikTok's side menu, with Your orders, TikTok Minis and more.	Akışın sol üst köşesinde TikTok'un yan menüsünü açan düğmeyi gizle. Menüde Siparişlerin, TikTok Minis ve daha fazlası var.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.	Mesaj istekleri satırı Gelen Kutusu'ndan kalkar. İstekler gelmeye devam eder ve sen bunu kapatana kadar orada bekler.
 The New followers row leaves the top of the Inbox. The accounts still follow you.	Yeni takipçiler satırı Gelen Kutusu'nun üstünden kalkar. Hesaplar seni takip etmeye devam eder.
 Hide the Report button on videos	Videolardaki Bildir düğmesini gizle
@@ -696,7 +696,6 @@ A long press on Share plays the video at the hold speed instead of opening the q
 Hold speed on Favorites	Favoriler'de basılı tutma hızı
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.	Favoriler'e uzun basmak yeni bir koleksiyon önermek yerine videoyu basılı tutma hızında oynatır. Uzun basma TikTok varsayılanında ve Kenarlardan sar kapalı olmalıdır.
 Lowest	En düşük
-Make TikTok yours.	TikTok'u kendine göre ayarla.
 Manager	Manager
 Marked as not interested	İlgilenmiyorum olarak işaretlendi
 Match locale and timezone to country	Yerel ayarı ve saat dilimini ülkeyle eşleştir
@@ -841,7 +840,6 @@ Press and hold a profile picture to save the full size original to your photo de
 Press and hold a story to save it. Stories have no save button of their own, and holding one is how TikTok pauses it, so this takes that gesture over.	Bir hikayeyi kaydetmek için ona basılı tut. Hikayelerin kendi kaydet düğmesi yoktur ve TikTok hikayeyi basılı tutunca duraklatır, bu yüzden bu ayar o hareketi devralır.
 Press and hold the left or right third of the screen to jump back or forward. The middle third keeps the Long press action.	Geri veya ileri atlamak için ekranın sol ya da sağ üçte birine basılı tut. Ortadaki üçte birlik bölüm Uzun basma eylemini korur.
 Privacy	Gizlilik
-Privacy and system	Gizlilik ve sistem
 Profile	Profil
 Profile picture saved to %1$s	Profil fotoğrafı %1$s konumuna kaydedildi
 Profile share actions	Profil paylaşım eylemleri
@@ -1258,7 +1256,6 @@ Video saved	Video kaydedildi
 Video saved in %1$s, but only %2$s of %3$s subtitles came with it	Video %1$s konumuna kaydedildi, ancak altyazılardan yalnızca %2$s tanesi onunla geldi (toplam %3$s)
 Video saved with %1$s subtitles in %2$s	Video, %1$s altyazıyla %2$s konumuna kaydedildi
 Wait before hiding the controls.	Kontrolleri gizlemeden önce bekle.
-Watching and sharing	İzleme ve paylaşma
 WebP, exactly as TikTok sent it	WebP, tam TikTok'un gönderdiği haliyle
 What TikTok gets	TikTok'un aldığı
 When TikTok requests this key, return the selected value below	TikTok bu anahtarı istediğinde aşağıda seçilen değeri döndür
@@ -1272,7 +1269,6 @@ YTDLnis background mode	YTDLnis arka plan modu
 YTDLnis download type	YTDLnis indirme türü
 Yes	Evet
 Your current settings already match Calm feed.	Mevcut ayarların zaten Sakin akışla aynı.
-Your feed	Akışın
 Your filters hid everything TikTok just sent. Most were %1$s.	Filtrelerin TikTok'un az önce gönderdiği her şeyi gizledi. En çok gizlenen: %1$s.
 Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.	Filtrelerin TikTok'un gönderdiği her şeyi art arda %1$d kez gizledi. En çok gizlenen: %2$s.
 Your operator's name, like T-Mobile.	Operatörünün adı, örneğin T-Mobile.
@@ -1320,12 +1316,12 @@ TikTok refused the follow with code %1$s	TikTok takibi %1$s koduyla reddetti
 TikTok refused the follow with code %1$s. A hidden CAPTCHA may be the cause.	TikTok takibi %1$s koduyla reddetti. Nedeni gizlenmiş bir CAPTCHA olabilir.
 TikTok refused the follow: %1$s A hidden CAPTCHA may be the cause.	TikTok takibi reddetti: %1$s Nedeni gizlenmiş bir CAPTCHA olabilir.
 Hushfeed is paused	Hushfeed duraklatıldı
-TikTok runs as if it weren't patched. Your settings stay as they are.	TikTok yamalanmamış gibi çalışır. Ayarların olduğu gibi kalır.
+Hushfeed runtime changes are paused. Your settings stay saved. Changes built into the APK remain.	Hushfeed'in çalışma sırasında uyguladığı değişiklikler duraklatıldı. Ayarların kayıtlı kalır. APK'ya işlenmiş değişiklikler kalır.
 TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.	TikTok açıldıktan sonraki bir dakika içinde üç kez kapandı, bu yüzden Hushfeed kendini duraklattı. Ayarların olduğu gibi kalır.
 A file named hushfeed-safe-mode in TikTok's folder under Android/data paused Hushfeed. Your settings stay as they are.	Android/data altındaki TikTok klasöründe bulunan hushfeed-safe-mode adlı bir dosya Hushfeed'i duraklattı. Ayarların olduğu gibi kalır.
 Turn Hushfeed back on	Hushfeed'i yeniden aç
 Pause Hushfeed	Hushfeed'i duraklat
-From the next start TikTok runs as if it weren't patched, so you can tell whether a problem comes from Hushfeed. Your settings stay as they are.	Bir sonraki açılıştan itibaren TikTok yamalanmamış gibi çalışır, böylece bir sorunun Hushfeed'den gelip gelmediğini anlarsın. Ayarların olduğu gibi kalır.
+Pause runtime changes after restarting TikTok. Your settings stay saved. Changes built into the APK remain.	TikTok'u yeniden başlattıktan sonra çalışma sırasında uygulanan değişiklikleri duraklat. Ayarların kayıtlı kalır. APK'ya işlenmiş değişiklikler kalır.
 Hushfeed turns back on when TikTok restarts.	Hushfeed, TikTok yeniden başladığında tekrar açılır.
 The file hushfeed-safe-mode couldn't be removed. Delete it from TikTok's folder under Android/data to turn Hushfeed back on.	hushfeed-safe-mode dosyası kaldırılamadı. Hushfeed'i yeniden açmak için onu Android/data altındaki TikTok klasöründen sil.
 Hide TikTok Shop in search	Aramada TikTok Shop'u gizle
@@ -1873,3 +1869,22 @@ Keep offline videos until you delete them	Çevrimdışı videoları sen silene k
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok, çevrimdışı izlemek için kaydedilen videoları belirli bir süre sonra, bazen yalnızca iki gün sonra, izlenmiş olsun olmasın kaldırır. Bu açıkken videolar, TikTok'un Çevrimdışı videolar ayarlarında sen silene kadar kalır. Telefonunda yer azaldığında TikTok izlenmiş olanları yine de temizleyebilir.
 Hide Thoughts on profiles	Profillerde Thoughts'u gizle
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	TikTok'un bir profil fotoğrafının üstünde gösterdiği Thoughts balonunu ve kendi profilinde bir tane paylaşma önerisini gizle. Bunu uygulamak için TikTok'u yeniden başlat.
+
+# context: Quiet Index settings categories and compact runtime status.
+Feed & layout	Akış ve düzen
+Filters, tabs and on-screen controls	Filtreler, sekmeler ve ekran kontrolleri
+Comments & inbox	Yorumlar ve gelen kutusu
+Filters, translation and inbox controls	Filtreler, çeviri ve gelen kutusu kontrolleri
+Downloads & sharing	İndirmeler ve paylaşım
+Files, subtitles and share sheet	Dosyalar, altyazılar ve paylaşım menüsü
+App & advanced	Uygulama ve gelişmiş ayarlar
+Region, backups and diagnostics	Bölge, yedekler ve tanılama
+About Hushfeed	Hushfeed hakkında
+Version, changes and licenses	Sürüm, değişiklikler ve lisanslar
+Customize	Özelleştir
+Active	Etkin
+Paused	Duraklatıldı
+Budgets and reminders	Sınırlar ve hatırlatmalar
+%1$s, %2$s	%1$s, %2$s
+Don't auto translate these languages	Bu dilleri otomatik çevirme
+Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Dil kodlarını virgülle ayır, örneğin es, de. TikTok senin için çevirdiğinde bu dillerdeki açıklamalar ve yorumlar yazıldığı gibi kalır. Çeviriyi gör'e dokunduğunda yine çalışır. TikTok'un kendi Çevirme listesi olduğu gibi kalır.

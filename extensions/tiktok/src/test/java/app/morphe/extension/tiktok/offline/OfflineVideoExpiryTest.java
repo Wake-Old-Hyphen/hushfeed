@@ -72,6 +72,41 @@ public class OfflineVideoExpiryTest {
         assertFalse(OfflineVideoExpiry.keepOfflineVideos());
     }
 
+    /** Auto adjust's boot step and its legacy rollback sit out only while the switch is on. */
+    @Test
+    public void autoAdjustRunsAsTikTokWroteItUntilTheSwitchIsTurnedOn() {
+        assertFalse(OfflineVideoExpiry.keepThroughAutoAdjust());
+
+        Settings.KEEP_OFFLINE_VIDEOS.save(true);
+        assertTrue(OfflineVideoExpiry.keepThroughAutoAdjust());
+        assertTrue("the build report should say the Auto adjust hook ran",
+                String.join(" ", HookStatus.report()).contains("offline auto adjust"));
+
+        PausedProcess.set(true);
+        assertFalse("a paused Hushfeed still held Auto adjust back", OfflineVideoExpiry.keepThroughAutoAdjust());
+        PausedProcess.set(false);
+
+        Settings.KEEP_OFFLINE_VIDEOS.save(false);
+        assertFalse(OfflineVideoExpiry.keepThroughAutoAdjust());
+    }
+
+    /** TikTok's yes to "clear what the default-on experiment saved" becomes a no only with the switch on. */
+    @Test
+    public void theDefaultOnCleanupIsCancelledOnlyWhileTheSwitchIsOn() {
+        assertTrue("TikTok's own yes should stand with the switch off", OfflineVideoExpiry.keepThroughDefaultEnableCleanup(true));
+        assertFalse(OfflineVideoExpiry.keepThroughDefaultEnableCleanup(false));
+
+        Settings.KEEP_OFFLINE_VIDEOS.save(true);
+        assertFalse("the list was cleared with the switch on", OfflineVideoExpiry.keepThroughDefaultEnableCleanup(true));
+        assertFalse(OfflineVideoExpiry.keepThroughDefaultEnableCleanup(false));
+        assertTrue("the build report should say the clean-up hook ran",
+                String.join(" ", HookStatus.report()).contains("offline default cleanup"));
+
+        PausedProcess.set(true);
+        assertTrue("a paused Hushfeed still cancelled the clean-up", OfflineVideoExpiry.keepThroughDefaultEnableCleanup(true));
+        PausedProcess.set(false);
+    }
+
     /** TikTok works the lifetime out once per account and keeps it, so a change waits for a restart. */
     @Test
     public void theSwitchAsksForARestart() {
