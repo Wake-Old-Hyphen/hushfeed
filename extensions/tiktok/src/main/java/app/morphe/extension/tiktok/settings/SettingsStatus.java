@@ -229,6 +229,13 @@ public class SettingsStatus {
         translateIntoEnabled = true;
     }
 
+    /** Translate comments hooked the gates and toggle behind TikTok's translate button in the comment header. */
+    public static boolean commentTranslateButtonEnabled = false;
+
+    public static void enableCommentTranslateButton() {
+        commentTranslateButtonEnabled = true;
+    }
+
     public static void enableHideCommentQuickReactions() {
         hideCommentQuickReactionsEnabled = true;
     }

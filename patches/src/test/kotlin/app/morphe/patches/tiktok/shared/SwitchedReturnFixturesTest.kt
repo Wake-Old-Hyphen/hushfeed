@@ -34,6 +34,9 @@ import app.morphe.patches.tiktok.misc.optimizer.installAnimatedImageCacheSwitch
 import app.morphe.patches.tiktok.misc.optimizer.installSplashAdSwitch
 import app.morphe.patches.tiktok.misc.optimizer.installUpdateCheckSwitch
 import app.morphe.patches.tiktok.misc.optimizer.limitBackgroundTraffic
+import app.morphe.patches.tiktok.misc.translation.COMMENT_TRANSLATE_BUTTON_SWITCH
+import app.morphe.patches.tiktok.misc.translation.findCommentTranslateButtonTargets
+import app.morphe.patches.tiktok.misc.translation.installCommentTranslateButton
 import app.morphe.patches.tiktok.misc.voicecomments.VOICE_COMMENTS_SWITCH
 import app.morphe.patches.tiktok.misc.voicecomments.installVoiceCommentSwitch
 import app.morphe.patches.tiktok.misc.voicecomments.resolveVoiceCommentPublishGate
@@ -65,8 +68,8 @@ import org.junit.rules.TemporaryFolder
  * The six patches that used to change TikTok with no switch now ask one first: Skip the splash
  * ad, Limit background traffic, Drop the animated image cache, Skip update checks, Stop on-device
  * AI profiling and Enable voice comments. Skip passkey sign-in came later with its switch already
- * in front, the same way. This puts their real hooks on each declared build and reads every
- * hooked method back.
+ * in front, the same way, and so did the two gates of the translate button in Translate comments.
+ * This puts their real hooks on each declared build and reads every hooked method back.
  *
  * <p>Each one has to ask its switch before anything else runs, leave with the patch's old answer
  * when the switch says yes, and land on TikTok's own first instruction, with all of TikTok's code
@@ -119,6 +122,7 @@ class SwitchedReturnFixturesTest {
             var cacheChecked = false
             val probe = bytecodePatch(name = "switched return probe") {
                 execute {
+                    val translateButton = findCommentTranslateButtonTargets(this::classDefByOrNull, this::classDefForEach)
                     val hooks = buildList {
                         listOf(
                             SplashPreloadTaskFingerprint, SplashPreloadEntryFingerprint,
@@ -134,10 +138,12 @@ class SwitchedReturnFixturesTest {
                         add(before(PitayaLiteStartFingerprint.method, AI_PROFILING_SWITCH))
                         add(before(resolveVoiceCommentPublishGate(), VOICE_COMMENTS_SWITCH, true))
                         add(before(PasskeyDeviceSupportFingerprint.method, PASSKEY_SIGN_IN_SWITCH, false))
+                        add(before(translateButton.enabledRead, COMMENT_TRANSLATE_BUTTON_SWITCH, true))
+                        add(before(translateButton.styleAnswer, COMMENT_TRANSLATE_BUTTON_SWITCH, true))
                     }
                     // Four tasks, the reviewed gates (two or three on the splash service), the
-                    // buffer gate, push setup, two update tasks, three Pitaya doors, the voice gate
-                    // and the passkey support check.
+                    // buffer gate, push setup, two update tasks, three Pitaya doors, the voice gate,
+                    // the passkey support check and the translate button's two gates.
                     assertTrue("$version: ${splashGates().size} splash gates", splashGates().size in 5..6)
                     expected = hooks.size
 
@@ -161,6 +167,7 @@ class SwitchedReturnFixturesTest {
                     installAiProfilingSwitch()
                     installVoiceCommentSwitch()
                     installPasskeySignInSwitch()
+                    installCommentTranslateButton()
 
                     for (hook in hooks) {
                         val now = mutableClassDefBy(hook.definingClass).methods.filter { signature(it) == hook.signature }
@@ -187,7 +194,7 @@ class SwitchedReturnFixturesTest {
                 patcher += setOf(probe)
                 runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
             }
-            assertTrue("$version: only $expected hooks were found", expected >= 18)
+            assertTrue("$version: only $expected hooks were found", expected >= 20)
             assertEquals("$version: every hook was read back", expected, checked)
             assertTrue("$version: the animated image cache was read back", cacheChecked)
         }

@@ -171,6 +171,7 @@ Added 1 seen video.,Added 1 seen video.
 Added one older seen video to this account,Added one older seen video to this account
 Added to this account.,Added to this account.
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.","Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first."
+"Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
 Ads,Ads
 Advanced,Advanced
@@ -1763,6 +1764,7 @@ Too late to put the saved videos back,Too late to put the saved videos back
 Too many media saves are already running. Try again in a moment.,Too many media saves are already running. Try again in a moment.
 Tracking,Tracking
 "Tracking, device access and links","Tracking, device access and links"
+Translate button in comments,Translate button in comments
 "Translate comments as they load, using TikTok's own translator.","Translate comments as they load, using TikTok's own translator."
 Translate into,Translate into
 Transparent,Transparent

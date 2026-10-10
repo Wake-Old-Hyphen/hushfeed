@@ -17,6 +17,8 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus için Android 10 veya üstü gerekir, bu yüzden sesler TikTok'un gönderdiği gibi kaydedilir.
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Kaydedilen videolarda sol alt köşede @kullanıcı adı ve açıklamanın ilk satırı görünür. Bunun için telefon videonun tamamını yeniden kodlar, bu yüzden kaydetmek daha uzun sürer. Hushfeed'in yaptığı kayıtlar için geçerlidir.
 Sound format	Ses biçimi
+Translate button in comments	Yorumlarda çeviri düğmesi
+Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	TikTok'un çeviri düğmesini yorum sayısının yanına ekler. Bir dokunuş tüm yorumları çevirir, bir dokunuş daha orijinalleri yeniden gösterir.
 Translate into	Şu dile çevir
 Type one language code here, like en.	Buraya tek bir dil kodu yaz, örneğin en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Bu hesabın en fazla %1$s MB ve %2$s kayıt içeren TikTok JSON dışa aktarımını kullanın. Saat dilimi olmayan tarihler için bu telefonun saat dilimi kullanılır.

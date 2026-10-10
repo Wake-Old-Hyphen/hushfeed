@@ -73,6 +73,8 @@ public class PauseAnswersUnpatchedTest {
             "local_hide_button_position", "block_sound_button_position",
             "not_interested_button_position", "feed_mute_button_position", "share_action_catalog",
             "diagnostic_report_salt",
+            // Which translate toggle Hushfeed's button turned on, so a pause can answer it off.
+            "comment_translate_button_turned_on",
             // The profile shortcuts TikTok has sent, recorded for the checklist like share actions.
             "profile_shortcut_catalog",
             // The popup labels TikTok has tried to show, recorded for the checklist the same way.

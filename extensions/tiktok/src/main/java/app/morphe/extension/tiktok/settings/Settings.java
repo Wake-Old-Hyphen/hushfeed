@@ -412,6 +412,20 @@ public class Settings extends BaseSettings {
     public static final StringSetting DONT_AUTO_TRANSLATE_LANGUAGES = new StringSetting("dont_auto_translate_languages", "");
     /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
     public static final StringSetting TRANSLATE_INTO = new StringSetting("translate_into", "");
+    /**
+     * TikTok's own translate button in the comment header (#85). No restart: the header asks its
+     * gates each time a comment sheet opens.
+     */
+    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON = new BooleanSetting("comment_translate_button", FALSE);
+    /**
+     * Whether the toggle behind that button was last turned on by the button Hushfeed showed. No
+     * row of its own: it is how turning the switch off knows to answer that toggle off, rather
+     * than one TikTok turned on itself. Kept out of import and export for the same reason as
+     * {@link #LAUNCHER_SHORTCUTS_REMOVED}: the toggle it describes lives in TikTok's storage on
+     * one phone.
+     */
+    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON_TURNED_ON =
+            new BooleanSetting("comment_translate_button_turned_on", FALSE, false, false);
     // Restart-gated: the comment keyboard builds its slot tree once per session, and the
     // trigger that adds the emoji row is asked at that moment only.
     public static final BooleanSetting HIDE_COMMENT_QUICK_REACTIONS =
@@ -1007,7 +1021,7 @@ public class Settings extends BaseSettings {
                 BOTTOM_NAVIGATION_OBSERVED_TABS, DOWNLOAD_PATH, DOWNLOAD_PATHS_MIGRATED,
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
-                FEED_MUTE_BUTTON_POSITION,
+                FEED_MUTE_BUTTON_POSITION, COMMENT_TRANSLATE_BUTTON_TURNED_ON,
                 SHARE_ACTION_CATALOG, PROFILE_SHORTCUT_CATALOG, POPUP_LABEL_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.

@@ -18,6 +18,8 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.,Opus
 "Opus needs Android 10 or later, so sounds save as TikTok sent them.","Opus butuh Android 10 atau yang lebih baru, jadi suara disimpan seperti yang dikirim TikTok."
 "Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.","Video yang disimpan menampilkan @nama pengguna dan baris pertama keterangan di pojok kiri bawah. Untuk itu ponsel mengenkode ulang seluruh video, jadi menyimpan jadi lebih lama. Berlaku untuk simpanan yang dibuat Hushfeed."
 Sound format,Format suara
+Translate button in comments,Tombol terjemahkan di komentar
+"Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Menambahkan tombol terjemahkan milik TikTok di samping jumlah komentar. Sekali ketuk menerjemahkan semua komentar, ketuk sekali lagi untuk menampilkan aslinya."
 Translate into,Terjemahkan ke
 "Type one language code here, like en.","Ketik satu kode bahasa di sini, seperti en."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Gunakan ekspor JSON TikTok akun ini, maksimal %1$s MB dan %2$s entri. Tanggal tanpa zona waktu memakai zona waktu ponsel ini."

@@ -17,6 +17,8 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	O Op
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	O Opus precisa do Android 10 ou mais recente, então os sons são salvos como o TikTok enviou.
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Os vídeos salvos mostram o @nome de usuário e a primeira linha da legenda no canto inferior esquerdo. Para isso o celular codifica o vídeo inteiro de novo, então salvar demora mais. Vale para o que o Hushfeed salva.
 Sound format	Formato do som
+Translate button in comments	Botão de traduzir nos comentários
+Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Adiciona o botão de traduzir do TikTok ao lado do número de comentários. Um toque traduz todos os comentários e outro mostra os originais de novo.
 Translate into	Traduzir para
 Type one language code here, like en.	Digite aqui um código de idioma, como en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Use a exportação JSON do TikTok desta conta, com até %1$s MB e %2$s entradas. Datas sem fuso horário usam o fuso deste telefone.
