@@ -694,6 +694,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_STATUS_BAR = new BooleanSetting("hide_status_bar", FALSE);
     /** LIVE rooms are an activity of their own, which Hide the status bar never reached (#38). */
     public static final BooleanSetting HIDE_STATUS_BAR_IN_LIVE = new BooleanSetting("hide_status_bar_in_live", FALSE);
+    /** Only the black strip TikTok keeps for the bar goes; the bar stays over the stream (#137). */
+    public static final BooleanSetting LIVE_UNDER_STATUS_BAR = new BooleanSetting("live_under_status_bar", FALSE);
     public static final StringSetting TOUCH_TARGET_SCALE = new StringSetting("touch_target_scale", "1");
     public static final BooleanSetting HIDE_SENSITIVE_WARNINGS = new BooleanSetting("hide_sensitive_warnings", FALSE);
     /** The Check sources banner on a video TikTok flags as unverified, and the share warnings that read it. */

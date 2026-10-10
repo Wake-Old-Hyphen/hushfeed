@@ -3,9 +3,12 @@ package app.morphe.extension.tiktok.feed;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -13,6 +16,7 @@ import android.widget.FrameLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.live.LivePlayActivity;
+import java.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +38,12 @@ public class LiveStatusBarTest {
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         Settings.HIDE_STATUS_BAR_IN_LIVE.save(false);
+        Settings.LIVE_UNDER_STATUS_BAR.save(false);
     }
 
     @After public void tearDown() {
         Settings.HIDE_STATUS_BAR_IN_LIVE.resetToDefault();
+        Settings.LIVE_UNDER_STATUS_BAR.resetToDefault();
         Utils.setContext(RuntimeEnvironment.getApplication());
     }
 
@@ -189,6 +195,111 @@ public class LiveStatusBarTest {
         layOut(live);
         assertEquals(bar, container.getPaddingTop());
         room.pause().stop().destroy();
+    }
+
+    /**
+     * #137: every panel TikTok opened over the room put its strip back once, and the old limit
+     * counted those for the whole visit, so the seventh panel left the strip there for good.
+     */
+    @Test public void aStripPutBackNowAndThenIsTakenEveryTime() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        room.start().resume().visible();
+        layOut(live);
+        assertEquals("the strip stayed", 0, topMargin(stream));
+
+        for (int panel = 1; panel <= 10; panel++) {
+            putBack(stream, bar);
+            layOut(live);
+            assertEquals("panel " + panel + " left the strip", 0, topMargin(stream));
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+        }
+        room.pause().stop().destroy();
+    }
+
+    /** TikTok putting the strip back on every frame is a fight the room is left to win. */
+    @Test public void aStripPutBackOnEveryLayoutIsLeftAfterAFewTries() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        room.start().resume().visible();
+        layOut(live);
+
+        for (int frame = 0; frame < 12; frame++) {
+            putBack(stream, bar);
+            layOut(live);
+        }
+        assertEquals("the fight went on", bar, topMargin(stream));
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1500));
+        putBack(stream, bar);
+        layOut(live);
+        assertEquals("a lost fight was taken up again", bar, topMargin(stream));
+
+        // A new visit starts over.
+        room.pause();
+        room.resume();
+        layOut(live);
+        assertEquals("coming back kept the strip", 0, topMargin(stream));
+        room.pause().stop().destroy();
+    }
+
+    /** #137: the other way out of the black strip keeps the clock and icons over the stream. */
+    @Test public void underTheBarTheStripGoesAndTheBarStays() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        live.getWindow().setStatusBarColor(Color.BLACK);
+        room.start().resume().visible();
+        layOut(live);
+
+        assertEquals("the strip stayed", 0, topMargin(stream));
+        assertEquals("the bar wasn't made see through", Color.TRANSPARENT, live.getWindow().getStatusBarColor());
+        assertEquals("the cutout mode was changed with the bar showing",
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT,
+                live.getWindow().getAttributes().layoutInDisplayCutoutMode);
+
+        room.pause();
+        assertEquals("leaving didn't give the strip back", bar, topMargin(stream));
+        assertEquals("leaving didn't give the bar's color back", Color.BLACK, live.getWindow().getStatusBarColor());
+        room.stop().destroy();
+    }
+
+    @Test public void hidingTheBarWinsOverShowingTheRoomUnderIt() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).setup();
+        LivePlayActivity live = room.get();
+        assertEquals("the bar wasn't hidden", WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES,
+                live.getWindow().getAttributes().layoutInDisplayCutoutMode);
+        room.pause().stop().destroy();
+    }
+
+    private static FrameLayout heldStream(Activity live, int bar) {
+        FrameLayout container = new FrameLayout(live);
+        FrameLayout stream = new FrameLayout(live);
+        FrameLayout.LayoutParams held = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        held.topMargin = bar;
+        container.addView(stream, held);
+        live.setContentView(container);
+        return stream;
+    }
+
+    private static void putBack(View stream, int bar) {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) stream.getLayoutParams();
+        params.topMargin = bar;
+        stream.setLayoutParams(params);
     }
 
     private static int platformBar() {

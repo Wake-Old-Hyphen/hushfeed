@@ -187,6 +187,8 @@ How much of a video you watch before it's hidden next time. Zero counts it after
 Later	Позже
 Leave when TikTok says time is up	Выходить, когда TikTok сообщает об окончании времени
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.	Разрешить LIVE занимать экран до самого верхнего края. Строка состояния возвращается, когда вы выходите из LIVE. Проведите вниз от верхнего края, чтобы увидеть её на миг.
+Show a LIVE under the status bar	Показывать LIVE под строкой состояния
+Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.	LIVE доходит до верхнего края, а часы и значки состояния остаются поверх него вместо чёрной полосы. Скрывать строку состояния в LIVE-трансляциях убирает их совсем.
 Loading the gate list and TikTok's current values…	Загрузка списка переключателей и текущих значений TikTok…
 New value	Новое значение
 No app on this phone opens that file	Ни одно приложение на этом телефоне не открывает такой файл

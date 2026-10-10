@@ -142,6 +142,8 @@ How much of a video you watch before it's hidden next time. Zero counts it after
 Later	Sonra
 Leave when TikTok says time is up	TikTok vaxtın bitdiyini dedikdə çıxın
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.	LIVE yayımının ekranı yuxarı kənara qədər doldurmasına icazə verin. LIVE-dan çıxdıqda status paneli geri qayıdır. Ona baxmaq üçün yuxarıdan aşağı sürüşdürün.
+Show a LIVE under the status bar	LIVE-ı status panelinin altında göstərin
+Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.	LIVE yayımı yuxarı kənara qədər uzansın, saat və status ikonları onun üstündə qalsın, qara zolaq olmasın. LIVE otaqlarında status panelini gizlədin isə onları tamamilə gizlədir.
 Loading the gate list and TikTok's current values…	Funksiya qapıları siyahısı və TikTok-un cari dəyərləri yüklənir…
 New value	Yeni dəyər
 No app on this phone opens that file	Bu telefonda həmin faylı açan tətbiq yoxdur
