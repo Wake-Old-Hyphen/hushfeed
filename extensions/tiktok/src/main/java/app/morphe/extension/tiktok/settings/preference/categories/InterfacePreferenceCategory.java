@@ -42,6 +42,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     /** Whether this page has anything on it. The row into it asks the same question. */
     public static boolean isAvailable() {
         return SettingsStatus.videoOverlaysEnabled
+                || SettingsStatus.musicDiscSpinEnabled
                 || SettingsStatus.feedTextSizeEnabled
                 || SettingsStatus.hideFeedFollowButtonEnabled
                 || SettingsStatus.hideFeedSaveButtonEnabled
