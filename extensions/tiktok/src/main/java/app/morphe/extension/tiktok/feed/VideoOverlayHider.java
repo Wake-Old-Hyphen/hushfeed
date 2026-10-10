@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.SystemClock;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -33,6 +35,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -610,6 +613,7 @@ public final class VideoOverlayHider {
                     TRAVERSAL.scaled.clear();
                 }
             }
+            ClearDisplayShownControls.apply(fadedClear, clearOn());
 
             setStatusBarHidden(activity, statusBar);
         } catch (Throwable ex) {
@@ -687,7 +691,7 @@ public final class VideoOverlayHider {
             }
         }
         View watched = rescaleRoot.get();
-        if (touchScale != 1f || !FADED_TO.isEmpty()) {
+        if (touchScale != 1f || !FADED_TO.isEmpty() || ClearDisplayShownControls.anyKept()) {
             if (watched != root && root != null) {
                 if (watched != null && watched.getViewTreeObserver().isAlive()) {
                     watched.getViewTreeObserver().removeOnPreDrawListener(RESCALE);
@@ -733,6 +737,7 @@ public final class VideoOverlayHider {
 
     /** The pre-draw pass: every faded view TikTok has written its own opacity to, faded again. */
     static void reapplyFade() {
+        ClearDisplayShownControls.apply(tapsGoThroughNow(), clearOn());
         if (FADED_TO.isEmpty()) return;
         int corrected = 0;
         for (Map.Entry<View, float[]> entry : FADED_TO.entrySet()) {
@@ -1274,6 +1279,69 @@ public final class VideoOverlayHider {
         int level = Settings.FADE_CONTROLS_OPACITY.get();
         return level > 0 && level < 100 && (RememberClearDisplayPatch.isClearDisplayNow()
                 || RememberClearDisplayPatch.isCarryingClear());
+    }
+
+    /** TikTok's Clear display, live or carried across a swipe, whatever Pause says. */
+    private static boolean clearOn() {
+        return RememberClearDisplayPatch.isClearDisplayNow() || RememberClearDisplayPatch.isCarryingClear();
+    }
+
+    /**
+     * Called as TikTok's clear-mode event arrives, before TikTok handles it: notes which of the
+     * current video's controls are showing, so the faded Clear display can keep them (#84).
+     * TikTok's Clear display puts them away by visibility as well as opacity; see
+     * {@link ClearDisplayShownControls}. The current video's are the ones on the screen.
+     */
+    public static void beforeClearDisplay(Object event) {
+        if (Looper.myLooper() != Looper.getMainLooper()) return;
+        Activity activity = activityReference.get();
+        if (activity == null) return;
+        try {
+            View root = activity.findViewById(android.R.id.content);
+            if (root == null) return;
+            // Collection.removeIf is API 24, and the payload's floor is 23.
+            List<Integer> columnIds = new ArrayList<>();
+            List<Integer> frameIds = new ArrayList<>();
+            String packageName = activity.getPackageName();
+            // The search bar holds its row in the same kind of wrapper the rail's buttons sit in.
+            for (String[] names : new String[][]{ACTION_BAR_IDS, SEARCH_BAR_IDS}) {
+                for (String name : names) {
+                    int id = resolveIdentifier(activity, packageName, name, false);
+                    if (id != 0) columnIds.add(id);
+                }
+            }
+            for (String[] names : new String[][]{ANCHOR_IDS, MUSIC_COVER_IDS}) {
+                for (String name : names) {
+                    int id = resolveIdentifier(activity, packageName, name, false);
+                    if (id != 0) frameIds.add(id);
+                }
+            }
+            List<View> columns = new ArrayList<>();
+            List<View> frames = new ArrayList<>();
+            DisplayMetrics screen = activity.getResources().getDisplayMetrics();
+            int[] where = new int[2];
+            ArrayDeque<View> pending = new ArrayDeque<>();
+            pending.add(root);
+            while (!pending.isEmpty()) {
+                View view = pending.removeFirst();
+                int id = view.getId();
+                boolean column = id != View.NO_ID && columnIds.contains(id);
+                if (column || (id != View.NO_ID && frameIds.contains(id))) {
+                    view.getLocationOnScreen(where);
+                    if (where[0] >= 0 && where[0] < screen.widthPixels
+                            && where[1] >= 0 && where[1] < screen.heightPixels) {
+                        (column ? columns : frames).add(view);
+                    }
+                }
+                if (view instanceof ViewGroup) {
+                    ViewGroup group = (ViewGroup) view;
+                    for (int i = 0; i < group.getChildCount(); i++) pending.add(group.getChildAt(i));
+                }
+            }
+            ClearDisplayShownControls.note(event, columns, frames);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not note the controls Clear display takes away", ex);
+        }
     }
 
     /** Lets a test stand in for a TikTok resource id, which only the real APK resolves. */

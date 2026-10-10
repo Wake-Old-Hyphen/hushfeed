@@ -405,9 +405,14 @@ set /p FAKE_ADB_MODE=<"%~dp0mode.txt"
 echo mode=%FAKE_ADB_MODE% args=%*>>"%~dp0adb.log"
 if "%3|%4|%5"=="shell|pm|path" goto package_path
 if "%3"=="uninstall" goto uninstall
+if "%3"=="get-state" goto state
+exit /b 0
+:state
+if not "%FAKE_ADB_MODE%"=="check-fail" echo device
 exit /b 0
 :package_path
 if "%FAKE_ADB_MODE%"=="check-fail" goto check_fail
+if "%FAKE_ADB_MODE%"=="absent-silent" exit /b 1
 if "%FAKE_ADB_MODE%"=="present" echo package:/data/app/example/base.apk
 if "%FAKE_ADB_MODE%"=="uninstall-fail" echo package:/data/app/example/base.apk
 exit /b 0
@@ -429,6 +434,15 @@ exit /b 19
     Assert-True ($calls.Count -eq 1 -and $calls[0] -like '*shell pm path com.example.app') `
         'The absent-package path attempted an uninstall.'
 
+    # API 36's pm path exits 1 with nothing to say for a package that isn't there.
+    Remove-Item -LiteralPath $log -Force
+    [System.IO.File]::WriteAllText($mode, 'absent-silent', [System.Text.Encoding]::ASCII)
+    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'CLEAN' -PackageName 'com.example.app'
+    $calls = @(Get-Content -LiteralPath $log)
+    Assert-True (-not $removed) 'A package API 36 reports absent was reported as removed.'
+    Assert-True ($calls.Count -eq 2 -and $calls[1] -like '*get-state') `
+        'A silent pm path failure was not checked against the device state, or went on to uninstall.'
+
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'present', [System.Text.Encoding]::ASCII)
     $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'READY' -PackageName 'com.example.app'
@@ -443,7 +457,7 @@ exit /b 19
         Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'BROKEN' -PackageName 'com.example.app'
     } '*could not check*' 'An ADB transport failure was treated as an absent package.'
     $calls = @(Get-Content -LiteralPath $log)
-    Assert-True ($calls.Count -eq 1) 'The check-failure path continued after ADB failed.'
+    Assert-True ($calls.Count -eq 2 -and $calls[1] -like '*get-state') 'The check-failure path continued after ADB failed.'
 
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'uninstall-fail', [System.Text.Encoding]::ASCII)

@@ -46,6 +46,8 @@ public class TapThroughControlsTest {
     private static final int CELL_ID = 0x7f0a0f01;
     private static final int COLUMN_ID = 0x7f0a0f02;
     private static final int FRAME_ID = 0x7f0a0f03;
+    private static final int COVER_ID = 0x7f0a0f04;
+    private static final int SEARCH_ID = 0x7f0a0f05;
     private static final int WIDTH = 1080;
     private static final int HEIGHT = 1920;
 
@@ -64,6 +66,8 @@ public class TapThroughControlsTest {
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
         VideoOverlayHider.resolveForTests("47.1.4:llj", COLUMN_ID);
         VideoOverlayHider.resolveForTests("47.1.4:bqv", FRAME_ID);
+        VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:ll8", SEARCH_ID);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
     }
@@ -78,6 +82,9 @@ public class TapThroughControlsTest {
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         VideoOverlayHider.resolveForTests("47.1.4:llj", 0);
         VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+        VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
+        VideoOverlayHider.resolveForTests("47.1.4:ll8", 0);
+        ClearDisplayShownControls.resetForTests();
     }
 
     /**
@@ -222,6 +229,133 @@ public class TapThroughControlsTest {
             assertTrue("TikTok's own flags were never changed", column.isClickable());
             assertFalse(column.isLongClickable());
             assertTrue(column.isEnabled());
+        }
+    }
+
+    /**
+     * TikTok's Clear display puts each button wrapper in the rail's column at 0 and GONE, and the
+     * caption frame and the music disc GONE (emulator, 47.1.4, 2026-10-10), so the faded column
+     * alone showed nothing. The faded Clear display keeps the ones that were showing on the
+     * current video, and only those; Pause gives TikTok its own look back, and leaving holds the
+     * wrappers at full through TikTok's animation up from 0.
+     */
+    @Test
+    public void theFadedClearDisplayKeepsWhatTikTokPutsAwayByVisibility() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(CELL_ID);
+            FrameLayout rail = new FrameLayout(activity);
+            rail.setId(COLUMN_ID);
+            View like = new View(activity);
+            View share = new View(activity);
+            // A button TikTok keeps away on this post.
+            View follow = new View(activity);
+            follow.setVisibility(View.GONE);
+            rail.addView(like);
+            rail.addView(share);
+            rail.addView(follow);
+            cell.addView(rail, new FrameLayout.LayoutParams(160, 480, Gravity.END | Gravity.TOP));
+            View caption = new View(activity);
+            caption.setId(FRAME_ID);
+            cell.addView(caption, new FrameLayout.LayoutParams(200, 100, Gravity.START | Gravity.BOTTOM));
+            View disc = new View(activity);
+            disc.setId(COVER_ID);
+            cell.addView(disc, new FrameLayout.LayoutParams(60, 60, Gravity.END | Gravity.BOTTOM));
+            // The search bar under the caption, its row in a wrapper like the rail's buttons.
+            FrameLayout search = new FrameLayout(activity);
+            search.setId(SEARCH_ID);
+            View searchRow = new View(activity);
+            search.addView(searchRow);
+            cell.addView(search, new FrameLayout.LayoutParams(400, 60, Gravity.START | Gravity.BOTTOM));
+            root.addView(cell, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            // The next video's cell, inflated below the screen.
+            FrameLayout next = new FrameLayout(activity);
+            next.setId(CELL_ID);
+            next.setTranslationY(100_000f);
+            FrameLayout nextRail = new FrameLayout(activity);
+            nextRail.setId(COLUMN_ID);
+            View nextLike = new View(activity);
+            nextRail.addView(nextLike);
+            next.addView(nextRail, new FrameLayout.LayoutParams(160, 480, Gravity.END | Gravity.TOP));
+            root.addView(next, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(root);
+            VideoOverlayHider.install(activity);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+
+            clear(true);
+            // TikTok's own handling, all in the frame after the event.
+            rail.setAlpha(0f);
+            for (View wrapper : new View[]{like, share, nextLike}) {
+                wrapper.setAlpha(0f);
+                wrapper.setVisibility(View.GONE);
+            }
+            caption.setVisibility(View.GONE);
+            disc.setVisibility(View.GONE);
+            searchRow.setVisibility(View.GONE);
+            VideoOverlayHider.applyTo(activity);
+            frameDrawn();
+            assertEquals("the rail holds the chosen level", 0.5f, rail.getAlpha(), 0f);
+            assertEquals("the search bar keeps its row", View.VISIBLE, searchRow.getVisibility());
+            assertEquals(0.5f, search.getAlpha(), 0f);
+            for (View wrapper : new View[]{like, share}) {
+                assertEquals("each button stays in the rail", View.VISIBLE, wrapper.getVisibility());
+                assertEquals("at full, so the rail's level is what shows", 1f, wrapper.getAlpha(), 0f);
+            }
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals(0.5f, caption.getAlpha(), 0f);
+            assertEquals(View.VISIBLE, disc.getVisibility());
+            assertEquals("a button TikTok kept away on this post stays away", View.GONE, follow.getVisibility());
+            assertEquals("the next video's buttons are TikTok's to set", View.GONE, nextLike.getVisibility());
+            assertEquals(0f, nextLike.getAlpha(), 0f);
+
+            // TikTok writing its own again is undone on the next frame.
+            like.setVisibility(View.GONE);
+            like.setAlpha(0f);
+            frameDrawn();
+            assertEquals(View.VISIBLE, like.getVisibility());
+            assertEquals(1f, like.getAlpha(), 0f);
+
+            PausedProcess.set(true);
+            VideoOverlayHider.applyTo(activity);
+            frameDrawn();
+            assertEquals("Pause gives back TikTok's Clear display", View.GONE, like.getVisibility());
+            assertEquals(0f, like.getAlpha(), 0f);
+            assertEquals(View.GONE, caption.getVisibility());
+            assertEquals(View.GONE, disc.getVisibility());
+            assertEquals(View.GONE, searchRow.getVisibility());
+
+            PausedProcess.set(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, like.getVisibility());
+            assertEquals(1f, like.getAlpha(), 0f);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+
+            clear(false);
+            // Leaving, TikTok shows them at 0 and animates them up after a pause.
+            for (View wrapper : new View[]{like, share}) {
+                wrapper.setVisibility(View.VISIBLE);
+                wrapper.setAlpha(0f);
+            }
+            VideoOverlayHider.applyTo(activity);
+            frameDrawn();
+            assertEquals("no blink while TikTok's animation runs", 1f, like.getAlpha(), 0f);
+            like.setAlpha(0.3f);
+            frameDrawn();
+            assertEquals(1f, like.getAlpha(), 0f);
+            org.robolectric.shadows.ShadowSystemClock.advanceBy(
+                    java.time.Duration.ofMillis(ClearDisplayShownControls.EXIT_HOLD_MS + 1));
+            frameDrawn();
+            assertFalse(ClearDisplayShownControls.anyKept());
+            like.setAlpha(0.4f);
+            frameDrawn();
+            assertEquals("after the hold the opacity is TikTok's own", 0.4f, like.getAlpha(), 0f);
         }
     }
 

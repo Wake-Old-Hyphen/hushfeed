@@ -3,6 +3,34 @@
     Shared guarded ADB operations for a replacement install.
 #>
 
+# The package's installed APK paths, none when it isn't installed. On API 36 pm path exits 1 with
+# no output for a package that isn't there, which only a device adb still reaches tells apart from
+# a broken connection, so a silent failure counts as absent only when get-state answers "device".
+function Get-AndroidPackagePaths {
+    param([string]$Adb, [string]$Serial, [string]$PackageName)
+
+    # Relaxed for the call: Windows PowerShell 5.1 throws on a native command's stderr under Stop,
+    # even redirected, and adb's "daemon not running; starting now" is on stderr.
+    $preference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = @(& $Adb -s $Serial shell pm path $PackageName 2>&1)
+        $status = $LASTEXITCODE
+        $state = ''
+        if ($status -ne 0) { $state = (@(& $Adb -s $Serial get-state 2>&1) -join ' ').Trim() }
+    } finally {
+        $ErrorActionPreference = $preference
+    }
+    $said = @($output | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ })
+    if ($status -ne 0 -and ($said.Count -gt 0 -or $state -ne 'device')) {
+        $detail = $said -join ' '
+        if (-not $detail) { $detail = "exit $status" }
+        throw "adb could not check $PackageName on ${Serial}: $detail"
+    }
+    @($said | Where-Object { $_.StartsWith('package:', [StringComparison]::Ordinal) } |
+        ForEach-Object { $_.Substring(8) })
+}
+
 function Assert-InstalledApkSigner {
     param(
         [string]$Adb, [string]$Serial, [string]$PackageName, $SigningSession,
@@ -12,14 +40,7 @@ function Assert-InstalledApkSigner {
     $preference = $ErrorActionPreference
     $checkDirectory = $null
     try {
-        $ErrorActionPreference = 'Continue'
-        $paths = @(& $Adb -s $Serial shell pm path $PackageName 2>&1)
-        $status = $LASTEXITCODE
-        $ErrorActionPreference = $preference
-        if ($status -ne 0) { throw "adb could not check the installed package $PackageName." }
-        $paths = @($paths | ForEach-Object { ([string]$_).Trim() } |
-            Where-Object { $_.StartsWith('package:', [StringComparison]::Ordinal) } |
-            ForEach-Object { $_.Substring(8) })
+        $paths = @(Get-AndroidPackagePaths -Adb $Adb -Serial $Serial -PackageName $PackageName)
         if ($paths.Count -eq 0) {
             if ($RequireInstalled) { throw "$PackageName must be installed before installing its verification probe." }
             return
@@ -57,23 +78,7 @@ function Remove-AndroidPackageIfInstalled {
         [Parameter(Mandatory = $true)][string]$PackageName
     )
 
-    # Relaxed for the call: Windows PowerShell 5.1 throws on a native command's stderr under Stop,
-    # even redirected, and adb's "daemon not running; starting now" is on stderr.
-    $preference = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
-    try {
-        $pathOutput = @(& $Adb -s $Serial shell pm path $PackageName 2>&1)
-        $pathExitCode = $LASTEXITCODE
-    } finally {
-        $ErrorActionPreference = $preference
-    }
-    if ($pathExitCode -ne 0) {
-        $detail = @($pathOutput | ForEach-Object { [string]$_ }) -join ' '
-        if ([string]::IsNullOrWhiteSpace($detail)) { $detail = "exit $pathExitCode" }
-        throw "adb could not check $PackageName on ${Serial}: $detail"
-    }
-    $installedPaths = @($pathOutput | ForEach-Object { ([string]$_).Trim() } |
-        Where-Object { $_.StartsWith('package:', [System.StringComparison]::Ordinal) })
+    $installedPaths = @(Get-AndroidPackagePaths -Adb $Adb -Serial $Serial -PackageName $PackageName)
     if ($installedPaths.Count -eq 0) {
         Write-Host "[device] $PackageName is not installed on $Serial; skipping uninstall"
         return $false

@@ -1601,6 +1601,129 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok captionstate" + (out.length() == 0 ? " none" : out.toString()));
                         break;
                     }
+                    case "fadestate": {
+                        // The feed controls Fade the video controls and Clear display both write
+                        // opacity to (#84): for each shown rail column, caption, anchor frame, search
+                        // bar, music disc and like button, its own alpha and visibility, every
+                        // ancestor's up to the content view, and its children's. Clear display hides
+                        // the controls by opacity, so this is what says which view it took to 0.
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.content.res.Resources resources = activity.getResources();
+                        java.util.Map<Integer, String> wanted = new java.util.HashMap<>();
+                        for (String name : new String[]{"llj", "desc", "bqv", "ll8", "videomusiccoverblock", "g85"}) {
+                            int id = resources.getIdentifier(name, "id", activity.getPackageName());
+                            if (id != 0) wanted.put(id, name);
+                        }
+                        StringBuilder out = new StringBuilder();
+                        try {
+                            Class<?> clear = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch");
+                            out.append(" clearNow=").append(clear.getMethod("isClearDisplayNow").invoke(null));
+                        } catch (ReflectiveOperationException missing) {
+                            out.append(" clearNow=unreadable");
+                        }
+                        android.util.DisplayMetrics screen = resources.getDisplayMetrics();
+                        java.util.ArrayDeque<android.view.View> pending = new java.util.ArrayDeque<>(windowRoots());
+                        while (!pending.isEmpty()) {
+                            android.view.View view = pending.removeFirst();
+                            String name = wanted.get(view.getId());
+                            int[] where = new int[2];
+                            view.getLocationOnScreen(where);
+                            if (name != null && view.isAttachedToWindow() && view.getWidth() > 0
+                                    && where[0] >= 0 && where[0] < screen.widthPixels
+                                    && where[1] >= 0 && where[1] < screen.heightPixels) {
+                                out.append("\n").append(name).append(" at=").append(where[0]).append(',').append(where[1])
+                                        .append(' ').append(opacity(view));
+                                android.view.ViewParent parent = view.getParent();
+                                for (int depth = 1; parent instanceof android.view.View; depth++) {
+                                    android.view.View up = (android.view.View) parent;
+                                    out.append("\n  up").append(depth).append(' ').append(up.getClass().getSimpleName())
+                                            .append('/').append(idName(up, resources)).append(' ').append(opacity(up));
+                                    if (up.getId() == android.R.id.content) break;
+                                    parent = up.getParent();
+                                }
+                                if (view instanceof android.view.ViewGroup) {
+                                    android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                    for (int i = 0; i < group.getChildCount(); i++) {
+                                        android.view.View child = group.getChildAt(i);
+                                        out.append("\n  child ").append(child.getClass().getSimpleName())
+                                                .append('/').append(idName(child, resources)).append(' ').append(opacity(child));
+                                    }
+                                }
+                            }
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) pending.add(group.getChildAt(i));
+                            }
+                        }
+                        Log.i(TAG, "ok fadestate" + out);
+                        break;
+                    }
+                    case "fadewatch": {
+                        // The rail column's children, the caption frame and the music disc sampled on
+                        // every frame for -e for ms (8000 by default), one line each time any of them
+                        // changes, so the order TikTok's Clear display writes them in, on the way in
+                        // and out, is on record (#84). Each entry is alpha/visibility.
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        String forText = intent.getStringExtra("for");
+                        long span = forText == null ? 8000L : Long.parseLong(forText);
+                        Method clearNow = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch")
+                                .getMethod("isClearDisplayNow");
+                        android.content.res.Resources resources = activity.getResources();
+                        int[] ids = new int[3];
+                        String[] names = {"llj", "bqv", "videomusiccoverblock"};
+                        for (int i = 0; i < names.length; i++) {
+                            ids[i] = resources.getIdentifier(names[i], "id", activity.getPackageName());
+                        }
+                        long start = android.os.SystemClock.uptimeMillis();
+                        String[] last = {null};
+                        int[] lines = {0};
+                        android.view.Choreographer.FrameCallback sample = new android.view.Choreographer.FrameCallback() {
+                            @Override public void doFrame(long frameNanos) {
+                                long at = android.os.SystemClock.uptimeMillis() - start;
+                                try {
+                                    StringBuilder now = new StringBuilder("clear=").append(clearNow.invoke(null));
+                                    for (int i = 0; i < ids.length; i++) {
+                                        android.view.View view = onScreen(activity.getWindow().getDecorView(), ids[i], resources);
+                                        now.append(' ').append(names[i]).append('=');
+                                        if (view == null) {
+                                            now.append("none");
+                                            continue;
+                                        }
+                                        now.append(shortOpacity(view));
+                                        if (i == 0 && view instanceof android.view.ViewGroup) {
+                                            android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                            now.append(" [");
+                                            for (int c = 0; c < group.getChildCount(); c++) {
+                                                now.append(c == 0 ? "" : " ").append(shortOpacity(group.getChildAt(c)));
+                                            }
+                                            now.append(']');
+                                        }
+                                    }
+                                    String state = now.toString();
+                                    if (!state.equals(last[0]) && lines[0] < 300) {
+                                        last[0] = state;
+                                        lines[0]++;
+                                        Log.i(TAG, "fadewatch +" + at + "ms " + state);
+                                    }
+                                } catch (Exception error) {
+                                    Log.e(TAG, "failed fadewatch", error);
+                                    return;
+                                }
+                                if (at < span) android.view.Choreographer.getInstance().postFrameCallback(this);
+                                else Log.i(TAG, "ok fadewatch lines=" + lines[0]);
+                            }
+                        };
+                        new android.os.Handler(android.os.Looper.getMainLooper()).post(new Runnable() {
+                            @Override public void run() {
+                                android.view.Choreographer.getInstance().postFrameCallback(sample);
+                            }
+                        });
+                        break;
+                    }
                     case "captionwatch": {
                         // The caption views sampled every 100 ms on the phone for -e for ms (15000
                         // by default) and reported once, so a short cue isn't lost between two adb
@@ -2051,6 +2174,43 @@ public final class Probe extends Instrumentation {
                 }
             }
             return out.toString();
+        }
+
+        /** A view's own opacity and visibility, and whether a running animation is about to change them. */
+        private static String opacity(android.view.View view) {
+            return "alpha=" + view.getAlpha() + " vis=" + view.getVisibility()
+                    + (view.getAnimation() != null ? " animating" : "")
+                    + (view.hasTransientState() ? " transient" : "");
+        }
+
+        /** Alpha to two places and visibility as V, I or G, for lines that list many views. */
+        private static String shortOpacity(android.view.View view) {
+            int visibility = view.getVisibility();
+            return String.format(java.util.Locale.US, "%.2f%s", view.getAlpha(),
+                    visibility == android.view.View.VISIBLE ? "V" : visibility == android.view.View.INVISIBLE ? "I" : "G");
+        }
+
+        /** The first view with {@code id} under {@code root} whose top left corner is on the screen. */
+        private static android.view.View onScreen(android.view.View root, int id, android.content.res.Resources resources) {
+            if (id == 0) return null;
+            android.util.DisplayMetrics screen = resources.getDisplayMetrics();
+            java.util.ArrayDeque<android.view.View> pending = new java.util.ArrayDeque<>();
+            pending.add(root);
+            int[] where = new int[2];
+            while (!pending.isEmpty()) {
+                android.view.View view = pending.removeFirst();
+                if (view.getId() == id) {
+                    view.getLocationOnScreen(where);
+                    if (where[0] >= 0 && where[0] < screen.widthPixels && where[1] >= 0 && where[1] < screen.heightPixels) {
+                        return view;
+                    }
+                }
+                if (view instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup group = (android.view.ViewGroup) view;
+                    for (int i = 0; i < group.getChildCount(); i++) pending.add(group.getChildAt(i));
+                }
+            }
+            return null;
         }
 
         /** The resource entry name of a view's id, the raw number for an id without one. */

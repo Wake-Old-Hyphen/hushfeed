@@ -350,6 +350,8 @@ public final class RememberClearDisplayPatch {
         Object type = Reflect.readField(event, "LIZIZ");
         if (!(clear instanceof Boolean) || !(type instanceof Integer)) return;
         if ((Integer) type == 3 || (Integer) type == 9) return;
+        // Before TikTok handles it, ours included: what the faded Clear display keeps (#84).
+        if ((Boolean) clear) VideoOverlayHider.beforeClearDisplay(event);
         if (event == nativeEvent) return;
         if (clearNow != (Boolean) clear) {
             clearNow = (Boolean) clear;
