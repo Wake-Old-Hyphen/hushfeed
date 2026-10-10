@@ -15,6 +15,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.EarlyApplication;
 import app.morphe.extension.shared.settings.PausedProcess;
@@ -51,7 +56,39 @@ public class AppLanguageTest {
         }
     }
 
+    private final Locale defaultBefore = Locale.getDefault();
+    private final AppLanguage.Language languageBefore = AppLanguage.language;
+
+    /** TikTok's language calls, recorded. */
+    private static final class FakeLanguage implements AppLanguage.Language {
+        Locale picked;
+        Locale strings;
+        int applied;
+        final List<Locale> loaded = new ArrayList<>();
+        RuntimeException failure;
+
+        @Override public Locale picked(Context context) {
+            if (failure != null) throw failure;
+            return picked;
+        }
+
+        @Override public void apply(Context context) {
+            applied++;
+        }
+
+        @Override public Locale strings() {
+            return strings;
+        }
+
+        @Override public void loadStrings(Locale locale) {
+            loaded.add(locale);
+            strings = locale;
+        }
+    }
+
     @After public void tearDown() {
+        Locale.setDefault(defaultBefore);
+        AppLanguage.language = languageBefore;
         PausedProcess.set(false);
         EarlyApplication.reset();
         Utils.setContext(RuntimeEnvironment.getApplication());
@@ -101,6 +138,83 @@ public class AppLanguageTest {
         } finally {
             Utils.setContext(application);
         }
+    }
+
+    /**
+     * The #61 reporter's TikTok came up in English after a reboot with Italian picked and the
+     * reset skipped. At the start the picked language becomes the default, TikTok's apply runs,
+     * and strings already loaded for another language switch to it.
+     */
+    @Test public void atTheStartThePickedLanguageComesBackWithItsStrings() {
+        Context application = RuntimeEnvironment.getApplication();
+        FakeLanguage language = new FakeLanguage();
+        AppLanguage.language = language;
+        Locale italian = Locale.ITALIAN;
+        language.picked = italian;
+        language.strings = Locale.US;
+        Locale.setDefault(Locale.US);
+
+        AppLanguage.applyAtStart(application);
+        assertEquals("off, nothing changes", Locale.US, Locale.getDefault());
+        assertEquals(0, language.applied);
+        assertTrue(language.loaded.isEmpty());
+
+        Settings.KEEP_APP_LANGUAGE.save(true);
+        AppLanguage.applyAtStart(application);
+        assertEquals(italian, Locale.getDefault());
+        assertEquals(1, language.applied);
+        assertEquals(Collections.singletonList(italian), language.loaded);
+
+        AppLanguage.applyAtStart(application);
+        assertEquals("strings already in the picked language load once", 1, language.loaded.size());
+        assertEquals("the apply is TikTok's own and cheap, so it runs every start", 2, language.applied);
+
+        PausedProcess.set(true);
+        Locale.setDefault(Locale.US);
+        AppLanguage.applyAtStart(application);
+        assertEquals("paused, nothing changes", Locale.US, Locale.getDefault());
+        assertEquals(2, language.applied);
+    }
+
+    @Test public void stringsNotLoadedYetFollowTheDefaultAndNothingPickedFollowsThePhone() {
+        Context application = RuntimeEnvironment.getApplication();
+        FakeLanguage language = new FakeLanguage();
+        AppLanguage.language = language;
+        Settings.KEEP_APP_LANGUAGE.save(true);
+        Locale.setDefault(Locale.US);
+
+        language.picked = Locale.ITALIAN;
+        AppLanguage.applyAtStart(application);
+        assertEquals(Locale.ITALIAN, Locale.getDefault());
+        assertTrue("no strings loaded yet, so they load for the new default", language.loaded.isEmpty());
+
+        Locale.setDefault(Locale.GERMANY);
+        language.picked = null;
+        language.strings = Locale.GERMANY;
+        AppLanguage.applyAtStart(application);
+        assertEquals("nothing picked, the phone's language stays", Locale.GERMANY, Locale.getDefault());
+        assertEquals(1, language.applied);
+    }
+
+    @Test public void aFailingCallLeavesTheStartAlone() {
+        FakeLanguage language = new FakeLanguage();
+        AppLanguage.language = language;
+        Settings.KEEP_APP_LANGUAGE.save(true);
+        language.failure = new IllegalStateException("not on this build");
+        Locale.setDefault(Locale.US);
+
+        AppLanguage.applyAtStart(RuntimeEnvironment.getApplication());
+        assertEquals(Locale.US, Locale.getDefault());
+        assertEquals(0, language.applied);
+    }
+
+    @Test public void unpatchedTheStubsDoNothing() {
+        Settings.KEEP_APP_LANGUAGE.save(true);
+        Locale.setDefault(Locale.US);
+        AppLanguage.applyAtStart(RuntimeEnvironment.getApplication());
+        assertEquals(Locale.US, Locale.getDefault());
+        assertNull(AppLanguage.pickedLocale(RuntimeEnvironment.getApplication()));
+        assertNull(AppLanguage.stringsLocale());
     }
 
     @Test public void theRowIsOnTheAppPageOnlyWhenPatched() {
