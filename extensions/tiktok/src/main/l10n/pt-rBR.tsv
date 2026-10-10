@@ -705,6 +705,7 @@ Messages, profiles and search still work.	As mensagens, os perfis e a busca cont
 Microphone in use	Microfone em uso
 Comments range	Faixa de comentários
 Favorites range	Faixa de favoritos
+Likes aren't available for this video	As curtidas não estão disponíveis para este vídeo
 Likes range	Faixa de curtidas
 Shares range	Faixa de compartilhamentos
 Use Save report for this large report	Use “Salvar relatório” para este relatório grande
@@ -1856,6 +1857,7 @@ Language	Idioma
 Username last changed	Última troca do nome de usuário
 Display name last changed	Última troca do nome de exibição
 Private account	Conta privada
+Like the video	Curtir o vídeo
 Liked videos	Vídeos curtidos
 Public	Públicos
 Copy	Copiar

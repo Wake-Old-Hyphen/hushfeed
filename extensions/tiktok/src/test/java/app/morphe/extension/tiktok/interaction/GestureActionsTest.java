@@ -149,7 +149,10 @@ public class GestureActionsTest {
         }
     }
 
-    /** The two rows offer the same actions, each under its own TikTok default. */
+    /**
+     * The two rows offer the same actions, each under its own TikTok default, but for the like:
+     * TikTok's own double tap already likes.
+     */
     @Test public void doubleTapAndLongPressOfferTheSameActions() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();
@@ -162,7 +165,10 @@ public class GestureActionsTest {
                     ((ChoicePreference) screen.findPreference("double_tap_action")).getEntryValues());
             java.util.List<String> longPress = java.util.Arrays.asList(
                     ((ChoicePreference) screen.findPreference("long_press_action")).getEntryValues());
-            assertEquals(new java.util.TreeSet<>(longPress), new java.util.TreeSet<>(doubleTap));
+            java.util.Set<String> longPressButTheLike = new java.util.TreeSet<>(longPress);
+            assertTrue(longPressButTheLike.remove("like"));
+            assertFalse(doubleTap.contains("like"));
+            assertEquals(longPressButTheLike, new java.util.TreeSet<>(doubleTap));
         }
     }
 
@@ -314,7 +320,7 @@ public class GestureActionsTest {
         }
     }
 
-    @Test public void longPressPatchHasTenReachableChoices() throws Exception {
+    @Test public void longPressPatchHasElevenReachableChoices() throws Exception {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();
             Utils.setContext(activity);
@@ -323,11 +329,14 @@ public class GestureActionsTest {
             new InterfacePreferenceCategory(activity, screen);
             ChoicePreference choice = (ChoicePreference) screen.findPreference("long_press_action");
             assertNotNull(choice);
-            assertArrayEquals(new String[]{"default", "nothing", "comments", "original_sound",
+            // #136: a like, the one thing a double tap did that a long press couldn't.
+            assertArrayEquals(new String[]{"default", "nothing", "like", "comments", "original_sound",
                     "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
                     "save_cover"}, choice.getEntryValues());
             assertEquals("every value needs a label to pick it by",
                     choice.getEntryValues().length, choice.getEntries().length);
+            assertEquals(L10n.t("Like the video"), String.valueOf(choice.getEntries()[2]));
+            assertTrue("a like is Hushfeed's press, not TikTok's hold", GestureActions.takesLongPress("like"));
             // The edge seek rides on the same patch, so its two controls come with it.
             assertNotNull(screen.findPreference("edge_seek"));
             assertNotNull(screen.findPreference("edge_seek_seconds"));

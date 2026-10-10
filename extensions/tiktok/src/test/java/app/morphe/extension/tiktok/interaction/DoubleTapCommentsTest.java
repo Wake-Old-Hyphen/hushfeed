@@ -27,6 +27,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 
 import com.ss.android.ugc.aweme.common.widget.VerticalViewPager;
 import com.ss.android.ugc.aweme.feed.assem.ability.IVideoCommentAbility;
+import com.ss.android.ugc.feed.platform.cell.ability.VideoDiggAssemAbility;
 
 import java.util.List;
 
@@ -50,6 +51,9 @@ import org.robolectric.shadows.ShadowToast;
  * whose one no-argument method is the icon press with TikTok's own gating in front of it. These
  * pin that the press goes through that method when it is there, that it is chosen by shape
  * rather than by name, and that a build without it falls back to the click and says so.
+ *
+ * <p>Like the video (#136) presses the heart in the cell of the button the comments would press,
+ * through the heart's ability in the same way, and the tests at the end pin that too.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -71,6 +75,19 @@ public class DoubleTapCommentsTest {
 
     /** The same assem on a build that dropped the ability. */
     public static final class BareAssem { }
+
+    /** The heart's assem: TikTok's long press like, and the click that toggles. */
+    public static final class HeartAssem implements VideoDiggAssemAbility {
+        int likes;
+        int clicks;
+
+        @Override public Long CI0() { return 0L; }
+        @Override public void Dw0(String enterMethod) { clicks++; }
+        @Override public void MG0() { likes++; }
+        @Override public Rect Oq1() { return new Rect(); }
+        @Override public boolean nY2() { return false; }
+        @Override public boolean vp0(float x, float y) { return false; }
+    }
 
     public static final class Params {
         public final GestureActionsTest.Clip aweme;
@@ -509,5 +526,160 @@ public class DoubleTapCommentsTest {
             Settings.EDGE_SEEK.resetToDefault();
             Settings.EDGE_SEEK_SECONDS.resetToDefault();
         }
+    }
+
+    /**
+     * Puts a heart in the rail of the pager's cell at this index, in a slot of its own as TikTok
+     * lays it out, and registers it for this owner as the heart's assem does.
+     */
+    private static void heart(VerticalViewPager pager, int index, Object owner) {
+        ViewGroup rail = rail(pager, index);
+        FrameLayout slot = new FrameLayout(rail.getContext());
+        rail.addView(slot, new FrameLayout.LayoutParams(40, 40, Gravity.BOTTOM));
+        View view = new View(rail.getContext());
+        slot.addView(view, new FrameLayout.LayoutParams(40, 40));
+        GestureActions.registerLikeView(owner, view);
+    }
+
+    private static HeartAssem heart(VerticalViewPager pager, int index) {
+        HeartAssem heart = new HeartAssem();
+        heart(pager, index, heart);
+        return heart;
+    }
+
+    private static boolean likeBound() {
+        for (String line : HookStatus.report()) {
+            if (line.startsWith(GestureActions.LIKE_FAMILY + ": 1 found, 0 missing")) return true;
+        }
+        return false;
+    }
+
+    @Test public void aLongPressSetToLikeLikesTheVideoOnScreenThroughItsHeart() {
+        // #136: the like goes to the video on screen, as the comments do (#63), and not to the
+        // one the player still names a page up. It's TikTok's own long press like, never the
+        // heart's click, which would take the like back off a video that's already liked.
+        VerticalViewPager pager = feed(root, "one", "two");
+        assem(pager, 0, "one");
+        assem(pager, 1, "two");
+        HeartAssem before = heart(pager, 0);
+        HeartAssem onScreen = heart(pager, 1);
+        layOut(root);
+        pager.scrollTo(0, PAGE_HEIGHT);
+        playing(new GestureActionsTest.Clip("one"));
+        Settings.LONG_PRESS_ACTION.save("like");
+        ShadowToast.reset();
+        try {
+            assertTrue("the press is the like's, not TikTok's", GestureActions.onLongPress(middle()));
+        } finally {
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+        }
+        assertEquals(0, before.likes);
+        assertEquals(1, onScreen.likes);
+        assertEquals("the heart's click is a toggle", 0, onScreen.clicks);
+        assertEquals(0, ShadowToast.shownToastCount());
+        assertTrue("Expected the like to report as bound, got " + HookStatus.report(), likeBound());
+    }
+
+    @Test public void theLikeIsChosenByShapeAndIsNotTheHeartsClick() {
+        java.lang.reflect.Method like = GestureActions.likePress(new HeartAssem());
+
+        assertNotNull(like);
+        // Six methods on the ability. The click takes a String and the like takes nothing; the
+        // names are this build's and the next build renames them.
+        assertEquals("MG0", like.getName());
+        assertEquals(0, like.getParameterTypes().length);
+        assertEquals(void.class, like.getReturnType());
+    }
+
+    @Test public void aBuildWithoutTheHeartsAbilityLikesNothingAndSaysSo() {
+        VerticalViewPager pager = feed(root, "one");
+        assem(pager, 0, "one");
+        BareAssem bare = new BareAssem();
+        heart(pager, 0, bare);
+        layOut(root);
+        playing(new GestureActionsTest.Clip("one"));
+        Settings.LONG_PRESS_ACTION.save("like");
+        ShadowToast.reset();
+        try {
+            assertTrue(GestureActions.onLongPress(middle()));
+        } finally {
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+        }
+        assertEquals(L10n.t("Likes aren't available for this video"), ShadowToast.getTextOfLatestToast());
+        assertNull(GestureActions.likePress(bare));
+        List<String> missing = HookStatus.missing(GestureActions.LIKE_FAMILY);
+        assertEquals("Expected one miss naming the ability, got " + missing, 1, missing.size());
+        assertTrue(missing.get(0), missing.get(0).contains("VideoDiggAssemAbility"));
+    }
+
+    @Test public void aCellWithoutAHeartDoesNotBorrowTheNextCells() {
+        VerticalViewPager pager = feed(root, "one", "two");
+        assem(pager, 0, "one");
+        assem(pager, 1, "two");
+        HeartAssem next = heart(pager, 1);
+        layOut(root);
+
+        assertFalse(GestureActions.likeVisibleVideo("one"));
+        assertEquals(0, next.likes);
+    }
+
+    @Test public void aLiveOrAnAdOnScreenLikesNothing() {
+        // No comment button, so no cell to find a heart in, and the video before it, which the
+        // player still names, isn't the one being watched.
+        VerticalViewPager pager = feed(root, "one", "live");
+        assem(pager, 0, "one");
+        HeartAssem before = heart(pager, 0);
+        layOut(root);
+        pager.scrollTo(0, PAGE_HEIGHT);
+        playing(new GestureActionsTest.Clip("one"));
+        Settings.LONG_PRESS_ACTION.save("like");
+        ShadowToast.reset();
+        try {
+            assertTrue(GestureActions.onLongPress(middle()));
+        } finally {
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+        }
+        assertEquals(0, before.likes);
+        assertEquals(L10n.t("Likes aren't available for this video"), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test public void aClearedRailsHeartStillLikes() {
+        // Clear display hides the rail, heart and all. Its assem still likes.
+        VerticalViewPager pager = feed(root, "one", "two");
+        assem(pager, 0, "one");
+        assem(pager, 1, "two");
+        HeartAssem before = heart(pager, 0);
+        HeartAssem onScreen = heart(pager, 1);
+        rail(pager, 1).setVisibility(View.GONE);
+        layOut(root);
+        pager.scrollTo(0, PAGE_HEIGHT);
+
+        assertTrue(GestureActions.likeVisibleVideo("one"));
+        assertEquals(0, before.likes);
+        assertEquals(1, onScreen.likes);
+    }
+
+    @Test public void offThePagerTheHeartBesideThePlayingVideosButtonLikes() {
+        // Nothing on screen to judge by, so the button bound to the playing id stands in, as it
+        // does for the comments, and the heart is the one beside it.
+        FrameLayout panel = new FrameLayout(activity);
+        root.addView(panel);
+        CommentAssem comments = new CommentAssem();
+        View button = new View(activity);
+        panel.addView(button);
+        GestureActions.registerCommentView(comments, button);
+        GestureActions.bindCommentView(comments, new Params("three"));
+        button.setVisibility(View.INVISIBLE);
+        HeartAssem heart = new HeartAssem();
+        View heartView = new View(activity);
+        panel.addView(heartView);
+        GestureActions.registerLikeView(heart, heartView);
+        layOut(root);
+
+        assertTrue(GestureActions.likeVisibleVideo("three"));
+        assertEquals(1, heart.likes);
+        assertFalse(GestureActions.likeVisibleVideo("four"));
+        assertEquals(1, heart.likes);
+        assertEquals("the like isn't the comments", 0, comments.presses);
     }
 }

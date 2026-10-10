@@ -70,6 +70,21 @@ public final class GestureActions {
     }
 
     /**
+     * Each heart's assem and its view, for Like the video. The heart needs no video id of its own:
+     * it's found beside the comment button the gesture picked, and its assem likes the post it's
+     * bound to.
+     */
+    private static final Map<Object, WeakReference<View>> HEARTS = new WeakHashMap<>();
+
+    /** {@code VideoDiggAssem.onViewCreated}, which TikTok runs again as a cell's assems are reused. */
+    public static void registerLikeView(Object owner, View view) {
+        for (Map.Entry<Object, WeakReference<View>> entry : HEARTS.entrySet()) {
+            if (entry.getKey() != owner && entry.getValue().get() == view) entry.getValue().clear();
+        }
+        HEARTS.put(owner, new WeakReference<>(view));
+    }
+
+    /**
      * Runs at the start of each method a double tap reaches on its way to TikTok's like, on the
      * main thread. Returning true swallows the gesture, which is what keeps the like from also
      * happening. The legacy panel hands the tap on to the modern one, so a swallowed tap never
@@ -107,7 +122,7 @@ public final class GestureActions {
 
     /** Whether this Long press choice gives the press to an action of Hushfeed's, not TikTok's. */
     public static boolean takesLongPress(String action) {
-        return "nothing".equals(action) || "comments".equals(action)
+        return "nothing".equals(action) || "comments".equals(action) || "like".equals(action)
                 || "original_sound".equals(action) || "copy_link".equals(action)
                 || "copy_sound_link".equals(action) || "youtube_music".equals(action)
                 || "sleep_timer".equals(action) || "save_frame".equals(action)
@@ -180,6 +195,10 @@ public final class GestureActions {
      */
     static boolean runAction(String action) {
         if ("nothing".equals(action)) return true;
+        if ("like".equals(action)) {
+            likeOnScreenVideo();
+            return true;
+        }
         if ("copy_link".equals(action)) {
             String link = ExternalDownloader.shareUrl(onScreenAweme());
             // The same treatment a shared link gets: TikTok's own link carries the parameters
@@ -289,18 +308,24 @@ public final class GestureActions {
      * pager doesn't count: the screen already said its cell is out of sight.
      */
     private static boolean openComments(String videoId, boolean outsidePagerOnly) {
-        if (videoId == null || videoId.isEmpty()) return false;
+        Map.Entry<Object, CommentControl> bound = boundButton(videoId, outsidePagerOnly);
+        return bound != null && press(bound.getKey(), bound.getValue().view.get());
+    }
+
+    /** The button bound to this video, a shown one before a hidden one, or null. */
+    private static Map.Entry<Object, CommentControl> boundButton(String videoId, boolean outsidePagerOnly) {
+        if (videoId == null || videoId.isEmpty()) return null;
         Map.Entry<Object, CommentControl> hidden = null;
         for (Map.Entry<Object, CommentControl> entry : COMMENTS.entrySet()) {
             CommentControl control = entry.getValue();
             View view = control.view.get();
             if (!videoId.equals(control.videoId) || view == null || !view.isAttachedToWindow()) continue;
             if (outsidePagerOnly && cellOf(view) != view) continue;
-            if (view.isShown() && view.getGlobalVisibleRect(new Rect())) return press(entry.getKey(), view);
+            if (view.isShown() && view.getGlobalVisibleRect(new Rect())) return entry;
             // Clear display can hide the action rail while its native click handler remains usable.
             hidden = entry;
         }
-        return hidden != null && press(hidden.getKey(), hidden.getValue().view.get());
+        return hidden;
     }
 
     /** The feed's pager, in the main feed and in a video opened from a profile or a search. */
@@ -324,6 +349,80 @@ public final class GestureActions {
                     + "), the player still names " + playingId);
         }
         return press(screen.owner, screen.view);
+    }
+
+    /**
+     * Likes the video on screen through its heart, or says it can't. The video is the one a
+     * gesture set to comments would open (#63), so a like right after a swipe doesn't land on the
+     * video before.
+     */
+    static void likeOnScreenVideo() {
+        String playing = Reflect.string(CurrentVideoAuthor.getAweme(), "getAid", "aid");
+        if (!likeVisibleVideo(playing)) {
+            Utils.showToastShort(L10n.t("Likes aren't available for this video"));
+        }
+    }
+
+    /**
+     * Presses the heart in the cell of the comment button {@link #openVisibleComments} would
+     * press. A feed in front whose cell has no button is a LIVE or an ad, which nothing here
+     * likes; with no feed in front, the button bound to the playing id stands in, as it does for
+     * the comments.
+     */
+    static boolean likeVisibleVideo(String playingId) {
+        OnScreen screen = onScreen(playingId);
+        View button = screen.view;
+        if (button == null && !screen.feedInFront) {
+            Map.Entry<Object, CommentControl> bound = boundButton(playingId, true);
+            if (bound != null) button = bound.getValue().view.get();
+        }
+        Object heart = button == null ? null : heartBeside(button);
+        return heart != null && pressLike(heart);
+    }
+
+    /**
+     * The heart nearest the comment button: the first registered heart under one of the button's
+     * parents, going up. In TikTok's pager the climb ends at the button's cell, so a cell whose
+     * heart is missing never borrows the next video's. A heart only has to be attached, since
+     * Clear display hides the rail and its assem still likes.
+     */
+    static Object heartBeside(View button) {
+        for (ViewParent parent = button.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (FEED_PAGER.equals(parent.getClass().getName())) break;
+            for (Map.Entry<Object, WeakReference<View>> entry : HEARTS.entrySet()) {
+                View heart = entry.getValue().get();
+                if (heart != null && heart.isAttachedToWindow() && isInside(heart, (View) parent)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isInside(View view, View group) {
+        for (ViewParent parent = view.getParent(); parent instanceof View; parent = parent.getParent()) {
+            if (parent == group) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Presses the heart the way TikTok's own long press like does (LongPressDiggAssem). The heart's
+     * click is a toggle that takes a like back off a liked video. This one likes only a video that
+     * isn't liked yet, through the same handler the click runs, so the count, the animation and
+     * Confirm likes all work as they do for a tap on the heart.
+     */
+    private static boolean pressLike(Object owner) {
+        Method like = likePress(owner);
+        if (like == null) return false;
+        try {
+            like.invoke(owner);
+            Logger.printDebug(() -> "Liked through " + like.getName());
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException exception) {
+            Logger.printException(() -> "Could not like the video from the feed gesture", exception);
+            return false;
+        }
     }
 
     /**
@@ -479,10 +578,29 @@ public final class GestureActions {
      * ability has grown a second method of that shape and the press can no longer be told apart.
      */
     static Method commentPress(Object owner) {
+        return abilityPress(owner, COMMENT_ABILITY, FAMILY);
+    }
+
+    /** The Hook status family the like press reports under. */
+    static final String LIKE_FAMILY = "long press like";
+    /**
+     * The ability the heart's assem implements. Its one no-argument method is TikTok's long press
+     * like, which likes a video that isn't liked and leaves a liked one be. On 47.1.4 it's MG0,
+     * beside the heart's click (Dw0, the one that takes a String), and the shape picks it the way
+     * it picks the comment press.
+     */
+    static final String LIKE_ABILITY = "com.ss.android.ugc.feed.platform.cell.ability.VideoDiggAssemAbility";
+
+    /** The heart's ability's one no-argument method, found as the comment press is. */
+    static Method likePress(Object owner) {
+        return abilityPress(owner, LIKE_ABILITY, LIKE_FAMILY);
+    }
+
+    private static Method abilityPress(Object owner, String abilityName, String family) {
         if (owner == null) return null;
         for (Class<?> type = owner.getClass(); type != null; type = type.getSuperclass()) {
             for (Class<?> ability : type.getInterfaces()) {
-                if (!COMMENT_ABILITY.equals(ability.getName())) continue;
+                if (!abilityName.equals(ability.getName())) continue;
                 Method found = null;
                 for (Method candidate : ability.getDeclaredMethods()) {
                     if (candidate.getParameterTypes().length != 0
@@ -490,7 +608,7 @@ public final class GestureActions {
                         continue;
                     }
                     if (found != null) {
-                        HookStatus.missingMember(FAMILY, "one no-argument method on",
+                        HookStatus.missingMember(family, "one no-argument method on",
                                 ability.getName(), "press");
                         return null;
                     }
@@ -498,12 +616,12 @@ public final class GestureActions {
                 }
                 if (found == null) break;
                 found.setAccessible(true);
-                HookStatus.bound(FAMILY, ability.getName() + "#" + found.getName());
+                HookStatus.bound(family, ability.getName() + "#" + found.getName());
                 return found;
             }
         }
-        HookStatus.missingMember(FAMILY, "ability", owner.getClass().getName(),
-                "IVideoCommentAbility");
+        HookStatus.missingMember(family, "ability", owner.getClass().getName(),
+                abilityName.substring(abilityName.lastIndexOf('.') + 1));
         return null;
     }
 

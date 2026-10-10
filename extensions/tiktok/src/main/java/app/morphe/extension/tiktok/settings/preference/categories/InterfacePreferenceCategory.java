@@ -596,13 +596,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     new String[]{"default", "nothing", "comments"}));
         }
         if (SettingsStatus.longPressEnabled) {
+            // Double tap's actions and a like, which TikTok's own double tap already does.
             addPreference(new ChoicePreference(context, "Long press", Settings.LONG_PRESS_ACTION,
                     new String[]{"TikTok default (hold to speed up, quick share)", "Do nothing",
-                            "Open comments", "Save the original sound", "Copy the video link",
-                            "Copy the sound link", "Find the sound on YouTube Music",
+                            "Like the video", "Open comments", "Save the original sound",
+                            "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
                             "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
                             "Save the video's cover"},
-                    new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
+                    new String[]{"default", "nothing", "like", "comments", "original_sound", "copy_link",
                             "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
             addPreference(new TogglePreference(context, "Seek from the edges",
                     "Press and hold the left or right third of the screen to jump back or forward. "

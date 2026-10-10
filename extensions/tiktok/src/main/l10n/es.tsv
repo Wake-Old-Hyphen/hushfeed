@@ -705,6 +705,7 @@ Messages, profiles and search still work.	Los mensajes, los perfiles y la búsqu
 Microphone in use	Micrófono en uso
 Comments range	Rango de comentarios
 Favorites range	Rango de favoritos
+Likes aren't available for this video	Los me gusta no están disponibles para este vídeo
 Likes range	Rango de me gusta
 Shares range	Rango de veces compartido
 Use Save report for this large report	Usa «Guardar informe» para este informe grande
@@ -1856,6 +1857,7 @@ Language	Idioma
 Username last changed	Último cambio de nombre de usuario
 Display name last changed	Último cambio de nombre visible
 Private account	Cuenta privada
+Like the video	Dar me gusta al vídeo
 Liked videos	Vídeos que le gustaron
 Public	Públicos
 Copy	Copiar

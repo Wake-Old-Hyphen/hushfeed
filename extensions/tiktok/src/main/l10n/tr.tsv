@@ -732,6 +732,7 @@ Messages, profiles and search still work.	Mesajlar, profiller ve arama çalışm
 Microphone in use	Mikrofon kullanımda
 Comments range	Yorum aralığı
 Favorites range	Favori aralığı
+Likes aren't available for this video	Bu video için beğeniler kullanılamıyor
 Likes range	Beğeni aralığı
 Shares range	Paylaşım aralığı
 TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.	TikTok'un kendi günlük ekran süresi hatırlatması, kapatılmayı beklemek yerine uygulamayı arka plana gönderir. Hemen geri dönersen hatırlatma ekranda kalır, böylece limit ulaşılabilir kalır. TikTok'un Ayarlar ve gizlilik bölümünde, Süre ve esenlik altında günlük bir limit ister.
@@ -1856,6 +1857,7 @@ Language	Dil
 Username last changed	Kullanıcı adı son değişikliği
 Display name last changed	Görünen ad son değişikliği
 Private account	Gizli hesap
+Like the video	Videoyu beğen
 Liked videos	Beğenilen videolar
 Public	Herkese açık
 Copy	Kopyala
