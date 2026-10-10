@@ -1,11 +1,3 @@
-# ============ HUSHFEED PATCH OPTIONS ============
-# Custom values for Hushfeed patches. Keys are matched safely; if the key name
-# is wrong and the patch has a single option, the value is applied there and
-# the real key is printed in the build log.
-hushfeed_options:
-  - name: "Remove unused language packs"
-    options:
-      Languages to keep : "en"
 # Nai64ExtraPatches_Options.yaml
 # PRIORITY RULE: Hushfeed wins. Any Nai64 patch overlapping a Hushfeed patch
 # is disabled below so Hushfeed owns that surface.
@@ -55,6 +47,18 @@ patches:
   - name: "Hide Roaming Status"
     enabled: true
 
+  # --- NEW: Time Zone Patches ---
+  - name: "Fake Auto Time Zone"
+    enabled: true
+    options:
+      Enable auto time zone: true
+
+  - name: "Spoof Time Zone"
+    enabled: true
+    options:
+      Time zone ID: "Europe/Amsterdam"
+  # --------------------------------
+
   - name: "Disable Firebase Auto-Init"
     enabled: true
 
@@ -86,9 +90,9 @@ patches:
   - name: "Spoof SIM Operator Name"
     enabled: false
     note: "Hushfeed SIM spoof owns telephony identity"
-  - name: "Spoof Time Zone"
-    enabled: false
-    note: "Hushfeed Region spoof owns locale/timezone"
+  # "Spoof Time Zone" removed from disabled list since you enabled it above.
+  # Note: If Hushfeed's "Region spoof" conflicts with this, the patch step log 
+  # will tell us, and we can disable it again.
   - name: "Spoof Locale"
     enabled: false
     note: "Hushfeed Region spoof owns locale/timezone"
