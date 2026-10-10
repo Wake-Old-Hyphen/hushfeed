@@ -234,6 +234,12 @@ public class Settings extends BaseSettings {
             new BooleanSetting("drop_animated_image_cache", FALSE);
     /** Keep playing in the background (#52). TikTok reads its gate once a process, so a restart applies it. */
     public static final BooleanSetting BACKGROUND_PLAY = new BooleanSetting("background_play", FALSE, true);
+    /**
+     * Replay in the background (#99): a video that ends while TikTok plays in the background
+     * starts again instead of waiting on the notification's Play. Read at each end, so no restart.
+     */
+    public static final BooleanSetting BACKGROUND_REPLAY = new BooleanSetting(
+            "background_replay", FALSE, false, Setting.parent(BACKGROUND_PLAY));
     public static final BooleanSetting HIDE_LAUNCHER_SHORTCUTS =
             new BooleanSetting("hide_launcher_shortcuts", FALSE);
     /**

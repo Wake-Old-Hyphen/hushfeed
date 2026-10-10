@@ -213,6 +213,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "to pause it. TikTok's background play switch stays on while this is "
                             + "on. Restart TikTok to apply this.",
                     Settings.BACKGROUND_PLAY));
+            addPreference(new TogglePreference(context, "Replay in the background",
+                    "When a video ends while TikTok plays in the background, it starts over "
+                            + "instead of waiting for you to press Play in the notification. A "
+                            + "call or another app's sound still pauses it.",
+                    Settings.BACKGROUND_REPLAY));
         }
         if (SettingsStatus.pictureInPictureEnabled) {
             addPreference(new TogglePreference(context, "Keep watching in a small window",

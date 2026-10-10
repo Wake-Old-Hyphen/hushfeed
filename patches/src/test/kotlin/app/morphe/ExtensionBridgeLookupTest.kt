@@ -179,6 +179,7 @@ class ExtensionBridgeLookupTest {
             "PlaybackSpeedPatch.kt:nativeAweme", "AutoAdvancePatch.kt:readState",
             "NotInterestedPatch.kt:createCall", "RememberClearDisplayPatch.kt:postClear",
             "RememberClearDisplayPatch.kt:readCurrentAweme", "HideLauncherShortcutsPatch.kt:askHostToRebuild",
+            "BackgroundPlayPatch.kt:replay",
         )
         val missing = known.filterNot(found::contains)
         assertTrue("the bridge scan no longer sees: $missing (saw ${found.sorted()})", missing.isEmpty())
