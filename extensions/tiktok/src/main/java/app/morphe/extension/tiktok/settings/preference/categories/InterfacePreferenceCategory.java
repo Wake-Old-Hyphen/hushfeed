@@ -581,9 +581,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     Settings.SWIPE_LEVELS_STRIP_PERCENT, "%1$s%%"));
         }
         if (SettingsStatus.doubleTapEnabled) {
+            // Long press's actions, which GestureActions runs the same way for both gestures.
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
-                    new String[]{"TikTok default", "Do nothing", "Open comments"},
-                    new String[]{"default", "nothing", "comments"}));
+                    new String[]{"TikTok default", "Do nothing", "Open comments",
+                            "Save the original sound", "Copy the video link", "Copy the sound link",
+                            "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
+                            "Save the frame on screen as a photo", "Save the video's cover"},
+                    new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
+                            "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
         }
         if (SettingsStatus.swipeLeftEnabled) {
             addPreference(new ChoicePreference(context, "Swipe left", Settings.SWIPE_LEFT_ACTION,

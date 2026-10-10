@@ -125,7 +125,7 @@ public class GestureActionsTest {
         }
     }
 
-    @Test public void standalonePatchHasThreeReachableChoices() throws Exception {
+    @Test public void standalonePatchOffersTheLongPressActions() throws Exception {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();
             Utils.setContext(activity);
@@ -135,10 +135,135 @@ public class GestureActionsTest {
             new InterfacePreferenceCategory(activity, screen);
             ChoicePreference choice = (ChoicePreference) screen.findPreference("double_tap_action");
             assertNotNull(choice);
-            assertArrayEquals(new String[]{"default", "nothing", "comments"}, choice.getEntryValues());
+            // #136: it offered only nothing and comments, and Long press had all the rest.
+            assertArrayEquals(new String[]{"default", "nothing", "comments", "original_sound",
+                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "save_cover"}, choice.getEntryValues());
+            assertEquals("every value needs a label to pick it by",
+                    choice.getEntryValues().length, choice.getEntries().length);
+            assertEquals("the row keeps its own name for TikTok's like",
+                    L10n.t("TikTok default"), String.valueOf(choice.getEntries()[0]));
             activity.setPreferenceScreen(screen);
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             app.morphe.extension.tiktok.UiCapture.save(activity.getWindow().getDecorView(), "interface-settings.png");
+        }
+    }
+
+    /** The two rows offer the same actions, each under its own TikTok default. */
+    @Test public void doubleTapAndLongPressOfferTheSameActions() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            SettingsStatus.longPressEnabled = true;
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            java.util.List<String> doubleTap = java.util.Arrays.asList(
+                    ((ChoicePreference) screen.findPreference("double_tap_action")).getEntryValues());
+            java.util.List<String> longPress = java.util.Arrays.asList(
+                    ((ChoicePreference) screen.findPreference("long_press_action")).getEntryValues());
+            assertEquals(new java.util.TreeSet<>(longPress), new java.util.TreeSet<>(doubleTap));
+        }
+    }
+
+    /**
+     * Every Double tap choice but TikTok's own takes the tap from the like, as every Long press
+     * choice but TikTok's takes the press. One the dispatch forgot would like the video instead.
+     */
+    @Test public void everyDoubleTapChoiceButTikToksTakesTheTap() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            BlockAuthorPatch.setCurrentVideoParams(new Params("every-choice"));
+            BlockAuthorPatch.setPlayingAweme("every-choice");
+            for (String value : ((ChoicePreference) screen.findPreference("double_tap_action")).getEntryValues()) {
+                Settings.DOUBLE_TAP_ACTION.save(value);
+                assertEquals(value, !"default".equals(value), GestureActions.onDoubleTap());
+                assertEquals(value + " is Hushfeed's on one gesture and TikTok's on the other",
+                        GestureActions.takesLongPress(value), !"default".equals(value));
+                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }
+            Settings.DOUBLE_TAP_ACTION.save("somewhere_new");
+            assertFalse("a choice this build doesn't know is TikTok's like", GestureActions.onDoubleTap());
+        } finally {
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+        }
+    }
+
+    /**
+     * #136: each action does from a double tap what it does from a long press. The same link on
+     * the clipboard, the same toast, for the video on screen.
+     */
+    @Test public void aDoubleTapRunsEachLongPressActionTheSameWay() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            activity.setContentView(new FrameLayout(activity));
+            Settings.EDGE_SEEK.save(false);
+            Settings.CUSTOM_SHARE_DOMAIN.save("");
+            BaseSettings.SANITIZE_SHARING_LINKS.save(true);
+            BlockAuthorPatch.setCurrentVideoParams(new Params(new Clip("both-gestures",
+                    "https://www.tiktok.com/@someone/video/7712345?sender=someone",
+                    new SoundStub("7712345678901234567"))));
+            BlockAuthorPatch.setPlayingAweme("both-gestures");
+            ClipboardManager clipboard =
+                    (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            for (String action : new String[]{"copy_link", "copy_sound_link", "original_sound",
+                    "youtube_music", "save_frame", "save_cover"}) {
+                Settings.DOUBLE_TAP_ACTION.save("default");
+                Settings.LONG_PRESS_ACTION.save(action);
+                clipboard.setPrimaryClip(ClipData.newPlainText("before", "before"));
+                ShadowToast.reset();
+                assertTrue(action, GestureActions.onLongPress(middleOf(activity)));
+                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                String pressedClip = String.valueOf(clipboard.getPrimaryClip().getItemAt(0).getText());
+                String pressedToast = ShadowToast.getTextOfLatestToast();
+                assertTrue(action + " showed nothing from a long press",
+                        pressedToast != null || !"before".equals(pressedClip));
+
+                Settings.LONG_PRESS_ACTION.save("default");
+                Settings.DOUBLE_TAP_ACTION.save(action);
+                clipboard.setPrimaryClip(ClipData.newPlainText("before", "before"));
+                ShadowToast.reset();
+                assertTrue(action + " left the tap to TikTok's like", GestureActions.onDoubleTap());
+                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                assertEquals(action, pressedClip,
+                        String.valueOf(clipboard.getPrimaryClip().getItemAt(0).getText()));
+                assertEquals(action, pressedToast, ShadowToast.getTextOfLatestToast());
+            }
+        } finally {
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
+            Settings.CUSTOM_SHARE_DOMAIN.resetToDefault();
+            BaseSettings.SANITIZE_SHARING_LINKS.resetToDefault();
+        }
+    }
+
+    /** The edge seek stays with the long press: a double tap carries no place to seek from. */
+    @Test public void aDoubleTapNeverSeeks() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            Utils.setContext(controller.get());
+            Settings.EDGE_SEEK.save(true);
+            Settings.EDGE_SEEK_SECONDS.save(5);
+            FakeController player = new FakeController();
+            FeedSeek.recordProgress(player, "no-seek", 10_000L, player.player.durationMs);
+            BlockAuthorPatch.setCurrentVideoParams(new Params("no-seek"));
+            BlockAuthorPatch.setPlayingAweme("no-seek");
+            for (String action : new String[]{"default", "nothing"}) {
+                Settings.DOUBLE_TAP_ACTION.save(action);
+                assertEquals(action, !"default".equals(action), GestureActions.onDoubleTap());
+                assertTrue(action + " moved the video", Float.isNaN(player.player.sought));
+            }
+        } finally {
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
+            Settings.EDGE_SEEK_SECONDS.resetToDefault();
         }
     }
 

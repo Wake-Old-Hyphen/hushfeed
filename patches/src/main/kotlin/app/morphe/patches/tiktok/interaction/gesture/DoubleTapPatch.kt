@@ -68,9 +68,9 @@ private object CommentBindFingerprint : Fingerprint(
 @Suppress("unused")
 val doubleTapPatch = bytecodePatch(
     name = "Double-tap controls",
-    description = "Lets a double tap on a video open its comments or do nothing, instead of " +
-        "liking it, so you don't like videos by accident. Starts off. Pick an action in Hushfeed " +
-        "settings > Feed screen.",
+    description = "Lets a double tap on a video do nothing, open its comments, copy the link, save " +
+        "the sound or the frame on screen, or set a sleep timer instead of liking it, so you don't " +
+        "like videos by accident. Starts off. Pick an action in Hushfeed settings > Feed screen.",
 ) {
     category("Interaction")
     compatibleWith(*AppCompatibilities.tiktok())

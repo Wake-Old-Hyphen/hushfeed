@@ -69,12 +69,19 @@ public final class GestureActions {
         control.aweme = new WeakReference<>(aweme);
     }
 
+    /**
+     * Runs at the start of each method a double tap reaches on its way to TikTok's like, on the
+     * main thread. Returning true swallows the gesture, which is what keeps the like from also
+     * happening. The legacy panel hands the tap on to the modern one, so a swallowed tap never
+     * reaches the second guard and an action runs once.
+     *
+     * <p>A double tap lands with the finger still down, as a long press does, so the Long press
+     * actions run from here unchanged: the sleep timer's picker is posted until the touch is done
+     * with, and a frame is read at the tap. The edge seek stays with the long press. Nothing here
+     * says where the tap landed.
+     */
     public static boolean onDoubleTap() {
-        String action = Settings.DOUBLE_TAP_ACTION.get();
-        if ("nothing".equals(action)) return true;
-        if (!"comments".equals(action)) return false;
-        openOnScreenComments();
-        return true;
+        return runAction(Settings.DOUBLE_TAP_ACTION.get());
     }
 
     /**
@@ -163,8 +170,15 @@ public final class GestureActions {
             // otherwise start under the finger does not fire on top of it.
             return true;
         }
+        return runAction(Settings.LONG_PRESS_ACTION.get());
+    }
 
-        String action = Settings.LONG_PRESS_ACTION.get();
+    /**
+     * What a gesture set to {@code action} does, for Double tap and Long press alike. True when
+     * the gesture was Hushfeed's; false leaves it to TikTok, which is what its own choice asks for
+     * and what a value this build doesn't know gets, as a backup from a newer build can carry.
+     */
+    static boolean runAction(String action) {
         if ("nothing".equals(action)) return true;
         if ("copy_link".equals(action)) {
             String link = ExternalDownloader.shareUrl(onScreenAweme());
