@@ -161,15 +161,21 @@ public class GestureActionsTest {
             SettingsStatus.longPressEnabled = true;
             PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
             new InterfacePreferenceCategory(activity, screen);
-            java.util.List<String> doubleTap = java.util.Arrays.asList(
-                    ((ChoicePreference) screen.findPreference("double_tap_action")).getEntryValues());
-            java.util.List<String> longPress = java.util.Arrays.asList(
-                    ((ChoicePreference) screen.findPreference("long_press_action")).getEntryValues());
+            java.util.List<String> doubleTap = entryValues(screen, "double_tap_action");
+            java.util.List<String> longPress = entryValues(screen, "long_press_action");
             java.util.Set<String> longPressButTheLike = new java.util.TreeSet<>(longPress);
             assertTrue(longPressButTheLike.remove("like"));
             assertFalse(doubleTap.contains("like"));
             assertEquals(longPressButTheLike, new java.util.TreeSet<>(doubleTap));
         }
+    }
+
+    private static java.util.List<String> entryValues(PreferenceScreen screen, String key) {
+        java.util.List<String> values = new java.util.ArrayList<>();
+        for (CharSequence value : ((ChoicePreference) screen.findPreference(key)).getEntryValues()) {
+            values.add(value.toString());
+        }
+        return values;
     }
 
     /**
@@ -186,7 +192,7 @@ public class GestureActionsTest {
             new InterfacePreferenceCategory(activity, screen);
             BlockAuthorPatch.setCurrentVideoParams(new Params("every-choice"));
             BlockAuthorPatch.setPlayingAweme("every-choice");
-            for (String value : ((ChoicePreference) screen.findPreference("double_tap_action")).getEntryValues()) {
+            for (String value : entryValues(screen, "double_tap_action")) {
                 Settings.DOUBLE_TAP_ACTION.save(value);
                 assertEquals(value, !"default".equals(value), GestureActions.onDoubleTap());
                 assertEquals(value + " is Hushfeed's on one gesture and TikTok's on the other",
