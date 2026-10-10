@@ -370,6 +370,26 @@ public final class FeedItemsFilter {
         }
     }
 
+    /**
+     * Called with the profile model's own FeedItemList right after a list the reader opened from a
+     * grid was copied into it: a collection, or another grid handing its loaded videos to the video
+     * page (X.0OfL.LJIIL on 47.1.4). No profile parse saw that list and it carries no profile uid,
+     * so its getItems read ran the main feed's rules: Hide photo posts or a blocked word took saved
+     * posts out of the pager the reader tapped into, and it played the wrong one (#135). Marked, it
+     * gets a profile list's rules. Runs inside TikTok's own model, so it never throws.
+     */
+    public static void markOpenedList(Object list) {
+        try {
+            if (!(list instanceof FeedItemList)) return;
+            HookStatus.bound("main feed", "opened list");
+            synchronized (PARSED_PROFILE_LISTS) {
+                PARSED_PROFILE_LISTS.put((FeedItemList) list, Boolean.TRUE);
+            }
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not mark an opened list", ex);
+        }
+    }
+
     /** Marked where TikTok parsed it, or stamped with a profile's uid (a clone keeps only the stamp). */
     static boolean isProfileList(FeedItemList list) {
         String profile = list.dataUserId;
