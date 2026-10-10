@@ -108,6 +108,12 @@ public final class VideoOverlayHider {
      * outside the cells, under the feed.
      */
     private static final String[] BOTTOM_TABS_IDS = {"47.1.4:opp"};
+    /**
+     * The hairline along the tab bar's top edge. It's the bar's sibling in the main layout, not
+     * its child, and TikTok puts it away with the bar only when its own clear lands, so taking
+     * the bar alone left a thin line across the bottom of each video until then (#84).
+     */
+    private static final String[] BOTTOM_TABS_DIVIDER_IDS = {"47.1.4:cnq"};
     /** The story-count button is a sibling of the main feed, outside its tab strip and cells. */
     private static final String[] FOLLOWING_STORY_IDS = {"47.1.4:wtr"};
     /**
@@ -263,6 +269,7 @@ public final class VideoOverlayHider {
     private static final int ANCHOR_TARGET = BOTTOM_TABS_TARGET + 1;
     private static final int MUSIC_COVER_TARGET = ANCHOR_TARGET + 1;
     private static final int SEARCH_BAR_TARGET = MUSIC_COVER_TARGET + 1;
+    private static final int BOTTOM_TABS_DIVIDER_TARGET = SEARCH_BAR_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -534,6 +541,7 @@ public final class VideoOverlayHider {
                 // Only over the Home feed. A live state that outlasts the feed (Inbox opened from
                 // a notification) must not take the tabs off another page.
                 wanted[BOTTOM_TABS_TARGET] = tabStrip && FeedVisibility.isOnFeed(activity);
+                wanted[BOTTOM_TABS_DIVIDER_TARGET] = wanted[BOTTOM_TABS_TARGET];
                 wanted[FOLLOWING_STORY_TARGET] = tabStrip && !FeedVisibility.isStoryVisible(activity);
                 wanted[DETAIL_COMMENT_BAR_TARGET] = detailCommentBar;
                 wanted[DETAIL_COMMENT_STRIP_TARGET] = detailCommentBar;
@@ -783,7 +791,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[SEARCH_BAR_TARGET + 1][];
+        String[][] targets = new String[BOTTOM_TABS_DIVIDER_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -808,15 +816,17 @@ public final class VideoOverlayHider {
         targets[ANCHOR_TARGET] = ANCHOR_IDS;
         targets[MUSIC_COVER_TARGET] = MUSIC_COVER_IDS;
         targets[SEARCH_BAR_TARGET] = SEARCH_BAR_IDS;
+        targets[BOTTOM_TABS_DIVIDER_TARGET] = BOTTOM_TABS_DIVIDER_IDS;
         return targets;
     }
 
     /**
-     * Main-feed tabs (top and bottom) and story count, the Clear display controls, and the
-     * detail pager's comment bar are outside the cells.
+     * Main-feed tabs (top and bottom, with the bottom bar's hairline) and story count, the Clear
+     * display controls, and the detail pager's comment bar are outside the cells.
      */
     private static boolean outsideCells(int target) {
-        return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET;
+        return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET
+                || target == BOTTOM_TABS_DIVIDER_TARGET;
     }
 
     private static int candidateCount(String[][] targets) {
@@ -936,7 +946,8 @@ public final class VideoOverlayHider {
                         setFaded(view, gone ? 100 : fadeLevel, fadedClear);
                         TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone);
-                    } else if (target == TAB_STRIP_TARGET || target == BOTTOM_TABS_TARGET) {
+                    } else if (target == TAB_STRIP_TARGET || target == BOTTOM_TABS_TARGET
+                            || target == BOTTOM_TABS_DIVIDER_TARGET) {
                         setFaded(view, wanted ? 100 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
                         setHidden(view, wanted);
                     } else setHidden(view, wanted);

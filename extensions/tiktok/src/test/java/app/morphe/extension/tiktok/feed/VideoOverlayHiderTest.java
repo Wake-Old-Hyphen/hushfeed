@@ -926,6 +926,60 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    /**
+     * The hairline along the tab bar's top edge is the bar's sibling, so with only the bar taken
+     * a thin line stayed across the bottom of each new video until TikTok's own clear landed
+     * (#84). It goes and comes back with the bar, and one TikTok put away itself stays away.
+     */
+    @Test
+    public void theTabBarsHairlineGoesWithTheTabs() {
+        int tabsId = 0x7f0a0b22;
+        int lineId = 0x7f0a0b23;
+        int cellId = 0x7f0a0b24;
+        VideoOverlayHider.resolveForTests("47.1.4:opp", tabsId);
+        VideoOverlayHider.resolveForTests("47.1.4:cnq", lineId);
+        VideoOverlayHider.resolveForTests("view_rootview", cellId);
+        try (var main = Robolectric.buildActivity(Activity.class).setup()) {
+            Utils.setContext(main.get());
+            FrameLayout root = new FrameLayout(main.get());
+            FrameLayout cell = new FrameLayout(main.get());
+            cell.setId(cellId);
+            root.addView(cell);
+            View line = new View(main.get());
+            line.setId(lineId);
+            root.addView(line);
+            View tabs = new View(main.get());
+            tabs.setId(tabsId);
+            root.addView(tabs);
+            main.get().setContentView(root);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(main.get());
+            assertEquals(View.GONE, tabs.getVisibility());
+            assertEquals("the hairline stayed over the video", View.GONE, line.getVisibility());
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            VideoOverlayHider.applyTo(main.get());
+            assertEquals(View.VISIBLE, tabs.getVisibility());
+            assertEquals("the hairline didn't come back with the tabs", View.VISIBLE, line.getVisibility());
+
+            // TikTok hides the hairline on its own on some accounts; ending the mode leaves that.
+            line.setVisibility(View.GONE);
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(main.get());
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            VideoOverlayHider.applyTo(main.get());
+            assertEquals("a hairline TikTok put away was brought back", View.GONE, line.getVisibility());
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+        }
+    }
+
     @Test
     public void clearDisplayHidesFollowingStoriesOutsideTheCellsAndRestoresNativeVisibility() {
         int storyId = 0x7f0a0b10;
