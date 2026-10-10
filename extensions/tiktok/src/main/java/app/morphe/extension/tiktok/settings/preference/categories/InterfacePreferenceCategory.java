@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.morphe.extension.tiktok.captions.CaptionStyle;
+import app.morphe.extension.tiktok.feed.BurnInGuard;
 import app.morphe.extension.tiktok.feed.FeedTextSize;
 import app.morphe.extension.tiktok.interaction.TapConfirmation;
 import app.morphe.extension.tiktok.settings.L10n;
@@ -539,6 +540,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
                     Settings.FADE_CONTROLS_OPACITY, "%1$s%%"
             ));
+            addPreference(new ChoicePreference(context, "Burn-in guard", Settings.BURN_IN_GUARD,
+                    new String[]{"Off", "Dim when idle", "Dim when idle and shift"},
+                    new String[]{BurnInGuard.OFF, BurnInGuard.DIM, BurnInGuard.DIM_AND_SHIFT})
+                    .withNote("For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."));
         }
     }
 

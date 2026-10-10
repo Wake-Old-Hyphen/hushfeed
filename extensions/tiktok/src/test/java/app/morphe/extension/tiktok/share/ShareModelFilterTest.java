@@ -2,8 +2,10 @@ package app.morphe.extension.tiktok.share;
 
 import static org.junit.Assert.*;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -12,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -53,6 +56,31 @@ public class ShareModelFilterTest {
         Settings.SHARE_HIDDEN_ITEMS.save("");
         assertSame(input, ShareModelFilter.channels(input));
     }
+    /** With logging on, an export says what each row was handed and what it kept (#120). */
+    @Test public void eachRowSaysWhatItWasHandedAndKept() {
+        boolean debug = BaseSettings.DEBUG.get();
+        try {
+            BaseSettings.DEBUG.save(true);
+            Settings.SHARE_HIDDEN_ITEMS.save("report");
+            ShadowLog.clear();
+            List<?> input = Arrays.asList(new Item("report"), new Item("captions"), new Object());
+            assertEquals(2, ShareModelFilter.actions(input).size());
+            List<?> untouched = input.subList(1, 3);
+            assertSame(untouched, ShareModelFilter.channels(untouched));
+
+            List<String> lines = new ArrayList<>();
+            for (ShadowLog.LogItem item : ShadowLog.getLogs()) {
+                if (item.msg.contains("Share sheet model")) lines.add(item.msg);
+            }
+            String all = String.join("\n", lines);
+            assertTrue(all, all.contains("Share sheet model VIDEO actions: 3 in [report, captions, ?], 2 kept in a new list"));
+            assertTrue(all, all.contains("Share sheet model VIDEO channels: 2 in [captions, ?], 2 kept"));
+            assertFalse("an untouched row says so: " + all, all.contains("channels: 2 in [captions, ?], 2 kept in a new list"));
+        } finally {
+            BaseSettings.DEBUG.save(debug);
+        }
+    }
+
     @Test public void rowsCanBeHiddenIndependently() {
         List<?> input = List.of(new Item("save"));
         Settings.HIDE_SHARE_ACTIONS.save(true);

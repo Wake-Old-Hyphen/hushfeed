@@ -99,16 +99,21 @@ final class SlideshowEncoder implements Closeable {
     }
 
     private static MediaFormat format(int width, int height, int fps) {
+        return format(width, height, fps, SlideshowVideo.bitRate(width, height));
+    }
+
+    /** An H.264 encoder fed through its input surface. {@link CaptionBurner} picks its own bit rate. */
+    static MediaFormat format(int width, int height, int fps, int bitRate) {
         MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME, width, height);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, SlideshowVideo.bitRate(width, height));
+        format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, fps);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, SlideshowVideo.KEYFRAME_SECONDS);
         return format;
     }
 
     /** The H.264 encoders that say they take this size, in the phone's own order of preference. */
-    private static List<String> encodersFor(int width, int height) {
+    static List<String> encodersFor(int width, int height) {
         List<String> names = new ArrayList<>();
         try {
             for (MediaCodecInfo info : new MediaCodecList(MediaCodecList.REGULAR_CODECS).getCodecInfos()) {
@@ -155,7 +160,8 @@ final class SlideshowEncoder implements Closeable {
         releaseMuxer(muxer);
     }
 
-    private static void release(MediaCodec encoder, AnimatedWebpMp4Converter.CodecSurface surface) {
+    /** Package-private, with {@link #releaseMuxer}, for {@link CaptionBurner}'s encoder and file. */
+    static void release(MediaCodec encoder, AnimatedWebpMp4Converter.CodecSurface surface) {
         if (encoder != null) {
             try {
                 encoder.stop();
@@ -178,7 +184,7 @@ final class SlideshowEncoder implements Closeable {
     }
 
     /** A muxer started and never stopped throws from release over its empty track; that says nothing new. */
-    private static void releaseMuxer(MediaMuxer muxer) {
+    static void releaseMuxer(MediaMuxer muxer) {
         if (muxer == null) return;
         try {
             muxer.release();

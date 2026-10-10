@@ -29,6 +29,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
         return SettingsStatus.commentToolsEnabled
                 || SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
+                || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
@@ -46,6 +47,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
     public void addPreferences(Context context) {
         boolean reading = SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
+                || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled;
@@ -70,6 +72,16 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "list stays the way it is.",
                     Settings.DONT_AUTO_TRANSLATE_LANGUAGES)
                     .withCheck(app.morphe.extension.tiktok.translation.DoNotAutoTranslate::languageProblem)
+                    .withNameKeyboard());
+        }
+        if (SettingsStatus.translateIntoEnabled) {
+            addPreference(new InputTextPreference(
+                    context,
+                    "Translate into",
+                    "One language code, like en or es. Comments and captions TikTok translates come out in "
+                            + "this language instead of the app's. Leave it empty to keep TikTok's choice.",
+                    Settings.TRANSLATE_INTO)
+                    .withCheck(app.morphe.extension.tiktok.translation.TranslateInto::languageProblem)
                     .withNameKeyboard());
         }
         if (SettingsStatus.commentSortControlsEnabled) {

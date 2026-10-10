@@ -1,9 +1,30 @@
+%1$s isn't a language code. Use two letters, like en, es or de.	%1$s dil kodu deyil. İki hərf yazın, məsələn en, es və ya de.
+Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Səsi də saxla və uzun basmada Orijinal səsi saxlayın üçün keçərlidir. Opus daha kiçik fayl yaradır, amma səs TikTok-un nüsxəsindən yenidən kodlanır.
+As TikTok sent it (M4A or MP3)	TikTok-un göndərdiyi kimi (M4A və ya MP3)
+Burn-in guard	Ekran yanmasından qoruma
+Couldn't write the caption on this video. Saving it without.	Açıqlamanı bu videonun üzərinə yazmaq alınmadı. Onsuz saxlanılır.
+Dim when idle	Toxunulmayanda solğunlaşdır
+Dim when idle and shift	Toxunulmayanda solğunlaşdır və sürüşdür
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	OLED ekranlar üçün. 5 saniyə toxunulmadıqda videonun üzərindəki düymələr, başlıq və tablar dörddə birə qədər solğunlaşır, növbəti toxunuşunuz onları geri qaytarır. Sürüşdürmə həmçinin lentdəki hər şeyi hər 2 dəqiqədən bir bir neçə piksel tərpədir.
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Yeni tarixçənin idxalı əvvəlki təmizləməni geri qaytarmaq imkanını bitirdi. İdxal olunmuş tarixçəni təmizləyə bilərsiniz.
 %1$d setting in that file can't be restored here and was skipped	Bu fayldakı %1$d ayar burada bərpa edilə bilmir və ötürüldü
 %1$d settings in that file can't be restored here and were skipped	Bu fayldakı %1$d ayar burada bərpa edilə bilmir və ötürüldü
 Import watch history	İzləmə tarixçəsini idxal et
+Keep the language picked in TikTok	TikTok-da seçilən dili saxla
+One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Bir dil kodu, məsələn en və ya es. TikTok-un tərcümə etdiyi şərhlər və başlıqlar tətbiqin dili əvəzinə bu dildə çıxır. TikTok-un seçimini saxlamaq üçün boş buraxın.
+Opus (.ogg), a smaller file	Opus (.ogg), daha kiçik fayl
+Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus bu telefonda işləmədi. Səs əvəzinə TikTok-un göndərdiyi kimi saxlanılır.
+Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus üçün Android 10 və ya daha yeni versiya lazımdır, ona görə səslər TikTok-un göndərdiyi kimi saxlanılır.
+Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Saxlanan videolarda sol alt küncdə @istifadəçi adı və açıqlamanın ilk sətri görünür. Bunun üçün telefon bütün videonu yenidən kodlayır, ona görə saxlamaq daha uzun çəkir. Hushfeed-in etdiyi saxlamalara aiddir.
+Sound format	Səs formatı
+Translate into	Bu dilə tərcümə et
+Type one language code here, like en.	Buraya bir dil kodu yazın, məsələn en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Bu hesabın TikTok JSON ixracını seçin. Fayl ən çox %1$s MB və %2$s qeyd ola bilər. Saat qurşağı olmayan tarixlər üçün bu telefonun saat qurşağı istifadə edilir.
 Sign in to TikTok before importing watch history.	İzləmə tarixçəsini idxal etməzdən əvvəl TikTok-a daxil olun.
+When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	TikTok açılanda telefonun dilinin dəyişdiyinə qərar verərsə, ayarlarında seçdiyiniz dili atır və telefona uyğunlaşır. Bu yandırılanda seçiminiz qalır. TikTok-un növbəti açılışından etibarən keçərlidir.
+Write the username and caption on the video	İstifadəçi adını və açıqlamanı videonun üzərinə yaz
+Writing the caption on the video	Açıqlama videonun üzərinə yazılır
+Writing the caption on the video: %1$s	Açıqlama videonun üzərinə yazılır: %1$s
 Your TikTok account changed. Choose the file again for this account.	TikTok hesabınız dəyişdi. Bu hesab üçün faylı yenidən seçin.
 Reading watch history	İzləmə tarixçəsi oxunur
 Importing watch history	İzləmə tarixçəsi idxal edilir
@@ -667,7 +688,7 @@ Last recording: 1 gate.	Son qeyd: 1 qapı.
 Layout	Düzülüş
 Layout, search, profile and system	Düzülüş, axtarış, profil və sistem
 Leave maximum empty to keep it unlimited.	Limitsiz saxlamaq üçün maksimumu boş buraxın.
-Leave the sound out of the saved video. Save the sound as well still writes the .m4a beside it if you want both.	Səsi saxlanılan videodan çıxarın. İkisini də istəyirsinizsə, Səsi də saxla yenə də .m4a faylını onun yanında yazır.
+Leave the sound out of the saved video. Save the sound as well still writes the sound file beside it if you want both.	Səsi saxlanılan videodan çıxarın. İkisini də istəyirsinizsə, Səsi də saxla yenə də səs faylını onun yanında yazır.
 Length and views per like	Uzunluq və bəyənməyə düşən baxışlar
 Less than a minute left	Bir dəqiqədən az qalıb
 Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this.	Ekran görüntülərinin, ekran yazısının və Circle to Search-in TikTok-da yenidən işləməsinə icazə verin. Tətbiq etmək üçün TikTok-u yenidən başladın.
@@ -1267,7 +1288,7 @@ While diagnostic logging is on, a message names the part of Hushfeed that failed
 Window width needed to enable the layout. Restart TikTok to apply this.	Düzülüşü aktiv etmək üçün lazım olan pəncərə eni. Tətbiq etmək üçün TikTok-u yenidən başladın.
 Words, countries and languages	Sözlər, ölkələr və dillər
 Working	İşləyir
-Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.	Videonun səsini onun yanında .m4a kimi yazın. Android 10 və daha yeni versiyalar audionu ayrıca fayllayır, ona görə o, videolarınızla eyni qovluq adı altında Music qovluğuna düşür.
+Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.	Videonun səsini onun yanında, Səs formatı altında seçilən formatda yazın. Android 10 və daha yeni versiyalar audionu ayrıca fayllayır, ona görə o, videolarınızla eyni qovluq adı altında Music qovluğuna düşür.
 YTDLnis background mode	YTDLnis fon rejimi
 YTDLnis download type	YTDLnis endirmə növü
 Yes	Bəli
@@ -1899,8 +1920,8 @@ Stop the two background tasks TikTok uses to check for updates, one of them when
 Limit background traffic	Arxa fon trafikini məhdudlaşdır
 Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.	TikTok-un növbəti videoları əvvəlcədən yükləməsini və bildirişləri qurmasını dayandırır. Bu açıq olduqca mesajlar da daxil olmaqla heç bir bildiriş almayacaqsınız. Videoların başlaması bir az çox çəkə bilər.
 Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.	TikTok-un növbəti videoları əvvəlcədən yükləməsini dayandırır. Daha az məlumat sərf edir, amma videoların başlaması bir az çox çəkə bilər.
-Cache one frame of animated images	Animasiyalı şəkillərin yalnız bir kadrını keşlə
-Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.	Animasiyalı stikerlər və GIF-lər üçün bütün kadrlar əvəzinə yalnız ekrandakı kadrı saxlayır ki, daha az yaddaş istifadə etsinlər. Bundan sonra yüklənənlərə tətbiq olunur.
+Don't decode animated frames ahead	Animasiya kadrlarını əvvəlcədən hazırlama
+Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load.	Animasiyalı stikerlər və GIF-lər hər kadrı bir neçə kadr qabaqcadan deyil, göstəriləndə hazırlayır ki, bir az daha az yaddaş istifadə etsinlər. Bundan sonra yüklənənlərə tətbiq olunur.
 Stop on-device AI profiling	Cihazdaxili süni intellekt profilləşdirməsini dayandır
 Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.	TikTok-un daxili süni intellekt mühərrikinin işə düşməsinin qarşısını alır ki, o, TikTok-un istifadəniz haqqında qeydə aldığı hər şeyin surətini almasın. TikTok mühərrik yoxmuş kimi işləyir.
 Allow voice comments	Səsli şərhlərə icazə ver

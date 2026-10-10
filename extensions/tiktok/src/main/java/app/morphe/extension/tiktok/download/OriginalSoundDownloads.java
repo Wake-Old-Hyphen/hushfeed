@@ -133,23 +133,34 @@ public final class OriginalSoundDownloads {
             return;
         }
         MediaJobScheduler.Job job = MediaJobScheduler.submit("original-sound", key, () -> {
-            File fetched = null;
+            File fetched = null, encoded = null;
             try {
                 fetched = MediaCache.createTempFile(app, "original-sound-", ".tmp");
                 // A sound entry is not always an MP4 audio track, so the name and the type both
                 // wait for the header instead of assuming one. A file called .m4a that holds
                 // MPEG frames is one the gallery refuses to play.
                 String extension = RemoteMedia.fetch(sources, fetched, RemoteMedia.Kind.AUDIO);
+                File publish = fetched;
+                // An Ogg that is Opus already goes out as it came, with no second encode.
+                if (SoundFormat.opus() && !OpusTranscoder.isOpus(fetched)) {
+                    encoded = MediaCache.createTempFile(app, "original-sound-", ".ogg");
+                    if (OpusTranscoder.transcodeOrKeep(fetched, encoded)) {
+                        publish = encoded;
+                        extension = "ogg";
+                    }
+                }
                 String name = fileName(aweme, extension);
                 String path = AudioDownloads.audioPath(DownloadsPatch.getVideoDownloadPath());
-                MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, fetched, name, mimeFor(extension), path, true);
+                MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, publish, name, mimeFor(extension), path, true);
                 SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
             } catch (IOException | RuntimeException exception) {
                 Logger.printException(() -> "Original sound download failed", exception);
                 Utils.showToastLong(L10n.t("The sound couldn't be saved. Try again."));
             } finally {
-                if (fetched != null && !MediaCache.delete(fetched)) {
-                    Logger.printInfo(() -> "Could not remove sound temporary file");
+                for (File temporary : new File[]{fetched, encoded}) {
+                    if (temporary != null && !MediaCache.delete(temporary)) {
+                        Logger.printInfo(() -> "Could not remove sound temporary file");
+                    }
                 }
             }
         }, () -> ACTIVE.remove(id));

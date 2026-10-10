@@ -62,6 +62,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.storeIdentityEnabled
                 || SettingsStatus.passkeySignInEnabled
+                || SettingsStatus.appLanguageEnabled
                 || hasPerformance();
     }
 
@@ -256,7 +257,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         if (SettingsStatus.screenCaptureEnabled || SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.refreshRateEnabled || SettingsStatus.launcherShortcutsEnabled
                 || SettingsStatus.firstLaunchSetupEnabled || SettingsStatus.storeIdentityEnabled
-                || SettingsStatus.passkeySignInEnabled) {
+                || SettingsStatus.passkeySignInEnabled || SettingsStatus.appLanguageEnabled) {
             addPreference(new SectionHeadingPreference(context, "System"));
         }
         if (SettingsStatus.screenCaptureEnabled) {
@@ -335,6 +336,16 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.SKIP_PASSKEY_SIGN_IN
             ));
         }
+        if (SettingsStatus.appLanguageEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep the language picked in TikTok",
+                    "When TikTok starts and decides the phone's language changed, it drops the "
+                            + "language you picked in its settings and follows the phone. With this "
+                            + "on, your pick stays. Counts from TikTok's next start.",
+                    Settings.KEEP_APP_LANGUAGE
+            ));
+        }
         // Each of these used to change TikTok the moment it was patched in, with no switch. They
         // start off now, so a row here is the only way any of them does anything.
         if (hasPerformance()) {
@@ -376,9 +387,10 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         if (SettingsStatus.animatedImageCacheEnabled) {
             addPreference(new TogglePreference(
                     context,
-                    "Cache one frame of animated images",
-                    "Keep only the frame on screen for animated stickers and GIFs instead of every "
-                            + "frame, so they use less memory. Applies to the next ones that load.",
+                    "Don't decode animated frames ahead",
+                    "Animated stickers and GIFs decode each frame as it's shown instead of a few "
+                            + "ahead, so they use a little less memory. Applies to the next ones "
+                            + "that load.",
                     Settings.DROP_ANIMATED_IMAGE_CACHE
             ));
         }

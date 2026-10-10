@@ -110,6 +110,11 @@ final class SaveProgress {
     private volatile TextView stopButton;
     private volatile int current = 1;
     private volatile int percent = -1;
+    /**
+     * The file under way is having its caption written in. That step stops at once on Cancel
+     * rather than after the file, so a single video's row offers Cancel while it runs.
+     */
+    private volatile boolean captioning;
     private volatile ProgressBar transferBar;
     private final AtomicBoolean cancelled = new AtomicBoolean();
     private volatile boolean finished;
@@ -193,11 +198,36 @@ final class SaveProgress {
         updateTransfer();
     }
 
+    /**
+     * How far writing the caption into the video has got, {@code done} of {@code expected}
+     * microseconds of it. It encodes the whole video again, the slow part of such a save, so the
+     * row says what it's doing rather than "Saving video", and offers Cancel for it.
+     */
+    void captioning(long done, long expected) {
+        if (finished || cancelled.get()) return;
+        int next = expected <= 0 ? -1 : (int) Math.max(0, Math.min(99, done * 100.0 / expected));
+        if (captioning && next == percent) return;
+        captioning = true;
+        percent = next;
+        updateTransfer();
+    }
+
+    /** The caption step is over, written in or given up, so the row says it's saving again. */
+    void captionDone() {
+        if (!captioning) return;
+        captioning = false;
+        percent = -1;
+        updateTransfer();
+    }
+
     private String progressText() {
         if (!started && fileCount) return L10n.quantity(Utils.getContext(), total,
                 "Waiting to save one file", "Waiting to save %1$s files");
         if (!started) return total == 1 ? L10n.t("Waiting to save video")
                 : L10n.f("Waiting to save %1$s files", String.valueOf(total));
+        if (captioning) return percent < 0 ? L10n.t("Writing the caption on the video")
+                : L10n.f("Writing the caption on the video: %1$s",
+                        java.text.NumberFormat.getPercentInstance().format(percent / 100.0));
         if (percent < 0) return total == 1 && !fileCount ? L10n.t("Saving video")
                 : L10n.f("Saving %1$s of %2$s", String.valueOf(current), String.valueOf(total));
         String value = java.text.NumberFormat.getPercentInstance().format(percent / 100.0);
@@ -218,8 +248,9 @@ final class SaveProgress {
             }
             if (!started) return;
             TextView button = stopButton;
-            // Single-video stream progress keeps its existing no-Cancel behavior while running.
-            if (button != null && total == 1 && !fileCount) button.setVisibility(View.GONE);
+            // Single-video stream progress keeps its existing no-Cancel behavior while running,
+            // except while the caption is written in, which Cancel does stop.
+            if (button != null && total == 1 && !fileCount) button.setVisibility(captioning ? View.VISIBLE : View.GONE);
             View shown = row;
             if (shownWaiting && shown != null && shown.getVisibility() == View.VISIBLE) {
                 shownWaiting = false;
@@ -247,6 +278,9 @@ final class SaveProgress {
     /** Stops after the file under way. The row says so, aloud once, until that file is done. */
     void cancel() {
         if (!cancelled.compareAndSet(false, true)) return;
+        // Writing the caption in stops now, not after the file, and the save's own word on it
+        // follows at once, so "Stopping after this file" would name a file that never comes.
+        if (captioning) return;
         Utils.runOnMainThread(() -> {
             TextView view = count;
             if (view == null) return;
@@ -370,7 +404,7 @@ final class SaveProgress {
                 stop.setOnClickListener(view -> cancelFromRow());
                 // While the save waits, Cancel takes it out of line. Once it runs, Cancel stops
                 // after the current file. File-count jobs keep the control for every count.
-                if (started && total == 1 && !fileCount) stop.setVisibility(View.GONE);
+                if (started && total == 1 && !fileCount && !captioning) stop.setVisibility(View.GONE);
                 banner.addView(stop, new LinearLayout.LayoutParams(-2, -2));
                 stopButton = stop;
 
@@ -573,7 +607,8 @@ final class SaveProgress {
     /**
      * Cancel on the row. A save still in line is taken out of it and never starts; one that has
      * started stops after the file under way. File-count jobs retain that control at every
-     * count; the single-video stream row keeps its existing no-Cancel behavior while running.
+     * count; the single-video stream row keeps its existing no-Cancel behavior while running,
+     * apart from the caption step, which stops at once.
      */
     private void cancelFromRow() {
         MediaJobScheduler.Job waitingOn = job;
@@ -582,11 +617,12 @@ final class SaveProgress {
             Utils.showToastShort(L10n.t("Save cancelled. Nothing was saved."));
             return;
         }
-        if (total > 1 || fileCount) cancel();
+        if (total > 1 || fileCount || captioning) cancel();
     }
 
     private void showCount(int current) {
         this.current = current;
+        captioning = false;
         percent = -1;
         updateTransfer();
     }

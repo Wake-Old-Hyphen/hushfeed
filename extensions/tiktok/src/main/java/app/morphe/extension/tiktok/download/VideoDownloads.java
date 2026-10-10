@@ -78,14 +78,18 @@ final class VideoDownloads {
         boolean withDetails = Settings.DOWNLOAD_DETAILS.get();
         boolean detailsAsJson = Settings.DOWNLOAD_DETAILS_JSON.get();
         boolean withTags = Settings.DOWNLOAD_TAGS.get();
+        boolean burnCaption = Settings.DOWNLOAD_BURN_CAPTION.get();
         boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
         // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
         long archiveGeneration = SavedVideoArchive.generation();
         boolean showProgress = Settings.DOWNLOAD_PROGRESS.get();
         boolean stampedFallback = stampedFallbackWanted();
         // TikTok's own save has no second try, so a fallback to the stamped copy needs the save
-        // here.
-        boolean extras = withDetails || withTags || checkSaved || showProgress || stampedFallback;
+        // here. So does a caption written in, which needs a file of our own to write it into.
+        boolean extras = withDetails || withTags || checkSaved || showProgress || stampedFallback || burnCaption;
+        // Writing the caption in encodes the whole video again, the slow part of such a save, so
+        // it gets the progress row and its Cancel whether or not the row was asked for.
+        boolean showRow = showProgress || burnCaption;
         // Photo posts can carry a video model too. Quality, mute and subtitle choices must
         // not intercept their save before OriginalPhotos or TikTok's still/live-photo job.
         if (Reflect.property(aweme, "getPhotoModeImageInfo", "photoModeImageInfo") != null) return false;
@@ -121,7 +125,7 @@ final class VideoDownloads {
         if (id == null) return false;
         Context app = context.getApplicationContext();
         String name, path;
-        DownloadDetails facts = withDetails || withTags ? new DownloadDetails(aweme, detailsAsJson) : null;
+        DownloadDetails facts = withDetails || withTags || burnCaption ? new DownloadDetails(aweme, detailsAsJson) : null;
         DownloadDetails details = withDetails ? facts : null;
         Map<String, String> tags = withTags ? Mp4Tags.of(facts) : Collections.emptyMap();
         try {
@@ -233,6 +237,8 @@ final class VideoDownloads {
                                 result = temp(app, temporary);
                                 TrackMuxer.videoOnly(picture[0], result);
                             }
+                            // Before the tags, so they land on the file that's published.
+                            if (burnCaption) result = captioned(app, temporary, result, facts, progress);
                             if (!tags.isEmpty()) result = tagged(app, temporary, result, tags);
                             published[0] = MediaFileWriter.publishForResult(app, result, name, "video/mp4", path, true);
                         } catch (IOException | RuntimeException failure) {
@@ -266,7 +272,12 @@ final class VideoDownloads {
                         subtitles[0]++;
                     }
                 });
-                if (published[0] == null) {
+                if (published[0] == null && burnCaption && outcome.cancelled > 0
+                        && outcome.stop == SaveProgress.Stop.NONE) {
+                    // Cancel while the caption was written in, which stops at once and leaves
+                    // nothing in the gallery.
+                    Utils.showToastShort(L10n.t("Save cancelled. Nothing was saved."));
+                } else if (published[0] == null) {
                     Utils.showToastLong(outcome.stop == SaveProgress.Stop.SERVER_WAIT
                             ? SaveProgress.message(outcome, "")
                             : L10n.t("The video couldn't be saved. Try again, or choose Automatic."));
@@ -297,11 +308,11 @@ final class VideoDownloads {
         Runnable saveAgain = () -> {
             ASKING.remove(id);
             if (withCover) CoverSaver.beside(app, aweme);
-            SaveProgress again = SaveProgress.queued(files, showProgress);
+            SaveProgress again = SaveProgress.queued(files, showRow);
             again.submit("video", key, () -> save.accept(again), release);
             again.acknowledge(null, L10n.t("Waiting to save video"));
         };
-        SaveProgress first = SaveProgress.queued(files, showProgress);
+        SaveProgress first = SaveProgress.queued(files, showRow);
         AtomicBoolean asking = new AtomicBoolean();
         MediaJobScheduler.Job job = first.submit("video", key, () -> {
             if (checkSaved) {
@@ -368,6 +379,22 @@ final class VideoDownloads {
             Logger.printException(() -> "Could not write the video's tags, so it's saved without them", exception);
         }
         return video;
+    }
+
+    /**
+     * The video with the creator and the first line of its caption written on it, or the same
+     * file when it can't be. Like the tags it's a nicety, so a phone whose codecs won't do it
+     * still gets the video, and is told it's going out without. Only a stop ends the save here.
+     */
+    private static File captioned(Context context, List<File> files, File video, DownloadDetails facts,
+            SaveProgress progress) throws IOException {
+        File output = temp(context, files);
+        try {
+            return CaptionBurner.burnOrKeep(video, output, facts.creator(), facts.caption(), progress) ? output : video;
+        } finally {
+            // The tags and the publish after it are ordinary saving again, without Cancel.
+            if (progress != null) progress.captionDone();
+        }
     }
 
     /** Every address the video itself can be fetched from, best first. */

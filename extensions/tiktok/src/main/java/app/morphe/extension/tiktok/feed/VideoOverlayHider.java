@@ -466,23 +466,26 @@ public final class VideoOverlayHider {
                     && (RememberClearDisplayPatch.isClearDisplayNow() || carry);
             // The fade belongs to the overlay patch: a value saved before a repatch without it
             // does nothing, and Pause answers the stock look.
-            fadeLevel = HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled ? 100
-                    : Math.max(0, Math.min(100, Settings.FADE_CONTROLS_OPACITY.get()));
+            boolean overlaysOn = !HushfeedPause.isPaused() && SettingsStatus.videoOverlaysEnabled;
+            int chosenFade = overlaysOn ? Math.max(0, Math.min(100, Settings.FADE_CONTROLS_OPACITY.get())) : 100;
             // With the fade set, Clear display keeps the controls it covers in sight at that
             // level instead of taking them away, and lets taps through them (#84). Across a
             // carried swipe the incoming video's controls show the same way rather than going.
-            fadedClear = clearLive && fadeLevel > 0 && fadeLevel < 100;
+            // Asked of the chosen level: the burn-in dim lowers what's drawn, never what Clear
+            // display does.
+            fadedClear = clearLive && chosenFade > 0 && chosenFade < 100;
+            fadeLevel = BurnInGuard.pass(activity, chosenFade, overlaysOn);
             boolean carryHides = carry && !fadedClear;
             boolean tabStrip = !detailPager && clearLive;
             // The comment bar is the opened post's own; the main feed has the tabs there. TikTok
             // leaves it up in Clear display on a photo or video opened from search or a profile
             // (#84), so it goes then too and comes back with the controls. A video opens in the
             // detail pager, but on 47.1.4 a photo from search opens in the main activity
-            // (DetailSafRootFragment) with the same bar, so Clear display doesn't ask which
-            // window it's in: only an opened post has the bar, and the strip under it is left
-            // alone wherever the bar isn't found (see the pairing after the walk).
-            boolean detailCommentBar = (detailPager && Settings.HIDE_DETAIL_COMMENT_BAR.get())
-                    || clearLive;
+            // (DetailSafRootFragment) with the same bar, so neither the switch nor Clear display
+            // asks which window it's in: only an opened post has the bar, and the strip under it
+            // is left alone wherever the bar isn't found (see the pairing after the walk). Asked
+            // only in the detail pager, the switch left that photo's bar up.
+            boolean detailCommentBar = Settings.HIDE_DETAIL_COMMENT_BAR.get() || clearLive;
             // The faded Clear display keeps the anchor row and the search bar in sight but out of
             // reach, which is what hiding them was for.
             boolean anchor = clearLive && !fadedClear;

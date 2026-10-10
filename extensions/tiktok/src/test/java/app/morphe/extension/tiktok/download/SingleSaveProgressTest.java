@@ -95,6 +95,52 @@ public class SingleSaveProgressTest {
         assertNull(root.findViewWithTag("hushfeed_save_progress"));
     }
 
+    /**
+     * Writing the caption in says so, and a single video's row, which has no Cancel while it
+     * downloads, offers one for it. That Cancel stops it at once, so the row doesn't go on to
+     * say "Stopping after this file".
+     */
+    @Test public void writingTheCaptionSaysSoAndOffersACancelThatStopsIt() {
+        progress = SaveProgress.begin(1, true);
+        settle();
+        ViewGroup banner = root.findViewWithTag("hushfeed_save_progress");
+        View cancel = banner.getChildAt(banner.getChildCount() - 1);
+        progress.transfer(500, 1000);
+        idle();
+        assertEquals("a single download keeps no Cancel while it runs", View.GONE, cancel.getVisibility());
+
+        progress.captioning(250_000, 1_000_000);
+        idle();
+        TextView label = find(root, TextView.class);
+        assertEquals("Writing the caption on the video: 25%", label.getText().toString());
+        assertEquals(View.VISIBLE, cancel.getVisibility());
+        assertFalse(find(root, ProgressBar.class).isIndeterminate());
+        assertEquals(25, find(root, ProgressBar.class).getProgress());
+
+        cancel.performClick();
+        idle();
+        assertTrue(progress.isCancelled());
+        assertEquals("Writing the caption on the video: 25%", label.getText().toString());
+    }
+
+    /** Once the caption is in, or given up, the tags and the publish are ordinary saving again. */
+    @Test public void afterTheCaptionTheRowSavesAgainWithoutCancel() {
+        progress = SaveProgress.begin(1, true);
+        settle();
+        ViewGroup banner = root.findViewWithTag("hushfeed_save_progress");
+        View cancel = banner.getChildAt(banner.getChildCount() - 1);
+        progress.transfer(500, 1000);
+        progress.captioning(990_000, 1_000_000);
+        idle();
+        assertEquals(View.VISIBLE, cancel.getVisibility());
+
+        progress.captionDone();
+        idle();
+        assertEquals("Saving video", find(root, TextView.class).getText().toString());
+        assertTrue(find(root, ProgressBar.class).isIndeterminate());
+        assertEquals("no Cancel once the caption step is over", View.GONE, cancel.getVisibility());
+    }
+
     @Test @Config(qualifiers = "w360dp-h640dp-notnight-mdpi", fontScale = 2f)
     public void largeTextKeepsTheProgressLabelAndBarInsideTheBanner() throws Exception {
         progress = SaveProgress.begin(1, true);

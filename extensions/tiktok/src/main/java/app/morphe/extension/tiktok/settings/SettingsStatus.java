@@ -222,6 +222,13 @@ public class SettingsStatus {
         doNotAutoTranslateEnabled = true;
     }
 
+    /** Translate comments hooked the translation service's answer to which language to translate into. */
+    public static boolean translateIntoEnabled = false;
+
+    public static void enableTranslateInto() {
+        translateIntoEnabled = true;
+    }
+
     public static void enableHideCommentQuickReactions() {
         hideCommentQuickReactionsEnabled = true;
     }
@@ -606,6 +613,13 @@ public class SettingsStatus {
 
     public static void enablePasskeySignIn() {
         passkeySignInEnabled = true;
+    }
+
+    /** Keep the app language put its switch in front of TikTok's language reset. */
+    public static boolean appLanguageEnabled = false;
+
+    public static void enableAppLanguage() {
+        appLanguageEnabled = true;
     }
 
     static {

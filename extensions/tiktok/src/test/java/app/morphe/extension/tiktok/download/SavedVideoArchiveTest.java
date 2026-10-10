@@ -582,6 +582,97 @@ public class SavedVideoArchiveTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
+    /** Off, a save never reaches the encoder, and the file is the one fetched, byte for byte. */
+    @Test public void withTheCaptionSwitchOffTheVideoIsNeverEncodedAgain() throws Exception {
+        AtomicInteger asked = new AtomicInteger();
+        CaptionBurner.Burn before = CaptionBurner.burner;
+        CaptionBurner.burner = (source, output, creator, caption, progress) -> asked.incrementAndGet();
+        try {
+            Settings.DOWNLOAD_BURN_CAPTION.save(false);
+            assertTrue(VideoDownloads.start(new Post(), owner.get()));
+            awaitJobs();
+            assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+            assertEquals("the switch is off, but the encoder was asked", 0, asked.get());
+        } finally {
+            CaptionBurner.burner = before;
+            Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
+        }
+    }
+
+    /** On, the encoder gets the fetched video with the post's name and caption, and its file is the one saved. */
+    @Test public void withTheCaptionSwitchOnTheCaptionedFileIsSaved() throws Exception {
+        byte[] captioned = {0, 0, 0, 16, 'f', 't', 'y', 'p', 'm', 'p', '4', '2', 0, 0, 0, 1};
+        List<String> seen = new java.util.concurrent.CopyOnWriteArrayList<>();
+        CaptionBurner.Burn before = CaptionBurner.burner;
+        CaptionBurner.burner = (source, output, creator, caption, progress) -> {
+            seen.add(java.util.Arrays.equals(VIDEO, Files.readAllBytes(source.toPath())) ? "fetched" : "something else");
+            seen.add(creator);
+            seen.add(caption);
+            Files.write(output.toPath(), captioned);
+        };
+        try {
+            Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+            Settings.DOWNLOAD_BURN_CAPTION.save(true);
+            assertTrue("the switch alone takes the save over from TikTok", VideoDownloads.start(new Post(), owner.get()));
+            awaitJobs();
+            assertEquals(List.of("fetched", "@alice", "A saved caption"), seen);
+            assertArrayEquals(captioned, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+        } finally {
+            CaptionBurner.burner = before;
+            Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
+        }
+    }
+
+    /** A phone that can't encode it still gets the video as it came, and is told so. */
+    @Test public void aCaptionThatCantBeWrittenStillSavesTheVideoAndSaysSo() throws Exception {
+        CaptionBurner.Burn before = CaptionBurner.burner;
+        CaptionBurner.burner = (source, output, creator, caption, progress) -> {
+            throw new java.io.IOException("No H.264 encoder took 1080 by 1920");
+        };
+        try {
+            Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+            Settings.DOWNLOAD_BURN_CAPTION.save(true);
+            ShadowToast.reset();
+            assertTrue(VideoDownloads.start(new Post(), owner.get()));
+            awaitJobs();
+            assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/123.mp4").toPath()));
+            assertTrue(ShadowToast.showedToast("Couldn't write the caption on this video. Saving it without."));
+        } finally {
+            CaptionBurner.burner = before;
+            Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
+        }
+    }
+
+    /** Cancel while the caption is written stops the save there, and nothing reaches the gallery. */
+    @Test public void cancelWhileTheCaptionIsWrittenSavesNothing() throws Exception {
+        CaptionBurner.Burn before = CaptionBurner.burner;
+        CaptionBurner.burner = (source, output, creator, caption, progress) -> {
+            progress.captioning(0, 1_000_000L);
+            // What the row's Cancel does while the caption is written in.
+            progress.cancel();
+            if (progress.isCancelled()) {
+                throw new MediaBudget.StopException("Writing the caption was cancelled",
+                        MediaBudget.StopException.Reason.CANCELLED);
+            }
+        };
+        try {
+            Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+            Settings.DOWNLOAD_BURN_CAPTION.save(true);
+            ShadowToast.reset();
+            assertTrue(VideoDownloads.start(new Post(), owner.get()));
+            awaitJobs();
+            assertFalse(new File(root, "alice/123.mp4").exists());
+            assertTrue(ShadowToast.showedToast("Save cancelled. Nothing was saved."));
+            assertFalse("a cancel read as a failure",
+                    ShadowToast.showedToast("The video couldn't be saved. Try again, or choose Automatic."));
+            assertFalse("a cancel read as an encoder failure",
+                    ShadowToast.showedToast("Couldn't write the caption on this video. Saving it without."));
+        } finally {
+            CaptionBurner.burner = before;
+            Settings.DOWNLOAD_BURN_CAPTION.resetToDefault();
+        }
+    }
+
     /** With only the progress row asked for, a video Hushfeed can't fetch goes back to TikTok. */
     @Test public void progressAloneLeavesAnUnavailableVideoToTikTok() {
         Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);

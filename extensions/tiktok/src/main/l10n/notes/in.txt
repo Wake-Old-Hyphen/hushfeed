@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos tidak lagi menghapus video dari koleksi yang kamu buka, jadi mengetuk video tersimpan kembali memutar video itu, bukan video lain atau tidak ada sama sekali (#135). Video yang sudah ditonton tetap disembunyikan di For You, Following, dan Friends.
+
+* **TikTok:** Patch baru, Keep the app language, menambahkan sakelar Pertahankan bahasa yang dipilih di TikTok di Sistem pada Aplikasi (#61). Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Dengan sakelar ini menyala, pilihanmu tetap. Awalnya mati.
+
+* **TikTok:** Sakelar baru Tulis nama pengguna dan keterangan di video di Unduhan menulis @nama pengguna dan baris pertama keterangan di pojok kiri bawah video yang disimpan Hushfeed. Ponsel mengenkode ulang videonya untuk itu, jadi simpanan seperti ini lebih lama dan menampilkan progresnya dengan tombol Batal. Awalnya mati.
+
+* **TikTok:** Remove creation tools sekarang memperingatkan bahwa membuka alat pembuatan, seperti pencarian efek di kamera, bisa menutup TikTok (#133). Jangan pilih patch ini kalau kamu membuat video.
+
+* **TikTok:** Drop the animated image cache tidak lagi mengganti cache bingkai TikTok dengan cache yang hanya menyimpan satu bingkai, yang bisa membuat stiker animasi di komentar macet di bingkai pertamanya (#130). Sakelarnya sekarang bernama Jangan dekode bingkai animasi lebih dulu, dan jika dinyalakan hanya mencegah TikTok mendekode bingkai sebelum ditampilkan.
+
+* **TikTok:** Gelembung cerita Mengikuti di bagian atas feed muncul lagi saat Tampilan bersih berakhir. TikTok menyembunyikannya saat Tampilan bersih dimulai, dan dulu gelembung itu tetap hilang sampai feed dimuat ulang. Gelembung hanya muncul lagi jika tadinya terlihat dan masih ada orang di dalamnya.
+
+* **TikTok:** Baris baru Terjemahkan ke di Komentar menerima satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa itu, bukan bahasa aplikasi, jadi kamu bisa memakai TikTok dalam satu bahasa dan membaca terjemahan dalam bahasa lain. Biarkan kosong untuk memakai pilihan TikTok.
+
+* **TikTok:** Pilihan baru Pelindung burn-in layar di bawah Tampilan bersih meredupkan tombol, keterangan, dan tab di atas video menjadi seperempat setelah 5 detik tanpa sentuhan, dan sentuhan berikutnya mengembalikannya. Dengan Redupkan saat diam dan geser, semua yang ada di feed juga bergeser beberapa piksel setiap 2 menit, supaya layar OLED tidak terbakar di bawah kontrol yang tidak pernah bergerak.
+
+* **TikTok:** Sembunyikan bilah komentar di video yang dibuka sekarang juga menghilangkan bilah itu dari postingan foto yang kamu buka dari pencarian. Sebelumnya, bilah untuk menambah komentar tetap muncul di sana.
+
+* **TikTok:** Pilihan baru Format suara di Unduhan membuat Simpan suaranya juga dan Simpan suara asli saat tekan lama bisa membuat berkas Opus (.ogg). Berkasnya lebih kecil daripada M4A dari TikTok, dan ponselmu mengodekan ulang suaranya untuk membuatnya. Butuh Android 10 atau yang lebih baru. Seperti yang dikirim TikTok tetap jadi bawaan, jadi hasil simpanan itu sama seperti sebelumnya.
+
 * **TikTok:** Pudarkan kontrol video sekarang juga berlaku di Tampilan bersih. Antara 1 dan 99, Tampilan bersih membiarkan tombol dan keterangan tetap di layar pada tingkat yang kamu pilih alih-alih menghilangkannya, dan ketukan pada keduanya diteruskan ke video, jadi tidak ada yang terbuka tanpa sengaja. Tekan lama atau cubit tetap mengeluarkanmu dari Tampilan bersih, dan di luar itu kontrol yang dipudarkan tetap menerima ketukan seperti sebelumnya (#84).
 
 * **TikTok:** Senyapkan video feed sekarang tetap membuat feed tanpa suara setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya, video berikutnya bisa berbunyi sampai kamu keluar dari feed lalu kembali.
@@ -28,7 +48,7 @@
 
 * **TikTok:** Pemilih waktu untuk Kapan dikirim di Pertahankan rentetan sekarang terbuka gelap atau terang sesuai setelan Hushfeed.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling, dan Enable voice comments kini masing-masing punya sakelar di pengaturan Hushfeed, jadi Jeda juga mematikannya dan mode sederhana Morphe Manager kini ikut memilihnya. Setiap sakelar itu mulai dalam keadaan mati. Kalau sebelumnya kamu sudah mem-patch dengan salah satu patch ini, nyalakan sakelarnya setelah memperbarui agar tetap berfungsi. Lewati iklan pembuka, Lewati pemeriksaan pembaruan, Batasi lalu lintas latar belakang, dan Simpan satu bingkai gambar animasi di cache ada di Performa di bagian Aplikasi. Hentikan profiling AI di perangkat ada di Privasi, dan Izinkan komentar suara ada di Komentar.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling, dan Enable voice comments kini masing-masing punya sakelar di pengaturan Hushfeed, jadi Jeda juga mematikannya dan mode sederhana Morphe Manager kini ikut memilihnya. Setiap sakelar itu mulai dalam keadaan mati. Kalau sebelumnya kamu sudah mem-patch dengan salah satu patch ini, nyalakan sakelarnya setelah memperbarui agar tetap berfungsi. Lewati iklan pembuka, Lewati pemeriksaan pembaruan, Batasi lalu lintas latar belakang, dan Jangan dekode bingkai animasi lebih dulu ada di Performa di bagian Aplikasi. Hentikan profiling AI di perangkat ada di Privasi, dan Izinkan komentar suara ada di Komentar.
 
 * **TikTok:** Patch baru, Skip passkey sign-in, ikut dipilih mode sederhana Morphe Manager dengan sakelarnya mati (#102). Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch, jadi akun yang punya kunci sandi bisa tertahan di langkah kunci sandi TikTok. Nyalakan Masuk tanpa kunci sandi di pengaturan Hushfeed > Aplikasi, lalu TikTok menganggap ponselmu tidak punya kunci sandi dan menawarkan cara masuk lainnya, seperti kata sandimu atau kode lewat email atau SMS. Kalau kamu sedang keluar dari akun, tekan lama Beranda untuk membuka pengaturan Hushfeed.
 

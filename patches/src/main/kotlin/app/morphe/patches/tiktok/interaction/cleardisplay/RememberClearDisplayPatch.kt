@@ -12,7 +12,9 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.interaction.blockauthor.PlayerProgressAidFingerprint
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.cloneMutable
 import app.morphe.util.getReference
 import app.morphe.util.implementationOrPatchException
@@ -28,7 +30,8 @@ val rememberClearDisplayPatch = bytecodePatch(
     name = "Remember clear display",
     description = "Keeps clear display, TikTok's mode that hides the buttons over a video, on " +
         "as you swipe to the next video. It can also turn on by itself after a delay you pick, " +
-        "which starts off in Hushfeed settings > Feed screen.",
+        "which starts off in Hushfeed settings > Feed screen. When clear display ends, the " +
+        "Following stories bubble TikTok hid comes back too.",
     default = true,
 ) {
     category("Playback")
@@ -128,6 +131,19 @@ val rememberClearDisplayPatch = bytecodePatch(
             "invoke-static/range { p0 .. p0 }, $EXTENSION->onFirstFrame(Ljava/lang/Object;)V")
         PlayerProgressAidFingerprint.method.addInstruction(0,
             "invoke-static/range { p0 .. p1 }, $EXTENSION->onPlaybackProgress(Ljava/lang/Object;Ljava/lang/String;)V")
+        // TikTok's Following stories bubble hides itself as clear display starts and stays gone
+        // after it ends. Held to declared builds by FollowingStoriesBubbleAnchorsTest.
+        try {
+            val bubble = mutableClassDefByOrNull(SKYLIGHT_BUBBLE)
+                ?: throw PatchException("Following stories bubble: $SKYLIGHT_BUBBLE is missing")
+            checkBubbleList { classDefByOrNull(it) }
+            val found = findBubbleClearMode(bubble)
+            (found.handler as MutableMethod).hookBubbleClearMode(found)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Remember clear display] Left out the Following stories bubble on " +
+                "${packageMetadata.versionName}: ${problem.message}")
+        }
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAutomaticClearDisplay()V")
     }

@@ -49,7 +49,16 @@ public final class EarlySwitch {
      * context exists. Off when nothing can be read or the start runs paused.
      */
     public static boolean isOn(String key) {
-        Context application = source.application();
+        return isOn(null, key);
+    }
+
+    /**
+     * {@link #isOn(String)}, read through [context] when there is one. A hook inside the
+     * application's attachBaseContext needs this, since ActivityThread has no application to hand
+     * out until that returns.
+     */
+    public static boolean isOn(@Nullable Context context, String key) {
+        Context application = context != null ? context : source.application();
         if (application == null) {
             Logger.printInfo(() -> "Early switch: no application yet, " + key + " answers off");
             return false;

@@ -15,6 +15,8 @@ import app.morphe.extension.shared.settings.StringSetting;
 @SuppressWarnings("deprecation")
 public final class ChoicePreference extends ListPreference {
     private final boolean needsRestart;
+    /** A line under the value saying what the choice covers, already translated. */
+    private CharSequence note;
 
     public ChoicePreference(Context context, String title, StringSetting setting, String[] labels, String[] values) {
         super(context);
@@ -38,8 +40,21 @@ public final class ChoicePreference extends ListPreference {
      * is translated here, so it goes past the lookup.
      */
     void showValue() {
-        super.setSummary(needsRestart
-                ? "%s\n" + L10n.t(getContext(), TogglePreference.RESTART_SENTENCE) : "%s");
+        String summary = "%s";
+        if (note != null) summary += "\n" + note;
+        if (needsRestart) summary += "\n" + L10n.t(getContext(), TogglePreference.RESTART_SENTENCE);
+        super.setSummary(summary);
+    }
+
+    /**
+     * Keeps {@code note} on a line under the value, where the screen's sync can't write over
+     * it. ListPreference formats the summary with the chosen label, so the note can't carry a
+     * percent sign.
+     */
+    public ChoicePreference withNote(CharSequence note) {
+        this.note = L10n.t(getContext(), note);
+        showValue();
+        return this;
     }
 
     @Override protected void showDialog(android.os.Bundle state) {

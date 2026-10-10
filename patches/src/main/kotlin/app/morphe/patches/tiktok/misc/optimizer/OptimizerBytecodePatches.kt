@@ -171,9 +171,9 @@ internal fun limitBackgroundTraffic(skipPushSetup: Boolean) {
 @Suppress("unused")
 val runtimeMemoryGovernorPatch = bytecodePatch(
     name = "Drop the animated image cache",
-    description = "Lets you make TikTok keep only the frame on screen for animated stickers and " +
-        "GIFs instead of every frame, so they use less memory. Starts off. Turn it on in " +
-        "Hushfeed settings > App.",
+    description = "Lets you make TikTok decode animated stickers and GIFs one frame at a time as " +
+        "they play, instead of a few frames ahead, so they use a little less memory. Starts off. " +
+        "Turn it on in Hushfeed settings > App.",
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
@@ -189,29 +189,17 @@ val runtimeMemoryGovernorPatch = bytecodePatch(
 }
 
 /**
- * Drop the animated image cache's hooks, without its settings row. With the switch on, Fresco's
- * factory builds the keep-last-frame cache (caching strategy 3), which holds the one frame on
- * screen, and the backend builder skips the frame preparer. The earlier version nulled the
- * FrescoFrameCache reads instead, so every frame walked back toward the first and nothing was
- * saved, since the preparer still filled the cache (#100). With the switch off both values are
- * TikTok's own.
+ * Drop the animated image cache's hook, without its settings row. With the switch on, the
+ * backend builder skips the frame preparer, so each frame is decoded as it's drawn and TikTok's
+ * own frame cache keeps it. 0.69.0 also swapped in Fresco's keep-last-frame cache (caching
+ * strategy 3), which left animated stickers in comments on their first frame (#130), and the
+ * version before that nulled the FrescoFrameCache reads, so every frame walked back toward the
+ * first (#100). Fresco itself skips the preparer when its count is 0. With the switch off the
+ * count is TikTok's own.
  */
 context(patchContext: BytecodePatchContext)
 internal fun installAnimatedImageCacheSwitch() {
     val factory = AnimatedDrawableFactoryFingerprint.method
-    val strategy = factory.cachingStrategyRead()
-        ?: throw PatchException("$ANIMATED_CACHE: the caching strategy read has an unreviewed shape.")
-    if (strategy.keepLastClass == FRESCO_FRAME_CACHE_DESCRIPTOR) {
-        throw PatchException("$ANIMATED_CACHE: strategy $KEEP_LAST_FRAME_STRATEGY builds FrescoFrameCache.")
-    }
-    val keepLast = patchContext.mutableClassDefBy(strategy.keepLastClass)
-    val fieldTypes = keepLast.fields.map { it.type }
-    if (fieldTypes.size != 2 || fieldTypes.count { it == "I" } != 1 || fieldTypes.count { it.startsWith("L") } != 1) {
-        throw PatchException("$ANIMATED_CACHE: ${strategy.keepLastClass} isn't the keep-last-frame cache.")
-    }
-
-    // The preparer decodes frames ahead into the cache. The keep-last cache drops them, so
-    // each would be decoded twice, and composed from frames it no longer holds.
     val builderCall = factory.backendBuilderCall()
         ?: throw PatchException("$ANIMATED_CACHE: no animation backend builder call.")
     val builder = patchContext.mutableClassDefBy(factory.definingClass).methods.single {
@@ -222,20 +210,13 @@ internal fun installAnimatedImageCacheSwitch() {
         ?: throw PatchException("$ANIMATED_CACHE: the frame preparer gate has an unreviewed shape.")
     val gateRegister = builder.getInstruction<OneRegisterInstruction>(gate).registerA
 
-    // Both values pass through the switch, which hands TikTok's own back while it's off. Nothing
-    // may jump straight to either insertion point, or that path would skip the question.
-    // framePreparerGateIndex only looks at branches, so the gate is checked again here for
-    // switch cases and exception handlers, as is the instruction after the strategy read.
+    // The count passes through the switch, which hands TikTok's own back while it's off. Nothing
+    // may jump straight to the gate, or that path would skip the question. framePreparerGateIndex
+    // only looks at branches, so the gate is checked again here for switch cases and handlers.
     if (builder.isBranchTarget(gate)) {
         throw PatchException("$ANIMATED_CACHE: a switch case or handler lands on the frame preparer gate.")
     }
-    if (factory.isBranchTarget(strategy.resultIndex + 1)) {
-        throw PatchException("$ANIMATED_CACHE: a branch lands right after the caching strategy read.")
-    }
-    val framesToPrepare = passThrough(gateRegister, "framesToPrepare")
-    val cachingStrategy = passThrough(strategy.register, "cachingStrategy")
-    builder.addInstructions(gate, framesToPrepare)
-    factory.addInstructions(strategy.resultIndex + 1, cachingStrategy)
+    builder.addInstructions(gate, passThrough(gateRegister, "framesToPrepare"))
 }
 
 /**

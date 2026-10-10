@@ -295,6 +295,8 @@ final class AnimatedWebpMp4Converter {
             } else if (outputIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 if (state.muxerStarted) throw new IllegalStateException("Encoder format changed twice");
                 state.trackIndex = muxer.addTrack(encoder.getOutputFormat());
+                // The muxer takes no track once it has started, and it starts here.
+                if (state.companion != null) state.companionTrack = muxer.addTrack(state.companion);
                 muxer.start();
                 state.muxerStarted = true;
             } else if (outputIndex >= 0) {
@@ -379,9 +381,19 @@ final class AnimatedWebpMp4Converter {
         boolean muxerStarted;
         /** Encoded frames written to the file, so a caller can tell how far the encoder lags. */
         long samples;
+        /**
+         * A track copied in beside the encoded one, such as a video's own sound, or null. It's
+         * added as the encoder's format arrives, just before the muxer starts.
+         */
+        MediaFormat companion;
+        /** Where {@link #companion} went in the muxer, once it's there. */
+        int companionTrack = -1;
     }
 
-    /** The encoder's input surface behind EGL. {@link SlideshowEncoder} draws its photos through it too. */
+    /**
+     * The encoder's input surface behind EGL. {@link SlideshowEncoder} draws its photos through
+     * it too, and {@link CaptionBurner} a saved video's frames with the caption over them.
+     */
     static final class CodecSurface {
         private static final float[] VERTICES = {
                 -1f, -1f, 0f, 1f,
@@ -507,6 +519,15 @@ final class AnimatedWebpMp4Converter {
             GLES20.glViewport(0, 0, width, height);
             GLES20.glClearColor(0f, 0f, 0f, 0f);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            drawUploaded();
+            submit(presentationTimeNs);
+        }
+
+        /**
+         * Draws the uploaded texture across the whole frame, over whatever is there already.
+         * {@link CaptionBurner} draws a decoded frame first and blends its overlay on with this.
+         */
+        void drawUploaded() {
             GLES20.glUseProgram(program);
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture);
             int positionLocation = GLES20.glGetAttribLocation(program, "aPosition");
@@ -518,6 +539,10 @@ final class AnimatedWebpMp4Converter {
             GLES20.glVertexAttribPointer(textureLocation, 2, GLES20.GL_FLOAT, false, 16, vertices);
             GLES20.glEnableVertexAttribArray(textureLocation);
             GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        }
+
+        /** Hands what's drawn to the encoder as one frame stamped {@code presentationTimeNs}. */
+        void submit(long presentationTimeNs) {
             EGLExt.eglPresentationTimeANDROID(display, eglSurface, presentationTimeNs);
             if (!EGL14.eglSwapBuffers(display, eglSurface)) {
                 throw new IllegalStateException("Could not submit MP4 frame");
@@ -555,7 +580,8 @@ final class AnimatedWebpMp4Converter {
             }
         }
 
-        private static int createProgram(String vertexSource, String fragmentSource) {
+        /** Package-private so {@link CaptionBurner} builds its decoded-frame program the same way. */
+        static int createProgram(String vertexSource, String fragmentSource) {
             int vertexShader = compileShader(GLES20.GL_VERTEX_SHADER, vertexSource);
             int fragmentShader = compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource);
             int result = GLES20.glCreateProgram();

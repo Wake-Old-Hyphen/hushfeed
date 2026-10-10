@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos ya no quita videos de una colección que abres, así que al tocar un video guardado se reproduce ese video otra vez, no otro ni nada (#135). Sigue ocultando los videos vistos en For You, Following y Friends.
+
+* **TikTok:** Un parche nuevo, Keep the app language, añade el interruptor Mantener el idioma elegido en TikTok en Sistema, dentro de Aplicación (#61). Cuando TikTok se inicia y decide que el idioma del teléfono cambió, descarta el idioma que elegiste en sus ajustes y sigue al teléfono. Con el interruptor activado, tu elección se mantiene. Empieza desactivado.
+
+* **TikTok:** Un nuevo interruptor Escribir el nombre de usuario y la descripción en el video, en Descargas, pone el @nombre de usuario y la primera línea de la descripción en la esquina inferior izquierda de los videos que guarda Hushfeed. El teléfono vuelve a codificar el video para hacerlo, así que esos guardados tardan más y muestran su progreso con un botón Cancelar. Empieza desactivado.
+
+* **TikTok:** Remove creation tools ahora avisa de que abrir una herramienta de creación, como la búsqueda de efectos en la cámara, puede cerrar TikTok (#133). Déjalo fuera si haces videos.
+
+* **TikTok:** Drop the animated image cache ya no cambia la caché de fotogramas de TikTok por una que guarda un solo fotograma, lo que podía dejar los stickers animados de los comentarios congelados en su primer fotograma (#130). Su interruptor ahora se llama No decodificar fotogramas animados por adelantado, y al activarlo solo evita que TikTok decodifique los fotogramas antes de mostrarlos.
+
+* **TikTok:** La burbuja de historias de Siguiendo arriba del feed vuelve cuando termina Controles ocultos. TikTok la oculta al empezar Controles ocultos y antes no volvía hasta que el feed se recargaba. Solo vuelve si se veía antes y todavía hay alguien en ella.
+
+* **TikTok:** Una nueva fila Traducir al en Comentarios acepta un código de idioma, como en o es. Los comentarios y descripciones que TikTok traduce salen en ese idioma en vez del de la app, así que puedes usar TikTok en un idioma y leer las traducciones en otro. Déjala vacía para mantener la elección de TikTok.
+
+* **TikTok:** Una nueva opción Protección contra el quemado de pantalla en Controles ocultos atenúa los botones, la descripción y las pestañas sobre el vídeo a una cuarta parte tras 5 segundos sin tocar, y tu siguiente toque los devuelve. Con Atenuar en reposo y desplazar, todo el feed también se mueve unos píxeles cada 2 minutos, para que una pantalla OLED no se marque bajo controles que nunca se mueven.
+
+* **TikTok:** Ocultar la barra de comentarios en los videos abiertos ahora también quita la barra de una publicación de fotos que abres desde la búsqueda. Antes, la barra para añadir un comentario se quedaba en esas.
+
+* **TikTok:** Una nueva opción, Formato del sonido, en Descargas permite que Guardar también el sonido y Guardar el sonido original al mantener pulsado creen archivos Opus (.ogg). Son más pequeños que el M4A de TikTok, y tu teléfono vuelve a codificar el sonido para crearlos. Necesita Android 10 o posterior. Tal como lo envía TikTok sigue siendo la opción por defecto, así que esas descargas salen igual que antes.
+
 * **TikTok:** Atenuar los controles del vídeo ahora funciona con Controles ocultos. Entre 1 y 99, Controles ocultos deja los botones y la descripción en pantalla al nivel que elijas en lugar de quitarlos, y un toque sobre ellos va al vídeo, así que nada se abre por accidente. Mantener presionado o pellizcar te sigue sacando de Controles ocultos, y fuera de ese modo los controles atenuados aceptan toques como antes (#84).
 
 * **TikTok:** Silenciar los videos del feed ahora mantiene el feed sin sonido después de cambiar TikTok entre claro y oscuro. Antes, los siguientes videos podían sonar hasta que salías del feed y volvías.
@@ -28,7 +48,7 @@
 
 * **TikTok:** El selector de hora de Cuándo enviar en Mantener una racha ahora se abre en oscuro o claro según los ajustes de Hushfeed.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling y Enable voice comments ahora tienen cada uno un interruptor en Ajustes de Hushfeed, así que Pausar también los desactiva y el modo simple de Morphe Manager ahora los elige. Cada uno de esos interruptores empieza desactivado. Si ya habías aplicado alguno de estos parches, activa su interruptor después de actualizar para que siga funcionando. Omitir el anuncio de inicio, Omitir las búsquedas de actualizaciones, Limitar el tráfico en segundo plano y Guardar en caché un solo fotograma de las imágenes animadas están en Rendimiento, dentro de Aplicación. Detener el perfilado de IA en el dispositivo está en Privacidad y Permitir comentarios de voz está en Comentarios.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling y Enable voice comments ahora tienen cada uno un interruptor en Ajustes de Hushfeed, así que Pausar también los desactiva y el modo simple de Morphe Manager ahora los elige. Cada uno de esos interruptores empieza desactivado. Si ya habías aplicado alguno de estos parches, activa su interruptor después de actualizar para que siga funcionando. Omitir el anuncio de inicio, Omitir las búsquedas de actualizaciones, Limitar el tráfico en segundo plano y No decodificar fotogramas animados por adelantado están en Rendimiento, dentro de Aplicación. Detener el perfilado de IA en el dispositivo está en Privacidad y Permitir comentarios de voz está en Comentarios.
 
 * **TikTok:** Parche nuevo, Skip passkey sign-in, incluido en el modo simple de Morphe Manager con su interruptor apagado (#102). Los gestores de contraseñas no le dan una llave de acceso a una app parcheada, así que una cuenta con llave de acceso podía quedarse atascada en el paso de llave de acceso de TikTok. Activa Iniciar sesión sin llave de acceso en Ajustes de Hushfeed > Aplicación y TikTok tratará tu teléfono como uno sin llaves de acceso, así que te ofrecerá sus otras formas de iniciar sesión, como tu contraseña o un código por correo o SMS. Si cerraste sesión, mantén pulsado Inicio para abrir los ajustes de Hushfeed.
 

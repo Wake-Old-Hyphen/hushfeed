@@ -4,6 +4,26 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Hide already seen videos no longer takes videos out of a collection you open, so tapping a saved video plays that video again instead of the wrong one or nothing (#135). It still hides seen videos in For You, Following and Friends.
+
+* **TikTok:** A new patch, Keep the app language, adds a Keep the language picked in TikTok switch under System in App (#61). When TikTok starts and decides the phone's language changed, it drops the language you picked in its own settings and follows the phone. With the switch on, your pick stays. It starts off.
+
+* **TikTok:** A new Write the username and caption on the video switch in Downloads draws the @username and the first line of the caption in the bottom left corner of videos Hushfeed saves. The phone encodes the video again for it, so those saves take longer and show their progress with a Cancel button. It starts off.
+
+* **TikTok:** Remove creation tools now warns that opening a creation tool, like effect search on the camera, can close TikTok (#133). Leave it out if you make videos.
+
+* **TikTok:** Drop the animated image cache no longer swaps TikTok's frame cache for one that holds a single frame, which could leave animated stickers in comments stuck on their first frame (#130). Its switch is now called Don't decode animated frames ahead, and turning it on only stops TikTok from decoding frames before they're shown.
+
+* **TikTok:** The Following stories bubble at the top of the feed comes back when Clear display ends. TikTok hides it as Clear display starts and used to leave it gone until the feed reloaded. It only comes back if it was showing before and still has someone in it.
+
+* **TikTok:** A new Translate into row in Comments takes one language code, like en or es. Comments and captions TikTok translates come out in that language instead of the app's, so you can keep TikTok in one language and read translations in another. Leave it empty to keep TikTok's choice.
+
+* **TikTok:** A new Burn-in guard choice under Clear display dims the buttons, caption and tabs over the video to a quarter after 5 seconds without a touch, and your next touch brings them back. With Dim when idle and shift, everything on the feed also moves a few pixels every 2 minutes, so an OLED screen doesn't wear in under controls that never move.
+
+* **TikTok:** Hide the comment bar on opened videos now also takes the bar off a photo post you open from search. Before, the Add comment bar stayed on those.
+
+* **TikTok:** A new Sound format choice in Downloads lets Save the sound as well and the Save the original sound long press make Opus files (.ogg). They're smaller than TikTok's M4A, and your phone encodes the sound again to make them. It needs Android 10 or later. As TikTok sent it stays the default, so those saves come out the same as before.
+
 * **TikTok:** Fade the video controls now works with Clear display. Set between 1 and 99, Clear display keeps the buttons and caption on screen at the level you picked instead of taking them away, and a tap on them goes to the video, so nothing opens by accident. Press and hold or pinch still takes you out of Clear display, and outside it faded controls take taps as before (#84).
 
 * **TikTok:** Mute feed videos keeps the feed quiet after you switch TikTok between light and dark. Before, the next videos could play with sound until you left the feed and came back.
@@ -32,7 +52,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** The time picker for When to send in Keep a streak going now opens dark or light to match Hushfeed settings.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling and Enable voice comments now each have a switch in Hushfeed settings, so Pause turns them off too and Morphe Manager's simple mode now picks them. Each of those switches starts off. If you patched with any of these before, turn its switch on after you update to keep it working. Skip the splash ad, Skip update checks, Limit background traffic and Cache one frame of animated images are under Performance in App. Stop on-device AI profiling is in Privacy and Allow voice comments is in Comments.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling and Enable voice comments now each have a switch in Hushfeed settings, so Pause turns them off too and Morphe Manager's simple mode now picks them. Each of those switches starts off. If you patched with any of these before, turn its switch on after you update to keep it working. Skip the splash ad, Skip update checks, Limit background traffic and Don't decode animated frames ahead are under Performance in App. Stop on-device AI profiling is in Privacy and Allow voice comments is in Comments.
 
 * **TikTok:** New patch, Skip passkey sign-in, in Morphe Manager's simple mode with its switch off (#102). Password managers won't hand a passkey to a patched app, so an account with a passkey could get stuck at TikTok's passkey step. Turn on Sign in without a passkey in Hushfeed settings > App and TikTok treats your phone as one without passkeys, so it offers its other ways to sign in, like your password or a code by email or text. If you're signed out, long-press Home to open Hushfeed settings.
 

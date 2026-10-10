@@ -1,10 +1,31 @@
 source,target
+"%1$s isn't a language code. Use two letters, like en, es or de.","%1$s bukan kode bahasa. Gunakan dua huruf, seperti en, es, atau de."
+"Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.","Berlaku untuk Simpan suaranya juga dan Simpan suara asli saat tekan lama. Opus menghasilkan berkas lebih kecil, tapi suaranya dikodekan ulang dari salinan TikTok."
+As TikTok sent it (M4A or MP3),Seperti yang dikirim TikTok (M4A atau MP3)
+Burn-in guard,Pelindung burn-in layar
+Couldn't write the caption on this video. Saving it without.,Keterangan tidak bisa ditulis di video ini. Disimpan tanpa keterangan.
+Dim when idle,Redupkan saat diam
+Dim when idle and shift,Redupkan saat diam dan geser
+"For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.","Untuk layar OLED. Setelah 5 detik tanpa sentuhan, tombol, keterangan, dan tab di atas video meredup menjadi seperempat, dan sentuhan berikutnya mengembalikannya. Geser juga memindahkan semua yang ada di feed beberapa piksel setiap 2 menit."
 Importing new history ended Undo for the earlier clear. You can clear the imported history.,Impor riwayat baru mengakhiri opsi Urungkan untuk penghapusan sebelumnya. Anda dapat menghapus riwayat yang diimpor.
 %1$d setting in that file can't be restored here and was skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 %1$d settings in that file can't be restored here and were skipped,%1$d pengaturan dalam berkas tidak dapat dipulihkan di sini dan dilewati
 "Import watch history","Impor riwayat tontonan"
+Keep the language picked in TikTok,Pertahankan bahasa yang dipilih di TikTok
+"One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.","Satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa ini, bukan bahasa aplikasi. Biarkan kosong untuk memakai pilihan TikTok."
+"Opus (.ogg), a smaller file","Opus (.ogg), berkas lebih kecil"
+Opus didn't work on this phone. Saving the sound as TikTok sent it instead.,Opus tidak berfungsi di ponsel ini. Menyimpan suaranya seperti yang dikirim TikTok.
+"Opus needs Android 10 or later, so sounds save as TikTok sent them.","Opus butuh Android 10 atau yang lebih baru, jadi suara disimpan seperti yang dikirim TikTok."
+"Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.","Video yang disimpan menampilkan @nama pengguna dan baris pertama keterangan di pojok kiri bawah. Untuk itu ponsel mengenkode ulang seluruh video, jadi menyimpan jadi lebih lama. Berlaku untuk simpanan yang dibuat Hushfeed."
+Sound format,Format suara
+Translate into,Terjemahkan ke
+"Type one language code here, like en.","Ketik satu kode bahasa di sini, seperti en."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Gunakan ekspor JSON TikTok akun ini, maksimal %1$s MB dan %2$s entri. Tanggal tanpa zona waktu memakai zona waktu ponsel ini."
 "Sign in to TikTok before importing watch history.","Masuk ke TikTok sebelum mengimpor riwayat tontonan."
+"When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Jika ini menyala, pilihanmu tetap. Berlaku sejak TikTok dimulai lagi."
+Write the username and caption on the video,Tulis nama pengguna dan keterangan di video
+Writing the caption on the video,Menulis keterangan di video
+Writing the caption on the video: %1$s,Menulis keterangan di video: %1$s
 "Your TikTok account changed. Choose the file again for this account.","Akun TikTok Anda berubah. Pilih kembali berkas untuk akun ini."
 "Reading watch history","Membaca riwayat tontonan"
 "Importing watch history","Mengimpor riwayat tontonan"
@@ -639,7 +660,7 @@ Layout,Tata letak
 "Layout, search, profile and system","Tata letak, pencarian, profil, dan sistem"
 Leave when TikTok says time is up,Keluar saat TikTok bilang waktunya habis
 Leave maximum empty to keep it unlimited.,Kosongkan nilai maksimum agar tetap tanpa batas.
-Leave the sound out of the saved video. Save the sound as well still writes the .m4a beside it if you want both.,Hilangkan suara dari video yang disimpan. Simpan suaranya juga tetap menulis berkas .m4a di sebelahnya kalau kamu mau keduanya.
+Leave the sound out of the saved video. Save the sound as well still writes the sound file beside it if you want both.,Hilangkan suara dari video yang disimpan. Simpan suaranya juga tetap menulis berkas suara di sebelahnya kalau kamu mau keduanya.
 Length and views per like,Durasi dan penayangan per suka
 Less than a minute left,Kurang dari satu menit lagi
 "Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this.","Izinkan lagi tangkapan layar, perekaman layar dan Circle to Search di TikTok. Mulai ulang TikTok agar berlaku."
@@ -1228,7 +1249,7 @@ What TikTok gets,Yang didapat TikTok
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","Selama pencatatan diagnostik aktif, sebuah pesan menyebutkan bagian Hushfeed yang gagal. Jika nonaktif, kegagalan hanya tercatat di laporan."
 Window width needed to enable the layout. Restart TikTok to apply this.,Lebar jendela yang dibutuhkan agar tata letaknya aktif. Mulai ulang TikTok agar berlaku.
 "Words, countries and languages","Kata, negara, dan bahasa"
-"Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.","Simpan suara video di sebelahnya sebagai .m4a. Android 10 ke atas menyimpan audio secara terpisah, jadi berkasnya masuk ke Music dengan nama folder yang sama seperti folder videomu."
+"Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.","Simpan suara video di sebelahnya, dalam format yang dipilih di Format suara. Android 10 ke atas menyimpan audio secara terpisah, jadi berkasnya masuk ke Music dengan nama folder yang sama seperti folder videomu."
 YTDLnis background mode,Mode latar belakang YTDLnis
 YTDLnis download type,Jenis unduhan YTDLnis
 Yes,Ya
@@ -1890,8 +1911,8 @@ Skip update checks,Lewati pemeriksaan pembaruan
 Limit background traffic,Batasi lalu lintas latar belakang
 "Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.","Hentikan TikTok memuat video berikutnya lebih awal dan menyiapkan notifikasi. Selama ini aktif, kamu tidak akan menerima notifikasi, termasuk pesan. Video mungkin butuh waktu sedikit lebih lama untuk mulai."
 "Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.","Hentikan TikTok memuat video berikutnya lebih awal. Kuota lebih hemat, tetapi video mungkin butuh waktu sedikit lebih lama untuk mulai."
-Cache one frame of animated images,Simpan satu bingkai gambar animasi di cache
-"Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.","Simpan hanya bingkai yang tampil di layar untuk stiker animasi dan GIF, bukan setiap bingkai, agar memakai lebih sedikit memori. Berlaku untuk yang dimuat berikutnya."
+Don't decode animated frames ahead,Jangan dekode bingkai animasi lebih dulu
+"Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load.","Stiker animasi dan GIF mendekode setiap bingkai saat ditampilkan, bukan beberapa sebelumnya, agar memakai sedikit lebih sedikit memori. Berlaku untuk yang dimuat berikutnya."
 Stop on-device AI profiling,Hentikan profiling AI di perangkat
 "Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.","Cegah mesin AI bawaan TikTok berjalan, sehingga mesin itu tidak mendapat salinan semua yang dicatat TikTok tentang penggunaanmu. TikTok berjalan seolah mesin itu tidak ada."
 Allow voice comments,Izinkan komentar suara

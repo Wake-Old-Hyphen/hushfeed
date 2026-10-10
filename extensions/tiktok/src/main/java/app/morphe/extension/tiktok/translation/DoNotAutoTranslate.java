@@ -104,8 +104,11 @@ public final class DoNotAutoTranslate {
         return parsed;
     }
 
-    /** The script decides when the entry names one (zh-Hans-TW is Simplified), else the region. */
-    private static boolean traditional(String entry) {
+    /**
+     * The script decides when the entry names one (zh-Hans-TW is Simplified), else the region.
+     * {@link TranslateInto} spells its Chinese the same way.
+     */
+    static boolean traditional(String entry) {
         String[] subtags = entry.trim().toLowerCase(Locale.ROOT).split("[-_]");
         boolean region = false;
         for (int index = 1; index < subtags.length; index++) {

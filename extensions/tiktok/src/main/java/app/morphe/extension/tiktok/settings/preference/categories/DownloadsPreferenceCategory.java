@@ -25,6 +25,7 @@ import app.morphe.extension.tiktok.download.DownloadDestination;
 import app.morphe.extension.tiktok.download.DownloadNamePreview;
 import app.morphe.extension.tiktok.download.ExternalDownloader;
 import app.morphe.extension.tiktok.download.SavedVideoArchive;
+import app.morphe.extension.tiktok.download.SoundFormat;
 
 /**
  * Where files go and what goes in them, then video, photos and stickers, the long presses,
@@ -120,9 +121,15 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.DOWNLOAD_WATERMARK_FALLBACK));
             addPreference(new TogglePreference(context, "Save videos without sound",
                     "Leave the sound out of the saved video. Save the sound as well still writes "
-                            + "the .m4a beside it if you want both.", Settings.DOWNLOAD_WITHOUT_SOUND));
+                            + "the sound file beside it if you want both.", Settings.DOWNLOAD_WITHOUT_SOUND));
             addPreference(new TogglePreference(context, "Save the sound as well",
-                    "Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.", Settings.DOWNLOAD_AUDIO_TRACK));
+                    "Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.", Settings.DOWNLOAD_AUDIO_TRACK));
+            addPreference(new ChoicePreference(context, "Sound format", Settings.DOWNLOAD_SOUND_FORMAT,
+                    new String[]{"As TikTok sent it (M4A or MP3)", "Opus (.ogg), a smaller file"},
+                    new String[]{SoundFormat.ORIGINAL, SoundFormat.OPUS})
+                    .withNote(SoundFormat.opusPossible()
+                            ? "Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy."
+                            : "Opus needs Android 10 or later, so sounds save as TikTok sent them."));
             addPreference(new TogglePreference(context, "Save the cover as well",
                     "Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.",
                     Settings.DOWNLOAD_COVER));
@@ -143,6 +150,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "where media players can read them. Applies to saves made by "
                             + "Hushfeed.",
                     Settings.DOWNLOAD_TAGS));
+            addPreference(new TogglePreference(context, "Write the username and caption on the video",
+                    "Saved videos show the @username and the first line of the caption in the "
+                            + "bottom left corner. The phone encodes the whole video again to do "
+                            + "it, so saving takes longer. Applies to saves made by Hushfeed.",
+                    Settings.DOWNLOAD_BURN_CAPTION));
             addPreference(new TogglePreference(context, "Check for already-saved videos",
                     L10n.f(context, "Remembers up to %1$s videos you saved here. If the file is "
                             + "still there, you get Open or Save again instead of a second "

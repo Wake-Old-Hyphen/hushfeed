@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos artık açtığın bir koleksiyondan video çıkarmıyor. Kaydedilmiş bir videoya dokununca yanlış bir video ya da hiçbir şey değil, yine o video oynuyor (#135). For You, Following ve Friends akışlarında izlenen videoları gizlemeye devam ediyor.
+
+* **TikTok:** Yeni Keep the app language yaması, Uygulama sayfasında Sistem altına TikTok'ta seçilen dili koru anahtarını ekler (#61). TikTok açılırken telefonun dilinin değiştiğine karar verirse, ayarlarında seçtiğin dili bırakır ve telefona uyar. Anahtar açıkken seçimin kalır. Kapalı başlar.
+
+* **TikTok:** İndirilenler altındaki yeni Kullanıcı adını ve açıklamayı videonun üzerine yaz anahtarı, Hushfeed'in kaydettiği videoların sol alt köşesine @kullanıcı adını ve açıklamanın ilk satırını yazar. Telefon bunun için videoyu yeniden kodlar, bu yüzden bu kayıtlar daha uzun sürer ve ilerlemelerini İptal düğmesiyle gösterir. Kapalı başlar.
+
+* **TikTok:** Remove creation tools artık bir oluşturma aracını, örneğin kameradaki efekt aramasını açmanın TikTok'u kapatabileceği konusunda uyarıyor (#133). Video çekiyorsan bu yamayı seçme.
+
+* **TikTok:** Drop the animated image cache artık TikTok'un kare önbelleğini tek bir kare tutan bir önbellekle değiştirmiyor. Bu, yorumlardaki hareketli çıkartmaların ilk karede takılı kalmasına yol açabiliyordu (#130). Anahtarının adı artık Hareketli kareleri önceden çözme. Açıkken yalnızca TikTok'un kareleri gösterilmeden önce çözmesini engeller.
+
+* **TikTok:** Akışın üstündeki Takip Edilenler hikâye balonu Temiz ekran bitince geri gelir. TikTok onu Temiz ekran başlarken gizler ve önceden akış yenilenene kadar gizli kalırdı. Yalnızca daha önce görünüyorsa ve içinde hâlâ biri varsa geri gelir.
+
+* **TikTok:** Yorumlar bölümündeki yeni Şu dile çevir satırı tek bir dil kodu alır, örneğin en veya es. TikTok'un çevirdiği yorumlar ve açıklamalar uygulamanın dili yerine o dilde çıkar, böylece TikTok'u bir dilde kullanıp çevirileri başka bir dilde okuyabilirsin. TikTok'un seçimini korumak için boş bırak.
+
+* **TikTok:** Temiz ekran altındaki yeni Ekran yanması koruması seçimi, 5 saniye dokunulmazsa videonun üzerindeki düğmeleri, açıklamayı ve sekmeleri dörtte bire kadar karartır, bir sonraki dokunuşun onları geri getirir. Boştayken karart ve kaydır seçiliyken akıştaki her şey ayrıca 2 dakikada bir birkaç piksel kayar, böylece OLED ekran hiç yer değiştirmeyen kontrollerin altında yanmaz.
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle artık aramadan açtığın bir fotoğraf gönderisinde de çubuğu kaldırır. Önceden bu gönderilerde yorum ekleme çubuğu kalıyordu.
+
+* **TikTok:** İndirilenler'deki yeni Ses biçimi seçeneği, Sesi de kaydet ve uzun basmadaki Orijinal sesi kaydet ile Opus dosyaları (.ogg) oluşturmayı sağlar. Bunlar TikTok'un M4A dosyasından küçüktür ve telefonun bunları oluşturmak için sesi yeniden kodlar. Android 10 veya üstü gerekir. Varsayılan TikTok'un gönderdiği gibi olarak kalır, bu yüzden bu kayıtlar eskisi gibi çıkar.
+
 * **TikTok:** Video kontrollerini soluklaştır artık Temiz ekranla da çalışıyor. 1 ile 99 arasında Temiz ekran, düğmeleri ve açıklamayı kaldırmak yerine seçtiğin seviyede ekranda tutuyor ve onlara dokunmak videoya gidiyor, böylece hiçbir şey yanlışlıkla açılmıyor. Basılı tutmak ya da iki parmağını birbirine yaklaştırmak seni yine Temiz ekrandan çıkarıyor, onun dışında soluk kontroller eskisi gibi dokunuşları alıyor (#84).
 
 * **TikTok:** Akış videolarının sesini kapat, TikTok'u açık ve koyu arasında değiştirdikten sonra da akışı sessiz tutuyor. Önceden, akıştan çıkıp geri dönene kadar sonraki videolar sesli oynayabiliyordu.
@@ -28,7 +48,7 @@
 
 * **TikTok:** Bir seriyi sürdür altındaki Ne zaman gönderilsin için saat seçici artık Hushfeed ayarlarına uyarak koyu ya da açık açılıyor.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ve Enable voice comments artık Hushfeed ayarlarında kendi anahtarına sahip, yani Duraklat bunları da kapatıyor ve Morphe Manager'ın basit modu artık bunları da seçiyor. Bu anahtarların her biri kapalı başlıyor. Daha önce bu yamalardan biriyle yamaladıysan, çalışmaya devam etmesi için güncellemeden sonra anahtarını aç. Açılış reklamını atla, Güncelleme kontrollerini atla, Arka plan trafiğini sınırla ve Hareketli görsellerin tek karesini önbelleğe al, Uygulama sayfasında Performans altında. Cihaz üstü yapay zeka profillemesini durdur Gizlilik altında, Sesli yorumlara izin ver ise Yorumlar altında.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ve Enable voice comments artık Hushfeed ayarlarında kendi anahtarına sahip, yani Duraklat bunları da kapatıyor ve Morphe Manager'ın basit modu artık bunları da seçiyor. Bu anahtarların her biri kapalı başlıyor. Daha önce bu yamalardan biriyle yamaladıysan, çalışmaya devam etmesi için güncellemeden sonra anahtarını aç. Açılış reklamını atla, Güncelleme kontrollerini atla, Arka plan trafiğini sınırla ve Hareketli kareleri önceden çözme, Uygulama sayfasında Performans altında. Cihaz üstü yapay zeka profillemesini durdur Gizlilik altında, Sesli yorumlara izin ver ise Yorumlar altında.
 
 * **TikTok:** Yeni yama, Skip passkey sign-in, Morphe Manager'ın basit modunda anahtarı kapalı olarak seçiliyor (#102). Şifre yöneticileri yamalı bir uygulamaya geçiş anahtarı vermiyor, bu yüzden geçiş anahtarı olan bir hesap TikTok'un geçiş anahtarı adımında takılı kalabiliyordu. Hushfeed ayarları > Uygulama altında Geçiş anahtarı olmadan giriş yap anahtarını aç, TikTok telefonunu geçiş anahtarı olmayan bir telefon gibi görür ve şifren ya da e-posta veya SMS ile gelen bir kod gibi diğer giriş yollarını sunar. Oturumun kapalıysa Hushfeed ayarlarını açmak için Ana Sayfa'ya basılı tut.
 

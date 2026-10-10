@@ -88,7 +88,7 @@ public final class ShareModelFilter {
 
     public static List<?> channels(List<?> items) {
         try {
-            return filter(items, Settings.HIDE_SHARE_CHANNELS.get());
+            return filter("channels", items, Settings.HIDE_SHARE_CHANNELS.get());
         } catch (Throwable ex) {
             HookStatus.threw(FAMILY, "channels", ex);
             Logger.printException(() -> "Could not filter the share channels row", ex);
@@ -104,7 +104,7 @@ public final class ShareModelFilter {
             Logger.printException(() -> "Could not record the share actions", ex);
         }
         try {
-            return filter(items, Settings.HIDE_SHARE_ACTIONS.get());
+            return filter("actions", items, Settings.HIDE_SHARE_ACTIONS.get());
         } catch (Throwable ex) {
             HookStatus.threw(FAMILY, "actions", ex);
             Logger.printException(() -> "Could not filter the share actions row", ex);
@@ -122,8 +122,27 @@ public final class ShareModelFilter {
         }
     }
 
-    private static List<?> filter(List<?> items, boolean hideRow) {
+    private static List<?> filter(String row, List<?> items, boolean hideRow) {
         if (items == null) return null;
+        List<?> result = filter(items, hideRow);
+        // What each row was handed and kept, by TikTok's own action names. #120's small sheet lost
+        // its whole top row with only a few of those hidden, and no export could say whether the
+        // row came in short or this let too much go.
+        Logger.printDebug(() -> "Share sheet model " + current + " " + row + ": " + items.size() + " in "
+                + keys(items) + ", " + result.size() + " kept" + (result == items ? "" : " in a new list"));
+        return result;
+    }
+
+    private static String keys(List<?> items) {
+        List<String> keys = new ArrayList<>(items.size());
+        for (Object item : items) {
+            String key = Reflect.string(item, "key", "key");
+            keys.add(key == null ? "?" : key);
+        }
+        return keys.toString();
+    }
+
+    private static List<?> filter(List<?> items, boolean hideRow) {
         if (hideRow) return new ArrayList<>();
         String hidden = hiddenItems();
         if (hidden.trim().isEmpty()) return items;

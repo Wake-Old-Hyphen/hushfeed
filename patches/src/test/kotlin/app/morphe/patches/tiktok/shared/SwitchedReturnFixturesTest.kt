@@ -29,7 +29,6 @@ import app.morphe.patches.tiktok.misc.optimizer.UPDATE_CHECKS_SWITCH
 import app.morphe.patches.tiktok.misc.optimizer.UpdateBackgroundTaskFingerprint
 import app.morphe.patches.tiktok.misc.optimizer.UpdateBootFinishedTaskFingerprint
 import app.morphe.patches.tiktok.misc.optimizer.backendBuilderCall
-import app.morphe.patches.tiktok.misc.optimizer.cachingStrategyRead
 import app.morphe.patches.tiktok.misc.optimizer.framePreparerGateIndex
 import app.morphe.patches.tiktok.misc.optimizer.installAnimatedImageCacheSwitch
 import app.morphe.patches.tiktok.misc.optimizer.installSplashAdSwitch
@@ -142,9 +141,9 @@ class SwitchedReturnFixturesTest {
                     assertTrue("$version: ${splashGates().size} splash gates", splashGates().size in 5..6)
                     expected = hooks.size
 
-                    // The animated image cache passes two values through rather than returning.
+                    // The animated image cache passes the preparer count through rather than
+                    // returning, and leaves the factory's caching strategy alone (#130).
                     val factory = AnimatedDrawableFactoryFingerprint.method
-                    val strategy = factory.cachingStrategyRead()!!
                     val factoryBefore = factory.implementation!!.instructions.map { it.opcode }
                     val call = factory.backendBuilderCall()!!
                     fun builder() = mutableClassDefBy(factory.definingClass).methods.single {
@@ -170,8 +169,8 @@ class SwitchedReturnFixturesTest {
                         checked++
                     }
 
-                    assertPassedThrough("$version: caching strategy", factory.implementation!!.instructions.toList(),
-                        strategy.resultIndex + 1, strategy.register, "cachingStrategy", factoryBefore)
+                    assertEquals("$version: the animated drawable factory is untouched", factoryBefore,
+                        factory.implementation!!.instructions.map { it.opcode })
                     assertPassedThrough("$version: frame preparer gate", builder().implementation!!.instructions.toList(),
                         gate, gateRegister, "framesToPrepare", builderBefore)
                     cacheChecked = true

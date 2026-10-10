@@ -124,6 +124,12 @@ public class Settings extends BaseSettings {
     public static final IntegerSetting PHOTO_VIDEO_SECONDS = new IntegerSetting("photo_video_seconds", 3, false,
             Setting.parent(DOWNLOAD_PHOTOS_AS_VIDEO)).withRange(1, 10);
     public static final BooleanSetting DOWNLOAD_AUDIO_TRACK = new BooleanSetting("download_audio_track", FALSE);
+    /**
+     * "original" keeps a saved sound in TikTok's own container; "opus" makes an .ogg. The row
+     * greys where the phone can't make one, and says why itself, since no switch would help.
+     */
+    public static final StringSetting DOWNLOAD_SOUND_FORMAT = new StringSetting("download_sound_format", "original",
+            false, app.morphe.extension.tiktok.download.SoundFormat::opusPossible);
     /** TikTok's watermarked copy saved when the clean file can't be fetched, instead of nothing. */
     public static final BooleanSetting DOWNLOAD_WATERMARK_FALLBACK = new BooleanSetting("download_watermark_fallback", FALSE);
     /** The video's cover, at the largest size it comes in, saved with each Download. */
@@ -137,6 +143,8 @@ public class Settings extends BaseSettings {
             "download_details_json", FALSE, false, Setting.parent(DOWNLOAD_DETAILS));
     /** The caption, creator, date and link written into the saved MP4 as tags players read. */
     public static final BooleanSetting DOWNLOAD_TAGS = new BooleanSetting("download_tags", FALSE);
+    /** The @username and the caption's first line drawn into the saved video's picture. */
+    public static final BooleanSetting DOWNLOAD_BURN_CAPTION = new BooleanSetting("download_burn_caption", FALSE);
     public static final BooleanSetting CHECK_SAVED_VIDEOS = new BooleanSetting("check_saved_videos", FALSE);
     /** A check mark on profile grids for videos in the record the check above keeps. */
     public static final BooleanSetting MARK_SAVED_VIDEOS = new BooleanSetting(
@@ -402,6 +410,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_BATCH_TRANSLATION = new BooleanSetting("comment_batch_translation", FALSE);
     /** Languages TikTok's automatic translation leaves alone, added to its own Don't translate list (#121). */
     public static final StringSetting DONT_AUTO_TRANSLATE_LANGUAGES = new StringSetting("dont_auto_translate_languages", "");
+    /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
+    public static final StringSetting TRANSLATE_INTO = new StringSetting("translate_into", "");
     // Restart-gated: the comment keyboard builds its slot tree once per session, and the
     // trigger that adds the emoji row is asked at that moment only.
     public static final BooleanSetting HIDE_COMMENT_QUICK_REACTIONS =
@@ -667,6 +677,12 @@ public class Settings extends BaseSettings {
      */
     public static final IntegerSetting FADE_CONTROLS_OPACITY =
             new IntegerSetting("fade_controls_opacity", 100).withRange(0, 100);
+    /**
+     * Burn-in guard for OLED screens (BurnInGuard): "dim" draws the controls the fade covers at a
+     * quarter after a few seconds without a touch, "dim_shift" also moves the window's content a
+     * couple of dp every two minutes. Over the feed and an opened video only.
+     */
+    public static final StringSetting BURN_IN_GUARD = new StringSetting("burn_in_guard", "off");
     public static final BooleanSetting HIDE_SHARE_GUIDE = new BooleanSetting("hide_share_guide", FALSE);
     public static final BooleanSetting HIDE_RAIL_FOLLOW = new BooleanSetting("hide_rail_follow", FALSE);
     public static final BooleanSetting HIDE_RAIL_LIKE = new BooleanSetting("hide_rail_like", FALSE);
@@ -826,6 +842,9 @@ public class Settings extends BaseSettings {
     // Skip passkey sign-in (#102), in the default selection with this off. Read each time a
     // sign-in screen asks whether this phone can use passkeys, so no restart.
     public static final BooleanSetting SKIP_PASSKEY_SIGN_IN = new BooleanSetting("skip_passkey_sign_in", FALSE);
+    // Keep the app language (#61), in the default selection with this off. TikTok's reset runs
+    // once early in each start, so a change counts from the next one, with no restart asked for.
+    public static final BooleanSetting KEEP_APP_LANGUAGE = new BooleanSetting("keep_app_language", FALSE);
     // App lock. Off until the reader turns it on, and read as each screen starts, so no restart.
     // The delay is whole minutes TikTok may spend in the background before it asks again.
     public static final BooleanSetting APP_LOCK = new BooleanSetting("app_lock", FALSE);

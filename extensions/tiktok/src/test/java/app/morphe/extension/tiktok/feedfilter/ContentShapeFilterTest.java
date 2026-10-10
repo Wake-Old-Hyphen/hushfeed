@@ -39,8 +39,9 @@ import org.robolectric.annotation.Config;
  * photo post, a shop placeholder, an inserted card, a video already watched, and every
  * count range as reached through a feed response.
  *
- * <p>Every case here goes in through {@link FeedItemsFilter#filter(FeedItemList)}, the way
- * TikTok's response reaches the filter, rather than calling the filter on its own. A filter
+ * <p>Every case here goes in through the entry points TikTok calls, mostly
+ * {@link FeedItemsFilter#filter(FeedItemList)}, the way its response reaches the filter, rather
+ * than calling the filter on its own. A filter
  * that works on its own and is not on the list does nothing, and only the entry point can
  * show it is on the list. The item builder answers only the getters these filters read;
  * the stub throws for anything else, so a filter that starts reading a new field says so.
@@ -120,6 +121,10 @@ public class ContentShapeFilterTest {
         } catch (ReflectiveOperationException exception) {
             throw new AssertionError(exception);
         }
+        return aids(list);
+    }
+
+    private static List<String> aids(FeedItemList list) {
         List<String> aids = new ArrayList<>();
         for (Object item : list.items) aids.add(((Aweme) item).getAid());
         return aids;
@@ -249,6 +254,29 @@ public class ContentShapeFilterTest {
         Settings.HIDE_SEEN_VIDEOS.save(false);
         assertEquals(Arrays.asList("watched", "fresh"),
                 survivors(page(new Item("watched"), new Item("fresh"))));
+    }
+
+    @Test
+    public void aWatchedVideoStaysInAListTheReaderOpened() {
+        Settings.HIDE_SEEN_VIDEOS.save(true);
+        SeenVideoHistory.onPlayProgressChange("saved", 9_000, 10_000);
+
+        // A collection's pager list reaches the filter only through getItems (#135).
+        FeedItemList collection = page(new Item("saved"), new Item("other"));
+        FeedItemsFilter.filterOnRead(collection);
+        assertEquals(Arrays.asList("saved", "other"), aids(collection));
+
+        // The main feed's response drops it, and so does a later read of that same list.
+        FeedItemList response = page(new Item("saved"), new Item("other"));
+        assertEquals(Arrays.asList("other"), survivors(response));
+        response.items.add(0, new Item("saved"));
+        FeedItemsFilter.filterOnRead(response);
+        assertEquals(Arrays.asList("other"), aids(response));
+
+        // So does a cold-cache restore.
+        FeedItemList cached = page(new Item("saved"), new Item("other"));
+        FeedItemsFilter.filterCachedFeedList(cached);
+        assertEquals(Arrays.asList("other"), aids(cached));
     }
 
     @Test

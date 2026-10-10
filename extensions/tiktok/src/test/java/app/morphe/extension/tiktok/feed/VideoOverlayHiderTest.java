@@ -1395,6 +1395,45 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * The switch follows the bar the way Clear display does. A photo opened from search plays in
+     * the main activity on 47.1.4, and asked only in the detail pager the switch left that
+     * photo's bar up. The feed's own strip, with no bar over it, stays.
+     */
+    @Test
+    public void theSwitchTakesTheBarOffAPhotoOpenedInTheMainActivity() {
+        resolveCommentBarIds();
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var mainController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.main.MainActivity.class).create().start()) {
+            Activity main = mainController.get();
+            View strip = new View(main);
+            FrameLayout root = new FrameLayout(main);
+            root.addView(pagerColumn(main, strip));
+            View bar = new View(main);
+            bar.setId(BAR_ID);
+            root.addView(bar);
+            main.setContentView(root);
+            mainController.resume();
+
+            VideoOverlayHider.applyTo(main);
+            assertEquals("the photo's comment bar stayed up", View.GONE, bar.getVisibility());
+            assertEquals(View.GONE, strip.getVisibility());
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(main);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+            assertEquals(View.VISIBLE, strip.getVisibility());
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+            root.removeView(bar);
+            VideoOverlayHider.applyTo(main);
+            assertEquals("the feed's strip went without a comment bar", View.VISIBLE, strip.getVisibility());
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+        }
+    }
+
+    /**
      * Clear display only fades the anchor row under the caption, and a tap on the faded row still
      * opened its search (#84). It goes invisible, keeping its space so the caption doesn't move,
      * and comes back when Clear display ends. A row TikTok had put away stays as it was.

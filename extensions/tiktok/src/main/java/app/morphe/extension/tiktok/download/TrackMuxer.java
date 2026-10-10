@@ -111,7 +111,11 @@ final class TrackMuxer {
         if (output.length() == 0) throw new IOException("Video muxer wrote an empty file");
     }
 
-    private static MediaFormat select(MediaExtractor extractor, String prefix) throws IOException {
+    /**
+     * Package-private, with {@link #leadIn} and {@link #copy}, for {@link CaptionBurner}, which
+     * copies a video's sound across the same way.
+     */
+    static MediaFormat select(MediaExtractor extractor, String prefix) throws IOException {
         for (int i = 0; i < extractor.getTrackCount(); i++) {
             MediaFormat format = extractor.getTrackFormat(i);
             String mime = format.getString(MediaFormat.KEY_MIME);
@@ -136,12 +140,12 @@ final class TrackMuxer {
      * well" wrote nothing and said "Download contains no media samples". A track that starts
      * at or after zero is left exactly as it is.
      */
-    private static long leadIn(MediaExtractor extractor) {
+    static long leadIn(MediaExtractor extractor) {
         long first = extractor.getSampleTime();
         return first < 0 ? first : 0L;
     }
 
-    private static void copy(MediaExtractor extractor, MediaMuxer muxer, int track, long shift) throws IOException {
+    static void copy(MediaExtractor extractor, MediaMuxer muxer, int track, long shift) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocateDirect(8 * 1024 * 1024);
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
         int samples = 0;

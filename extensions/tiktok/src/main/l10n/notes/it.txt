@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos non toglie più i video da una raccolta che apri, quindi toccando un video salvato si riproduce di nuovo quel video, non un altro o niente (#135). Continua a nascondere i video già visti in For You, Following e Friends.
+
+* **TikTok:** Una nuova patch, Keep the app language, aggiunge l'interruttore Mantieni la lingua scelta in TikTok in Sistema dentro App (#61). Quando TikTok si avvia e decide che la lingua del telefono è cambiata, scarta la lingua che hai scelto nelle sue impostazioni e segue il telefono. Con l'interruttore attivo, la tua scelta resta. Parte spento.
+
+* **TikTok:** Un nuovo interruttore Scrivi nome utente e descrizione sul video in Download scrive il @nome utente e la prima riga della descrizione nell'angolo in basso a sinistra dei video salvati da Hushfeed. Il telefono ricodifica il video per farlo, quindi questi salvataggi richiedono più tempo e mostrano l'avanzamento con un pulsante Annulla. Parte spento.
+
+* **TikTok:** Remove creation tools ora avvisa che aprire uno strumento di creazione, come la ricerca degli effetti nella fotocamera, può chiudere TikTok (#133). Lascialo fuori se fai video.
+
+* **TikTok:** Drop the animated image cache non sostituisce più la cache dei fotogrammi di TikTok con una che ne tiene uno solo, cosa che poteva lasciare gli sticker animati nei commenti fermi sul primo fotogramma (#130). Il suo interruttore ora si chiama Non decodificare in anticipo i fotogrammi animati, e quando è attivo impedisce solo a TikTok di decodificare i fotogrammi prima che vengano mostrati.
+
+* **TikTok:** La bolla delle storie di Seguiti in cima al feed torna quando finisce Vista pulita. TikTok la nasconde quando inizia Vista pulita e prima restava nascosta finché il feed non si ricaricava. Torna solo se prima era visibile e contiene ancora qualcuno.
+
+* **TikTok:** Una nuova riga Traduci in nei Commenti accetta un codice lingua, come en o es. I commenti e le didascalie che TikTok traduce escono in quella lingua invece che in quella dell'app, così puoi usare TikTok in una lingua e leggere le traduzioni in un'altra. Lasciala vuota per tenere la scelta di TikTok.
+
+* **TikTok:** Una nuova scelta Protezione dal burn-in in Vista pulita attenua i pulsanti, la didascalia e le schede sopra il video a un quarto dopo 5 secondi senza tocchi, e il tocco successivo li riporta. Con Attenua quando inattivo e sposta, anche tutto il feed si sposta di qualche pixel ogni 2 minuti, così uno schermo OLED non si segna sotto i controlli che non si muovono mai.
+
+* **TikTok:** Nascondi la barra dei commenti nei video aperti ora toglie la barra anche da un post di foto che apri dalla ricerca. Prima, lì la barra per aggiungere un commento restava.
+
+* **TikTok:** La nuova scelta Formato audio in Download permette a Salva anche l'audio e a Salva l'audio originale con la pressione prolungata di creare file Opus (.ogg). Sono più piccoli dell'M4A di TikTok, e il telefono ricodifica l'audio per crearli. Serve Android 10 o successivo. Come lo invia TikTok resta l'impostazione predefinita, quindi quei salvataggi escono come prima.
+
 * **TikTok:** Attenua i controlli del video ora funziona anche con la Vista pulita. Tra 1 e 99, la Vista pulita lascia i pulsanti e la descrizione sullo schermo al livello che hai scelto invece di toglierli, e un tocco su di essi arriva al video, così niente si apre per sbaglio. Tenere premuto o pizzicare ti fa ancora uscire dalla Vista pulita, e fuori da essa i controlli attenuati ricevono i tocchi come prima (#84).
 
 * **TikTok:** Disattiva l'audio dei video nel feed ora tiene il feed muto anche dopo che passi TikTok tra chiaro e scuro. Prima i video successivi potevano partire con l'audio finché non uscivi dal feed e ci tornavi.
@@ -28,7 +48,7 @@
 
 * **TikTok:** Il selettore dell'ora per Quando inviare in Mantieni viva una serie ora si apre scuro o chiaro come le impostazioni di Hushfeed.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ed Enable voice comments ora hanno ciascuna un interruttore in Impostazioni di Hushfeed, quindi Pausa spegne anche loro e la modalità semplice di Morphe Manager ora le sceglie. Ognuno di questi interruttori parte disattivato. Se avevi già applicato una di queste patch, attiva il suo interruttore dopo l'aggiornamento perché continui a funzionare. Salta l'annuncio di avvio, Salta i controlli degli aggiornamenti, Limita il traffico in background e Memorizza un solo fotogramma delle immagini animate sono in Prestazioni, dentro App. Ferma la profilazione IA sul dispositivo è in Privacy e Consenti i commenti vocali è in Commenti.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling ed Enable voice comments ora hanno ciascuna un interruttore in Impostazioni di Hushfeed, quindi Pausa spegne anche loro e la modalità semplice di Morphe Manager ora le sceglie. Ognuno di questi interruttori parte disattivato. Se avevi già applicato una di queste patch, attiva il suo interruttore dopo l'aggiornamento perché continui a funzionare. Salta l'annuncio di avvio, Salta i controlli degli aggiornamenti, Limita il traffico in background e Non decodificare in anticipo i fotogrammi animati sono in Prestazioni, dentro App. Ferma la profilazione IA sul dispositivo è in Privacy e Consenti i commenti vocali è in Commenti.
 
 * **TikTok:** Nuova patch, Skip passkey sign-in, scelta dalla modalità semplice di Morphe Manager con l'interruttore spento (#102). I gestori di password non danno una passkey a un'app modificata, quindi un account con una passkey poteva bloccarsi al passaggio della passkey di TikTok. Attiva Accedi senza passkey in Impostazioni di Hushfeed > App e TikTok tratterà il tuo telefono come uno senza passkey, offrendo gli altri modi che ha per accedere, come la password o un codice via email o SMS. Se sei disconnesso, tieni premuto su Home per aprire le impostazioni di Hushfeed.
 

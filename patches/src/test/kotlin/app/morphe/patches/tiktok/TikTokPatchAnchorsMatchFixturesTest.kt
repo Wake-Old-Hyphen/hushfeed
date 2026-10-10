@@ -26,7 +26,6 @@ import app.morphe.patches.tiktok.interaction.searchsuggestions.isSearchRewardsAc
 import app.morphe.patches.tiktok.interaction.speed.playerManagerSpeedBoundary
 import app.morphe.patches.tiktok.misc.settings.isSettingsComposeRowsMethod
 import app.morphe.patches.tiktok.misc.optimizer.backendBuilderCall
-import app.morphe.patches.tiktok.misc.optimizer.cachingStrategyRead
 import app.morphe.patches.tiktok.misc.optimizer.framePreparerGateIndex
 import app.morphe.patches.tiktok.interaction.exactcounts.COMPACT_COUNT_FORMATTERS
 import app.morphe.patches.tiktok.interaction.exactcounts.COUNT_FORMATTERS
@@ -489,10 +488,9 @@ class TikTokPatchAnchorsMatchFixturesTest {
     }
 
     /**
-     * Drop the animated image cache forces Fresco's caching strategy to 3 and turns the frame
-     * preparer off (#100). On every declared build the factory has to be one method that reads the
-     * strategy, builds a two-field keep-last-frame cache for 3, and calls one backend builder
-     * whose preparer gate nothing jumps to directly.
+     * Drop the animated image cache turns the frame preparer off and leaves TikTok's own caching
+     * strategy alone (#100, #130). On every declared build the factory has to be one method that
+     * calls one backend builder whose preparer gate nothing jumps to directly.
      */
     @Test
     fun `animated image cache factory keeps one shape on every declared build`() {
@@ -505,10 +503,6 @@ class TikTokPatchAnchorsMatchFixturesTest {
             }
             assertEquals("${apk.name}: animated drawable factories", 1, factories.size)
             val factory = factories.single()
-            val strategy = requireNotNull(factory.cachingStrategyRead()) { "${apk.name}: caching strategy read" }
-            val keepLast = classes.single { it.type == strategy.keepLastClass }
-            assertEquals("${apk.name}: keep-last cache fields", listOf("I", "L"),
-                keepLast.fields.map { it.type.take(1) }.sorted())
             val call = requireNotNull(factory.backendBuilderCall()) { "${apk.name}: backend builder call" }
             val builder = classes.single { it.type == factory.definingClass }.methods.single {
                 it.name == call.name && it.parameterTypes.map(CharSequence::toString) == call.parameterTypes.map(CharSequence::toString) && it.returnType == call.returnType

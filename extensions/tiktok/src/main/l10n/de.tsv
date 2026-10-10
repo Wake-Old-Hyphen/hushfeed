@@ -1,9 +1,30 @@
+%1$s isn't a language code. Use two letters, like en, es or de.	%1$s ist kein Sprachcode. Nutze zwei Buchstaben, etwa en, es oder de.
+Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Gilt für Ton ebenfalls speichern und für Originalsound speichern beim langen Drücken. Opus ergibt eine kleinere Datei, aber der Ton wird aus TikToks Kopie neu kodiert.
+As TikTok sent it (M4A or MP3)	So, wie TikTok ihn liefert (M4A oder MP3)
+Burn-in guard	Einbrennschutz
+Couldn't write the caption on this video. Saving it without.	Die Beschreibung konnte nicht ins Video geschrieben werden. Es wird ohne gespeichert.
+Dim when idle	Bei Inaktivität abdunkeln
+Dim when idle and shift	Bei Inaktivität abdunkeln und verschieben
+For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.	Für OLED-Bildschirme. Nach 5 Sekunden ohne Berührung werden die Schaltflächen, die Beschreibung und die Tabs über dem Video auf ein Viertel abgedunkelt, und deine nächste Berührung holt sie zurück. Verschieben bewegt außerdem alles im Feed alle 2 Minuten um ein paar Pixel.
 Importing new history ended Undo for the earlier clear. You can clear the imported history.	Durch den Import ist das Rückgängigmachen des früheren Löschens beendet. Du kannst den importierten Verlauf löschen.
 %1$d setting in that file can't be restored here and was skipped	%1$d Einstellung in der Datei kann hier nicht wiederhergestellt werden und wurde übersprungen
 %1$d settings in that file can't be restored here and were skipped	%1$d Einstellungen in der Datei können hier nicht wiederhergestellt werden und wurden übersprungen
 Import watch history	Wiedergabeverlauf importieren
+Keep the language picked in TikTok	In TikTok gewählte Sprache behalten
+One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Ein Sprachcode, zum Beispiel en oder es. Kommentare und Beschreibungen, die TikTok übersetzt, erscheinen in dieser Sprache statt in der Sprache der App. Lass das Feld leer, um TikToks Wahl zu behalten.
+Opus (.ogg), a smaller file	Opus (.ogg), kleinere Datei
+Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus hat auf diesem Handy nicht funktioniert. Der Ton wird stattdessen so gespeichert, wie TikTok ihn geschickt hat.
+Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus braucht Android 10 oder neuer, deshalb werden Töne so gespeichert, wie TikTok sie liefert.
+Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Gespeicherte Videos zeigen unten links den @Benutzernamen und die erste Zeile der Beschreibung. Dafür kodiert das Handy das ganze Video neu, das Speichern dauert also länger. Gilt für Speicherungen durch Hushfeed.
+Sound format	Tonformat
+Translate into	Übersetzen in
+Type one language code here, like en.	Gib hier einen Sprachcode ein, zum Beispiel en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Wähle den TikTok-JSON-Export dieses Kontos mit höchstens %1$s MB und %2$s Einträgen. Datumsangaben ohne Zeitzone verwenden die Zeitzone dieses Telefons.
 Sign in to TikTok before importing watch history.	Melde dich bei TikTok an, bevor du den Wiedergabeverlauf importierst.
+When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	Wenn TikTok startet und meint, die Sprache des Handys habe sich geändert, verwirft es die Sprache, die du in seinen Einstellungen gewählt hast, und folgt dem Handy. Ist das an, bleibt deine Wahl. Gilt ab dem nächsten Start von TikTok.
+Write the username and caption on the video	Benutzernamen und Beschreibung ins Video schreiben
+Writing the caption on the video	Beschreibung wird ins Video geschrieben
+Writing the caption on the video: %1$s	Beschreibung wird ins Video geschrieben: %1$s
 Your TikTok account changed. Choose the file again for this account.	Dein TikTok-Konto hat sich geändert. Wähle die Datei für dieses Konto erneut.
 Reading watch history	Wiedergabeverlauf wird gelesen
 Importing watch history	Wiedergabeverlauf wird importiert
@@ -643,7 +664,7 @@ Last recording: 1 gate.	Letzte Aufzeichnung: 1 Gate.
 Layout	Layout
 Layout, search, profile and system	Layout, Suche, Profil und System
 Leave maximum empty to keep it unlimited.	Lass das Maximum leer, damit es unbegrenzt bleibt.
-Leave the sound out of the saved video. Save the sound as well still writes the .m4a beside it if you want both.	Den Ton aus dem gespeicherten Video weglassen. Ton ebenfalls speichern schreibt die .m4a weiterhin daneben, wenn du beides willst.
+Leave the sound out of the saved video. Save the sound as well still writes the sound file beside it if you want both.	Den Ton aus dem gespeicherten Video weglassen. Ton ebenfalls speichern schreibt die Tondatei weiterhin daneben, wenn du beides willst.
 Length and views per like	Länge und Aufrufe pro Like
 Less than a minute left	Weniger als eine Minute übrig
 Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this.	Screenshots, Bildschirmaufnahme und Circle to Search auf TikTok wieder zulassen. TikTok neu starten, damit das gilt.
@@ -1231,7 +1252,7 @@ When a video ends in full screen, stay on it instead of moving to the next one. 
 While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.	Solange die Diagnoseprotokollierung läuft, nennt eine Meldung den Teil von Hushfeed, der fehlgeschlagen ist. Aus behält Fehler nur im Bericht.
 Window width needed to enable the layout. Restart TikTok to apply this.	Fensterbreite, ab der das Layout gilt. TikTok neu starten, damit das gilt.
 Words, countries and languages	Wörter, Länder und Sprachen
-Write the video's sound beside it as an .m4a. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.	Den Ton des Videos daneben als .m4a speichern. Ab Android 10 wird Audio getrennt abgelegt, also landet die Datei unter Music im Ordner mit dem Namen deines Videoordners.
+Write the video's sound beside it, in the format picked under Sound format. Android 10 and later file audio separately, so it lands in Music under the same folder name as your videos.	Den Ton des Videos daneben speichern, im Format, das unter Tonformat gewählt ist. Ab Android 10 wird Audio getrennt abgelegt, also landet die Datei unter Music im Ordner mit dem Namen deines Videoordners.
 YTDLnis background mode	YTDLnis-Hintergrundmodus
 YTDLnis download type	YTDLnis-Downloadtyp
 Yes	Ja
@@ -1902,8 +1923,8 @@ Stop the two background tasks TikTok uses to check for updates, one of them when
 Limit background traffic	Hintergrund-Datenverkehr begrenzen
 Stop TikTok loading upcoming videos ahead of time and setting up notifications. You won't get notifications, messages included, while this is on. Videos may take a moment longer to start.	Verhindert, dass TikTok kommende Videos vorab lädt und Benachrichtigungen einrichtet. Solange das an ist, bekommst du keine Benachrichtigungen, auch nicht für Nachrichten. Videos starten vielleicht etwas später.
 Stop TikTok loading upcoming videos ahead of time. It uses less data, but videos may take a moment longer to start.	Verhindert, dass TikTok kommende Videos vorab lädt. Das spart Daten, aber Videos starten vielleicht etwas später.
-Cache one frame of animated images	Nur ein Bild animierter Grafiken zwischenspeichern
-Keep only the frame on screen for animated stickers and GIFs instead of every frame, so they use less memory. Applies to the next ones that load.	Behält bei animierten Stickern und GIFs nur das sichtbare Bild statt aller Einzelbilder, damit sie weniger Speicher brauchen. Gilt für die nächsten, die geladen werden.
+Don't decode animated frames ahead	Animierte Bilder nicht im Voraus dekodieren
+Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load.	Animierte Sticker und GIFs dekodieren jedes Bild erst, wenn es angezeigt wird, statt einige im Voraus, damit sie etwas weniger Speicher brauchen. Gilt für die nächsten, die geladen werden.
 Stop on-device AI profiling	KI-Profiling auf dem Gerät stoppen
 Stop TikTok's built-in AI engine from starting, so it doesn't get a copy of everything TikTok logs about your use. TikTok works as if the engine weren't there.	Verhindert, dass TikToks eingebaute KI-Engine startet, damit sie keine Kopie von allem bekommt, was TikTok über deine Nutzung protokolliert. TikTok funktioniert, als gäbe es die Engine nicht.
 Allow voice comments	Sprachkommentare erlauben

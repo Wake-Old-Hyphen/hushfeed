@@ -30,12 +30,6 @@ public final class PerformanceSwitches {
     /** {@link Settings#DROP_ANIMATED_IMAGE_CACHE}'s key. */
     static final String ANIMATED_IMAGE_CACHE_KEY = "drop_animated_image_cache";
 
-    /**
-     * Fresco's keep-last-frame caching strategy (CACHING_STRATEGY_KEEP_LAST_CACHE), which holds
-     * only the frame on screen. The patch refuses a build whose strategy 3 is anything else.
-     */
-    static final int KEEP_LAST_FRAME_STRATEGY = 3;
-
     private PerformanceSwitches() {
     }
 
@@ -61,19 +55,12 @@ public final class PerformanceSwitches {
 
     /**
      * The number of frames Fresco decodes ahead of the one on screen, read just before the
-     * animation backend decides whether to build its frame preparer. None with the switch on,
-     * since the keep-last cache would drop each one it prepared; TikTok's own count otherwise.
+     * animation backend decides whether to build its frame preparer. None with the switch on, so
+     * each frame is decoded as it's drawn and kept in TikTok's own frame cache; TikTok's own
+     * count otherwise.
      */
     public static int framesToPrepare(int frames) {
         return dropAnimatedImageCache() ? 0 : frames;
-    }
-
-    /**
-     * The caching strategy Fresco's animated drawable factory read from its supplier: the
-     * keep-last-frame cache with the switch on, TikTok's own choice otherwise.
-     */
-    public static int cachingStrategy(int strategy) {
-        return dropAnimatedImageCache() ? KEEP_LAST_FRAME_STRATEGY : strategy;
     }
 
     private static boolean dropAnimatedImageCache() {

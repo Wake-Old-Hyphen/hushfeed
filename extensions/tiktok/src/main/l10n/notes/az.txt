@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos artıq açdığınız kolleksiyadan videoları çıxarmır, ona görə saxlanmış videoya toxunanda səhv video və ya heç nə yox, yenə həmin video oynayır (#135). O, For You, Following və Friends lentlərində baxılmış videoları gizlətməyə davam edir.
+
+* **TikTok:** Yeni Keep the app language patçı Tətbiq səhifəsində Sistem altına TikTok-da seçilən dili saxla açarını əlavə edir (#61). TikTok açılanda telefonun dilinin dəyişdiyinə qərar verərsə, öz ayarlarında seçdiyiniz dili atır və telefona uyğunlaşır. Açar yandırılanda seçiminiz qalır. Sönülü başlayır.
+
+* **TikTok:** Endirmələr bölməsindəki yeni İstifadəçi adını və açıqlamanı videonun üzərinə yaz açarı Hushfeed-in saxladığı videoların sol alt küncünə @istifadəçi adını və açıqlamanın ilk sətrini yazır. Bunun üçün telefon videonu yenidən kodlayır, ona görə belə saxlamalar daha uzun çəkir və gedişatı Ləğv edin düyməsi ilə göstərilir. Açar sönülü başlayır.
+
+* **TikTok:** Remove creation tools indi xəbərdarlıq edir ki, yaratma alətlərindən birini, məsələn kamerada effekt axtarışını açmaq TikTok-u bağlaya bilər (#133). Video çəkirsinizsə, onu seçməyin.
+
+* **TikTok:** Drop the animated image cache artıq TikTok-un kadr keşini yalnız bir kadr saxlayan keşlə əvəz etmir. Bu, şərhlərdəki animasiyalı stikerlərin ilk kadrda ilişib qalmasına səbəb ola bilərdi (#130). Onun açarı indi Animasiya kadrlarını əvvəlcədən hazırlama adlanır və açıq olanda yalnız TikTok-un kadrları göstərilməzdən əvvəl hazırlamasının qarşısını alır.
+
+* **TikTok:** Lentin yuxarısındakı İzlənilənlər hekayələri balonu Təmiz ekran bitəndə geri qayıdır. TikTok onu Təmiz ekran başlayanda gizlədir və əvvəllər lent yenidən yüklənənə qədər gizli qalırdı. O, yalnız əvvəl görünürdüsə və içində hələ kimsə varsa geri qayıdır.
+
+* **TikTok:** Şərhlər bölməsindəki yeni Bu dilə tərcümə et sətri bir dil kodu qəbul edir, məsələn en və ya es. TikTok-un tərcümə etdiyi şərhlər və başlıqlar tətbiqin dili əvəzinə həmin dildə çıxır, beləliklə TikTok-u bir dildə saxlayıb tərcümələri başqa dildə oxuya bilərsiniz. TikTok-un seçimini saxlamaq üçün boş buraxın.
+
+* **TikTok:** Təmiz ekran altında yeni Ekran yanmasından qoruma seçimi 5 saniyə toxunulmadıqda videonun üzərindəki düymələri, başlığı və tabları dörddə birə qədər solğunlaşdırır, növbəti toxunuşunuz onları geri qaytarır. Toxunulmayanda solğunlaşdır və sürüşdür ilə lentdəki hər şey həm də hər 2 dəqiqədən bir bir neçə piksel tərpənir ki, OLED ekran heç vaxt yerindən tərpənməyən idarəetmə elementlərinin altında yanmasın.
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin indi axtarışdan açdığınız foto paylaşımında da paneli götürür. Əvvəllər belə paylaşımlarda Şərh əlavə et paneli qalırdı.
+
+* **TikTok:** Endirmələr bölməsindəki yeni Səs formatı seçimi Səsi də saxla və uzun basmadakı Orijinal səsi saxlayın əməliyyatlarına Opus faylları (.ogg) yaratmağa imkan verir. Onlar TikTok-un M4A faylından kiçikdir və telefonunuz onları yaratmaq üçün səsi yenidən kodlayır. Android 10 və ya daha yenisi lazımdır. Defolt olaraq TikTok-un göndərdiyi kimi qalır, ona görə bu saxlamalar əvvəlki kimi çıxır.
+
 * **TikTok:** Video idarəetmələrini solğunlaşdır indi Təmiz ekranla da işləyir. 1 ilə 99 arasında olanda Təmiz ekran düymələri və başlığı götürmək əvəzinə seçdiyiniz səviyyədə ekranda saxlayır, onlara toxunuş isə videoya gedir, buna görə heç nə təsadüfən açılmır. Basıb saxlamaq və ya çimdik jesti sizi yenə Təmiz ekrandan çıxarır, ondan kənarda isə solğunlaşdırılmış idarəetmələr əvvəlki kimi toxunuşları qəbul edir (#84).
 
 * **TikTok:** Lent videolarını səssiz edin indi TikTok-u açıq və tünd arasında dəyişdikdən sonra da lenti səssiz saxlayır. Əvvəllər lentdən çıxıb geri qayıdana qədər növbəti videolar səslə oynaya bilirdi.
@@ -28,7 +48,7 @@
 
 * **TikTok:** Seriyanı davam etdirin bölməsindəki Nə vaxt göndərilsin üçün vaxt seçicisi indi Hushfeed ayarlarına uyğun olaraq tünd və ya açıq açılır.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling və Enable voice comments indi Hushfeed ayarlarında hər biri öz açarına malikdir, ona görə də Fasilə onları da söndürür və Morphe Manager-in sadə rejimi indi onları da seçir. Bu açarların hər biri söndürülmüş başlayır. Əvvəllər bu yamalardan biri ilə yamaqlamısınızsa, işləməyə davam etməsi üçün yenilədikdən sonra onun açarını yandırın. Açılış reklamını ötür, Yeniləmə yoxlamalarını ötür, Arxa fon trafikini məhdudlaşdır və Animasiyalı şəkillərin yalnız bir kadrını keşlə Tətbiq səhifəsində Performans bölməsindədir. Cihazdaxili süni intellekt profilləşdirməsini dayandır Məxfilik bölməsində, Səsli şərhlərə icazə ver isə Şərhlər bölməsindədir.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling və Enable voice comments indi Hushfeed ayarlarında hər biri öz açarına malikdir, ona görə də Fasilə onları da söndürür və Morphe Manager-in sadə rejimi indi onları da seçir. Bu açarların hər biri söndürülmüş başlayır. Əvvəllər bu yamalardan biri ilə yamaqlamısınızsa, işləməyə davam etməsi üçün yenilədikdən sonra onun açarını yandırın. Açılış reklamını ötür, Yeniləmə yoxlamalarını ötür, Arxa fon trafikini məhdudlaşdır və Animasiya kadrlarını əvvəlcədən hazırlama Tətbiq səhifəsində Performans bölməsindədir. Cihazdaxili süni intellekt profilləşdirməsini dayandır Məxfilik bölməsində, Səsli şərhlərə icazə ver isə Şərhlər bölməsindədir.
 
 * **TikTok:** Yeni yama, Skip passkey sign-in, Morphe Manager-in sadə rejimində açarı söndürülü halda seçilir (#102). Parol menecerləri yamaqlanmış tətbiqə passkey vermir, ona görə də passkey-i olan hesab TikTok-un passkey addımında ilişib qala bilərdi. Hushfeed ayarları > Tətbiq bölməsində Passkey olmadan daxil olun açarını yandırın, TikTok telefonunuza passkey dəstəkləməyən telefon kimi baxacaq və daxil olmağın başqa yollarını, məsələn parolunuzu və ya e-poçt ya da SMS ilə gələn kodu təklif edəcək. Hesabdan çıxmısınızsa, Hushfeed ayarlarını açmaq üçün Ana səhifəni uzun basın.
 

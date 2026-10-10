@@ -40,6 +40,7 @@ public final class FeedItemsFilter {
 
     private static final AdsFilter ADS_FILTER = new AdsFilter();
     private static final LocationBadgeFilter LOCATION_FILTER = new LocationBadgeFilter();
+    private static final SeenVideoFilter SEEN_FILTER = new SeenVideoFilter();
     private static final List<IFilter> CONTENT_FILTERS = List.of(
         ADS_FILTER,
         new LiveFilter(),
@@ -55,7 +56,7 @@ public final class FeedItemsFilter {
         new ContentMarkerFilters.DramaFilter(),
         new ContentMarkerFilters.PlaylistFilter(),
         new CardFilters.InsertedCardFilter(),
-        new SeenVideoFilter(),
+        SEEN_FILTER,
         new OfflineVideoFilter(),
         new AdvancedFeedRules.KeywordFilter(),
         new AdvancedFeedRules.StickerTextFilter(),
@@ -189,7 +190,37 @@ public final class FeedItemsFilter {
         }
     }
 
+    /** The main feed's response, as fetchFeedList returns it. */
     public static void filter(FeedItemList feedItemList) {
+        markMainFeed(feedItemList);
+        filterList(feedItemList);
+    }
+
+    /**
+     * The main feed's own lists: what fetchFeedList returned and what the cold-cache and offline
+     * restores handed over. Hide already seen videos acts on these, and on the Following and
+     * Friends feeds, but never on a list that reaches the filter only through getItems. A
+     * collection opens in TikTok's profile list model, whose list carries no profile uid, so the
+     * read took the reader's own saved videos out of the pager they had just tapped into, and it
+     * played the wrong one or nothing (#135). FeedItemList keeps Object's equals and hashCode, so
+     * the map keys by identity, and an entry goes when its list does.
+     */
+    private static final Map<FeedItemList, Boolean> MAIN_FEED_LISTS = new WeakHashMap<>();
+
+    private static void markMainFeed(FeedItemList list) {
+        if (list == null) return;
+        synchronized (MAIN_FEED_LISTS) {
+            MAIN_FEED_LISTS.put(list, Boolean.TRUE);
+        }
+    }
+
+    static boolean isMainFeedList(FeedItemList list) {
+        synchronized (MAIN_FEED_LISTS) {
+            return MAIN_FEED_LISTS.containsKey(list);
+        }
+    }
+
+    private static void filterList(FeedItemList feedItemList) {
         boolean verbose = BaseSettings.DEBUG.get();
 
         if (feedItemList == null || feedItemList.items == null) {
@@ -238,7 +269,7 @@ public final class FeedItemsFilter {
     public static void filterOnRead(FeedItemList feedItemList) {
         try {
             HookStatus.bound("main feed", "FeedItemList.getItems");
-            filter(feedItemList);
+            filterList(feedItemList);
         } catch (Throwable ex) {
             HookStatus.threw("main feed", "FeedItemList.getItems", ex);
             Logger.printException(() -> "Could not filter the main feed while reading it", ex);
@@ -1065,6 +1096,7 @@ public final class FeedItemsFilter {
 
     public static FeedItemList filterCachedFeedList(FeedItemList feedItemList) {
         if (feedItemList == null || feedItemList.items == null) return null;
+        markMainFeed(feedItemList);
         filterCachedFeedItems("FeedItemList:cold-cache", feedItemList);
         return feedItemList.items.isEmpty() ? null : feedItemList;
     }
@@ -1089,6 +1121,7 @@ public final class FeedItemsFilter {
             return null;
         }
         if (!Settings.FILTER_OFFLINE_FALLBACK_VIDEOS.get()) return feedItemList;
+        markMainFeed(feedItemList);
         filterCachedFeedItems(OFFLINE_FALLBACK_SOURCE, feedItemList);
         return feedItemList.items.isEmpty() ? null : feedItemList;
     }
@@ -1252,6 +1285,11 @@ public final class FeedItemsFilter {
         List<IFilter> activeContentFilters = getActiveFilters(
             forYou ? FOR_YOU_FILTERS : phase == FilterPhase.RESPONSE ? CONTENT_FILTERS : LATE_FOLLOW_FILTERS
         );
+        // A list the main feed's own routes never handed over is one the reader opened, and the
+        // videos in it are the ones they chose to watch (#135).
+        if (owner instanceof FeedItemList && !isMainFeedList((FeedItemList) owner)) {
+            activeContentFilters.remove(SEEN_FILTER);
+        }
         List<IFilter> activeRangeFilters = phase == FilterPhase.RESPONSE
             ? getActiveFilters(RANGE_FILTERS)
             : List.of();

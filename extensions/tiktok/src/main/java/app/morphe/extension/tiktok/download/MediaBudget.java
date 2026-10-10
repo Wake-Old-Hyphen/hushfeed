@@ -49,8 +49,13 @@ final class MediaBudget {
     }
 
     static void runWithJobDeadline(Runnable work) {
+        runWithJobDeadline(null, work);
+    }
+
+    /** As above, with {@code fresh} (a new one when null) for a job that has no deadline yet. */
+    static void runWithJobDeadline(Deadline fresh, Runnable work) {
         Deadline previous = CURRENT_DEADLINE.get();
-        if (previous == null) CURRENT_DEADLINE.set(deadline());
+        if (previous == null) CURRENT_DEADLINE.set(fresh != null ? fresh : deadline());
         try {
             work.run();
         } finally {
@@ -265,7 +270,7 @@ final class MediaBudget {
     }
 
     static final class Deadline {
-        private final long endNanos;
+        private long endNanos;
         private final Clock clock;
         AtomicBoolean cancellation;
         StopException networkStop;
@@ -283,6 +288,18 @@ final class MediaBudget {
 
         boolean expired() {
             return endNanos - clock.nanoTime() <= 0;
+        }
+
+        /**
+         * Moves the end out to at least {@code millis} from now, and leaves a later end alone.
+         * For a step whose length follows the media rather than the network: writing a caption
+         * into a video encodes all of it again, which runs about as long as the video plays,
+         * and a long one used up the two minutes the whole save gets. That step still has its
+         * own checks for a codec that stops moving.
+         */
+        void allowAtLeast(long millis) {
+            long end = clock.nanoTime() + Math.max(0L, millis) * 1_000_000L;
+            if (end - endNanos > 0) endNanos = end;
         }
     }
 }

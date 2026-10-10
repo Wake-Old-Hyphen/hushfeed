@@ -96,7 +96,6 @@ public class PerformanceSwitchesTest {
         assertFalse(PerformanceSwitches.skipUpdateChecks());
         assertFalse(PerformanceSwitches.limitBackgroundTraffic());
         for (int frames : new int[]{0, 1, 3, 10}) assertEquals(frames, PerformanceSwitches.framesToPrepare(frames));
-        for (int strategy : new int[]{0, 1, 2, 3}) assertEquals(strategy, PerformanceSwitches.cachingStrategy(strategy));
     }
 
     @Test public void eachSwitchAnswersForItsOwnPatchOnly() {
@@ -104,7 +103,7 @@ public class PerformanceSwitchesTest {
         assertTrue(PerformanceSwitches.skipSplashAd());
         assertFalse(PerformanceSwitches.skipUpdateChecks());
         assertFalse(PerformanceSwitches.limitBackgroundTraffic());
-        assertEquals(2, PerformanceSwitches.cachingStrategy(2));
+        assertEquals(2, PerformanceSwitches.framesToPrepare(2));
 
         Settings.SKIP_UPDATE_CHECKS.save(true);
         assertTrue(PerformanceSwitches.skipUpdateChecks());
@@ -114,9 +113,7 @@ public class PerformanceSwitchesTest {
 
         Settings.DROP_ANIMATED_IMAGE_CACHE.save(true);
         assertEquals("no frames prepared ahead", 0, PerformanceSwitches.framesToPrepare(4));
-        assertEquals("the keep-last-frame cache", 3, PerformanceSwitches.cachingStrategy(1));
-        assertEquals(3, PerformanceSwitches.cachingStrategy(2));
-        assertEquals(PerformanceSwitches.KEEP_LAST_FRAME_STRATEGY, PerformanceSwitches.cachingStrategy(3));
+        assertEquals(0, PerformanceSwitches.framesToPrepare(0));
     }
 
     @Test public void pausedEverySwitchAnswersOff() {
@@ -126,7 +123,6 @@ public class PerformanceSwitchesTest {
         assertFalse(PerformanceSwitches.skipUpdateChecks());
         assertFalse(PerformanceSwitches.limitBackgroundTraffic());
         assertEquals(5, PerformanceSwitches.framesToPrepare(5));
-        assertEquals(1, PerformanceSwitches.cachingStrategy(1));
     }
 
     /**
@@ -155,7 +151,6 @@ public class PerformanceSwitchesTest {
             assertTrue(PerformanceSwitches.skipUpdateChecks());
             assertTrue(PerformanceSwitches.limitBackgroundTraffic());
             assertEquals(0, PerformanceSwitches.framesToPrepare(2));
-            assertEquals(3, PerformanceSwitches.cachingStrategy(1));
         } finally {
             Utils.setContext(application);
         }
@@ -176,7 +171,7 @@ public class PerformanceSwitchesTest {
         Utils.setContext(null);
         try {
             assertFalse("no application yet answers off", PerformanceSwitches.skipSplashAd());
-            assertEquals(2, PerformanceSwitches.cachingStrategy(2));
+            assertEquals(2, PerformanceSwitches.framesToPrepare(2));
         } finally {
             Utils.setContext(application);
         }

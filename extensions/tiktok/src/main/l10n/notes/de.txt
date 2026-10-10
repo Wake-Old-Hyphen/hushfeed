@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Hide already seen videos nimmt keine Videos mehr aus einer Sammlung, die du öffnest. Ein Tipp auf ein gespeichertes Video spielt also wieder dieses Video ab statt eines falschen oder gar keines (#135). In For You, Following und Friends blendet es gesehene Videos weiter aus.
+
+* **TikTok:** Ein neuer Patch, Keep the app language, bringt unter System in App den Schalter In TikTok gewählte Sprache behalten (#61). Wenn TikTok startet und meint, die Sprache des Handys habe sich geändert, verwirft es die Sprache, die du in seinen Einstellungen gewählt hast, und folgt dem Handy. Mit dem Schalter bleibt deine Wahl. Er ist zu Beginn aus.
+
+* **TikTok:** Ein neuer Schalter Benutzernamen und Beschreibung ins Video schreiben unter Downloads schreibt den @Benutzernamen und die erste Zeile der Beschreibung unten links in Videos, die Hushfeed speichert. Das Handy kodiert das Video dafür neu, solche Speicherungen dauern also länger und zeigen ihren Fortschritt mit einer Schaltfläche Abbrechen. Er ist zu Beginn aus.
+
+* **TikTok:** Remove creation tools weist jetzt darauf hin, dass das Öffnen eines Erstellungswerkzeugs, etwa der Effektsuche in der Kamera, TikTok schließen kann (#133). Lass den Patch weg, wenn du Videos machst.
+
+* **TikTok:** Drop the animated image cache ersetzt TikToks Bildcache nicht mehr durch einen, der nur ein einziges Bild hält. Dadurch konnten animierte Sticker in Kommentaren auf ihrem ersten Bild hängen bleiben (#130). Der Schalter heißt jetzt Animierte Bilder nicht im Voraus dekodieren, und eingeschaltet hält er TikTok nur davon ab, Bilder zu dekodieren, bevor sie angezeigt werden.
+
+* **TikTok:** Die Story-Blase von Gefolgt oben im Feed kommt zurück, wenn Freie Ansicht endet. TikTok blendet sie aus, sobald Freie Ansicht beginnt, und bisher blieb sie weg, bis der Feed neu geladen wurde. Sie kommt nur zurück, wenn sie vorher zu sehen war und noch jemand darin ist.
+
+* **TikTok:** Eine neue Zeile Übersetzen in unter Kommentare nimmt einen Sprachcode, zum Beispiel en oder es. Kommentare und Beschreibungen, die TikTok übersetzt, erscheinen dann in dieser Sprache statt in der Sprache der App. So kannst du TikTok in einer Sprache nutzen und Übersetzungen in einer anderen lesen. Lass sie leer, um TikToks Wahl zu behalten.
+
+* **TikTok:** Eine neue Auswahl Einbrennschutz unter Freie Ansicht dunkelt die Schaltflächen, die Beschreibung und die Tabs über dem Video nach 5 Sekunden ohne Berührung auf ein Viertel ab, und deine nächste Berührung holt sie zurück. Mit Bei Inaktivität abdunkeln und verschieben bewegt sich außerdem alles im Feed alle 2 Minuten um ein paar Pixel, damit sich auf einem OLED-Bildschirm nichts unter Bedienelementen einbrennt, die sich nie bewegen.
+
+* **TikTok:** Kommentarleiste bei geöffneten Videos ausblenden nimmt die Leiste jetzt auch bei einem Fotobeitrag weg, den du aus der Suche öffnest. Vorher blieb dort die Leiste zum Kommentieren stehen.
+
+* **TikTok:** Eine neue Auswahl Tonformat unter Downloads lässt Ton ebenfalls speichern und Originalsound speichern beim langen Drücken Opus-Dateien (.ogg) erstellen. Sie sind kleiner als TikToks M4A, und dein Handy kodiert den Ton dafür neu. Dafür braucht es Android 10 oder neuer. Standard bleibt So, wie TikTok ihn liefert, damit diese Speicherungen wie bisher herauskommen.
+
 * **TikTok:** Videosteuerung ausblenden lassen funktioniert jetzt auch mit Freie Ansicht. Zwischen 1 und 99 lässt Freie Ansicht die Schaltflächen und die Beschreibung in der gewählten Stufe auf dem Bildschirm, statt sie wegzunehmen, und ein Tippen darauf geht an das Video, damit nichts aus Versehen aufgeht. Gedrückt halten oder zwei Finger zusammenziehen bringt dich weiterhin aus Freie Ansicht heraus, und außerhalb davon nehmen abgedunkelte Steuerelemente wie bisher Tippen an (#84).
 
 * **TikTok:** Feed-Videos stummschalten hält den Feed jetzt auch stumm, wenn du TikTok zwischen hell und dunkel umstellst. Vorher konnten die nächsten Videos mit Ton laufen, bis du den Feed verlassen hast und zurückgekommen bist.
@@ -28,7 +48,7 @@
 
 * **TikTok:** Die Zeitauswahl für Wann senden unter Eine Serie am Laufen halten öffnet sich jetzt dunkel oder hell, passend zu den Hushfeed-Einstellungen.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling und Enable voice comments haben jetzt jeweils einen Schalter in den Hushfeed-Einstellungen, sodass Pausieren sie ebenfalls ausschaltet und der einfache Modus von Morphe Manager sie jetzt mit auswählt. Jeder dieser Schalter ist zunächst aus. Wenn du schon mit einem dieser Patches gepatcht hast, schalte seinen Schalter nach dem Update ein, damit er weiter wirkt. Startwerbung überspringen, Update-Prüfungen überspringen, Hintergrund-Datenverkehr begrenzen und Nur ein Bild animierter Grafiken zwischenspeichern findest du unter Leistung in App. KI-Profiling auf dem Gerät stoppen steht unter Datenschutz und Sprachkommentare erlauben unter Kommentare.
+* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling und Enable voice comments haben jetzt jeweils einen Schalter in den Hushfeed-Einstellungen, sodass Pausieren sie ebenfalls ausschaltet und der einfache Modus von Morphe Manager sie jetzt mit auswählt. Jeder dieser Schalter ist zunächst aus. Wenn du schon mit einem dieser Patches gepatcht hast, schalte seinen Schalter nach dem Update ein, damit er weiter wirkt. Startwerbung überspringen, Update-Prüfungen überspringen, Hintergrund-Datenverkehr begrenzen und Animierte Bilder nicht im Voraus dekodieren findest du unter Leistung in App. KI-Profiling auf dem Gerät stoppen steht unter Datenschutz und Sprachkommentare erlauben unter Kommentare.
 
 * **TikTok:** Neuer Patch, Skip passkey sign-in, im einfachen Modus von Morphe Manager ausgewählt, mit ausgeschaltetem Schalter (#102). Passwortmanager geben einer gepatchten App keinen Passkey, deshalb konnte ein Konto mit Passkey bei TikToks Passkey-Schritt hängen bleiben. Schalte unter Hushfeed-Einstellungen > App Ohne Passkey anmelden ein, dann behandelt TikTok dein Handy wie eines ohne Passkeys und bietet seine anderen Anmeldewege an, etwa dein Passwort oder einen Code per E-Mail oder SMS. Wenn du abgemeldet bist, drück lange auf Startseite, um die Hushfeed-Einstellungen zu öffnen.
 

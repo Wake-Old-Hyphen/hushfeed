@@ -21,7 +21,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Saves a video's sound as its own .m4a, copied out of a container rather than re-encoded.
+ * Saves a video's sound as its own .m4a, copied out of a container rather than re-encoded, or
+ * as an .ogg encoded to Opus when {@link SoundFormat} says so.
  *
  * The bytes come from whatever has already been fetched wherever possible: when
  * {@link VideoDownloads} handles the download it hands its own temporary file over, which is
@@ -130,11 +131,23 @@ final class AudioDownloads {
             throws MediaBudget.StopException {
         if (!enabled()) return false;
         File output = null;
+        // Read once, so the temporary file, the name and the type all agree.
+        boolean opus = SoundFormat.opus();
         try {
-            output = MediaCache.createTempFile(app, "sound-", ".m4a");
-            TrackMuxer.audioOnly(source, output);
+            output = MediaCache.createTempFile(app, "sound-", opus ? ".ogg" : ".m4a");
+            if (opus && !OpusTranscoder.transcodeOrKeep(source, output)) {
+                // A fresh file for the M4A: the muxer needn't cut off what the encoder left.
+                opus = false;
+                File failed = output;
+                output = null;
+                if (!MediaCache.delete(failed)) Logger.printInfo(() -> "Could not remove sound temporary file");
+                output = MediaCache.createTempFile(app, "sound-", ".m4a");
+            }
+            if (!opus) TrackMuxer.audioOnly(source, output);
             String path = audioPath(videoPath);
-            MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, output, name, "audio/mp4", path, true);
+            String fileName = opus ? SoundFormat.withExtension(name, "ogg") : name;
+            MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, output, fileName,
+                    opus ? "audio/ogg" : "audio/mp4", path, true);
             if (announce) SaveNotice.saved(L10n.f("Sound saved to %1$s", path), saved);
             else Utils.showToastShort(L10n.f("Sound saved to %1$s", path));
             return true;
@@ -152,7 +165,7 @@ final class AudioDownloads {
     }
 
     /**
-     * Where the .m4a goes. Android 10 and later file media by type, and an audio file does not
+     * Where the sound file goes. Android 10 and later file media by type, and an audio file does not
      * belong to the video collection, so the sound mirrors the video's own folder under Music.
      * Older versions write real files and keep the two together.
      */
