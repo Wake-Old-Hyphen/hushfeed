@@ -1691,6 +1691,64 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * TikTok's loading line grows along the bottom of a video while it buffers, and it was the
+     * one bar left on a cleared screen (#84). Its frame goes see-through while TikTok's clear-mode
+     * bar is up, whatever TikTok does to the line itself, and comes back with the bar.
+     */
+    @Test
+    public void theLoadingLineGoesWithTheClearDisplayControls() {
+        int exitId = 0x7f0a0c11;
+        int lineId = 0x7f0a0c12;
+        VideoOverlayHider.resolveForTests("47.1.4:e_5", exitId);
+        VideoOverlayHider.resolveForTests("47.1.4:nh4", lineId);
+        Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout clearBar = new FrameLayout(activity);
+            View exit = new View(activity);
+            exit.setId(exitId);
+            clearBar.addView(exit);
+            root.addView(clearBar);
+            FrameLayout lineFrame = new FrameLayout(activity);
+            View line = new View(activity);
+            line.setId(lineId);
+            lineFrame.addView(line);
+            root.addView(lineFrame);
+            activity.setContentView(root);
+
+            clearBar.setVisibility(View.GONE);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("outside Clear display the line is TikTok's", 1f, lineFrame.getAlpha(), 0f);
+
+            clearBar.setVisibility(View.VISIBLE);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, lineFrame.getAlpha(), 0f);
+            assertEquals("the frame stays laid out", View.VISIBLE, lineFrame.getVisibility());
+            assertEquals("the line itself is left to TikTok", 1f, line.getAlpha(), 0f);
+
+            // TikTok shows the line again for the next buffer; the frame still covers it.
+            line.setVisibility(View.GONE);
+            line.setVisibility(View.VISIBLE);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, lineFrame.getAlpha(), 0f);
+
+            clearBar.setVisibility(View.GONE);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("back with TikTok's bar", 1f, lineFrame.getAlpha(), 0f);
+
+            clearBar.setVisibility(View.VISIBLE);
+            VideoOverlayHider.applyTo(activity);
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("back with the switch off", 1f, lineFrame.getAlpha(), 0f);
+        } finally {
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
+        }
+    }
+
+    /**
      * A photo post in Clear display has only a close button at the bottom right, inside the
      * cell, and TikTok takes it and its parent away as Clear display ends. It goes with the other
      * controls, and when it's put back after TikTok's exit it stays inside the hidden parent,

@@ -114,6 +114,13 @@ public final class VideoOverlayHider {
      * the bar alone left a thin line across the bottom of each video until then (#84).
      */
     private static final String[] BOTTOM_TABS_DIVIDER_IDS = {"47.1.4:cnq"};
+    /**
+     * TikTok's loading line, the thin bar along the bottom of each video that grows from the
+     * middle while it buffers. With the Clear display controls hidden it was the one bar left at
+     * the bottom of a cleared screen (#84). TikTok shows and animates it on every buffer, so the
+     * frame that holds it goes see-through instead of the line itself.
+     */
+    private static final String[] LOADING_LINE_IDS = {"47.1.4:nh4"};
     /** The story-count button is a sibling of the main feed, outside its tab strip and cells. */
     private static final String[] FOLLOWING_STORY_IDS = {"47.1.4:wtr"};
     /**
@@ -270,6 +277,7 @@ public final class VideoOverlayHider {
     private static final int MUSIC_COVER_TARGET = ANCHOR_TARGET + 1;
     private static final int SEARCH_BAR_TARGET = MUSIC_COVER_TARGET + 1;
     private static final int BOTTOM_TABS_DIVIDER_TARGET = SEARCH_BAR_TARGET + 1;
+    private static final int LOADING_LINE_TARGET = BOTTOM_TABS_DIVIDER_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -548,6 +556,7 @@ public final class VideoOverlayHider {
                 wanted[CLEAR_EXIT_TARGET] = clearControls;
                 wanted[CLEAR_PLAYBACK_TARGET] = clearControls;
                 wanted[CLEAR_SEEK_BAR_TARGET] = clearControls;
+                wanted[LOADING_LINE_TARGET] = clearControls;
                 wanted[CLEAR_PHOTO_EXIT_TARGET] = clearControls;
                 wanted[ANCHOR_TARGET] = anchor;
                 // Only ever faded, never hidden by a switch of its own.
@@ -791,7 +800,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[BOTTOM_TABS_DIVIDER_TARGET + 1][];
+        String[][] targets = new String[LOADING_LINE_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -817,6 +826,7 @@ public final class VideoOverlayHider {
         targets[MUSIC_COVER_TARGET] = MUSIC_COVER_IDS;
         targets[SEARCH_BAR_TARGET] = SEARCH_BAR_IDS;
         targets[BOTTOM_TABS_DIVIDER_TARGET] = BOTTOM_TABS_DIVIDER_IDS;
+        targets[LOADING_LINE_TARGET] = LOADING_LINE_IDS;
         return targets;
     }
 
@@ -889,8 +899,12 @@ public final class VideoOverlayHider {
         hidden[firstCandidate(CLEAR_EXIT_TARGET)] = false;
         hidden[firstCandidate(CLEAR_PLAYBACK_TARGET)] = false;
         // Across a carried swipe the bar on screen is the incoming video's ordinary one, which
-        // its own clear is about to take; it stays away until then.
-        if (!carry) hidden[firstCandidate(CLEAR_SEEK_BAR_TARGET)] = false;
+        // its own clear is about to take; it stays away until then. So does the incoming
+        // video's loading line, which is on screen exactly then.
+        if (!carry) {
+            hidden[firstCandidate(CLEAR_SEEK_BAR_TARGET)] = false;
+            hidden[firstCandidate(LOADING_LINE_TARGET)] = false;
+        }
     }
 
     private static boolean anyParentShown(List<View> views) {
@@ -930,7 +944,10 @@ public final class VideoOverlayHider {
                     // The progress bar only goes see-through, so a drag along the bottom edge
                     // still seeks while it's out of sight (#84).
                     if (target == CLEAR_SEEK_BAR_TARGET) setTransparent(view, wanted);
-                    else if (target == ANCHOR_TARGET || target == MUSIC_COVER_TARGET
+                    else if (target == LOADING_LINE_TARGET) {
+                        android.view.ViewParent frame = view.getParent();
+                        setTransparent(frame instanceof View ? (View) frame : view, wanted);
+                    } else if (target == ANCHOR_TARGET || target == MUSIC_COVER_TARGET
                             || target == SEARCH_BAR_TARGET) {
                         // 47.1.4 keeps the caption frame, the music disc and the search bar
                         // beside the column, so they fade here. Invisible rather than gone, so
