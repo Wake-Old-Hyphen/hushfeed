@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** With Hide the Clear display controls on, TikTok's loading line, the thin bar that grows from the middle along the bottom of a video while it buffers, now goes too while the screen is cleared (#84).
+
 * **TikTok:** A new Translate button in comments switch under Comments shows TikTok's own translate button next to the comment count. One tap translates every comment and reply, and another brings the originals back (#85). It starts off.
 
 * **TikTok:** Clear display no longer leaves a thin line across the bottom of each new video for a few seconds (#84). It was the hairline along the top of the tab bar, which stayed behind when the tabs went away.

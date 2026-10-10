@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Com Esconder os controles da tela limpa ligado, a linha de carregamento do TikTok, a barra fina que cresce do meio ao longo da borda de baixo de um vídeo enquanto ele carrega, agora também some enquanto a tela está limpa (#84).
+
 * **TikTok:** A nova chave Botão de traduzir nos comentários, em Comentários, mostra o próprio botão de traduzir do TikTok ao lado da contagem de comentários. Um toque traduz todos os comentários e respostas, e outro traz os originais de volta (#85). Ela começa desligada.
 
 * **TikTok:** Tela limpa não deixa mais uma linha fina na parte de baixo de cada vídeo novo por alguns segundos (#84). Era a linha fina na borda de cima da barra de abas, que ficava para trás quando as abas sumiam.

@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin açıq olanda TikTok-un yüklənmə xətti, video yüklənərkən aşağı kənar boyunca ortadan böyüyən nazik zolaq, ekran təmizlənəndə artıq o da gizlənir (#84).
+
 * **TikTok:** Şərhlər bölməsindəki yeni Şərhlərdə tərcümə düyməsi açarı TikTok-un öz tərcümə düyməsini şərh sayının yanında göstərir. Bir toxunuş bütün şərhləri və cavabları tərcümə edir, ikincisi isə orijinalları geri qaytarır (#85). Açar əvvəlcə söndürülüb.
 
 * **TikTok:** Təmiz ekran artıq hər yeni videonun altında bir neçə saniyəlik nazik xətt qoymur (#84). Bu, tab panelinin üst kənarındakı incə xətt idi və tablar gedəndə geridə qalırdı.

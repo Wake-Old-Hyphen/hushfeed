@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Con Ocultar también los controles que quedan en Controles ocultos activado, la línea de carga de TikTok, la barra fina que crece desde el centro en el borde inferior de un video mientras carga, ahora también se va mientras la pantalla está despejada (#84).
+
 * **TikTok:** El nuevo interruptor Botón de traducir en los comentarios, en Comentarios, muestra el propio botón de traducir de TikTok junto al número de comentarios. Un toque traduce todos los comentarios y respuestas, y otro devuelve los originales (#85). Empieza desactivado.
 
 * **TikTok:** Controles ocultos ya no deja una línea fina en la parte de abajo de cada video nuevo durante unos segundos (#84). Era la línea fina del borde superior de la barra de pestañas, que se quedaba cuando las pestañas desaparecían.

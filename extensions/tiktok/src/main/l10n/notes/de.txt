@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Mit Steuerelemente der freien Ansicht ausblenden verschwindet jetzt auch TikToks Ladelinie, der dünne Balken, der beim Puffern von der Mitte aus am unteren Rand eines Videos wächst, solange der Bildschirm frei ist (#84).
+
 * **TikTok:** Der neue Schalter Übersetzen-Schaltfläche in Kommentaren unter Kommentare zeigt TikToks eigene Übersetzen-Schaltfläche neben der Kommentaranzahl. Ein Tippen übersetzt alle Kommentare und Antworten, ein weiteres holt die Originale zurück (#85). Er ist anfangs aus.
 
 * **TikTok:** Freie Ansicht lässt am unteren Rand jedes neuen Videos nicht mehr ein paar Sekunden lang eine dünne Linie stehen (#84). Das war die feine Linie oben an der Tab-Leiste, die zurückblieb, wenn die Tabs verschwanden.

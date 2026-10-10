@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Con Nascondi i controlli della vista pulita attivo, ora sparisce anche la linea di caricamento di TikTok, la barra sottile che cresce dal centro lungo il bordo inferiore di un video mentre si carica, finché lo schermo è pulito (#84).
+
 * **TikTok:** Il nuovo interruttore Pulsante Traduci nei commenti, in Commenti, mostra il pulsante di traduzione di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti e le risposte, un altro riporta gli originali (#85). Parte spento.
 
 * **TikTok:** Vista pulita non lascia più una linea sottile in fondo a ogni nuovo video per qualche secondo (#84). Era la linea sottile sul bordo superiore della barra delle schede, che restava lì quando le schede sparivano.
