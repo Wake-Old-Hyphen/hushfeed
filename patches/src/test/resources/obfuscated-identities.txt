@@ -19,6 +19,7 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/AnimatedWeb
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/featurecontrols/CaptchaGate.java|LJIIJ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|bqv
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|cnk
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|cnq
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|d4
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|dux
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|e_5
