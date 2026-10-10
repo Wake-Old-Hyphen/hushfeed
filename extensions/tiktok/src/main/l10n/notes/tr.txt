@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** LIVE odalarında durum çubuğunu gizle, üstteki siyah şeridi LIVE boyunca uzak tutuyor (#137). Önceden TikTok şeridi birkaç kez geri koyduktan sonra, mesela yayının üstünde paneller açılıp kapandığında, pes ediyordu. Yeni LIVE'ı durum çubuğunun altında göster anahtarı, bir LIVE'ın saat ve simgeler üstünde kalacak şekilde üst kenara kadar uzanmasını sağlıyor. Çubuğu tutmak isterseniz bunu kullanın. Başta kapalı.
+
+* **TikTok:** Çift dokunma artık Uzun basmanın yaptığı her şeyi yapabiliyor, mesela bağlantıyı kopyalamak ya da kareyi kaydetmek. Uzun basmada da yeni Videoyu beğen seçeneği var (#136). Uzun basmayla beğeni TikTok'un kendi beğenisi gibi çalışıyor ve bir beğeniyi asla geri almıyor.
+
 * **TikTok:** Bir videoyu açtığınız koleksiyon ya da başka bir ızgara içindeki tüm gönderileri koruyor. Böylece Hide photo posts, engellenen kelimeler ve diğer akış filtreleri artık yanlış videonun oynamasına yol açmıyor (#135). Açtığınız bir listeden yalnızca reklamlar çıkarılıyor.
 
 * **TikTok:** Hide the Send to row artık uzun basınca açılan küçük paylaşım sayfasında Report, Download ve işlem satırının geri kalanını da gizlemiyor (#120). O sayfada TikTok iki satırı tek bir çerçeveye koyuyor ve çerçevenin tamamı gizleniyordu.

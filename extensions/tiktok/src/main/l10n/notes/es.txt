@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Ocultar la barra de estado en los LIVE mantiene fuera la franja negra de arriba durante todo el LIVE (#137). Antes se rendía después de que TikTok volviera a poner la franja unas cuantas veces, por ejemplo al abrir y cerrar paneles sobre la transmisión. El nuevo interruptor Mostrar el LIVE bajo la barra de estado deja que un LIVE llegue hasta el borde superior con la hora y los iconos encima, si prefieres conservar la barra. Empieza desactivado.
+
+* **TikTok:** Doble toque ahora puede hacer todo lo que hace Pulsación larga, como copiar el enlace o guardar el fotograma, y Pulsación larga tiene una nueva opción, Dar me gusta al vídeo (#136). Un me gusta con pulsación larga funciona como el de TikTok y nunca quita un me gusta.
+
 * **TikTok:** Una colección u otra cuadrícula desde la que abres un video conserva todas sus publicaciones, así que Hide photo posts, las palabras bloqueadas y los demás filtros del feed ya no hacen que se reproduzca el video equivocado (#135). De una lista que abriste solo se quitan los anuncios.
 
 * **TikTok:** Hide the Send to row ya no se lleva Report, Download y el resto de la fila de acciones en la hoja de compartir pequeña que abre una pulsación larga (#120). En esa hoja TikTok pone las dos filas en un mismo marco, y se estaba ocultando el marco entero.

@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Nascondi la barra di stato nelle stanze LIVE tiene lontana la striscia nera in alto per tutto il LIVE (#137). Prima si arrendeva dopo che TikTok rimetteva la striscia un po' di volte, per esempio quando i pannelli si aprono e si chiudono sopra la diretta. Il nuovo interruttore Mostra il LIVE sotto la barra di stato lascia che un LIVE arrivi fino al bordo superiore con l'ora e le icone sopra, se preferisci tenere la barra. Parte spento.
+
+* **TikTok:** Doppio tocco ora può fare tutto quello che fa Pressione prolungata, come copiare il link o salvare il fotogramma, e Pressione prolungata ha la nuova scelta Metti Mi piace al video (#136). Un Mi piace dato con la pressione prolungata funziona come quello di TikTok e non toglie mai un Mi piace.
+
 * **TikTok:** Una raccolta o un'altra griglia da cui apri un video tiene tutti i suoi post, quindi Hide photo posts, le parole bloccate e gli altri filtri del feed non fanno più partire il video sbagliato (#135). Da un elenco che hai aperto vengono tolte solo le pubblicità.
 
 * **TikTok:** Hide the Send to row non si porta più via Report, Download e il resto della riga delle azioni nel piccolo menu di condivisione che si apre con una pressione prolungata (#120). In quel menu TikTok mette le due righe nello stesso riquadro, e veniva nascosto l'intero riquadro.

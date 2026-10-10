@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Sembunyikan bilah status di ruang LIVE menjauhkan strip hitam di atas selama LIVE berlangsung (#137). Dulu fitur ini menyerah setelah TikTok memasang strip itu lagi beberapa kali, misalnya saat panel dibuka dan ditutup di atas siaran. Tombol baru Tampilkan LIVE di bawah bilah status membiarkan LIVE sampai ke tepi atas dengan jam dan ikon di atasnya, kalau kamu lebih suka bilahnya tetap ada. Awalnya mati.
+
+* **TikTok:** Ketuk dua kali sekarang bisa melakukan semua yang bisa dilakukan Tekan lama, seperti menyalin tautan atau menyimpan bingkai, dan Tekan lama punya pilihan baru Sukai video (#136). Suka lewat tekan lama bekerja seperti milik TikTok sendiri dan tidak pernah membatalkan suka.
+
 * **TikTok:** Koleksi atau grid lain tempat kamu membuka video tetap menyimpan semua postingannya, jadi Hide photo posts, kata yang diblokir, dan filter feed lainnya tidak lagi membuat video yang salah diputar (#135). Dari daftar yang kamu buka, hanya iklan yang dibuang.
 
 * **TikTok:** Hide the Send to row tidak lagi ikut menyembunyikan Report, Download, dan baris aksi lainnya di lembar bagikan kecil yang terbuka saat tekan lama (#120). Di lembar itu TikTok menaruh kedua baris dalam satu bingkai, dan seluruh bingkainya ikut disembunyikan.

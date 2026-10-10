@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Hide the status bar in LIVE rooms keeps the black strip at the top away for the whole LIVE (#137). It used to give up after TikTok put the strip back a few times, like when panels open and close over the stream. A new Show a LIVE under the status bar switch lets a LIVE reach the top edge with the clock and icons over it, if you'd rather keep the bar. It starts off.
+
+* **TikTok:** Double tap can now do anything Long press does, like copying the link or saving the frame, and Long press has a new Like the video choice (#136). A like from a long press works like TikTok's own and never takes a like away.
+
 * **TikTok:** A collection or another grid you open a video from keeps every post in it, so Hide photo posts, blocked words and the other feed filters no longer make it play the wrong video (#135). Only ads are taken out of a list you opened.
 
 * **TikTok:** Hide the Send to row no longer takes Report, Download and the rest of the actions row with it on the small share sheet a long press opens (#120). On that sheet TikTok puts both rows in one frame, and the whole frame was being hidden.
