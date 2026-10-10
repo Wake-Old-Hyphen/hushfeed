@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Show the progress bar kembali menampilkan bilah di feed For You, termasuk untuk video pendek (#134). Di 47.1.4 patch ini menyalakan pemeriksaan TikTok yang salah, yaitu yang menentukan apakah sebuah video itu iklan, jadi bilahnya tidak pernah muncul lagi saat video diputar.
+
 * **TikTok:** Laporan diagnostik punya bagian Storage baru yang menampilkan folder terbesar di penyimpanan TikTok, jadi laporan bisa menunjukkan apa yang membuatnya penuh (#70). Bagian ini hanya menyebut nama folder, tidak pernah nama file, dan menyembunyikan nomor akun.
 
 * **TikTok:** Menekan kembali di video yang sudah bersih dari pencarian atau profil tidak lagi dihitung sebagai mematikan Clear display. Membuka video yang sama lagi akan membersihkannya seperti video lain, dan Clear display yang diingat tetap menyala (#84).

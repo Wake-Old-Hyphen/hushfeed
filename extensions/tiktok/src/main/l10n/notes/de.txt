@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Show the progress bar zeigt die Leiste im For You Feed wieder an, auch bei kurzen Videos (#134). Auf 47.1.4 hat es die falsche TikTok-Prüfung eingeschaltet, nämlich die, ob ein Video Werbung ist. Deshalb kam die Leiste während der Wiedergabe nie zurück.
+
 * **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt Storage mit den größten Ordnern in TikToks Speicher. So zeigt ein Bericht, was ihn füllt (#70). Er nennt nur Ordner, nie Dateien, und blendet Kontonummern aus.
 
 * **TikTok:** Wenn du bei einem freigeräumten Video aus der Suche oder einem Profil auf Zurück tippst, zählt das nicht mehr als Ausschalten von Clear display. Öffnest du dasselbe Video noch mal, wird es wie jedes andere freigeräumt, und ein gemerktes Clear display bleibt an (#84).

@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Show the progress bar shows the bar on the For You feed again, short videos included (#134). On 47.1.4 it was switching on the wrong TikTok check, one that decides whether a video is an ad, so the bar never came back while a video played.
+
 * **TikTok:** The diagnostic report has a new Storage section listing the biggest folders in TikTok's storage, so a report can show what's filling it up (#70). It names folders only, never files, and hides account numbers.
 
 * **TikTok:** Pressing back on a cleared video from search or a profile no longer counts as turning Clear display off. Opening the same video again clears it like any other, and a remembered Clear display stays on (#84).

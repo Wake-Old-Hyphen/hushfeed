@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Show the progress bar vuelve a mostrar la barra en el feed Para ti, también en videos cortos (#134). En la 47.1.4 activaba la comprobación equivocada de TikTok, la que decide si un video es un anuncio, así que la barra nunca volvía mientras se reproducía un video.
+
 * **TikTok:** El informe de diagnóstico tiene una nueva sección Storage con las carpetas más grandes del almacenamiento de TikTok, así un informe puede mostrar qué lo está llenando (#70). Solo nombra carpetas, nunca archivos, y oculta los números de cuenta.
 
 * **TikTok:** Pulsar atrás en un video despejado que abriste desde la búsqueda o un perfil ya no cuenta como apagar Clear display. Si abres el mismo video otra vez, se despeja como cualquier otro, y un Clear display recordado sigue activo (#84).

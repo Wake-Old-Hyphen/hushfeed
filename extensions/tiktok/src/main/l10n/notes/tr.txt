@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Show the progress bar, Sana Özel akışında çubuğu yine gösteriyor, kısa videolarda da (#134). 47.1.4'te TikTok'un yanlış kontrolünü, yani bir videonun reklam olup olmadığına karar veren kontrolü açıyordu. Bu yüzden video oynarken çubuk hiç geri gelmiyordu.
+
 * **TikTok:** Tanılama raporunda TikTok depolamasındaki en büyük klasörleri listeleyen yeni bir Storage bölümü var. Böylece rapor, alanı neyin doldurduğunu gösterebiliyor (#70). Sadece klasör adlarını yazıyor, dosya adlarını asla, hesap numaralarını da gizliyor.
 
 * **TikTok:** Aramadan ya da bir profilden açılan temizlenmiş bir videoda geriye basmak artık Clear display'i kapatmak sayılmıyor. Aynı videoyu yeniden açınca o da diğerleri gibi temizleniyor ve hatırlanan Clear display açık kalıyor (#84).

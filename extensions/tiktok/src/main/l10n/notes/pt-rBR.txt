@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** O Show the progress bar volta a mostrar a barra no feed Para Você, inclusive em vídeos curtos (#134). Na 47.1.4 ele ligava a verificação errada do TikTok, a que decide se um vídeo é anúncio, então a barra nunca voltava enquanto o vídeo tocava.
+
 * **TikTok:** O relatório de diagnóstico tem uma nova seção Storage que lista as maiores pastas no armazenamento do TikTok, então um relatório consegue mostrar o que está enchendo ele (#70). Ela só cita pastas, nunca arquivos, e esconde números de conta.
 
 * **TikTok:** Apertar voltar em um vídeo limpo aberto pela busca ou por um perfil não conta mais como desligar o Clear display. Abrir o mesmo vídeo de novo limpa ele como qualquer outro, e um Clear display lembrado continua ligado (#84).

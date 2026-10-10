@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Show the progress bar yenidən For You lentində zolağı göstərir, qısa videolarda da (#134). 47.1.4-də o, TikTok-un səhv yoxlamasını, videonun reklam olub-olmadığını həll edən yoxlamanı işə salırdı, ona görə video oynayanda zolaq heç geri gəlmirdi.
+
 * **TikTok:** Diaqnostika hesabatında yeni Storage bölməsi var. O, TikTok yaddaşındakı ən böyük qovluqları göstərir, beləliklə hesabat yeri nəyin doldurduğunu göstərə bilir (#70). Yalnız qovluq adlarını yazır, fayl adlarını yox, hesab nömrələrini isə gizlədir.
 
 * **TikTok:** Axtarışdan və ya profildən açılmış təmizlənmiş videoda geri düyməsinə basmaq artıq Clear display-i söndürmək sayılmır. Eyni videonu yenidən açanda o da başqaları kimi təmizlənir, yadda saxlanmış Clear display isə açıq qalır (#84).
