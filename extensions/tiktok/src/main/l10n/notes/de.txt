@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Eine Sammlung oder ein anderes Raster, aus dem du ein Video öffnest, behält alle Beiträge. Hide photo posts, blockierte Wörter und die anderen Feed-Filter lassen dort also nicht mehr das falsche Video abspielen (#135). Aus einer Liste, die du geöffnet hast, wird nur Werbung entfernt.
+
+* **TikTok:** Hide the Send to row nimmt im kleinen Teilen-Menü, das ein langes Drücken öffnet, nicht mehr Report, Download und den Rest der Aktionszeile mit (#120). In diesem Menü legt TikTok beide Zeilen in einen Rahmen, und es wurde der ganze Rahmen ausgeblendet.
+
 * **TikTok:** Show the progress bar zeigt die Leiste im For You Feed wieder an, auch bei kurzen Videos (#134). Auf 47.1.4 hat es die falsche TikTok-Prüfung eingeschaltet, nämlich die, ob ein Video Werbung ist. Deshalb kam die Leiste während der Wiedergabe nie zurück.
 
 * **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt Storage mit den größten Ordnern in TikToks Speicher. So zeigt ein Bericht, was ihn füllt (#70). Er nennt nur Ordner, nie Dateien, und blendet Kontonummern aus.

@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** A collection or another grid you open a video from keeps every post in it, so Hide photo posts, blocked words and the other feed filters no longer make it play the wrong video (#135). Only ads are taken out of a list you opened.
+
+* **TikTok:** Hide the Send to row no longer takes Report, Download and the rest of the actions row with it on the small share sheet a long press opens (#120). On that sheet TikTok puts both rows in one frame, and the whole frame was being hidden.
+
 * **TikTok:** Show the progress bar shows the bar on the For You feed again, short videos included (#134). On 47.1.4 it was switching on the wrong TikTok check, one that decides whether a video is an ad, so the bar never came back while a video played.
 
 * **TikTok:** The diagnostic report has a new Storage section listing the biggest folders in TikTok's storage, so a report can show what's filling it up (#70). It names folders only, never files, and hides account numbers.

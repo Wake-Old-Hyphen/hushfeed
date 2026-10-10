@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Uma coleção ou outra grade de onde você abre um vídeo mantém todas as publicações, então o Hide photo posts, as palavras bloqueadas e os outros filtros do feed não fazem mais tocar o vídeo errado (#135). De uma lista que você abriu, só os anúncios são tirados.
+
+* **TikTok:** O Hide the Send to row não leva mais junto Report, Download e o resto da fileira de ações na folha de compartilhar pequena que abre com um toque longo (#120). Nessa folha o TikTok coloca as duas fileiras no mesmo quadro, e o quadro inteiro estava sendo escondido.
+
 * **TikTok:** O Show the progress bar volta a mostrar a barra no feed Para Você, inclusive em vídeos curtos (#134). Na 47.1.4 ele ligava a verificação errada do TikTok, a que decide se um vídeo é anúncio, então a barra nunca voltava enquanto o vídeo tocava.
 
 * **TikTok:** O relatório de diagnóstico tem uma nova seção Storage que lista as maiores pastas no armazenamento do TikTok, então um relatório consegue mostrar o que está enchendo ele (#70). Ela só cita pastas, nunca arquivos, e esconde números de conta.

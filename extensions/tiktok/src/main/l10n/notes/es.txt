@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Una colección u otra cuadrícula desde la que abres un video conserva todas sus publicaciones, así que Hide photo posts, las palabras bloqueadas y los demás filtros del feed ya no hacen que se reproduzca el video equivocado (#135). De una lista que abriste solo se quitan los anuncios.
+
+* **TikTok:** Hide the Send to row ya no se lleva Report, Download y el resto de la fila de acciones en la hoja de compartir pequeña que abre una pulsación larga (#120). En esa hoja TikTok pone las dos filas en un mismo marco, y se estaba ocultando el marco entero.
+
 * **TikTok:** Show the progress bar vuelve a mostrar la barra en el feed Para ti, también en videos cortos (#134). En la 47.1.4 activaba la comprobación equivocada de TikTok, la que decide si un video es un anuncio, así que la barra nunca volvía mientras se reproducía un video.
 
 * **TikTok:** El informe de diagnóstico tiene una nueva sección Storage con las carpetas más grandes del almacenamiento de TikTok, así un informe puede mostrar qué lo está llenando (#70). Solo nombra carpetas, nunca archivos, y oculta los números de cuenta.

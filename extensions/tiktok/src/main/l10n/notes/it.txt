@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Una raccolta o un'altra griglia da cui apri un video tiene tutti i suoi post, quindi Hide photo posts, le parole bloccate e gli altri filtri del feed non fanno più partire il video sbagliato (#135). Da un elenco che hai aperto vengono tolte solo le pubblicità.
+
+* **TikTok:** Hide the Send to row non si porta più via Report, Download e il resto della riga delle azioni nel piccolo menu di condivisione che si apre con una pressione prolungata (#120). In quel menu TikTok mette le due righe nello stesso riquadro, e veniva nascosto l'intero riquadro.
+
 * **TikTok:** Show the progress bar mostra di nuovo la barra nel feed Per te, anche sui video brevi (#134). Sulla 47.1.4 attivava il controllo sbagliato di TikTok, quello che decide se un video è una pubblicità, quindi la barra non tornava mai mentre il video era in riproduzione.
 
 * **TikTok:** Il report diagnostico ha una nuova sezione Storage con le cartelle più grandi nella memoria di TikTok, così un report può mostrare cosa la sta riempiendo (#70). Nomina solo le cartelle, mai i file, e nasconde i numeri degli account.

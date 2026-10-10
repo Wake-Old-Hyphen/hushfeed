@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Koleksi atau grid lain tempat kamu membuka video tetap menyimpan semua postingannya, jadi Hide photo posts, kata yang diblokir, dan filter feed lainnya tidak lagi membuat video yang salah diputar (#135). Dari daftar yang kamu buka, hanya iklan yang dibuang.
+
+* **TikTok:** Hide the Send to row tidak lagi ikut menyembunyikan Report, Download, dan baris aksi lainnya di lembar bagikan kecil yang terbuka saat tekan lama (#120). Di lembar itu TikTok menaruh kedua baris dalam satu bingkai, dan seluruh bingkainya ikut disembunyikan.
+
 * **TikTok:** Show the progress bar kembali menampilkan bilah di feed For You, termasuk untuk video pendek (#134). Di 47.1.4 patch ini menyalakan pemeriksaan TikTok yang salah, yaitu yang menentukan apakah sebuah video itu iklan, jadi bilahnya tidak pernah muncul lagi saat video diputar.
 
 * **TikTok:** Laporan diagnostik punya bagian Storage baru yang menampilkan folder terbesar di penyimpanan TikTok, jadi laporan bisa menunjukkan apa yang membuatnya penuh (#70). Bagian ini hanya menyebut nama folder, tidak pernah nama file, dan menyembunyikan nomor akun.
