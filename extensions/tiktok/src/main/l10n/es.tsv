@@ -602,6 +602,10 @@ Hide the track name beside the caption.	Ocultar el nombre de la pista junto a la
 Hide the status bar	Ocultar la barra de estado
 Hide stories from the feed.	Ocultar historias del feed.
 Hide the whole column on the right, from the avatar down to the music disc.	Ocultar toda la columna derecha, desde la foto hasta el disco de música.
+Spin the music disc	Hacer girar el disco de música
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Hacer girar el disco de música al final de la columna derecha mientras se reproduce un video, como lo hacía TikTok antes.
+Keep the music disc still	Mantener quieto el disco de música
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	Mantener quieto el disco de música al final de la columna derecha, aunque TikTok lo haga girar. Tiene prioridad sobre Hacer girar el disco de música.
 Hide this creator on this phone	Ocultar a este creador en este dispositivo
 Hide verified accounts	Ocultar las cuentas verificadas
 Hide video actions	Ocultar las acciones del vídeo

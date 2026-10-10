@@ -662,6 +662,10 @@ Hide the track name beside the caption.	Скрывать название ком
 Hide the status bar	Скрывать строку состояния
 Hide stories from the feed.	Скрывать истории из ленты.
 Hide the whole column on the right, from the avatar down to the music disc.	Скрывать всю колонку справа, от аватара до музыкального диска.
+Spin the music disc	Вращать музыкальный диск
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Вращать музыкальный диск внизу правой колонки, пока идёт видео, как TikTok делал раньше.
+Keep the music disc still	Держать музыкальный диск неподвижным
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	Держать музыкальный диск внизу правой колонки неподвижным, даже если TikTok его вращает. Это важнее, чем «Вращать музыкальный диск».
 Hide this creator on this phone	Скрывать этого автора на этом телефоне
 Hide verified accounts	Скрывать верифицированные аккаунты
 Hide video actions	Скрывать действия под видео

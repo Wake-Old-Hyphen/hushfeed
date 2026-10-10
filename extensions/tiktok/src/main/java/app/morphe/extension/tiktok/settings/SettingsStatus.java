@@ -549,6 +549,14 @@ public class SettingsStatus {
         footnotesEnabled = true;
     }
 
+    /** Hide video overlays found the music disc's two animation settings on this build and hooked them (#68). */
+    public static boolean musicDiscSpinEnabled = false;
+
+    public static void enableMusicDiscSpin() {
+        musicDiscSpinEnabled = true;
+        app.morphe.extension.tiktok.feed.MusicDiscSpin.installed();
+    }
+
     /** Hide inbox items found the group chat banner's update on this build and hooked it. */
     public static boolean groupChatBannerEnabled = false;
 

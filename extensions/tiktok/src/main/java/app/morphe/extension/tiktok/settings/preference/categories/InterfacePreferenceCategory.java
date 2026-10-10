@@ -91,6 +91,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
 
     private void addRightColumn(Context context) {
         boolean any = SettingsStatus.videoOverlaysEnabled
+                || SettingsStatus.musicDiscSpinEnabled
                 || SettingsStatus.hideFeedFollowButtonEnabled
                 || SettingsStatus.hideFeedSaveButtonEnabled
                 || SettingsStatus.exactCountsEnabled
@@ -125,6 +126,21 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new ChoicePreference(context, "Feed button size", Settings.TOUCH_TARGET_SCALE,
                     new String[]{"Normal", "Larger (1.25x)"},
                     new String[]{"1", "1.25"}));
+        }
+        // TikTok 47.1.4 holds the disc still by default (#68); these answer the setting that does.
+        if (SettingsStatus.musicDiscSpinEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Spin the music disc",
+                    "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
+                    Settings.SPIN_MUSIC_DISC
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep the music disc still",
+                    "Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.",
+                    Settings.STOP_MUSIC_DISC_SPIN
+            ));
         }
         if (SettingsStatus.hideFeedFollowButtonEnabled) {
             addPreference(new TogglePreference(

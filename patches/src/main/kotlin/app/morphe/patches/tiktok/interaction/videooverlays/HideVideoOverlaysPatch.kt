@@ -49,8 +49,9 @@ private const val PATCH_NAME = "Hide video overlays"
 val hideVideoOverlaysPatch = bytecodePatch(
     name = "Hide video overlays",
     description = "Lets you hide clutter over videos, like the caption, the music line, " +
-        "buttons on the right, surveys and location labels, so you see more of the video. Each " +
-        "has its own switch. Starts off. Turn it on in Hushfeed settings > Feed screen.",
+        "buttons on the right, surveys and location labels, so you see more of the video. It can " +
+        "also make the music disc spin again or keep it still. Each has its own switch. Starts " +
+        "off. Turn it on in Hushfeed settings > Feed screen.",
 ) {
     category("Feed")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -77,6 +78,15 @@ val hideVideoOverlaysPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out Hide Footnotes on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
+        // holds both reads, left out with a note anywhere else.
+        val musicDiscReads = try {
+            MusicAnimationCloseFingerprint.method to MusicCoverRotationDurationFingerprint.method
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out the music disc switches on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         // A missing new control must not leave an otherwise failed patch partly applied.
         controls()
         badgeList()
@@ -97,6 +107,17 @@ val hideVideoOverlaysPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFootnotes()V",
+            )
+        }
+        // The music disc. 47.1.4 ships music_animation_close_exp at 3, which keeps the disc from
+        // turning; each lazy read hands its value to MusicDiscSpin before boxing it, and with both
+        // switches off the value goes through as TikTok read it.
+        if (musicDiscReads != null) {
+            musicDiscReads.first.answerMusicDiscSetting(PATCH_NAME, "closeSetting")
+            musicDiscReads.second.answerMusicDiscSetting(PATCH_NAME, "rotationSeconds")
+            status.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMusicDiscSpin()V",
             )
         }
         status.addInstruction(

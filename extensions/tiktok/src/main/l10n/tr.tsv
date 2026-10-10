@@ -630,6 +630,10 @@ Hide the share prompt after a like	Beğeniden sonra çıkan paylaşım istemini 
 Hide the track name beside the caption.	Açıklamanın yanındaki parça adını gizle.
 Hide the status bar	Durum çubuğunu gizle
 Hide the whole column on the right, from the avatar down to the music disc.	Avatardan müzik diskine kadar sağdaki tüm sütunu gizle.
+Spin the music disc	Müzik diskini döndür
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Video oynarken sağ sütunun altındaki müzik diskini TikTok'un eskiden yaptığı gibi döndür.
+Keep the music disc still	Müzik diskini sabit tut
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	TikTok döndürse bile sağ sütunun altındaki müzik diskini sabit tut. Bu, Müzik diskini döndür ayarından önce gelir.
 Hide this creator on this phone	Bu içerik üreticisini bu telefonda gizle
 Hide verified accounts	Doğrulanmış hesapları gizle
 Hide video actions	Video eylemlerini gizle

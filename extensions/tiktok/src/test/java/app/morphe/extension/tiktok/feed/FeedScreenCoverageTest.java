@@ -128,6 +128,10 @@ public class FeedScreenCoverageTest {
         }
         put("hide_feed_action_bar", YES, YES, NONE);
         put("touch_target_scale", YES, YES, NONE);
+        // The disc's turn hangs on two AB settings read once per launch, which the cover assem
+        // of every cell asks, in either window (#68).
+        put("spin_music_disc", YES, YES, NONE);
+        put("stop_music_disc_spin", YES, YES, NONE);
         put("hide_feed_follow_button", YES, YES, NONE);
         put("hide_feed_save_button", YES, YES, NONE);
         // Formatters and model getters every screen reads; whether a LIVE room reads them too

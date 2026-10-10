@@ -605,6 +605,10 @@ Hide the track name beside the caption.	Den Titelnamen neben der Beschreibung au
 Hide the status bar	Statusleiste ausblenden
 Hide stories from the feed.	Storys aus dem Feed ausblenden.
 Hide the whole column on the right, from the avatar down to the music disc.	Die ganze rechte Spalte ausblenden, vom Avatar bis zur Musikscheibe.
+Spin the music disc	Musikscheibe drehen lassen
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Die Musikscheibe unten in der rechten Spalte drehen lassen, während ein Video läuft, so wie TikTok es früher tat.
+Keep the music disc still	Musikscheibe stillhalten
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	Die Musikscheibe unten in der rechten Spalte stillhalten, auch wenn TikTok sie dreht. Das hat Vorrang vor Musikscheibe drehen lassen.
 Hide this creator on this phone	Diesen Creator auf diesem Gerät ausblenden
 Hide verified accounts	Verifizierte Konten ausblenden
 Hide video actions	Videoaktionen ausblenden

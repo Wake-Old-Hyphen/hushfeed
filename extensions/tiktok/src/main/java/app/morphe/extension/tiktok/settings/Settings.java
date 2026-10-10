@@ -709,6 +709,14 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_RAIL_MUSIC = new BooleanSetting("hide_rail_music", FALSE);
     public static final BooleanSetting HIDE_RAIL_SHARE = new BooleanSetting("hide_rail_share", FALSE);
     public static final BooleanSetting HIDE_RAIL_COUNTS = new BooleanSetting("hide_rail_counts", FALSE);
+    /**
+     * Whether the music disc turns (#68, MusicDiscSpin). TikTok reads the two settings behind it
+     * once per launch, so both take a restart. Holding it still is declared first because Spin
+     * names it as the switch that overrides it.
+     */
+    public static final BooleanSetting STOP_MUSIC_DISC_SPIN = new BooleanSetting("stop_music_disc_spin", FALSE, true);
+    public static final BooleanSetting SPIN_MUSIC_DISC = new BooleanSetting("spin_music_disc", FALSE, true,
+            Setting.parentNot(STOP_MUSIC_DISC_SPIN));
     public static final BooleanSetting HIDE_STATUS_BAR = new BooleanSetting("hide_status_bar", FALSE);
     /** LIVE rooms are an activity of their own, which Hide the status bar never reached (#38). */
     public static final BooleanSetting HIDE_STATUS_BAR_IN_LIVE = new BooleanSetting("hide_status_bar_in_live", FALSE);
