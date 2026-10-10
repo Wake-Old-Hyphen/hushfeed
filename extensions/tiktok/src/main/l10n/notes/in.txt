@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Piringan musik bisa berputar lagi. TikTok 47.1.4 membuatnya diam sejak awal, jadi Layar feed sekarang punya Putar piringan musik, dan Biarkan piringan musik diam kalau kamu tidak ingin piringan itu berputar sama sekali. Keduanya perlu mulai ulang (#68).
+
+* **TikTok:** Tampilkan bilah progres punya dua tombol baru di Pemutaran, keduanya mati di awal. Tampilkan waktu di samping bilah progres menambahkan waktu yang sudah diputar dan durasi video di ujung bilah, dan Pegangan bilah progres lebih besar menggambar pegangan yang lebih besar di garis yang sedikit lebih tebal (#90).
+
 * **TikTok:** Dengan Sembunyikan kontrol Tampilan bersih aktif, garis pemuatan TikTok, bilah tipis yang memanjang dari tengah di tepi bawah video saat memuat, sekarang ikut hilang selama layar bersih (#84).
 
 * **TikTok:** Tombol baru Tombol terjemahkan di komentar di bagian Komentar menampilkan tombol terjemahan milik TikTok sendiri di samping jumlah komentar. Sekali ketuk menerjemahkan semua komentar dan balasan, ketukan berikutnya mengembalikan teks aslinya (#85). Awalnya mati.

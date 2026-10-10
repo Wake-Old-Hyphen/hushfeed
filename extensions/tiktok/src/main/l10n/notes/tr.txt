@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Müzik diski yeniden dönebiliyor. TikTok 47.1.4 onu baştan sabit tutuyor, bu yüzden Akış ekranı artık Müzik diskini döndür seçeneğine sahip, hiç dönmesini istemiyorsanız Müzik diskini sabit tut da var. İkisi de yeniden başlatma gerektiriyor (#68).
+
+* **TikTok:** İlerleme çubuğunu göster için Oynatma altında iki yeni anahtar var, ikisi de başta kapalı. Süreyi ilerleme çubuğunun yanında göster, çubuğun sonuna oynatılan süreyi ve videonun uzunluğunu ekliyor, Daha büyük ilerleme çubuğu tutamacı ise biraz daha kalın bir çizgi üzerinde daha büyük bir tutamaç çiziyor (#90).
+
 * **TikTok:** Temiz ekran kontrollerini gizle açıkken TikTok'un yükleme çizgisi, video yüklenirken alt kenar boyunca ortadan büyüyen ince çubuk, artık ekran temizken o da kayboluyor (#84).
 
 * **TikTok:** Yorumlar altındaki yeni Yorumlarda çeviri düğmesi anahtarı, TikTok'un kendi çeviri düğmesini yorum sayısının yanında gösteriyor. Bir dokunuş tüm yorumları ve yanıtları çeviriyor, bir dokunuş daha orijinalleri geri getiriyor (#85). Başta kapalı.

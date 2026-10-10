@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Die Musikscheibe kann sich wieder drehen. TikTok 47.1.4 hält sie von Haus aus still, deshalb gibt es in der Feed-Ansicht jetzt Musikscheibe drehen lassen, und Musikscheibe stillhalten, falls sie sich nie drehen soll. Beide brauchen einen Neustart (#68).
+
+* **TikTok:** Fortschrittsbalken anzeigen hat zwei neue Schalter unter Wiedergabe, beide anfangs aus. Zeit neben dem Fortschrittsbalken anzeigen setzt die abgespielte Zeit und die Länge des Videos ans Ende des Balkens, und Größerer Griff am Fortschrittsbalken zeichnet einen größeren Griff auf einer etwas dickeren Linie (#90).
+
 * **TikTok:** Mit Steuerelemente der freien Ansicht ausblenden verschwindet jetzt auch TikToks Ladelinie, der dünne Balken, der beim Puffern von der Mitte aus am unteren Rand eines Videos wächst, solange der Bildschirm frei ist (#84).
 
 * **TikTok:** Der neue Schalter Übersetzen-Schaltfläche in Kommentaren unter Kommentare zeigt TikToks eigene Übersetzen-Schaltfläche neben der Kommentaranzahl. Ein Tippen übersetzt alle Kommentare und Antworten, ein weiteres holt die Originale zurück (#85). Er ist anfangs aus.

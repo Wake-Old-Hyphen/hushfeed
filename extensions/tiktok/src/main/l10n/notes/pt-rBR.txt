@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** O disco de música pode girar de novo. O TikTok 47.1.4 já vem com ele parado, então Tela do feed agora tem Girar o disco de música, e Manter o disco de música parado se você preferir que ele nunca gire. Os dois precisam reiniciar o app (#68).
+
+* **TikTok:** Mostrar a barra de progresso ganhou duas chaves novas em Reprodução, as duas desligadas no começo. Mostrar o tempo ao lado da barra de progresso põe o tempo assistido e a duração do vídeo no fim da barra, e Marcador maior na barra de progresso desenha um marcador maior numa linha um pouco mais grossa (#90).
+
 * **TikTok:** Com Esconder os controles da tela limpa ligado, a linha de carregamento do TikTok, a barra fina que cresce do meio ao longo da borda de baixo de um vídeo enquanto ele carrega, agora também some enquanto a tela está limpa (#84).
 
 * **TikTok:** A nova chave Botão de traduzir nos comentários, em Comentários, mostra o próprio botão de traduzir do TikTok ao lado da contagem de comentários. Um toque traduz todos os comentários e respostas, e outro traz os originais de volta (#85). Ela começa desligada.

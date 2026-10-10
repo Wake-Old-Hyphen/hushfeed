@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Il disco musicale può girare di nuovo. TikTok 47.1.4 lo tiene fermo di serie, quindi in Schermata del feed ora c'è Fai girare il disco musicale, e Tieni fermo il disco musicale se preferisci che non giri mai. Entrambi richiedono un riavvio (#68).
+
+* **TikTok:** Mostra la barra di avanzamento ha due nuovi interruttori in Riproduzione, entrambi spenti all'inizio. Mostra il tempo accanto alla barra di avanzamento aggiunge il tempo riprodotto e la durata del video alla fine della barra, e Cursore più grande nella barra di avanzamento disegna un cursore più grande su una linea un po' più spessa (#90).
+
 * **TikTok:** Con Nascondi i controlli della vista pulita attivo, ora sparisce anche la linea di caricamento di TikTok, la barra sottile che cresce dal centro lungo il bordo inferiore di un video mentre si carica, finché lo schermo è pulito (#84).
 
 * **TikTok:** Il nuovo interruttore Pulsante Traduci nei commenti, in Commenti, mostra il pulsante di traduzione di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti e le risposte, un altro riporta gli originali (#85). Parte spento.

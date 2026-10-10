@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** El disco de música puede volver a girar. TikTok 47.1.4 lo deja quieto de fábrica, así que Pantalla del feed ahora tiene Hacer girar el disco de música, y Mantener quieto el disco de música si prefieres que nunca gire. Los dos necesitan reiniciar (#68).
+
+* **TikTok:** Mostrar la barra de progreso tiene dos interruptores nuevos en Reproducción, los dos desactivados al principio. Mostrar el tiempo junto a la barra de progreso añade el tiempo reproducido y la duración del video al final de la barra, y Control más grande en la barra de progreso dibuja un control más grande sobre una línea un poco más gruesa (#90).
+
 * **TikTok:** Con Ocultar también los controles que quedan en Controles ocultos activado, la línea de carga de TikTok, la barra fina que crece desde el centro en el borde inferior de un video mientras carga, ahora también se va mientras la pantalla está despejada (#84).
 
 * **TikTok:** El nuevo interruptor Botón de traducir en los comentarios, en Comentarios, muestra el propio botón de traducir de TikTok junto al número de comentarios. Un toque traduce todos los comentarios y respuestas, y otro devuelve los originales (#85). Empieza desactivado.

@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** The music disc can spin again. TikTok 47.1.4 keeps it still out of the box, so Feed screen now has Spin the music disc, and Keep the music disc still if you'd rather it never turns. Both need a restart (#68).
+
+* **TikTok:** Show the progress bar has two new switches under Playback, both off at first. Show the time beside the progress bar adds the time played and the video's length at the end of the bar, and Bigger progress bar handle draws a larger handle on a slightly thicker line (#90).
+
 * **TikTok:** With Hide the Clear display controls on, TikTok's loading line, the thin bar that grows from the middle along the bottom of a video while it buffers, now goes too while the screen is cleared (#84).
 
 * **TikTok:** A new Translate button in comments switch under Comments shows TikTok's own translate button next to the comment count. One tap translates every comment and reply, and another brings the originals back (#85). It starts off.

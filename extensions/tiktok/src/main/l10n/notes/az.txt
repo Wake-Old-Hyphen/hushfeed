@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Musiqi diski yenidən fırlana bilər. TikTok 47.1.4 onu əvvəlcədən sabit saxlayır, ona görə Lent ekranında indi Musiqi diskini fırladın var, heç fırlanmasını istəmirsinizsə Musiqi diskini sabit saxlayın da var. İkisi də yenidən başlatma tələb edir (#68).
+
+* **TikTok:** İrəliləyiş panelini göstərin üçün Oxutma bölməsində iki yeni açar var, ikisi də əvvəlcə söndürülüb. İrəliləyiş panelinin yanında vaxtı göstərin panelin sonuna oxudulan vaxtı və videonun uzunluğunu əlavə edir, Daha böyük irəliləyiş paneli tutacağı isə bir az qalın xətt üzərində daha böyük tutacaq çəkir (#90).
+
 * **TikTok:** Təmiz ekran idarəetmələrini gizlədin açıq olanda TikTok-un yüklənmə xətti, video yüklənərkən aşağı kənar boyunca ortadan böyüyən nazik zolaq, ekran təmizlənəndə artıq o da gizlənir (#84).
 
 * **TikTok:** Şərhlər bölməsindəki yeni Şərhlərdə tərcümə düyməsi açarı TikTok-un öz tərcümə düyməsini şərh sayının yanında göstərir. Bir toxunuş bütün şərhləri və cavabları tərcümə edir, ikincisi isə orijinalları geri qaytarır (#85). Açar əvvəlcə söndürülüb.
