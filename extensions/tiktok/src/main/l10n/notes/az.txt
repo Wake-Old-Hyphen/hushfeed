@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** İki dəfə toxunma Hushfeed-in hərəkətlərindən birinə qoyulubsa, barmağın bir az çox qaldığı ikinci toxunuş artıq TikTok-un uzun basma menyusunu da açmır, yəni paylaşım paneli şərhlərin üstündə açılmır. (#63)
+
+* **TikTok:** LIVE idarəetmələri üçün Hushfeed ayarları > Oxutma altında üçüncü açar var, Hər LIVE otağında keyfiyyət seçimi təklif et. TikTok LIVE menyusunda Video keyfiyyəti seçimini yalnız yayım bunu istədikdə və ya TikTok hesabın üçün yeni keyfiyyət seçicisini açdıqda göstərir, ona görə bəzi otaqlarda keyfiyyət seçmək mümkün deyildi. Açar açıq olanda belə otaqlar yeni seçicini alır, növbəti otaq isə TikTok bağlanana qədər sonuncu seçdiyin keyfiyyətdə açılır. Standart olaraq bağlıdır. (#57)
+
+* **TikTok:** Profil şəbəkəsində tarixləri göstərin və İştirak dərəcəsini göstərin indi TikTok 47.1.4-ün şəbəkələrində işləyir, həm profilin videolarında, həm də Sevimlilərdə və bəyənilən videolarda. Bu versiya hər xananın baxış sayını patçın çatmadığı yerdə yazır, ona görə orada nə tarix, nə də dərəcə görünürdü.
 
 * **TikTok:** Bloklanmış yaradıcılar, bloklanmış sözlər, baxış və bəyənmə aralıqları və LIVE videoları gizlədin, Hekayələri gizlədin kimi açarlar indi İzlədiklərim tabında da işləyir. TikTok 47.1.4-də o tabdan yalnız reklamlar və məkan nişanlı videolar çıxırdı, ona görə blokladığınız yaradıcı orada yenə görünə bilirdi.
 

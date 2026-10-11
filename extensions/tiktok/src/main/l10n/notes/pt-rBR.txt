@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** Com Toque duplo em uma das ações do Hushfeed, um segundo toque em que o dedo fica um pouco demais não abre mais junto o menu de toque longo do TikTok, então o painel de compartilhar não aparece mais por cima dos comentários. (#63)
+
+* **TikTok:** Controles de LIVE tem uma terceira chave, Oferecer a qualidade da LIVE em todas as salas, em Configurações do Hushfeed > Reprodução. O TikTok só oferece Qualidade do vídeo no menu de uma LIVE quando a transmissão pede ou quando o TikTok liga o seletor de qualidade mais novo para a sua conta, então em algumas salas não dava para escolher. Com a chave ligada, as salas sem ele ganham o seletor novo, e a próxima sala abre na última qualidade que você escolheu até o TikTok ser fechado. Vem desligada. (#57)
+
+* **TikTok:** Mostrar datas na grade do perfil e Mostrar taxa de engajamento agora funcionam nas grades do TikTok 47.1.4, tanto nos vídeos de um perfil quanto nos Favoritos e nos vídeos curtidos. Essa versão escreve as visualizações de cada quadro num lugar que o patch não alcançava, então nem a data nem a taxa apareciam ali.
 
 * **TikTok:** Criadores bloqueados, palavras bloqueadas, as faixas de visualizações e curtidas e chaves como Esconder os vídeos LIVE e Esconder os stories agora também valem na aba Seguindo. No TikTok 47.1.4 essa aba só perdia os anúncios e os vídeos com local, então um criador que você bloqueou ainda podia aparecer ali.
 

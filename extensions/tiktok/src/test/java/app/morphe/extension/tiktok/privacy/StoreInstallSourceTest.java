@@ -68,17 +68,28 @@ public class StoreInstallSourceTest {
         assertNull(StoreInstallSource.originatingOf(info));
     }
 
-    /** From Android 11 TikTok asks here first, so Log diagnostics has to name the store from here too. */
+    /**
+     * From Android 11 TikTok asks here first, so Log diagnostics has to name the store from here
+     * too, whichever of the two reads TikTok makes. Each one logs on its own, once per store.
+     */
     @Test public void anAnsweredInstallSourceReadIsLoggedByStore() throws Exception {
-        StoreIdentity.loggedInstaller = null;
-        ShadowLog.clear();
         Settings.STORE_IDENTITY_INSTALLER.save("com.sec.android.app.samsungapps");
         BaseSettings.DEBUG.save(true);
         try {
             InstallSourceInfo info = StoreInstallSource.sourceFor(pm, ownPackage);
+            StoreIdentity.loggedInstaller = null;
+            ShadowLog.clear();
+            StoreInstallSource.installingOf(info);
+            assertEquals("the installer read", Arrays.asList("com.sec.android.app.samsungapps"), StoreIdentityTest.answersLogged());
+
+            StoreIdentity.loggedInstaller = null;
+            ShadowLog.clear();
+            StoreInstallSource.initiatingOf(info);
+            assertEquals("the initiator read", Arrays.asList("com.sec.android.app.samsungapps"), StoreIdentityTest.answersLogged());
+
             StoreInstallSource.installingOf(info);
             StoreInstallSource.initiatingOf(info);
-            assertEquals(Arrays.asList("com.sec.android.app.samsungapps"), StoreIdentityTest.answersLogged());
+            assertEquals("once per store", Arrays.asList("com.sec.android.app.samsungapps"), StoreIdentityTest.answersLogged());
         } finally {
             BaseSettings.DEBUG.save(false);
             StoreIdentity.loggedInstaller = null;

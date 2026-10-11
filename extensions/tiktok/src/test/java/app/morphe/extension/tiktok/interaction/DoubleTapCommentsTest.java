@@ -112,6 +112,7 @@ public class DoubleTapCommentsTest {
     }
 
     @After public void tearDown() {
+        GestureActions.forgetDoubleTaps();
         HookStatus.clear();
     }
 

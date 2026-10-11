@@ -4,6 +4,14 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** With Double tap set to one of Hushfeed's actions, a second tap your finger stays on a moment too long no longer brings up TikTok's long press menu as well, so the share panel stops opening on top of the comments. (#63)
+
+* **TikTok:** LIVE controls has a third switch, Offer LIVE quality in every room, under Hushfeed settings > Playback. TikTok offers Video quality in a LIVE's menu only when the stream asks for it or TikTok turns its newer quality picker on for your account, so in some rooms there was no way to pick one. With the switch on, rooms without it get the newer picker, and the next room opens at the quality you picked last until TikTok closes. It's off by default. (#57)
+
+* **TikTok:** Show dates on profile grids and Show engagement rate work on TikTok 47.1.4's grids now, on a profile's videos and on Favorites and liked videos too. That version sets each cell's view count in a place the patch didn't reach, so neither the date nor the rate showed up there.
+
 * **TikTok:** Blocked creators, blocked words, the view and like ranges and switches like Hide LIVE videos and Hide stories now work on the Following tab too. On TikTok 47.1.4 that tab only lost its ads and place-tagged videos, so a creator you'd blocked could still turn up there.
 
 * **TikTok:** A word that isn't a language code in Don't auto translate these languages now gets a plain "isn't a language code" message. It used to warn that no video would ever match, which is the caption language filter's warning and doesn't fit a list that only keeps text untranslated (#121).

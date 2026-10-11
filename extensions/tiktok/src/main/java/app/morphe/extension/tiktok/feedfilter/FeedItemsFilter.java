@@ -1457,9 +1457,10 @@ public final class FeedItemsFilter {
         }
         // Never restore ads, blocked creators/words, seen videos, or other hard rejects. (A video a
         // link opened was kept above, before any rule could take it out.) Not on the Following
-        // read either: that list grows under the video playing, so one put back now would go
-        // again the moment a video that passes arrives, from under the player.
-        if (rangeKept.isEmpty() && qualityFallback != null && phase == FilterPhase.RESPONSE) {
+        // tab either, on its response or its reads: that list grows under the video playing, so
+        // one put back would go again the moment a video that passes arrives, from under the player.
+        if (rangeKept.isEmpty() && qualityFallback != null && phase == FilterPhase.RESPONSE
+            && !(owner instanceof FollowFeedList)) {
             if (capture != null) {
                 capture.putBack(extractor.extract(qualityFallback), "QualityFilter", "closest-to-quality-rule");
             }

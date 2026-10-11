@@ -498,6 +498,12 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SHOW_EXACT_LIVE_VIEWERS = new BooleanSetting("show_exact_live_viewers", FALSE);
     /**
+     * Offers TikTok's quality picker in every LIVE room and carries the last pick to the next
+     * room; the LIVE controls patch. Read when a room builds its menu and picks its starting
+     * quality, so the next room follows a change.
+     */
+    public static final BooleanSetting OFFER_LIVE_QUALITY = new BooleanSetting("offer_live_quality", FALSE);
+    /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
      */

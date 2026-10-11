@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** Con Doble toque en una de las acciones de Hushfeed, un segundo toque en el que el dedo se queda un momento de más ya no abre también el menú de pulsación larga de TikTok, así que el panel de compartir ya no aparece encima de los comentarios. (#63)
+
+* **TikTok:** Controles de LIVE tiene un tercer interruptor, Ofrecer la calidad de LIVE en todas las salas, en Ajustes de Hushfeed > Reproducción. TikTok solo ofrece Calidad de video en el menú de un LIVE cuando la transmisión lo pide o cuando TikTok activa su selector de calidad más nuevo para tu cuenta, así que en algunas salas no había forma de elegirla. Con el interruptor activado, las salas sin él reciben el selector nuevo, y la siguiente sala se abre con la última calidad que elegiste hasta que cierres TikTok. Viene desactivado. (#57)
+
+* **TikTok:** Mostrar fechas en la cuadrícula del perfil y Mostrar la tasa de interacción ya funcionan en las cuadrículas de TikTok 47.1.4, tanto en los vídeos de un perfil como en Favoritos y en los vídeos que te gustan. Esa versión pone las vistas de cada celda en un sitio al que el parche no llegaba, así que ni la fecha ni la tasa aparecían ahí.
 
 * **TikTok:** Los creadores bloqueados, las palabras bloqueadas, los rangos de vistas y me gusta e interruptores como Ocultar los vídeos LIVE y Ocultar las historias ahora también funcionan en la pestaña Siguiendo. En TikTok 47.1.4 esa pestaña solo perdía los anuncios y los vídeos con ubicación, así que un creador que habías bloqueado podía seguir apareciendo ahí.
 

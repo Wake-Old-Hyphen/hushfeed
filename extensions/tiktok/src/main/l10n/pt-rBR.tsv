@@ -1713,6 +1713,8 @@ Play the audio on videos TikTok silenced because their sound was pulled for copy
 Match region fields in requests	Igualar os campos de região nas solicitações
 Show exact LIVE viewer counts	Mostrar o número exato de espectadores da LIVE
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Uma sala de LIVE mostra quantas pessoas estão assistindo com um número arredondado, como 1,2K. Isso mostra o número exato.
+Offer LIVE quality in every room	Oferecer a qualidade da LIVE em todas as salas
+TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.	O TikTok só deixa escolher a qualidade de uma LIVE em algumas salas. Isso adiciona Qualidade do vídeo ao menu de todas as salas, e a próxima sala abre na última qualidade que você escolheu.
 Keep watching in a small window	Continuar assistindo em uma janela pequena
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Quando você sai do TikTok com um vídeo tocando, ele continua em uma janela pequena sobre seus outros apps, com um botão para pausar. Funciona no feed e em vídeos abertos de um perfil, da busca ou de um som. Requer Android 8 ou mais recente.
 Play	Reproduzir

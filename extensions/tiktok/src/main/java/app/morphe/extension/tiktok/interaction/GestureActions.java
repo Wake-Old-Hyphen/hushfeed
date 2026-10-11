@@ -9,9 +9,11 @@ package app.morphe.extension.tiktok.interaction;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
@@ -108,6 +110,10 @@ public final class GestureActions {
             answeredTapDown = event.getDownTime();
             answeredTapAt = event.getEventTime();
             answeredTap = answer;
+            if (answer) {
+                tookTapFrom = event.getDownTime();
+                tookTapAt = SystemClock.uptimeMillis();
+            }
         }
         return answer;
     }
@@ -116,6 +122,45 @@ public final class GestureActions {
     private static long answeredTapDown = Long.MIN_VALUE;
     private static long answeredTapAt = Long.MIN_VALUE;
     private static boolean answeredTap;
+
+    /**
+     * The last double tap Hushfeed took: the down time of the event it was handed and when it ran,
+     * on the uptime clock touch events use. Android's gesture detector still times a long press
+     * from a double tap's second touch, and so do TikTok's own timers, so a finger left down a
+     * moment too long also got TikTok's long press, and its share panel opened over the comments
+     * the tap had opened (#63).
+     */
+    private static long tookTapFrom = Long.MIN_VALUE;
+    private static long tookTapAt = Long.MIN_VALUE;
+
+    /** Forgets the last double taps answered and taken, for tests that share the class across runs. */
+    static void forgetDoubleTaps() {
+        answeredTapDown = Long.MIN_VALUE;
+        answeredTapAt = Long.MIN_VALUE;
+        tookTapFrom = Long.MIN_VALUE;
+        tookTapAt = Long.MIN_VALUE;
+    }
+
+    /**
+     * Whether a long press whose touch went down at {@code downTime} is the second touch of a
+     * double tap Hushfeed took. The detector hands the tap either touch's down, and either went
+     * down before the tap ran, so a touch that went down in between is the second one. A new
+     * touch goes down after.
+     */
+    static boolean isTakenDoubleTap(long downTime) {
+        return tookTapAt != Long.MIN_VALUE && downTime >= tookTapFrom && downTime <= tookTapAt;
+    }
+
+    /**
+     * The same for a press that arrives without its touch, from TikTok's own timers. They fire
+     * 350 to 500 ms after the down, and the tap ran at that down, so a press that soon after the
+     * tap is its touch. A new one needs a lift and a full hold first.
+     */
+    static boolean isTakenDoubleTap() {
+        if (tookTapAt == Long.MIN_VALUE) return false;
+        long since = SystemClock.uptimeMillis() - tookTapAt;
+        return since >= 0 && since <= Math.max(ViewConfiguration.getLongPressTimeout(), 500) + 300;
+    }
 
     /** {@link #onDoubleTap(MotionEvent)} for a tap with no event to tell it apart by. */
     public static boolean onDoubleTap() {
@@ -139,6 +184,7 @@ public final class GestureActions {
 
     /** Eligibility callback from the native edge-speedup component before its 300 ms timer. */
     public static boolean allowNativeEdgeSpeedup(float x) {
+        if (isTakenDoubleTap()) return false;
         if (edgeSeekDelta(x) != 0) return false;
         return !takesLongPress(Settings.LONG_PRESS_ACTION.get());
     }
@@ -187,14 +233,17 @@ public final class GestureActions {
 
     /**
      * Runs before TikTok's own long press handling. Returning true swallows the gesture,
-     * which is what keeps the 2x hold and the quick share sheet from also firing.
+     * which is what keeps the 2x hold and the quick share sheet from also firing. A double tap
+     * Hushfeed took keeps its second touch: the press is swallowed and nothing else runs.
      */
     public static boolean onLongPress(MotionEvent event) {
+        if (event == null ? isTakenDoubleTap() : isTakenDoubleTap(event.getDownTime())) return true;
         return handleLongPress(edgeSeekDelta(event));
     }
 
     /** Ordinary feed cells deliver the saved local DOWN x through their native timer. */
     public static boolean onLongPress(float x) {
+        if (isTakenDoubleTap()) return true;
         return handleLongPress(edgeSeekDelta(x));
     }
 

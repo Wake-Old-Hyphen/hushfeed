@@ -564,11 +564,11 @@ public class CreatorExceptionsTest {
 
     /**
      * The For You read puts back the post closest to the length rule when it hides every one.
-     * The Following read doesn't: its list grows under the video playing, so one put back would
-     * go again from under the player as soon as a post that passes arrived.
+     * The Following tab doesn't, on either pass: its list grows under the video playing, so one put
+     * back would go again from under the player as soon as a post that passes arrived.
      */
     @Test
-    public void theFollowingReadPutsNoLongVideoBack() {
+    public void theFollowingTabPutsNoLongVideoBack() {
         Settings.MAX_VIDEO_SECONDS.save(1);
         Item longOne = stranger("long");
         longOne.durationMs = 5_000;
@@ -579,6 +579,17 @@ public class CreatorExceptionsTest {
         longTwo.durationMs = 5_000;
         assertEquals(List.of(), followingSurvivors(list, longTwo));
         assertEquals(List.of("short"), followingSurvivors(list, stranger("short")));
+
+        FollowFeedList arriving = new FollowFeedList();
+        arriving.mItems = new ArrayList<>();
+        Item longThree = stranger("long-three");
+        longThree.durationMs = 5_000;
+        FollowFeed entry = new FollowFeed();
+        entry.aweme = longThree;
+        arriving.mItems.add(entry);
+        FeedItemsFilter.filter(arriving);
+        assertNoFilterThrew();
+        assertTrue("nor does the response the tab arrives in", arriving.mItems.isEmpty());
     }
 
     /**

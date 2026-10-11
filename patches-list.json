@@ -1,5 +1,5 @@
 {
-  "version": "v0.70.0",
+  "version": "v0.71.0",
   "appNames": {
     "com.zhiliaoapp.musically": "TikTok"
   },
@@ -2895,7 +2895,7 @@
     },
     {
       "name": "LIVE controls",
-      "description": "Stops a LIVE in the feed from opening by itself after a countdown, and can show a LIVE's exact viewer count instead of a rounded one. Starts off. Turn it on in Hushfeed settings > Playback.",
+      "description": "Stops a LIVE in the feed from opening by itself after a countdown, can show a LIVE's exact viewer count instead of a rounded one, and can offer a quality choice in every LIVE room. Starts off. Turn it on in Hushfeed settings > Playback.",
       "category": "Playback",
       "use": true,
       "dependencies": [

@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** Con Doppio tocco impostato su un'azione di Hushfeed, un secondo tocco in cui il dito resta giù un attimo di troppo non apre più anche il menu della pressione prolungata di TikTok, quindi il pannello di condivisione non compare più sopra i commenti. (#63)
+
+* **TikTok:** Controlli LIVE ha un terzo interruttore, Offri la qualità LIVE in ogni stanza, in Impostazioni di Hushfeed > Riproduzione. TikTok offre Qualità video nel menu di una LIVE solo quando lo chiede la diretta o quando TikTok attiva il selettore di qualità più nuovo per il tuo account, quindi in alcune stanze non si poteva sceglierla. Con l'interruttore attivo, le stanze senza ricevono il selettore nuovo, e la stanza successiva si apre con l'ultima qualità che hai scelto finché non chiudi TikTok. È spento di base. (#57)
+
+* **TikTok:** Mostra le date nella griglia del profilo e Mostra il tasso di interazione ora funzionano nelle griglie di TikTok 47.1.4, sia sui video di un profilo sia nei Preferiti e nei video che ti piacciono. Quella versione scrive le visualizzazioni di ogni riquadro in un punto che la patch non raggiungeva, quindi lì non comparivano né la data né il tasso.
 
 * **TikTok:** Creator bloccati, parole bloccate, gli intervalli di visualizzazioni e Mi piace e interruttori come Nascondi i video LIVE e Nascondi le storie ora funzionano anche nella scheda Seguiti. Su TikTok 47.1.4 quella scheda perdeva solo le pubblicità e i video con un luogo, quindi un creator che avevi bloccato poteva ancora comparire lì.
 

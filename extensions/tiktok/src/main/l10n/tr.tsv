@@ -1713,6 +1713,8 @@ Play the audio on videos TikTok silenced because their sound was pulled for copy
 Match region fields in requests	İsteklerdeki bölge alanlarını eşleştir
 Show exact LIVE viewer counts	LIVE izleyici sayısını tam göster
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Bir LIVE odası kaç kişinin izlediğini 1,2K gibi yuvarlanmış bir sayıyla gösterir. Bu, bunun yerine tam sayıyı gösterir.
+Offer LIVE quality in every room	Her LIVE odasında kalite seçimi sun
+TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.	TikTok bir LIVE'ın kalitesini yalnızca bazı odalarda seçtirir. Bu, her odanın menüsüne Video kalitesi ekler ve sonraki oda en son seçtiğin kalitede açılır.
 Keep watching in a small window	Küçük bir pencerede izlemeye devam et
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak için bir düğme bulunur. Akışta ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.
 Play	Oynat

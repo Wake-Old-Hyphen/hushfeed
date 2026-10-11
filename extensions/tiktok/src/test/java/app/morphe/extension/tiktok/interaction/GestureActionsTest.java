@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.SystemClock;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ import org.robolectric.shadows.ShadowToast;
 public class GestureActionsTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     @After public void tearDown() {
+        GestureActions.forgetDoubleTaps();
         SettingsStatus.doubleTapEnabled = false;
         SettingsStatus.longPressEnabled = false;
         SettingsStatus.videoOverlaysEnabled = false;
@@ -323,6 +325,77 @@ public class GestureActionsTest {
         } finally {
             Settings.DOUBLE_TAP_ACTION.save("default");
             Settings.LONG_PRESS_ACTION.save("default");
+        }
+    }
+
+    private static MotionEvent down(long downTime, float x) {
+        return MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, 10f, 0);
+    }
+
+    /**
+     * #63: a finger left down on a double tap's second touch got TikTok's long press as well, and
+     * its share panel opened over the comments the tap had opened. A tap Hushfeed takes keeps its
+     * touch, on the detector's long press, the native timer's and the edge speedup alike.
+     */
+    @Test public void aTakenDoubleTapKeepsItsSecondTouchFromTheLongPress() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            Settings.EDGE_SEEK.save(false);
+            Settings.LONG_PRESS_ACTION.save("copy_link");
+            Settings.DOUBLE_TAP_ACTION.save("nothing");
+            ClipboardManager clipboard =
+                    (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setPrimaryClip(ClipData.newPlainText("before", "before"));
+            ShadowToast.reset();
+            float middle = activity.getResources().getDisplayMetrics().widthPixels / 2f;
+            long second = SystemClock.uptimeMillis();
+
+            // The detector hands the tap its first touch's down, which went up 180 ms before.
+            assertTrue(GestureActions.onDoubleTap(down(second - 180, middle)));
+            assertTrue("the held touch went to TikTok", GestureActions.onLongPress(down(second, middle)));
+            assertTrue("the native timer's press went to TikTok", GestureActions.onLongPress(middle));
+            Settings.LONG_PRESS_ACTION.save("default");
+            assertTrue("TikTok's share panel opened", GestureActions.onLongPress(down(second, middle)));
+            assertFalse("the edge speedup started", GestureActions.allowNativeEdgeSpeedup(middle));
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals("the long press action ran", "before",
+                    String.valueOf(clipboard.getPrimaryClip().getItemAt(0).getText()));
+            assertNull(ShadowToast.getTextOfLatestToast());
+
+            // A new touch is a long press of its own, whether it's dated or comes from a timer.
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                    .idleFor(java.time.Duration.ofMillis(900));
+            long later = SystemClock.uptimeMillis();
+            assertFalse(GestureActions.onLongPress(down(later - 500, middle)));
+            assertFalse(GestureActions.onLongPress(middle));
+            assertTrue(GestureActions.allowNativeEdgeSpeedup(middle));
+        } finally {
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
+        }
+    }
+
+    /** TikTok's own like keeps TikTok's behavior: its double tap doesn't take the long press. */
+    @Test public void tikToksOwnDoubleTapLeavesTheLongPressAlone() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            Settings.EDGE_SEEK.save(false);
+            Settings.LONG_PRESS_ACTION.save("default");
+            Settings.DOUBLE_TAP_ACTION.save("default");
+            float middle = activity.getResources().getDisplayMetrics().widthPixels / 2f;
+            long second = SystemClock.uptimeMillis();
+
+            assertFalse(GestureActions.onDoubleTap(down(second - 180, middle)));
+            assertFalse(GestureActions.onLongPress(down(second, middle)));
+            assertFalse(GestureActions.onLongPress(middle));
+            assertTrue(GestureActions.allowNativeEdgeSpeedup(middle));
+        } finally {
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
         }
     }
 

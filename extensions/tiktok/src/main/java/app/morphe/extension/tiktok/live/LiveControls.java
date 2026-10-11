@@ -25,6 +25,16 @@ public final class LiveControls {
         return SettingsStatus.liveControlsEnabled && Settings.STOP_LIVE_AUTO_ENTER.get();
     }
 
+    /**
+     * True while every LIVE room should offer TikTok's newer quality picker and a pick should
+     * carry to the next room. TikTok's own setting for both is off unless its server turns it on,
+     * which leaves a quality pick only in rooms whose stream asks for the older one. Paused, the
+     * switch answers off and TikTok's setting decides again.
+     */
+    public static boolean offerQualityEverywhere() {
+        return SettingsStatus.liveControlsEnabled && Settings.OFFER_LIVE_QUALITY.get();
+    }
+
     private static final long NONE = -1;
     private static long pendingViewers = NONE;
 

@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** Ist Doppeltippen auf eine Aktion von Hushfeed gestellt, öffnet ein zweites Tippen, auf dem der Finger etwas zu lange bleibt, nicht mehr zusätzlich TikToks Menü für langes Drücken. Das Teilen-Feld geht also nicht mehr über den Kommentaren auf. (#63)
+
+* **TikTok:** LIVE-Steuerung hat unter Hushfeed-Einstellungen > Wiedergabe einen dritten Schalter, LIVE-Qualität in jedem Raum anbieten. TikTok bietet Videoqualität im Menü einer LIVE nur an, wenn der Stream es verlangt oder TikTok die neuere Qualitätsauswahl für dein Konto einschaltet, deshalb ließ sich in manchen Räumen keine Qualität wählen. Mit dem Schalter bekommen Räume ohne sie die neuere Auswahl, und der nächste Raum öffnet mit der zuletzt gewählten Qualität, bis TikTok geschlossen wird. Standardmäßig aus. (#57)
+
+* **TikTok:** Datum im Profilraster anzeigen und Interaktionsrate anzeigen wirken unter TikTok 47.1.4 jetzt auch in den Rastern, bei den Videos eines Profils genauso wie bei Favoriten und gelikten Videos. Diese Version setzt die Aufrufzahl einer Kachel an einer Stelle, die der Patch nicht erreicht hat, deshalb erschienen dort weder Datum noch Rate.
 
 * **TikTok:** Blockierte Creator, blockierte Wörter, die Bereiche für Aufrufe und Likes und Schalter wie LIVE-Videos ausblenden und Storys ausblenden wirken jetzt auch im Tab Folge ich. Unter TikTok 47.1.4 verschwanden dort nur Werbung und Videos mit Ortsmarke, sodass ein blockierter Creator dort trotzdem auftauchen konnte.
 

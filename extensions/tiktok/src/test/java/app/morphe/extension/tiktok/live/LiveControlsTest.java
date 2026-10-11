@@ -36,7 +36,44 @@ public class LiveControlsTest {
         SettingsStatus.liveControlsEnabled = false;
         Settings.STOP_LIVE_AUTO_ENTER.save(Settings.STOP_LIVE_AUTO_ENTER.defaultValue);
         Settings.SHOW_EXACT_LIVE_VIEWERS.save(Settings.SHOW_EXACT_LIVE_VIEWERS.defaultValue);
+        Settings.OFFER_LIVE_QUALITY.save(Settings.OFFER_LIVE_QUALITY.defaultValue);
         Locale.setDefault(savedLocale);
+    }
+
+    /** Off, TikTok's own setting decides which rooms offer a quality. */
+    @Test public void qualityOffByDefaultLeavesTikToksSetting() {
+        assertFalse(Settings.OFFER_LIVE_QUALITY.defaultValue);
+        assertFalse(LiveControls.offerQualityEverywhere());
+    }
+
+    @Test public void qualityOnOffersItEverywhere() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        assertTrue(LiveControls.offerQualityEverywhere());
+        Settings.OFFER_LIVE_QUALITY.save(false);
+        assertFalse("read at the call, so the next room follows", LiveControls.offerQualityEverywhere());
+    }
+
+    @Test public void pausedQualityLeavesTikToksSetting() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        setPaused(true);
+        assertFalse(LiveControls.offerQualityEverywhere());
+    }
+
+    @Test public void qualityDoesNothingWithoutThePatch() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse(LiveControls.offerQualityEverywhere());
+    }
+
+    @Test public void qualityIsIndependentOfTheOtherSwitches() {
+        Settings.STOP_LIVE_AUTO_ENTER.save(true);
+        Settings.SHOW_EXACT_LIVE_VIEWERS.save(true);
+        assertFalse(LiveControls.offerQualityEverywhere());
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        Settings.STOP_LIVE_AUTO_ENTER.save(false);
+        Settings.SHOW_EXACT_LIVE_VIEWERS.save(false);
+        assertTrue(LiveControls.offerQualityEverywhere());
+        assertFalse(LiveControls.skipAutoEnter());
     }
 
     @Test public void offByDefaultPreviewsCountDownAsBefore() {

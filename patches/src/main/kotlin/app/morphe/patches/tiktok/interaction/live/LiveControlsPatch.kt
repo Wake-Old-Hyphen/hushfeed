@@ -54,6 +54,37 @@ internal object LivePreviewAutoEnterFingerprint : Fingerprint(
     strings = listOf("live_preview_page_enable_auto_entering_guide", "homepage_follow"),
 )
 
+/** TikTok's server setting for its newer LIVE quality picker, real-named on 47.1.4. */
+internal const val LIVE_RESOLUTION_SELECTION_SETTING =
+    "Lcom/bytedance/android/livesdk/livesetting/watchlive/LiveShowResolutionSelectionSetting;"
+
+/**
+ * Whether a room's menu offers the newer quality picker, LiveTalentDefinitionSelectionDialog.
+ * The menu builder (X.0hG2.LIZ on 47.1.4) offers the older picker only when the stream itself asks
+ * for it (LiveCoreSDKData.Options.showQualityButton), and the newer one only in a video room
+ * whose stream doesn't, when this answers true. It answers the server's
+ * enable_resolution_selection, false unless TikTok turns it on, which is why only some rooms
+ * offer a quality at all (#57).
+ */
+internal object LiveResolutionSelectionFingerprint : Fingerprint(
+    definingClass = LIVE_RESOLUTION_SELECTION_SETTING,
+    name = "isEnable",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+/**
+ * Whether a pick in that picker carries to the next room: when this answers true,
+ * PullStreamService hands a video room the last quality picked instead of the stream's default.
+ * It answers isEnable() and the server's persist_across_rooms.
+ */
+internal object LiveResolutionPersistFingerprint : Fingerprint(
+    definingClass = LIVE_RESOLUTION_SELECTION_SETTING,
+    name = "needPersistAcrossRooms",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
 /** The LIVE room's top-right viewer count, real-named on 47.0.3, 47.1.3 and 47.1.4. */
 internal const val ONLINE_AUDIENCE_RANK_WIDGET = "Lcom/bytedance/android/livesdk/rank/impl/widget/OnlineAudienceRankWidget;"
 
@@ -157,9 +188,9 @@ private fun wrapped(instructions: List<Instruction>, at: Int, result: Int): Bool
 @Suppress("unused")
 val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
-    description = "Stops a LIVE in the feed from opening by itself after a countdown, and can " +
-        "show a LIVE's exact viewer count instead of a rounded one. Starts off. Turn it on in " +
-        "Hushfeed settings > Playback.",
+    description = "Stops a LIVE in the feed from opening by itself after a countdown, can " +
+        "show a LIVE's exact viewer count instead of a rounded one, and can offer a quality " +
+        "choice in every LIVE room. Starts off. Turn it on in Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -176,6 +207,15 @@ val liveControlsPatch = bytecodePatch(
             "invoke-static {}, $EXTENSION->skipAutoEnter()Z",
             "return-void",
         )
+        // Both answer true while the switch is on; every other reader of the setting goes
+        // through these two.
+        listOf(LiveResolutionSelectionFingerprint, LiveResolutionPersistFingerprint).forEach {
+            it.method.guardAtEntry(
+                "LIVE controls",
+                "invoke-static {}, $EXTENSION->offerQualityEverywhere()Z",
+                "const/4 v0, 0x1\nreturn v0",
+            )
+        }
 
         // The formatter's result lands in the upper half of the long it was given, so the count
         // can't be read back after the call and the hook needs no spare register: the count is

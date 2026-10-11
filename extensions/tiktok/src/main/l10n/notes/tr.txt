@@ -1,4 +1,10 @@
-## Unreleased
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** Çift dokunma Hushfeed'in eylemlerinden birine ayarlıysa, parmağın biraz fazla kaldığı ikinci dokunuş artık TikTok'un uzun basma menüsünü de açmıyor, yani paylaşım paneli artık yorumların üstünde açılmıyor. (#63)
+
+* **TikTok:** LIVE kontrolleri'nin Hushfeed ayarları > Oynatma altında üçüncü bir anahtarı var, Her LIVE odasında kalite seçimi sun. TikTok bir LIVE'ın menüsünde Video kalitesini yalnızca yayın bunu istediğinde ya da TikTok hesabın için yeni kalite seçicisini açtığında gösteriyor, bu yüzden bazı odalarda kalite seçilemiyordu. Anahtar açıkken bu odalar yeni seçiciyi alır ve sonraki oda, TikTok kapanana kadar en son seçtiğin kalitede açılır. Varsayılan olarak kapalı. (#57)
+
+* **TikTok:** Profil ızgarasında tarihleri göster ve Etkileşim oranını göster artık TikTok 47.1.4'ün ızgaralarında çalışıyor, hem bir profilin videolarında hem de Favorilerde ve beğenilen videolarda. Bu sürüm her hücrenin izlenme sayısını yamanın ulaşmadığı bir yerde yazıyor, bu yüzden orada ne tarih ne de oran görünüyordu.
 
 * **TikTok:** Engellenen içerik üreticileri, engellenen kelimeler, izlenme ve beğeni aralıkları ve CANLI videolarını gizle, Hikayeleri gizle gibi anahtarlar artık Takip Edilenler sekmesinde de çalışıyor. TikTok 47.1.4'te o sekmeden yalnızca reklamlar ve konum etiketli videolar kalkıyordu, bu yüzden engellediğin bir içerik üreticisi orada yine çıkabiliyordu.
 
