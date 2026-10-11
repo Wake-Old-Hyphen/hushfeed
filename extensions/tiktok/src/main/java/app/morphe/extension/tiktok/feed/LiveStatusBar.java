@@ -7,8 +7,10 @@ package app.morphe.extension.tiktok.feed;
 import android.app.Activity;
 import android.app.Application;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.DisplayCutout;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,10 @@ import java.util.WeakHashMap;
  * is hidden and its window allowed into the display cutout, and the strip TikTok keeps for the
  * bar is taken away so the stream reaches the top edge; all of it goes back as the room leaves,
  * so switching apps or rotating starts again from TikTok's own state.
+ *
+ * <p>Show a LIVE under the status bar takes only the strip away and leaves the bar showing, see
+ * through, over the stream. That's how rooms looked until TikTok started keeping a black strip
+ * for the bar in October 2026, with or without Hushfeed (#137).
  */
 public final class LiveStatusBar {
     /** TikTok's LIVE room, real-named on 47.0.3 and 47.1.3 (read off the S22, 2026-09-27). */
@@ -44,8 +50,14 @@ public final class LiveStatusBar {
     private static final int MAX_VISITS = 200;
     /** Layout passes that look for the strip before giving up on a room that has none. */
     private static final int MAX_SEARCHES = 40;
-    /** Times the strip is taken away again after TikTok puts it back, so the two can't fight. */
+    /**
+     * TikTok putting the strip back this many times inside {@link #FIGHT_WINDOW_MS} is a layout
+     * fight, and the room keeps its strip from then on. A count per visit stopped too soon: each
+     * panel opened in the room (rankings, gifts, comments) puts the strip back once, so after a
+     * few taps the black strip stayed (#137).
+     */
     private static final int MAX_RELIFTS = 6;
+    private static final long FIGHT_WINDOW_MS = 1000;
 
     private static WeakReference<Application> followed = new WeakReference<>(null);
     /** The rooms whose bar this hid. */
@@ -61,7 +73,9 @@ public final class LiveStatusBar {
         followed = new WeakReference<>(application);
         application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityResumed(Activity resumed) {
-                if (isLiveRoom(resumed) && Settings.HIDE_STATUS_BAR_IN_LIVE.get()) hide(resumed);
+                if (!isLiveRoom(resumed)) return;
+                if (Settings.HIDE_STATUS_BAR_IN_LIVE.get()) hide(resumed, true);
+                else if (Settings.LIVE_UNDER_STATUS_BAR.get()) hide(resumed, false);
             }
 
             @Override public void onActivityPaused(Activity paused) {
@@ -85,36 +99,48 @@ public final class LiveStatusBar {
     }
 
     static void hide(Activity activity) {
+        hide(activity, true);
+    }
+
+    /** With {@code hideBar} false only the strip goes, and the bar stays over the stream. */
+    static void hide(Activity activity, boolean hideBar) {
         try {
             Window window = activity.getWindow();
             if (window == null || HIDDEN.containsKey(activity)) return;
             WindowManager.LayoutParams attributes = window.getAttributes();
             int cutout = Build.VERSION.SDK_INT >= 28 ? attributes.layoutInDisplayCutoutMode : 0;
             View decor = window.getDecorView();
-            Room room = new Room(activity, decor, cutout);
+            Room room = new Room(activity, decor, cutout, hideBar, window.getStatusBarColor());
             HIDDEN.put(activity, room);
+            if (!hideBar) {
+                // See through, so the stream shows under the clock. Android 15 draws every app's
+                // bar see through already and ignores this; the strip was the black there.
+                window.setStatusBarColor(Color.TRANSPARENT);
+            }
             // Only a room that stays out of the cutout is let in. 47.1.3's LIVE window already
             // asks for ALWAYS (read off the S22), which SHORT_EDGES would narrow in landscape.
-            if (Build.VERSION.SDK_INT >= 28
+            if (hideBar && Build.VERSION.SDK_INT >= 28
                     && (cutout == WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
                     || cutout == WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER)) {
                 attributes.layoutInDisplayCutoutMode =
                         WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 window.setAttributes(attributes);
             }
-            if (Build.VERSION.SDK_INT >= 30) {
-                WindowInsetsController controller = decor.getWindowInsetsController();
-                if (controller != null) {
-                    controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-                    controller.hide(WindowInsets.Type.statusBars());
+            if (hideBar) {
+                if (Build.VERSION.SDK_INT >= 30) {
+                    WindowInsetsController controller = decor.getWindowInsetsController();
+                    if (controller != null) {
+                        controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                        controller.hide(WindowInsets.Type.statusBars());
+                    }
+                } else {
+                    decor.setSystemUiVisibility(decor.getSystemUiVisibility() | LEGACY_FLAGS);
                 }
-            } else {
-                decor.setSystemUiVisibility(decor.getSystemUiVisibility() | LEGACY_FLAGS);
             }
             // The room's views are laid out after it resumes, and its insets are only known once
             // the window is attached, so the strip is looked for on the layout passes that follow.
             decor.getViewTreeObserver().addOnGlobalLayoutListener(room);
-            HookStatus.bound(HOOK_FAMILY, "LIVE room status bar hidden");
+            HookStatus.bound(HOOK_FAMILY, hideBar ? "LIVE room status bar hidden" : "LIVE room under the status bar");
         } catch (Throwable failure) {
             HookStatus.threw(HOOK_FAMILY, "hide", failure);
             Logger.printException(() -> "Could not hide the status bar in a LIVE room", failure);
@@ -130,6 +156,10 @@ public final class LiveStatusBar {
             View decor = window.getDecorView();
             decor.getViewTreeObserver().removeOnGlobalLayoutListener(room);
             room.putBack();
+            if (!room.barHidden) {
+                window.setStatusBarColor(room.statusBarColor);
+                return;
+            }
             if (Build.VERSION.SDK_INT >= 28) {
                 WindowManager.LayoutParams attributes = window.getAttributes();
                 if (attributes.layoutInDisplayCutoutMode != room.cutout) {
@@ -246,25 +276,43 @@ public final class LiveStatusBar {
     /** One visit to a LIVE room with its bar hidden. It holds its views weakly. */
     private static final class Room implements ViewTreeObserver.OnGlobalLayoutListener {
         final int cutout;
+        /** Whether the bar was hidden, or only the strip taken away under a bar left showing. */
+        final boolean barHidden;
+        /** The bar's color as TikTok set it, given back as the room leaves. */
+        final int statusBarColor;
         private final WeakReference<Activity> activity;
         private final WeakReference<View> decor;
         private Offset lifted;
         private int searches, relifts;
+        private long fightStart;
+        private boolean fought;
 
-        Room(Activity activity, View decor, int cutout) {
+        Room(Activity activity, View decor, int cutout, boolean barHidden, int statusBarColor) {
             this.activity = new WeakReference<>(activity);
             this.decor = new WeakReference<>(decor);
             this.cutout = cutout;
+            this.barHidden = barHidden;
+            this.statusBarColor = statusBarColor;
         }
 
         @Override public void onGlobalLayout() {
             try {
                 if (lifted != null) {
                     View target = lifted.view.get();
-                    // TikTok put the strip back, on a relayout of its own.
-                    if (target != null && lifted.current(target) == lifted.value && relifts++ < MAX_RELIFTS) {
-                        lifted.set(target, 0);
+                    // TikTok put the strip back, on a relayout of its own: a panel opening or
+                    // closing in the room does it.
+                    if (target == null || fought || lifted.current(target) != lifted.value) return;
+                    long now = SystemClock.uptimeMillis();
+                    if (now - fightStart > FIGHT_WINDOW_MS) {
+                        fightStart = now;
+                        relifts = 0;
                     }
+                    if (++relifts > MAX_RELIFTS) {
+                        fought = true;
+                        Logger.printDebug(() -> "TikTok keeps putting the LIVE room's top strip back; leaving it");
+                        return;
+                    }
+                    lifted.set(target, 0);
                     return;
                 }
                 Activity room = activity.get();

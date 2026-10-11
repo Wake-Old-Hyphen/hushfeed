@@ -46,6 +46,8 @@ feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.1.4:llj|app|com.ss.android.ugc.fee
 feed/VideoOverlayHider.java|SURVEY_IDS|47.1.4:f98|app|layout:com.by.andInflater.common_feed_item_feed|tag:RelativeLayout#1
 feed/VideoOverlayHider.java|TAB_STRIP_IDS|47.1.4:uzf|app|com.ss.android.ugc.aweme.homepage.ui.view.tab.top.TopTabLayoutAbility|on:View
 feed/VideoOverlayHider.java|BOTTOM_TABS_IDS|47.1.4:opp|app|com.ss.android.ugc.aweme.main.assems.mainfragment.BottomTabAssemBase|-
+feed/VideoOverlayHider.java|BOTTOM_TABS_DIVIDER_IDS|47.1.4:cnq|app|com.bytedance.tiktok.homepage.mainpagefragment.assem.MainPageSeekAssem|on:View#2
+feed/VideoOverlayHider.java|LOADING_LINE_IDS|47.1.4:nh4|app|com.by.andInflater.common_feed_view_video_progress_bar|on:LineProgressBar
 feed/VideoOverlayHider.java|FOLLOWING_STORY_IDS|47.1.4:wtr|app|com.by.andInflater.friends_tab_social_friends_tab_fragment_layout|on:FrameLayout#3
 feed/VideoOverlayHider.java|CLEAR_EXIT_IDS|47.1.4:e_5|app|com.by.andInflater.common_feed_immersive_clear_mode_bottom_interact_area|on:RelativeLayout
 feed/VideoOverlayHider.java|CLEAR_PLAYBACK_IDS|47.1.4:l83|app|com.by.andInflater.common_feed_immersive_clear_mode_bottom_interact_area|on:LinearLayout

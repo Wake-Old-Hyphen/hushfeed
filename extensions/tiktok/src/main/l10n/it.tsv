@@ -17,11 +17,13 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus richiede Android 10 o successivo, quindi l'audio viene salvato come lo invia TikTok.
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	I video salvati mostrano il @nome utente e la prima riga della descrizione nell'angolo in basso a sinistra. Per farlo il telefono ricodifica tutto il video, quindi il salvataggio richiede più tempo. Vale per i salvataggi fatti da Hushfeed.
 Sound format	Formato audio
+Translate button in comments	Pulsante Traduci nei commenti
+Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Aggiunge il pulsante Traduci di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti, un altro mostra di nuovo gli originali.
 Translate into	Traduci in
 Type one language code here, like en.	Scrivi qui un codice lingua, come en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Usa l'esportazione JSON di TikTok di questo account, fino a %1$s MB e %2$s voci. Le date senza fuso orario usano quello di questo telefono.
 Sign in to TikTok before importing watch history.	Accedi a TikTok prima di importare la cronologia di visualizzazione.
-When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	Quando TikTok si avvia e decide che la lingua del telefono è cambiata, scarta la lingua che hai scelto nelle sue impostazioni e segue il telefono. Con questa opzione attiva, la tua scelta resta. Vale dal prossimo avvio di TikTok.
+When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	Quando TikTok si avvia e decide che la lingua del telefono è cambiata, scarta la lingua che hai scelto nelle sue impostazioni e segue il telefono. Con questa opzione attiva, la tua scelta resta. Vale dal prossimo avvio di TikTok.
 Write the username and caption on the video	Scrivi nome utente e descrizione sul video
 Writing the caption on the video	Scrittura della descrizione sul video
 Writing the caption on the video: %1$s	Scrittura della descrizione sul video: %1$s
@@ -145,6 +147,8 @@ How much of a video you watch before it's hidden next time. Zero counts it after
 Later	Più tardi
 Leave when TikTok says time is up	Esci quando TikTok dice che il tempo è scaduto
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.	Lascia che un LIVE riempia lo schermo fino al bordo superiore. La barra di stato torna quando esci dal LIVE. Scorri verso il basso dall'alto per vederla per un attimo.
+Show a LIVE under the status bar	Mostra il LIVE sotto la barra di stato
+Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.	Lascia che un LIVE arrivi fino al bordo superiore con l'ora e le icone di stato sopra, invece di una striscia nera. Nascondi la barra di stato nelle stanze LIVE invece le toglie del tutto.
 Loading the gate list and TikTok's current values…	Caricamento dell'elenco gate e dei valori attuali di TikTok…
 New value	Nuovo valore
 No app on this phone opens that file	Nessuna app su questo telefono apre quel file
@@ -601,6 +605,10 @@ Hide the track name beside the caption.	Nascondi il nome del brano accanto alla 
 Hide the status bar	Nascondi la barra di stato
 Hide stories from the feed.	Nascondi le storie dal feed.
 Hide the whole column on the right, from the avatar down to the music disc.	Nascondi l'intera colonna a destra, dall'avatar fino al disco musicale.
+Spin the music disc	Fai girare il disco musicale
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Fai girare il disco musicale in fondo alla colonna di destra mentre il video va, come faceva TikTok prima.
+Keep the music disc still	Tieni fermo il disco musicale
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	Tieni fermo il disco musicale in fondo alla colonna di destra, anche quando TikTok lo fa girare. Ha la precedenza su Fai girare il disco musicale.
 Hide this creator on this phone	Nascondi questo creator su questo telefono
 Hide verified accounts	Nascondi gli account verificati
 Hide video actions	Nascondi le azioni sul video
@@ -708,6 +716,7 @@ Messages, profiles and search still work.	Messaggi, profili e ricerca continuano
 Microphone in use	Microfono in uso
 Comments range	Intervallo dei commenti
 Favorites range	Intervallo dei preferiti
+Likes aren't available for this video	I Mi piace non sono disponibili per questo video
 Likes range	Intervallo dei Mi piace
 Shares range	Intervallo delle condivisioni
 Use Save report for this large report	Usa Salva rapporto per questo rapporto di grandi dimensioni
@@ -1004,6 +1013,10 @@ Show the country a video was posted from next to the creator's name.	Mostra il p
 Show the current spoken caption while the other controls are hidden.	Mostra il sottotitolo attualmente recitato mentre gli altri controlli sono nascosti.
 Show the handle instead of the name	Mostra il nome utente invece del nome visualizzato
 Show the progress bar	Mostra la barra di avanzamento
+Show the time beside the progress bar	Mostra il tempo accanto alla barra di avanzamento
+Show the time played and the video's length at the end of the progress bar while it's on screen.	Mostra il tempo trascorso e la durata del video alla fine della barra di avanzamento mentre è sullo schermo.
+Bigger progress bar handle	Cursore più grande nella barra di avanzamento
+Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	Disegna un cursore più grande e una linea un po' più spessa nella barra di avanzamento, così vedi meglio dove sei arrivato.
 Show the progress bar thumbnail	Mostra la miniatura nella barra di avanzamento
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Mostra le liste complete "Attività" e "Nuovi follower" invece di fermarti al pulsante "Visualizza tutto".
 Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.	Mostra il video per intero invece di ritagliarlo nella finestra. Su un telefono molto allungato non cambia nulla, perché il video ci rientra già. Su un telefono pieghevole aperto, uno schermo più quadrato o in una visualizzazione divisa, i lati o le estremità non vengono più tagliati.
@@ -1468,6 +1481,8 @@ Clearing seen videos	Eliminazione dei video visti in corso
 Couldn't clear seen videos. Try again.	Non è stato possibile eliminare i video visti. Riprova.
 Keep playing in the background	Continua la riproduzione in background
 The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.	Il video che stai guardando continua fino alla fine anche se esci da TikTok o spegni lo schermo, e puoi metterlo in pausa dalla notifica multimediale di TikTok. L'interruttore di riproduzione in background di TikTok resta attivo finché questa opzione è attiva. Riavvia TikTok per applicare la modifica.
+Replay in the background	Ripeti in background
+When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.	Quando un video finisce mentre TikTok è in riproduzione in background, ricomincia da capo invece di aspettare che tu prema Riproduci nella notifica. Una chiamata o l'audio di un'altra app lo mettono comunque in pausa.
 Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off.	"Continua la riproduzione in background" è attivo nelle impostazioni di Riproduzione di Hushfeed, quindi TikTok riceve 2 per questa chiave, e una sovrascrittura qui non ha effetto finché quell'interruttore non è disattivato.
 2, from Keep playing in the background	2, da "Continua la riproduzione in background"
 Let the last video finish	Lascia finire l'ultimo video
@@ -1856,6 +1871,7 @@ Language	Lingua
 Username last changed	Ultimo cambio del nome utente
 Display name last changed	Ultimo cambio del nome visualizzato
 Private account	Account privato
+Like the video	Metti Mi piace al video
 Liked videos	Video con Mi piace
 Public	Pubblici
 Copy	Copia

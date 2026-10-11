@@ -69,7 +69,7 @@ val showSeekbarPatch = bytecodePatch(
     name = "Show the progress bar",
     description = "Shows the progress bar on videos where TikTok hides it, so you can see how " +
         "long a video is and skip around. On by default. Turn it off in Hushfeed settings > " +
-        "Playback.",
+        "Playback, where you can also show the time beside the bar or give it a bigger handle.",
     default = true,
 ) {
     category("Playback")
@@ -123,6 +123,16 @@ val showSeekbarPatch = bytecodePatch(
         val drag = gates.gateBefore(CANNOT_DRAG_LOG)
         mutableClassDefBy(inverse.definingClass).methods.named(inverse).answerInverseExperiment()
         mutableClassDefBy(drag.definingClass).methods.named(drag).answerDraggable()
+
+        // The time beside the bar and the bigger handle (#90), two switches that start off. Both
+        // work through the bar's own methods, found from the show-type setter's class, and the
+        // time learns the video and its length from the player's progress event.
+        val showType = SetSeekBarShowTypeFingerprint.method
+        val bar = mutableClassDefBy(showType.definingClass)
+        bar.methods.named(barProgressOf(bar.type, bar.methods)).hookBarProgress()
+        bar.methods.named(showType.barStyle()).hookBarStyle()
+        val event = PlayProgressFingerprint.method.progressEvent()
+        mutableClassDefBy(event.definingClass).methods.named(event).recordProgressTick()
     }
 }
 

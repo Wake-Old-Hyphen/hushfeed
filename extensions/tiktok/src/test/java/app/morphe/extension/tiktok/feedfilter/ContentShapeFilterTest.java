@@ -280,6 +280,27 @@ public class ContentShapeFilterTest {
     }
 
     @Test
+    public void anOpenedListKeepsWhatTheFeedRulesWouldTake() {
+        Settings.HIDE_IMAGE.save(true);
+
+        // A collection copied into the profile model's list and marked there keeps its saved
+        // photo post, so the pager the reader tapped into still lines up (#135).
+        FeedItemList opened = page(new Item("photo").images(new Object()), new Item("video"));
+        FeedItemsFilter.markOpenedList(opened);
+        FeedItemsFilter.filterOnRead(opened);
+        assertEquals(Arrays.asList("photo", "video"), aids(opened));
+
+        // An unmarked list read the same way is still filtered as the main feed's.
+        FeedItemList unmarked = page(new Item("photo").images(new Object()), new Item("video"));
+        FeedItemsFilter.filterOnRead(unmarked);
+        assertEquals(Arrays.asList("video"), aids(unmarked));
+
+        // Anything that isn't a FeedItemList is left alone.
+        FeedItemsFilter.markOpenedList(new Object());
+        FeedItemsFilter.markOpenedList(null);
+    }
+
+    @Test
     public void viewRangeFiltersTheFeedResponse() { assertRange(0); }
 
     @Test

@@ -1,5 +1,37 @@
 ## Unreleased
 
+* **TikTok:** Tetap putar di latar belakang sekarang bisa memulai ulang video saat selesai, jadi kamu tidak perlu menekan Putar di notifikasi setiap kali. Aktifkan Putar ulang di latar belakang di Pemutaran. Panggilan atau suara aplikasi lain tetap menjedanya (#99).
+
+* **TikTok:** Piringan musik bisa berputar lagi. TikTok 47.1.4 membuatnya diam sejak awal, jadi Layar feed sekarang punya Putar piringan musik, dan Biarkan piringan musik diam kalau kamu tidak ingin piringan itu berputar sama sekali. Keduanya perlu mulai ulang (#68).
+
+* **TikTok:** Tampilkan bilah progres punya dua tombol baru di Pemutaran, keduanya mati di awal. Tampilkan waktu di samping bilah progres menambahkan waktu yang sudah diputar dan durasi video di ujung bilah, dan Pegangan bilah progres lebih besar menggambar pegangan yang lebih besar di garis yang sedikit lebih tebal (#90).
+
+* **TikTok:** Dengan Sembunyikan kontrol Tampilan bersih aktif, garis pemuatan TikTok, bilah tipis yang memanjang dari tengah di tepi bawah video saat memuat, sekarang ikut hilang selama layar bersih (#84).
+
+* **TikTok:** Tombol baru Tombol terjemahkan di komentar di bagian Komentar menampilkan tombol terjemahan milik TikTok sendiri di samping jumlah komentar. Sekali ketuk menerjemahkan semua komentar dan balasan, ketukan berikutnya mengembalikan teks aslinya (#85). Awalnya mati.
+
+* **TikTok:** Tampilan bersih tidak lagi meninggalkan garis tipis di bagian bawah setiap video baru selama beberapa detik (#84). Itu garis halus di tepi atas bilah tab, yang tertinggal saat tabnya hilang.
+
+* **TikTok:** Sembunyikan bilah status di ruang LIVE menjauhkan strip hitam di atas selama LIVE berlangsung (#137). Dulu fitur ini menyerah setelah TikTok memasang strip itu lagi beberapa kali, misalnya saat panel dibuka dan ditutup di atas siaran. Tombol baru Tampilkan LIVE di bawah bilah status membiarkan LIVE sampai ke tepi atas dengan jam dan ikon di atasnya, kalau kamu lebih suka bilahnya tetap ada. Awalnya mati.
+
+* **TikTok:** Ketuk dua kali sekarang bisa melakukan semua yang bisa dilakukan Tekan lama, seperti menyalin tautan atau menyimpan bingkai, dan Tekan lama punya pilihan baru Sukai video (#136). Suka lewat tekan lama bekerja seperti milik TikTok sendiri dan tidak pernah membatalkan suka.
+
+* **TikTok:** Koleksi atau grid lain tempat kamu membuka video tetap menyimpan semua postingannya, jadi Hide photo posts, kata yang diblokir, dan filter feed lainnya tidak lagi membuat video yang salah diputar (#135). Dari daftar yang kamu buka, hanya iklan yang dibuang.
+
+* **TikTok:** Hide the Send to row tidak lagi ikut menyembunyikan Report, Download, dan baris aksi lainnya di lembar bagikan kecil yang terbuka saat tekan lama (#120). Di lembar itu TikTok menaruh kedua baris dalam satu bingkai, dan seluruh bingkainya ikut disembunyikan.
+
+* **TikTok:** Show the progress bar kembali menampilkan bilah di feed For You, termasuk untuk video pendek (#134). Di 47.1.4 patch ini menyalakan pemeriksaan TikTok yang salah, yaitu yang menentukan apakah sebuah video itu iklan, jadi bilahnya tidak pernah muncul lagi saat video diputar.
+
+* **TikTok:** Laporan diagnostik punya bagian Storage baru yang menampilkan folder terbesar di penyimpanan TikTok, jadi laporan bisa menunjukkan apa yang membuatnya penuh (#70). Bagian ini hanya menyebut nama folder, tidak pernah nama file, dan menyembunyikan nomor akun.
+
+* **TikTok:** Menekan kembali di video yang sudah bersih dari pencarian atau profil tidak lagi dihitung sebagai mematikan Clear display. Membuka video yang sama lagi akan membersihkannya seperti video lain, dan Clear display yang diingat tetap menyala (#84).
+
+* **TikTok:** Remove LIVE extras sekarang menyebutkan bahwa ia menghapus file untuk bergabung ke LIVE orang lain sebagai tamu, jadi bergabung lewat suara atau video bisa tidak berfungsi kalau patch ini dipakai (#132). Jangan pilih patch ini kalau kamu suka bergabung ke LIVE.
+
+* **TikTok:** Saat Clear display diingat, atau Automatic clear display tanpa jeda, TikTok tidak lagi menampilkan tab di bawah putaran loading dan tombol video pertama selama sekitar satu detik setelah dibuka dari awal. Video yang dibuka dari Favorites atau profil juga langsung mulai bersih (#84).
+
+* **TikTok:** Dengan Show where a video was posted aktif, nama kreator tidak lagi dipotong agar negaranya muat kalau barisnya cukup untuk keduanya, jadi "Rn D… · TR" kembali terbaca utuh (#127). Nama yang memang terlalu panjang tetap dipendekkan supaya negaranya terlihat utuh.
+
 * **TikTok:** Hide already seen videos tidak lagi menghapus video dari koleksi yang kamu buka, jadi mengetuk video tersimpan kembali memutar video itu, bukan video lain atau tidak ada sama sekali (#135). Video yang sudah ditonton tetap disembunyikan di For You, Following, dan Friends.
 
 * **TikTok:** Patch baru, Keep the app language, menambahkan sakelar Pertahankan bahasa yang dipilih di TikTok di Sistem pada Aplikasi (#61). Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Dengan sakelar ini menyala, pilihanmu tetap. Awalnya mati.

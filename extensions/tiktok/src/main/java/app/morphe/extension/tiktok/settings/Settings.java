@@ -234,6 +234,12 @@ public class Settings extends BaseSettings {
             new BooleanSetting("drop_animated_image_cache", FALSE);
     /** Keep playing in the background (#52). TikTok reads its gate once a process, so a restart applies it. */
     public static final BooleanSetting BACKGROUND_PLAY = new BooleanSetting("background_play", FALSE, true);
+    /**
+     * Replay in the background (#99): a video that ends while TikTok plays in the background
+     * starts again instead of waiting on the notification's Play. Read at each end, so no restart.
+     */
+    public static final BooleanSetting BACKGROUND_REPLAY = new BooleanSetting(
+            "background_replay", FALSE, false, Setting.parent(BACKGROUND_PLAY));
     public static final BooleanSetting HIDE_LAUNCHER_SHORTCUTS =
             new BooleanSetting("hide_launcher_shortcuts", FALSE);
     /**
@@ -412,6 +418,20 @@ public class Settings extends BaseSettings {
     public static final StringSetting DONT_AUTO_TRANSLATE_LANGUAGES = new StringSetting("dont_auto_translate_languages", "");
     /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
     public static final StringSetting TRANSLATE_INTO = new StringSetting("translate_into", "");
+    /**
+     * TikTok's own translate button in the comment header (#85). No restart: the header asks its
+     * gates each time a comment sheet opens.
+     */
+    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON = new BooleanSetting("comment_translate_button", FALSE);
+    /**
+     * Whether the toggle behind that button was last turned on by the button Hushfeed showed. No
+     * row of its own: it is how turning the switch off knows to answer that toggle off, rather
+     * than one TikTok turned on itself. Kept out of import and export for the same reason as
+     * {@link #LAUNCHER_SHORTCUTS_REMOVED}: the toggle it describes lives in TikTok's storage on
+     * one phone.
+     */
+    public static final BooleanSetting COMMENT_TRANSLATE_BUTTON_TURNED_ON =
+            new BooleanSetting("comment_translate_button_turned_on", FALSE, false, false);
     // Restart-gated: the comment keyboard builds its slot tree once per session, and the
     // trigger that adds the emoji row is asked at that moment only.
     public static final BooleanSetting HIDE_COMMENT_QUICK_REACTIONS =
@@ -449,6 +469,10 @@ public class Settings extends BaseSettings {
     /** Offline videos stay until you clear them, instead of expiring after TikTok's lifetime (#123). */
     public static final BooleanSetting KEEP_OFFLINE_VIDEOS = new BooleanSetting("keep_offline_videos", FALSE, true);
     public static final BooleanSetting SHOW_SEEKBAR = new BooleanSetting("show_seekbar", TRUE);
+    /** The time played and the video's length at the end of the progress bar (#90). */
+    public static final BooleanSetting SEEKBAR_TIME = new BooleanSetting("seekbar_time", FALSE);
+    /** A larger handle and a slightly thicker line on the progress bar at rest (#90). */
+    public static final BooleanSetting SEEKBAR_BIG_HANDLE = new BooleanSetting("seekbar_big_handle", FALSE);
     public static final BooleanSetting SHOW_SEEKBAR_THUMBNAIL = new BooleanSetting(
             "show_seekbar_thumbnail",
             TRUE
@@ -691,9 +715,19 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_RAIL_MUSIC = new BooleanSetting("hide_rail_music", FALSE);
     public static final BooleanSetting HIDE_RAIL_SHARE = new BooleanSetting("hide_rail_share", FALSE);
     public static final BooleanSetting HIDE_RAIL_COUNTS = new BooleanSetting("hide_rail_counts", FALSE);
+    /**
+     * Whether the music disc turns (#68, MusicDiscSpin). TikTok reads the two settings behind it
+     * once per launch, so both take a restart. Holding it still is declared first because Spin
+     * names it as the switch that overrides it.
+     */
+    public static final BooleanSetting STOP_MUSIC_DISC_SPIN = new BooleanSetting("stop_music_disc_spin", FALSE, true);
+    public static final BooleanSetting SPIN_MUSIC_DISC = new BooleanSetting("spin_music_disc", FALSE, true,
+            Setting.parentNot(STOP_MUSIC_DISC_SPIN));
     public static final BooleanSetting HIDE_STATUS_BAR = new BooleanSetting("hide_status_bar", FALSE);
     /** LIVE rooms are an activity of their own, which Hide the status bar never reached (#38). */
     public static final BooleanSetting HIDE_STATUS_BAR_IN_LIVE = new BooleanSetting("hide_status_bar_in_live", FALSE);
+    /** Only the black strip TikTok keeps for the bar goes; the bar stays over the stream (#137). */
+    public static final BooleanSetting LIVE_UNDER_STATUS_BAR = new BooleanSetting("live_under_status_bar", FALSE);
     public static final StringSetting TOUCH_TARGET_SCALE = new StringSetting("touch_target_scale", "1");
     public static final BooleanSetting HIDE_SENSITIVE_WARNINGS = new BooleanSetting("hide_sensitive_warnings", FALSE);
     /** The Check sources banner on a video TikTok flags as unverified, and the share warnings that read it. */
@@ -1005,7 +1039,7 @@ public class Settings extends BaseSettings {
                 BOTTOM_NAVIGATION_OBSERVED_TABS, DOWNLOAD_PATH, DOWNLOAD_PATHS_MIGRATED,
                 REMEMBERED_SPEED, SESSION_BUDGET_STATE, BLOCK_AUTHOR_BUTTON_POSITION,
                 LOCAL_HIDE_BUTTON_POSITION, BLOCK_SOUND_BUTTON_POSITION, NOT_INTERESTED_BUTTON_POSITION,
-                FEED_MUTE_BUTTON_POSITION,
+                FEED_MUTE_BUTTON_POSITION, COMMENT_TRANSLATE_BUTTON_TURNED_ON,
                 SHARE_ACTION_CATALOG, PROFILE_SHORTCUT_CATALOG, POPUP_LABEL_CATALOG, DIAGNOSTIC_REPORT_SALT, AUTO_STREAK_STATE,
                 // The budget's day is worked out from this hour. Paused, the budget counts
                 // nothing and holds nothing, but its record still has to name the right day.

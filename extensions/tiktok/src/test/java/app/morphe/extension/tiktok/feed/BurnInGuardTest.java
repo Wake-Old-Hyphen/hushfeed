@@ -93,7 +93,7 @@ public class BurnInGuardTest {
     }
 
     private static void clear(boolean on) {
-        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(on, 1));
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(on, on ? 0 : 2));
     }
 
     /** Lets {@code millis} go by, running whatever the main thread had due in them. */
@@ -101,14 +101,19 @@ public class BurnInGuardTest {
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(millis));
     }
 
-    /** A finger down and up the way the system delivers it: to the decor view, which hands it to the callback. */
-    private void touch() {
+    /**
+     * A finger down and up the way the system delivers it: to the decor view, which hands it to
+     * the callback. Answers when it lifted: the frame the touch draws moves Robolectric's clock on
+     * by its frame delay, so a wait counted from after this ran past the deadline.
+     */
+    private long touch() {
         send(MotionEvent.ACTION_DOWN);
-        send(MotionEvent.ACTION_UP);
+        long lifted = send(MotionEvent.ACTION_UP);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
+        return lifted;
     }
 
-    private void send(int action) {
+    private long send(int action) {
         long now = SystemClock.uptimeMillis();
         MotionEvent event = MotionEvent.obtain(now, now, action, 10f, 10f, 0);
         try {
@@ -116,6 +121,13 @@ public class BurnInGuardTest {
         } finally {
             event.recycle();
         }
+        return now;
+    }
+
+    /** Lets time run to {@code uptime}, running whatever the main thread had due by then. */
+    private static void until(long uptime) {
+        long left = uptime - SystemClock.uptimeMillis();
+        if (left > 0) after(left);
     }
 
     /** A finger held still, for speed or a thumb resting on a paused video, is a touch until it lifts. */
@@ -180,12 +192,14 @@ public class BurnInGuardTest {
             assertEquals(DIMMED, tabs.getAlpha(), 0.0001f);
             assertEquals("a dimmed control is still there to tap", View.VISIBLE, column.getVisibility());
 
-            touch();
+            long lifted = touch();
             assertEquals("the next touch brings them back", 1f, column.getAlpha(), 0f);
             assertEquals(1f, tabs.getAlpha(), 0f);
-            after(BurnInGuard.IDLE_AFTER_MS - 1);
-            assertEquals("the wait starts again from that touch", 1f, column.getAlpha(), 0f);
-            after(1);
+            assertEquals("the wait starts again from that touch",
+                    lifted + BurnInGuard.IDLE_AFTER_MS, BurnInGuard.nextPassAtForTests());
+            until(lifted + BurnInGuard.IDLE_AFTER_MS - 1);
+            assertEquals(1f, column.getAlpha(), 0f);
+            until(lifted + BurnInGuard.IDLE_AFTER_MS);
             assertEquals(DIMMED, column.getAlpha(), 0.0001f);
         }
     }

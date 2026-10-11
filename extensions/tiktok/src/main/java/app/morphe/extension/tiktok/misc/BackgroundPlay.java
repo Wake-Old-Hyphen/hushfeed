@@ -5,7 +5,14 @@
 package app.morphe.extension.tiktok.misc;
 
 import android.app.ActivityManager;
+import android.content.Context;
+import android.media.AudioManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 
+import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -23,6 +30,11 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * its own. Which posts may play on stays TikTok's call too, with two exceptions: TikTok leaves
  * out photo posts and the videos on your own profile (where your private videos play), and the
  * switch lets both through. Ads, LIVE and paid posts still stop.
+ *
+ * <p>Replay in the background (#99) is the one thing here TikTok doesn't do on its own. Its
+ * background session holds one video: it turns the player's looping off when the session starts,
+ * and when the video ends it rewinds it and pauses, leaving the Play button in the notification.
+ * With the switch on, that Play is pressed for you once TikTok has finished pausing.
  */
 public final class BackgroundPlay {
     /** The Feature Gate Lab key the switch decides while it's on. */
@@ -31,6 +43,47 @@ public final class BackgroundPlay {
     static final int ALWAYS = 2;
     /** The event type TikTok gives the videos you open from your own profile. */
     static final String OWN_PROFILE = "personal_homepage";
+    /**
+     * The shortest time between two replays. A video ends after it has played, so two ends this
+     * close together mean something is wrong with it, and it's left paused rather than started
+     * over and over.
+     */
+    static final long REPLAY_GAP_MS = 1_500L;
+
+    /** What the replay needs from the phone and from TikTok, which tests stand in for. */
+    interface Host {
+        /** This process's importance, as {@link ActivityManager#getMyMemoryState} reports it. */
+        int importance();
+
+        /** The audio mode, which says whether a call is ringing or on. */
+        int audioMode();
+
+        /** Presses Play on TikTok's background session, the way its notification does. */
+        void pressPlay(Object listener);
+    }
+
+    static Host host = new Host() {
+        @Override public int importance() {
+            ActivityManager.RunningAppProcessInfo state = new ActivityManager.RunningAppProcessInfo();
+            ActivityManager.getMyMemoryState(state);
+            return state.importance;
+        }
+
+        @Override public int audioMode() {
+            Context context = Utils.getContext();
+            AudioManager audio = context == null ? null
+                    : (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            return audio == null ? AudioManager.MODE_NORMAL : audio.getMode();
+        }
+
+        @Override public void pressPlay(Object listener) {
+            replay(listener);
+        }
+    };
+
+    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+    /** When the last replay was pressed, on the elapsed-time clock. Tests reset it. */
+    static long lastReplay = -REPLAY_GAP_MS;
 
     private BackgroundPlay() {}
 
@@ -71,13 +124,63 @@ public final class BackgroundPlay {
     public static boolean skipsPageFocus() {
         if (!Settings.BACKGROUND_PLAY.get()) return false;
         try {
-            ActivityManager.RunningAppProcessInfo state = new ActivityManager.RunningAppProcessInfo();
-            ActivityManager.getMyMemoryState(state);
-            return hidden(state.importance);
+            return hidden(host.importance());
         } catch (RuntimeException e) {
             return false;
         }
     }
+
+    /** Whether a video that ends in the background starts again. Both switches have to be on. */
+    static boolean replays() {
+        return Settings.BACKGROUND_PLAY.get() && Settings.BACKGROUND_REPLAY.get();
+    }
+
+    /**
+     * TikTok's background session has played its video to the end (#99). The patch calls this
+     * from the session's own player listener, before TikTok rewinds and pauses it, and hands over
+     * the answer TikTok just got to whether the session holds one video. Only then does TikTok
+     * pause. A session that can move on to another video, as a collection's can, is left alone.
+     * The replay waits until TikTok has finished with the end, so it starts from the beginning
+     * of a paused video, as a tap on Play in the notification would.
+     */
+    public static void onBackgroundEnd(boolean single, Object listener) {
+        try {
+            if (!single || listener == null || !replays()) return;
+            MAIN.post(() -> replayIfStillAway(listener));
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not replay the video in the background", error);
+        }
+    }
+
+    private static void replayIfStillAway(Object listener) {
+        try {
+            long now = SystemClock.elapsedRealtime();
+            if (!shouldReplay(true, host.importance(), host.audioMode(), now, lastReplay)) return;
+            lastReplay = now;
+            host.pressPlay(listener);
+        } catch (Throwable error) {
+            Logger.printException(() -> "Could not replay the video in the background", error);
+        }
+    }
+
+    /**
+     * Whether to press Play now. The switches are read again, since the replay waits a moment.
+     * If a TikTok screen is showing, you came back and TikTok picks the video up itself. During
+     * a call it stays paused, and so does a video that ended again straight after a replay.
+     */
+    static boolean shouldReplay(boolean single, int importance, int audioMode, long now, long last) {
+        return single && replays() && hidden(importance) && !inCall(audioMode)
+                && now - last >= REPLAY_GAP_MS;
+    }
+
+    /** Whether the phone's audio mode says a call is ringing, on, or being screened. */
+    static boolean inCall(int audioMode) {
+        return audioMode > AudioManager.MODE_NORMAL;
+    }
+
+    // Replaced with TikTok's own Play on its background session when the patch is applied. Not
+    // private, so the host above calls it straight and not through an accessor D8 would add.
+    static void replay(Object listener) { }
 
     /**
      * Whether a process of this importance has none of its screens showing. A screen that shows,

@@ -171,6 +171,7 @@ Added 1 seen video.,Added 1 seen video.
 Added one older seen video to this account,Added one older seen video to this account
 Added to this account.,Added to this account.
 "Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first.","Adds Export CSV and Export JSON buttons under the search box, so Search within comments must be on. They save the comments and replies loaded so far to a file you pick. Open the reply threads you want first."
+"Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again."
 "Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok.","Adds a search box that finds comments already loaded on this video, by words or username. It doesn't search all of TikTok."
 Ads,Ads
 Advanced,Advanced
@@ -247,6 +248,7 @@ Avatar and follow button,Avatar and follow button
 Back,Back
 Back up settings,Back up settings
 Backup and restore,Backup and restore
+Bigger progress bar handle,Bigger progress bar handle
 Bio copied,Bio copied
 Black,Black
 Block clipboard reads,Block clipboard reads
@@ -475,6 +477,7 @@ Downloads & sharing,Downloads & sharing
 "Drag to move, release to place","Drag to move, release to place"
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.
 Drama and Series,Drama and Series
+"Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are."
 Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.,Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.
 Easier comment likes,Easier comment likes
 Edge strip width,Edge strip width
@@ -773,6 +776,7 @@ Hold speed on Comment,Hold speed on Comment
 Hold speed on Favorites,Hold speed on Favorites
 Hold speed on Share,Hold speed on Share
 Hold the feed after the budget,Hold the feed after the budget
+"Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.","Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc."
 Home,Home
 Home tab name,Home tab name
 Hook status,Hook status
@@ -826,6 +830,7 @@ Keep playing in the background,Keep playing in the background
 Keep the Favorites tab,Keep the Favorites tab
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.
 Keep the language picked in TikTok,Keep the language picked in TikTok
+Keep the music disc still,Keep the music disc still
 Keep the screen's refresh rate,Keep the screen's refresh rate
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only."
 Keep this string to %1$s characters or fewer.,Keep this string to %1$s characters or fewer.
@@ -866,6 +871,7 @@ Left edge strip,Left edge strip
 Length and views per like,Length and views per like
 Less than a minute left,Less than a minute left
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.,Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.
+"Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.","Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead."
 "Let comments, repost notes and your bio run past the length TikTok's app stops at. TikTok's servers can still turn down a long one.","Let comments, repost notes and your bio run past the length TikTok's app stops at. TikTok's servers can still turn down a long one."
 "Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this.","Let screenshots, screen recording and Circle to Search work on TikTok again. Restart TikTok to apply this."
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.
@@ -873,7 +879,9 @@ Let the last video finish,Let the last video finish
 Licenses,Licenses
 Lift text length limits,Lift text length limits
 Like,Like
+Like the video,Like the video
 Liked videos,Liked videos
+Likes aren't available for this video,Likes aren't available for this video
 Likes range,Likes range
 Limit background traffic,Limit background traffic
 Limits,Limits
@@ -1185,6 +1193,7 @@ Removed %1$s,Removed %1$s
 "Reopen Hushfeed settings, then choose the file","Reopen Hushfeed settings, then choose the file"
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.
+Replay in the background,Replay in the background
 Report saved to %1$s,Report saved to %1$s
 Repost with a comment,Repost with a comment
 Required,Required
@@ -1377,6 +1386,7 @@ Show See translation,Show See translation
 "Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.","Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work."
 Show TikTok's feed buttons,Show TikTok's feed buttons
 Show TikTok's own progress bar on videos where it's normally hidden.,Show TikTok's own progress bar on videos where it's normally hidden.
+Show a LIVE under the status bar,Show a LIVE under the status bar
 Show a progress bar while a video saves.,Show a progress bar while a video saves.
 Show a video preview thumbnail while dragging the progress bar.,Show a video preview thumbnail while dragging the progress bar.
 "Show counts as full numbers, like 1,234,567 instead of 1.2M.","Show counts as full numbers, like 1,234,567 instead of 1.2M."
@@ -1414,6 +1424,8 @@ Show the progress bar,Show the progress bar
 Show the progress bar thumbnail,Show the progress bar thumbnail
 "Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.","Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments."
 Show the switch,Show the switch
+Show the time beside the progress bar,Show the time beside the progress bar
+Show the time played and the video's length at the end of the progress bar while it's on screen.,Show the time played and the video's length at the end of the progress bar while it's on screen.
 Show the time to the second,Show the time to the second
 Show the whole Activity and New followers lists instead of stopping at a View all button.,Show the whole Activity and New followers lists instead of stopping at a View all button.
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.","Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off."
@@ -1453,6 +1465,7 @@ Source,Source
 Speed,Speed
 Speed menu choices,Speed menu choices
 Speed while you hold the video,Speed while you hold the video
+Spin the music disc,Spin the music disc
 Split comment minimum width,Split comment minimum width
 Start each new video at your default. A manual choice lasts until the video changes.,Start each new video at your default. A manual choice lasts until the video changes.
 Start feature gate recording,Start feature gate recording
@@ -1759,6 +1772,7 @@ Too late to put the saved videos back,Too late to put the saved videos back
 Too many media saves are already running. Try again in a moment.,Too many media saves are already running. Try again in a moment.
 Tracking,Tracking
 "Tracking, device access and links","Tracking, device access and links"
+Translate button in comments,Translate button in comments
 "Translate comments as they load, using TikTok's own translator.","Translate comments as they load, using TikTok's own translator."
 Translate into,Translate into
 Transparent,Transparent
@@ -1775,6 +1789,7 @@ Turn off the timer (TikTok closes at %1$s),Turn off the timer (TikTok closes at 
 Turn on %1$s first.,Turn on %1$s first.
 Turn on Keep a streak going first,Turn on Keep a streak going first
 Turn on overrides,Turn on overrides
+"Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.","Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to."
 Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
 Turned off %1$d gates. Restart TikTok to apply this.,Turned off %1$d gates. Restart TikTok to apply this.
 Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Turned off 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
@@ -1872,8 +1887,9 @@ What gets sent each day.,What gets sent each day.
 What's new,What's new
 "When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit. Links you send to another app go out as they were.","When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit. Links you send to another app go out as they were."
 "When TikTok requests this key, return the selected value below","When TikTok requests this key, return the selected value below"
-"When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start."
+"When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start."
 "When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on.","When a video ends in full screen, stay on it instead of moving to the next one. Swiping still moves on."
+"When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.","When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it."
 "When the budget runs out, the video on screen plays to its end before the hold starts, and you can't swipe to another video meanwhile. If the fade already dimmed the feed, the hold starts right away. Needs a hold. It waits %1$d minutes at most.","When the budget runs out, the video on screen plays to its end before the hold starts, and you can't swipe to another video meanwhile. If the fade already dimmed the feed, the hold starts right away. Needs a hold. It waits %1$d minutes at most."
 "When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.","When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked."
 When to send,When to send

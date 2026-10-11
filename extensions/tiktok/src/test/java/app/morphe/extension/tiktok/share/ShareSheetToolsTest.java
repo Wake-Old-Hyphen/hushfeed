@@ -83,6 +83,7 @@ public class ShareSheetToolsTest {
         ReflectionHelpers.setStaticField(ShareSheetTools.class, "activityReference", new WeakReference<>(null));
         ((ResourceIdCache) ReflectionHelpers.getStaticField(ShareSheetTools.class, "RESOURCE_IDS")).clear();
         ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareSheetTools.class, "ORIGINAL_WIDTHS")).clear();
+        ((Map<?, ?>) ReflectionHelpers.getStaticField(ShareSheetTools.class, "HIDDEN_SECTION_CHILDREN")).clear();
         ReflectionHelpers.setStaticField(ShareSheetTools.class, "windowGlobal", null);
         ReflectionHelpers.setStaticField(ShareSheetTools.class, "windowViewsReader", null);
         ReflectionHelpers.setStaticField(ShareSheetTools.class, "windowViewsUnavailable", false);
@@ -169,6 +170,76 @@ public class ShareSheetToolsTest {
 
             assertEquals(View.GONE, currentSection.getVisibility());
         }
+    }
+
+    /**
+     * The compact long-press sheet ranks its actions row at the top, and TikTok's panel adds
+     * every top widget to the Send to frame, so that frame holds the Send to row and the actions
+     * row side by side (#120). Hiding Send to must leave Report, Download and the rest showing,
+     * still filtered by the hidden list, and turning it off must not show what TikTok hid itself.
+     */
+    @Test public void hidingSendToKeepsAnActionsRowThatSharesItsFrame() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            Activity activity = controller.get();
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout section = new FrameLayout(activity);
+            section.setId(0x7f000201);
+            FrameLayout sendTo = new FrameLayout(activity);
+            FrameLayout contacts = new FrameLayout(activity);
+            contacts.setId(0x7f000301);
+            sendTo.addView(contacts);
+            View hiddenByTikTok = new View(activity);
+            hiddenByTikTok.setVisibility(View.GONE);
+            FrameLayout actionsWidget = new FrameLayout(activity);
+            FrameLayout actions = actionRow(activity);
+            NativeActionCell report = new NativeActionCell(activity, 137, "Report");
+            NativeActionCell copy = new NativeActionCell(activity, 131, "Copy link");
+            actions.addView(report);
+            actions.addView(copy);
+            actionsWidget.addView(actions);
+            section.addView(sendTo);
+            section.addView(hiddenByTikTok);
+            section.addView(actionsWidget);
+            root.addView(section);
+            activity.setContentView(root);
+
+            Settings.HIDE_SHARE_CONTACTS.save(true);
+            Settings.SHARE_HIDDEN_ITEMS.save("copy link");
+            ReflectionHelpers.setStaticField(ShareSheetTools.class, "activityReference",
+                    new WeakReference<>(activity));
+            ReflectionHelpers.callStaticMethod(ShareSheetTools.class, "apply");
+
+            assertEquals("the frame holding the actions row stays up", View.VISIBLE, section.getVisibility());
+            assertEquals(View.GONE, sendTo.getVisibility());
+            assertEquals(View.VISIBLE, actionsWidget.getVisibility());
+            assertEquals(View.VISIBLE, report.getVisibility());
+            assertEquals("the hidden list still applies to the kept row", View.GONE, copy.getVisibility());
+
+            Settings.HIDE_SHARE_CONTACTS.save(false);
+            ReflectionHelpers.callStaticMethod(ShareSheetTools.class, "apply");
+
+            assertEquals(View.VISIBLE, section.getVisibility());
+            assertEquals(View.VISIBLE, sendTo.getVisibility());
+            assertEquals("only children hidden here come back", View.GONE, hiddenByTikTok.getVisibility());
+            assertEquals(View.VISIBLE, report.getVisibility());
+        }
+    }
+
+    /** The control: a Send to frame with no other row in it still goes away whole. */
+    @Test public void aSendToFrameWithoutAnotherRowIsHiddenWhole() {
+        FrameLayout section = new FrameLayout(context);
+        View sendTo = new View(context);
+        section.addView(sendTo);
+        FrameLayout elsewhere = new FrameLayout(context);
+        FrameLayout actions = actionRow(context);
+        elsewhere.addView(actions);
+
+        ShareSheetTools.setSectionHidden(section, true, actions, null);
+        assertEquals(View.GONE, section.getVisibility());
+        assertEquals("children are left alone when the frame itself goes", View.VISIBLE, sendTo.getVisibility());
+
+        ShareSheetTools.setSectionHidden(section, false, actions, null);
+        assertEquals(View.VISIBLE, section.getVisibility());
     }
 
     /**

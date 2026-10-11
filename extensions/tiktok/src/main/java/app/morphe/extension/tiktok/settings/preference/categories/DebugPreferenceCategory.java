@@ -24,6 +24,7 @@ import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.TimedDiagnosticsPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
+import app.morphe.extension.tiktok.storage.StorageReport;
 
 @SuppressWarnings("deprecation")
 public class DebugPreferenceCategory extends ConditionalPreferenceCategory {
@@ -48,6 +49,10 @@ public class DebugPreferenceCategory extends ConditionalPreferenceCategory {
     @Override
     public void addPreferences(Context context) {
         if (SettingsStatus.diagnosticsEnabled) {
+            // Measured as the page opens, so the export made from it says where TikTok's
+            // storage went (#70).
+            StorageReport.prepare(context);
+
             addPreference(new TogglePreference(
                     context,
                     "Log diagnostics",

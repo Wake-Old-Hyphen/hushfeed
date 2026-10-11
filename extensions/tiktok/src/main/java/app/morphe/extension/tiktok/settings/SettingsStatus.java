@@ -229,6 +229,13 @@ public class SettingsStatus {
         translateIntoEnabled = true;
     }
 
+    /** Translate comments hooked the gates and toggle behind TikTok's translate button in the comment header. */
+    public static boolean commentTranslateButtonEnabled = false;
+
+    public static void enableCommentTranslateButton() {
+        commentTranslateButtonEnabled = true;
+    }
+
     public static void enableHideCommentQuickReactions() {
         hideCommentQuickReactionsEnabled = true;
     }
@@ -540,6 +547,14 @@ public class SettingsStatus {
 
     public static void enableFootnotes() {
         footnotesEnabled = true;
+    }
+
+    /** Hide video overlays found the music disc's two animation settings on this build and hooked them (#68). */
+    public static boolean musicDiscSpinEnabled = false;
+
+    public static void enableMusicDiscSpin() {
+        musicDiscSpinEnabled = true;
+        app.morphe.extension.tiktok.feed.MusicDiscSpin.installed();
     }
 
     /** Hide inbox items found the group chat banner's update on this build and hooked it. */

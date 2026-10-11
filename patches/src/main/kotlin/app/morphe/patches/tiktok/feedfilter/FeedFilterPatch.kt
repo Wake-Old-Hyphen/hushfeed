@@ -191,6 +191,24 @@ val feedFilterPatch = bytecodePatch(
             }
         }
 
+        // A list the reader opens from a grid, a collection for one, is copied into the profile
+        // model's own FeedItemList, which no profile parse saw and which has no profile uid. Marked
+        // as the model first reads it back after the copy, it gets a profile list's rules, and the
+        // feed's rules no longer take saved videos out of the pager the reader tapped into (#135).
+        OpenedListFillFingerprint.method.let { method ->
+            val instructions = method.implementationOrPatchException("Feed filter").instructions.toList()
+            val copyIndex = instructions.indexOfFirst { it.isModelSetItems() }
+            val readIndex = instructions.withIndex()
+                .firstOrNull { it.index > copyIndex && it.value.isModelDataRead() }?.index
+                ?: throw PatchException("Feed filter: the opened list's copy is never read back")
+            val register = (instructions[readIndex] as OneRegisterInstruction).registerA
+            method.addInstruction(
+                readIndex + 1,
+                "invoke-static/range {v$register .. v$register}, " +
+                    "$EXTENSION_CLASS_DESCRIPTOR->markOpenedList(Ljava/lang/Object;)V",
+            )
+        }
+
         FollowFeedFingerprint.method.let { method ->
             val returnIndices =
                 method.implementation!!.instructions.withIndex()

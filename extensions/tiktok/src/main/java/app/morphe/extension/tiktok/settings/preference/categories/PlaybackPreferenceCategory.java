@@ -139,6 +139,20 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Show TikTok's own progress bar on videos where it's normally hidden.",
                     Settings.SHOW_SEEKBAR
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show the time beside the progress bar",
+                    "Show the time played and the video's length at the end of the progress bar "
+                            + "while it's on screen.",
+                    Settings.SEEKBAR_TIME
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Bigger progress bar handle",
+                    "Draw a larger handle and a slightly thicker line on the progress bar, so it's "
+                            + "easier to see where you are.",
+                    Settings.SEEKBAR_BIG_HANDLE
+            ));
         }
         if (SettingsStatus.seekbarThumbnailEnabled) {
             addPreference(new TogglePreference(
@@ -199,6 +213,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "to pause it. TikTok's background play switch stays on while this is "
                             + "on. Restart TikTok to apply this.",
                     Settings.BACKGROUND_PLAY));
+            addPreference(new TogglePreference(context, "Replay in the background",
+                    "When a video ends while TikTok plays in the background, it starts over "
+                            + "instead of waiting for you to press Play in the notification. A "
+                            + "call or another app's sound still pauses it.",
+                    Settings.BACKGROUND_REPLAY));
         }
         if (SettingsStatus.pictureInPictureEnabled) {
             addPreference(new TogglePreference(context, "Keep watching in a small window",

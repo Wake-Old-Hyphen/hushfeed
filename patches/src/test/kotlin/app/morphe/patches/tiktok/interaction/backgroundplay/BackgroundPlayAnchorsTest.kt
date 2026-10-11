@@ -16,6 +16,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -34,6 +35,7 @@ import org.junit.Test
  * What Keep playing in the background changes, held to each declared build: the one lazy that
  * reads the mode hands back the int it hooks, and every place TikTok loads the remembered
  * switch's key either reads it through a hook or stores it, so no read is left on TikTok's say.
+ * The replay (#99) hooks one end of a background video and presses the Play the notification does.
  */
 class BackgroundPlayAnchorsTest {
     private fun Instruction.loads(key: String) =
@@ -211,6 +213,59 @@ class BackgroundPlayAnchorsTest {
                     } == true
                 }
             })
+        }
+    }
+
+    @Test
+    fun `the background session's end and the Play the replay presses resolve on each build`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = HashMap<String, ClassDef>()
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) classes.putIfAbsent(classDef.type, classDef)
+            }
+            val version = Fixtures.versionOf(apk)
+
+            val found = classes.values.flatMap { classDef -> classDef.methods.filter { BackgroundPlayEndFingerprint.takes(it, classDef) } }
+            assertEquals("$version: the background session's end takes ${found.map { it.definingClass }}", 1, found.size)
+            val end = found.single()
+            val shape = resolveBackgroundEnd(end, classes::get)
+
+            // The hook is a plain invoke-static of the answer and the listener, and the listener
+            // is the register the method reads its session from.
+            val listener = end.implementation!!.registerCount - 2
+            assertTrue("$version: the answer sits in v${shape.singleRegister}", shape.singleRegister <= 15)
+            assertTrue("$version: the listener sits in v$listener", listener <= 15)
+            val body = end.implementation!!.instructions.toList()
+            val read = body.first { instruction ->
+                instruction.opcode == Opcode.IGET_OBJECT && instruction.getReference<FieldReference>()?.let {
+                    it.definingClass == shape.session.definingClass && it.name == shape.session.name
+                } == true
+            }
+            assertEquals("$version: the listener is not where the hook reads it", listener, (read as TwoRegisterInstruction).registerB)
+            assertEquals("$version: the answer is not what TikTok branches on", Opcode.IF_EQZ, body[shape.singleResult + 1].opcode)
+
+            // The session and its listener belong together.
+            val session = classes.getValue(shape.play.definingClass)
+            assertTrue("$version: ${session.type} doesn't hold ${end.definingClass}", session.fields.any { it.type == end.definingClass })
+
+            // TikTok's media notification presses that Play with the reason the bridge passes.
+            val owners = setOf(session.type) + session.interfaces
+            val pressed = classes.values.flatMap { it.methods }.any { method ->
+                val instructions = method.implementation?.instructions?.toList() ?: return@any false
+                instructions.indices.any { at ->
+                    val call = instructions[at]
+                    (call.opcode == Opcode.INVOKE_VIRTUAL || call.opcode == Opcode.INVOKE_INTERFACE) &&
+                        call.getReference<MethodReference>()?.let {
+                            it.definingClass in owners && it.name == shape.play.name &&
+                                it.parameterTypes.map(CharSequence::toString) == listOf("I")
+                        } == true &&
+                        instructions.subList(0, at).lastOrNull { previous ->
+                            previous is OneRegisterInstruction && previous.registerA == (call as FiveRegisterInstruction).registerD
+                        }?.let { (it as? NarrowLiteralInstruction)?.narrowLiteral } == NOTIFICATION_PLAY
+                }
+            }
+            assertTrue("$version: nothing presses ${shape.play.name} with $NOTIFICATION_PLAY", pressed)
         }
     }
 

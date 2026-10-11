@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.feedfilter
 
 import app.morphe.Fixtures
+import app.morphe.takes
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
@@ -110,6 +111,65 @@ class ProfileListAnchorsTest {
             assertTrue("nothing parses a FeedItemList through apiExecuteGetJSONObject any more", feedListCallers.isNotEmpty())
             assertTrue("more than the two profile fetchers parse a FeedItemList there: $feedListCallers",
                 feedListCallers.size <= 2)
+        }
+    }
+
+    /**
+     * The later mark (#135): a list the reader opens from a grid is copied into the profile model's
+     * own FeedItemList, which no parse saw. Exactly one method takes OpenedListFillFingerprint, it
+     * copies with setItems before it reads mData back into a local (the register the hook marks),
+     * its class reads its items back out of mData through FeedItemList.getItems, and a grid's click
+     * calls it by name and shape.
+     */
+    @Test
+    fun `a list opened from a grid is copied in through the one method the Feed filter marks it in`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val fills = ArrayList<Pair<com.android.tools.smali.dexlib2.iface.ClassDef, com.android.tools.smali.dexlib2.iface.Method>>()
+            val classes = HashMap<String, com.android.tools.smali.dexlib2.iface.ClassDef>()
+            for (entry in container.dexEntryNames) {
+                for (classDef in container.getEntry(entry)!!.dexFile.classes) {
+                    classes.putIfAbsent(classDef.type, classDef)
+                    for (method in classDef.methods) {
+                        if (OpenedListFillFingerprint.takes(method, classDef)) fills += classDef to method
+                    }
+                }
+            }
+            assertEquals("${apk.name}: ${fills.map { "${it.first.type}->${it.second.name}" }}", 1, fills.size)
+            val (owner, fill) = fills.single()
+
+            val instructions = fill.implementation!!.instructions.toList()
+            val copy = instructions.indexOfFirst { it.isModelSetItems() }
+            val read = instructions.withIndex().firstOrNull { it.index > copy && it.value.isModelDataRead() }
+            assertNotNull("${apk.name}: the copy is never read back from mData", read)
+            val register = (read!!.value as com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction).registerA
+            val shape = fill.parameterTypes.map { it.toString() }
+            val locals = fill.implementation!!.registerCount - shape.sumOf { if (it == "J" || it == "D") 2L else 1L }.toInt() - 1
+            assertTrue("${apk.name}: mData is read into v$register, not a local", register < locals)
+
+            val getItems = owner.methods.singleOrNull { it.name == "getItems" && it.parameterTypes.isEmpty() }
+            assertNotNull("${apk.name}: ${owner.type} has no getItems of its own", getItems)
+            val readsBack = getItems!!.implementation!!.instructions.toList()
+            assertTrue("${apk.name}: ${owner.type}.getItems doesn't read mData", readsBack.any { it.isModelDataRead() })
+            assertTrue("${apk.name}: ${owner.type}.getItems doesn't hand out FeedItemList.getItems",
+                readsBack.any {
+                    it.opcode == Opcode.INVOKE_VIRTUAL &&
+                        ((it as ReferenceInstruction).reference as MethodReference).let { reference ->
+                            reference.definingClass == feedItemList && reference.name == "getItems"
+                        }
+                })
+
+            val callers = classes.values.sumOf { classDef ->
+                classDef.methods.sumOf { method ->
+                    (method.implementation?.instructions ?: emptyList()).count {
+                        (it.opcode == Opcode.INVOKE_VIRTUAL || it.opcode == Opcode.INVOKE_VIRTUAL_RANGE) &&
+                            ((it as ReferenceInstruction).reference as MethodReference).let { reference ->
+                                reference.name == fill.name && reference.parameterTypes.map { p -> p.toString() } == shape
+                            }
+                    }
+                }
+            }
+            assertTrue("${apk.name}: nothing calls ${fill.name} with its shape", callers > 0)
         }
     }
 }

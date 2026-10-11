@@ -15,12 +15,18 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.cloneMutable
 import app.morphe.util.getMutableMethod
 import app.morphe.util.getReference
+import app.morphe.util.singleOrPatchException
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -84,6 +90,91 @@ internal object PageAudioFocusFingerprint : Fingerprint(
     filters = listOf(methodCall(parameters = listOf(AUDIO_MANAGER, FOCUS_LISTENER, "I", "I"), returnType = "I")),
 )
 
+internal const val PLAY_LISTENER = "Lcom/ss/android/ugc/aweme/player/sdk/api/OnUIPlayListener;"
+
+/** The reason TikTok's media notification hands its background session's Play. */
+internal const val NOTIFICATION_PLAY = 2
+
+/**
+ * The end of a video in TikTok's background session (#99): the session's own player listener.
+ * When the session holds one video it rewinds it and pauses the session, then drops the session's
+ * pending work on its handler and sets the notification to paused. On 47.1.4 the other player
+ * listeners that rewind at the end touch no handler.
+ */
+internal object BackgroundPlayEndFingerprint : Fingerprint(
+    name = "onPlayCompleted",
+    returnType = "V",
+    parameters = listOf("Ljava/lang/String;"),
+    filters = listOf(
+        methodCall(name = "seek", parameters = listOf("F"), returnType = "V"),
+        methodCall(definingClass = "Landroid/os/Handler;", name = "removeCallbacksAndMessages"),
+    ),
+    custom = { _, classDef -> PLAY_LISTENER in classDef.interfaces },
+)
+
+/** What the replay needs from the background session's end. */
+internal class BackgroundEnd(
+    /** Index of the move-result that keeps the answer to whether the session holds one video. */
+    val singleResult: Int,
+    /** The register that answer lands in. */
+    val singleRegister: Int,
+    /** The listener's field holding its session. */
+    val session: FieldReference,
+    /** The session's Play, the one its notification presses. */
+    val play: MethodReference,
+)
+
+/**
+ * Finds the pieces of [end] the replay uses, or says which one moved: the check whether the
+ * session holds one video, kept and branched on before the rewind; the session the listener
+ * holds, which is the class its pause is called on; and that session's Play, its one other
+ * method taking a reason that resumes the player. The bridge reaches them from the extension's
+ * package, so they have to be public.
+ */
+internal fun resolveBackgroundEnd(end: Method, classOf: (String) -> ClassDef?): BackgroundEnd {
+    fun fail(why: String): Nothing = throw PatchException("Keep playing in the background: $why")
+    fun Instruction.call() = getReference<MethodReference>()
+    fun MethodReference.takes() = parameterTypes.map(CharSequence::toString)
+
+    val instructions = end.implementation?.instructions?.toList() ?: fail("the background session's end has no code.")
+    val check = instructions.indexOfFirst {
+        it.opcode == Opcode.INVOKE_STATIC && it.call()?.let { target -> target.returnType == "Z" && target.parameterTypes.isEmpty() } == true
+    }
+    val result = instructions.getOrNull(check + 1) as? OneRegisterInstruction
+    val branch = instructions.getOrNull(check + 2) as? OneRegisterInstruction
+    if (check < 0 || result == null || branch == null || result.opcode != Opcode.MOVE_RESULT ||
+        branch.opcode != Opcode.IF_EQZ || branch.registerA != result.registerA
+    ) {
+        fail("the background session's end no longer checks whether it holds one video before it rewinds.")
+    }
+    val seek = (check + 3 until instructions.size).firstOrNull { at ->
+        instructions[at].call()?.let { it.name == "seek" && it.takes() == listOf("F") } == true
+    } ?: fail("the background session's end no longer rewinds the video.")
+    val pause = (seek + 1 until instructions.size).firstOrNull { at ->
+        instructions[at].opcode == Opcode.INVOKE_VIRTUAL &&
+            instructions[at].call()?.let { it.returnType == "V" && it.takes() == listOf("I") } == true
+    }?.let { instructions[it].call()!! } ?: fail("the background session's end no longer pauses its session.")
+
+    val listener = classOf(end.definingClass) ?: fail("${end.definingClass} is missing.")
+    val sessions = listener.fields.filter { !AccessFlags.STATIC.isSet(it.accessFlags) && it.type == pause.definingClass }
+    val session = sessions.singleOrNull()
+        ?: fail("${end.definingClass} holds ${sessions.size} sessions of ${pause.definingClass}, expected 1.")
+    val sessionClass = classOf(pause.definingClass) ?: fail("${pause.definingClass} is missing.")
+    val plays = sessionClass.methods.filter { method ->
+        !AccessFlags.STATIC.isSet(method.accessFlags) && method.name != pause.name && method.returnType == "V" &&
+            method.takes() == listOf("I") && method.implementation?.instructions?.any { instruction ->
+                instruction.call()?.let { it.name == "resume" && it.parameterTypes.isEmpty() && it.returnType == "V" } == true
+            } == true
+    }
+    val play = plays.singleOrNull()
+        ?: fail("${pause.definingClass} has ${plays.size} methods that resume its player for a reason, expected 1.")
+    // The extension reaches all four from its own package.
+    if (listOf(listener.accessFlags, session.accessFlags, sessionClass.accessFlags, play.accessFlags).any { !AccessFlags.PUBLIC.isSet(it) }) {
+        fail("the listener, its session or the session's Play is no longer public.")
+    }
+    return BackgroundEnd(check + 1, result.registerA, session, play)
+}
+
 /** The string a const-string loads, or null. */
 private fun Instruction.string(): String? =
     if (opcode == Opcode.CONST_STRING || opcode == Opcode.CONST_STRING_JUMBO) getReference<StringReference>()?.string else null
@@ -127,8 +218,8 @@ internal fun List<Instruction>.readsKevaBoolean(index: Int, key: String): Boolea
 val backgroundPlayPatch = bytecodePatch(
     name = "Keep playing in the background",
     description = "Keeps the video playing when you leave TikTok or turn the screen off, with " +
-        "a notification to pause it. Handy for music and talks. Starts off. Turn it on in " +
-        "Hushfeed settings > Playback, then restart TikTok.",
+        "a notification to pause it. It can also start the video over when it ends. Handy for " +
+        "music and talks. Starts off. Turn it on in Hushfeed settings > Playback, then restart TikTok.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -222,6 +313,38 @@ val backgroundPlayPatch = bytecodePatch(
             "return-void",
         )
 
+        // A video that ends in the background (#99). The extension gets the answer to whether the
+        // session holds one video right where TikTok keeps it, and presses the session's Play
+        // once TikTok has rewound and paused, the way the notification's Play does.
+        val end = BackgroundPlayEndFingerprint.method
+        val shape = resolveBackgroundEnd(end) { classDefByOrNull(it) }
+        // The listener's own register: `this` and the one String after the locals.
+        val listener = end.implementation!!.registerCount - 2
+        if (shape.singleRegister > 15 || listener > 15) {
+            throw PatchException("Keep playing in the background: the background session's end keeps its registers past v15.")
+        }
+        val extension = mutableClassDefBy(EXTENSION)
+        val stub = extension.methods.filter { it.name == "replay" }
+            .singleOrPatchException("Keep playing in the background: extension bridge replay")
+        val bridge = stub.cloneMutable(additionalRegisters = 2)
+        extension.methods.remove(stub)
+        extension.methods.add(bridge)
+        val session = shape.session
+        bridge.addInstructions(
+            0,
+            """
+                check-cast p0, ${end.definingClass}
+                iget-object v0, p0, ${session.definingClass}->${session.name}:${session.type}
+                const/4 v1, 0x${NOTIFICATION_PLAY.toString(16)}
+                invoke-virtual { v0, v1 }, ${shape.play.definingClass}->${shape.play.name}(I)V
+                return-void
+            """,
+        )
+        end.addInstruction(
+            shape.singleResult + 1,
+            "invoke-static { v${shape.singleRegister}, v$listener }, $EXTENSION->onBackgroundEnd(ZLjava/lang/Object;)V",
+        )
+
         var remembered = 0
         BackgroundPlayRememberedReadFingerprint.matchAll().forEach { match ->
             val method = match.method
@@ -248,6 +371,6 @@ val backgroundPlayPatch = bytecodePatch(
         if (remembered < 2) {
             throw PatchException("Keep playing in the background: found $remembered reads of TikTok's remembered background play switch, expected at least 2.")
         }
-        println("[Background play] Hooked the mode read, the scene and photo post checks, the page's claim on the sound and $remembered reads of the remembered switch.")
+        println("[Background play] Hooked the mode read, the scene and photo post checks, the page's claim on the sound, the end of a background video and $remembered reads of the remembered switch.")
     }
 }

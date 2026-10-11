@@ -17,11 +17,13 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus için Android 10 veya üstü gerekir, bu yüzden sesler TikTok'un gönderdiği gibi kaydedilir.
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Kaydedilen videolarda sol alt köşede @kullanıcı adı ve açıklamanın ilk satırı görünür. Bunun için telefon videonun tamamını yeniden kodlar, bu yüzden kaydetmek daha uzun sürer. Hushfeed'in yaptığı kayıtlar için geçerlidir.
 Sound format	Ses biçimi
+Translate button in comments	Yorumlarda çeviri düğmesi
+Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	TikTok'un çeviri düğmesini yorum sayısının yanına ekler. Bir dokunuş tüm yorumları çevirir, bir dokunuş daha orijinalleri yeniden gösterir.
 Translate into	Şu dile çevir
 Type one language code here, like en.	Buraya tek bir dil kodu yaz, örneğin en.
 Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.	Bu hesabın en fazla %1$s MB ve %2$s kayıt içeren TikTok JSON dışa aktarımını kullanın. Saat dilimi olmayan tarihler için bu telefonun saat dilimi kullanılır.
 Sign in to TikTok before importing watch history.	İzleme geçmişini içe aktarmadan önce TikTok'a giriş yapın.
-When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	TikTok açılırken telefonun dilinin değiştiğine karar verirse, ayarlarında seçtiğin dili bırakır ve telefona uyar. Bu açıkken seçimin kalır. TikTok'un bir sonraki açılışından itibaren geçerlidir.
+When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.	TikTok açılırken telefonun dilinin değiştiğine karar verirse, ayarlarında seçtiğin dili bırakır ve telefona uyar. Bu açıkken seçimin kalır. TikTok'un bir sonraki açılışından itibaren geçerlidir.
 Write the username and caption on the video	Kullanıcı adını ve açıklamayı videonun üzerine yaz
 Writing the caption on the video	Açıklama videonun üzerine yazılıyor
 Writing the caption on the video: %1$s	Açıklama videonun üzerine yazılıyor: %1$s
@@ -142,6 +144,8 @@ How much of a video you watch before it's hidden next time. Zero counts it after
 Later	Daha sonra
 Leave when TikTok says time is up	TikTok süre doldu deyince uygulamadan çık
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.	Bir LIVE ekranı üst kenara kadar doldursun. Durum çubuğu LIVE'dan çıkınca geri gelir. Göz atmak için üstten aşağı kaydır.
+Show a LIVE under the status bar	LIVE'ı durum çubuğunun altında göster
+Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.	Bir LIVE üst kenara kadar uzansın, saat ve durum simgeleri üstünde kalsın, siyah şerit olmasın. LIVE odalarında durum çubuğunu gizle ise onları tamamen kaldırır.
 Loading the gate list and TikTok's current values…	Gate listesi ve TikTok'un geçerli değerleri yükleniyor…
 New value	Yeni değer
 No app on this phone opens that file	Bu telefonda o dosyayı açan bir uygulama yok
@@ -626,6 +630,10 @@ Hide the share prompt after a like	Beğeniden sonra çıkan paylaşım istemini 
 Hide the track name beside the caption.	Açıklamanın yanındaki parça adını gizle.
 Hide the status bar	Durum çubuğunu gizle
 Hide the whole column on the right, from the avatar down to the music disc.	Avatardan müzik diskine kadar sağdaki tüm sütunu gizle.
+Spin the music disc	Müzik diskini döndür
+Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.	Video oynarken sağ sütunun altındaki müzik diskini TikTok'un eskiden yaptığı gibi döndür.
+Keep the music disc still	Müzik diskini sabit tut
+Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.	TikTok döndürse bile sağ sütunun altındaki müzik diskini sabit tut. Bu, Müzik diskini döndür ayarından önce gelir.
 Hide this creator on this phone	Bu içerik üreticisini bu telefonda gizle
 Hide verified accounts	Doğrulanmış hesapları gizle
 Hide video actions	Video eylemlerini gizle
@@ -732,6 +740,7 @@ Messages, profiles and search still work.	Mesajlar, profiller ve arama çalışm
 Microphone in use	Mikrofon kullanımda
 Comments range	Yorum aralığı
 Favorites range	Favori aralığı
+Likes aren't available for this video	Bu video için beğeniler kullanılamıyor
 Likes range	Beğeni aralığı
 Shares range	Paylaşım aralığı
 TikTok's own daily screen-time reminder sends the app to the background instead of waiting to be dismissed. Coming straight back leaves the reminder on screen, so the limit stays reachable. Needs a daily limit set under TikTok's Settings and privacy, under Time and well-being.	TikTok'un kendi günlük ekran süresi hatırlatması, kapatılmayı beklemek yerine uygulamayı arka plana gönderir. Hemen geri dönersen hatırlatma ekranda kalır, böylece limit ulaşılabilir kalır. TikTok'un Ayarlar ve gizlilik bölümünde, Süre ve esenlik altında günlük bir limit ister.
@@ -1034,6 +1043,10 @@ Show the current spoken caption while the other controls are hidden.	Diğer kont
 Show the handle instead of the name	Ad yerine kullanıcı adını göster
 Show the hide button on videos	Videolarda gizle düğmesini göster
 Show the progress bar	İlerleme çubuğunu göster
+Show the time beside the progress bar	Süreyi ilerleme çubuğunun yanında göster
+Show the time played and the video's length at the end of the progress bar while it's on screen.	İlerleme çubuğu ekrandayken oynatılan süreyi ve videonun uzunluğunu çubuğun sonunda göster.
+Bigger progress bar handle	Daha büyük ilerleme çubuğu tutamacı
+Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	İlerleme çubuğunda daha büyük bir tutamaç ve biraz daha kalın bir çizgi çiz, böylece nerede olduğunu daha kolay görürsün.
 Show the progress bar thumbnail	İlerleme çubuğu küçük resmini göster
 Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.	TikTok'un CANLI çekmecesindeki arama girişini, mümkün olan yerlerde göster. Bu, video yorumlarına bir arama kutusu eklemez.
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Tümünü gör düğmesinde durmak yerine Etkinlik ve Yeni takipçiler listelerinin tamamını göster.
@@ -1468,6 +1481,8 @@ Clearing seen videos	İzlenen videolar temizleniyor
 Couldn't clear seen videos. Try again.	İzlenen videolar temizlenemedi. Tekrar dene.
 Keep playing in the background	Arka planda oynatmaya devam et
 The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.	İzlediğin video, TikTok'tan çıktıktan veya ekranı kapattıktan sonra da sonuna kadar oynamaya devam eder ve TikTok'un kendi medya bildiriminden duraklatılabilir. Bu açıkken TikTok'un arka planda oynatma anahtarı da açık kalır. Bunu uygulamak için TikTok'u yeniden başlat.
+Replay in the background	Arka planda yeniden oynat
+When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.	TikTok arka planda oynarken bir video bittiğinde, bildirimdeki Oynat'a basmanı beklemek yerine baştan başlar. Bir arama veya başka bir uygulamanın sesi onu yine duraklatır.
 Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off.	Hushfeed'in Oynatma ayarlarında Arka planda oynatmaya devam et açık, bu yüzden TikTok bu anahtar için 2 alır ve buradaki bir geçersiz kılma o anahtar kapanana kadar etkisizdir.
 2, from Keep playing in the background	2, Arka planda oynatmaya devam et ayarından
 Let the last video finish	Son videonun bitmesine izin ver
@@ -1856,6 +1871,7 @@ Language	Dil
 Username last changed	Kullanıcı adı son değişikliği
 Display name last changed	Görünen ad son değişikliği
 Private account	Gizli hesap
+Like the video	Videoyu beğen
 Liked videos	Beğenilen videolar
 Public	Herkese açık
 Copy	Kopyala

@@ -18,11 +18,13 @@ Opus didn't work on this phone. Saving the sound as TikTok sent it instead.,Opus
 "Opus needs Android 10 or later, so sounds save as TikTok sent them.","Opus butuh Android 10 atau yang lebih baru, jadi suara disimpan seperti yang dikirim TikTok."
 "Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.","Video yang disimpan menampilkan @nama pengguna dan baris pertama keterangan di pojok kiri bawah. Untuk itu ponsel mengenkode ulang seluruh video, jadi menyimpan jadi lebih lama. Berlaku untuk simpanan yang dibuat Hushfeed."
 Sound format,Format suara
+Translate button in comments,Tombol terjemahkan di komentar
+"Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.","Menambahkan tombol terjemahkan milik TikTok di samping jumlah komentar. Sekali ketuk menerjemahkan semua komentar, ketuk sekali lagi untuk menampilkan aslinya."
 Translate into,Terjemahkan ke
 "Type one language code here, like en.","Ketik satu kode bahasa di sini, seperti en."
 "Use this account's TikTok JSON export, up to %1$s MB and %2$s entries. Dates without a time zone use this phone's time zone.","Gunakan ekspor JSON TikTok akun ini, maksimal %1$s MB dan %2$s entri. Tanggal tanpa zona waktu memakai zona waktu ponsel ini."
 "Sign in to TikTok before importing watch history.","Masuk ke TikTok sebelum mengimpor riwayat tontonan."
-"When TikTok starts and decides the phone's language changed, it drops the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Jika ini menyala, pilihanmu tetap. Berlaku sejak TikTok dimulai lagi."
+"When TikTok starts and decides the phone's language changed, it forgets the language you picked in its settings and follows the phone. With this on, your pick stays. Counts from TikTok's next start.","Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Jika ini menyala, pilihanmu tetap. Berlaku sejak TikTok dimulai lagi."
 Write the username and caption on the video,Tulis nama pengguna dan keterangan di video
 Writing the caption on the video,Menulis keterangan di video
 Writing the caption on the video: %1$s,Menulis keterangan di video: %1$s
@@ -142,6 +144,8 @@ Hide the status bar in LIVE rooms,Sembunyikan bilah status di ruang LIVE
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,Berapa banyak video yang kamu tonton sebelum video itu disembunyikan lain kali. Nol menghitungnya setelah beberapa detik.
 Later,Nanti
 Let a LIVE fill the screen up to the top edge. The status bar comes back when you leave the LIVE. Swipe down from the top to peek at it.,Biarkan LIVE memenuhi layar sampai tepi atas. Bilah status kembali saat kamu keluar dari LIVE. Geser ke bawah dari atas untuk melihatnya sebentar.
+Show a LIVE under the status bar,Tampilkan LIVE di bawah bilah status
+"Let a LIVE reach the top edge with the clock and status icons over it, instead of a black strip. Hide the status bar in LIVE rooms takes them away instead.","Biarkan LIVE sampai ke tepi atas dengan jam dan ikon status di atasnya, bukan strip hitam. Sembunyikan bilah status di ruang LIVE menyembunyikan semuanya."
 Loading the gate list and TikTok's current values…,Memuat daftar gate dan nilai TikTok saat ini…
 New value,Nilai baru
 No profile shortcuts have been seen yet,Belum ada pintasan profil yang terlihat
@@ -596,6 +600,10 @@ Hide the track name beside the caption.,Sembunyikan nama lagu di samping keteran
 Hide the status bar,Sembunyikan bilah status
 Hide stories from the feed.,Sembunyikan Story dari feed.
 "Hide the whole column on the right, from the avatar down to the music disc.","Sembunyikan seluruh kolom kanan, dari avatar sampai piringan musik."
+Spin the music disc,Putar piringan musik
+"Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.","Putar piringan musik di bagian bawah kolom kanan saat video berjalan, seperti yang dulu dilakukan TikTok."
+Keep the music disc still,Biarkan piringan musik diam
+"Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.","Tahan piringan musik di bagian bawah kolom kanan agar tetap diam, meski TikTok memutarnya. Ini mengalahkan Putar piringan musik."
 Hide this creator on this phone,Sembunyikan kreator ini di ponsel ini
 Hide verified accounts,Sembunyikan akun terverifikasi
 Hide video actions,Sembunyikan aksi video
@@ -704,6 +712,7 @@ Media config (VE),Konfigurasi media (VE)
 Microphone in use,Mikrofon sedang dipakai
 Comments range,Rentang komentar
 Favorites range,Rentang favorit
+Likes aren't available for this video,Suka tidak tersedia untuk video ini
 Likes range,Rentang suka
 Shares range,Rentang bagikan
 Use Save report for this large report,Gunakan Simpan laporan untuk laporan besar ini
@@ -1000,6 +1009,10 @@ Show the country a video was posted from next to the creator's name.,Tampilkan n
 Show the current spoken caption while the other controls are hidden.,Tampilkan teks ucapan yang sedang berjalan meski kontrol lain disembunyikan.
 Show the handle instead of the name,"Tampilkan nama pengguna, bukan nama tampilan"
 Show the progress bar,Tampilkan bilah progres
+Show the time beside the progress bar,Tampilkan waktu di samping bilah progres
+Show the time played and the video's length at the end of the progress bar while it's on screen.,Tampilkan waktu yang sudah diputar dan durasi video di ujung bilah progres selama bilah itu terlihat.
+Bigger progress bar handle,Pegangan bilah progres lebih besar
+"Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Gambar pegangan yang lebih besar dan garis yang sedikit lebih tebal pada bilah progres, agar lebih mudah melihat posisimu."
 Show the progress bar thumbnail,Tampilkan miniatur bilah progres
 Show the whole Activity and New followers lists instead of stopping at a View all button.,"Tampilkan seluruh daftar Aktivitas dan Pengikut baru, bukan berhenti di tombol Lihat semua."
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.","Tampilkan video secara utuh, bukan dipotong mengikuti jendela. Di ponsel yang tinggi tidak ada yang berubah karena videonya memang sudah pas. Di ponsel lipat yang dibuka, layar yang lebih persegi, atau mode layar terbagi, sisi atau ujung videonya tidak lagi terpotong."
@@ -1464,6 +1477,8 @@ Clearing seen videos,Menghapus video yang sudah ditonton
 Couldn't clear seen videos. Try again.,Video yang sudah ditonton tidak dapat dihapus. Coba lagi.
 Keep playing in the background,Tetap putar di latar belakang
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","Video yang sedang kamu tonton tetap diputar sampai selesai setelah kamu keluar dari TikTok atau mematikan layar, dengan notifikasi media TikTok sendiri untuk menjedanya. Tombol putar di latar belakang milik TikTok tetap aktif selama ini aktif. Mulai ulang TikTok agar berlaku."
+Replay in the background,Putar ulang di latar belakang
+"When a video ends while TikTok plays in the background, it starts over instead of waiting for you to press Play in the notification. A call or another app's sound still pauses it.","Saat video selesai ketika TikTok diputar di latar belakang, video dimulai lagi dari awal tanpa menunggu kamu menekan Putar di notifikasi. Panggilan atau suara dari aplikasi lain tetap menjedanya."
 "Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off.","Tetap putar di latar belakang aktif di pengaturan Pemutaran Hushfeed, jadi TikTok mendapat 2 untuk kunci ini dan penggantian di sini tidak berpengaruh sampai tombol itu dimatikan."
 "2, from Keep playing in the background","2, dari Tetap putar di latar belakang"
 Let the last video finish,Biarkan video terakhir selesai
@@ -1849,6 +1864,7 @@ Language,Bahasa
 Username last changed,Nama pengguna terakhir diubah
 Display name last changed,Nama tampilan terakhir diubah
 Private account,Akun privat
+Like the video,Sukai video
 Liked videos,Video yang disukai
 Public,Publik
 Copy,Salin

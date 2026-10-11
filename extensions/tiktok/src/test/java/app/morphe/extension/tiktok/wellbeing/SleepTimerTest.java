@@ -7,6 +7,8 @@ package app.morphe.extension.tiktok.wellbeing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -50,6 +52,7 @@ public class SleepTimerTest {
     @After public void tearDown() {
         SleepTimer.resetForTests();
         Settings.LONG_PRESS_ACTION.resetToDefault();
+        Settings.DOUBLE_TAP_ACTION.resetToDefault();
         Settings.EDGE_SEEK.resetToDefault();
     }
 
@@ -169,6 +172,29 @@ public class SleepTimerTest {
 
             idleMinutes(40);
             assertEquals(0, closes);
+        }
+    }
+
+    /**
+     * #136: a double tap set to the timer opens the same picker. It's posted, as from the long
+     * press, so it opens once the tap that asked for it is done with the touch.
+     */
+    @Test public void theDoubleTapOpensThePickerOnceTheTapIsDone() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            Settings.DOUBLE_TAP_ACTION.save("sleep_timer");
+            AlertDialog before = ShadowAlertDialog.getLatestAlertDialog();
+
+            assertTrue("the tap is the timer's, not TikTok's like", GestureActions.onDoubleTap());
+            assertSame("the picker opened under the tap", before, ShadowAlertDialog.getLatestAlertDialog());
+            shadowOf(Looper.getMainLooper()).idle();
+            AlertDialog picker = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(picker);
+            assertNotSame(before, picker);
+            shadowOf(picker).clickOnItem(0);
+            assertTrue(SleepTimer.isRunning());
         }
     }
 }

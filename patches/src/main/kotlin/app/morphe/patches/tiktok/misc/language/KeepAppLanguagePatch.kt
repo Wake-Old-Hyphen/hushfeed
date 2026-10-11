@@ -14,6 +14,7 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.Method
@@ -28,7 +29,13 @@ internal const val APP_LANGUAGE_SWITCH =
 internal const val I18N_MANAGER_SERVICE = "Lcom/tiktok/ef/i18nimpl/service/I18nManagerServiceImpl;"
 internal const val I18N_MANAGER_API = "Lcom/tiktok/ef/i18nmanagerapi/service/i18n/I18nManagerServiceApi;"
 internal const val LANGUAGE_PREFERENCES = "key_language_sp_key"
+internal const val APP_LANGUAGE = "Lapp/morphe/extension/tiktok/misc/AppLanguage;"
+
+/** TikTok's reword table, its own strings by language. Native code loads it by this name. */
+internal const val REWORD_MANAGER = "Lcom/ss/android/ugc/aweme/nxreword/manager/NxRewordManager;"
+internal const val HOST_APPLICATION = "Lcom/ss/android/ugc/aweme/app/host/AwemeHostApplication;"
 private const val CONTEXT = "Landroid/content/Context;"
+private const val LOCALE = "Ljava/util/Locale;"
 private const val EDITOR = "Landroid/content/SharedPreferences\$Editor;"
 
 /**
@@ -61,9 +68,66 @@ internal fun Method.isAppLanguageReset(): Boolean {
         }
 }
 
+/**
+ * TikTok's read of the language picked in its settings (`X.039Q.LIZ` on 47.1.4): the saved locale
+ * from [LANGUAGE_PREFERENCES], with its zh-Hans and region handling, or null when nothing was
+ * picked and TikTok follows the phone.
+ */
+internal object PickedLocaleFingerprint : Fingerprint(
+    returnType = LOCALE,
+    parameters = listOf(CONTEXT),
+    strings = listOf(LANGUAGE_PREFERENCES, "key_current_locale", "pref_language_key", "key_current_region"),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
+)
+
+/**
+ * TikTok's apply of that language to the app's resources (`X.039Q.LIZIZ`), which its start-up
+ * runs as well, after the point the reword table can already have loaded.
+ */
+internal object ApplyPickedLocaleFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(CONTEXT),
+    strings = listOf(LANGUAGE_PREFERENCES, "updateLocale error:"),
+    custom = { method, _ ->
+        AccessFlags.STATIC.isSet(method.accessFlags) && method.calls("Landroid/content/res/Configuration;", "setLocale")
+    },
+)
+
+/** The reword table's switch to another language (`LJ`), the one TikTok's language page makes. */
+internal object LoadStringsFingerprint : Fingerprint(
+    definingClass = REWORD_MANAGER,
+    returnType = "V",
+    parameters = listOf(LOCALE),
+    strings = listOf("switch_locale"),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
+)
+
+/** The language the reword table is loaded for (`LIZIZ`), null before it loads. */
+internal object StringsLocaleFingerprint : Fingerprint(
+    definingClass = REWORD_MANAGER,
+    returnType = LOCALE,
+    parameters = listOf(),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
+)
+
+internal object HostApplicationOnCreateFingerprint : Fingerprint(
+    definingClass = HOST_APPLICATION,
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf(),
+)
+
+internal fun Method.calls(definingClass: String, name: String, returnType: String? = null): Boolean =
+    implementation?.instructions?.any { instruction ->
+        instruction.getReference<MethodReference>()?.let {
+            it.definingClass == definingClass && it.name == name && (returnType == null || it.returnType == returnType)
+        } == true
+    } == true
+
 @Suppress("unused")
 val keepAppLanguagePatch = bytecodePatch(
-    name = PATCH,
+    // A literal, not PATCH: DefaultSelectionPolicyTest reads the declarations as text.
+    name = "Keep the app language",
     description = "Lets you keep the language you picked in TikTok's own settings. When TikTok " +
         "starts and decides the phone's language changed, it drops that pick and follows the " +
         "phone, which can leave it in the wrong language after a reboot. Starts off. Turn it on " +
@@ -75,6 +139,7 @@ val keepAppLanguagePatch = bytecodePatch(
 
     execute {
         installAppLanguageSwitch()
+        installLanguageAtStart()
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAppLanguage()V",
@@ -100,4 +165,47 @@ internal fun installAppLanguageSwitch() {
         )
     }
     reset.guardAtEntry(PATCH, "invoke-static/range { p1 .. p1 }, $APP_LANGUAGE_SWITCH", "return-void")
+}
+
+/**
+ * Puts the picked language back first thing in the application's onCreate (#61). Skipping the
+ * reset kept the pick saved, but the reporter's TikTok still came up in English after a reboot;
+ * their own build that also did this stayed Italian. The extension's stubs get TikTok's calls
+ * here, so no obfuscated name is written into its sources, and the extension decides with the
+ * switch whether any of them runs.
+ */
+context(patchContext: BytecodePatchContext)
+internal fun installLanguageAtStart() {
+    val picked = PickedLocaleFingerprint.method
+    val apply = ApplyPickedLocaleFingerprint.method
+    if (!apply.calls(picked.definingClass, picked.name, LOCALE)) {
+        throw PatchException(
+            "$PATCH: ${apply.definingClass}->${apply.name} no longer reads ${picked.definingClass}->${picked.name}",
+        )
+    }
+    val loadStrings = LoadStringsFingerprint.method
+    val stringsLocale = StringsLocaleFingerprint.method
+
+    val extension = patchContext.mutableClassDefBy(APP_LANGUAGE)
+    fun stub(name: String) = extension.methods.single { it.name == name }
+    stub("pickedLocale").addInstructions(
+        0,
+        """
+            invoke-static { p0 }, ${picked.definingClass}->${picked.name}($CONTEXT)$LOCALE
+            move-result-object v0
+            return-object v0
+        """,
+    )
+    stub("applyPickedLocale").addInstruction(0, "invoke-static { p0 }, ${apply.definingClass}->${apply.name}($CONTEXT)V")
+    stub("stringsLocale").addInstructions(
+        0,
+        """
+            invoke-static { }, $REWORD_MANAGER->${stringsLocale.name}()$LOCALE
+            move-result-object v0
+            return-object v0
+        """,
+    )
+    stub("loadStringsFor").addInstruction(0, "invoke-static { p0 }, $REWORD_MANAGER->${loadStrings.name}($LOCALE)V")
+
+    HostApplicationOnCreateFingerprint.method.addInstruction(0, "invoke-static { p0 }, $APP_LANGUAGE->applyAtStart($CONTEXT)V")
 }

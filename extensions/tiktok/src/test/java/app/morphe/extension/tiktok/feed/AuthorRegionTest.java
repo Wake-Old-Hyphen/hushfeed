@@ -552,6 +552,43 @@ public class AuthorRegionTest {
         assertEquals(LONG_NAME, name.getText().toString());
     }
 
+    /**
+     * #127: TikTok's name is 0dp with weight 1 in a wrap_content row. Written without a layout,
+     * the country was squeezed into the short name's own width and the name cut to "Rn D… · TR"
+     * with half the row empty.
+     */
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aShortNameInAWeightedRowGrowsRatherThanBeingCut() {
+        LinearLayout row = new LinearLayout(context);
+        TextView name = new TextView(context);
+        name.setId(NAME_ID);
+        name.setSingleLine(true);
+        name.setEllipsize(TextUtils.TruncateAt.END);
+        name.setText("Rn Dunyasi");
+        row.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView postTime = new TextView(context);
+        postTime.setId(POST_TIME_ID);
+        postTime.setText(" · 13s ago");
+        row.addView(postTime);
+        FrameLayout root = new FrameLayout(context);
+        root.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        layOut(root);
+        int before = name.getWidth();
+
+        AuthorRegion.decorate(name, null, "TR");
+        layOut(root);
+        AuthorRegion.decorate(name, null, "TR");
+
+        assertEquals("Rn Dunyasi · TR", name.getText().toString());
+        assertEquals(0, name.getLayout().getEllipsisCount(0));
+        assertTrue("the name took the room it needed", name.getWidth() > before);
+
+        AuthorRegion.restore();
+        assertEquals("Rn Dunyasi", name.getText().toString());
+    }
+
     /** On a LIVE preview or an ad with no author row, the only row left can be the cell beside it. */
     @Test
     public void aLoneRowOffScreenIsNotTheVideosRow() {

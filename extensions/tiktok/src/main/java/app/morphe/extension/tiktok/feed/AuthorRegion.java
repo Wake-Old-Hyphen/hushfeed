@@ -307,10 +307,25 @@ public final class AuthorRegion {
         decoratedHandle = handle;
         decoratedRegion = region;
         name.setText(updated);
-        // A row with a fixed width takes the new text without a layout pass, so no later pass
-        // would come to fit it. Its layout is already rebuilt here; a wrap_content row has none
-        // yet and is fitted on the pass it asked for.
-        refit(name, text, handle, region);
+        if (hasFixedWidth(name)) {
+            // A row with a fixed width takes the new text without a layout pass, so no later pass
+            // would come to fit it. Its layout is already rebuilt here.
+            refit(name, text, handle, region);
+        } else {
+            // TikTok's name is 0dp with weight 1 in a wrap_content row (47.1.4), and a TextView
+            // whose width isn't wrap_content keeps its old width on setText without asking for a
+            // layout. The country was then squeezed into the width of the name alone and fit()
+            // cut the name to make room, so a short name read "Rn D… · TR" beside a row with
+            // plenty of space (#127). The row measures the new text first; the pass it asks for
+            // fits it only if it's really out of room.
+            name.requestLayout();
+        }
+    }
+
+    /** A width the row can't change by measuring the text again. */
+    private static boolean hasFixedWidth(TextView name) {
+        ViewGroup.LayoutParams params = name.getLayoutParams();
+        return params != null && params.width > 0;
     }
 
     private static void refit(TextView name, CharSequence original, String handle, String region) {

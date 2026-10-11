@@ -279,6 +279,13 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "you leave the LIVE. Swipe down from the top to peek at it.",
                     Settings.HIDE_STATUS_BAR_IN_LIVE
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show a LIVE under the status bar",
+                    "Let a LIVE reach the top edge with the clock and status icons over it, instead "
+                            + "of a black strip. Hide the status bar in LIVE rooms takes them away instead.",
+                    Settings.LIVE_UNDER_STATUS_BAR
+            ));
         }
         if (SettingsStatus.refreshRateEnabled) {
             addPreference(new TogglePreference(
@@ -340,7 +347,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(
                     context,
                     "Keep the language picked in TikTok",
-                    "When TikTok starts and decides the phone's language changed, it drops the "
+                    "When TikTok starts and decides the phone's language changed, it forgets the "
                             + "language you picked in its settings and follows the phone. With this "
                             + "on, your pick stays. Counts from TikTok's next start.",
                     Settings.KEEP_APP_LANGUAGE

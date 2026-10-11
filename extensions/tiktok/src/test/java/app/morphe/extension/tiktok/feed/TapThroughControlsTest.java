@@ -75,7 +75,7 @@ public class TapThroughControlsTest {
     @After
     public void tearDown() {
         PausedProcess.set(false);
-        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(false, 1));
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(false, 2));
         Settings.CLEAR_DISPLAY.save(false);
         Settings.FADE_CONTROLS_OPACITY.save(100);
         SettingsStatus.videoOverlaysEnabled = overlays;
@@ -116,7 +116,7 @@ public class TapThroughControlsTest {
     }
 
     private static void clear(boolean on) {
-        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(on, 1));
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(on, on ? 0 : 2));
     }
 
     private void frameDrawn() {

@@ -42,6 +42,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     /** Whether this page has anything on it. The row into it asks the same question. */
     public static boolean isAvailable() {
         return SettingsStatus.videoOverlaysEnabled
+                || SettingsStatus.musicDiscSpinEnabled
                 || SettingsStatus.feedTextSizeEnabled
                 || SettingsStatus.hideFeedFollowButtonEnabled
                 || SettingsStatus.hideFeedSaveButtonEnabled
@@ -91,6 +92,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
 
     private void addRightColumn(Context context) {
         boolean any = SettingsStatus.videoOverlaysEnabled
+                || SettingsStatus.musicDiscSpinEnabled
                 || SettingsStatus.hideFeedFollowButtonEnabled
                 || SettingsStatus.hideFeedSaveButtonEnabled
                 || SettingsStatus.exactCountsEnabled
@@ -125,6 +127,21 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new ChoicePreference(context, "Feed button size", Settings.TOUCH_TARGET_SCALE,
                     new String[]{"Normal", "Larger (1.25x)"},
                     new String[]{"1", "1.25"}));
+        }
+        // TikTok 47.1.4 holds the disc still by default (#68); these answer the setting that does.
+        if (SettingsStatus.musicDiscSpinEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Spin the music disc",
+                    "Turn the music disc at the bottom of the right column while a video plays, the way TikTok used to.",
+                    Settings.SPIN_MUSIC_DISC
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep the music disc still",
+                    "Hold the music disc at the bottom of the right column still, even where TikTok turns it. This overrides Spin the music disc.",
+                    Settings.STOP_MUSIC_DISC_SPIN
+            ));
         }
         if (SettingsStatus.hideFeedFollowButtonEnabled) {
             addPreference(new TogglePreference(
@@ -581,9 +598,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     Settings.SWIPE_LEVELS_STRIP_PERCENT, "%1$s%%"));
         }
         if (SettingsStatus.doubleTapEnabled) {
+            // Long press's actions, which GestureActions runs the same way for both gestures.
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
-                    new String[]{"TikTok default", "Do nothing", "Open comments"},
-                    new String[]{"default", "nothing", "comments"}));
+                    new String[]{"TikTok default", "Do nothing", "Open comments",
+                            "Save the original sound", "Copy the video link", "Copy the sound link",
+                            "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
+                            "Save the frame on screen as a photo", "Save the video's cover"},
+                    new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
+                            "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
         }
         if (SettingsStatus.swipeLeftEnabled) {
             addPreference(new ChoicePreference(context, "Swipe left", Settings.SWIPE_LEFT_ACTION,
@@ -591,13 +613,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     new String[]{"default", "nothing", "comments"}));
         }
         if (SettingsStatus.longPressEnabled) {
+            // Double tap's actions and a like, which TikTok's own double tap already does.
             addPreference(new ChoicePreference(context, "Long press", Settings.LONG_PRESS_ACTION,
                     new String[]{"TikTok default (hold to speed up, quick share)", "Do nothing",
-                            "Open comments", "Save the original sound", "Copy the video link",
-                            "Copy the sound link", "Find the sound on YouTube Music",
+                            "Like the video", "Open comments", "Save the original sound",
+                            "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
                             "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
                             "Save the video's cover"},
-                    new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
+                    new String[]{"default", "nothing", "like", "comments", "original_sound", "copy_link",
                             "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
             addPreference(new TogglePreference(context, "Seek from the edges",
                     "Press and hold the left or right third of the screen to jump back or forward. "

@@ -4,6 +4,38 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Keep playing in the background can now start a video over when it ends, so you don't have to press Play in the notification each time. Turn on Replay in the background under Playback. A call or another app's sound still pauses it (#99).
+
+* **TikTok:** The music disc can spin again. TikTok 47.1.4 keeps it still out of the box, so Feed screen now has Spin the music disc, and Keep the music disc still if you'd rather it never turns. Both need a restart (#68).
+
+* **TikTok:** Show the progress bar has two new switches under Playback, both off at first. Show the time beside the progress bar adds the time played and the video's length at the end of the bar, and Bigger progress bar handle draws a larger handle on a slightly thicker line (#90).
+
+* **TikTok:** With Hide the Clear display controls on, TikTok's loading line, the thin bar that grows from the middle along the bottom of a video while it buffers, now goes too while the screen is cleared (#84).
+
+* **TikTok:** A new Translate button in comments switch under Comments shows TikTok's own translate button next to the comment count. One tap translates every comment and reply, and another brings the originals back (#85). It starts off.
+
+* **TikTok:** Clear display no longer leaves a thin line across the bottom of each new video for a few seconds (#84). It was the hairline along the top of the tab bar, which stayed behind when the tabs went away.
+
+* **TikTok:** Hide the status bar in LIVE rooms keeps the black strip at the top away for the whole LIVE (#137). It used to give up after TikTok put the strip back a few times, like when panels open and close over the stream. A new Show a LIVE under the status bar switch lets a LIVE reach the top edge with the clock and icons over it, if you'd rather keep the bar. It starts off.
+
+* **TikTok:** Double tap can now do anything Long press does, like copying the link or saving the frame, and Long press has a new Like the video choice (#136). A like from a long press works like TikTok's own and never takes a like away.
+
+* **TikTok:** A collection or another grid you open a video from keeps every post in it, so Hide photo posts, blocked words and the other feed filters no longer make it play the wrong video (#135). Only ads are taken out of a list you opened.
+
+* **TikTok:** Hide the Send to row no longer takes Report, Download and the rest of the actions row with it on the small share sheet a long press opens (#120). On that sheet TikTok puts both rows in one frame, and the whole frame was being hidden.
+
+* **TikTok:** Show the progress bar shows the bar on the For You feed again, short videos included (#134). On 47.1.4 it was switching on the wrong TikTok check, one that decides whether a video is an ad, so the bar never came back while a video played.
+
+* **TikTok:** The diagnostic report has a new Storage section listing the biggest folders in TikTok's storage, so a report can show what's filling it up (#70). It names folders only, never files, and hides account numbers.
+
+* **TikTok:** Pressing back on a cleared video from search or a profile no longer counts as turning Clear display off. Opening the same video again clears it like any other, and a remembered Clear display stays on (#84).
+
+* **TikTok:** Remove LIVE extras now says it takes out the files for joining someone's LIVE as a guest, so joining by voice or video may stop working with it in (#132). Leave it out if you join LIVEs.
+
+* **TikTok:** When Clear display is remembered, or Automatic clear display has no delay, TikTok no longer shows the tabs under its loading spinner and the first video's buttons for about a second after a cold start. A video opened from Favorites or a profile starts cleared the same way (#84).
+
+* **TikTok:** With Show where a video was posted on, the creator's name no longer gets cut short to fit the country when the row has room for both, so "Rn D… · TR" reads in full again (#127). A name that's really too long is still shortened so the country stays whole.
+
 * **TikTok:** Hide already seen videos no longer takes videos out of a collection you open, so tapping a saved video plays that video again instead of the wrong one or nothing (#135). It still hides seen videos in For You, Following and Friends.
 
 * **TikTok:** A new patch, Keep the app language, adds a Keep the language picked in TikTok switch under System in App (#61). When TikTok starts and decides the phone's language changed, it drops the language you picked in its own settings and follows the phone. With the switch on, your pick stays. It starts off.

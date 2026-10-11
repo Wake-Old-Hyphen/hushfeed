@@ -190,9 +190,10 @@ val studioCreationDebloatPatch = rawResourcePatch(
 @Suppress("unused")
 val liveStreamSuiteOptimizerPatch = rawResourcePatch(
     name = "Remove LIVE extras",
-    description = "Removes the files for LIVE co-hosting, matches, games and gift effects, so " +
-        "the app gets about 3 MB smaller. The catch: in LIVEs, battle scores and guest names can " +
-        "go missing, and co-hosting, games or animated gifts may stop working.",
+    description = "Removes the files for LIVE co-hosting, joining a LIVE as a guest, matches, " +
+        "games and gift effects, so the app gets about 3 MB smaller. The catch: in LIVEs, battle " +
+        "scores and guest names can go missing, and joining someone's LIVE by voice or video, " +
+        "co-hosting, games or animated gifts may stop working.",
     default = false,
 ) {
     category("Performance")

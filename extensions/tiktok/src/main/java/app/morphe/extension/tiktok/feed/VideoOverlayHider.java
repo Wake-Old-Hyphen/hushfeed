@@ -108,6 +108,19 @@ public final class VideoOverlayHider {
      * outside the cells, under the feed.
      */
     private static final String[] BOTTOM_TABS_IDS = {"47.1.4:opp"};
+    /**
+     * The hairline along the tab bar's top edge. It's the bar's sibling in the main layout, not
+     * its child, and TikTok puts it away with the bar only when its own clear lands, so taking
+     * the bar alone left a thin line across the bottom of each video until then (#84).
+     */
+    private static final String[] BOTTOM_TABS_DIVIDER_IDS = {"47.1.4:cnq"};
+    /**
+     * TikTok's loading line, the thin bar along the bottom of each video that grows from the
+     * middle while it buffers. With the Clear display controls hidden it was the one bar left at
+     * the bottom of a cleared screen (#84). TikTok shows and animates it on every buffer, so the
+     * frame that holds it goes see-through instead of the line itself.
+     */
+    private static final String[] LOADING_LINE_IDS = {"47.1.4:nh4"};
     /** The story-count button is a sibling of the main feed, outside its tab strip and cells. */
     private static final String[] FOLLOWING_STORY_IDS = {"47.1.4:wtr"};
     /**
@@ -143,6 +156,13 @@ public final class VideoOverlayHider {
      * is laid out above it, which is how its name is found on each build.
      */
     private static final String[] SEARCH_BAR_IDS = {"47.1.4:ll8"};
+    /**
+     * What {@link #beforeClearDisplay} notes before TikTok's Clear display: the wrappers the rail's
+     * buttons and the search bar sit in, and the frames the anchor row and the music disc sit in.
+     * Constants, so the anchor test can trace the lookups.
+     */
+    private static final String[][] SHOWN_COLUMN_IDS = {ACTION_BAR_IDS, SEARCH_BAR_IDS};
+    private static final String[][] SHOWN_FRAME_IDS = {ANCHOR_IDS, MUSIC_COVER_IDS};
     /**
      * The blank TikTok keeps above the video on tall screens, as tall as the status bar, so the
      * bar never covers the picture. With the bar hidden it's only a black strip (#97).
@@ -256,6 +276,8 @@ public final class VideoOverlayHider {
     private static final int ANCHOR_TARGET = BOTTOM_TABS_TARGET + 1;
     private static final int MUSIC_COVER_TARGET = ANCHOR_TARGET + 1;
     private static final int SEARCH_BAR_TARGET = MUSIC_COVER_TARGET + 1;
+    private static final int BOTTOM_TABS_DIVIDER_TARGET = SEARCH_BAR_TARGET + 1;
+    private static final int LOADING_LINE_TARGET = BOTTOM_TABS_DIVIDER_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -527,12 +549,14 @@ public final class VideoOverlayHider {
                 // Only over the Home feed. A live state that outlasts the feed (Inbox opened from
                 // a notification) must not take the tabs off another page.
                 wanted[BOTTOM_TABS_TARGET] = tabStrip && FeedVisibility.isOnFeed(activity);
+                wanted[BOTTOM_TABS_DIVIDER_TARGET] = wanted[BOTTOM_TABS_TARGET];
                 wanted[FOLLOWING_STORY_TARGET] = tabStrip && !FeedVisibility.isStoryVisible(activity);
                 wanted[DETAIL_COMMENT_BAR_TARGET] = detailCommentBar;
                 wanted[DETAIL_COMMENT_STRIP_TARGET] = detailCommentBar;
                 wanted[CLEAR_EXIT_TARGET] = clearControls;
                 wanted[CLEAR_PLAYBACK_TARGET] = clearControls;
                 wanted[CLEAR_SEEK_BAR_TARGET] = clearControls;
+                wanted[LOADING_LINE_TARGET] = clearControls;
                 wanted[CLEAR_PHOTO_EXIT_TARGET] = clearControls;
                 wanted[ANCHOR_TARGET] = anchor;
                 // Only ever faded, never hidden by a switch of its own.
@@ -776,7 +800,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[SEARCH_BAR_TARGET + 1][];
+        String[][] targets = new String[LOADING_LINE_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -801,15 +825,18 @@ public final class VideoOverlayHider {
         targets[ANCHOR_TARGET] = ANCHOR_IDS;
         targets[MUSIC_COVER_TARGET] = MUSIC_COVER_IDS;
         targets[SEARCH_BAR_TARGET] = SEARCH_BAR_IDS;
+        targets[BOTTOM_TABS_DIVIDER_TARGET] = BOTTOM_TABS_DIVIDER_IDS;
+        targets[LOADING_LINE_TARGET] = LOADING_LINE_IDS;
         return targets;
     }
 
     /**
-     * Main-feed tabs (top and bottom) and story count, the Clear display controls, and the
-     * detail pager's comment bar are outside the cells.
+     * Main-feed tabs (top and bottom, with the bottom bar's hairline) and story count, the Clear
+     * display controls, and the detail pager's comment bar are outside the cells.
      */
     private static boolean outsideCells(int target) {
-        return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET;
+        return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET
+                || target == BOTTOM_TABS_DIVIDER_TARGET;
     }
 
     private static int candidateCount(String[][] targets) {
@@ -872,8 +899,12 @@ public final class VideoOverlayHider {
         hidden[firstCandidate(CLEAR_EXIT_TARGET)] = false;
         hidden[firstCandidate(CLEAR_PLAYBACK_TARGET)] = false;
         // Across a carried swipe the bar on screen is the incoming video's ordinary one, which
-        // its own clear is about to take; it stays away until then.
-        if (!carry) hidden[firstCandidate(CLEAR_SEEK_BAR_TARGET)] = false;
+        // its own clear is about to take; it stays away until then. So does the incoming
+        // video's loading line, which is on screen exactly then.
+        if (!carry) {
+            hidden[firstCandidate(CLEAR_SEEK_BAR_TARGET)] = false;
+            hidden[firstCandidate(LOADING_LINE_TARGET)] = false;
+        }
     }
 
     private static boolean anyParentShown(List<View> views) {
@@ -913,7 +944,10 @@ public final class VideoOverlayHider {
                     // The progress bar only goes see-through, so a drag along the bottom edge
                     // still seeks while it's out of sight (#84).
                     if (target == CLEAR_SEEK_BAR_TARGET) setTransparent(view, wanted);
-                    else if (target == ANCHOR_TARGET || target == MUSIC_COVER_TARGET
+                    else if (target == LOADING_LINE_TARGET) {
+                        android.view.ViewParent frame = view.getParent();
+                        setTransparent(frame instanceof View ? (View) frame : view, wanted);
+                    } else if (target == ANCHOR_TARGET || target == MUSIC_COVER_TARGET
                             || target == SEARCH_BAR_TARGET) {
                         // 47.1.4 keeps the caption frame, the music disc and the search bar
                         // beside the column, so they fade here. Invisible rather than gone, so
@@ -929,7 +963,8 @@ public final class VideoOverlayHider {
                         setFaded(view, gone ? 100 : fadeLevel, fadedClear);
                         TapThroughControls.mark(view, !gone && fadedClear);
                         setHidden(view, gone);
-                    } else if (target == TAB_STRIP_TARGET || target == BOTTOM_TABS_TARGET) {
+                    } else if (target == TAB_STRIP_TARGET || target == BOTTOM_TABS_TARGET
+                            || target == BOTTOM_TABS_DIVIDER_TARGET) {
                         setFaded(view, wanted ? 100 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel));
                         setHidden(view, wanted);
                     } else setHidden(view, wanted);
@@ -1305,17 +1340,16 @@ public final class VideoOverlayHider {
             // Collection.removeIf is API 24, and the payload's floor is 23.
             List<Integer> columnIds = new ArrayList<>();
             List<Integer> frameIds = new ArrayList<>();
-            String packageName = activity.getPackageName();
             // The search bar holds its row in the same kind of wrapper the rail's buttons sit in.
-            for (String[] names : new String[][]{ACTION_BAR_IDS, SEARCH_BAR_IDS}) {
-                for (String name : names) {
-                    int id = resolveIdentifier(activity, packageName, name, false);
+            for (String[] columnNames : SHOWN_COLUMN_IDS) {
+                for (String columnName : columnNames) {
+                    int id = resolveIdentifier(activity, activity.getPackageName(), columnName, false);
                     if (id != 0) columnIds.add(id);
                 }
             }
-            for (String[] names : new String[][]{ANCHOR_IDS, MUSIC_COVER_IDS}) {
-                for (String name : names) {
-                    int id = resolveIdentifier(activity, packageName, name, false);
+            for (String[] frameNames : SHOWN_FRAME_IDS) {
+                for (String frameName : frameNames) {
+                    int id = resolveIdentifier(activity, activity.getPackageName(), frameName, false);
                     if (id != 0) frameIds.add(id);
                 }
             }

@@ -16,6 +16,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.feed.VideoOverlayHider;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import java.lang.ref.WeakReference;
@@ -36,6 +37,12 @@ public final class RememberClearDisplayPatch {
     }
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
+    // Clear-mode event types, from TikTok's enum of them (X.0vGX getType on 47.1.4).
+    private static final int SCREEN_RECORD = 1;
+    private static final int SWITCH_PAGE = 3;
+    private static final int NOTIFY_EXIT = 9;
+    private static final int SWITCH_AD = 11;
+    private static final int BACK_BUTTON = 12;
     private static String currentId;
     private static Runnable pending;
     private static Runnable onFocus;
@@ -83,6 +90,21 @@ public final class RememberClearDisplayPatch {
      * starts; see {@link #isCarryingClear}.
      */
     private static volatile boolean carrying;
+    /**
+     * Whether nothing has been decided about carrying yet in this process. The first video of a
+     * cold start, and TikTok's spinner before it, showed the tabs, the buttons and the top items
+     * for about a second until the saved Clear display landed on it (#84), so a choice that
+     * clears each video as it starts is carried from the start. It ends at the first decision,
+     * or after {@link #START_LIMIT_MS} so a feed that never loads gets its tabs back.
+     */
+    private static volatile boolean starting = true;
+    private static boolean startLimitArmed;
+    static final long START_LIMIT_MS = 10000;
+    private static final Runnable END_START = () -> {
+        if (!starting) return;
+        starting = false;
+        VideoOverlayHider.refresh();
+    };
     private static boolean observingPreferences;
     private static WeakReference<View> window = new WeakReference<>(null);
     private static final SharedPreferences.OnSharedPreferenceChangeListener PREFERENCES = (preferences, key) -> {
@@ -201,14 +223,20 @@ public final class RememberClearDisplayPatch {
             currentId = null;
             applied = false;
             manuallyChanged = false;
-            setCarrying(false);
+            boolean remembered = false;
             // Not under the daily hold, whose panel needs TikTok's tabs back (leaveForHold).
             // Nor under the feed lock, which covers the feed the same way and needs the tabs too.
-            if (Settings.CLEAR_DISPLAY.get() && !SessionBudget.isLocked() && !FeedLock.covers()) emit(event, true);
+            if (Settings.CLEAR_DISPLAY.get() && !SessionBudget.isLocked() && !FeedLock.covers()) {
+                remembered = emit(event, true);
+            }
             // Switched off while it had the controls hidden: TikTok brings them back on the next
             // video by itself, but the live state, which the tab strip hide reads, would say
             // hidden until TikTok's own clear display bar was used (S22, 2026-09-23).
             else if (automaticHidden) emit(event, false);
+            // A remembered clear lands on every video as it starts, the way the automatic path
+            // with no delay does, so it carries the same way: a video opened from Favorites
+            // showed its controls for about a second until its clear landed (#84).
+            setCarrying(remembered);
             return;
         }
         if (!id.equals(currentId)) {
@@ -262,6 +290,9 @@ public final class RememberClearDisplayPatch {
         onFocus = null;
         applied = false;
         manuallyChanged = false;
+        starting = true;
+        startLimitArmed = false;
+        MAIN.removeCallbacks(END_START);
         View old = window.get();
         if (old != null) {
             if (old.getViewTreeObserver().isAlive()) old.getViewTreeObserver().removeOnWindowFocusChangeListener(FOCUS);
@@ -290,20 +321,32 @@ public final class RememberClearDisplayPatch {
     }
 
     /**
-     * Whether the controls should stay away across a swipe: the automatic path cleared the last
-     * video, will clear the next one as soon as it starts (no delay chosen), and nobody has asked
-     * for the controls back. TikTok's clear mode belongs to one video, so until the next one's
-     * clear lands it shows its buttons, its progress bar and the tabs, and a slow drag shows
-     * them on the incoming video too (#84). The overlay hider keeps them away while this holds.
+     * Whether the controls should stay away across a swipe: the last video was cleared by the
+     * automatic path (no delay chosen) or the remembered choice, the next one is cleared as soon
+     * as it starts, and nobody has asked for the controls back. TikTok's clear mode belongs to one
+     * video, so until the next one's clear lands it shows its buttons, its progress bar and the
+     * tabs, and a slow drag shows them on the incoming video too (#84). The overlay hider keeps
+     * them away while this holds. Before the first video of a cold start it holds as well.
      */
     public static boolean isCarryingClear() {
-        return carrying && Settings.AUTOMATIC_CLEAR_DISPLAY.get()
-                && Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get() == 0 && !SessionBudget.isLocked()
-                && !FeedLock.covers();
+        if (SessionBudget.isLocked() || FeedLock.covers()) return false;
+        boolean clearsAsItStarts = Settings.AUTOMATIC_CLEAR_DISPLAY.get()
+                ? Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get() == 0
+                : Settings.CLEAR_DISPLAY.get();
+        if (!clearsAsItStarts) return false;
+        if (carrying) return true;
+        if (!starting || !SettingsStatus.automaticClearDisplayEnabled) return false;
+        if (!startLimitArmed) {
+            startLimitArmed = true;
+            MAIN.postDelayed(END_START, START_LIMIT_MS);
+        }
+        return true;
     }
 
     private static void setCarrying(boolean carry) {
-        if (carrying == carry) return;
+        boolean started = starting;
+        starting = false;
+        if (carrying == carry && !started) return;
         carrying = carry;
         MAIN.post(VideoOverlayHider::refresh);
     }
@@ -349,7 +392,7 @@ public final class RememberClearDisplayPatch {
         Object clear = Reflect.readField(event, "LIZ");
         Object type = Reflect.readField(event, "LIZIZ");
         if (!(clear instanceof Boolean) || !(type instanceof Integer)) return;
-        if ((Integer) type == 3 || (Integer) type == 9) return;
+        if ((Integer) type == SWITCH_PAGE || (Integer) type == NOTIFY_EXIT) return;
         // Before TikTok handles it, ours included: what the faded Clear display keeps (#84).
         if ((Boolean) clear) VideoOverlayHider.beforeClearDisplay(event);
         if (event == nativeEvent) return;
@@ -362,6 +405,13 @@ public final class RememberClearDisplayPatch {
         // TikTok's own change: the state is TikTok's or the user's from here.
         automaticHidden = false;
         setCarrying(false);
+        // Exits TikTok makes by itself, not the reader's choice: on an opened video the first back
+        // press leaves clear mode before the page (DetailPageComponent on 47.1.4), a screen
+        // recording or cast starting leaves it, and so does paid series content. The state follows
+        // them, but they don't stick to the video or overwrite the remembered choice. Counted, the
+        // back press kept a video replayed from search from clearing again (#84).
+        int kind = (Integer) type;
+        if (kind == BACK_BUTTON || kind == SCREEN_RECORD || kind == SWITCH_AD) return;
         long observed = generation;
         Runnable changed = () -> {
             if (observed != generation) return;

@@ -33,6 +33,7 @@ private const val SEEK_EXTENSION = "Lapp/morphe/extension/tiktok/interaction/Fee
 private const val MOTION_EVENT = "Landroid/view/MotionEvent;"
 private const val EDGE_SPEEDUP = "Lcom/ss/android/ugc/aweme/feed/longvideo/edgespeedup/EdgeSpeedupAssem;"
 private const val FEED_PAGE_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;"
+internal const val DIGG_CLASS = "Lcom/ss/android/ugc/aweme/feed/assem/digg/VideoDiggAssem;"
 
 /** Whether the method is the coordinate callback: a public final one taking two floats. */
 private fun Method.isCoordinateCallback() =
@@ -169,6 +170,19 @@ private object FeedLongPressFingerprint : Fingerprint(
 )
 
 /**
+ * The heart's assem, which kept its name as the comment assem did. Like the video presses the
+ * heart in the cell of the comment button a gesture picks, so the heart's view is registered the
+ * way Double-tap controls registers the comment button's. The press itself goes through the
+ * ability the assem implements, found by shape at the time of the press.
+ */
+internal object LikeViewFingerprint : Fingerprint(
+    definingClass = DIGG_CLASS,
+    name = "onViewCreated",
+    parameters = listOf("Landroid/view/View;"),
+    returnType = "V",
+)
+
+/**
  * PlayerController is one of the classes TikTok did not rename, and neither is this callback
  * on it. It runs several times a second while a video plays and carries the source id, the
  * position and the length, which is what an edge seek needs to know, and the controller it
@@ -196,9 +210,9 @@ private object PlayerProgressFingerprint : Fingerprint(
 @Suppress("unused")
 val longPressPatch = bytecodePatch(
     name = "Long-press controls",
-    description = "Lets a long press on a video do something else, like open the comments, " +
-        "copy the link, save the sound or the frame on screen, or set a sleep timer. Starts off. " +
-        "Pick an action in Hushfeed settings > Feed screen.",
+    description = "Lets a long press on a video like it, open the comments, copy the link, save " +
+        "the sound or the frame on screen, or set a sleep timer. Starts off. Pick an action in " +
+        "Hushfeed settings > Feed screen.",
 ) {
     category("Interaction")
     compatibleWith(*AppCompatibilities.tiktok())
@@ -231,6 +245,12 @@ val longPressPatch = bytecodePatch(
                 ExternalLabel("original", getInstruction(0)),
             )
         }
+
+        LikeViewFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p1 }, " +
+                "$EXTENSION->registerLikeView(Ljava/lang/Object;Landroid/view/View;)V",
+        )
 
         // p0 is the controller, p1 the source id, then the position and the length, each a
         // pair of registers. The range form is what reaches them in a method this wide.

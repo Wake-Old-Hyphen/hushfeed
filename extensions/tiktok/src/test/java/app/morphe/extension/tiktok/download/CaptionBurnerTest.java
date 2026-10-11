@@ -214,6 +214,7 @@ public class CaptionBurnerTest {
             @Override public void sleep(long millis) { }
         };
         MediaBudget.Deadline deadline = new MediaBudget.Deadline(1_000_000_000L, clock);
+        File output = files.newFile("out.mp4");
         boolean[] kept = new boolean[1];
         CaptionBurner.burner = (in, out, creator, caption, progress) -> {
             now[0] = 2_000_000_000L;
@@ -221,7 +222,7 @@ public class CaptionBurnerTest {
         };
         MediaBudget.runWithJobDeadline(deadline, () -> {
             try {
-                kept[0] = !CaptionBurner.burnOrKeep(source, files.newFile("out.mp4"), "@alice", "Hello", null);
+                kept[0] = !CaptionBurner.burnOrKeep(source, output, "@alice", "Hello", null);
             } catch (MediaBudget.StopException stop) {
                 throw new AssertionError("running out of time lost the save", stop);
             }

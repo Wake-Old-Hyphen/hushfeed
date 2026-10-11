@@ -30,6 +30,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
+                || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
@@ -48,6 +49,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
         boolean reading = SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
+                || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled;
@@ -83,6 +85,15 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.TRANSLATE_INTO)
                     .withCheck(app.morphe.extension.tiktok.translation.TranslateInto::languageProblem)
                     .withNameKeyboard());
+        }
+        if (SettingsStatus.commentTranslateButtonEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Translate button in comments",
+                    "Adds TikTok's translate button next to the comment count. One tap translates "
+                            + "every comment, and another shows the originals again.",
+                    Settings.COMMENT_TRANSLATE_BUTTON
+            ));
         }
         if (SettingsStatus.commentSortControlsEnabled) {
             addPreference(new TogglePreference(

@@ -1,5 +1,37 @@
 ## Unreleased
 
+* **TikTok:** Im Hintergrund weiterspielen kann ein Video jetzt von vorn starten, wenn es endet, damit du nicht jedes Mal in der Benachrichtigung auf Abspielen tippen musst. Schalte unter Wiedergabe Im Hintergrund wiederholen ein. Ein Anruf oder der Ton einer anderen App hält es weiterhin an (#99).
+
+* **TikTok:** Die Musikscheibe kann sich wieder drehen. TikTok 47.1.4 hält sie von Haus aus still, deshalb gibt es in der Feed-Ansicht jetzt Musikscheibe drehen lassen, und Musikscheibe stillhalten, falls sie sich nie drehen soll. Beide brauchen einen Neustart (#68).
+
+* **TikTok:** Fortschrittsbalken anzeigen hat zwei neue Schalter unter Wiedergabe, beide anfangs aus. Zeit neben dem Fortschrittsbalken anzeigen setzt die abgespielte Zeit und die Länge des Videos ans Ende des Balkens, und Größerer Griff am Fortschrittsbalken zeichnet einen größeren Griff auf einer etwas dickeren Linie (#90).
+
+* **TikTok:** Mit Steuerelemente der freien Ansicht ausblenden verschwindet jetzt auch TikToks Ladelinie, der dünne Balken, der beim Puffern von der Mitte aus am unteren Rand eines Videos wächst, solange der Bildschirm frei ist (#84).
+
+* **TikTok:** Der neue Schalter Übersetzen-Schaltfläche in Kommentaren unter Kommentare zeigt TikToks eigene Übersetzen-Schaltfläche neben der Kommentaranzahl. Ein Tippen übersetzt alle Kommentare und Antworten, ein weiteres holt die Originale zurück (#85). Er ist anfangs aus.
+
+* **TikTok:** Freie Ansicht lässt am unteren Rand jedes neuen Videos nicht mehr ein paar Sekunden lang eine dünne Linie stehen (#84). Das war die feine Linie oben an der Tab-Leiste, die zurückblieb, wenn die Tabs verschwanden.
+
+* **TikTok:** Statusleiste in LIVE-Räumen ausblenden hält den schwarzen Streifen oben für das ganze LIVE fern (#137). Bisher gab es auf, nachdem TikTok den Streifen ein paar Mal zurückgesetzt hatte, etwa wenn sich Panels über dem Stream öffnen und schließen. Der neue Schalter LIVE unter der Statusleiste zeigen lässt ein LIVE bis zum oberen Rand reichen, mit Uhr und Symbolen darüber, falls du die Leiste lieber behältst. Er ist anfangs aus.
+
+* **TikTok:** Doppeltippen kann jetzt alles, was Langes Drücken kann, etwa den Link kopieren oder das Bild speichern, und Langes Drücken hat die neue Auswahl Video liken (#136). Ein Like per langem Drücken funktioniert wie TikToks eigenes und nimmt nie ein Like zurück.
+
+* **TikTok:** Eine Sammlung oder ein anderes Raster, aus dem du ein Video öffnest, behält alle Beiträge. Hide photo posts, blockierte Wörter und die anderen Feed-Filter lassen dort also nicht mehr das falsche Video abspielen (#135). Aus einer Liste, die du geöffnet hast, wird nur Werbung entfernt.
+
+* **TikTok:** Hide the Send to row nimmt im kleinen Teilen-Menü, das ein langes Drücken öffnet, nicht mehr Report, Download und den Rest der Aktionszeile mit (#120). In diesem Menü legt TikTok beide Zeilen in einen Rahmen, und es wurde der ganze Rahmen ausgeblendet.
+
+* **TikTok:** Show the progress bar zeigt die Leiste im For You Feed wieder an, auch bei kurzen Videos (#134). Auf 47.1.4 hat es die falsche TikTok-Prüfung eingeschaltet, nämlich die, ob ein Video Werbung ist. Deshalb kam die Leiste während der Wiedergabe nie zurück.
+
+* **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt Storage mit den größten Ordnern in TikToks Speicher. So zeigt ein Bericht, was ihn füllt (#70). Er nennt nur Ordner, nie Dateien, und blendet Kontonummern aus.
+
+* **TikTok:** Wenn du bei einem freigeräumten Video aus der Suche oder einem Profil auf Zurück tippst, zählt das nicht mehr als Ausschalten von Clear display. Öffnest du dasselbe Video noch mal, wird es wie jedes andere freigeräumt, und ein gemerktes Clear display bleibt an (#84).
+
+* **TikTok:** Remove LIVE extras sagt jetzt, dass es die Dateien entfernt, mit denen du einem fremden LIVE als Gast beitrittst. Mit diesem Patch kann der Beitritt per Sprache oder Video also nicht mehr klappen (#132). Lass ihn weg, wenn du LIVEs beitrittst.
+
+* **TikTok:** Wenn Clear display gemerkt wird oder Automatic clear display keine Verzögerung hat, zeigt TikTok nach einem Kaltstart nicht mehr die Tabs unter dem Ladekreis und etwa eine Sekunde lang die Knöpfe des ersten Videos. Ein Video, das du aus Favorites oder einem Profil öffnest, startet genauso schon aufgeräumt (#84).
+
+* **TikTok:** Mit Show where a video was posted wird der Name des Creators nicht mehr für das Land gekürzt, wenn die Zeile Platz für beides hat. "Rn D… · TR" ist also wieder ganz lesbar (#127). Ein Name, der wirklich zu lang ist, wird weiter gekürzt, damit das Land ganz zu sehen bleibt.
+
 * **TikTok:** Hide already seen videos nimmt keine Videos mehr aus einer Sammlung, die du öffnest. Ein Tipp auf ein gespeichertes Video spielt also wieder dieses Video ab statt eines falschen oder gar keines (#135). In For You, Following und Friends blendet es gesehene Videos weiter aus.
 
 * **TikTok:** Ein neuer Patch, Keep the app language, bringt unter System in App den Schalter In TikTok gewählte Sprache behalten (#61). Wenn TikTok startet und meint, die Sprache des Handys habe sich geändert, verwirft es die Sprache, die du in seinen Einstellungen gewählt hast, und folgt dem Handy. Mit dem Schalter bleibt deine Wahl. Er ist zu Beginn aus.

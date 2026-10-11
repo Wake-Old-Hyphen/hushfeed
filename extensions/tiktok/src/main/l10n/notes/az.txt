@@ -1,5 +1,37 @@
 ## Unreleased
 
+* **TikTok:** Fonda oxutmağa davam edin indi video bitəndə onu yenidən başlada bilər, beləliklə hər dəfə bildirişdə Oxut düyməsini basmağa ehtiyac qalmır. Oxutma bölməsində Fonda təkrar oxut seçimini yandırın. Zəng və ya başqa tətbiqin səsi onu yenə dayandırır (#99).
+
+* **TikTok:** Musiqi diski yenidən fırlana bilər. TikTok 47.1.4 onu əvvəlcədən sabit saxlayır, ona görə Lent ekranında indi Musiqi diskini fırladın var, heç fırlanmasını istəmirsinizsə Musiqi diskini sabit saxlayın da var. İkisi də yenidən başlatma tələb edir (#68).
+
+* **TikTok:** İrəliləyiş panelini göstərin üçün Oxutma bölməsində iki yeni açar var, ikisi də əvvəlcə söndürülüb. İrəliləyiş panelinin yanında vaxtı göstərin panelin sonuna oxudulan vaxtı və videonun uzunluğunu əlavə edir, Daha böyük irəliləyiş paneli tutacağı isə bir az qalın xətt üzərində daha böyük tutacaq çəkir (#90).
+
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin açıq olanda TikTok-un yüklənmə xətti, video yüklənərkən aşağı kənar boyunca ortadan böyüyən nazik zolaq, ekran təmizlənəndə artıq o da gizlənir (#84).
+
+* **TikTok:** Şərhlər bölməsindəki yeni Şərhlərdə tərcümə düyməsi açarı TikTok-un öz tərcümə düyməsini şərh sayının yanında göstərir. Bir toxunuş bütün şərhləri və cavabları tərcümə edir, ikincisi isə orijinalları geri qaytarır (#85). Açar əvvəlcə söndürülüb.
+
+* **TikTok:** Təmiz ekran artıq hər yeni videonun altında bir neçə saniyəlik nazik xətt qoymur (#84). Bu, tab panelinin üst kənarındakı incə xətt idi və tablar gedəndə geridə qalırdı.
+
+* **TikTok:** LIVE otaqlarında status panelini gizlədin yuxarıdakı qara zolağı bütün LIVE boyunca uzaqda saxlayır (#137). Əvvəllər TikTok zolağı bir neçə dəfə geri qaytardıqdan sonra, məsələn yayımın üstündə panellər açılıb bağlananda, bu işləməyi dayandırırdı. Yeni LIVE-ı status panelinin altında göstərin açarı LIVE-ın yuxarı kənara qədər uzanmasına imkan verir, saat və ikonlar onun üstündə qalır. Paneli saxlamaq istəyirsinizsə, bunu seçin. Açar əvvəlcə söndürülüb.
+
+* **TikTok:** İki dəfə toxunma artıq Uzun basmanın etdiyi hər şeyi edə bilir, məsələn linki kopyalamaq və ya kadrı saxlamaq, Uzun basmada isə yeni Videonu bəyənin seçimi var (#136). Uzun basma ilə bəyənmə TikTok-un özününkü kimi işləyir və bəyənməni heç vaxt geri götürmür.
+
+* **TikTok:** Videonu açdığınız kolleksiya və ya başqa şəbəkə içindəki bütün paylaşımları saxlayır, beləliklə Hide photo posts, bloklanmış sözlər və digər lent filtrləri artıq səhv videonun oynamasına səbəb olmur (#135). Açdığınız siyahıdan yalnız reklamlar çıxarılır.
+
+* **TikTok:** Hide the Send to row artıq uzun basmanın açdığı kiçik paylaşım pəncərəsində Report, Download və digər əməliyyatlar sırasını da gizlətmir (#120). O pəncərədə TikTok hər iki sıranı bir çərçivəyə qoyur və bütün çərçivə gizlənirdi.
+
+* **TikTok:** Show the progress bar yenidən For You lentində zolağı göstərir, qısa videolarda da (#134). 47.1.4-də o, TikTok-un səhv yoxlamasını, videonun reklam olub-olmadığını həll edən yoxlamanı işə salırdı, ona görə video oynayanda zolaq heç geri gəlmirdi.
+
+* **TikTok:** Diaqnostika hesabatında yeni Storage bölməsi var. O, TikTok yaddaşındakı ən böyük qovluqları göstərir, beləliklə hesabat yeri nəyin doldurduğunu göstərə bilir (#70). Yalnız qovluq adlarını yazır, fayl adlarını yox, hesab nömrələrini isə gizlədir.
+
+* **TikTok:** Axtarışdan və ya profildən açılmış təmizlənmiş videoda geri düyməsinə basmaq artıq Clear display-i söndürmək sayılmır. Eyni videonu yenidən açanda o da başqaları kimi təmizlənir, yadda saxlanmış Clear display isə açıq qalır (#84).
+
+* **TikTok:** Remove LIVE extras indi başqasının LIVE-ına qonaq kimi qoşulmaq üçün faylları da sildiyini deyir, ona görə onunla səsli və ya videolu qoşulmaq işləməyə bilər (#132). LIVE-lara qoşulursunuzsa, onu seçməyin.
+
+* **TikTok:** Clear display yadda saxlananda və ya Automatic clear display gecikməsiz olanda, TikTok soyuq başlanğıcdan sonra yükləmə fırlanğacının altında tabları və ilk videonun düymələrini təxminən bir saniyə artıq göstərmir. Favorites və ya profildən açılan video da eyni şəkildə təmizlənmiş başlayır (#84).
+
+* **TikTok:** Show where a video was posted açıq olanda, sırada hər ikisinə yer varsa, yaradıcının adı artıq ölkəyə yer açmaq üçün qısaldılmır, ona görə "Rn D… · TR" yenə tam oxunur (#127). Həqiqətən çox uzun ad isə ölkə tam görünsün deyə yenə qısaldılır.
+
 * **TikTok:** Hide already seen videos artıq açdığınız kolleksiyadan videoları çıxarmır, ona görə saxlanmış videoya toxunanda səhv video və ya heç nə yox, yenə həmin video oynayır (#135). O, For You, Following və Friends lentlərində baxılmış videoları gizlətməyə davam edir.
 
 * **TikTok:** Yeni Keep the app language patçı Tətbiq səhifəsində Sistem altına TikTok-da seçilən dili saxla açarını əlavə edir (#61). TikTok açılanda telefonun dilinin dəyişdiyinə qərar verərsə, öz ayarlarında seçdiyiniz dili atır və telefona uyğunlaşır. Açar yandırılanda seçiminiz qalır. Sönülü başlayır.

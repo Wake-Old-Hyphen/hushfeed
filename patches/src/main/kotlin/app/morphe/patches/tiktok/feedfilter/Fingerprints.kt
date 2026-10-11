@@ -103,6 +103,46 @@ internal object ProfileApiExecuteFingerprint : Fingerprint(
     ),
 )
 
+/** Whether the instruction is a list model's setItems(List), the call the opened-list fill copies through. */
+internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isModelSetItems(): Boolean =
+    opcode == com.android.tools.smali.dexlib2.Opcode.INVOKE_VIRTUAL &&
+        getReference<MethodReference>()?.let { reference ->
+            reference.name == "setItems" && reference.returnType == "V" &&
+                reference.parameterTypes == listOf("Ljava/util/List;")
+        } == true
+
+/** Whether the instruction is a read of a list model's real-named data field, which holds its FeedItemList. */
+internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isModelDataRead(): Boolean =
+    opcode == com.android.tools.smali.dexlib2.Opcode.IGET_OBJECT &&
+        getReference<FieldReference>()?.let { field ->
+            field.name == "mData" && field.type == "Ljava/lang/Object;"
+        } == true
+
+/**
+ * Where a list the reader opened from a grid becomes the list TikTok's profile model plays: a
+ * collection, or another grid handing its loaded videos to the video page (X.0OfL.LJIIL on 47.1.4,
+ * called through X.0OfJ from the collection click and one other grid). It copies the grid's list
+ * into the model's FeedItemList with setItems, then writes the paging on it. That FeedItemList
+ * carries no profile uid and no profile parse saw it, so its getItems read ran the main feed's
+ * rules (#135). R8 names the class and method; the shape and the maxCursor write name it.
+ */
+internal object OpenedListFillFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Ljava/util/List;", "J", "Z", "Ljava/lang/String;"),
+    custom = { method, _ ->
+        method.implementation?.instructions?.let { instructions ->
+            instructions.any { it.isModelSetItems() } && instructions.any { it.isModelDataRead() } &&
+                instructions.any {
+                    it.opcode == com.android.tools.smali.dexlib2.Opcode.IPUT_WIDE &&
+                        it.getReference<FieldReference>()?.let { field ->
+                            field.definingClass == "Lcom/ss/android/ugc/aweme/feed/model/FeedItemList;" &&
+                                field.name == "maxCursor"
+                        } == true
+                }
+        } == true
+    },
+)
+
 internal object FollowFeedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;",

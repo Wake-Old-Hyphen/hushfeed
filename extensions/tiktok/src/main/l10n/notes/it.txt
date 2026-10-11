@@ -1,5 +1,37 @@
 ## Unreleased
 
+* **TikTok:** Continua la riproduzione in background ora può far ripartire un video quando finisce, così non devi premere Riproduci nella notifica ogni volta. Attiva Ripeti in background in Riproduzione. Una chiamata o l'audio di un'altra app lo mettono ancora in pausa (#99).
+
+* **TikTok:** Il disco musicale può girare di nuovo. TikTok 47.1.4 lo tiene fermo di serie, quindi in Schermata del feed ora c'è Fai girare il disco musicale, e Tieni fermo il disco musicale se preferisci che non giri mai. Entrambi richiedono un riavvio (#68).
+
+* **TikTok:** Mostra la barra di avanzamento ha due nuovi interruttori in Riproduzione, entrambi spenti all'inizio. Mostra il tempo accanto alla barra di avanzamento aggiunge il tempo riprodotto e la durata del video alla fine della barra, e Cursore più grande nella barra di avanzamento disegna un cursore più grande su una linea un po' più spessa (#90).
+
+* **TikTok:** Con Nascondi i controlli della vista pulita attivo, ora sparisce anche la linea di caricamento di TikTok, la barra sottile che cresce dal centro lungo il bordo inferiore di un video mentre si carica, finché lo schermo è pulito (#84).
+
+* **TikTok:** Il nuovo interruttore Pulsante Traduci nei commenti, in Commenti, mostra il pulsante di traduzione di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti e le risposte, un altro riporta gli originali (#85). Parte spento.
+
+* **TikTok:** Vista pulita non lascia più una linea sottile in fondo a ogni nuovo video per qualche secondo (#84). Era la linea sottile sul bordo superiore della barra delle schede, che restava lì quando le schede sparivano.
+
+* **TikTok:** Nascondi la barra di stato nelle stanze LIVE tiene lontana la striscia nera in alto per tutto il LIVE (#137). Prima si arrendeva dopo che TikTok rimetteva la striscia un po' di volte, per esempio quando i pannelli si aprono e si chiudono sopra la diretta. Il nuovo interruttore Mostra il LIVE sotto la barra di stato lascia che un LIVE arrivi fino al bordo superiore con l'ora e le icone sopra, se preferisci tenere la barra. Parte spento.
+
+* **TikTok:** Doppio tocco ora può fare tutto quello che fa Pressione prolungata, come copiare il link o salvare il fotogramma, e Pressione prolungata ha la nuova scelta Metti Mi piace al video (#136). Un Mi piace dato con la pressione prolungata funziona come quello di TikTok e non toglie mai un Mi piace.
+
+* **TikTok:** Una raccolta o un'altra griglia da cui apri un video tiene tutti i suoi post, quindi Hide photo posts, le parole bloccate e gli altri filtri del feed non fanno più partire il video sbagliato (#135). Da un elenco che hai aperto vengono tolte solo le pubblicità.
+
+* **TikTok:** Hide the Send to row non si porta più via Report, Download e il resto della riga delle azioni nel piccolo menu di condivisione che si apre con una pressione prolungata (#120). In quel menu TikTok mette le due righe nello stesso riquadro, e veniva nascosto l'intero riquadro.
+
+* **TikTok:** Show the progress bar mostra di nuovo la barra nel feed Per te, anche sui video brevi (#134). Sulla 47.1.4 attivava il controllo sbagliato di TikTok, quello che decide se un video è una pubblicità, quindi la barra non tornava mai mentre il video era in riproduzione.
+
+* **TikTok:** Il report diagnostico ha una nuova sezione Storage con le cartelle più grandi nella memoria di TikTok, così un report può mostrare cosa la sta riempiendo (#70). Nomina solo le cartelle, mai i file, e nasconde i numeri degli account.
+
+* **TikTok:** Premere indietro su un video pulito aperto dalla ricerca o da un profilo non conta più come spegnere Clear display. Riaprendo lo stesso video si pulisce come gli altri, e un Clear display ricordato resta attivo (#84).
+
+* **TikTok:** Remove LIVE extras ora dice che toglie i file per entrare nella LIVE di qualcun altro come ospite, quindi con questa patch entrare con la voce o il video può smettere di funzionare (#132). Lasciala fuori se partecipi alle LIVE.
+
+* **TikTok:** Quando Clear display viene ricordato, o Automatic clear display non ha ritardo, TikTok non mostra più le schede sotto la rotellina di caricamento e i pulsanti del primo video per circa un secondo dopo un avvio a freddo. Anche un video aperto da Favorites o da un profilo parte già pulito (#84).
+
+* **TikTok:** Con Show where a video was posted attivo, il nome del creator non viene più accorciato per far stare il paese quando la riga ha spazio per entrambi, quindi "Rn D… · TR" si legge di nuovo per intero (#127). Un nome davvero troppo lungo viene ancora accorciato perché il paese resti intero.
+
 * **TikTok:** Hide already seen videos non toglie più i video da una raccolta che apri, quindi toccando un video salvato si riproduce di nuovo quel video, non un altro o niente (#135). Continua a nascondere i video già visti in For You, Following e Friends.
 
 * **TikTok:** Una nuova patch, Keep the app language, aggiunge l'interruttore Mantieni la lingua scelta in TikTok in Sistema dentro App (#61). Quando TikTok si avvia e decide che la lingua del telefono è cambiata, scarta la lingua che hai scelto nelle sue impostazioni e segue il telefono. Con l'interruttore attivo, la tua scelta resta. Parte spento.
