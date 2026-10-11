@@ -99,22 +99,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Nai64 version (local mirror)
+      - name: Fetch Nai64 version (GitLab)
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
         id: nai64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p nai64-meta
-          gh release download nai64-bundle --repo ${{ github.repository }} \
-            --pattern "changelog_history.json" --dir nai64-meta/ || true
-          NAI64_VER="1.1.0"
-          if [ -f nai64-meta/changelog_history.json ]; then
-            V=$(jq -r 'if type=="array" then (last | .version? // empty) else (.version? // empty) end' nai64-meta/changelog_history.json 2>/dev/null || true)
-            [ -n "$V" ] && NAI64_VER="$V"
-          fi
+          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
+          NAI64_VER=$(jq -r '.version // "unknown"' nai64-meta/bundle.json)
           echo "NAI64_VERSION=$NAI64_VER" >> $GITHUB_OUTPUT
-          echo "Nai64 version (mirror): $NAI64_VER"
+          echo "Nai64 version: $NAI64_VER"
 
       - name: Upload changelog for publish job
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
@@ -135,7 +128,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Edit this list whenever a new TikTok version is supported
         version: ['47.1.4']
     steps:
       - uses: actions/checkout@v4
@@ -204,20 +196,19 @@ jobs:
           mkdir -p bundles
           curl -L -o bundles/hushfeed.mpp "https://github.com/${{ github.repository }}/releases/download/v${{ needs.build-mpp.outputs.VERSION }}/patches-${{ needs.build-mpp.outputs.VERSION }}.mpp"
 
-      - name: Download Nai64 bundle (local mirror)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Nai64 bundle (GitLab)
         run: |
           mkdir -p bundles nai64-meta
-          gh release download nai64-bundle --repo ${{ github.repository }} \
-            --pattern "patches.jar" --dir nai64-meta/
-          gh release download nai64-bundle --repo ${{ github.repository }} \
-            --pattern "patches.sha256" --dir nai64-meta/ || true
-          if [ -f nai64-meta/patches.sha256 ]; then
-            (cd nai64-meta && sha256sum -c patches.sha256) || echo "WARNING: sha256 check failed or format differs — continuing"
+          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
+          NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
+          
+          if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
+            echo "❌ Could not find Nai64 download URL"
+            exit 1
           fi
-          mv nai64-meta/patches.jar bundles/nai64.mpp
-          echo "Nai64 bundle ready: $(du -h bundles/nai64.mpp | cut -f1)"
+          
+          curl -L -o bundles/nai64.mpp "$NAI64_URL"
+          echo "✅ Nai64 bundle downloaded: $(du -h bundles/nai64.mpp | cut -f1)"
 
       - name: Generate options
         run: java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -o build/options.json
@@ -318,13 +309,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p build bundles
+          mkdir -p build bundles nai64-meta
           CLI_URL=$(curl -s https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest | jq -r '.assets[] | select(.name | endswith("-all.jar")) | .browser_download_url')
           curl -L -o build/cli.jar "$CLI_URL"
           curl -L -o bundles/hushfeed.mpp "https://github.com/${{ github.repository }}/releases/download/v${{ needs.build-mpp.outputs.VERSION }}/patches-${{ needs.build-mpp.outputs.VERSION }}.mpp"
-          gh release download nai64-bundle --repo ${{ github.repository }} \
-            --pattern "patches.jar" --dir bundles/
-          mv bundles/patches.jar bundles/nai64.mpp
+          
+          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
+          NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
+          curl -L -o bundles/nai64.mpp "$NAI64_URL"
 
       - name: Regenerate options for notes
         run: |
