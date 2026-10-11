@@ -10,6 +10,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.argumentRegister
 import app.morphe.util.findMutableMethodOf
@@ -127,6 +128,7 @@ val followDiagnosticsPatch = bytecodePatch(
                 mutableMethod.patchFollowCall(patch.index, patch.beforeInstructions)
             }
         }
+        registerForBuildDetails("enableFollowDiagnostics")
     }
 }
 

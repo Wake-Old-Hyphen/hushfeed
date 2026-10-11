@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Build təfərrüatları indi yalnız TikTok-un resurslarını dəyişən yamaları da adlandırır, məsələn Change app name, Custom launcher icon və Trust user certificates. Yamanın özü göstərilir, onun seçimlərində seçdiyiniz ad və ya şəkil heç vaxt göstərilmir.
+
+* **TikTok:** Diaqnostikanı qeyd edin açıq olanda qeyd indi hər video üçün bir dəfə TikTok-un onunla irəliləmə çubuğu üçün neçə önizləmə şəkli göndərdiyini yazır. Çubuğu sürüşdürəndə önizləmə görünmürsə, diaqnostika ixracı videonun belə şəkillərlə gəlib-gəlmədiyini göstərir (#140).
+
+* **TikTok:** Build təfərrüatları və tam jurnal ixracı indi quruluşunda TikTok-un kodunu dəyişən hər yamağı qısa adı ilə sadalayır, Comment send fix və Network request report kimi açarı olmayanlar da daxil.
+
+* **TikTok:** Yadda saxlanan və ya avtomatik Təmiz ekran indi axtarışdan açdığınız videonu da təmizləyir. TikTok həmin videonu açılan səhifəyə artıq oynayarkən ötürür, Təmiz ekran isə orada heç vaxt gəlməyən başlanğıcı gözləyirdi, ona görə düymələr və TikTok-un axtarış çubuğu qalırdı (#84).
+
+* **TikTok:** Video örtüklərini gizlədin və lent mətn ölçüləri indi keçid TikTok-u arxasında Sizin üçün lenti olmadan birbaşa axtarışda və ya videoda açanda da işləyir. Əvvəl belə açılan videolarda bütün örtüklər və TikTok-un öz mətn ölçüsü qalırdı (#84).
+
 * **TikTok:** TikTok brauzerində xarici səhifələri qoruyun indi LIVE-ların və Mağazanın açdığı tapmaca CAPTCHA-nı TikTok-un öz səhifəsi sayır, buna görə tapmacanın TikTok ilə əlaqəsi qalır (#87). O, TikTok-un öz serverlərindən yüklənir, sadəcə açarın tanımadığı ünvandan.
 
 * **TikTok:** Build təfərrüatları, Qoşulma statusu, Lisenziyalar və ya Yeniliklər üzərinə tez ikinci toxunuş artıq eyni pəncərəni bir-birinin üstündə iki dəfə açmır.
@@ -44,7 +54,7 @@
 
 * **TikTok:** Diaqnostika hesabatında yeni Storage bölməsi var. O, TikTok yaddaşındakı ən böyük qovluqları göstərir, beləliklə hesabat yeri nəyin doldurduğunu göstərə bilir (#70). Yalnız qovluq adlarını yazır, fayl adlarını yox, hesab nömrələrini isə gizlədir.
 
-* **TikTok:** Axtarışdan və ya profildən açılmış təmizlənmiş videoda geri düyməsinə basmaq artıq Clear display-i söndürmək sayılmır. Eyni videonu yenidən açanda o da başqaları kimi təmizlənir, yadda saxlanmış Clear display isə açıq qalır (#84).
+* **TikTok:** Təmizlənmiş videoda geri düyməsinə basmaq və ya oradan paylaşma panelini açmaq artıq Clear display-i söndürmək sayılmır. Eyni videonu yenidən açanda o da başqaları kimi təmizlənir, yadda saxlanmış Clear display isə açıq qalır (#84).
 
 * **TikTok:** Remove LIVE extras indi başqasının LIVE-ına qonaq kimi qoşulmaq üçün faylları da sildiyini deyir, ona görə onunla səsli və ya videolu qoşulmaq işləməyə bilər (#132). LIVE-lara qoşulursunuzsa, onu seçməyin.
 

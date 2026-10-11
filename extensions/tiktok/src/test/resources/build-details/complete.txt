@@ -18,3 +18,4 @@ tool_core_assets=already_stripped
 tool_creation=absent
 tool_live_extras=not_selected
 version_code_override=2147483647
+resource_patches=changeAppName,customLauncherIcon

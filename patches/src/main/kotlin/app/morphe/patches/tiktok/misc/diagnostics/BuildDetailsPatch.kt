@@ -50,7 +50,7 @@ internal object BuildDetails {
     private val fields = ("schema bundle_version source_commit source_clean source_start source_end target_package " +
         "target_version target_version_code patcher_bundle_compat patcher_applying_engine amoled amoled_color " +
         "language_packs native_locales_retained tool_p2p_relay tool_core_assets tool_creation tool_live_extras " +
-        "version_code_override").split(' ')
+        "version_code_override resource_patches").split(' ')
     internal val nativeLocales = ("af ar az bg bn ca ceb cs da de el en es et fa fi fil fr ga gu he hi hr hu " +
         "id in is it iw ja jv kk km kn ko lt lv ml mr ms my nb nl or pa pl pt ro ru sk sl sq sv sw ta te th " +
         "tr uk ur uz vi zh zu").split(' ').toSet()
@@ -81,7 +81,7 @@ internal object BuildDetails {
             "language_packs" to "not_selected", "native_locales_retained" to "unknown",
             "tool_p2p_relay" to "not_selected", "tool_core_assets" to "not_selected",
             "tool_creation" to "not_selected", "tool_live_extras" to "not_selected",
-            "version_code_override" to "not_selected",
+            "version_code_override" to "not_selected", "resource_patches" to "none",
         )
     }
 
@@ -113,6 +113,22 @@ internal object BuildDetails {
     }
 
     fun raisedVersionCode(output: File) = update(output) { this["version_code_override"] = Int.MAX_VALUE.toString() }
+
+    /**
+     * A resource-only patch with no choice field of its own went in. Each calls this as the last
+     * statement of execute with its own name, never an option's value, so the list is sorted
+     * constants only.
+     */
+    fun applied(output: File, patch: String) {
+        require(resourcePatchName.matches(patch))
+        update(output) {
+            val names = getValue("resource_patches").split(',').filter { it.isNotEmpty() && it != "none" }.toSortedSet()
+            names += patch
+            this["resource_patches"] = names.joinToString(",")
+        }
+    }
+
+    internal val resourcePatchName = Regex("[a-z][A-Za-z0-9]{0,63}")
 
     private fun stripOutcome(result: StripSummary) = when {
         result.files == 0 -> "absent"

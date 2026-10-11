@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.misc.commentpublish
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -138,5 +139,6 @@ val commentPublishDiagnosticsPatch = bytecodePatch(
         check(handOffs > 0) {
             "Comment publish diagnostics: the publish entry never hands the comment to the request."
         }
+        registerForBuildDetails("enableCommentPublishDiagnostics")
     }
 }

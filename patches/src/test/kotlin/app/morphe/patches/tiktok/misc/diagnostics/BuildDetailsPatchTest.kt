@@ -5,10 +5,13 @@ import app.morphe.patcher.patch.BytecodePatch
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.branding.changeAppNamePatch
+import app.morphe.patches.tiktok.misc.branding.customLauncherIconPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.optimizer.*
 import app.morphe.patches.tiktok.misc.theme.amoledThemePatch
 import app.morphe.patches.tiktok.misc.update.hidePlayStoreUpdatePatch
+import app.morphe.patches.tiktok.privacy.trustUserCertificatesPatch
 import java.io.File
 import java.net.URI
 import java.security.MessageDigest
@@ -56,6 +59,9 @@ class BuildDetailsPatchTest {
         BuildDetails.stripped(output, BuildChoice.CORE, StripSummary(4, 0, true))
         BuildDetails.stripped(output, BuildChoice.CREATION, StripSummary(0, 0, false))
         BuildDetails.raisedVersionCode(output)
+        BuildDetails.applied(output, "customLauncherIcon")
+        BuildDetails.applied(output, "changeAppName")
+        BuildDetails.applied(output, "customLauncherIcon")
         val root = File("../extensions/tiktok/src/test/resources/build-details/complete.txt")
             .takeIf(File::isFile) ?: File("extensions/tiktok/src/test/resources/build-details/complete.txt")
         assertEquals(root.readText().replace("\r\n", "\n"), output.readText())
@@ -200,9 +206,36 @@ class BuildDetailsPatchTest {
         assertEquals("VENDOR_SENTINEL", file.readText())
     }
 
+    @Test fun `resource-only patches start as none and list only their own sorted names`() {
+        val output = record("resource-patches")
+        assertEquals("none", output.facts()["resource_patches"])
+        BuildDetails.applied(output, "trustUserCertificates")
+        BuildDetails.applied(output, "changeAppName")
+        assertEquals("changeAppName,trustUserCertificates", output.facts()["resource_patches"])
+        // An option's value, like the app name someone typed, can never take a patch's place.
+        listOf("My TikTok", "sessionid=RAW_SENTINEL", "ChangeAppName", "", "a".repeat(65)).forEach { name ->
+            assertThrows(name, IllegalArgumentException::class.java) { BuildDetails.applied(output, name) }
+        }
+        assertFalse(output.readText().contains("RAW_SENTINEL"))
+        BuildDetails.begin(output, target, manifest(), "1.14.2")
+        assertEquals("none", output.facts()["resource_patches"])
+    }
+
+    @Test fun `every choice and every resource patch together stay under the runtime's size cap`() {
+        val output = record("everything")
+        BuildDetails.amoled(output, "#ff121212")
+        BuildDetails.languages(output, StripSummary(1, 1, false, BuildDetails.nativeLocales))
+        listOf(BuildChoice.P2P, BuildChoice.CORE, BuildChoice.CREATION, BuildChoice.LIVE)
+            .forEach { BuildDetails.stripped(output, it, StripSummary(1, 1, true)) }
+        BuildDetails.raisedVersionCode(output)
+        listOf("changeAppName", "customLauncherIcon", "trustUserCertificates").forEach { BuildDetails.applied(output, it) }
+        assertTrue("the record is ${output.length()} bytes", output.length() <= 4096)
+    }
+
     @Test fun `resource choices add only raw metadata dependencies and live retains its existing bytecode`() {
         listOf(amoledThemePatch, p2pRelayBlockerPatch, coreAssetDebloatPatch, languagePackPurgerPatch,
-            studioCreationDebloatPatch, hidePlayStoreUpdatePatch).forEach { patch ->
+            studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
+            trustUserCertificatesPatch).forEach { patch ->
             val closure = dependencies(patch)
             assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in closure)
             assertTrue("${patch.name} unexpectedly injects runtime hooks", closure.none { it is BytecodePatch })

@@ -11,6 +11,7 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.follow.followDiagnosticsPatch
 import app.morphe.patches.tiktok.misc.follow.insertAll
 import app.morphe.patches.tiktok.misc.follow.planNetworkLancet
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.numberOfParameterRegisters
@@ -93,5 +94,6 @@ val repostDiagnosticsPatch = bytecodePatch(
             "invoke-static/range {v${firstParameter + 1} .. v${firstParameter + 2}}, " +
                 "$EXTENSION->onPublishRequested(Ljava/lang/String;Ljava/lang/String;)V",
         )
+        registerForBuildDetails("enableRepostDiagnostics")
     }
 }

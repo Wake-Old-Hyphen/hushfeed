@@ -10,6 +10,9 @@ import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.branding.decodedXmlFiles
 import app.morphe.patches.tiktok.misc.branding.elements
 import app.morphe.patches.tiktok.misc.branding.readXml
+import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
+import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
+import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import app.morphe.patches.tiktok.misc.theme.decodedPackageRoots
 import app.morphe.patches.tiktok.misc.theme.decodedResourceDirectories
 import app.morphe.patches.tiktok.misc.theme.renamedPathCollisions
@@ -38,6 +41,7 @@ val trustUserCertificatesPatch = resourcePatch(
 ) {
     category("Privacy")
     compatibleWith(*AppCompatibilities.tiktok())
+    dependsOn(buildDetailsPatch)
 
     execute {
         val packageRoot = get("res").parentFile
@@ -60,6 +64,7 @@ val trustUserCertificatesPatch = resourcePatch(
         for (file in files) {
             document(file.relativeTo(get(".")).invariantSeparatorsPath).use { trustUserCertificates(it) }
         }
+        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "trustUserCertificates")
     }
 }
 

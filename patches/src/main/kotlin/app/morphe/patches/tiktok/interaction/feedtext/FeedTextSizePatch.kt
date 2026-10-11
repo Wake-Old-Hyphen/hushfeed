@@ -10,6 +10,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.authorregion.DetailActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -158,10 +159,14 @@ val feedTextSizePatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
     dependsOn(settingsPatch, sharedExtensionPatch)
     execute {
+        val windows = listOf(MainActivityOnCreateFingerprint.method, DetailActivityOnCreateFingerprint.method)
         installFeedText()
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeedTextSize()V")
-        MainActivityOnCreateFingerprint.method.addInstruction(0,
-            "invoke-static/range { p0 .. p0 }, $FEED_TEXT->install(Landroid/app/Activity;)V")
+        // The detail page as well, for a process a deep link starts with no MainActivity (#84).
+        windows.forEach {
+            it.addInstruction(0,
+                "invoke-static/range { p0 .. p0 }, $FEED_TEXT->install(Landroid/app/Activity;)V")
+        }
     }
 }

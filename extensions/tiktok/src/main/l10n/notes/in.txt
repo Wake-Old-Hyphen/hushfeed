@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Detail build sekarang juga menyebut patch yang hanya mengubah sumber daya TikTok, seperti Change app name, Custom launcher icon, dan Trust user certificates. Yang dicantumkan patch-nya, tidak pernah nama atau gambar yang kamu pilih di opsinya.
+
+* **TikTok:** Dengan Catat diagnostik aktif, log sekarang mencatat sekali per video berapa gambar pratinjau bilah progres yang dikirim TikTok bersamanya. Kalau pratinjau tidak muncul saat bilah digeser, ekspor diagnostik menunjukkan apakah video itu membawa gambar pratinjau (#140).
+
+* **TikTok:** Detail build dan ekspor log lengkap kini mencantumkan setiap patch di build kamu yang mengubah kode TikTok, dengan nama singkat, termasuk yang tanpa sakelar seperti Comment send fix dan Network request report.
+
+* **TikTok:** Tampilan bersih, yang diingat atau otomatis, kini juga membersihkan video yang kamu buka dari pencarian. TikTok menyerahkan video itu ke halaman yang dibuka dalam keadaan sudah diputar, dan Tampilan bersih menunggu awal pemutaran yang tidak pernah datang di sana, jadi tombol dan bilah pencarian TikTok tetap tampil (#84).
+
+* **TikTok:** Sembunyikan overlay video dan ukuran teks feed kini juga berfungsi saat sebuah tautan membuka TikTok langsung ke pencarian atau video, tanpa feed Untuk Anda di belakangnya. Sebelumnya, video yang dibuka dengan cara itu tetap menampilkan semua overlay dan ukuran teks bawaan TikTok (#84).
+
 * **TikTok:** Lindungi halaman eksternal di browser TikTok kini menganggap CAPTCHA teka-teki yang dibuka LIVE dan Toko sebagai halaman TikTok sendiri, sehingga teka-teki tetap terhubung ke TikTok (#87). CAPTCHA itu dimuat dari server TikTok sendiri, hanya dari alamat yang belum dikenal sakelar ini.
 
 * **TikTok:** Ketukan kedua yang cepat pada Detail build, Pemeriksaan fitur, Lisensi, atau Yang baru tidak lagi membuka jendela yang sama dua kali secara bertumpuk.
@@ -44,7 +54,7 @@
 
 * **TikTok:** Laporan diagnostik punya bagian Storage baru yang menampilkan folder terbesar di penyimpanan TikTok, jadi laporan bisa menunjukkan apa yang membuatnya penuh (#70). Bagian ini hanya menyebut nama folder, tidak pernah nama file, dan menyembunyikan nomor akun.
 
-* **TikTok:** Menekan kembali di video yang sudah bersih dari pencarian atau profil tidak lagi dihitung sebagai mematikan Clear display. Membuka video yang sama lagi akan membersihkannya seperti video lain, dan Clear display yang diingat tetap menyala (#84).
+* **TikTok:** Menekan kembali di video yang sudah bersih, atau membuka panel bagikan dari sana, tidak lagi dihitung sebagai mematikan Clear display. Membuka video yang sama lagi akan membersihkannya seperti video lain, dan Clear display yang diingat tetap menyala (#84).
 
 * **TikTok:** Remove LIVE extras sekarang menyebutkan bahwa ia menghapus file untuk bergabung ke LIVE orang lain sebagai tamu, jadi bergabung lewat suara atau video bisa tidak berfungsi kalau patch ini dipakai (#132). Jangan pilih patch ini kalau kamu suka bergabung ke LIVE.
 

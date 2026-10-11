@@ -6,6 +6,8 @@ package app.morphe.patches.tiktok.misc.login.disablerequirement
 
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.returnEarly
 
 @Suppress("unused")
@@ -16,6 +18,8 @@ val disableLoginRequirementPatch = bytecodePatch(
     default = true,
 ) {
     category("Settings")
+    // Only so Build details can list it: the patch itself runs no extension code.
+    dependsOn(sharedExtensionPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
@@ -25,6 +29,7 @@ val disableLoginRequirementPatch = bytecodePatch(
         ).forEach { fp ->
             fp.method.returnEarly(false)
         }
+        registerForBuildDetails("enableNoLoginRequirement")
     }
 }
 

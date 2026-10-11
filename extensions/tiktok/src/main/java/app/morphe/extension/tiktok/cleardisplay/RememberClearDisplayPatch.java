@@ -20,6 +20,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.FeedLock;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class RememberClearDisplayPatch {
@@ -40,6 +43,7 @@ public final class RememberClearDisplayPatch {
     // Clear-mode event types, from TikTok's enum of them (X.0vGX getType on 47.1.4).
     private static final int SCREEN_RECORD = 1;
     private static final int SWITCH_PAGE = 3;
+    private static final int OTHER_EXIT = 6;
     private static final int NOTIFY_EXIT = 9;
     private static final int SWITCH_AD = 11;
     private static final int BACK_BUTTON = 12;
@@ -55,6 +59,8 @@ public final class RememberClearDisplayPatch {
     private static Condition activeCondition;
     private static String activeId;
     private static final AtomicBoolean progressQueued = new AtomicBoolean();
+    /** Players that have reported a first frame, or stood one in from progress. */
+    private static final Map<Object, Boolean> FRAMED = Collections.synchronizedMap(new WeakHashMap<>());
     private static Object nativeEvent;
     private static Object nativeCell;
     private static boolean nativeWanted;
@@ -151,13 +157,17 @@ public final class RememberClearDisplayPatch {
     }
 
     public static void onFirstFrame(Object controller) {
+        if (controller != null) FRAMED.put(controller, Boolean.TRUE);
         WeakReference<Object> owner = new WeakReference<>(controller);
         MAIN.post(() -> {
             Object player = owner.get();
             if (player == null) return;
             Object activity = Reflect.readField(player, "activity");
             if (!(activity instanceof Activity) || ((Activity) activity).isFinishing()
-                    || ((Activity) activity).isDestroyed()) return;
+                    || ((Activity) activity).isDestroyed()) {
+                Logger.printDebug(() -> "Clear display: first frame with no live activity on the player");
+                return;
+            }
             observeWindow(((Activity) activity).getWindow().getDecorView());
             Object aweme = readCurrentAweme(player);
             if (currentController.get() != player || currentModel.get() != aweme) {
@@ -168,6 +178,8 @@ public final class RememberClearDisplayPatch {
             WeakReference<Object> model = new WeakReference<>(aweme);
             currentModel = model;
             String id = Reflect.string(model.get(), "getAid", "aid");
+            Logger.printDebug(() -> "Clear display: first frame on " + activity.getClass().getSimpleName()
+                    + (id == null ? " with no video id" : id.equals(currentId) ? ", same video" : ", new video"));
             firstFrame(id, () -> {
                 Object live = owner.get();
                 Object context = Reflect.readField(live, "activity");
@@ -181,8 +193,19 @@ public final class RememberClearDisplayPatch {
         });
     }
 
-    /** Native progress can arrive after the first frame's panel has become eligible. */
+    /**
+     * Native progress can arrive after the first frame's panel has become eligible. It also stands
+     * in for a first frame that never came: a video opened from search's grid is handed to the
+     * detail page already playing, so its player there reports progress but no first frame, and
+     * nothing started the automatic clear on it (#84).
+     */
     public static void onPlaybackProgress(Object controller, String id) {
+        if (controller != null && id != null && controller != currentController.get()
+                && !FRAMED.containsKey(controller)) {
+            Logger.printDebug(() -> "Clear display: a player started without a first frame");
+            onFirstFrame(controller);
+            return;
+        }
         if (!awaitingNative || !progressQueued.compareAndSet(false, true)) return;
         long observed = generation;
         MAIN.post(() -> {
@@ -246,7 +269,11 @@ public final class RememberClearDisplayPatch {
             manuallyChanged = false;
             emit(event, false);
         }
-        if (pending != null || applied || manuallyChanged) return;
+        if (pending != null || applied || manuallyChanged) {
+            Logger.printDebug(() -> "Clear display: automatic clear not started, "
+                    + (manuallyChanged ? "changed by hand on this video" : applied ? "already cleared" : "one is pending"));
+            return;
+        }
         long attempt = generation;
         pending = () -> {
             if (attempt != generation) return;
@@ -258,7 +285,13 @@ public final class RememberClearDisplayPatch {
                     automaticHidden = true;
                     awaitingNative = false;
                     setCarrying(true);
-                } else if (attempt == generation) awaitingNative = true;
+                    Logger.printDebug(() -> "Clear display: automatic clear landed");
+                } else {
+                    if (attempt == generation) awaitingNative = true;
+                    Logger.printDebug(() -> "Clear display: TikTok's clear-mode panel didn't take the automatic clear");
+                }
+            } else {
+                Logger.printDebug(() -> "Clear display: automatic clear skipped, the video or its window isn't current");
             }
         };
         MAIN.postDelayed(pending, awaitingNative ? 0
@@ -305,6 +338,7 @@ public final class RememberClearDisplayPatch {
         carrying = false;
         currentController.clear();
         currentModel.clear();
+        FRAMED.clear();
         activeCondition = null;
         activeId = null;
         nativeEvent = null;
@@ -395,6 +429,8 @@ public final class RememberClearDisplayPatch {
         if ((Integer) type == SWITCH_PAGE || (Integer) type == NOTIFY_EXIT) return;
         // Before TikTok handles it, ours included: what the faded Clear display keeps (#84).
         if ((Boolean) clear) VideoOverlayHider.beforeClearDisplay(event);
+        Logger.printDebug(() -> "Clear display event: type " + type + ", clear " + clear
+                + (event == nativeEvent ? ", posted by Hushfeed" : ""));
         if (event == nativeEvent) return;
         if (clearNow != (Boolean) clear) {
             clearNow = (Boolean) clear;
@@ -406,12 +442,14 @@ public final class RememberClearDisplayPatch {
         automaticHidden = false;
         setCarrying(false);
         // Exits TikTok makes by itself, not the reader's choice: on an opened video the first back
-        // press leaves clear mode before the page (DetailPageComponent on 47.1.4), a screen
-        // recording or cast starting leaves it, and so does paid series content. The state follows
-        // them, but they don't stick to the video or overwrite the remembered choice. Counted, the
-        // back press kept a video replayed from search from clearing again (#84).
+        // press leaves clear mode before the page (BACK_BUTTON from DetailPageComponent, OTHER_EXIT
+        // from the clear-mode panel's Back key handler on 47.1.4), a screen recording or cast
+        // starting leaves it, and so does paid series content. OTHER_EXIT also comes from the more
+        // button opening the share panel and from background play. The state follows them, but
+        // they don't stick to the video or overwrite the remembered choice. Counted, the back
+        // press kept a video replayed from search from clearing again (#84).
         int kind = (Integer) type;
-        if (kind == BACK_BUTTON || kind == SCREEN_RECORD || kind == SWITCH_AD) return;
+        if (kind == BACK_BUTTON || kind == OTHER_EXIT || kind == SCREEN_RECORD || kind == SWITCH_AD) return;
         long observed = generation;
         Runnable changed = () -> {
             if (observed != generation) return;

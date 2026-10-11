@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.BuildDetails;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
@@ -54,6 +55,9 @@ public class TikTokActivityHook {
         // load rather than inside it: the patcher fills load() with the patches' own
         // registrations and holds its unpatched body empty.
         app.morphe.extension.tiktok.featuregatelab.FeatureGateLabReport.install();
+        // Build details and the full log export list the switches the patcher registered, read
+        // here for the same reason. Both open from this screen.
+        BuildDetails.setRegisteredSwitches(SettingsStatus.registered());
         SettingsUi.syncDarkMode(base);
 
         FrameLayout settingsSurface = new FrameLayout(base);

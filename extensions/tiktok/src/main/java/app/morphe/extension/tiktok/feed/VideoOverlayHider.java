@@ -386,7 +386,9 @@ public final class VideoOverlayHider {
     }
 
     /**
-     * Called from the patched {@code MainActivity.onCreate}; the work is posted. A copy recreated
+     * Called from the patched {@code MainActivity.onCreate} and {@code DetailActivity.onCreate}, so
+     * a process a deep link starts with no main feed still follows its videos; the work is
+     * posted. A copy recreated
      * behind the feed runs it after it has stopped again, and leaves the hides where they are.
      */
     public static void install(Activity activity) {

@@ -10,6 +10,8 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -48,6 +50,8 @@ val antiRecordingPatch = bytecodePatch(
     default = true,
 ) {
     category("Downloads")
+    // Only so Build details can list it: the patch itself runs no extension code.
+    dependsOn(sharedExtensionPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
@@ -110,5 +114,6 @@ val antiRecordingPatch = bytecodePatch(
                 mutableMethod.replaceInstruction(index, "nop")
             }
         }
+        registerForBuildDetails("enableNoScreenCaptureDetection")
     }
 }

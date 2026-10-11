@@ -9,6 +9,7 @@ import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/privacy/NetworkRequests;"
 
@@ -40,5 +41,6 @@ val networkRequestReportPatch = bytecodePatch(
             0,
             "invoke-static/range {p0 .. p0}, $EXTENSION_CLASS_DESCRIPTOR->onCall(Ljava/lang/Object;)V",
         )
+        registerForBuildDetails("enableNetworkRequestReport")
     }
 }

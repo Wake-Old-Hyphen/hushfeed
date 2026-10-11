@@ -8,6 +8,9 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
+import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
+import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import app.morphe.patches.tiktok.misc.theme.decodedPackageRoots
 import app.morphe.patches.tiktok.misc.theme.decodedResourceDirectories
 import app.morphe.patches.tiktok.misc.theme.renamedPathCollisions
@@ -59,6 +62,7 @@ val customLauncherIconPatch = resourcePatch(
 ) {
     category("Interface")
     compatibleWith(*AppCompatibilities.tiktok())
+    dependsOn(buildDetailsPatch)
     val style by stringOption(
         key = "iconStyle",
         default = IconStyle.TIKTOK.key,
@@ -114,6 +118,7 @@ val customLauncherIconPatch = resourcePatch(
                 restyleAdaptiveIcon(icon, layer, chosen, pictureReference)
             }
         }
+        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "customLauncherIcon")
     }
 }
 

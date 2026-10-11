@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Build-Informationen nennen jetzt auch die Patches, die nur TikToks Ressourcen ändern, etwa Change app name, Custom launcher icon und Trust user certificates. Aufgeführt wird der Patch, nie der Name oder das Bild, das du in seinen Optionen gewählt hast.
+
+* **TikTok:** Mit Diagnose protokollieren steht im Protokoll jetzt einmal pro Video, wie viele Vorschaubilder für den Fortschrittsbalken TikTok mitgeschickt hat. Wenn beim Ziehen des Balkens keine Vorschau kommt, zeigt ein Diagnose-Export, ob das Video überhaupt welche hatte (#140).
+
+* **TikTok:** Build-Informationen und der vollständige Log-Export listen jetzt jeden Patch in deinem Build, der TikToks Code geändert hat, mit einem Kurznamen auf, auch die ohne Schalter wie Comment send fix und Network request report.
+
+* **TikTok:** Freie Ansicht, gemerkt oder automatisch, räumt jetzt auch ein Video frei, das du aus der Suche öffnest. TikTok gibt dieses Video schon laufend an die geöffnete Seite weiter, und Freie Ansicht wartete dort auf einen Start, der nie kam, sodass die Knöpfe und TikToks Suchleiste stehen blieben (#84).
+
+* **TikTok:** Video-Einblendungen ausblenden und die Textgrößen im Feed wirken jetzt auch, wenn ein Link TikTok direkt in der Suche oder in einem Video startet, ohne den Für-dich-Feed dahinter. Vorher behielten so geöffnete Videos alle Einblendungen und TikToks eigene Textgröße (#84).
+
 * **TikTok:** Externe Seiten in TikToks Browser schützen zählt das Puzzle-CAPTCHA, das LIVEs und der Shop öffnen, jetzt zu TikToks eigenen Seiten, damit das Puzzle seine Verbindung zu TikTok behält (#87). Es lädt von TikToks eigenen Servern, nur von einer Adresse, die der Schalter noch nicht kannte.
 
 * **TikTok:** Ein schnelles zweites Tippen auf Build-Informationen, Funktionsprüfung, Lizenzen oder Neu in Hushfeed öffnet dasselbe Fenster nicht mehr doppelt übereinander.
@@ -44,7 +54,7 @@
 
 * **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt Storage mit den größten Ordnern in TikToks Speicher. So zeigt ein Bericht, was ihn füllt (#70). Er nennt nur Ordner, nie Dateien, und blendet Kontonummern aus.
 
-* **TikTok:** Wenn du bei einem freigeräumten Video aus der Suche oder einem Profil auf Zurück tippst, zählt das nicht mehr als Ausschalten von Clear display. Öffnest du dasselbe Video noch mal, wird es wie jedes andere freigeräumt, und ein gemerktes Clear display bleibt an (#84).
+* **TikTok:** Wenn du bei einem freigeräumten Video auf Zurück tippst oder von dort das Teilen-Menü öffnest, zählt das nicht mehr als Ausschalten von Clear display. Öffnest du dasselbe Video noch mal, wird es wie jedes andere freigeräumt, und ein gemerktes Clear display bleibt an (#84).
 
 * **TikTok:** Remove LIVE extras sagt jetzt, dass es die Dateien entfernt, mit denen du einem fremden LIVE als Gast beitrittst. Mit diesem Patch kann der Beitritt per Sprache oder Video also nicht mehr klappen (#132). Lass ihn weg, wenn du LIVEs beitrittst.
 

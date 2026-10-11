@@ -8,6 +8,9 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
+import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
+import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
@@ -27,6 +30,7 @@ val changeAppNamePatch = resourcePatch(
 ) {
     category("Interface")
     compatibleWith(*AppCompatibilities.tiktok())
+    dependsOn(buildDetailsPatch)
     val appName by stringOption(
         key = "appName",
         default = "Hushfeed",
@@ -39,6 +43,7 @@ val changeAppNamePatch = resourcePatch(
         // Checked before the manifest is opened, so a refused name changes nothing.
         val name = checkedAppName(appName)
         document("AndroidManifest.xml").use { xml -> renameApp(xml, name) }
+        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "changeAppName")
     }
 }
 

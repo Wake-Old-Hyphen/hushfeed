@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Derleme ayrıntıları artık yalnızca TikTok'un kaynaklarını değiştiren yamaları da adlandırıyor, örneğin Change app name, Custom launcher icon ve Trust user certificates. Yamanın kendisi listelenir, seçeneklerinde seçtiğin ad ya da resim asla listelenmez.
+
+* **TikTok:** Tanılamayı günlüğe kaydet açıkken günlük artık her video için bir kez TikTok'un onunla birlikte ilerleme çubuğu için kaç önizleme resmi gönderdiğini yazıyor. Çubuğu sürüklerken önizleme görünmüyorsa, tanılama dışa aktarımı videonun hiç önizleme resmiyle gelip gelmediğini gösterir (#140).
+
+* **TikTok:** Derleme ayrıntıları ve tam günlük dışa aktarımı artık derlemende TikTok'un kodunu değiştiren her yamayı kısa bir adla listeliyor, Comment send fix ve Network request report gibi anahtarı olmayanlar da dahil.
+
+* **TikTok:** Hatırlanan ya da otomatik Temiz ekran artık aramadan açtığın videoyu da temizliyor. TikTok o videoyu açılan sayfaya zaten oynarken veriyor, Temiz ekran ise orada hiç gelmeyen bir başlangıcı bekliyordu, bu yüzden düğmeler ve TikTok'un arama çubuğu kalıyordu (#84).
+
+* **TikTok:** Video katmanlarını gizle ve akış metin boyutları artık bir bağlantı TikTok'u arkasında Sana Özel akışı olmadan doğrudan aramada veya bir videoda başlattığında da çalışıyor. Önceden bu şekilde açılan videolar tüm katmanları ve TikTok'un kendi metin boyutunu koruyordu (#84).
+
 * **TikTok:** TikTok tarayıcısındaki harici sayfaları koru artık LIVE'ların ve Mağaza'nın açtığı yapboz CAPTCHA'sını TikTok'un kendi sayfası sayıyor, böylece yapboz TikTok ile bağlantısını koruyor (#87). TikTok'un kendi sunucularından yükleniyor, sadece anahtarın tanımadığı bir adresten.
 
 * **TikTok:** Derleme ayrıntıları, Kanca durumu, Lisanslar veya Yenilikler üzerine hızlı ikinci dokunuş artık aynı pencereyi üst üste iki kez açmıyor.
@@ -44,7 +54,7 @@
 
 * **TikTok:** Tanılama raporunda TikTok depolamasındaki en büyük klasörleri listeleyen yeni bir Storage bölümü var. Böylece rapor, alanı neyin doldurduğunu gösterebiliyor (#70). Sadece klasör adlarını yazıyor, dosya adlarını asla, hesap numaralarını da gizliyor.
 
-* **TikTok:** Aramadan ya da bir profilden açılan temizlenmiş bir videoda geriye basmak artık Clear display'i kapatmak sayılmıyor. Aynı videoyu yeniden açınca o da diğerleri gibi temizleniyor ve hatırlanan Clear display açık kalıyor (#84).
+* **TikTok:** Temizlenmiş bir videoda geriye basmak ya da oradan paylaşım panelini açmak artık Clear display'i kapatmak sayılmıyor. Aynı videoyu yeniden açınca o da diğerleri gibi temizleniyor ve hatırlanan Clear display açık kalıyor (#84).
 
 * **TikTok:** Remove LIVE extras artık başkasının LIVE yayınına konuk olarak katılma dosyalarını da kaldırdığını söylüyor. Yani bu yamayla sesli ya da görüntülü katılım çalışmayabilir (#132). LIVE yayınlarına katılıyorsan bu yamayı seçme.
 

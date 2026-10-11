@@ -8,6 +8,7 @@ import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -129,5 +130,6 @@ val commentSendFixPatch = bytecodePatch(
             pageIndex + 1,
             "invoke-static/range { v$page .. v$page }, $EXTENSION->onTopPage(Ljava/lang/Object;)V",
         )
+        registerForBuildDetails("enableCommentSendFix")
     }
 }

@@ -587,29 +587,35 @@ public class AutomaticClearDisplayTest {
     }
     /**
      * On a video opened from search or a profile, TikTok spends the first back press on leaving
-     * clear mode. That's the way out, not a choice to see the controls: counted as one, opening
-     * the same video again never cleared it (#84), and a remembered clear was saved off.
+     * clear mode: BACK_BUTTON (12) from the page's back handling, OTHER_EXIT (6) from the
+     * clear-mode panel's Back key handler. That's the way out, not a choice to see the controls:
+     * counted as one, opening the same video again never cleared it (#84, seen on the emulator
+     * with the Back key), and a remembered clear was saved off.
      */
     @Test public void tikToksOwnExitsDontStickToTheVideoOrOverwriteTheChoice() {
-        try (var page = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
-             var again = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
-            List<Boolean> events = new ArrayList<>();
-            RememberClearDisplayPatch.observeWindow(page.get().getWindow().getDecorView());
-            RememberClearDisplayPatch.firstFrame("same", () -> true, events::add);
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
-            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 12));
-            Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertFalse("the state didn't follow TikTok", RememberClearDisplayPatch.isClearDisplayNow());
-            RememberClearDisplayPatch.observeWindow(again.get().getWindow().getDecorView());
-            RememberClearDisplayPatch.firstFrame("same", () -> true, events::add);
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
-            assertEquals("the video opened again stayed uncleared", List.of(false, true, false, true), events);
+        for (int exit : new int[]{12, 6}) {
+            try (var page = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+                 var again = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+                List<Boolean> events = new ArrayList<>();
+                RememberClearDisplayPatch.observeWindow(page.get().getWindow().getDecorView());
+                RememberClearDisplayPatch.firstFrame("same", () -> true, events::add);
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+                RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, exit));
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertFalse("type " + exit + ": the state didn't follow TikTok",
+                        RememberClearDisplayPatch.isClearDisplayNow());
+                RememberClearDisplayPatch.observeWindow(again.get().getWindow().getDecorView());
+                RememberClearDisplayPatch.firstFrame("same", () -> true, events::add);
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
+                assertEquals("type " + exit + ": the video opened again stayed uncleared",
+                        List.of(false, true, false, true), events);
+            }
         }
 
         Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
         Settings.CLEAR_DISPLAY.save(true);
         try {
-            for (int kind : new int[]{1, 11, 12}) {
+            for (int kind : new int[]{1, 6, 11, 12}) {
                 RememberClearDisplayPatch.firstFrame("kind" + kind, () -> true, value -> true);
                 RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, kind));
                 assertTrue("type " + kind + " saved the remembered clear off", Settings.CLEAR_DISPLAY.get());
@@ -664,6 +670,50 @@ public class AutomaticClearDisplayTest {
         RememberClearDisplayPatch.firstFrame("next", () -> true, events::add);
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));
         assertEquals("old event delivery cancelled the next item's timer", List.of(false, false, true), events);
+    }
+
+    /** Stands in for TikTok's PlayerController: the clear path reads its page from this field. */
+    static final class Player {
+        final Object activity;
+        Player(Object activity) { this.activity = activity; }
+    }
+
+    private static Object watchedWindow() {
+        return ((java.lang.ref.WeakReference<?>) org.robolectric.util.ReflectionHelpers.getStaticField(
+                RememberClearDisplayPatch.class, "window")).get();
+    }
+
+    /**
+     * A video opened from search's grid is handed to the detail page already playing, so that
+     * page's player reports progress but never a first frame, and nothing started the automatic
+     * clear there (#84, emulator 2026-10-11). Its first progress stands in for the first frame.
+     */
+    @Test public void progressFromAPlayerThatNeverShowedAFirstFrameStandsInForIt() {
+        try (var page = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            Player player = new Player(page.get());
+            RememberClearDisplayPatch.onPlaybackProgress(player, "search");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertSame("the page's window is watched as after a first frame",
+                    page.get().getWindow().getDecorView(), watchedWindow());
+            assertSame(player, ((java.lang.ref.WeakReference<?>) org.robolectric.util.ReflectionHelpers
+                    .getStaticField(RememberClearDisplayPatch.class, "currentController")).get());
+        }
+    }
+
+    @Test public void aPlayerThatShowedAFirstFrameIsNotStoodInForAgain() {
+        try (var page = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            Player player = new Player(page.get());
+            RememberClearDisplayPatch.onFirstFrame(player);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            // Another player is current now, as in the feed after a swipe to the next video.
+            org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                    "currentController", new java.lang.ref.WeakReference<>(new Object()));
+            org.robolectric.util.ReflectionHelpers.setStaticField(RememberClearDisplayPatch.class,
+                    "window", new java.lang.ref.WeakReference<>(null));
+            RememberClearDisplayPatch.onPlaybackProgress(player, "feed");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertNull("the old video's progress started it over", watchedWindow());
+        }
     }
 
     @Test public void rejectedNativeEntryRetriesOnMatchingProgressWithoutRepeatingTheChosenDelay() {

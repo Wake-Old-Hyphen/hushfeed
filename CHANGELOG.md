@@ -4,6 +4,16 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Build details now also names the patches that only change TikTok's resources, like Change app name, Custom launcher icon and Trust user certificates. It lists the patch, never the name or picture you picked in its options.
+
+* **TikTok:** With Log diagnostics on, the log now says once per video how many progress bar preview pictures TikTok sent with it. If the preview doesn't show while you drag the bar, a diagnostics export tells whether the video came with any (#140).
+
+* **TikTok:** Build details and the full log export now list every patch that changed TikTok's code in your build, by a short name, including the ones with no switch like Comment send fix and Network request report.
+
+* **TikTok:** Clear display, remembered or automatic, now also clears a video you open from search. TikTok hands that video to the opened page already playing, and Clear display waited for a start that never came there, so the buttons and TikTok's search bar stayed up (#84).
+
+* **TikTok:** Hide video overlays and Feed text sizes now also work when a link starts TikTok straight into search or a video, with no For You feed behind it. Before, the videos opened that way kept every overlay and TikTok's own text size (#84).
+
 * **TikTok:** Protect external pages in TikTok's browser now counts the puzzle CAPTCHA that LIVEs and the Shop open as one of TikTok's own pages, so the puzzle keeps its link back to TikTok (#87). It loads from TikTok's own servers, just not from an address the switch knew.
 
 * **TikTok:** A quick second tap on Build details, Hook status, Licenses or What's new no longer opens the same window twice, one on top of the other.
@@ -48,7 +58,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** The diagnostic report has a new Storage section listing the biggest folders in TikTok's storage, so a report can show what's filling it up (#70). It names folders only, never files, and hides account numbers.
 
-* **TikTok:** Pressing back on a cleared video from search or a profile no longer counts as turning Clear display off. Opening the same video again clears it like any other, and a remembered Clear display stays on (#84).
+* **TikTok:** Pressing back on a cleared video, or opening the share panel from it, no longer counts as turning Clear display off. Opening the same video again clears it like any other, and a remembered Clear display stays on (#84).
 
 * **TikTok:** Remove LIVE extras now says it takes out the files for joining someone's LIVE as a guest, so joining by voice or video may stop working with it in (#132). Leave it out if you join LIVEs.
 

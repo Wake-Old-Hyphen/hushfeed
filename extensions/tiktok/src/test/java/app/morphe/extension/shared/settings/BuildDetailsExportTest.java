@@ -41,7 +41,7 @@ public class BuildDetailsExportTest {
         // A failed preference commit rolls the filter back to "all" and logs an error the clear
         // below removes, and every later assertion then reads unrelated categories. Say so here.
         boolean interruptedBefore = Thread.currentThread().isInterrupted();
-        boolean saved = BaseSettings.DEBUG_LOG_FILTERS.save("downloads");
+        boolean saved = saveDownloadsFilter();
         assertTrue(saved ? "" : failedFilterSaveDetails(interruptedBefore), saved);
         LogBufferManager.clearLogBuffer();
         HookStatus.clear();
@@ -126,6 +126,23 @@ public class BuildDetailsExportTest {
             Utils.setContext(asset.context);
             assertEquals("", Utils.getBuildMetadata());
             assertFalse(BuildDetails.report().contains("SIZE_SENTINEL"));
+        }
+    }
+
+    /**
+     * Robolectric's SDK 23 SharedPreferencesImpl opens the prefs file, and when that fails tries
+     * mkdir on its folder and gives up with "Couldn't create ...". On Windows the open can fail
+     * for a moment (twice in full gates, never alone), and the commit then returns false and the
+     * save rolls back. Up to two more tries after a short wait, only for that log line, tell the
+     * file hiccup apart from a save that can't land.
+     */
+    private static boolean saveDownloadsFilter() throws InterruptedException {
+        for (int attempt = 0; ; attempt++) {
+            if (BaseSettings.DEBUG_LOG_FILTERS.save("downloads")) return true;
+            boolean fileHiccup = ShadowLog.getLogsForTag("SharedPreferencesImpl").stream()
+                    .anyMatch(item -> item.msg != null && item.msg.startsWith("Couldn't create"));
+            if (!fileHiccup || attempt >= 2) return false;
+            Thread.sleep(250);
         }
     }
 

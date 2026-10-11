@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -27,15 +28,44 @@ public final class BuildDetails {
             "schema", "bundle_version", "source_commit", "source_clean", "source_start", "source_end",
             "target_package", "target_version", "target_version_code", "patcher_bundle_compat",
             "patcher_applying_engine", "amoled", "amoled_color", "language_packs", "native_locales_retained",
-            "tool_p2p_relay", "tool_core_assets", "tool_creation", "tool_live_extras", "version_code_override"
+            "tool_p2p_relay", "tool_core_assets", "tool_creation", "tool_live_extras", "version_code_override",
+            "resource_patches"
     };
+    /** Records written before resource_patches end one line earlier; that key then says unknown. */
+    private static final int LEGACY_KEYS = KEYS.length - 1;
+    private static final int MAX_RESOURCE_PATCHES = 32;
     private static final String VERSION = "[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?";
     private static final Set<String> LOCALES = new HashSet<>(Arrays.asList((
             "af ar az bg bn ca ceb cs da de el en es et fa fi fil fr ga gu he hi hr hu id in is it iw ja jv "
                     + "kk km kn ko lt lv ml mr ms my nb nl or pa pl pt ro ru sk sl sq sv sw ta te th tr uk ur uz vi zh zu")
             .split(" ")));
 
+    /** How many names the report prints. The count line still says how many there were. */
+    private static final int MAX_LISTED_SWITCHES = 400;
+    private static final int MAX_SWITCH_NAME = 64;
+    /** Null until the extension reports which switches registered, so the report says unknown. */
+    private static volatile List<String> registeredSwitches;
+
     private BuildDetails() {}
+
+    /**
+     * The switches the installed extension says the patcher registered, one or more per patch
+     * that changed TikTok's code. Names outside letters and digits are dropped, so nothing typed
+     * by a person or read from TikTok can reach the report. Null returns the record to unknown.
+     */
+    public static void setRegisteredSwitches(Collection<String> names) {
+        if (names == null) {
+            registeredSwitches = null;
+            return;
+        }
+        Set<String> clean = new HashSet<>();
+        for (String name : names) {
+            if (name != null && name.length() <= MAX_SWITCH_NAME && name.matches("[A-Za-z0-9]+")) clean.add(name);
+        }
+        List<String> sorted = new ArrayList<>(clean);
+        Collections.sort(sorted);
+        registeredSwitches = Collections.unmodifiableList(sorted);
+    }
 
     public static String readMetadata(Context context) {
         if (context == null) return "";
@@ -76,21 +106,38 @@ public final class BuildDetails {
                         .append('\n');
             }
             text.append(choice || key.equals("amoled_color") || key.equals("native_locales_retained")
-                    ? "patch_time." : "").append(key).append(": ").append(value).append('\n');
+                    || key.equals("resource_patches") ? "patch_time." : "").append(key).append(": ").append(value).append('\n');
         }
-        return text.toString();
+        List<String> switches = registeredSwitches;
+        text.append("registered_switches_count: ").append(switches == null ? "unknown" : String.valueOf(switches.size()))
+                .append("\nregistered_switches: ");
+        if (switches == null) {
+            text.append("unknown");
+        } else if (switches.isEmpty()) {
+            text.append("none");
+        } else {
+            int listed = Math.min(switches.size(), MAX_LISTED_SWITCHES);
+            for (int index = 0; index < listed; index++) {
+                if (index > 0) text.append(',');
+                text.append(switches.get(index));
+            }
+            if (listed < switches.size()) text.append(",+").append(switches.size() - listed).append(" more");
+        }
+        return text.append('\n').toString();
     }
 
     private static Map<String, String> parse(String metadata) {
         Map<String, String> facts = new LinkedHashMap<>();
         if (metadata != null && metadata.length() <= MAX_BYTES) {
             String[] lines = metadata.split("\n", -1);
-            if (lines.length == KEYS.length + 1 && lines[KEYS.length].isEmpty()) {
-                for (int index = 0; index < KEYS.length; index++) {
+            int count = lines.length - 1;
+            if ((count == KEYS.length || count == LEGACY_KEYS) && lines[count].isEmpty()) {
+                for (int index = 0; index < count; index++) {
                     String prefix = KEYS[index] + "=";
                     if (!lines[index].startsWith(prefix)) break;
                     facts.put(KEYS[index], lines[index].substring(prefix.length()));
                 }
+                if (count == LEGACY_KEYS && facts.size() == LEGACY_KEYS) facts.put("resource_patches", "unknown");
             }
         }
         if (facts.size() == KEYS.length && valid(facts)) return Collections.unmodifiableMap(facts);
@@ -129,7 +176,21 @@ public final class BuildDetails {
         for (String key : new String[]{"tool_p2p_relay", "tool_core_assets", "tool_creation", "tool_live_extras"}) {
             if (!oneOf(facts.get(key), "unknown", "not_selected", "unverified", "absent", "stripped", "already_stripped")) return false;
         }
-        return oneOf(facts.get("version_code_override"), "unknown", "not_selected", "unverified", "2147483647");
+        if (!oneOf(facts.get("version_code_override"), "unknown", "not_selected", "unverified", "2147483647")) return false;
+        return validResourcePatches(facts.get("resource_patches"));
+    }
+
+    /** {@code unknown}, {@code none}, or patch names in letters and digits, sorted and unique. */
+    private static boolean validResourcePatches(String value) {
+        if (oneOf(value, "unknown", "none")) return true;
+        List<String> names = Arrays.asList(value.split(",", -1));
+        if (names.size() > MAX_RESOURCE_PATCHES) return false;
+        for (String name : names) {
+            if (!name.matches("[a-z][A-Za-z0-9]{0,63}")) return false;
+        }
+        List<String> sorted = new ArrayList<>(new HashSet<>(names));
+        Collections.sort(sorted);
+        return names.equals(sorted);
     }
 
     private static boolean validTarget(Map<String, String> facts) {

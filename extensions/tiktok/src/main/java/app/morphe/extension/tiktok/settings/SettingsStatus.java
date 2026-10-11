@@ -6,6 +6,11 @@
 
 package app.morphe.extension.tiktok.settings;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SettingsStatus {
     public static boolean regionSpoofEnabled;
     public static void enableRegionSpoof() { regionSpoofEnabled = true; }
@@ -647,6 +652,56 @@ public class SettingsStatus {
 
     public static void enableAppLanguage() {
         appLanguageEnabled = true;
+    }
+
+    // Patches with no settings row register too, so Build details can list every patch that
+    // changed TikTok's code. Each one registers last in its execute, after everything it checks.
+    public static boolean settingsEnabled = false;
+    public static void enableSettings() { settingsEnabled = true; }
+    public static boolean noScreenCaptureDetectionEnabled = false;
+    public static void enableNoScreenCaptureDetection() { noScreenCaptureDetectionEnabled = true; }
+    public static boolean noLoginRequirementEnabled = false;
+    public static void enableNoLoginRequirement() { noLoginRequirementEnabled = true; }
+    public static boolean googleLoginFixEnabled = false;
+    public static void enableGoogleLoginFix() { googleLoginFixEnabled = true; }
+    public static boolean runBesideStoreAppEnabled = false;
+    public static void enableRunBesideStoreApp() { runBesideStoreAppEnabled = true; }
+    public static boolean commentPublishDiagnosticsEnabled = false;
+    public static void enableCommentPublishDiagnostics() { commentPublishDiagnosticsEnabled = true; }
+    public static boolean commentSendFixEnabled = false;
+    public static void enableCommentSendFix() { commentSendFixEnabled = true; }
+    public static boolean followDiagnosticsEnabled = false;
+    public static void enableFollowDiagnostics() { followDiagnosticsEnabled = true; }
+    public static boolean repostDiagnosticsEnabled = false;
+    public static void enableRepostDiagnostics() { repostDiagnosticsEnabled = true; }
+    public static boolean riskControlCaptchaEnabled = false;
+    public static void enableRiskControlCaptcha() { riskControlCaptchaEnabled = true; }
+    public static boolean networkRequestReportEnabled = false;
+    public static void enableNetworkRequestReport() { networkRequestReportEnabled = true; }
+    public static boolean featureGateLabEnabled = false;
+    public static void enableFeatureGateLab() { featureGateLabEnabled = true; }
+
+    private static final String SWITCH_SUFFIX = "Enabled";
+
+    /**
+     * The patches that registered here, each named by its switch without the "Enabled" ending.
+     * Only the patcher's registrations set these, so the list is what this APK was patched with.
+     */
+    static List<String> registered() {
+        List<String> names = new ArrayList<>();
+        for (Field field : SettingsStatus.class.getDeclaredFields()) {
+            String name = field.getName();
+            int modifiers = field.getModifiers();
+            if (field.getType() != boolean.class || !Modifier.isStatic(modifiers)
+                    || !Modifier.isPublic(modifiers) || !name.endsWith(SWITCH_SUFFIX)) continue;
+            try {
+                if (field.getBoolean(null)) names.add(name.substring(0, name.length() - SWITCH_SUFFIX.length()));
+            } catch (IllegalAccessException unreachable) {
+                // Public fields of this class always read.
+                throw new IllegalStateException(unreachable);
+            }
+        }
+        return names;
     }
 
     static {

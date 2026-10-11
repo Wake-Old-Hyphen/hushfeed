@@ -11,6 +11,7 @@ import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.authorregion.DetailActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -62,6 +63,7 @@ val hideVideoOverlaysPatch = bytecodePatch(
     execute {
         val status = SettingsStatusLoadFingerprint.method
         val activity = MainActivityOnCreateFingerprint.method
+        val detail = DetailActivityOnCreateFingerprint.method
         val controls = resolveFeedOverlayControls(
             FullscreenEntranceFingerprint.method,
             listOf("PoiAnchorView2" to LocationCardFingerprint.method,
@@ -144,11 +146,15 @@ val hideVideoOverlaysPatch = bytecodePatch(
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableVideoOverlays()V",
         )
 
-        // p0 is the activity. /range because a parameter register is usually above v15.
-        activity.addInstruction(
-            0,
-            "invoke-static/range { p0 .. p0 }, " +
-                "$EXTENSION_CLASS_DESCRIPTOR->install(Landroid/app/Activity;)V",
-        )
+        // p0 is the activity. /range because a parameter register is usually above v15. The
+        // detail page too: a process started into search by a deep link opens its videos there
+        // with no MainActivity, and nothing followed them (#84).
+        listOf(activity, detail).forEach {
+            it.addInstruction(
+                0,
+                "invoke-static/range { p0 .. p0 }, " +
+                    "$EXTENSION_CLASS_DESCRIPTOR->install(Landroid/app/Activity;)V",
+            )
+        }
     }
 }

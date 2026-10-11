@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Detalhes da compilação agora também cita os patches que só mudam os recursos do TikTok, como Change app name, Custom launcher icon e Trust user certificates. Ele lista o patch, nunca o nome ou a imagem que você escolheu nas opções dele.
+
+* **TikTok:** Com Registrar diagnósticos ligado, o registro agora informa uma vez por vídeo quantas imagens de prévia da barra de progresso o TikTok mandou com ele. Se a prévia não aparece quando você arrasta a barra, uma exportação de diagnósticos mostra se o vídeo veio com alguma (#140).
+
+* **TikTok:** Detalhes da compilação e a exportação completa do log agora listam, com um nome curto, cada patch da sua compilação que alterou o código do TikTok, incluindo os sem chave, como Comment send fix e Network request report.
+
+* **TikTok:** Tela limpa, lembrada ou automática, agora também limpa um vídeo que você abre pela busca. O TikTok passa esse vídeo para a página aberta já tocando, e a Tela limpa esperava um início que ali nunca chegava, então os botões e a barra de busca do TikTok continuavam na tela (#84).
+
+* **TikTok:** Esconder sobreposições do vídeo e os tamanhos de texto do feed agora também funcionam quando um link abre o TikTok direto na busca ou em um vídeo, sem o feed Para você por trás. Antes, os vídeos abertos assim mantinham todas as sobreposições e o tamanho de texto do próprio TikTok (#84).
+
 * **TikTok:** Proteger páginas externas no navegador do TikTok agora conta o CAPTCHA de quebra-cabeça que os LIVEs e a Loja abrem como uma página do próprio TikTok, então o quebra-cabeça mantém a ligação com o TikTok (#87). Ele carrega dos servidores do TikTok, só que de um endereço que a opção não conhecia.
 
 * **TikTok:** Um segundo toque rápido em Detalhes da compilação, Verificação de recursos, Licenças ou Novidades não abre mais a mesma janela duas vezes, uma em cima da outra.
@@ -44,7 +54,7 @@
 
 * **TikTok:** O relatório de diagnóstico tem uma nova seção Storage que lista as maiores pastas no armazenamento do TikTok, então um relatório consegue mostrar o que está enchendo ele (#70). Ela só cita pastas, nunca arquivos, e esconde números de conta.
 
-* **TikTok:** Apertar voltar em um vídeo limpo aberto pela busca ou por um perfil não conta mais como desligar o Clear display. Abrir o mesmo vídeo de novo limpa ele como qualquer outro, e um Clear display lembrado continua ligado (#84).
+* **TikTok:** Apertar voltar em um vídeo limpo, ou abrir o painel de compartilhar a partir dele, não conta mais como desligar o Clear display. Abrir o mesmo vídeo de novo limpa ele como qualquer outro, e um Clear display lembrado continua ligado (#84).
 
 * **TikTok:** O Remove LIVE extras agora avisa que tira os arquivos para entrar na LIVE de outra pessoa como convidado, então entrar por voz ou vídeo pode parar de funcionar com ele (#132). Deixe ele de fora se você entra em LIVEs.
 

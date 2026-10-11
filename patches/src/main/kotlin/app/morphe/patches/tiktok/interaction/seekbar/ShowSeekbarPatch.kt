@@ -193,5 +193,17 @@ val showSeekbarThumbnailPatch = bytecodePatch(
             EXTENSION_CLASS_DESCRIPTOR,
             "overrideThumbnailGate",
         )
+
+        // The preview check's diagnostic line (#140): whether the video came with preview
+        // sheets, which only the server sends. Held to every declared build by
+        // SeekbarPreviewAnchorsTest, left out with a note on a build the patch is forced onto.
+        try {
+            val seekbar = mutableClassDefBy(SeekbarGateLogFingerprint.method.definingClass)
+            val check = previewCheckOf(seekbar)
+            seekbar.methods.named(check.method).reportPreviewCheck(check.video)
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Show the progress bar thumbnail] Left out the preview check line on ${packageMetadata.versionName}: ${problem.message}")
+        }
     }
 }

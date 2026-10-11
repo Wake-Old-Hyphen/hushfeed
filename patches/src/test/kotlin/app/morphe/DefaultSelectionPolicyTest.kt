@@ -12,6 +12,8 @@ import org.junit.Test
  *
  * <p>A patch in the default selection has to leave TikTok as it ships until the reader turns a
  * switch on, and including it can't break installing, updating, signing in or the region. The
+ * switches that already started on when 0.69.0 recommended their patches (Remove feed ads, Show
+ * the progress bar and a few more) keep doing so, and their README rows say "On by default". The
  * rest are named here with the reason they stay out, so leaving a new patch out of the default
  * is a decision someone wrote down rather than an accident of its declaration.
  */
@@ -52,6 +54,18 @@ class DefaultSelectionPolicyTest {
             "a patch left out of the default selection needs a reason here, and one put back needs its entry removed",
             keptOut.keys.sorted(), outside.sorted(),
         )
+    }
+
+    /** The README's install step and Patches section both say how many patches simple mode picks. */
+    @Test
+    fun `the README counts simple mode's selection from the catalog`() {
+        val readme = File("../README.md").takeIf { it.isFile } ?: File("README.md")
+        assertTrue("could not find the README from ${File(".").absolutePath}", readme.isFile)
+        val counts = Regex("""Simple mode in Morphe Manager selects (\d+)""").findAll(readme.readText())
+            .map { it.groupValues[1].toInt() }.toList()
+        assertEquals("the install step and the Patches section each give the count", 2, counts.size)
+        val picked = shippedPatches().count { it.get("use").asBoolean }
+        assertEquals("simple mode's count in the README", listOf(picked, picked), counts)
     }
 
     /** The catalog is generated, so the declarations are checked too, in case it is stale. */

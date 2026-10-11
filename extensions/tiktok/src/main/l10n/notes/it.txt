@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Dettagli della build ora indica anche le patch che cambiano solo le risorse di TikTok, come Change app name, Custom launcher icon e Trust user certificates. Elenca la patch, mai il nome o l'immagine che hai scelto nelle sue opzioni.
+
+* **TikTok:** Con Registra la diagnostica attivo, il registro ora indica una volta per video quante immagini di anteprima della barra di avanzamento TikTok ha inviato con esso. Se l'anteprima non compare mentre trascini la barra, un'esportazione della diagnostica mostra se il video ne aveva (#140).
+
+* **TikTok:** Dettagli della build e l'esportazione completa del log ora elencano, con un nome breve, ogni patch della tua build che ha modificato il codice di TikTok, comprese quelle senza interruttore come Comment send fix e Network request report.
+
+* **TikTok:** Vista pulita, ricordata o automatica, ora pulisce anche un video aperto dalla ricerca. TikTok passa quel video alla pagina aperta mentre è già in riproduzione, e Vista pulita aspettava un avvio che lì non arrivava mai, quindi i pulsanti e la barra di ricerca di TikTok restavano (#84).
+
+* **TikTok:** Nascondi gli overlay dei video e le dimensioni del testo del feed ora funzionano anche quando un link avvia TikTok direttamente nella ricerca o in un video, senza il feed Per te dietro. Prima i video aperti così mantenevano tutti gli overlay e la dimensione del testo di TikTok (#84).
+
 * **TikTok:** Proteggi le pagine esterne nel browser di TikTok ora considera il CAPTCHA a puzzle che aprono i LIVE e lo Shop una pagina di TikTok, così il puzzle resta collegato a TikTok (#87). Si carica dai server di TikTok, solo da un indirizzo che l'interruttore non conosceva.
 
 * **TikTok:** Un secondo tocco rapido su Dettagli della build, Stato dell'hook, Licenze o Novità non apre più la stessa finestra due volte, una sopra l'altra.
@@ -44,7 +54,7 @@
 
 * **TikTok:** Il report diagnostico ha una nuova sezione Storage con le cartelle più grandi nella memoria di TikTok, così un report può mostrare cosa la sta riempiendo (#70). Nomina solo le cartelle, mai i file, e nasconde i numeri degli account.
 
-* **TikTok:** Premere indietro su un video pulito aperto dalla ricerca o da un profilo non conta più come spegnere Clear display. Riaprendo lo stesso video si pulisce come gli altri, e un Clear display ricordato resta attivo (#84).
+* **TikTok:** Premere indietro su un video pulito, o aprire da lì il pannello di condivisione, non conta più come spegnere Clear display. Riaprendo lo stesso video si pulisce come gli altri, e un Clear display ricordato resta attivo (#84).
 
 * **TikTok:** Remove LIVE extras ora dice che toglie i file per entrare nella LIVE di qualcun altro come ospite, quindi con questa patch entrare con la voce o il video può smettere di funzionare (#132). Lasciala fuori se partecipi alle LIVE.
 

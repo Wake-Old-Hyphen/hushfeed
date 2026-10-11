@@ -8,6 +8,7 @@ import android.view.View;
 import java.util.Collections;
 import java.util.List;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
 
 import org.junit.After;
@@ -32,6 +33,9 @@ public class FollowingStoriesBubbleTest {
 
     @Before
     public void setUp() {
+        // The pause check reads a setting, whose class needs a context to load. Without this the
+        // class passed only when an earlier test in the same fork had set one.
+        Utils.setContext(RuntimeEnvironment.getApplication());
         bubble = new View(RuntimeEnvironment.getApplication());
         FollowingStoriesBubble.resetForTests();
     }

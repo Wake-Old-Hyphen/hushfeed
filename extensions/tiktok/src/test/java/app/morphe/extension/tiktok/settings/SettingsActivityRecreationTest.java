@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.util.Arrays;
+import java.util.List;
+import app.morphe.extension.shared.diagnostics.BuildDetails;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
@@ -108,6 +111,24 @@ public class SettingsActivityRecreationTest {
             assertTrue(hasMenu(currentPage(after), "Downloads & sharing"));
             after.onBackPressed();
             assertTrue(after.isFinishing());
+        }
+    }
+
+    @Test public void openingSettingsHandsTheRegisteredSwitchesToBuildDetails() {
+        try {
+            BuildDetails.setRegisteredSwitches(null);
+            try (var owner = Robolectric.buildActivity(SettingsActivity.class, settingsIntent()).setup().visible()) {
+                settle(owner.get());
+                assertTrue(owner.get().initialized);
+                String report = BuildDetails.report("");
+                assertFalse(report, report.contains("registered_switches: unknown"));
+                String line = report.substring(report.indexOf("registered_switches: "));
+                line = line.substring(0, line.indexOf('\n'));
+                List<String> names = Arrays.asList(line.substring("registered_switches: ".length()).split(","));
+                assertTrue(line, names.contains("advancedDownloads") && names.contains("feedFilter"));
+            }
+        } finally {
+            BuildDetails.setRegisteredSwitches(null);
         }
     }
 

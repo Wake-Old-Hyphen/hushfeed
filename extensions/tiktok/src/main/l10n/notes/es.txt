@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Detalles de la compilación ahora también nombra los parches que solo cambian los recursos de TikTok, como Change app name, Custom launcher icon y Trust user certificates. Muestra el parche, nunca el nombre ni la imagen que elegiste en sus opciones.
+
+* **TikTok:** Con Registrar diagnósticos activado, el registro ahora indica una vez por video cuántas imágenes de vista previa de la barra de progreso envió TikTok con él. Si la vista previa no aparece al arrastrar la barra, una exportación de diagnósticos muestra si el video traía alguna (#140).
+
+* **TikTok:** Detalles de la compilación y la exportación completa del registro ahora enumeran, con un nombre corto, cada parche de tu compilación que cambió el código de TikTok, incluidos los que no tienen interruptor, como Comment send fix y Network request report.
+
+* **TikTok:** Controles ocultos, recordado o automático, ahora también despeja un vídeo que abres desde la búsqueda. TikTok pasa ese vídeo a la página abierta ya reproduciéndose, y Controles ocultos esperaba un inicio que ahí nunca llegaba, así que los botones y la barra de búsqueda de TikTok se quedaban (#84).
+
+* **TikTok:** Ocultar superposiciones de vídeo y los tamaños de texto del feed ahora también funcionan cuando un enlace abre TikTok directamente en la búsqueda o en un vídeo, sin el feed Para ti detrás. Antes, los vídeos abiertos así conservaban todas las superposiciones y el tamaño de texto propio de TikTok (#84).
+
 * **TikTok:** Proteger páginas externas en el navegador de TikTok ahora cuenta el CAPTCHA de rompecabezas que abren los LIVE y la Tienda como una página propia de TikTok, así el rompecabezas conserva su conexión con TikTok (#87). Se carga desde los servidores de TikTok, solo que desde una dirección que el interruptor no conocía.
 
 * **TikTok:** Un segundo toque rápido en Detalles de la compilación, Comprobación de funciones, Licencias o Novedades ya no abre la misma ventana dos veces, una encima de otra.
@@ -44,7 +54,7 @@
 
 * **TikTok:** El informe de diagnóstico tiene una nueva sección Storage con las carpetas más grandes del almacenamiento de TikTok, así un informe puede mostrar qué lo está llenando (#70). Solo nombra carpetas, nunca archivos, y oculta los números de cuenta.
 
-* **TikTok:** Pulsar atrás en un video despejado que abriste desde la búsqueda o un perfil ya no cuenta como apagar Clear display. Si abres el mismo video otra vez, se despeja como cualquier otro, y un Clear display recordado sigue activo (#84).
+* **TikTok:** Pulsar atrás en un video despejado, o abrir desde él el panel de compartir, ya no cuenta como apagar Clear display. Si abres el mismo video otra vez, se despeja como cualquier otro, y un Clear display recordado sigue activo (#84).
 
 * **TikTok:** Remove LIVE extras ahora dice que quita los archivos para unirte al LIVE de otra persona como invitado, así que con él puede dejar de funcionar unirte por voz o video (#132). No lo incluyas si te unes a LIVEs.
 

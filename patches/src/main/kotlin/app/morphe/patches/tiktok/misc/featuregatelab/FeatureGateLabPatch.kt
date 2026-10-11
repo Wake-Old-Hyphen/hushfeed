@@ -17,6 +17,7 @@ import app.morphe.patches.tiktok.misc.absettings.appAbClass
 import app.morphe.patches.tiktok.misc.absettings.methodOfShape
 import app.morphe.patches.tiktok.misc.absettings.methodsOfShape
 import app.morphe.patches.tiktok.misc.absettings.shape
+import app.morphe.patches.tiktok.misc.settings.registerForBuildDetails
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.callThroughLocals
 import app.morphe.patches.tiktok.shared.objectIn
@@ -229,6 +230,7 @@ val featureGateLabPatch = bytecodePatch(
             it.name == "isInstalled" && it.returnType == "Z" && it.parameterTypes.isEmpty()
         } ?: throw PatchException("Feature Gate Lab runtime marker not found")
         installed.returnEarly(true)
+        registerForBuildDetails("enableFeatureGateLab")
     }
 }
 

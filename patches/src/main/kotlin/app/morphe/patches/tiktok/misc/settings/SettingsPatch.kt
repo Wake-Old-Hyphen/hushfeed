@@ -632,5 +632,6 @@ val settingsPatch = bytecodePatch(
         }
 
         resolveOpenDebugFunction2Method().openMorpheSettingsAtStart("0")
+        registerForBuildDetails("enableSettings")
     }
 }
