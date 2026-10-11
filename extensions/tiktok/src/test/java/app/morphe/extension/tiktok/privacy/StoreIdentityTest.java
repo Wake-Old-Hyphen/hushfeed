@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import org.junit.After;
@@ -20,8 +21,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -44,6 +49,8 @@ public class StoreIdentityTest {
         Utils.setContext(context);
         ownPackage = context.getPackageName();
         Settings.STORE_IDENTITY.save(true);
+        StoreIdentity.loggedInstaller = null;
+        ShadowLog.clear();
     }
 
     @After public void tearDown() {
@@ -134,5 +141,34 @@ public class StoreIdentityTest {
         pm.setInstallerPackageName(ownPackage, "com.morphe.manager");
         Settings.STORE_IDENTITY.save(false);
         assertEquals("com.morphe.manager", StoreIdentity.installerFor(pm, ownPackage));
+    }
+
+    /** Log diagnostics names the store TikTok was told, once per store rather than once per read. */
+    @Test public void anAnsweredInstallerReadIsLoggedOncePerStore() {
+        PackageManager pm = context.getPackageManager();
+        pm.setInstallerPackageName(ownPackage, "com.morphe.manager");
+        BaseSettings.DEBUG.save(true);
+        try {
+            StoreIdentity.installerFor(pm, ownPackage);
+            StoreIdentity.installerFor(pm, ownPackage);
+            Settings.STORE_IDENTITY_INSTALLER.save("com.sec.android.app.samsungapps");
+            StoreIdentity.installerFor(pm, ownPackage);
+            Settings.STORE_IDENTITY.save(false);
+            StoreIdentity.installerFor(pm, ownPackage);
+            assertEquals(Arrays.asList(StoreIdentity.STORE, "com.sec.android.app.samsungapps"), answersLogged());
+        } finally {
+            BaseSettings.DEBUG.save(false);
+        }
+    }
+
+    private static List<String> answersLogged() {
+        String prefix = "Store identity: TikTok's installer read answered ";
+        List<String> answers = new ArrayList<>();
+        for (ShadowLog.LogItem item : ShadowLog.getLogs()) {
+            if (item.msg == null) continue;
+            int at = item.msg.indexOf(prefix);
+            if (at >= 0) answers.add(item.msg.substring(at + prefix.length()).trim());
+        }
+        return answers;
     }
 }

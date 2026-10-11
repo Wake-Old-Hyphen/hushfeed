@@ -139,6 +139,8 @@ public class DoNotAutoTranslateTest {
         String problem = DoNotAutoTranslate.languageProblem("es, Spanish");
         assertNotNull(problem);
         assertTrue(problem, problem.contains("Spanish"));
+        // This list only keeps text untranslated, so the feed filter's warning about videos doesn't fit.
+        assertFalse(problem, problem.contains("video"));
     }
 
     /** Hushfeed's own comment translator reads TikTok's list too, and has to see the added languages. */

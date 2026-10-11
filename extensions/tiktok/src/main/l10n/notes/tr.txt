@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Bu dilleri otomatik çevirme satırında dil kodu olmayan bir kelime artık sadece "dil kodu değil" mesajı alıyor. Önceden hiçbir videonun eşleşmeyeceği uyarısı çıkıyordu. Bu, açıklama dili filtresinin uyarısı ve yalnızca metni çevrilmeden bırakan bir listeye uymuyor (#121).
+
 * **TikTok:** Derleme ayrıntıları artık yalnızca TikTok'un kaynaklarını değiştiren yamaları da adlandırıyor, örneğin Change app name, Custom launcher icon ve Trust user certificates. Yamanın kendisi listelenir, seçeneklerinde seçtiğin ad ya da resim asla listelenmez.
 
 * **TikTok:** Tanılamayı günlüğe kaydet açıkken günlük artık her video için bir kez TikTok'un onunla birlikte ilerleme çubuğu için kaç önizleme resmi gönderdiğini yazıyor. Çubuğu sürüklerken önizleme görünmüyorsa, tanılama dışa aktarımı videonun hiç önizleme resmiyle gelip gelmediğini gösterir (#140).

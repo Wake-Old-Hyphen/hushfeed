@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Una palabra que no es un código de idioma en No traducir automáticamente estos idiomas ahora recibe un simple mensaje de "no es un código de idioma". Antes avisaba de que ningún video coincidiría nunca, que es el aviso del filtro de idioma de los subtítulos y no encaja en una lista que solo deja el texto sin traducir (#121).
+
 * **TikTok:** Detalles de la compilación ahora también nombra los parches que solo cambian los recursos de TikTok, como Change app name, Custom launcher icon y Trust user certificates. Muestra el parche, nunca el nombre ni la imagen que elegiste en sus opciones.
 
 * **TikTok:** Con Registrar diagnósticos activado, el registro ahora indica una vez por video cuántas imágenes de vista previa de la barra de progreso envió TikTok con él. Si la vista previa no aparece al arrastrar la barra, una exportación de diagnósticos muestra si el video traía alguna (#140).

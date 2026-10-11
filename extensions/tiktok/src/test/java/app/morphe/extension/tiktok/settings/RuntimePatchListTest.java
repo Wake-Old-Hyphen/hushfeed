@@ -1,6 +1,7 @@
 package app.morphe.extension.tiktok.settings;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -38,11 +39,16 @@ public class RuntimePatchListTest {
     private static final Pattern PATCH_NAME = Pattern.compile("\\bname = \"([^\"]+)\"");
     private static final Pattern ANY_REGISTRATION =
             Pattern.compile("SettingsStatus;->|SETTINGS_STATUS->enable|registerForBuildDetails\\(\"");
-    /** A resource patch has its own choice field, or adds its name to resource_patches. */
-    private static final Pattern RESOURCE_RECORD =
-            Pattern.compile("buildChoicePatch\\(BuildChoice\\.|BuildDetails\\.applied\\(");
+    /**
+     * A resource patch has its own choice field, or adds its name to resource_patches, on a line
+     * that isn't commented out.
+     */
+    private static final Pattern RESOURCE_RECORD = Pattern.compile(
+            "(?m)^(?![ \\t]*//).*(?:buildChoicePatch\\(BuildChoice\\.|BuildDetails\\.applied\\()");
     private static final Pattern RESOURCE_APPLIED = Pattern.compile(
-            "(?m)^([ \\t]*)BuildDetails\\.applied\\(get\\(BUILD_DETAILS_ASSET\\), \"([A-Za-z0-9]+)\"\\)");
+            "(?m)^([ \\t]*)BuildDetails\\.applied\\(get\\(BUILD_DETAILS_ASSET\\), \"([^\"]*)\"\\)");
+    /** BuildDetailsPatch.kt's resourcePatchName, which applied() requires. */
+    private static final Pattern RESOURCE_NAME = Pattern.compile("[a-z][A-Za-z0-9]{0,63}");
 
     @Test
     public void registeredNamesEveryRaisedSwitchAndNothingElse() throws Exception {
@@ -90,6 +96,17 @@ public class RuntimePatchListTest {
                 "    execute {\n        BuildDetails.applied(get(BUILD_DETAILS_ASSET), \"quiet\")\n")));
         assertEquals(Collections.emptySet(), silentPatches(quiet.replace(") {\n",
                 ") {\n    dependsOn(buildChoicePatch(BuildChoice.AMOLED))\n")));
+        // A record that's commented out writes nothing.
+        assertEquals(Collections.singleton("Quiet"), silentPatches(quiet.replace("    execute {\n",
+                "    execute {\n        // BuildDetails.applied(get(BUILD_DETAILS_ASSET), \"quiet\")\n")));
+    }
+
+    @Test
+    public void theNamePatternMatchesWhatAppliedAccepts() {
+        assertTrue(RESOURCE_NAME.matcher("changeAppName").matches());
+        assertFalse(RESOURCE_NAME.matcher("ChangeAppName").matches());
+        assertFalse(RESOURCE_NAME.matcher("change_app_name").matches());
+        assertFalse(RESOURCE_NAME.matcher("a" + "b".repeat(64)).matches());
     }
 
     @Test
@@ -100,6 +117,8 @@ public class RuntimePatchListTest {
             Matcher call = RESOURCE_APPLIED.matcher(source);
             while (call.find()) {
                 String name = call.group(2);
+                assertTrue(file + " records " + name + ", a name applied() refuses",
+                        RESOURCE_NAME.matcher(name).matches());
                 assertTrue(file + " records " + name + " for its own patch",
                         source.contains("val " + name + "Patch = resourcePatch(")
                                 || source.contains("val " + name + "Patch = rawResourcePatch("));

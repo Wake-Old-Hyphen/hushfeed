@@ -14,6 +14,7 @@ import java.util.Set;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.feedfilter.CaptionLanguageFilter;
+import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -69,9 +70,13 @@ public final class DoNotAutoTranslate {
         }
     }
 
-    /** What is wrong with the list the user typed, or null: the same rule the caption languages use. */
+    /**
+     * What is wrong with the list the user typed, or null: the same rule the caption languages
+     * use, without their warning about videos, since this list hides nothing.
+     */
     public static String languageProblem(String value) {
-        return CaptionLanguageFilter.languageProblem(value);
+        String bad = CaptionLanguageFilter.firstBadEntry(value);
+        return bad == null ? null : L10n.f("%1$s isn't a language code. Use two letters, like en, es or de.", bad);
     }
 
     /** Whether any language is excluded. The row's summary and the tests ask. */

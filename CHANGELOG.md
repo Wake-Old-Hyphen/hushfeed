@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** A word that isn't a language code in Don't auto translate these languages now gets a plain "isn't a language code" message. It used to warn that no video would ever match, which is the caption language filter's warning and doesn't fit a list that only keeps text untranslated (#121).
+
 * **TikTok:** Build details now also names the patches that only change TikTok's resources, like Change app name, Custom launcher icon and Trust user certificates. It lists the patch, never the name or picture you picked in its options.
 
 * **TikTok:** With Log diagnostics on, the log now says once per video how many progress bar preview pictures TikTok sent with it. If the preview doesn't show while you drag the bar, a diagnostics export tells whether the video came with any (#140).

@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Bu dilləri avtomatik tərcümə etməyin sırasına dil kodu olmayan söz yazanda indi sadəcə "dil kodu deyil" mesajı çıxır. Əvvəl heç bir videonun uyğun gəlməyəcəyi barədə xəbərdarlıq edirdi. Bu, başlıq dili filtrinin xəbərdarlığıdır və yalnız mətni tərcüməsiz saxlayan siyahıya uyğun gəlmir (#121).
+
 * **TikTok:** Build təfərrüatları indi yalnız TikTok-un resurslarını dəyişən yamaları da adlandırır, məsələn Change app name, Custom launcher icon və Trust user certificates. Yamanın özü göstərilir, onun seçimlərində seçdiyiniz ad və ya şəkil heç vaxt göstərilmir.
 
 * **TikTok:** Diaqnostikanı qeyd edin açıq olanda qeyd indi hər video üçün bir dəfə TikTok-un onunla irəliləmə çubuğu üçün neçə önizləmə şəkli göndərdiyini yazır. Çubuğu sürüşdürəndə önizləmə görünmürsə, diaqnostika ixracı videonun belə şəkillərlə gəlib-gəlmədiyini göstərir (#140).

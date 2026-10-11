@@ -87,6 +87,14 @@ public final class CaptionLanguageFilter implements IFilter {
      * lose every captioned video in the languages the reader meant to keep.
      */
     public static String languageProblem(String value) {
+        String bad = firstBadEntry(value);
+        return bad == null ? null : L10n.f(
+                "%1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.",
+                bad);
+    }
+
+    /** The first entry of a language list that isn't a language code, or null. */
+    public static String firstBadEntry(String value) {
         if (value == null) return null;
         String trimmed = value.trim();
         if (trimmed.isEmpty()) return null;
@@ -94,9 +102,7 @@ public final class CaptionLanguageFilter implements IFilter {
             // "en,,es" left a blank entry, which the filter skips, and the check refused the list
             // with an empty name in its message. The country check skips blanks the same way.
             if (entry.isEmpty() || primary(entry) != null) continue;
-            return L10n.f(
-                    "%1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.",
-                    entry.trim());
+            return entry.trim();
         }
         return null;
     }

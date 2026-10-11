@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Kata yang bukan kode bahasa di Jangan terjemahkan otomatis bahasa ini sekarang cukup mendapat pesan "bukan kode bahasa". Sebelumnya muncul peringatan bahwa tidak ada video yang akan cocok, padahal itu peringatan filter bahasa keterangan dan tidak cocok untuk daftar yang hanya membiarkan teks tidak diterjemahkan (#121).
+
 * **TikTok:** Detail build sekarang juga menyebut patch yang hanya mengubah sumber daya TikTok, seperti Change app name, Custom launcher icon, dan Trust user certificates. Yang dicantumkan patch-nya, tidak pernah nama atau gambar yang kamu pilih di opsinya.
 
 * **TikTok:** Dengan Catat diagnostik aktif, log sekarang mencatat sekali per video berapa gambar pratinjau bilah progres yang dikirim TikTok bersamanya. Kalau pratinjau tidak muncul saat bilah digeser, ekspor diagnostik menunjukkan apakah video itu membawa gambar pratinjau (#140).

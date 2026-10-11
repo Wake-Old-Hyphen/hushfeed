@@ -89,6 +89,9 @@ public final class StoreIdentity {
     @Nullable
     private static volatile PackageInfo signedOnly;
     private static volatile boolean logged;
+    /** The store the last logged installer read answered. Tests clear it. */
+    @Nullable
+    static volatile String loggedInstaller;
 
     private StoreIdentity() {
     }
@@ -127,8 +130,14 @@ public final class StoreIdentity {
      */
     @Nullable
     public static String installerFor(PackageManager manager, String packageName) {
-        if (answersFor(packageName)) return installer();
-        return manager.getInstallerPackageName(packageName);
+        if (!answersFor(packageName)) return manager.getInstallerPackageName(packageName);
+        String store = installer();
+        // Once per store, so Log diagnostics shows the answer TikTok got without a line per read.
+        if (!store.equals(loggedInstaller)) {
+            loggedInstaller = store;
+            Logger.printDebug(() -> "Store identity: TikTok's installer read answered " + store);
+        }
+        return store;
     }
 
     /** Whether the switch is on and {@code packageName} is TikTok's own. */

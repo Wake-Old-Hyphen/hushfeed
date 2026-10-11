@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Ein Wort, das kein Sprachcode ist, bekommt in Diese Sprachen nicht automatisch übersetzen jetzt einfach den Hinweis „kein Sprachcode“. Vorher hieß es, kein Video würde je dazu passen. Das ist die Warnung des Filters für Untertitelsprachen und passt nicht zu einer Liste, die nur Text unübersetzt lässt (#121).
+
 * **TikTok:** Build-Informationen nennen jetzt auch die Patches, die nur TikToks Ressourcen ändern, etwa Change app name, Custom launcher icon und Trust user certificates. Aufgeführt wird der Patch, nie der Name oder das Bild, das du in seinen Optionen gewählt hast.
 
 * **TikTok:** Mit Diagnose protokollieren steht im Protokoll jetzt einmal pro Video, wie viele Vorschaubilder für den Fortschrittsbalken TikTok mitgeschickt hat. Wenn beim Ziehen des Balkens keine Vorschau kommt, zeigt ein Diagnose-Export, ob das Video überhaupt welche hatte (#140).

@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -182,18 +183,29 @@ public class SeekbarPatchTest {
     @Test
     public void thePreviewCheckLeavesVideosUnseenWhileLogDiagnosticsIsOff() {
         BaseSettings.DEBUG.save(false);
+        ShadowLog.clear();
         FakeAweme aweme = videoWith(new FakeSheet(List.of("u"), List.of("i")));
         SeekbarPatch.onPreviewCheck(null);
         SeekbarPatch.onPreviewCheck(aweme);
+        assertEquals(0, previewLines());
         assertTrue(SeekbarPatch.firstPreviewLook(aweme));
 
         BaseSettings.DEBUG.save(true);
         try {
             FakeAweme logged = videoWith(new FakeSheet(List.of("u"), List.of("i")));
             SeekbarPatch.onPreviewCheck(logged);
+            SeekbarPatch.onPreviewCheck(logged);
+            assertEquals("one preview line per video", 1, previewLines());
             assertFalse(SeekbarPatch.firstPreviewLook(logged));
         } finally {
             BaseSettings.DEBUG.save(false);
         }
+    }
+
+    private static long previewLines() {
+        return ShadowLog.getLogs().stream()
+                .filter(item -> item.msg != null && item.msg.contains("[Morphe TikTok Seekbar] preview ")
+                        && item.msg.contains(" switch="))
+                .count();
     }
 }
