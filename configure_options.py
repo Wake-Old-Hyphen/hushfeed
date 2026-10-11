@@ -13,7 +13,7 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import yaml
 
@@ -90,7 +90,7 @@ def main() -> int:
 
     # Environment overrides for variant testing
     extra_hushfeed_disabled = {normalize_key(x) for x in os.environ.get("FORCE_DISABLE_HUSHFEED", "").split(",") if x.strip()}
-    extra_nai64_disabled = {normalize_key(x) for x inos.environ.get("FORCE_DISABLE_NAI64", "").split(",") if x.strip()}
+    extra_nai64_disabled = {normalize_key(x) for x in os.environ.get("FORCE_DISABLE_NAI64", "").split(",") if x.strip()}
     
     disabled_hushfeed |= extra_hushfeed_disabled
     if extra_hushfeed_disabled:
