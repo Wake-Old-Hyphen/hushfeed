@@ -58,7 +58,7 @@
     },
     {
       "name": "Advanced downloads",
-      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, and hold a profile picture or story to save it. Starts off. Turn it on in Hushfeed settings > Downloads.",
+      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, and save a story from its share sheet. Starts off. Turn it on in Hushfeed settings > Downloads.",
       "category": "Downloads",
       "use": true,
       "dependencies": [
@@ -4345,7 +4345,7 @@
     },
     {
       "name": "Show the progress bar",
-      "description": "Shows the progress bar on videos where TikTok hides it, so you can see how long a video is and skip around. On by default. Turn it off in Hushfeed settings > Playback, where you can also show the time beside the bar or give it a bigger handle.",
+      "description": "Shows the progress bar on videos where TikTok hides it, so you can see how long a video is and skip around. On by default. Turn it off in Hushfeed settings > Playback, where you can also show the time beside the bar or give it a bigger handle. A seek bar for video stories is there too.",
       "category": "Playback",
       "use": true,
       "dependencies": [

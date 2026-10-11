@@ -320,4 +320,38 @@ public class SeekbarTimeTest {
         assertEquals(2, crowded.getChildCount());
         assertNull(SeekbarTimeLabel.find(crowded));
     }
+
+    @Test
+    public void theTimeIsDrawnInsideTheLabelOnOneLine() {
+        Settings.SEEKBAR_TIME.save(true);
+        for (long lengthMs : new long[]{14_000L, 754_000L, 3_723_000L}) {
+            LinearLayout bar = bar();
+            play(bar, Post.video("v" + lengthMs), lengthMs / 3, lengthMs);
+            bar.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(79, View.MeasureSpec.EXACTLY));
+            bar.layout(0, 0, 1080, 79);
+
+            SeekbarTimeLabel label = SeekbarTimeLabel.find(bar);
+            assertNotNull(label);
+            android.text.Layout layout = label.getLayout();
+            assertNotNull(layout);
+            float room = label.getWidth() - label.getCompoundPaddingLeft() - label.getCompoundPaddingRight();
+            assertEquals(label.getText().toString(), 1, layout.getLineCount());
+            assertTrue("starts inside: " + layout.getLineLeft(0), layout.getLineLeft(0) >= -0.5f);
+            assertTrue("ends inside: " + layout.getLineRight(0) + " of " + room,
+                    layout.getLineRight(0) <= room + 0.5f);
+        }
+    }
+
+    @Test
+    public void aRefusedBarIsDescribedByItsOrientationAndChildren() {
+        LinearLayout crowded = bar();
+        crowded.addView(new View(context));
+        assertEquals("horizontal [android.widget.FrameLayout, android.view.View]",
+                SeekbarTimeLabel.shapeOf(crowded));
+
+        LinearLayout vertical = bar();
+        vertical.setOrientation(LinearLayout.VERTICAL);
+        assertEquals("vertical [android.widget.FrameLayout]", SeekbarTimeLabel.shapeOf(vertical));
+    }
 }

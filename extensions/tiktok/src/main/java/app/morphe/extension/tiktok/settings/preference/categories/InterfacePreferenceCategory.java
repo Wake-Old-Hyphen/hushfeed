@@ -523,7 +523,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new ChoicePreference(context, "Caption background", Settings.CAPTION_BACKGROUND,
                     new String[]{"TikTok default", "Transparent", "Dark", "Black"},
                     new String[]{"default", "transparent", "dark", "black"}));
-            addPreference(new TogglePreference(context, "Keep captions in clear display",
+            addPreference(new TogglePreference(context, "Keep captions in Clear display",
                     "Show the current spoken caption while the other controls are hidden.", Settings.KEEP_CAPTIONS_CLEAR_DISPLAY));
         }
     }
@@ -533,7 +533,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new SectionHeadingPreference(context, "Clear display"));
         }
         if (SettingsStatus.automaticClearDisplayEnabled) {
-            addPreference(new TogglePreference(context, "Automatic clear display",
+            addPreference(new TogglePreference(context, "Automatic Clear display",
                     "Hide controls after each video starts. Tap to restore them.", Settings.AUTOMATIC_CLEAR_DISPLAY));
             NumberInputPreference delay = new NumberInputPreference(context, "Clear display delay",
                     "Wait before hiding the controls.", Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY,

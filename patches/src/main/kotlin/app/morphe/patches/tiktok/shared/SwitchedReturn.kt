@@ -14,6 +14,7 @@ import app.morphe.util.cloneMutable
 import app.morphe.util.cloneMutableAndPreserveParameters
 import app.morphe.util.numberOfParameterRegisters
 import app.morphe.util.numberOfParameterRegistersLogical
+import com.android.tools.smali.dexlib2.iface.Method
 
 /** Labels for the cloned form below, unique across one patching run. */
 private var switchedReturnLabels = 0
@@ -39,7 +40,7 @@ internal fun MutableMethod.returnVoidWhenOn(patch: String, switch: String) {
 /** [returnVoidWhenOn] for a method answering `Z`, which answers [value] with the switch on. */
 context(patchContext: BytecodePatchContext)
 internal fun MutableMethod.returnBooleanWhenOn(patch: String, switch: String, value: Boolean) {
-    if (returnType != "Z") throw PatchException("$patch: $definingClass->$name returns $returnType, not a boolean.")
+    checkBooleanWhenOn(patch)
     val literal = if (value) "0x1" else "0x0"
     returnWhenOn(patch, switch) { register -> "${constantInto(register, literal)}\nreturn v$register" }
 }
@@ -54,6 +55,23 @@ internal fun MutableMethod.returnNullWhenOn(patch: String, switch: String) {
 }
 
 /**
+ * Throws whatever [returnBooleanWhenOn] would refuse this method for, and changes nothing, so a
+ * patch hooking two methods can check both before it hooks either.
+ */
+internal fun Method.checkBooleanWhenOn(patch: String) {
+    if (returnType != "Z") throw PatchException("$patch: $definingClass->$name returns $returnType, not a boolean.")
+    checkReturnWhenOn(patch)
+}
+
+private fun Method.checkReturnWhenOn(patch: String) {
+    val body = implementation ?: throw PatchException("$patch: $definingClass->$name has no implementation")
+    // With no local the frame is cloned with one more register, which move-result has to reach.
+    if (body.registerCount - numberOfParameterRegisters < 1 && body.registerCount > 255) {
+        throw PatchException("$patch: $definingClass->$name has no register move-result can reach.")
+    }
+}
+
+/**
  * A constant into [register]. `const/4` names its register in four bits, so it reaches v15 and
  * no further; the scratch register of a cloned frame sits above the old frame and can be higher.
  */
@@ -62,7 +80,8 @@ private fun constantInto(register: Int, literal: String): String =
 
 context(patchContext: BytecodePatchContext)
 private fun MutableMethod.returnWhenOn(patch: String, switch: String, answer: (register: Int) -> String) {
-    val body = implementation ?: throw PatchException("$patch: $definingClass->$name has no implementation")
+    checkReturnWhenOn(patch)
+    val body = implementation!!
     if (body.registerCount - numberOfParameterRegisters >= 1) {
         guardAtEntry(patch, "invoke-static {}, $switch", answer(0))
         return

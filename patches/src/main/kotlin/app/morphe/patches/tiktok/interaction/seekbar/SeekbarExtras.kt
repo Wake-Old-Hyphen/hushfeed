@@ -191,8 +191,13 @@ internal fun Method.keepsEventArguments(): Boolean {
     return code.instructions.none { instruction -> kept.any { instruction.writes(it) } }
 }
 
+/*
+ * Each hook below checks its method and returns what it would add, adding nothing yet, so the
+ * patch can check every hook an extra needs before any of them goes in.
+ */
+
 /** Records each progress event at the end of its constructor: the percent, the position and the video. */
-internal fun MutableMethod.recordProgressTick() {
+internal fun MutableMethod.progressTickHook(): () -> Unit {
     val returns = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.RETURN_VOID }
     if (returns.size != 1) {
         throw PatchException("$PATCH: the progress event's constructor returns in ${returns.size} places, expected one")
@@ -204,25 +209,22 @@ internal fun MutableMethod.recordProgressTick() {
         throw PatchException("$PATCH: the progress event's constructor reuses its percent, position or video registers")
     }
     // p1 the percent, p2 and p3 the wide position, p4 the video, as progressEvent() requires.
-    addInstructions(
-        returns.single().index,
-        callThroughLocals(
-            PATCH,
-            "invoke-static",
-            "$SEEKBAR_TIME->onPlayTick(FJ$AWEME)V",
-            valueIn("p1"),
-            wideIn("p2"),
-            objectIn("p4"),
-        ),
+    val index = returns.single().index
+    val call = callThroughLocals(
+        PATCH,
+        "invoke-static",
+        "$SEEKBAR_TIME->onPlayTick(FJ$AWEME)V",
+        valueIn("p1"),
+        wideIn("p2"),
+        objectIn("p4"),
     )
+    return { addInstructions(index, call) }
 }
 
 /** Hands the time the percent the bar is about to draw, before the bar draws it. */
-internal fun MutableMethod.hookBarProgress() {
-    addInstructions(
-        0,
-        callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_TIME->onBarProgress(${LINEAR_LAYOUT}F)V", objectIn("p0"), valueIn("p1")),
-    )
+internal fun MutableMethod.barProgressHook(): () -> Unit {
+    val call = callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_TIME->onBarProgress(${LINEAR_LAYOUT}F)V", objectIn("p0"), valueIn("p1"))
+    return { addInstructions(0, call) }
 }
 
 /**
@@ -230,7 +232,7 @@ internal fun MutableMethod.hookBarProgress() {
  * and tells both features which style is starting. Every size register is read by its setter and
  * by nothing after it, which is checked here, so raising it changes that call and no other.
  */
-internal fun MutableMethod.hookBarStyle() {
+internal fun MutableMethod.barStyleHook(): () -> Unit {
     val arguments = styleArguments()
     val liveness = RegisterLiveness.of(this)
     arguments.forEach { argument ->
@@ -244,23 +246,21 @@ internal fun MutableMethod.hookBarStyle() {
             throw PatchException("$PATCH: a branch in $definingClass->$name goes straight to the ${argument.call} setter")
         }
     }
-    // Last call first, so each insertion leaves the indices of the earlier calls where they were.
-    arguments.sortedByDescending { it.index }.forEach { argument ->
-        val register = argument.register
-        addInstructions(
-            argument.index,
-            """
-                invoke-static/range {v$register .. v$register}, $SEEKBAR_HANDLE->${argument.call}($FLOAT)$FLOAT
-                move-result-object v$register
-            """,
-        )
+    val time = callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_TIME->onBarStyle(${LINEAR_LAYOUT}I)V", objectIn("p0"), valueIn("p1"))
+    val handle = callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_HANDLE->beginStyle(${LINEAR_LAYOUT}I)V", objectIn("p0"), valueIn("p1"))
+    return {
+        // Last call first, so each insertion leaves the indices of the earlier calls where they were.
+        arguments.sortedByDescending { it.index }.forEach { argument ->
+            val register = argument.register
+            addInstructions(
+                argument.index,
+                """
+                    invoke-static/range {v$register .. v$register}, $SEEKBAR_HANDLE->${argument.call}($FLOAT)$FLOAT
+                    move-result-object v$register
+                """,
+            )
+        }
+        addInstructions(0, time)
+        addInstructions(0, handle)
     }
-    addInstructions(
-        0,
-        callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_TIME->onBarStyle(${LINEAR_LAYOUT}I)V", objectIn("p0"), valueIn("p1")),
-    )
-    addInstructions(
-        0,
-        callThroughLocals(PATCH, "invoke-static", "$SEEKBAR_HANDLE->beginStyle(${LINEAR_LAYOUT}I)V", objectIn("p0"), valueIn("p1")),
-    )
 }

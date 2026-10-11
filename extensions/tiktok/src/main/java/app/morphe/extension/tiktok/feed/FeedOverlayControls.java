@@ -23,6 +23,7 @@ public final class FeedOverlayControls {
     private static final WeakHashMap<View, WeakReference<Binding>> BINDINGS = new WeakHashMap<>();
 
     public static void bindFullscreen(View view) {
+        VideoOverlayHider.noteFullscreenEntry(view);
         bind(view, Settings.HIDE_FULLSCREEN_BUTTON, false, "full screen entry");
     }
 

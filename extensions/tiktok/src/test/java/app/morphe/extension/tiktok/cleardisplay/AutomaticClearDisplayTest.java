@@ -866,7 +866,7 @@ public class AutomaticClearDisplayTest {
             List<String> titles = feedScreenTitles(activity);
             int heading = titles.indexOf("Clear display");
             assertTrue(titles.toString(), heading >= 0);
-            assertEquals(List.of("Clear display", "Automatic clear display", "Clear display delay",
+            assertEquals(List.of("Clear display", "Automatic Clear display", "Clear display delay",
                     "Hide the Clear display controls"), titles.subList(heading, heading + 4));
             assertEquals(1, titles.stream().filter("Hide the Clear display controls"::equals).count());
 
@@ -877,7 +877,7 @@ public class AutomaticClearDisplayTest {
             heading = titles.indexOf("Clear display");
             assertTrue(titles.toString(), heading >= 0);
             assertEquals("Hide the Clear display controls", titles.get(heading + 1));
-            assertFalse(titles.contains("Automatic clear display"));
+            assertFalse(titles.contains("Automatic Clear display"));
         } finally {
             SettingsStatus.videoOverlaysEnabled = overlays;
         }

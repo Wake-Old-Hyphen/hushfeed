@@ -4,6 +4,26 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Protect external pages in TikTok's browser now counts the puzzle CAPTCHA that LIVEs and the Shop open as one of TikTok's own pages, so the puzzle keeps its link back to TikTok (#87). It loads from TikTok's own servers, just not from an address the switch knew.
+
+* **TikTok:** A quick second tap on Build details, Hook status, Licenses or What's new no longer opens the same window twice, one on top of the other.
+
+* **TikTok:** Like the video, as a Double tap or Long press action, now stays with the video you're on in every kind of feed. Where that video has no heart to press, it tells you instead of liking the one next to it.
+
+* **TikTok:** A Double tap set to one of Hushfeed's actions now runs it once per tap, even if TikTok passes the same tap to two of its handlers.
+
+* **TikTok:** Patching a TikTok version Hushfeed doesn't list is safer. The extras of Show the progress bar and the comment translate button are now left out on their own when they don't fit that version, so they can't stop the patch or go in halfway.
+
+* **TikTok:** The Keep captions in Clear display and Automatic Clear display rows now spell Clear display the way TikTok does.
+
+* **TikTok:** With Hide the comment bar on opened videos on, the progress bar on a long video you open from search or a profile now sits under the caption again. Before, it drew across the creator's name (#50).
+
+* **TikTok:** Fade the video controls now also fades the progress bar on a paused video, the Following tab's stories pill, and on a video opened from search its top search bar, Full screen button and Add comment bar. Before, those stayed at full strength (#84).
+
+* **TikTok:** A story can now be saved from its share sheet. Turn on Save a story from its share sheet under Downloads and a save button shows up there. It saves the copy without the watermark when TikTok has one, and tells you when only the watermarked copy is there (#93).
+
+* **TikTok:** Show the progress bar has a new switch under Playback, Seek bar on video stories, which starts off. It puts a thin line along the bottom of a video story that you can drag to go back or skip ahead, with the time shown while you drag. Tapping still moves between stories (#72).
+
 * **TikTok:** Keep playing in the background can now start a video over when it ends, so you don't have to press Play in the notification each time. Turn on Replay in the background under Playback. A call or another app's sound still pauses it (#99).
 
 * **TikTok:** The music disc can spin again. TikTok 47.1.4 keeps it still out of the box, so Feed screen now has Spin the music disc, and Keep the music disc still if you'd rather it never turns. Both need a restart (#68).
@@ -32,7 +52,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** Remove LIVE extras now says it takes out the files for joining someone's LIVE as a guest, so joining by voice or video may stop working with it in (#132). Leave it out if you join LIVEs.
 
-* **TikTok:** When Clear display is remembered, or Automatic clear display has no delay, TikTok no longer shows the tabs under its loading spinner and the first video's buttons for about a second after a cold start. A video opened from Favorites or a profile starts cleared the same way (#84).
+* **TikTok:** When Clear display is remembered, or Automatic Clear display has no delay, TikTok no longer shows the tabs under its loading spinner and the first video's buttons for about a second after a cold start. A video opened from Favorites or a profile starts cleared the same way (#84).
 
 * **TikTok:** With Show where a video was posted on, the creator's name no longer gets cut short to fit the country when the row has room for both, so "Rn D… · TR" reads in full again (#127). A name that's really too long is still shortened so the country stays whole.
 

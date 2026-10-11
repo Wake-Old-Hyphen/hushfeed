@@ -80,6 +80,8 @@ internal fun findBubbleClearMode(bubble: ClassDef): BubbleClearMode {
     } ?: throw PatchException("$WHAT: no test of the event's enter flag above the hide")
     val exitIndex = branchTarget(handler, test)
     if (exitIndex <= toggleIndex) throw PatchException("$WHAT: the way out no longer follows the way in")
+    // The way in ends in a goto on 47.1.4. If it ran on instead, showAgain would undo the hide.
+    if (body[exitIndex - 1].opcode.canContinue()) throw PatchException("$WHAT: the way in runs on into the way out")
 
     val toggleBody = bubble.methods.filter {
         it.name == toggle.name && it.parameterTypes.map { type -> type.toString() } == listOf("Z", "Z") &&

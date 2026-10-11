@@ -35,7 +35,10 @@ import app.morphe.extension.tiktok.settings.Settings;
  * be the wrong one right after a boot. Their build that stayed Italian also put the picked
  * language back at the top of the application's onCreate, so the switch does that too: the
  * picked language becomes the process's default, TikTok's own apply puts it on the app's
- * resources, and a reword table already loaded for another language is switched to it.
+ * resources, and a reword table already loaded is switched to it, which also empties the cache
+ * TikTok answers strings from. Switching only a table loaded for another language wasn't enough:
+ * when TikTok's search service starts the process at boot, the table loads for the pick but the
+ * cache fills with the phone's language first, and the UI stays in it (emulator, 2026-10-10).
  */
 @SuppressWarnings("unused")
 public final class AppLanguage {
@@ -98,8 +101,14 @@ public final class AppLanguage {
             }
             if (!picked.equals(before)) Locale.setDefault(picked);
             language.apply(context);
-            // Before they load the strings follow the default set above.
-            if (strings != null && !strings.equals(picked)) language.loadStrings(picked);
+            // Loaded strings switch to the picked language even when they say they're in it.
+            // TikTok answers each string from a cache keyed by the string's id alone, and a
+            // process its search or push service starts at boot fills that cache in the phone's
+            // language before TikTok applies the pick, so the UI came up in English with the
+            // table saying Italian (emulator, 47.1.4, 2026-10-10). Only the switch empties the
+            // cache; TikTok's own apply leaves it. Before they load nothing is cached, and they
+            // load for the default set above.
+            if (strings != null) language.loadStrings(picked);
             Logger.printInfo(() -> "Keep the app language: put back " + picked + " (default was "
                     + before + ", strings " + strings + ")");
         } catch (Throwable error) {

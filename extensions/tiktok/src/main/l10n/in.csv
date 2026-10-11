@@ -223,7 +223,7 @@ Auto-advance,Lanjut otomatis
 Staying on a video,Tetap di video
 Auto-advance stopped after %1$d videos,Lanjut otomatis dihentikan setelah %1$d video
 Auto-advance stopped after one video,Lanjut otomatis dihentikan setelah satu video
-Automatic clear display,Tampilan bersih otomatis
+Automatic Clear display,Tampilan bersih otomatis
 Avatar and follow button,Avatar dan tombol ikuti
 Back,Kembali
 Back up settings,Cadangkan pengaturan
@@ -642,7 +642,7 @@ Inserted cards,Kartu yang disisipkan
 Keep a local record of what you have watched and hide those videos when the feed sends them again.,Simpan catatan tontonanmu di perangkat dan sembunyikan video itu saat feed mengirimnya lagi.
 Keep a paused video paused,Biarkan video yang dijeda tetap dijeda
 "Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.","Pindah ke video berikutnya saat video saat ini berakhir. Jeda, dialog terbuka, dan batas waktu layar akan menghentikannya. Mulai ulang TikTok setelah mengubah setelan ini."
-Keep captions in clear display,Pertahankan keterangan saat tampilan bersih
+Keep captions in Clear display,Pertahankan keterangan saat tampilan bersih
 Keep going,Lanjutkan
 Keep the Favorites tab,Pertahankan tab Favorit
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Sembunyikan jam dan ikon status selama TikTok terbuka. Geser dari atas untuk mengintipnya.
@@ -1013,6 +1013,10 @@ Show the time beside the progress bar,Tampilkan waktu di samping bilah progres
 Show the time played and the video's length at the end of the progress bar while it's on screen.,Tampilkan waktu yang sudah diputar dan durasi video di ujung bilah progres selama bilah itu terlihat.
 Bigger progress bar handle,Pegangan bilah progres lebih besar
 "Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Gambar pegangan yang lebih besar dan garis yang sedikit lebih tebal pada bilah progres, agar lebih mudah melihat posisimu."
+Seek bar on video stories,Bilah geser di story video
+"Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories.","Tambahkan garis tipis di bagian bawah story video yang bisa kamu geser untuk mundur atau maju. Waktunya tampil saat kamu menggeser, dan ketukan pada garis itu tetap berpindah antar-story."
+Story position,Posisi dalam story
+%1$s of %2$s,%1$s dari %2$s
 Show the progress bar thumbnail,Tampilkan miniatur bilah progres
 Show the whole Activity and New followers lists instead of stopping at a View all button.,"Tampilkan seluruh daftar Aktivitas dan Pengikut baru, bukan berhenti di tombol Lihat semua."
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.","Tampilkan video secara utuh, bukan dipotong mengikuti jendela. Di ponsel yang tinggi tidak ada yang berubah karena videonya memang sudah pas. Di ponsel lipat yang dibuka, layar yang lebih persegi, atau mode layar terbagi, sisi atau ujung videonya tidak lagi terpotong."
@@ -1935,3 +1939,6 @@ Allow voice comments,Izinkan komentar suara
 "Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.","Tampilkan tombol TikTok untuk merekam komentar suara di akun yang belum memilikinya. Ini belum dicoba di akun sungguhan, jadi mungkin tidak berfungsi."
 Sign in without a passkey,Masuk tanpa kunci sandi
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.","TikTok menganggap ponselmu tidak punya kunci sandi, jadi saat masuk TikTok meminta kata sandimu atau kode lewat email atau SMS. Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch."
+"Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Menambahkan tombol simpan ke menu yang dibuka tombol Bagikan pada Story. Tombol itu menyimpan Story yang sedang kamu tonton, dan menahan Story tetap menjedanya."
+Save a story from its share sheet,Simpan Story dari menu bagikan
+"TikTok only had its watermarked copy of this story, so that copy was saved to %1$s","TikTok hanya punya salinan bertanda air dari Story ini, jadi salinan itu yang disimpan di %1$s"

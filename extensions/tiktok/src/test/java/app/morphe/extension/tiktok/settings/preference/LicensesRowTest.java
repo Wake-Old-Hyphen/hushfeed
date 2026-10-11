@@ -2,6 +2,8 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -102,6 +104,29 @@ public class LicensesRowTest {
                     dialog.getButton(android.app.AlertDialog.BUTTON_NEUTRAL));
 
             dialog.dismiss();
+        }
+    }
+
+    /** A second press that lands before the notice takes input opens no second one on top. */
+    @Test
+    public void aSecondPressWhileTheNoticeIsUpOpensNothingMore() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+
+            LicensesPreference.show(activity);
+            var first = ShadowAlertDialog.getLatestAlertDialog();
+            LicensesPreference.show(activity);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertSame("a second notice opened on top of the first", first, ShadowAlertDialog.getLatestAlertDialog());
+
+            first.dismiss();
+            LicensesPreference.show(activity);
+            var again = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotSame("once it's closed, a press opens it again", first, again);
+            assertTrue(again.isShowing());
+            again.dismiss();
         }
     }
 

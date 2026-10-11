@@ -1405,6 +1405,123 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    private static final int SEEK_ROW_ID = 0x7f0a0213;
+    private static final int CAPTION_FRAME_ID = 0x7f0a0214;
+
+    /**
+     * An opened video as the S25 lays it out (2026-10-11), at 1080 by 2205: the pager column with
+     * a cell over the 138 px strip, the caption's frame at the bottom of the cell, the comment bar,
+     * and TikTok's 79 px progress bar row at the top of its own 180 px slot at the bottom. With
+     * {@code searchBarUnderCaption} the cell keeps 101 px under the caption, as one does with
+     * TikTok's search bar there. Returns the root, the row, the strip and the caption's frame.
+     * The activity is never resumed, so no window lays the views out again in the middle of a
+     * pass; {@link #layOutAt} stands in for the layout that follows each one on a phone.
+     */
+    private static View[] openedVideo(Activity detail, boolean searchBarUnderCaption) {
+        FrameLayout root = new FrameLayout(detail);
+        View strip = new View(detail);
+        LinearLayout column = pagerColumn(detail, strip);
+        FrameLayout cell = column.findViewById(CELL_ID);
+        View frame = new View(detail);
+        frame.setId(CAPTION_FRAME_ID);
+        FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, 161, android.view.Gravity.BOTTOM);
+        frameParams.bottomMargin = searchBarUnderCaption ? 101 : 0;
+        cell.addView(frame, frameParams);
+        root.addView(column);
+        View bar = new View(detail);
+        bar.setId(BAR_ID);
+        root.addView(bar, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, 87, android.view.Gravity.BOTTOM));
+        FrameLayout slot = new FrameLayout(detail);
+        View row = new View(detail);
+        row.setId(SEEK_ROW_ID);
+        slot.addView(row, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 79));
+        root.addView(slot, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, 180, android.view.Gravity.BOTTOM));
+        detail.setContentView(root);
+        return new View[] {root, row, strip, frame};
+    }
+
+    private static void layOutAt(View root) {
+        root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(2205, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 1080, 2205);
+    }
+
+    /**
+     * With the comment bar and its strip gone the cell grows to the bottom and the caption comes
+     * down 138 px, but TikTok's bar row keeps its place, so a long video's bar drew across the
+     * creator's name (S25, 2026-10-11). The row comes down to where the caption now ends, 101 px
+     * to the bottom of its slot, and goes back up with the comment bar.
+     */
+    @Test
+    public void theProgressBarComesDownWithTheCaptionWhenTheCommentBarGoes() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", CAPTION_FRAME_ID);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, false);
+            View row = views[1];
+            layOutAt(views[0]);
+
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.GONE, views[2].getVisibility());
+            // The cell grows into the strip's room on the next layout, and that layout's pass moves the row.
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the caption grew past the bar", 2205, views[3].getBottom());
+            assertEquals("the bar stayed above the caption's new place", 101f, row.getTranslationY(), 0.5f);
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.VISIBLE, views[2].getVisibility());
+            assertEquals("the bar didn't go back up with the comment bar", 0f, row.getTranslationY(), 0f);
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+        }
+    }
+
+    /**
+     * A cell with TikTok's search bar under the caption already ends where the bar row does, so the
+     * row stays put; and a row TikTok moved itself is left where TikTok put it.
+     */
+    @Test
+    public void theProgressBarStaysWhereTheCaptionAlreadyClearsIt() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", CAPTION_FRAME_ID);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, true);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.GONE, views[2].getVisibility());
+            assertEquals("a bar already under the caption moved", 0f, views[1].getTranslationY(), 0f);
+
+            views = openedVideo(detail, false);
+            views[1].setTranslationY(-20f);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("TikTok's own move was overwritten", -20f, views[1].getTranslationY(), 0f);
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+        }
+    }
+
     /**
      * On 47.1.4 a photo opened from search plays in the main activity (DetailSafRootFragment),
      * not the detail pager, with the same comment bar. Clear display takes it off there too, and
@@ -2239,6 +2356,279 @@ public class VideoOverlayHiderTest {
             Settings.FADE_CONTROLS_OPACITY.save(100);
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             clearFadeIds();
+        }
+    }
+
+    /**
+     * The progress bar on a paused video stayed at full strength under a faded setting (#84).
+     * TikTok writes its show type's alpha on the SeekBar inside the row, which is what undid a
+     * fade put there; the row is never written by it, so the fade goes on the row, and the time
+     * label that rides in the row fades with it. A value TikTok writes on the row is faded again
+     * before the frame.
+     */
+    @Test
+    public void theProgressBarRowFadesAndTikTokPausingItDoesNotUndoIt() {
+        int rowId = 0x7f0a0e01;
+        VideoOverlayHider.resolveForTests("video_seek_bar", rowId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout row = new FrameLayout(activity);
+            row.setId(rowId);
+            View seekBar = new View(activity);
+            row.addView(seekBar);
+            FrameLayout root = new FrameLayout(activity);
+            root.addView(row);
+            activity.setContentView(root);
+            View content = activity.findViewById(android.R.id.content);
+
+            Settings.FADE_CONTROLS_OPACITY.save(30);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, row.getAlpha(), 0.0001f);
+            assertEquals("the bar inside is left to TikTok", 1f, seekBar.getAlpha(), 0f);
+
+            // The show type of a paused video: alpha 1 on the SeekBar, then on the row by an animation.
+            seekBar.setAlpha(1f);
+            row.setAlpha(1f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals(0.3f, row.getAlpha(), 0.0001f);
+            assertEquals(1f, seekBar.getAlpha(), 0f);
+            assertEquals("the bar still takes a drag", View.VISIBLE, row.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(1f, row.getAlpha(), 0f);
+        } finally {
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+        }
+    }
+
+    /**
+     * A video opened from search has a search bar across the top that sits outside the cells, so
+     * the fade never reached it or the gradient behind it. They fade like the tabs, never past the
+     * floor, and in the faded Clear display they show at the chosen level.
+     */
+    @Test
+    public void theSearchBarAcrossTheTopOfAnOpenedVideoFades() {
+        int barId = 0x7f0a0e02;
+        int scrimId = 0x7f0a0e03;
+        VideoOverlayHider.resolveForTests("47.1.4:j2g", barId);
+        VideoOverlayHider.resolveForTests("47.1.4:g5p", scrimId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            View scrim = new View(activity);
+            scrim.setId(scrimId);
+            View bar = new FrameLayout(activity);
+            bar.setId(barId);
+            bar.setClickable(true);
+            root.addView(scrim);
+            root.addView(bar);
+            activity.setContentView(root);
+
+            Settings.FADE_CONTROLS_OPACITY.save(30);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, bar.getAlpha(), 0.0001f);
+            assertEquals(0.3f, scrim.getAlpha(), 0.0001f);
+            assertEquals("the way back out stays in reach", View.VISIBLE, bar.getVisibility());
+
+            Settings.FADE_CONTROLS_OPACITY.save(0);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("never past the floor", 0.1f, bar.getAlpha(), 0.0001f);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+
+            // Faded Clear display: TikTok left the bar at 0.5, and it shows at the level.
+            Settings.FADE_CONTROLS_OPACITY.save(30);
+            VideoOverlayHider.applyTo(activity);
+            bar.setAlpha(0.5f);
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, bar.getAlpha(), 0.0001f);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("TikTok's own last value comes back", 0.5f, bar.getAlpha(), 0f);
+            assertEquals(1f, scrim.getAlpha(), 0f);
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            VideoOverlayHider.resolveForTests("47.1.4:j2g", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:g5p", 0);
+        }
+    }
+
+    /**
+     * The Full screen button has no id to look up, so the patch hands the view over as TikTok binds
+     * it. It fades with the controls, lets a finger through it in the faded Clear display, goes out
+     * of sight at 0 without moving what is beside it, and comes back at 100.
+     */
+    @Test
+    public void theFullScreenButtonFadesWithTheControls() {
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            View entry = new View(activity);
+            entry.setClickable(true);
+            root.addView(entry);
+            activity.setContentView(root);
+            FeedOverlayControls.bindFullscreen(entry);
+
+            Settings.FADE_CONTROLS_OPACITY.save(30);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, entry.getAlpha(), 0.0001f);
+            assertEquals(View.VISIBLE, entry.getVisibility());
+            assertFalse("outside Clear display it takes taps", TapThroughControls.isMarked(entry));
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, entry.getAlpha(), 0.0001f);
+            assertTrue("a finger goes through it in the faded Clear display",
+                    TapThroughControls.isMarked(entry));
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.FADE_CONTROLS_OPACITY.save(0);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, entry.getVisibility());
+            assertFalse(TapThroughControls.isMarked(entry));
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, entry.getVisibility());
+            assertEquals(1f, entry.getAlpha(), 0f);
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+        }
+    }
+
+    /**
+     * Classic Clear display takes the Add comment bar and its strip off an opened video. The faded
+     * one keeps the bar in sight at the chosen level instead (the strip stays, so the pager keeps
+     * its height), the fade fades it outside Clear display too, and a fade of 0 takes both away.
+     */
+    @Test
+    public void theCommentBarFadesOnAnOpenedVideoInsteadOfStayingSolid() {
+        resolveCommentBarIds();
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View strip = new View(detail);
+            FrameLayout root = new FrameLayout(detail);
+            root.addView(pagerColumn(detail, strip));
+            View bar = new View(detail);
+            bar.setId(BAR_ID);
+            bar.setClickable(true);
+            root.addView(bar);
+            detail.setContentView(root);
+            detailController.resume();
+
+            Settings.FADE_CONTROLS_OPACITY.save(40);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(0.4f, bar.getAlpha(), 0.0001f);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+            assertFalse(TapThroughControls.isMarked(bar));
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the faded Clear display keeps the bar in sight", View.VISIBLE, bar.getVisibility());
+            assertEquals(0.4f, bar.getAlpha(), 0.0001f);
+            assertEquals("and keeps the pager its height", View.VISIBLE, strip.getVisibility());
+            assertTrue(TapThroughControls.isMarked(bar));
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.FADE_CONTROLS_OPACITY.save(0);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.GONE, bar.getVisibility());
+            assertEquals(View.GONE, strip.getVisibility());
+            assertFalse(TapThroughControls.isMarked(bar));
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.VISIBLE, bar.getVisibility());
+            assertEquals(View.VISIBLE, strip.getVisibility());
+            assertEquals(1f, bar.getAlpha(), 0f);
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+        }
+    }
+
+    /**
+     * The Following tab's story pill was only ever hidden by Clear display, so with a fade chosen
+     * it stayed at full strength the rest of the time (#84). It fades with the tabs now, and Clear
+     * display still takes it away.
+     */
+    @Test
+    public void theFollowingStoriesPillFadesWithTheTabs() {
+        int storyId = 0x7f0a0e04;
+        VideoOverlayHider.resolveForTests("47.1.4:wtr", storyId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout stories = new FrameLayout(activity);
+            stories.setId(storyId);
+            stories.setClickable(true);
+            root.addView(stories);
+            activity.setContentView(root);
+
+            Settings.FADE_CONTROLS_OPACITY.save(30);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0.3f, stories.getAlpha(), 0.0001f);
+            assertEquals(View.VISIBLE, stories.getVisibility());
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, stories.getVisibility());
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, stories.getVisibility());
+            assertEquals(0.3f, stories.getAlpha(), 0.0001f);
+
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(1f, stories.getAlpha(), 0f);
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            VideoOverlayHider.resolveForTests("47.1.4:wtr", 0);
         }
     }
 }

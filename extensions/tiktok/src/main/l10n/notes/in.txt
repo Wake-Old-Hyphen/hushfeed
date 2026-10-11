@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Lindungi halaman eksternal di browser TikTok kini menganggap CAPTCHA teka-teki yang dibuka LIVE dan Toko sebagai halaman TikTok sendiri, sehingga teka-teki tetap terhubung ke TikTok (#87). CAPTCHA itu dimuat dari server TikTok sendiri, hanya dari alamat yang belum dikenal sakelar ini.
+
+* **TikTok:** Ketukan kedua yang cepat pada Detail build, Pemeriksaan fitur, Lisensi, atau Yang baru tidak lagi membuka jendela yang sama dua kali secara bertumpuk.
+
+* **TikTok:** Sukai video, sebagai aksi Ketuk dua kali atau Tekan lama, kini tetap pada video yang sedang kamu tonton di semua jenis feed. Kalau video itu tidak punya tombol hati, kamu diberi tahu, bukan video di sebelahnya yang disukai.
+
+* **TikTok:** Ketuk dua kali yang diatur ke salah satu aksi Hushfeed kini menjalankannya sekali per ketukan, meski TikTok meneruskan ketukan yang sama ke dua penanganannya.
+
+* **TikTok:** Mem-patch versi TikTok yang tidak ada di daftar Hushfeed kini lebih aman. Tambahan Tampilkan bilah progres dan tombol terjemahan komentar kini dilewati sendiri-sendiri kalau tidak cocok dengan versi itu, jadi tidak bisa menghentikan patch atau terpasang setengah.
+
+* **TikTok:** Baris Keep captions in Clear display dan Automatic Clear display kini menulis Clear display seperti TikTok.
+
+* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, bilah progres pada video panjang yang kamu buka dari pencarian atau profil kini kembali berada di bawah keterangan. Sebelumnya bilah itu menimpa nama kreator (#50).
+
+* **TikTok:** Pudarkan kontrol video sekarang juga memudarkan bilah progres pada video yang dijeda, tombol story di tab Mengikuti, dan pada video yang dibuka dari pencarian, bilah pencarian di atas, tombol Layar penuh, dan bilah Tambahkan komentar. Sebelumnya semua itu tetap terlihat penuh (#84).
+
+* **TikTok:** Story sekarang bisa disimpan dari menu bagikannya. Aktifkan Simpan Story dari menu bagikan di Unduhan, lalu tombol simpan muncul di sana. Tombol itu menyimpan salinan tanpa watermark kalau TikTok punya, dan memberi tahu kalau yang ada hanya salinan dengan watermark (#93).
+
+* **TikTok:** Tampilkan bilah progres punya sakelar baru di Pemutaran, Bilah geser di story video, yang awalnya mati. Sakelar ini menaruh garis tipis di bagian bawah story video yang bisa kamu geser untuk mundur atau maju, dengan waktu yang tampil saat kamu menggeser. Mengetuk tetap berpindah antar story (#72).
+
 * **TikTok:** Tetap putar di latar belakang sekarang bisa memulai ulang video saat selesai, jadi kamu tidak perlu menekan Putar di notifikasi setiap kali. Aktifkan Putar ulang di latar belakang di Pemutaran. Panggilan atau suara aplikasi lain tetap menjedanya (#99).
 
 * **TikTok:** Piringan musik bisa berputar lagi. TikTok 47.1.4 membuatnya diam sejak awal, jadi Layar feed sekarang punya Putar piringan musik, dan Biarkan piringan musik diam kalau kamu tidak ingin piringan itu berputar sama sekali. Keduanya perlu mulai ulang (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** Remove LIVE extras sekarang menyebutkan bahwa ia menghapus file untuk bergabung ke LIVE orang lain sebagai tamu, jadi bergabung lewat suara atau video bisa tidak berfungsi kalau patch ini dipakai (#132). Jangan pilih patch ini kalau kamu suka bergabung ke LIVE.
 
-* **TikTok:** Saat Clear display diingat, atau Automatic clear display tanpa jeda, TikTok tidak lagi menampilkan tab di bawah putaran loading dan tombol video pertama selama sekitar satu detik setelah dibuka dari awal. Video yang dibuka dari Favorites atau profil juga langsung mulai bersih (#84).
+* **TikTok:** Saat Clear display diingat, atau Automatic Clear display tanpa jeda, TikTok tidak lagi menampilkan tab di bawah putaran loading dan tombol video pertama selama sekitar satu detik setelah dibuka dari awal. Video yang dibuka dari Favorites atau profil juga langsung mulai bersih (#84).
 
 * **TikTok:** Dengan Show where a video was posted aktif, nama kreator tidak lagi dipotong agar negaranya muat kalau barisnya cukup untuk keduanya, jadi "Rn D… · TR" kembali terbaca utuh (#127). Nama yang memang terlalu panjang tetap dipendekkan supaya negaranya terlihat utuh.
 

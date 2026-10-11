@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** TikTok tarayıcısındaki harici sayfaları koru artık LIVE'ların ve Mağaza'nın açtığı yapboz CAPTCHA'sını TikTok'un kendi sayfası sayıyor, böylece yapboz TikTok ile bağlantısını koruyor (#87). TikTok'un kendi sunucularından yükleniyor, sadece anahtarın tanımadığı bir adresten.
+
+* **TikTok:** Derleme ayrıntıları, Kanca durumu, Lisanslar veya Yenilikler üzerine hızlı ikinci dokunuş artık aynı pencereyi üst üste iki kez açmıyor.
+
+* **TikTok:** Videoyu beğen, Çift dokunma ya da Uzun basma eylemi olarak, artık her akışta izlediğin videoda kalıyor. O videoda basılacak bir kalp yoksa yanındaki videoyu beğenmek yerine bunu sana söylüyor.
+
+* **TikTok:** Hushfeed eylemlerinden birine ayarlanan Çift dokunma artık her dokunuşta onu bir kez çalıştırıyor, TikTok aynı dokunuşu kendi iki işleyicisine iletse bile.
+
+* **TikTok:** Hushfeed'in listesinde olmayan bir TikTok sürümüne yama yapmak artık daha güvenli. İlerleme çubuğunu göster'in ekleri ve yorum çevirme düğmesi o sürüme uymadığında artık tek başına dışarıda bırakılıyor, böylece yamayı durduramıyor ya da yarım kalamıyor.
+
+* **TikTok:** Keep captions in Clear display ve Automatic Clear display satırları artık Clear display'i TikTok'un yazdığı gibi yazıyor.
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken, aramadan ya da bir profilden açtığın uzun bir videoda ilerleme çubuğu yeniden açıklamanın altında duruyor. Önceden içerik üreticisinin adının üstünden geçiyordu (#50).
+
+* **TikTok:** Video kontrollerini soluklaştır artık duraklatılmış bir videodaki ilerleme çubuğunu, Takip edilenler sekmesindeki hikaye düğmesini ve aramadan açılan bir videoda üstteki arama çubuğunu, Tam ekran düğmesini ve Yorum ekle çubuğunu da soluklaştırıyor. Önceden bunlar tam parlaklıkta kalıyordu (#84).
+
+* **TikTok:** Bir hikaye artık paylaşım menüsünden kaydedilebiliyor. İndirilenler altında Hikayeyi paylaşım menüsünden kaydet seçeneğini açın, orada bir kaydet düğmesi çıkar. TikTok'ta filigransız kopya varsa onu kaydeder, yalnızca filigranlı kopya varsa bunu size söyler (#93).
+
+* **TikTok:** İlerleme çubuğunu göster seçeneğinin Oynatma altında yeni bir anahtarı var, Video hikayelerde sarma çubuğu, başta kapalı. Bir video hikayenin altına geri dönmek ya da ileri atlamak için sürükleyebileceğiniz ince bir çizgi koyar ve sürüklerken süreyi gösterir. Dokunmak yine hikayeler arasında geçiş yapar (#72).
+
 * **TikTok:** Arka planda oynatmaya devam et artık bir video bittiğinde onu baştan başlatabiliyor, böylece her seferinde bildirimdeki Oynat düğmesine basmanız gerekmiyor. Oynatma altında Arka planda yeniden oynat seçeneğini açın. Bir arama ya da başka bir uygulamanın sesi onu yine duraklatır (#99).
 
 * **TikTok:** Müzik diski yeniden dönebiliyor. TikTok 47.1.4 onu baştan sabit tutuyor, bu yüzden Akış ekranı artık Müzik diskini döndür seçeneğine sahip, hiç dönmesini istemiyorsanız Müzik diskini sabit tut da var. İkisi de yeniden başlatma gerektiriyor (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** Remove LIVE extras artık başkasının LIVE yayınına konuk olarak katılma dosyalarını da kaldırdığını söylüyor. Yani bu yamayla sesli ya da görüntülü katılım çalışmayabilir (#132). LIVE yayınlarına katılıyorsan bu yamayı seçme.
 
-* **TikTok:** Clear display hatırlandığında ya da Automatic clear display gecikmesiz olduğunda, TikTok soğuk açılıştan sonra yükleme simgesinin altında sekmeleri ve ilk videonun düğmelerini yaklaşık bir saniye artık göstermiyor. Favorites'ten ya da bir profilden açılan video da aynı şekilde temiz başlıyor (#84).
+* **TikTok:** Clear display hatırlandığında ya da Automatic Clear display gecikmesiz olduğunda, TikTok soğuk açılıştan sonra yükleme simgesinin altında sekmeleri ve ilk videonun düğmelerini yaklaşık bir saniye artık göstermiyor. Favorites'ten ya da bir profilden açılan video da aynı şekilde temiz başlıyor (#84).
 
 * **TikTok:** Show where a video was posted açıkken satırda ikisine de yer varsa, içerik üreticisinin adı artık ülkeye yer açmak için kısaltılmıyor. Yani "Rn D… · TR" yine tam okunuyor (#127). Gerçekten çok uzun bir ad ise ülke tam görünsün diye yine kısaltılıyor.
 

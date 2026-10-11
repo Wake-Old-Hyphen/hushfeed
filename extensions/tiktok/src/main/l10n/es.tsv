@@ -15,8 +15,11 @@ One language code, like en or es. Comments and captions TikTok translates come o
 Opus (.ogg), a smaller file	Opus (.ogg), archivo más pequeño
 Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus no funcionó en este teléfono. Guardando el sonido tal como lo envió TikTok.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus necesita Android 10 o posterior, así que los sonidos se guardan tal como los envía TikTok.
+Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Añade un botón de guardar al panel que abre el botón Compartir de una historia. Guarda la historia que estás viendo, y mantener pulsada una historia la sigue pausando.
+Save a story from its share sheet	Guardar una historia desde el panel de compartir
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Los videos guardados muestran el @nombre de usuario y la primera línea de la descripción en la esquina inferior izquierda. Para hacerlo, el teléfono vuelve a codificar todo el video, así que guardar tarda más. Se aplica a lo que guarda Hushfeed.
 Sound format	Formato del sonido
+TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	TikTok solo tenía la copia con marca de agua de esta historia, así que esa copia se guardó en %1$s
 Translate button in comments	Botón de traducir en los comentarios
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Añade el botón de traducir de TikTok junto al número de comentarios. Un toque traduce todos los comentarios y otro vuelve a mostrar los originales.
 Translate into	Traducir al
@@ -224,7 +227,7 @@ Auto-advance	Avance automático
 Staying on a video	Quedarse en un vídeo
 Auto-advance stopped after %1$d videos	El avance automático se detuvo tras %1$d vídeos
 Auto-advance stopped after one video	El avance automático se detuvo tras un vídeo
-Automatic clear display	Ocultar controles automáticamente
+Automatic Clear display	Ocultar controles automáticamente
 Avatar and follow button	Avatar y botón de seguir
 Back	Atrás
 Back up settings	Copia de seguridad de los ajustes
@@ -644,7 +647,7 @@ Inserted cards	Tarjetas insertadas
 Keep a local record of what you have watched and hide those videos when the feed sends them again.	Guardar en el dispositivo un registro de lo que has visto y ocultar esos vídeos cuando el feed los vuelva a enviar.
 Keep a paused video paused	Mantener en pausa un vídeo pausado
 Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.	Pasa al siguiente vídeo cuando termine el actual. Las pausas, los diálogos abiertos y los bloqueos de tiempo de pantalla lo detienen. Reinicia TikTok después de cambiar este ajuste.
-Keep captions in clear display	Mantener los subtítulos con los controles ocultos
+Keep captions in Clear display	Mantener los subtítulos con los controles ocultos
 Keep going	Seguir
 Keep the Favorites tab	Mantener la pestaña Favoritos
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	Mantener el reloj y los iconos de estado fuera de la pantalla mientras TikTok está abierto. Desliza desde arriba para verlos.
@@ -1014,6 +1017,10 @@ Show the time beside the progress bar	Mostrar el tiempo junto a la barra de prog
 Show the time played and the video's length at the end of the progress bar while it's on screen.	Mostrar el tiempo reproducido y la duración del vídeo al final de la barra de progreso mientras está en pantalla.
 Bigger progress bar handle	Control más grande en la barra de progreso
 Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	Dibujar un control más grande y una línea algo más gruesa en la barra de progreso, para que sea más fácil ver por dónde vas.
+Seek bar on video stories	Barra de reproducción en historias de vídeo
+Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories.	Añadir una línea fina en la parte inferior de una historia de vídeo que puedes arrastrar para retroceder o avanzar. El tiempo se muestra mientras arrastras, y un toque en ella sigue pasando de una historia a otra.
+Story position	Posición en la historia
+%1$s of %2$s	%1$s de %2$s
 Show the progress bar thumbnail	Mostrar la miniatura de la barra de progreso
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Mostrar las listas completas de Actividad y Nuevos seguidores en vez de pararse en un botón de Ver todo.
 Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.	Mostrar el vídeo entero en vez de recortarlo a la ventana. En un móvil alto no cambia nada, porque ya cabe. En un plegable abierto, en una pantalla más cuadrada o en vista dividida dejan de cortarse los lados o los extremos.

@@ -8,6 +8,7 @@ package app.morphe.patches.tiktok.interaction.videooverlays
 
 import app.morphe.util.addInstruction
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -79,9 +80,25 @@ val hideVideoOverlaysPatch = bytecodePatch(
             null
         }
         // The music disc's two switches (#68), the same way: required where MusicDiscSpinAnchorsTest
-        // holds both reads, left out with a note anywhere else.
-        val musicDiscReads = try {
-            MusicAnimationCloseFingerprint.method to MusicCoverRotationDurationFingerprint.method
+        // holds every hold on the disc's way, left out with a note anywhere else.
+        val musicDisc = try {
+            MusicDiscHooks(
+                close = MusicAnimationCloseFingerprint.method,
+                duration = MusicCoverRotationDurationFingerprint.method,
+                hold = MusicCoverAnimationHoldFingerprint.method,
+                subscriber = MusicCoverPlaySubscriberFingerprint.method,
+                trigger = PlayAnimationTriggerFingerprint.method,
+                degrade = MusicCoverDegradeRegistrationFingerprint.method.let { registration ->
+                    val check = degradeCheckType(registration)
+                        ?: throw PatchException("$PATCH_NAME: onViewCreated registers nothing under $MUSIC_COVER_DEGRADE_KEY.")
+                    mutableClassDefBy(check).methods.singleOrNull(::isDegradeEnable)
+                        ?: throw PatchException("$PATCH_NAME: $check has no enable() to answer.")
+                },
+                playAnimationSwitch = PlayAnimationDowngradeFingerprint.method.definingClass.let { strategy ->
+                    classDefBy(strategy).methods.singleOrNull { playAnimationSwitchIndex(it) >= 0 }
+                        ?: throw PatchException("$PATCH_NAME: $strategy switches no play animation.")
+                },
+            )
         } catch (problem: Exception) {
             if (packageMetadata.versionName in declaredVersions()) throw problem
             println("[$PATCH_NAME] Left out the music disc switches on ${packageMetadata.versionName}: ${problem.message}")
@@ -110,11 +127,12 @@ val hideVideoOverlaysPatch = bytecodePatch(
             )
         }
         // The music disc. 47.1.4 ships music_animation_close_exp at 3, which keeps the disc from
-        // turning; each lazy read hands its value to MusicDiscSpin before boxing it, and with both
-        // switches off the value goes through as TikTok read it.
-        if (musicDiscReads != null) {
-            musicDiscReads.first.answerMusicDiscSetting(PATCH_NAME, "closeSetting")
-            musicDiscReads.second.answerMusicDiscSetting(PATCH_NAME, "rotationSeconds")
+        // turning; each lazy read hands its value to MusicDiscSpin before boxing it. The holds
+        // past it (anim_opt, the high frame rate hold, the play animation's load downgrade and
+        // musicCoverDegrade) come from the server or the phone's load, and each hands its answer
+        // to MusicDiscSpin too. With both switches off every value goes through as TikTok read it.
+        if (musicDisc != null) {
+            musicDisc.apply(PATCH_NAME)
             status.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableMusicDiscSpin()V",

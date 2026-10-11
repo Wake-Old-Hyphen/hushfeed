@@ -20,11 +20,14 @@ import app.morphe.extension.tiktok.featuregatelab.FeatureGateLearnMode;
 
 @SuppressWarnings("deprecation")
 public final class FeatureGateRecorderPreference extends Preference implements ImmediateAction {
+    private static final String KEY = "feature_gate_recorder";
+
     public FeatureGateRecorderPreference(Context context) {
         super(context);
-        setKey("feature_gate_recorder");
+        setKey(KEY);
         refresh();
         setOnPreferenceClickListener(preference -> {
+            if (SettingsUi.dialogOpen(KEY, context)) return true;
             if (FeatureGateLearnMode.isRecording()) {
                 showReport(context, FeatureGateLearnMode.stopAndBuildReport());
             } else if (hasLastReport()) {
@@ -74,6 +77,7 @@ public final class FeatureGateRecorderPreference extends Preference implements I
                 .setNegativeButton(L10n.t(context, "Cancel"), null)
                 .create();
         dialog.show();
+        SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
         SettingsUi.styleActionButton(dialog.getButton(AlertDialog.BUTTON_POSITIVE), true);
         SettingsUi.styleActionButton(dialog.getButton(AlertDialog.BUTTON_NEUTRAL), false);
@@ -128,6 +132,7 @@ public final class FeatureGateRecorderPreference extends Preference implements I
         }
         AlertDialog dialog = builder.create();
         dialog.show();
+        SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
         Button save = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         if (save != null && !empty) {

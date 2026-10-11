@@ -79,8 +79,11 @@ val doubleTapPatch = bytecodePatch(
         doubleTapRouteMethods.forEach { (owner, name) ->
             doubleTapRoute(owner, name).method.apply {
                 requireLocals("Double tap", 1)
+                // The tap's event, the last register as the only parameter: it tells the extension
+                // a tap a second guard sees again from a new one.
+                val event = implementation!!.registerCount - 1
                 addInstructionsWithLabels(0, """
-                    invoke-static {}, $EXTENSION->onDoubleTap()Z
+                    invoke-static/range { v$event .. v$event }, $EXTENSION->onDoubleTap(Landroid/view/MotionEvent;)Z
                     move-result v0
                     if-eqz v0, :original
                     return-void

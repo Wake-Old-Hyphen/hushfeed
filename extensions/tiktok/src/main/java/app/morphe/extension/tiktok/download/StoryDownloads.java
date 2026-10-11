@@ -28,7 +28,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Saves a story from a press and hold on it.
+ * Saves a story from a press and hold on it, and from the save button {@link StoryShareSave}
+ * puts in its share sheet.
  *
  * A story is an Aweme like anything else in the feed, so the saves beside this one do the work;
  * what stories lack is any way to ask. The registered play area identifies a story viewer;
@@ -41,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @SuppressWarnings("unused")
 public final class StoryDownloads {
-    private static final String HOOK_FAMILY = "story saves";
+    static final String HOOK_FAMILY = "story saves";
     private static final Set<String> ACTIVE = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     /** The model each play area binds, and the view each play area put on screen. */
@@ -245,7 +246,16 @@ public final class StoryDownloads {
     /** @return true when the press was used, so TikTok's own hold keeps working when it was not. */
     static boolean save(View anchor, Object aweme) {
         if (anchor == null) return false;
-        Context context = anchor.getContext();
+        return saveStory(anchor.getContext(), aweme);
+    }
+
+    /**
+     * The save itself, for a hold and for the save button {@link StoryShareSave} puts in a
+     * story's share sheet, which has a Context and no view of the story.
+     *
+     * @return true when the save was taken on or the reader was told why it couldn't be.
+     */
+    static boolean saveStory(Context context, Object aweme) {
         if (context == null) return false;
         if (aweme == null) {
             Utils.showToastShort(L10n.t("Open the story again and try once more"));
@@ -277,9 +287,10 @@ public final class StoryDownloads {
         if (VideoDownloads.start(aweme, context, false)) return true;
 
         List<List<String>> photos = OriginalPhotos.sources(aweme);
-        List<String> video = photos.isEmpty()
-                ? VideoDownloads.sourceUrls(Reflect.property(aweme, "getVideo", "video"))
-                : Collections.emptyList();
+        VideoSource source = photos.isEmpty()
+                ? videoSource(Reflect.property(aweme, "getVideo", "video"))
+                : VideoSource.NONE;
+        List<String> video = source.urls;
         if (photos.isEmpty() && video.isEmpty()) {
             Utils.showToastShort(L10n.t("This story isn't available to save"));
             return true;
@@ -314,6 +325,7 @@ public final class StoryDownloads {
             return true;
         }
         String capturedAudioName = audioName;
+        boolean stamped = source.stamped;
         // The photos' row follows the job from the moment it is accepted; a video has none.
         SaveProgress progress = SaveProgress.queued(Math.max(1, photoSnapshot.size()), false);
         // A video story's sound is a second file in the gallery, though the row counts one.
@@ -321,7 +333,7 @@ public final class StoryDownloads {
         MediaJobScheduler.Job job = progress.submit("story", key, files, () -> {
             try {
                 if (photoSnapshot.isEmpty()) {
-                    saveVideo(app, videoName, path, videoSnapshot, capturedAudioName);
+                    saveVideo(app, videoName, path, videoSnapshot, capturedAudioName, stamped);
                 } else {
                     savePhotos(app, photoNames, path, photoSnapshot, progress);
                 }
@@ -336,7 +348,39 @@ public final class StoryDownloads {
         return true;
     }
 
-    private static void saveVideo(Context app, String name, String path, List<String> urls, String audioName) throws IOException {
+    /**
+     * Where a story's video is fetched from, best first, and whether that's TikTok's watermarked
+     * copy. The clean address comes first: Remove watermark fills it from the copy the player
+     * streams when TikTok sent none. Then that streamed copy, which carries no watermark either.
+     * TikTok's download address is the stamped copy, so a story falls back to it only when it has
+     * nothing else, and the notice says so. A feed video keeps {@link VideoDownloads#sourceUrls}'
+     * order, where the download address is the full file and the streamed one can be smaller.
+     */
+    static VideoSource videoSource(Object video) {
+        List<String> clean = VideoDownloads.urls(
+                Reflect.property(video, "getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"));
+        if (!clean.isEmpty()) return new VideoSource(clean, false);
+        List<String> streamed = VideoDownloads.urls(Reflect.property(video, "getPlayAddr", "playAddr"));
+        if (!streamed.isEmpty()) return new VideoSource(streamed, false);
+        List<String> stamped = VideoDownloads.urls(Reflect.property(video, "getDownloadAddr", "downloadAddr"));
+        return stamped.isEmpty() ? VideoSource.NONE : new VideoSource(stamped, true);
+    }
+
+    /** A story video's addresses and whether they are TikTok's watermarked copy. */
+    static final class VideoSource {
+        static final VideoSource NONE = new VideoSource(Collections.<String>emptyList(), false);
+
+        final List<String> urls;
+        final boolean stamped;
+
+        VideoSource(List<String> urls, boolean stamped) {
+            this.urls = urls;
+            this.stamped = stamped;
+        }
+    }
+
+    private static void saveVideo(Context app, String name, String path, List<String> urls, String audioName,
+            boolean stamped) throws IOException {
         MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
         File temp = MediaCache.createTempFile(app, "story-", ".mp4");
         try {
@@ -346,7 +390,9 @@ public final class StoryDownloads {
             // The sound keeps to a toast: its banner went up first and the story's, a tick
             // later, took it down before anyone saw it (refutation review of 3d5395f2).
             if (audioName != null) saveSound(app, audioName, temp, path);
-            SaveNotice.saved(L10n.f("Story saved to %1$s", path), saved);
+            SaveNotice.saved(stamped
+                    ? L10n.f("TikTok only had its watermarked copy of this story, so that copy was saved to %1$s", path)
+                    : L10n.f("Story saved to %1$s", path), saved);
         } finally {
             if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove story temporary file");
         }

@@ -14,6 +14,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Looper;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -278,6 +279,31 @@ public class DoubleTapCommentsTest {
 
         assertEquals(0, before.presses);
         assertEquals(1, onScreen.presses);
+    }
+
+    @Test public void aTapThatReachesASecondGuardRunsItsActionOnce() {
+        VerticalViewPager pager = feed(root, "one", "two");
+        assem(pager, 0, "one");
+        CommentAssem onScreen = assem(pager, 1, "two");
+        layOut(root);
+        pager.scrollTo(0, PAGE_HEIGHT);
+        Settings.DOUBLE_TAP_ACTION.save("comments");
+        MotionEvent tap = MotionEvent.obtain(1_000L, 1_180L, MotionEvent.ACTION_DOWN, 10f, 10f, 0);
+
+        assertTrue(GestureActions.onDoubleTap(tap));
+        // The second guard gets a copy of the same tap and swallows it without a second press.
+        assertTrue(GestureActions.onDoubleTap(MotionEvent.obtain(tap)));
+        assertEquals(1, onScreen.presses);
+
+        assertTrue(GestureActions.onDoubleTap(MotionEvent.obtain(2_000L, 2_180L, MotionEvent.ACTION_DOWN, 10f, 10f, 0)));
+        assertEquals("the next double tap is its own", 2, onScreen.presses);
+
+        // TikTok's own like keeps its answer at every guard.
+        Settings.DOUBLE_TAP_ACTION.save("default");
+        MotionEvent liked = MotionEvent.obtain(3_000L, 3_180L, MotionEvent.ACTION_DOWN, 10f, 10f, 0);
+        assertFalse(GestureActions.onDoubleTap(liked));
+        assertFalse(GestureActions.onDoubleTap(MotionEvent.obtain(liked)));
+        assertEquals(2, onScreen.presses);
     }
 
     @Test public void aClearedRailStillCountsByTheCellUnderIt() {
@@ -621,6 +647,31 @@ public class DoubleTapCommentsTest {
 
         assertFalse(GestureActions.likeVisibleVideo("one"));
         assertEquals(0, next.likes);
+    }
+
+    /** A list of TikTok's that isn't its feed pager, the way a feed on another surface might lay out its cells. */
+    public static final class RecyclerView extends FrameLayout {
+        public RecyclerView(Context context) { super(context); }
+    }
+
+    @Test public void aCellWithoutAHeartInAnotherListDoesNotBorrowItsNeighboursEither() {
+        RecyclerView list = new RecyclerView(activity);
+        root.addView(list);
+        FrameLayout bare = new FrameLayout(activity);
+        FrameLayout neighbour = new FrameLayout(activity);
+        list.addView(bare);
+        list.addView(neighbour);
+        View button = new View(activity);
+        bare.addView(button);
+        View heartView = new View(activity);
+        neighbour.addView(heartView);
+        HeartAssem heart = new HeartAssem();
+        GestureActions.registerLikeView(heart, heartView);
+
+        assertNull(GestureActions.heartBeside(button));
+        View besideTheHeart = new View(activity);
+        neighbour.addView(besideTheHeart);
+        assertSame(heart, GestureActions.heartBeside(besideTheHeart));
     }
 
     @Test public void aLiveOrAnAdOnScreenLikesNothing() {

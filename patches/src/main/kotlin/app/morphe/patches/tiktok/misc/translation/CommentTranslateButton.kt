@@ -9,6 +9,7 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.LazyAbGateSearch
+import app.morphe.patches.tiktok.shared.checkBooleanWhenOn
 import app.morphe.patches.tiktok.shared.returnBooleanWhenOn
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -163,6 +164,13 @@ internal fun MutableMethod.reportToggleWrite() {
     )
 }
 
+/** Refuses a read with no return to send through the extension, before anything is hooked. */
+internal fun Method.checkToggleStateRead() {
+    if (implementation?.instructions?.any { it.opcode == Opcode.RETURN } != true) {
+        throw PatchException("$PATCH_NAME: $definingClass->$name has no return to send the toggle's state through.")
+    }
+}
+
 /** Every answer of the read goes through the extension, at the return's own label. */
 internal fun MutableMethod.sendToggleStateThroughExtension() {
     findInstructionIndicesReversedOrThrow { opcode == Opcode.RETURN }.forEach { index ->
@@ -204,6 +212,11 @@ internal fun installCommentTranslateButton() {
     val styleAnswer = mutable(targets.styleAnswer)
     val stateRead = mutable(targets.stateRead)
     val stateWrite = mutable(targets.stateWrite)
+    // Both gates and the toggle's read are checked before anything is hooked, so a refusal leaves
+    // no hook behind. The write's shape was checked when it was found.
+    enabledRead.checkBooleanWhenOn(PATCH_NAME)
+    styleAnswer.checkBooleanWhenOn(PATCH_NAME)
+    stateRead.checkToggleStateRead()
 
     enabledRead.returnBooleanWhenOn(PATCH_NAME, COMMENT_TRANSLATE_BUTTON_SWITCH, true)
     styleAnswer.returnBooleanWhenOn(PATCH_NAME, COMMENT_TRANSLATE_BUTTON_SWITCH, true)

@@ -166,7 +166,8 @@ public class AppLanguageTest {
         assertEquals(Collections.singletonList(italian), language.loaded);
 
         AppLanguage.applyAtStart(application);
-        assertEquals("strings already in the picked language load once", 1, language.loaded.size());
+        assertEquals("strings already in the picked language switch again, which empties TikTok's cache",
+                2, language.loaded.size());
         assertEquals("the apply is TikTok's own and cheap, so it runs every start", 2, language.applied);
 
         PausedProcess.set(true);
@@ -174,6 +175,27 @@ public class AppLanguageTest {
         AppLanguage.applyAtStart(application);
         assertEquals("paused, nothing changes", Locale.US, Locale.getDefault());
         assertEquals(2, language.applied);
+    }
+
+    /**
+     * A process TikTok's search service started at boot (emulator, 2026-10-10): the table had
+     * loaded for Italian by the application's onCreate, but TikTok's string cache had filled in
+     * English first and the UI came up in English. The switch is what empties that cache, so it
+     * runs even when the strings already say they are in the picked language.
+     */
+    @Test public void aStartWhoseStringsAlreadySayThePickedLanguageStillSwitchesThem() {
+        Context application = RuntimeEnvironment.getApplication();
+        FakeLanguage language = new FakeLanguage();
+        AppLanguage.language = language;
+        Settings.KEEP_APP_LANGUAGE.save(true);
+        Locale.setDefault(Locale.US);
+        language.picked = Locale.ITALY;
+        language.strings = Locale.ITALY;
+
+        AppLanguage.applyAtStart(application);
+        assertEquals(Locale.ITALY, Locale.getDefault());
+        assertEquals(1, language.applied);
+        assertEquals("switched once, to the pick", Collections.singletonList(Locale.ITALY), language.loaded);
     }
 
     @Test public void stringsNotLoadedYetFollowTheDefaultAndNothingPickedFollowsThePhone() {

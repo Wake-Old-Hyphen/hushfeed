@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Proteger páginas externas no navegador do TikTok agora conta o CAPTCHA de quebra-cabeça que os LIVEs e a Loja abrem como uma página do próprio TikTok, então o quebra-cabeça mantém a ligação com o TikTok (#87). Ele carrega dos servidores do TikTok, só que de um endereço que a opção não conhecia.
+
+* **TikTok:** Um segundo toque rápido em Detalhes da compilação, Verificação de recursos, Licenças ou Novidades não abre mais a mesma janela duas vezes, uma em cima da outra.
+
+* **TikTok:** Curtir o vídeo, como ação de Toque duplo ou Toque longo, agora fica no vídeo que você está vendo em qualquer tipo de feed. Se esse vídeo não tiver coração para tocar, ele avisa em vez de curtir o vídeo ao lado.
+
+* **TikTok:** Um Toque duplo definido para uma ação do Hushfeed agora a executa uma vez por toque, mesmo que o TikTok passe o mesmo toque para dois dos seus tratadores.
+
+* **TikTok:** Aplicar o patch numa versão do TikTok que o Hushfeed não lista ficou mais seguro. Os extras de Mostrar a barra de progresso e o botão de traduzir comentários agora ficam de fora sozinhos quando não se encaixam nessa versão, então não podem parar o patch nem entrar pela metade.
+
+* **TikTok:** As linhas Keep captions in Clear display e Automatic Clear display agora escrevem Clear display do jeito que o TikTok escreve.
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, a barra de progresso de um vídeo longo que você abre pela busca ou por um perfil volta a ficar embaixo da legenda. Antes ela passava por cima do nome do criador (#50).
+
+* **TikTok:** Esmaecer os controles do vídeo agora também esmaece a barra de progresso de um vídeo pausado, a pílula de stories da aba Seguindo e, num vídeo aberto pela busca, a barra de busca no topo, o botão Tela cheia e a barra de Adicionar comentário. Antes eles ficavam com intensidade total (#84).
+
+* **TikTok:** Agora dá para salvar um story pela folha de compartilhamento. Ative Salvar um story pela folha de compartilhamento em Downloads e um botão de salvar aparece ali. Ele salva a cópia sem marca d'água quando o TikTok tem uma, e avisa quando só existe a cópia com marca d'água (#93).
+
+* **TikTok:** Mostrar a barra de progresso tem um novo botão em Reprodução, Barra de reprodução nos stories em vídeo, que começa desligado. Ele coloca uma linha fina na parte de baixo de um story em vídeo que você pode arrastar para voltar ou avançar, com o tempo aparecendo enquanto você arrasta. Tocar ainda passa de um story para outro (#72).
+
 * **TikTok:** Continuar tocando em segundo plano agora pode recomeçar um vídeo quando ele termina, então você não precisa tocar em Reproduzir na notificação toda vez. Ative Repetir em segundo plano em Reprodução. Uma ligação ou o som de outro app ainda pausa o vídeo (#99).
 
 * **TikTok:** O disco de música pode girar de novo. O TikTok 47.1.4 já vem com ele parado, então Tela do feed agora tem Girar o disco de música, e Manter o disco de música parado se você preferir que ele nunca gire. Os dois precisam reiniciar o app (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** O Remove LIVE extras agora avisa que tira os arquivos para entrar na LIVE de outra pessoa como convidado, então entrar por voz ou vídeo pode parar de funcionar com ele (#132). Deixe ele de fora se você entra em LIVEs.
 
-* **TikTok:** Quando o Clear display fica lembrado, ou o Automatic clear display não tem atraso, o TikTok não mostra mais as abas embaixo do ícone de carregamento nem os botões do primeiro vídeo por cerca de um segundo depois de abrir do zero. Um vídeo aberto pelos Favorites ou por um perfil também já começa limpo (#84).
+* **TikTok:** Quando o Clear display fica lembrado, ou o Automatic Clear display não tem atraso, o TikTok não mostra mais as abas embaixo do ícone de carregamento nem os botões do primeiro vídeo por cerca de um segundo depois de abrir do zero. Um vídeo aberto pelos Favorites ou por um perfil também já começa limpo (#84).
 
 * **TikTok:** Com Show where a video was posted ligado, o nome do criador não é mais cortado para caber o país quando a linha tem espaço para os dois, então "Rn D… · TR" volta a aparecer inteiro (#127). Um nome que é longo demais de verdade continua sendo encurtado para o país aparecer inteiro.
 

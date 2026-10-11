@@ -44,7 +44,8 @@ public final class StoryControls {
         return isPhoto(Reflect.invoke(params, "getAweme"));
     }
 
-    static boolean isPhoto(Object aweme) {
+    /** Whether the story is a photo story: one that carries images. The story seek bar asks too. */
+    public static boolean isPhoto(Object aweme) {
         if (aweme == null) return false;
         Object images = Reflect.property(aweme, "getImageInfos", "imageInfos");
         return images instanceof Collection && !((Collection<?>) images).isEmpty();

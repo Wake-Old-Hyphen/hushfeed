@@ -28,10 +28,10 @@ import app.morphe.extension.tiktok.download.SavedVideoArchive;
 import app.morphe.extension.tiktok.download.SoundFormat;
 
 /**
- * Where files go and what goes in them, then video, photos and stickers, the long presses,
- * subtitles, the hand-off to another app, and the offline limit. Each block belongs to its
- * own patch and any of them can be in the bundle alone, so every block is a plain if and never
- * a return: a return for one of them took every later block with it once.
+ * Where files go and what goes in them, then video, photos and stickers, the long presses, the
+ * story share sheet, subtitles, the hand-off to another app, and the offline limit. Each block
+ * belongs to its own patch and any of them can be in the bundle alone, so every block is a plain
+ * if and never a return: a return for one of them took every later block with it once.
  */
 @SuppressWarnings("deprecation")
 public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
@@ -196,6 +196,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     "Press and hold a story to save it. Stories have no save button of their own, "
                             + "and holding one is how TikTok pauses it, so this takes that gesture over.",
                     Settings.SAVE_STORY));
+            addPreference(new SectionHeadingPreference(context, "Stories"));
+            addPreference(new TogglePreference(context, "Save a story from its share sheet",
+                    "Puts a save button in the sheet a story's Share button opens. It saves the story "
+                            + "you're watching, and holding a story still pauses it.",
+                    Settings.SAVE_STORY_FROM_SHARE));
         }
         if (SettingsStatus.subtitleToolsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Subtitles"));

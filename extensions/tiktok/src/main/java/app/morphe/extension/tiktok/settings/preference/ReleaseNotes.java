@@ -157,6 +157,7 @@ public final class ReleaseNotes {
     }
 
     static void show(Context context, String current, Runnable onDismiss) {
+        if (SettingsUi.dialogOpen(KEY, context)) return;
         TextView body = new TextView(context);
         // A release translated for the phone's table shows in that language (#91), and the rest
         // come from the English changelog. A LocaleSpan per run is what a screen reader that
@@ -217,6 +218,7 @@ public final class ReleaseNotes {
                 .setNegativeButton(L10n.t(context, "Later"), (target, which) -> target.dismiss())
                 .create();
         dialog.show();
+        SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
     }
 

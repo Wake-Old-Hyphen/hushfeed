@@ -28,6 +28,10 @@ import org.robolectric.annotation.Config;
  * Hushfeed switch off. These pin that Spin clears the disc's flag only, Keep still sets it and
  * zeroes a duration that would let it turn anyway, the track name's flag is never touched, and
  * nothing changes with both switches off.
+ *
+ * <p>Answered past the close setting the S22's disc still stood, so Spin also lifts the holds
+ * further on (anim_opt, the high frame rate hold, the play animation's load downgrade and
+ * musicCoverDegrade), and only Spin does.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -116,5 +120,77 @@ public class MusicDiscSpinTest {
         assertFalse(Settings.SPIN_MUSIC_DISC.isAvailable());
         Settings.STOP_MUSIC_DISC_SPIN.save(false);
         assertTrue(Settings.SPIN_MUSIC_DISC.isAvailable());
+    }
+
+    @Test public void bothSwitchesOffLeaveTheLaterHoldsAsTikTokSentThem() {
+        for (boolean value : new boolean[] {false, true}) {
+            assertEquals(value, MusicDiscSpin.coverAnimationHeld(value));
+            assertEquals(value, MusicDiscSpin.highFrameRateHeld(value));
+            assertEquals(value, MusicDiscSpin.playAnimationSwitchedOff(value));
+            assertEquals(value, MusicDiscSpin.degradeAllows(value));
+        }
+        assertFalse(LogBufferManager.buildExportText().contains("Music disc:"));
+        assertFalse(HookStatus.report().toString().contains(MusicDiscSpin.FAMILY));
+    }
+
+    @Test public void spinLiftsEveryHoldPastTheCloseSettingAndLogsEachOncePerClear() {
+        MusicDiscSpin.installed();
+        Settings.SPIN_MUSIC_DISC.save(true);
+
+        // Each hold is read once a video. The answer holds every time, the line is written once.
+        for (int video = 0; video < 3; video++) {
+            assertFalse(MusicDiscSpin.coverAnimationHeld(true));
+            assertFalse(MusicDiscSpin.highFrameRateHeld(true));
+            assertFalse(MusicDiscSpin.playAnimationSwitchedOff(true));
+            assertTrue(MusicDiscSpin.degradeAllows(false));
+        }
+        // A hold TikTok didn't set has nothing to answer.
+        assertFalse(MusicDiscSpin.coverAnimationHeld(false));
+        assertFalse(MusicDiscSpin.highFrameRateHeld(false));
+        assertFalse(MusicDiscSpin.playAnimationSwitchedOff(false));
+        assertTrue(MusicDiscSpin.degradeAllows(true));
+
+        String hooks = HookStatus.report().toString();
+        assertTrue(hooks, hooks.contains("music disc spin: 5 found, 0 missing"));
+        String report = LogBufferManager.buildExportText();
+        assertEquals(report, 1, occurrences(report, ANIM_OPT_LINE));
+        assertEquals(report, 1, occurrences(report, FRAME_RATE_LINE));
+        assertEquals(report, 1, occurrences(report, LOAD_LINE));
+        assertEquals(report, 1, occurrences(report, DEGRADE_LINE));
+
+        // Clearing the diagnostics starts over, so a fresh export names the holds again.
+        HookStatus.clear();
+        LogBufferManager.clearLogBuffer();
+        assertFalse(MusicDiscSpin.highFrameRateHeld(true));
+        report = LogBufferManager.buildExportText();
+        assertEquals(report, 1, occurrences(report, FRAME_RATE_LINE));
+        assertEquals(report, 0, occurrences(report, ANIM_OPT_LINE));
+    }
+
+    @Test public void keepStillLeavesTheLaterHoldsAloneEvenWithSpinOn() {
+        Settings.SPIN_MUSIC_DISC.save(true);
+        Settings.STOP_MUSIC_DISC_SPIN.save(true);
+
+        assertTrue(MusicDiscSpin.coverAnimationHeld(true));
+        assertTrue(MusicDiscSpin.highFrameRateHeld(true));
+        assertTrue(MusicDiscSpin.playAnimationSwitchedOff(true));
+        assertFalse(MusicDiscSpin.degradeAllows(false));
+        assertFalse(MusicDiscSpin.coverAnimationHeld(false));
+        assertTrue(MusicDiscSpin.degradeAllows(true));
+        assertFalse(LogBufferManager.buildExportText().contains("Music disc:"));
+    }
+
+    private static final String ANIM_OPT_LINE = "Music disc: anim_opt came back true, answered false";
+    private static final String FRAME_RATE_LINE =
+            "Music disc: the high frame rate hold came back true, answered false";
+    private static final String LOAD_LINE = "Music disc: feed_play_anim_downgrade came back true, answered false";
+    private static final String DEGRADE_LINE = "Music disc: musicCoverDegrade came back false, answered true";
+
+    private static int occurrences(String haystack, String needle) {
+        int count = 0;
+        for (int at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + 1)) {
+            count++;
+        }
+        return count;
     }
 }

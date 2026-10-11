@@ -94,7 +94,30 @@ public final class GestureActions {
      * actions run from here unchanged: the sleep timer's picker is posted until the touch is done
      * with, and a frame is read at the tap. The edge seek stays with the long press. Nothing here
      * says where the tap landed.
+     *
+     * <p>Each guard hands over the tap's event. A route that reached a second guard with the same
+     * tap, rather than through the panel that swallows it, gets the first guard's answer back and
+     * the action doesn't run twice. A copy of the event carries the same times, so it counts too.
      */
+    public static boolean onDoubleTap(MotionEvent event) {
+        if (event != null && event.getDownTime() == answeredTapDown && event.getEventTime() == answeredTapAt) {
+            return answeredTap;
+        }
+        boolean answer = onDoubleTap();
+        if (event != null) {
+            answeredTapDown = event.getDownTime();
+            answeredTapAt = event.getEventTime();
+            answeredTap = answer;
+        }
+        return answer;
+    }
+
+    /** The double tap the last guard answered, by its event's times, and what it answered. */
+    private static long answeredTapDown = Long.MIN_VALUE;
+    private static long answeredTapAt = Long.MIN_VALUE;
+    private static boolean answeredTap;
+
+    /** {@link #onDoubleTap(MotionEvent)} for a tap with no event to tell it apart by. */
     public static boolean onDoubleTap() {
         return runAction(Settings.DOUBLE_TAP_ACTION.get());
     }
@@ -382,13 +405,13 @@ public final class GestureActions {
 
     /**
      * The heart nearest the comment button: the first registered heart under one of the button's
-     * parents, going up. In TikTok's pager the climb ends at the button's cell, so a cell whose
-     * heart is missing never borrows the next video's. A heart only has to be attached, since
-     * Clear display hides the rail and its assem still likes.
+     * parents, going up. The climb ends at the button's cell, in TikTok's pager or in any other
+     * pager or list, so a cell whose heart is missing never borrows the next video's. A heart
+     * only has to be attached, since Clear display hides the rail and its assem still likes.
      */
     static Object heartBeside(View button) {
         for (ViewParent parent = button.getParent(); parent instanceof View; parent = parent.getParent()) {
-            if (FEED_PAGER.equals(parent.getClass().getName())) break;
+            if (holdsCells(parent)) break;
             for (Map.Entry<Object, WeakReference<View>> entry : HEARTS.entrySet()) {
                 View heart = entry.getValue().get();
                 if (heart != null && heart.isAttachedToWindow() && isInside(heart, (View) parent)) {
@@ -397,6 +420,23 @@ public final class GestureActions {
             }
         }
         return null;
+    }
+
+    /**
+     * Whether this parent lays out cells of its own: TikTok's feed pager, or a ViewPager,
+     * RecyclerView or AdapterView, TikTok's subclasses included. On 47.1.4 the rail between a
+     * comment button and its heart is a LinearLayout, which isn't one.
+     */
+    static boolean holdsCells(ViewParent parent) {
+        if (parent instanceof android.widget.AdapterView) return true;
+        for (Class<?> type = parent.getClass(); type != null && type != View.class; type = type.getSuperclass()) {
+            String name = type.getSimpleName();
+            if (FEED_PAGER.equals(type.getName()) || "ViewPager".equals(name) || "ViewPager2".equals(name)
+                    || "RecyclerView".equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isInside(View view, View group) {

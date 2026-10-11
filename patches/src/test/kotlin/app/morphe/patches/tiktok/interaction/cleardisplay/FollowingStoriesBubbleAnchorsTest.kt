@@ -5,7 +5,9 @@
 package app.morphe.patches.tiktok.interaction.cleardisplay
 
 import app.morphe.Fixtures
+import app.morphe.patcher.extensions.InstructionExtensions.removeInstruction
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -84,6 +86,22 @@ class FollowingStoriesBubbleAnchorsTest {
                 before.map { it.opcode },
                 after.filterIndexed { index, _ -> index !in added }.map { it.opcode },
             )
+        }
+    }
+
+    @Test
+    fun `a way in that runs on into the way out is refused`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val original = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .first { it.type == SKYLIGHT_BUBBLE }
+            val found = findBubbleClearMode(original)
+            val bubble = MutableClass(original)
+            // Drop the goto that ends the way in, so its last instruction runs on into the way out.
+            bubble.methods.single { it.name == found.handler.name && it.parameterTypes == found.handler.parameterTypes }
+                .removeInstruction(found.exitIndex - 1)
+            assertThrows(PatchException::class.java) { findBubbleClearMode(bubble) }
         }
     }
 

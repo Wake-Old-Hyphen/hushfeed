@@ -15,8 +15,11 @@ One language code, like en or es. Comments and captions TikTok translates come o
 Opus (.ogg), a smaller file	Opus (.ogg), daha küçük dosya
 Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus bu telefonda çalışmadı. Ses, TikTok'un gönderdiği haliyle kaydediliyor.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus için Android 10 veya üstü gerekir, bu yüzden sesler TikTok'un gönderdiği gibi kaydedilir.
+Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Bir hikayenin Paylaş düğmesinin açtığı menüye bir kaydet düğmesi ekler. İzlediğin hikayeyi kaydeder ve bir hikayeye basılı tutmak onu yine duraklatır.
+Save a story from its share sheet	Hikayeyi paylaşım menüsünden kaydet
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Kaydedilen videolarda sol alt köşede @kullanıcı adı ve açıklamanın ilk satırı görünür. Bunun için telefon videonun tamamını yeniden kodlar, bu yüzden kaydetmek daha uzun sürer. Hushfeed'in yaptığı kayıtlar için geçerlidir.
 Sound format	Ses biçimi
+TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	TikTok'ta bu hikayenin yalnızca filigranlı kopyası vardı, bu yüzden o kopya şuraya kaydedildi: %1$s
 Translate button in comments	Yorumlarda çeviri düğmesi
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	TikTok'un çeviri düğmesini yorum sayısının yanına ekler. Bir dokunuş tüm yorumları çevirir, bir dokunuş daha orijinalleri yeniden gösterir.
 Translate into	Şu dile çevir
@@ -222,7 +225,7 @@ Auto-advance stopped after %1$d videos	Otomatik geçiş %1$d videodan sonra durd
 Auto-advance stopped after one video	Otomatik geçiş bir videodan sonra durdu
 Auto-advance videos	Videoları otomatik geç
 Automatic	Otomatik
-Automatic clear display	Otomatik temiz ekran
+Automatic Clear display	Otomatik temiz ekran
 Avatar and follow button	Profil fotoğrafı ve takip düğmesi
 Back	Geri
 Back up settings	Ayarları yedekle
@@ -671,7 +674,7 @@ Includes these events: %1$s	Şu olayları içerir: %1$s
 Inserted cards	Araya eklenen kartlar
 Keep a local record of what you have watched and hide those videos when the feed sends them again.	İzlediklerinin yerel bir kaydını tut ve akış o videoları yeniden gönderdiğinde onları gizle.
 Keep a paused video paused	Duraklatılan videoyu duraklatılmış tut
-Keep captions in clear display	Temiz ekranda altyazıları koru
+Keep captions in Clear display	Temiz ekranda altyazıları koru
 Keep going	Devam et
 Keep the Favorites tab	Favoriler sekmesini koru
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	TikTok açıkken saati ve durum simgelerini ekrandan uzak tut. Onlara göz atmak için üstten aşağı kaydır.
@@ -1047,6 +1050,10 @@ Show the time beside the progress bar	Süreyi ilerleme çubuğunun yanında gös
 Show the time played and the video's length at the end of the progress bar while it's on screen.	İlerleme çubuğu ekrandayken oynatılan süreyi ve videonun uzunluğunu çubuğun sonunda göster.
 Bigger progress bar handle	Daha büyük ilerleme çubuğu tutamacı
 Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	İlerleme çubuğunda daha büyük bir tutamaç ve biraz daha kalın bir çizgi çiz, böylece nerede olduğunu daha kolay görürsün.
+Seek bar on video stories	Video hikayelerde sarma çubuğu
+Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories.	Video hikayenin altına, geri sarmak veya ileri atlamak için sürükleyebileceğin ince bir çizgi ekle. Sürüklerken süre gösterilir ve çizgiye dokunmak yine hikayeler arasında geçiş yapar.
+Story position	Hikayedeki konum
+%1$s of %2$s	%1$s / %2$s
 Show the progress bar thumbnail	İlerleme çubuğu küçük resmini göster
 Show the search entry inside TikTok's LIVE drawer, where available. This doesn't add a search box to video comments.	TikTok'un CANLI çekmecesindeki arama girişini, mümkün olan yerlerde göster. Bu, video yorumlarına bir arama kutusu eklemez.
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Tümünü gör düğmesinde durmak yerine Etkinlik ve Yeni takipçiler listelerinin tamamını göster.

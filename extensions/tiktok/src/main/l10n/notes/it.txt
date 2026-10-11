@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Proteggi le pagine esterne nel browser di TikTok ora considera il CAPTCHA a puzzle che aprono i LIVE e lo Shop una pagina di TikTok, così il puzzle resta collegato a TikTok (#87). Si carica dai server di TikTok, solo da un indirizzo che l'interruttore non conosceva.
+
+* **TikTok:** Un secondo tocco rapido su Dettagli della build, Stato dell'hook, Licenze o Novità non apre più la stessa finestra due volte, una sopra l'altra.
+
+* **TikTok:** Metti Mi piace al video, come azione di Doppio tocco o Pressione prolungata, ora resta sul video che stai guardando in ogni tipo di feed. Se quel video non ha un cuore da premere, te lo dice invece di mettere Mi piace a quello accanto.
+
+* **TikTok:** Un Doppio tocco impostato su un'azione di Hushfeed ora la esegue una volta per tocco, anche se TikTok passa lo stesso tocco a due dei suoi gestori.
+
+* **TikTok:** Applicare le patch a una versione di TikTok che Hushfeed non elenca è più sicuro. Gli extra di Mostra la barra di avanzamento e il pulsante per tradurre i commenti ora vengono esclusi da soli quando non si adattano a quella versione, così non possono fermare la patch né restare a metà.
+
+* **TikTok:** Le righe Keep captions in Clear display e Automatic Clear display ora scrivono Clear display come fa TikTok.
+
+* **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, la barra di avanzamento di un video lungo aperto dalla ricerca o da un profilo torna sotto la descrizione. Prima passava sopra il nome del creator (#50).
+
+* **TikTok:** Attenua i controlli del video ora attenua anche la barra di avanzamento di un video in pausa, la pillola delle storie nella scheda Seguiti e, in un video aperto dalla ricerca, la barra di ricerca in alto, il pulsante Schermo intero e la barra Aggiungi un commento. Prima restavano a piena intensità (#84).
+
+* **TikTok:** Ora puoi salvare una storia dal suo menu di condivisione. Attiva Salva una storia dal menu di condivisione in Download e lì compare un pulsante per salvare. Salva la copia senza filigrana quando TikTok ce l'ha, e ti avvisa quando c'è solo la copia con la filigrana (#93).
+
+* **TikTok:** Mostra la barra di avanzamento ha un nuovo interruttore in Riproduzione, Barra di riproduzione nelle storie video, che parte spento. Mette una linea sottile in fondo a una storia video che puoi trascinare per tornare indietro o andare avanti, con il tempo mostrato mentre trascini. Toccare passa ancora da una storia all'altra (#72).
+
 * **TikTok:** Continua la riproduzione in background ora può far ripartire un video quando finisce, così non devi premere Riproduci nella notifica ogni volta. Attiva Ripeti in background in Riproduzione. Una chiamata o l'audio di un'altra app lo mettono ancora in pausa (#99).
 
 * **TikTok:** Il disco musicale può girare di nuovo. TikTok 47.1.4 lo tiene fermo di serie, quindi in Schermata del feed ora c'è Fai girare il disco musicale, e Tieni fermo il disco musicale se preferisci che non giri mai. Entrambi richiedono un riavvio (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** Remove LIVE extras ora dice che toglie i file per entrare nella LIVE di qualcun altro come ospite, quindi con questa patch entrare con la voce o il video può smettere di funzionare (#132). Lasciala fuori se partecipi alle LIVE.
 
-* **TikTok:** Quando Clear display viene ricordato, o Automatic clear display non ha ritardo, TikTok non mostra più le schede sotto la rotellina di caricamento e i pulsanti del primo video per circa un secondo dopo un avvio a freddo. Anche un video aperto da Favorites o da un profilo parte già pulito (#84).
+* **TikTok:** Quando Clear display viene ricordato, o Automatic Clear display non ha ritardo, TikTok non mostra più le schede sotto la rotellina di caricamento e i pulsanti del primo video per circa un secondo dopo un avvio a freddo. Anche un video aperto da Favorites o da un profilo parte già pulito (#84).
 
 * **TikTok:** Con Show where a video was posted attivo, il nome del creator non viene più accorciato per far stare il paese quando la riga ha spazio per entrambi, quindi "Rn D… · TR" si legge di nuovo per intero (#127). Un nome davvero troppo lungo viene ancora accorciato perché il paese resti intero.
 

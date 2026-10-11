@@ -32,6 +32,12 @@ private const val IM_CONVERSATION =
 private const val SHARE_TOOLS = "Lapp/morphe/extension/tiktok/share/ShareSheetTools;"
 private const val BASE_SHARE_PACKAGE = "Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
 
+/**
+ * The share model builder's actions row, the List the snapshot below copies its actions from. The
+ * story save button (#93) finds the snapshot's own actions field by where this one is stored.
+ */
+internal const val SHARE_BUILDER_ACTIONS = "LJFF"
+
 internal object ShareSnapshotFingerprint : Fingerprint(
     strings = listOf("click_to_respond_duration", "config_duration"),
     custom = { method, _ -> method.name == "<init>" && method.parameterTypes.size == 1 },
@@ -61,7 +67,7 @@ internal fun hookShareModel() {
     check(packages.size == 1) {
         "Share sheet: $builder holds ${packages.size} BaseSharePackage fields, so which one the sheet is built from is no longer obvious."
     }
-    val callbacks = mapOf("LIZ" to "channels", "LJFF" to "actions", "LJJIIJZLJL" to "contacts")
+    val callbacks = mapOf("LIZ" to "channels", SHARE_BUILDER_ACTIONS to "actions", "LJJIIJZLJL" to "contacts")
     val found = mutableSetOf<String>()
     method.implementation!!.instructions.withIndex().toList().asReversed().forEach { (index, instruction) ->
         val field = (instruction as? ReferenceInstruction)?.reference as? FieldReference ?: return@forEach

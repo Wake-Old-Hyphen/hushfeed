@@ -14,6 +14,7 @@ import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -22,6 +23,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
@@ -43,6 +45,51 @@ private val DISC_READS = listOf(
     DiscRead(MUSIC_COVER_ROTATION_DURATION_KEY, MusicCoverRotationDurationFingerprint, "rotationSeconds"),
 )
 
+/** One method on the disc's way past the close setting: its shape, judged without the fingerprint. */
+private class DiscHold(val name: String, val fingerprint: Fingerprint, val shape: (Method) -> Boolean)
+
+private val COVER_HOLD = DiscHold("the cover's anim_opt hold", MusicCoverAnimationHoldFingerprint) { isCoverAnimationHold(it) }
+private val PLAY_SUBSCRIBER = DiscHold("the play subscriber", MusicCoverPlaySubscriberFingerprint) {
+    it.returnType == "Ljava/lang/Object;" &&
+        it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/Object;", "Ljava/lang/Object;") &&
+        highFrameRateHoldIndex(it) >= 0
+}
+private val PLAY_HOOK = DiscHold("the cell's play hook", PlayAnimationTriggerFingerprint) {
+    it.definingClass == VIDEO_VIEW_CELL && it.returnType == "V" && it.parameterTypes.isEmpty() &&
+        loads(it, START_PLAY_ANIMATION_KEY)
+}
+private val DEGRADE_REGISTRATION = DiscHold("the degrade check's registration", MusicCoverDegradeRegistrationFingerprint) {
+    it.definingClass == MUSIC_COVER_ASSEM && it.name == "onViewCreated" && loads(it, MUSIC_COVER_DEGRADE_KEY)
+}
+private val LOAD_STRATEGY = DiscHold("the play animation's load strategy", PlayAnimationDowngradeFingerprint) {
+    it.name == "getStrategyId" && loads(it, PLAY_ANIMATION_DOWNGRADE_ID)
+}
+private val DISC_HOLDS = listOf(COVER_HOLD, PLAY_SUBSCRIBER, PLAY_HOOK, DEGRADE_REGISTRATION, LOAD_STRATEGY)
+
+private val ANIMATOR_START = listOf("Ljava/lang/String;", "Landroid/animation/Animator;", "Landroid/view/View;")
+
+private fun loads(method: Method, string: String) =
+    method.implementation?.instructions?.any { it.getReference<StringReference>()?.string == string } == true
+
+private fun Method.code(): List<Instruction> = implementation?.instructions?.toList().orEmpty()
+
+/** The instructions without nops, which dexlib2 adds or takes away to keep a payload aligned. */
+private fun Method.counted(): Int = code().count { it.opcode != Opcode.NOP }
+
+/**
+ * The disc's way on one build: the two lazy reads, each hold, the check registered under
+ * musicCoverDegrade and the load strategy's class, the static that starts the animator through
+ * a check, and what the runnable that loads musicCoverDegrade calls.
+ */
+private class DiscChain(
+    val reads: Map<String, Method>,
+    val holds: Map<DiscHold, Method>,
+    val checkClass: ClassDef,
+    val strategyClass: ClassDef,
+    val starters: List<Method>,
+    val startedUnderKey: List<MethodReference>,
+)
+
 /**
  * What the music disc switches hook (#68), held to each declared build: the two lazy values
  * VideoMusicCoverAssem's play subscriber asks before it lets the disc turn, each a no-argument
@@ -50,6 +97,12 @@ private val DISC_READS = listOf(
  * the close setting at 3 and the duration at 0, so the subscriber returns before it starts the
  * turn. The hook goes on the real bodies here, so the int MusicDiscSpin answers is the one TikTok
  * just read, and the boxing that follows keeps the answer for the launch.
+ *
+ * <p>Answered past those two the S22's disc still stood, so Spin also answers the holds further
+ * on: VideoMusicCoverVM's anim_opt hold, the high frame rate hold the play subscriber and the
+ * cell's play hook both read, the load strategy's play animation switch the play hook reads, and
+ * the enable() of the check registered under musicCoverDegrade. Each is held to the build here,
+ * and so is the way they lead to one another.
  */
 class MusicDiscSpinAnchorsTest {
     @Test
@@ -243,17 +296,248 @@ class MusicDiscSpinAnchorsTest {
     }
 
     @Test
-    fun `the patch hands both reads to the extension methods that answer them`() {
+    fun `each hold past the close setting is one method on each declared build and its fingerprint takes exactly it`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val byShape = DISC_HOLDS.associateWith { mutableListOf<String>() }
+            val byFingerprint = DISC_HOLDS.associateWith { mutableListOf<String>() }
+            walk(apk) { classDef, method ->
+                for (hold in DISC_HOLDS) {
+                    if (hold.shape(method)) byShape.getValue(hold) += "${classDef.type}->${method.name}"
+                    if (hold.fingerprint.takes(method, classDef)) byFingerprint.getValue(hold) += "${classDef.type}->${method.name}"
+                }
+            }
+            for (hold in DISC_HOLDS) {
+                assertEquals("$version: ${hold.name} is ${byShape[hold]}", 1, byShape.getValue(hold).size)
+                assertEquals("$version: ${hold.name}'s fingerprint", byShape[hold], byFingerprint[hold])
+            }
+        }
+    }
+
+    @Test
+    fun `the holds lead to one another and the degrade check is what starts the animator`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val chain = chainOf(apk)
+            val hold = chain.holds.getValue(COVER_HOLD)
+            val subscriber = chain.holds.getValue(PLAY_SUBSCRIBER)
+            val trigger = chain.holds.getValue(PLAY_HOOK)
+
+            // The subscriber asks the very hold the fingerprint takes.
+            val asked = subscriber.code().mapNotNull { it.getReference<MethodReference>() }
+                .filter { it.definingClass == MUSIC_COVER_VM && it.returnType == "Z" && it.parameterTypes.isEmpty() }
+                .map { it.name }.distinct()
+            assertEquals("$version: the subscriber asks $asked", listOf(hold.name), asked)
+
+            // The cell's play hook reads the subscriber's high frame rate hold and the load strategy's
+            // switch, each once and before it hands over the event the subscriber waits for.
+            val event = trigger.code().indexOfFirst { it.getReference<StringReference>()?.string == START_PLAY_ANIMATION_KEY }
+            val frameRate = subscriber.code()[highFrameRateHoldIndex(subscriber)].getReference<FieldReference>()!!
+            val frameRateRead = staticBooleanReadIndex(trigger, frameRate)
+            assertTrue("$version: the play hook reads the frame rate hold at $frameRateRead, the event at $event", frameRateRead in 0 until event)
+            val switches = chain.strategyClass.methods.filter { playAnimationSwitchIndex(it) >= 0 }
+            assertEquals("$version: ${chain.strategyClass.type} switches in ${switches.map { it.name }}", 1, switches.size)
+            val off = switches.single().code()[playAnimationSwitchIndex(switches.single())].getReference<FieldReference>()!!
+            assertFalse("$version: the switch is the frame rate hold", off.name == frameRate.name && off.definingClass == frameRate.definingClass)
+            val offRead = staticBooleanReadIndex(trigger, off)
+            assertTrue("$version: the play hook reads the switch at $offRead, the event at $event", offRead in 0 until event)
+
+            // The check onViewCreated registers has one enable(), of the interface whose enable()
+            // the starter asks before it starts the animator, and the runnable starts it under the key.
+            assertEquals("$version: ${chain.checkClass.type}'s enable()", 1, chain.checkClass.methods.count(::isDegradeEnable))
+            assertEquals("$version: the animator is started by ${chain.starters.map { "${it.definingClass}->${it.name}" }}", 1, chain.starters.size)
+            val starter = chain.starters.single()
+            val enable = starter.code().mapNotNull { it.getReference<MethodReference>() }.first { it.name == "enable" }
+            assertTrue(
+                "$version: ${chain.checkClass.type} is no ${enable.definingClass}",
+                enable.definingClass == chain.checkClass.type || enable.definingClass in chain.checkClass.interfaces,
+            )
+            assertTrue(
+                "$version: nothing starts the animator under $MUSIC_COVER_DEGRADE_KEY: ${chain.startedUnderKey}",
+                chain.startedUnderKey.any { it.definingClass == starter.definingClass && it.name == starter.name },
+            )
+        }
+    }
+
+    @Test
+    fun `every hook lands on the value it answers in the real methods`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val chain = chainOf(apk)
+            val hold = MutableMethod(chain.holds.getValue(COVER_HOLD))
+            val subscriber = MutableMethod(chain.holds.getValue(PLAY_SUBSCRIBER))
+            val trigger = MutableMethod(chain.holds.getValue(PLAY_HOOK))
+            val degrade = MutableMethod(chain.checkClass.methods.single(::isDegradeEnable))
+            val switch = chain.strategyClass.methods.single { playAnimationSwitchIndex(it) >= 0 }
+            val frameRate = subscriber.code()[highFrameRateHoldIndex(subscriber)].getReference<FieldReference>()!!
+            val off = switch.code()[playAnimationSwitchIndex(switch)].getReference<FieldReference>()!!
+            val sizes = listOf(hold, subscriber, trigger, degrade).associateWith { it.counted() }
+
+            MusicDiscHooks(
+                close = MutableMethod(chain.reads.getValue(MUSIC_ANIMATION_CLOSE_KEY)),
+                duration = MutableMethod(chain.reads.getValue(MUSIC_COVER_ROTATION_DURATION_KEY)),
+                hold = hold,
+                subscriber = subscriber,
+                trigger = trigger,
+                degrade = degrade,
+                playAnimationSwitch = switch,
+            ).apply("Hide video overlays")
+
+            // The returns: each answered on its own register, and no branch lands past the answer.
+            for ((method, answer) in listOf(hold to "coverAnimationHeld", degrade to "degradeAllows")) {
+                val code = method.code()
+                val returns = code.withIndex().filter { it.value.opcode == Opcode.RETURN }
+                assertTrue("$version: ${method.name} returns nothing", returns.isNotEmpty())
+                assertEquals("$version: ${method.name} grew by", sizes.getValue(method) + 2 * returns.size, method.counted())
+                for ((at, instruction) in returns) {
+                    assertAnswer("$version: ${method.name} at $at", code, at - 2, (instruction as OneRegisterInstruction).registerA, answer)
+                }
+                val landings = returns.map { it.index }.toSet()
+                for (branch in code.filterIsInstance<BuilderOffsetInstruction>()) {
+                    assertFalse("$version: a branch in ${method.name} skips the answer", branch.target.location.index in landings)
+                }
+            }
+            // The reads: each answered right after it lands, before anything tests it.
+            for ((method, field, answer) in listOf(
+                Triple(subscriber, frameRate, "highFrameRateHeld"),
+                Triple(trigger, frameRate, "highFrameRateHeld"),
+                Triple(trigger, off, "playAnimationSwitchedOff"),
+            )) {
+                val code = method.code()
+                val read = staticBooleanReadIndex(method, field)
+                assertTrue("$version: ${method.name} no longer reads ${field.name} once", read >= 0)
+                assertAnswer("$version: ${method.name} after ${field.name}", code, read + 1, (code[read] as OneRegisterInstruction).registerA, answer)
+            }
+            assertEquals("$version: the subscriber grew by", sizes.getValue(subscriber) + 2, subscriber.counted())
+            assertEquals("$version: the play hook grew by", sizes.getValue(trigger) + 4, trigger.counted())
+        }
+    }
+
+    @Test
+    fun `a boolean hook with nothing to answer stops the patch and leaves the method as it was`() {
+        val void = lambda(listOf("const/4 v0, 0x1", "return-void"), returns = "V")
+        val voidBefore = void.implementation!!.instructions.toList()
+        assertThrows(PatchException::class.java) { void.answerMusicDiscReturn("Hide video overlays", "degradeAllows") }
+        assertEquals(voidBefore, void.implementation!!.instructions.toList())
+
+        val read = lambda(listOf("sget-boolean v0, Lfixture/Hold;->held:Z", "return v0"), returns = "Z")
+        val readBefore = read.implementation!!.instructions.toList()
+        assertThrows(PatchException::class.java) { read.answerMusicDiscRead("Hide video overlays", 1, "highFrameRateHeld") }
+        assertEquals(readBefore, read.implementation!!.instructions.toList())
+
+        read.answerMusicDiscRead("Hide video overlays", 0, "highFrameRateHeld")
+        val after = read.implementation!!.instructions.toList()
+        assertEquals(4, after.size)
+        assertAnswer("the read", after, 1, 0, "highFrameRateHeld")
+        assertEquals(Opcode.RETURN, after[3].opcode)
+    }
+
+    @Test
+    fun `a boolean returned from above v15 is answered through the range form`() {
+        val high = lambda(listOf("const/4 v0, 0x1", "move/from16 v17, v0", "return v17"), returns = "Z", registers = 20)
+        high.answerMusicDiscReturn("Hide video overlays", "coverAnimationHeld")
+        val after = high.implementation!!.instructions.toList()
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, after[2].opcode)
+        assertEquals(1, (after[2] as RegisterRangeInstruction).registerCount)
+        assertAnswer("the high return", after, 2, 17, "coverAnimationHeld")
+        assertEquals(Opcode.RETURN, after[4].opcode)
+    }
+
+    @Test
+    fun `the patch hands every hold to the extension methods that answer them`() {
         val repo = if (File("src/main/kotlin").isDirectory) File("..") else File(".")
-        val patch = File(repo, "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/HideVideoOverlaysPatch.kt").readText()
-        assertTrue("the close read is not hooked", patch.contains("answerMusicDiscSetting(PATCH_NAME, \"closeSetting\")"))
-        assertTrue("the duration read is not hooked", patch.contains("answerMusicDiscSetting(PATCH_NAME, \"rotationSeconds\")"))
+        val dir = "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays"
+        val hooks = File(repo, "$dir/MusicDiscSpin.kt").readText()
+        for (call in listOf(
+            "close.answerMusicDiscSetting(patch, \"closeSetting\")",
+            "duration.answerMusicDiscSetting(patch, \"rotationSeconds\")",
+            "hold.answerMusicDiscReturn(patch, \"coverAnimationHeld\")",
+            "subscriber.answerMusicDiscRead(patch, highFrameRateHoldIndex(subscriber), \"highFrameRateHeld\")",
+            "trigger.answerMusicDiscRead(patch, staticBooleanReadIndex(trigger, frameRateHold), \"highFrameRateHeld\")",
+            "trigger.answerMusicDiscRead(patch, staticBooleanReadIndex(trigger, playAnimationOff), \"playAnimationSwitchedOff\")",
+            "degrade.answerMusicDiscReturn(patch, \"degradeAllows\")",
+        )) {
+            assertTrue("MusicDiscHooks never makes $call", hooks.contains(call))
+        }
+        val patch = File(repo, "$dir/HideVideoOverlaysPatch.kt").readText()
+        assertTrue("the holds are never hooked", patch.contains("musicDisc.apply(PATCH_NAME)"))
         assertTrue("the rows are never shown", patch.contains("SettingsStatus;->enableMusicDiscSpin()V"))
         val extension = File(repo, "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/MusicDiscSpin.java").readText()
-        assertTrue("the extension takes no close value", extension.contains("public static int closeSetting(int value)"))
-        assertTrue("the extension takes no duration", extension.contains("public static int rotationSeconds(int seconds)"))
+        for (signature in listOf(
+            "public static int closeSetting(int value)",
+            "public static int rotationSeconds(int seconds)",
+            "public static boolean coverAnimationHeld(boolean held)",
+            "public static boolean highFrameRateHeld(boolean held)",
+            "public static boolean playAnimationSwitchedOff(boolean off)",
+            "public static boolean degradeAllows(boolean allows)",
+        )) {
+            assertTrue("the extension has no $signature", extension.contains(signature))
+        }
         val status = File(repo, "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/SettingsStatus.java").readText()
         assertTrue("the status has no switch for the rows", status.contains("public static void enableMusicDiscSpin()"))
+    }
+
+    /** A static `(Z)Z` call on MusicDiscSpin at [at] on [register], and its answer back into it. */
+    private fun assertAnswer(where: String, code: List<Instruction>, at: Int, register: Int, answer: String) {
+        val call = code[at].getReference<MethodReference>()
+        assertEquals(where, MUSIC_DISC_SPIN_DESCRIPTOR, call?.definingClass)
+        assertEquals(where, answer, call!!.name)
+        assertEquals(where, listOf("Z"), call.parameterTypes.map(CharSequence::toString))
+        assertEquals(where, "Z", call.returnType)
+        assertEquals(where, register, code[at].firstRegister())
+        assertEquals(where, Opcode.MOVE_RESULT, code[at + 1].opcode)
+        assertEquals(where, register, (code[at + 1] as OneRegisterInstruction).registerA)
+    }
+
+    /** The disc's way on one build, found in two walks: the methods first, then the classes they name. */
+    private fun chainOf(apk: File): DiscChain {
+        val reads = mutableMapOf<String, Method>()
+        val holds = mutableMapOf<DiscHold, Method>()
+        walk(apk) { _, method ->
+            for (read in DISC_READS) {
+                if (isBoxedAbIntRead(method, read.key)) assertTrue("${read.key} is read twice", reads.put(read.key, method) == null)
+            }
+            for (hold in DISC_HOLDS) {
+                if (hold.shape(method)) assertTrue("${hold.name} is found twice", holds.put(hold, method) == null)
+            }
+        }
+        val checkType = degradeCheckType(holds.getValue(DEGRADE_REGISTRATION))
+        assertTrue("onViewCreated registers nothing under $MUSIC_COVER_DEGRADE_KEY", checkType != null)
+        val strategyType = holds.getValue(LOAD_STRATEGY).definingClass
+
+        var checkClass: ClassDef? = null
+        var strategyClass: ClassDef? = null
+        val starters = mutableListOf<Method>()
+        val startedUnderKey = mutableListOf<MethodReference>()
+        walk(apk) { classDef, method ->
+            if (classDef.type == checkType) checkClass = classDef
+            if (classDef.type == strategyType) strategyClass = classDef
+            val code = method.code()
+            if (method.returnType == "V" && method.parameterTypes.map(CharSequence::toString) == ANIMATOR_START) {
+                val enable = code.indexOfFirst { instruction ->
+                    instruction.getReference<MethodReference>()?.let {
+                        it.name == "enable" && it.returnType == "Z" && it.parameterTypes.isEmpty()
+                    } == true
+                }
+                val start = code.indexOfLast { instruction ->
+                    instruction.getReference<MethodReference>()?.let {
+                        it.definingClass == "Landroid/animation/Animator;" && it.name == "start"
+                    } == true
+                }
+                if (enable >= 0 && start > enable) starters += method
+            }
+            if (code.any { it.getReference<StringReference>()?.string == MUSIC_COVER_DEGRADE_KEY }) {
+                code.filter { it.opcode == Opcode.INVOKE_STATIC }.mapNotNull { it.getReference<MethodReference>() }
+                    .filter { it.parameterTypes.map(CharSequence::toString) == ANIMATOR_START }
+                    .forEach { startedUnderKey += it }
+            }
+        }
+        return DiscChain(
+            reads, holds,
+            checkClass ?: throw AssertionError("$checkType is not in the build"),
+            strategyClass ?: throw AssertionError("$strategyType is not in the build"),
+            starters, startedUnderKey,
+        )
     }
 
     /** A no-argument lambda body answering Object, made of [lines]. */

@@ -18,8 +18,11 @@ One language code, like en or es. Comments and captions TikTok translates come o
 Opus (.ogg), a smaller file	Opus (.ogg), файл поменьше
 Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus не сработал на этом телефоне. Звук сохраняется в том виде, в каком его прислал TikTok.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Для Opus нужен Android 10 или новее, поэтому звук сохраняется так, как прислал TikTok.
+Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Добавляет кнопку сохранения в меню, которое открывает кнопка «Поделиться» в истории. Она сохраняет историю, которую вы смотрите, а удержание истории по-прежнему ставит её на паузу.
+Save a story from its share sheet	Сохранять историю из меню «Поделиться»
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	На сохранённых видео внизу слева видны @имя пользователя и первая строка описания. Для этого телефон заново кодирует всё видео, поэтому сохранение занимает больше времени. Действует для сохранений через Hushfeed.
 Sound format	Формат звука
+TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	У TikTok была только копия этой истории с водяным знаком, поэтому в %1$s сохранена эта копия
 Translate button in comments	Кнопка перевода в комментариях
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Добавляет кнопку перевода TikTok рядом с числом комментариев. Одно нажатие переводит все комментарии, следующее снова показывает оригиналы.
 Translate into	Переводить на
@@ -272,7 +275,7 @@ Auto-advance stopped after %1$d videos|one	Автопереключение ос
 Auto-advance stopped after %1$d videos|few	Автопереключение остановлено после %1$d видео
 Auto-advance stopped after %1$d videos|many	Автопереключение остановлено после %1$d видео
 Auto-advance stopped after one video	Автопереключение остановлено после одного видео
-Automatic clear display	Автоматический чистый вид
+Automatic Clear display	Автоматический чистый вид
 Avatar and follow button	Аватар и кнопка «Подписаться»
 Back	Назад
 Back up settings	Создать резервную копию настроек
@@ -704,7 +707,7 @@ Inserted cards	Вставленные карточки
 Keep a local record of what you have watched and hide those videos when the feed sends them again.	Вести локальную запись просмотренного и скрывать эти видео, когда лента присылает их снова.
 Keep a paused video paused	Оставлять видео на паузе
 Move to the next video when the current one ends. Pauses, open dialogs and screen-time holds stop it. Restart TikTok to apply this.	Переходить к следующему видео, когда текущее заканчивается. Паузы, открытые диалоги и ограничения экранного времени останавливают это. Перезапустите TikTok, чтобы это применить.
-Keep captions in clear display	Оставлять субтитры в чистом виде
+Keep captions in Clear display	Оставлять субтитры в чистом виде
 Keep going	Продолжить
 Keep the Favorites tab	Оставлять вкладку Избранное
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	Держать часы и значки статуса скрытыми, пока открыт TikTok. Проведите вниз от верхнего края, чтобы увидеть их.
@@ -1092,6 +1095,10 @@ Show the time beside the progress bar	Показывать время рядом
 Show the time played and the video's length at the end of the progress bar while it's on screen.	Показывать прошедшее время и длину видео в конце полосы прогресса, пока она на экране.
 Bigger progress bar handle	Крупный ползунок полосы прогресса
 Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.	Рисовать ползунок крупнее, а полосу прогресса чуть толще, чтобы было легче видеть, где вы сейчас.
+Seek bar on video stories	Ползунок перемотки в видеоисториях
+Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories.	Добавить тонкую линию внизу видеоистории, которую можно перетаскивать, чтобы перемотать назад или вперёд. Во время перетаскивания показывается время, а нажатие на неё по-прежнему переключает истории.
+Story position	Позиция в истории
+%1$s of %2$s	%1$s из %2$s
 Show the progress bar thumbnail	Показывать превью на полосе прогресса
 Show the whole Activity and New followers lists instead of stopping at a View all button.	Показывать списки «Активность» и «Новые подписчики» целиком, не останавливаясь на кнопке «Смотреть все».
 Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.	Показывать видео целиком, не обрезая его по размеру окна. На вытянутом телефоне, где оно и так помещается, ничего не меняется. На развёрнутом складном телефоне, более квадратном экране или в режиме разделённого экрана края или концы видео перестают обрезаться.

@@ -81,6 +81,7 @@ public class HookStatusPreference extends Preference {
     }
 
     private void showReport() {
+        if (SettingsUi.dialogOpen(getKey(), getContext())) return;
         Context context = getContext();
         List<String> report = HookStatus.report();
         StringBuilder message = new StringBuilder();
@@ -99,6 +100,7 @@ public class HookStatusPreference extends Preference {
                 .setMessage(message.toString())
                 .setPositiveButton(L10n.t(context, "Close"), null)
                 .show();
+        SettingsUi.dialogOpened(getKey(), context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
     }
 

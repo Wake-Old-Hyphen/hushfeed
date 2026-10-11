@@ -54,6 +54,7 @@ public final class LicensesPreference extends Preference {
 
     /** Opens the notice, and is public so the settings search can open it from a result. */
     public static void show(Context context) {
+        if (SettingsUi.dialogOpen(KEY, context)) return;
         TextView body = new TextView(context);
         body.setText(LicenseNotice.TEXT);
         body.setTextIsSelectable(true);
@@ -80,6 +81,7 @@ public final class LicensesPreference extends Preference {
                         Utils.openLink(LicenseNotice.LICENSE_URL))
                 .create();
         dialog.show();
+        SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
 
         TextView heading = dialog.findViewById(android.R.id.title);

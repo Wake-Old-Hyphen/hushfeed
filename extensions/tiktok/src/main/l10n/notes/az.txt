@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** TikTok brauzerində xarici səhifələri qoruyun indi LIVE-ların və Mağazanın açdığı tapmaca CAPTCHA-nı TikTok-un öz səhifəsi sayır, buna görə tapmacanın TikTok ilə əlaqəsi qalır (#87). O, TikTok-un öz serverlərindən yüklənir, sadəcə açarın tanımadığı ünvandan.
+
+* **TikTok:** Build təfərrüatları, Qoşulma statusu, Lisenziyalar və ya Yeniliklər üzərinə tez ikinci toxunuş artıq eyni pəncərəni bir-birinin üstündə iki dəfə açmır.
+
+* **TikTok:** Videonu bəyənin, İki dəfə toxunma və ya Uzun basma əməli kimi, indi hər növ lentdə baxdığınız videoda qalır. Həmin videoda basılacaq ürək yoxdursa, yanındakı videonu bəyənmək əvəzinə bunu sizə deyir.
+
+* **TikTok:** Hushfeed əməllərindən birinə qoyulmuş İki dəfə toxunma indi hər toxunuşda onu bir dəfə işlədir, hətta TikTok eyni toxunuşu öz iki işləyicisinə ötürsə belə.
+
+* **TikTok:** Hushfeed-in siyahısında olmayan TikTok versiyasını patch etmək indi daha təhlükəsizdir. İrəliləyiş panelini göstərin əlavələri və şərh tərcümə düyməsi həmin versiyaya uyğun gəlmədikdə indi ayrıca kənarda qalır, ona görə patch-i dayandıra və ya yarımçıq qura bilməz.
+
+* **TikTok:** Keep captions in Clear display və Automatic Clear display sətirləri indi Clear display sözünü TikTok-un yazdığı kimi yazır.
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda, axtarışdan və ya profildən açdığınız uzun videoda irəliləyiş paneli yenidən başlığın altında durur. Əvvəllər o, müəllifin adının üstündən keçirdi (#50).
+
+* **TikTok:** Video idarəetmələrini solğunlaşdır indi dayandırılmış videoda irəliləyiş panelini, İzlənilənlər bölməsindəki hekayələr düyməsini, axtarışdan açılan videoda isə yuxarıdakı axtarış panelini, Tam ekran düyməsini və Şərh əlavə et panelini də solğunlaşdırır. Əvvəllər bunlar tam parlaqlıqda qalırdı (#84).
+
+* **TikTok:** Hekayəni indi paylaşma vərəqindən saxlamaq olar. Endirmələr bölməsində Hekayəni paylaşma vərəqindən saxlayın seçimini yandırın, orada saxla düyməsi görünəcək. TikTok-da su nişanı olmayan nüsxə varsa onu saxlayır, yalnız su nişanlı nüsxə olduqda isə bunu bildirir (#93).
+
+* **TikTok:** İrəliləyiş panelini göstərin seçiminin Oxutma bölməsində yeni açarı var: Video hekayələrdə irəli-geri çəkmə zolağı, əvvəlcə söndürülüdür. O, video hekayənin altına nazik bir xətt qoyur, onu çəkərək geri qayıda və ya irəli keçə bilərsiniz, çəkərkən vaxt göstərilir. Toxunmaq yenə hekayələr arasında keçid edir (#72).
+
 * **TikTok:** Fonda oxutmağa davam edin indi video bitəndə onu yenidən başlada bilər, beləliklə hər dəfə bildirişdə Oxut düyməsini basmağa ehtiyac qalmır. Oxutma bölməsində Fonda təkrar oxut seçimini yandırın. Zəng və ya başqa tətbiqin səsi onu yenə dayandırır (#99).
 
 * **TikTok:** Musiqi diski yenidən fırlana bilər. TikTok 47.1.4 onu əvvəlcədən sabit saxlayır, ona görə Lent ekranında indi Musiqi diskini fırladın var, heç fırlanmasını istəmirsinizsə Musiqi diskini sabit saxlayın da var. İkisi də yenidən başlatma tələb edir (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** Remove LIVE extras indi başqasının LIVE-ına qonaq kimi qoşulmaq üçün faylları da sildiyini deyir, ona görə onunla səsli və ya videolu qoşulmaq işləməyə bilər (#132). LIVE-lara qoşulursunuzsa, onu seçməyin.
 
-* **TikTok:** Clear display yadda saxlananda və ya Automatic clear display gecikməsiz olanda, TikTok soyuq başlanğıcdan sonra yükləmə fırlanğacının altında tabları və ilk videonun düymələrini təxminən bir saniyə artıq göstərmir. Favorites və ya profildən açılan video da eyni şəkildə təmizlənmiş başlayır (#84).
+* **TikTok:** Clear display yadda saxlananda və ya Automatic Clear display gecikməsiz olanda, TikTok soyuq başlanğıcdan sonra yükləmə fırlanğacının altında tabları və ilk videonun düymələrini təxminən bir saniyə artıq göstərmir. Favorites və ya profildən açılan video da eyni şəkildə təmizlənmiş başlayır (#84).
 
 * **TikTok:** Show where a video was posted açıq olanda, sırada hər ikisinə yer varsa, yaradıcının adı artıq ölkəyə yer açmaq üçün qısaldılmır, ona görə "Rn D… · TR" yenə tam oxunur (#127). Həqiqətən çox uzun ad isə ölkə tam görünsün deyə yenə qısaldılır.
 

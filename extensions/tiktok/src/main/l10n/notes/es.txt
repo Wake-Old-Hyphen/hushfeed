@@ -1,5 +1,25 @@
 ## Unreleased
 
+* **TikTok:** Proteger páginas externas en el navegador de TikTok ahora cuenta el CAPTCHA de rompecabezas que abren los LIVE y la Tienda como una página propia de TikTok, así el rompecabezas conserva su conexión con TikTok (#87). Se carga desde los servidores de TikTok, solo que desde una dirección que el interruptor no conocía.
+
+* **TikTok:** Un segundo toque rápido en Detalles de la compilación, Comprobación de funciones, Licencias o Novedades ya no abre la misma ventana dos veces, una encima de otra.
+
+* **TikTok:** Dar me gusta al vídeo, como acción de Doble toque o Pulsación larga, ahora se queda en el vídeo que estás viendo en cualquier tipo de feed. Si ese vídeo no tiene corazón que pulsar, te lo dice en vez de dar me gusta al de al lado.
+
+* **TikTok:** Un Doble toque asignado a una acción de Hushfeed ahora la ejecuta una vez por toque, aunque TikTok pase el mismo toque a dos de sus controladores.
+
+* **TikTok:** Parchear una versión de TikTok que Hushfeed no incluye en su lista es más seguro. Los extras de Mostrar la barra de progreso y el botón para traducir comentarios ahora se quedan fuera por separado cuando no encajan con esa versión, así que no pueden detener el parcheo ni quedar a medias.
+
+* **TikTok:** Las filas Keep captions in Clear display y Automatic Clear display ahora escriben Clear display como lo hace TikTok.
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, la barra de progreso de un video largo que abres desde la búsqueda o un perfil vuelve a quedar debajo de la descripción. Antes se dibujaba encima del nombre del creador (#50).
+
+* **TikTok:** Atenuar los controles del vídeo ahora también atenúa la barra de progreso de un vídeo en pausa, la píldora de historias de la pestaña Siguiendo y, en un vídeo abierto desde la búsqueda, la barra de búsqueda de arriba, el botón de Pantalla completa y la barra para añadir un comentario. Antes se quedaban a plena intensidad (#84).
+
+* **TikTok:** Ahora puedes guardar una historia desde su panel de compartir. Activa Guardar una historia desde el panel de compartir en Descargas y aparece ahí un botón para guardar. Guarda la copia sin marca de agua cuando TikTok la tiene, y te avisa cuando solo está la copia con marca de agua (#93).
+
+* **TikTok:** Mostrar la barra de progreso tiene un nuevo interruptor en Reproducción, Barra de reproducción en historias de vídeo, que empieza desactivado. Pone una línea fina en la parte de abajo de una historia de vídeo que puedes arrastrar para retroceder o adelantar, con el tiempo visible mientras arrastras. Tocar sigue pasando de una historia a otra (#72).
+
 * **TikTok:** Seguir reproduciendo en segundo plano ahora puede volver a empezar un video cuando termina, así no tienes que tocar Reproducir en la notificación cada vez. Activa Repetir en segundo plano en Reproducción. Una llamada o el sonido de otra app lo siguen pausando (#99).
 
 * **TikTok:** El disco de música puede volver a girar. TikTok 47.1.4 lo deja quieto de fábrica, así que Pantalla del feed ahora tiene Hacer girar el disco de música, y Mantener quieto el disco de música si prefieres que nunca gire. Los dos necesitan reiniciar (#68).
@@ -28,7 +48,7 @@
 
 * **TikTok:** Remove LIVE extras ahora dice que quita los archivos para unirte al LIVE de otra persona como invitado, así que con él puede dejar de funcionar unirte por voz o video (#132). No lo incluyas si te unes a LIVEs.
 
-* **TikTok:** Cuando Clear display se recuerda, o Automatic clear display no tiene retraso, TikTok ya no muestra las pestañas bajo su círculo de carga ni los botones del primer video durante un segundo tras un arranque en frío. Un video abierto desde Favorites o un perfil también empieza despejado (#84).
+* **TikTok:** Cuando Clear display se recuerda, o Automatic Clear display no tiene retraso, TikTok ya no muestra las pestañas bajo su círculo de carga ni los botones del primer video durante un segundo tras un arranque en frío. Un video abierto desde Favorites o un perfil también empieza despejado (#84).
 
 * **TikTok:** Con Show where a video was posted activado, el nombre del creador ya no se corta para que quepa el país cuando la fila tiene espacio para los dos, así que "Rn D… · TR" vuelve a leerse completo (#127). Un nombre que de verdad es demasiado largo se sigue acortando para que el país se vea entero.
 

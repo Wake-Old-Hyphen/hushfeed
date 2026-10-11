@@ -50,6 +50,7 @@ source,target
 %1$s minutes,%1$s minutes
 %1$s more saves waiting,%1$s more saves waiting
 %1$s needs fixing. %2$s,%1$s needs fixing. %2$s
+%1$s of %2$s,%1$s of %2$s
 %1$s older seen video was dropped to keep the newest %2$s.,%1$s older seen video was dropped to keep the newest %2$s.
 %1$s older seen videos were dropped to keep the newest %2$s.,%1$s older seen videos were dropped to keep the newest %2$s.
 %1$s point,%1$s point
@@ -159,6 +160,7 @@ Add a creator,Add a creator
 Add a seen-history file saved by Hushfeed to the videos @%1$s has seen. A video in both keeps the newer date.,Add a seen-history file saved by Hushfeed to the videos @%1$s has seen. A video in both keeps the newer date.
 Add a seen-history file saved by Hushfeed to this account's seen videos. A video in both keeps the newer date.,Add a seen-history file saved by Hushfeed to this account's seen videos. A video in both keeps the newer date.
 Add a separate button that skips videos using the current sound.,Add a separate button that skips videos using the current sound.
+"Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories.","Add a thin line along the bottom of a video story that you can drag to go back or skip ahead. The time shows while you drag, and a tap on it still moves between stories."
 Add apps to Share via,Add apps to Share via
 Add hidden creator,Add hidden creator
 Add older seen videos to this account,Add older seen videos to this account
@@ -243,7 +245,7 @@ Auto-advance stopped after %1$d videos,Auto-advance stopped after %1$d videos
 Auto-advance stopped after one video,Auto-advance stopped after one video
 Auto-advance videos,Auto-advance videos
 Automatic,Automatic
-Automatic clear display,Automatic clear display
+Automatic Clear display,Automatic Clear display
 Avatar and follow button,Avatar and follow button
 Back,Back
 Back up settings,Back up settings
@@ -819,7 +821,7 @@ Keep a local record of what you have watched and hide those videos when the feed
 Keep a paused video paused,Keep a paused video paused
 "Keep a photo story on screen until you tap or swipe, instead of moving on after a few seconds.","Keep a photo story on screen until you tap or swipe, instead of moving on after a few seconds."
 Keep a streak going,Keep a streak going
-Keep captions in clear display,Keep captions in clear display
+Keep captions in Clear display,Keep captions in Clear display
 Keep going,Keep going
 Keep long press from quick sharing,Keep long press from quick sharing
 Keep long press from reposting,Keep long press from reposting
@@ -1158,6 +1160,7 @@ Pulling down at the top of For You no longer reloads it.,Pulling down at the top
 Put %1$s in %2$s first.,Put %1$s in %2$s first.
 Put back the settings saved before the last restore or reset.,Put back the settings saved before the last restore or reset.
 Put every setting back to its default straight away. Your current settings are kept for Undo.,Put every setting back to its default straight away. Your current settings are kept for Undo.
+"Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it."
 "Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.","Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked."
 Putting seen videos back,Putting seen videos back
 Putting the saved videos back,Putting the saved videos back
@@ -1242,6 +1245,7 @@ Sample caption to test,Sample caption to test
 Sample category to test,Sample category to test
 Save,Save
 Save a profile picture on a long press,Save a profile picture on a long press
+Save a story from its share sheet,Save a story from its share sheet
 Save a story on a long press,Save a story on a long press
 Save again,Save again
 Save as video,Save as video
@@ -1329,6 +1333,7 @@ Search these comments,Search these comments
 Search within comments,Search within comments
 Seconds per photo,Seconds per photo
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty."
+Seek bar on video stories,Seek bar on video stories
 Seek by,Seek by
 Seek from the edges,Seek from the edges
 Seen,Seen
@@ -1528,6 +1533,7 @@ Store TikTok thinks it came from,Store TikTok thinks it came from
 "Stores the caption, creator, post date and link inside the video file, where media players can read them. Applies to saves made by Hushfeed.","Stores the caption, creator, post date and link inside the video file, where media players can read them. Applies to saves made by Hushfeed."
 Stories,Stories
 Story,Story
+Story position,Story position
 Story saved to %1$s,Story saved to %1$s
 Streak,Streak
 Structured value observed,Structured value observed
@@ -1732,6 +1738,7 @@ TikTok gets no location from your phone. The Region settings change your country
 TikTok is locked,TikTok is locked
 TikTok isn't locked because this phone has no screen lock,TikTok isn't locked because this phone has no screen lock
 "TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.","TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today."
+"TikTok only had its watermarked copy of this story, so that copy was saved to %1$s","TikTok only had its watermarked copy of this story, so that copy was saved to %1$s"
 TikTok read it,TikTok read it
 "TikTok read it, but the override couldn't be applied. Reset it and save it again.","TikTok read it, but the override couldn't be applied. Reset it and save it again."
 TikTok refused the follow with code %1$s,TikTok refused the follow with code %1$s

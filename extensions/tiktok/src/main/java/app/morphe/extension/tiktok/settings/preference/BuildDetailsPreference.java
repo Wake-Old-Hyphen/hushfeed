@@ -32,6 +32,7 @@ public final class BuildDetailsPreference extends Preference implements Immediat
         setTitle(L10n.t(context, "Build details"));
         setSummary(L10n.t(context, SUMMARY));
         setOnPreferenceClickListener(preference -> {
+            if (SettingsUi.dialogOpen(KEY, context)) return true;
             String report = BuildDetails.report();
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setTitle(L10n.t(context, "Build details"))
@@ -42,6 +43,7 @@ public final class BuildDetailsPreference extends Preference implements Immediat
                             (shown, which) -> LogBufferManager.exportBuildDetailsToFile())
                     .setNegativeButton(L10n.t(context, "Close"), null)
                     .show();
+            SettingsUi.dialogOpened(KEY, context, dialog);
             SettingsUi.styleStandardAlertDialog(dialog);
             TextView details = dialog.findViewById(android.R.id.message);
             if (details != null) {

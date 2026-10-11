@@ -267,8 +267,9 @@ internal fun MutableMethod.interceptPhotoVideoConversion() {
 val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
-        "sound on its own or a photo post as one video, and hold a profile picture or story to " +
-        "save it. Starts off. Turn it on in Hushfeed settings > Downloads.",
+        "sound on its own or a photo post as one video, hold a profile picture or story to save " +
+        "it, and save a story from its share sheet. Starts off. Turn it on in Hushfeed settings > " +
+        "Downloads.",
 ) {
     category("Downloads")
     compatibleWith(*AppCompatibilities.tiktok())
@@ -356,6 +357,7 @@ val advancedDownloadsPatch = bytecodePatch(
             }
 
         resolveStoryLongPressTimer().interceptStoryLongPress()
+        hookStoryShareSave()
 
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAdvancedDownloads()V")

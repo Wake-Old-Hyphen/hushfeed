@@ -171,6 +171,7 @@ public class Settings extends BaseSettings {
     public static final StringSetting DOWNLOAD_STICKER_FORMAT = new StringSetting("download_sticker_format", "mp4");
     public static final BooleanSetting SAVE_PROFILE_PICTURE = new BooleanSetting("save_profile_picture", FALSE);
     public static final BooleanSetting SAVE_STORY = new BooleanSetting("save_story", FALSE);
+    public static final BooleanSetting SAVE_STORY_FROM_SHARE = new BooleanSetting("save_story_from_share", FALSE);
     public static final StringSetting DOUBLE_TAP_ACTION = new StringSetting("double_tap_action", "default");
     public static final StringSetting LONG_PRESS_ACTION = new StringSetting("long_press_action", "default");
     /**
@@ -473,6 +474,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SEEKBAR_TIME = new BooleanSetting("seekbar_time", FALSE);
     /** A larger handle and a slightly thicker line on the progress bar at rest (#90). */
     public static final BooleanSetting SEEKBAR_BIG_HANDLE = new BooleanSetting("seekbar_big_handle", FALSE);
+    /** A line along the bottom of a video story that can be dragged to seek (#72). */
+    public static final BooleanSetting STORY_SEEKBAR = new BooleanSetting("story_seekbar", FALSE);
     public static final BooleanSetting SHOW_SEEKBAR_THUMBNAIL = new BooleanSetting(
             "show_seekbar_thumbnail",
             TRUE
@@ -717,8 +720,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_RAIL_COUNTS = new BooleanSetting("hide_rail_counts", FALSE);
     /**
      * Whether the music disc turns (#68, MusicDiscSpin). TikTok reads the two settings behind it
-     * once per launch, so both take a restart. Holding it still is declared first because Spin
-     * names it as the switch that overrides it.
+     * once per launch, so both take a restart (Spin also lifts the holds past them, which are asked
+     * on every video). Holding it still is declared first because Spin names it as the switch that
+     * overrides it.
      */
     public static final BooleanSetting STOP_MUSIC_DISC_SPIN = new BooleanSetting("stop_music_disc_spin", FALSE, true);
     public static final BooleanSetting SPIN_MUSIC_DISC = new BooleanSetting("spin_music_disc", FALSE, true,

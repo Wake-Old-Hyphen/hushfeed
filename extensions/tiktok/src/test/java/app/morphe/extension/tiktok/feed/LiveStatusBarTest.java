@@ -44,6 +44,7 @@ public class LiveStatusBarTest {
     @After public void tearDown() {
         Settings.HIDE_STATUS_BAR_IN_LIVE.resetToDefault();
         Settings.LIVE_UNDER_STATUS_BAR.resetToDefault();
+        LiveStatusBar.videoContainerForTests = 0;
         Utils.setContext(RuntimeEnvironment.getApplication());
     }
 
@@ -191,10 +192,136 @@ public class LiveStatusBarTest {
         FrameLayout container = new FrameLayout(live);
         container.setPadding(0, bar, 0, 0);
         live.setContentView(container);
+        View cover = cover(live, (FrameLayout) container.getParent(), bar);
         room.start().resume().visible();
         layOut(live);
         assertEquals(bar, container.getPaddingTop());
+        assertEquals("the cover went with the switch off", View.VISIBLE, cover.getVisibility());
         room.pause().stop().destroy();
+    }
+
+    /**
+     * #137 on Android 16: TikTok also draws a plain view the bar's height over the top of the room,
+     * so under the bar the room's top row sat under black once the strip was gone.
+     */
+    @Test public void tikToksCoverOverTheBarGoesWhileTheRoomIsInFront() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout root = new FrameLayout(live);
+        FrameLayout stream = new FrameLayout(live);
+        FrameLayout.LayoutParams held = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        held.topMargin = bar;
+        root.addView(stream, held);
+        View shade = new View(live);
+        shade.setBackgroundColor(Color.DKGRAY);
+        root.addView(shade, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bar * 2));
+        live.setContentView(root);
+        View cover = cover(live, root, bar);
+        room.start().resume().visible();
+
+        layOut(live);
+        assertEquals("the cover stayed", View.INVISIBLE, cover.getVisibility());
+        assertEquals("a view that isn't the bar's height went", View.VISIBLE, shade.getVisibility());
+        assertEquals("the strip stayed", 0, topMargin(stream));
+
+        cover.setVisibility(View.VISIBLE);
+        layOut(live);
+        assertEquals("the cover came back on a relayout", View.INVISIBLE, cover.getVisibility());
+
+        room.pause();
+        assertEquals("leaving didn't give the cover back", View.VISIBLE, cover.getVisibility());
+        room.resume();
+        layOut(live);
+        assertEquals("coming back kept the cover", View.INVISIBLE, cover.getVisibility());
+
+        // TikTok swapping its cover for a new one, as a rotation or a new room can.
+        root.removeView(cover);
+        View swapped = cover(live, root, bar);
+        layOut(live);
+        assertEquals("the new cover stayed", View.INVISIBLE, swapped.getVisibility());
+        room.pause().stop().destroy();
+    }
+
+    /**
+     * #137: under a bar left showing, the stream reaches the top edge while the room's controls
+     * stay a bar lower, where TikTok had them, so the creator row isn't under the clock. Every
+     * page of the room's pager gets it, and it all goes back as the room leaves.
+     */
+    @Test public void underTheBarTheControlsStayBelowTheClock() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        FrameLayout nextRoom = page(live, stream);
+        room.start().resume().visible();
+        layOut(live);
+
+        assertEquals("the strip stayed", 0, topMargin(stream));
+        assertEquals("the controls went up under the clock", 7 + bar, controls.getPaddingTop());
+        assertEquals("the next room's controls went up", 7 + bar, nextRoom.getPaddingTop());
+        layOut(live);
+        assertEquals("a relayout lowered the controls twice", 7 + bar, controls.getPaddingTop());
+
+        controls.setPadding(0, 7, 0, 0);
+        layOut(live);
+        assertEquals("TikTok's own padding came back and stayed", 7 + bar, controls.getPaddingTop());
+
+        room.pause();
+        assertEquals("leaving didn't give the controls back", 7, controls.getPaddingTop());
+        assertEquals(7, nextRoom.getPaddingTop());
+        room.resume();
+        layOut(live);
+        assertEquals("coming back left the controls up", 7 + bar, controls.getPaddingTop());
+        room.pause().stop().destroy();
+    }
+
+    /** With the bar hidden there's no clock to keep clear of, so the controls go up with the room. */
+    @Test public void withTheBarHiddenTheControlsGoUpWithTheRoom() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        room.start().resume().visible();
+        layOut(live);
+
+        assertEquals("the strip stayed", 0, topMargin(stream));
+        assertEquals("the controls were held down", 7, controls.getPaddingTop());
+        room.pause().stop().destroy();
+    }
+
+    /** A room page as 47.1.4 has it: the stream's view, and beside it the controls, padded 7. */
+    private static FrameLayout page(Activity live, FrameLayout pager) {
+        FrameLayout page = new FrameLayout(live);
+        FrameLayout video = new FrameLayout(live);
+        video.setId(LiveStatusBar.videoContainerForTests);
+        page.addView(video, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        FrameLayout controls = new FrameLayout(live);
+        controls.setPadding(0, 7, 0, 0);
+        page.addView(controls, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        pager.addView(page, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        return controls;
+    }
+
+    private static View cover(Activity live, FrameLayout parent, int bar) {
+        View cover = new View(live);
+        cover.setBackgroundColor(Color.BLACK);
+        parent.addView(cover, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bar));
+        return cover;
     }
 
     /**

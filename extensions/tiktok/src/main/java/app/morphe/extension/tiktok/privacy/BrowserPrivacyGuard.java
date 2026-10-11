@@ -61,6 +61,16 @@ public final class BrowserPrivacyGuard {
             "pipopayment.com", "pipopayment.us",
     };
 
+    /**
+     * TikTok's own CDNs. They serve uploads and every ByteDance app's static pages too, so only
+     * the puzzle CAPTCHA's folder there is trusted: that's what LIVEs and the Shop open
+     * (lf16-cdn-tos.tiktokcdn-us.com/obj/static-tx/oec-captcha-ttweb/..., read off a 47.1.4 LIVE
+     * on 2026-10-11). The puzzle answers TikTok through its bridge, so withholding it there left
+     * a check that could never pass (#87).
+     */
+    private static final String[] STATIC_CDN_DOMAINS = {"tiktokcdn.com", "tiktokcdn-us.com", "tiktokcdn-eu.com"};
+    private static final String STATIC_FRONTEND = "/obj/static-tx/oec-captcha-ttweb/";
+
     /** How long a request thread waits for the decision to reach the WebView's own thread. */
     private static final long DECISION_WAIT_MS = 250;
 
@@ -252,7 +262,24 @@ public final class BrowserPrivacyGuard {
         for (String domain : FIRST_PARTY_DOMAINS) {
             if (sameOrSubdomain(host, domain)) return true;
         }
+        for (String domain : STATIC_CDN_DOMAINS) {
+            if (sameOrSubdomain(host, domain)) return isStaticFrontend(parsed.getEncodedPath());
+        }
         return false;
+    }
+
+    /**
+     * Chromium resolves dot segments, escaped dots included, and drops tabs and line breaks
+     * before it asks for a path, so a path is only read as the frontend's when it has none of
+     * those to resolve: plain characters, no escapes, no empty or dot segment.
+     */
+    private static boolean isStaticFrontend(String path) {
+        if (path == null || !path.startsWith(STATIC_FRONTEND) || path.contains("//")) return false;
+        if (!path.matches("[A-Za-z0-9._~/-]+")) return false;
+        for (String segment : path.split("/")) {
+            if (segment.equals(".") || segment.equals("..")) return false;
+        }
+        return true;
     }
 
     private static boolean sameOrSubdomain(String host, String domain) {

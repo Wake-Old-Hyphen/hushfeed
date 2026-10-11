@@ -99,9 +99,35 @@ class SeekbarExtrasAnchorsTest {
     fun `the patch hooks the bar, its style and the progress event`() {
         val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
         val source = File(root, "app/morphe/patches/tiktok/interaction/seekbar/ShowSeekbarPatch.kt").readText()
-        assertTrue("the bar's progress is not hooked", source.contains(".hookBarProgress()"))
-        assertTrue("the bar's style is not hooked", source.contains(".hookBarStyle()"))
-        assertTrue("the progress event is not recorded", source.contains(".recordProgressTick()"))
+        assertTrue("the bar's progress is not hooked", source.contains(".barProgressHook()"))
+        assertTrue("the bar's style is not hooked", source.contains(".barStyleHook()"))
+        assertTrue("the progress event is not recorded", source.contains(".progressTickHook()"))
+    }
+
+    /**
+     * An extra used to be hooked one piece at a time, so a miss on a forced build left the first
+     * pieces in and the switches showing with nothing behind them. Every hook is checked first now,
+     * and each extra turns on its own rows only once it's in.
+     */
+    @Test
+    fun `each extra is checked whole before any of it goes in`() {
+        val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
+        val source = File(root, "app/morphe/patches/tiktok/interaction/seekbar/ShowSeekbarPatch.kt").readText()
+        val extra = source.substringAfter("fun extra(").substringBefore("\n        }\n")
+        val checked = extra.indexOf("hooks()")
+        val applied = extra.indexOf("checked.forEach { it() }")
+        assertTrue("the extra's hooks aren't checked first", checked in 0 until applied)
+        assertTrue("an extra's rows show before it's in", extra.indexOf("SettingsStatus") > applied)
+        assertTrue(source.contains("\"enableSeekbarExtras\""))
+        assertTrue(source.contains("\"enableStorySeekbar\""))
+        val extras = File(root, "app/morphe/patches/tiktok/interaction/seekbar/SeekbarExtras.kt").readText()
+        val stories = File(root, "app/morphe/patches/tiktok/interaction/seekbar/StorySeekbar.kt").readText()
+        for (hook in listOf("progressTickHook", "barProgressHook", "barStyleHook")) {
+            assertTrue("$hook doesn't hand its hook back", extras.contains("fun MutableMethod.$hook(): () -> Unit"))
+        }
+        for (hook in listOf("storyCellViewHook", "storyCellBindHook", "storyProgressHook")) {
+            assertTrue("$hook doesn't hand its hook back", stories.contains("fun MutableMethod.$hook(): () -> Unit"))
+        }
     }
 
     private fun Method.calls(): List<MethodReference> =
