@@ -41,7 +41,8 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      # NOTE: NO inject-amoled.py step here — this is the vanilla comparison build.
+      - name: Relax Device privacy guard transport check
+        run: python3 inject-guard-relax.py
 
       - name: Configure local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
@@ -96,15 +97,23 @@ jobs:
           fi
           echo "SIGNING_ALIAS=$FINAL_ALIAS" >> $GITHUB_ENV
 
-      - name: Prepare bundles
+      - name: Prepare bundles (GitLab)
         run: |
-          mkdir -p bundles
+          mkdir -p bundles nai64-meta
           cp patches/build/release/patches-${{ env.VERSION }}.mpp bundles/hushfeed.mpp
-          NAI64_JSON=$(curl -s "https://raw.githubusercontent.com/Nai64/Nai64ExtraPatches/refs/heads/main/patches-bundle.json")
-          NAI64_URL=$(echo "$NAI64_JSON" | jq -r '.download_url')
-          NAI64_VER=$(echo "$NAI64_JSON" | jq -r '.version // "unknown"')
+          
+          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
+          NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
+          NAI64_VER=$(jq -r '.version // "unknown"' nai64-meta/bundle.json)
+          
+          if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
+            echo "❌ Could not find Nai64 download URL"
+            exit 1
+          fi
+          
           curl -L -o bundles/nai64.mpp "$NAI64_URL"
           echo "NAI64_VERSION=$NAI64_VER" >> $GITHUB_ENV
+          echo "✅ Nai64 bundle downloaded (version $NAI64_VER)"
 
       - name: Download base APK
         env:
