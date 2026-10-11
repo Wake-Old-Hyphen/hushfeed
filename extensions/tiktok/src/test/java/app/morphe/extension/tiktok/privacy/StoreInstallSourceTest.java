@@ -9,7 +9,10 @@ import android.content.pm.InstallSourceInfo;
 import android.content.pm.PackageManager;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.settings.Settings;
+
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 
 /**
  * How TikTok's Android 11 install source reads come back with "Look like the store app" on: the
@@ -62,6 +66,23 @@ public class StoreInstallSourceTest {
         assertEquals("com.huawei.appmarket", StoreInstallSource.installingOf(info));
         assertEquals("com.huawei.appmarket", StoreInstallSource.initiatingOf(info));
         assertNull(StoreInstallSource.originatingOf(info));
+    }
+
+    /** From Android 11 TikTok asks here first, so Log diagnostics has to name the store from here too. */
+    @Test public void anAnsweredInstallSourceReadIsLoggedByStore() throws Exception {
+        StoreIdentity.loggedInstaller = null;
+        ShadowLog.clear();
+        Settings.STORE_IDENTITY_INSTALLER.save("com.sec.android.app.samsungapps");
+        BaseSettings.DEBUG.save(true);
+        try {
+            InstallSourceInfo info = StoreInstallSource.sourceFor(pm, ownPackage);
+            StoreInstallSource.installingOf(info);
+            StoreInstallSource.initiatingOf(info);
+            assertEquals(Arrays.asList("com.sec.android.app.samsungapps"), StoreIdentityTest.answersLogged());
+        } finally {
+            BaseSettings.DEBUG.save(false);
+            StoreIdentity.loggedInstaller = null;
+        }
     }
 
     @Test public void offTikToksInstallSourceReadsAsItReallyIs() throws Exception {

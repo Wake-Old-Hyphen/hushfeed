@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Los creadores bloqueados, las palabras bloqueadas, los rangos de vistas y me gusta e interruptores como Ocultar los vídeos LIVE y Ocultar las historias ahora también funcionan en la pestaña Siguiendo. En TikTok 47.1.4 esa pestaña solo perdía los anuncios y los vídeos con ubicación, así que un creador que habías bloqueado podía seguir apareciendo ahí.
+
 * **TikTok:** Una palabra que no es un código de idioma en No traducir automáticamente estos idiomas ahora recibe un simple mensaje de "no es un código de idioma". Antes avisaba de que ningún video coincidiría nunca, que es el aviso del filtro de idioma de los subtítulos y no encaja en una lista que solo deja el texto sin traducir (#121).
 
 * **TikTok:** Detalles de la compilación ahora también nombra los parches que solo cambian los recursos de TikTok, como Change app name, Custom launcher icon y Trust user certificates. Muestra el parche, nunca el nombre ni la imagen que elegiste en sus opciones.

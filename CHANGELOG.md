@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Blocked creators, blocked words, the view and like ranges and switches like Hide LIVE videos and Hide stories now work on the Following tab too. On TikTok 47.1.4 that tab only lost its ads and place-tagged videos, so a creator you'd blocked could still turn up there.
+
 * **TikTok:** A word that isn't a language code in Don't auto translate these languages now gets a plain "isn't a language code" message. It used to warn that no video would ever match, which is the caption language filter's warning and doesn't fit a list that only keeps text untranslated (#121).
 
 * **TikTok:** Build details now also names the patches that only change TikTok's resources, like Change app name, Custom launcher icon and Trust user certificates. It lists the patch, never the name or picture you picked in its options.

@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Engellenen içerik üreticileri, engellenen kelimeler, izlenme ve beğeni aralıkları ve CANLI videolarını gizle, Hikayeleri gizle gibi anahtarlar artık Takip Edilenler sekmesinde de çalışıyor. TikTok 47.1.4'te o sekmeden yalnızca reklamlar ve konum etiketli videolar kalkıyordu, bu yüzden engellediğin bir içerik üreticisi orada yine çıkabiliyordu.
+
 * **TikTok:** Bu dilleri otomatik çevirme satırında dil kodu olmayan bir kelime artık sadece "dil kodu değil" mesajı alıyor. Önceden hiçbir videonun eşleşmeyeceği uyarısı çıkıyordu. Bu, açıklama dili filtresinin uyarısı ve yalnızca metni çevrilmeden bırakan bir listeye uymuyor (#121).
 
 * **TikTok:** Derleme ayrıntıları artık yalnızca TikTok'un kaynaklarını değiştiren yamaları da adlandırıyor, örneğin Change app name, Custom launcher icon ve Trust user certificates. Yamanın kendisi listelenir, seçeneklerinde seçtiğin ad ya da resim asla listelenmez.

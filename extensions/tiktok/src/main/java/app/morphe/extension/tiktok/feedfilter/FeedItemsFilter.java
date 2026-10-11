@@ -85,7 +85,14 @@ public final class FeedItemsFilter {
     private static final List<IFilter> FOR_YOU_FILTERS = forYouFilters();
     private static volatile List<IFilter> RANGE_FILTERS = createRangeFilters();
     private static final List<IFilter> AD_ONLY_FILTERS = List.of(ADS_FILTER);
-    private static final List<IFilter> LATE_FOLLOW_FILTERS = List.of(ADS_FILTER, LOCATION_FILTER);
+    /**
+     * The Following tab's rules where TikTok reads its list. On 47.1.4 the tab never loads
+     * through the response hook, so this read is the only place its videos meet the feed rules,
+     * the way For You's do in {@link #filterOnRead}; before, a blocked creator still showed there.
+     * Hide seen videos stays out: the list grows under the video playing, and a re-read would
+     * pull the ones already watched in it and move the pager.
+     */
+    private static final List<IFilter> LATE_FOLLOW_FILTERS = withoutSeen(CONTENT_FILTERS);
     /** The card shapes TikTok uses for a bought search result. */
     private static final String[] SEARCH_AD_FIELDS = {"multiAdCard", "aiAdCard", "brandZoneCard"};
     /** The feed type TikTok 47.0.3 gives a single TikTok Shop product card in search results. */
@@ -135,6 +142,12 @@ public final class FeedItemsFilter {
         List<IFilter> filters = new ArrayList<>(CONTENT_FILTERS);
         filters.add(UNPERSONALIZED_FILTER);
         return Collections.unmodifiableList(filters);
+    }
+
+    private static List<IFilter> withoutSeen(List<IFilter> filters) {
+        List<IFilter> kept = new ArrayList<>(filters);
+        kept.remove(SEEN_FILTER);
+        return Collections.unmodifiableList(kept);
     }
 
     private static List<IFilter> createRangeFilters() {
@@ -1310,9 +1323,7 @@ public final class FeedItemsFilter {
         if (owner instanceof FeedItemList && !isMainFeedList((FeedItemList) owner)) {
             activeContentFilters.remove(SEEN_FILTER);
         }
-        List<IFilter> activeRangeFilters = phase == FilterPhase.RESPONSE
-            ? getActiveFilters(RANGE_FILTERS)
-            : List.of();
+        List<IFilter> activeRangeFilters = getActiveFilters(RANGE_FILTERS);
         if (activeContentFilters.isEmpty() && activeRangeFilters.isEmpty()) {
             FeedCapture.noRules(source);
             return;
@@ -1445,8 +1456,10 @@ public final class FeedItemsFilter {
             FeedFilterCounters.removed(FOR_YOU_DISTRIBUTION_SOURCE, dropped == null ? 0 : dropped, UNPERSONALIZED_REASON);
         }
         // Never restore ads, blocked creators/words, seen videos, or other hard rejects. (A video a
-        // link opened was kept above, before any rule could take it out.)
-        if (rangeKept.isEmpty() && qualityFallback != null) {
+        // link opened was kept above, before any rule could take it out.) Not on the Following
+        // read either: that list grows under the video playing, so one put back now would go
+        // again the moment a video that passes arrives, from under the player.
+        if (rangeKept.isEmpty() && qualityFallback != null && phase == FilterPhase.RESPONSE) {
             if (capture != null) {
                 capture.putBack(extractor.extract(qualityFallback), "QualityFilter", "closest-to-quality-rule");
             }

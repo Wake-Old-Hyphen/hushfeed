@@ -35,6 +35,7 @@ val trackedScreenshots = mapOf(
     "settings/creator-list.png" to "pages/dark/creator-list.png",
     "settings/diagnostics-light.png" to "pages/light/diagnostics.png",
     "settings/diagnostics.png" to "pages/dark/diagnostics.png",
+    "settings/diagnostics-end.png" to "pages/dark/diagnostics-end.png",
     "settings/dialog-multi-dark.png" to "dialogs/dark/multi-choice.png",
     "settings/dialog-multi-light.png" to "dialogs/light/multi-choice.png",
     "settings/dialog-single-dark.png" to "dialogs/dark/single-choice.png",

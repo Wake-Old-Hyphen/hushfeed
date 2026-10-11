@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Bloklanmış yaradıcılar, bloklanmış sözlər, baxış və bəyənmə aralıqları və LIVE videoları gizlədin, Hekayələri gizlədin kimi açarlar indi İzlədiklərim tabında da işləyir. TikTok 47.1.4-də o tabdan yalnız reklamlar və məkan nişanlı videolar çıxırdı, ona görə blokladığınız yaradıcı orada yenə görünə bilirdi.
+
 * **TikTok:** Bu dilləri avtomatik tərcümə etməyin sırasına dil kodu olmayan söz yazanda indi sadəcə "dil kodu deyil" mesajı çıxır. Əvvəl heç bir videonun uyğun gəlməyəcəyi barədə xəbərdarlıq edirdi. Bu, başlıq dili filtrinin xəbərdarlığıdır və yalnız mətni tərcüməsiz saxlayan siyahıya uyğun gəlmir (#121).
 
 * **TikTok:** Build təfərrüatları indi yalnız TikTok-un resurslarını dəyişən yamaları da adlandırır, məsələn Change app name, Custom launcher icon və Trust user certificates. Yamanın özü göstərilir, onun seçimlərində seçdiyiniz ad və ya şəkil heç vaxt göstərilmir.

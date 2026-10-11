@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Criadores bloqueados, palavras bloqueadas, as faixas de visualizações e curtidas e chaves como Esconder os vídeos LIVE e Esconder os stories agora também valem na aba Seguindo. No TikTok 47.1.4 essa aba só perdia os anúncios e os vídeos com local, então um criador que você bloqueou ainda podia aparecer ali.
+
 * **TikTok:** Uma palavra que não é código de idioma em Não traduzir automaticamente estes idiomas agora recebe só a mensagem "não é um código de idioma". Antes avisava que nenhum vídeo combinaria, que é o aviso do filtro de idioma das legendas e não faz sentido numa lista que só deixa o texto sem tradução (#121).
 
 * **TikTok:** Detalhes da compilação agora também cita os patches que só mudam os recursos do TikTok, como Change app name, Custom launcher icon e Trust user certificates. Ele lista o patch, nunca o nome ou a imagem que você escolheu nas opções dele.

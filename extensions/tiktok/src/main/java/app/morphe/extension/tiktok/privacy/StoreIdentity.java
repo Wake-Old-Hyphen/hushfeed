@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -131,9 +132,17 @@ public final class StoreIdentity {
     @Nullable
     public static String installerFor(PackageManager manager, String packageName) {
         if (!answersFor(packageName)) return manager.getInstallerPackageName(packageName);
-        String store = installer();
-        // Once per store, so Log diagnostics shows the answer TikTok got without a line per read.
-        if (!store.equals(loggedInstaller)) {
+        return logged(installer());
+    }
+
+    /**
+     * {@code store}, after Log diagnostics names it once per store rather than once per read.
+     * Every installer answer goes through here, {@link StoreInstallSource}'s included, since from
+     * Android 11 TikTok asks that one first. A read with logging off doesn't count, so turning
+     * logging on mid-session still shows the store.
+     */
+    static String logged(String store) {
+        if (BaseSettings.DEBUG.get() && !store.equals(loggedInstaller)) {
             loggedInstaller = store;
             Logger.printDebug(() -> "Store identity: TikTok's installer read answered " + store);
         }

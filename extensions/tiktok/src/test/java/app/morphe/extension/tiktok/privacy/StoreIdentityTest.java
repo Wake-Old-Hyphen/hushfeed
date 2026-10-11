@@ -161,7 +161,22 @@ public class StoreIdentityTest {
         }
     }
 
-    private static List<String> answersLogged() {
+    /** TikTok reads its installer at a cold start, before anyone turns Log diagnostics on. */
+    @Test public void aReadBeforeLoggingIsOnStillLeavesTheStoreToLog() {
+        PackageManager pm = context.getPackageManager();
+        pm.setInstallerPackageName(ownPackage, "com.morphe.manager");
+        BaseSettings.DEBUG.save(false);
+        StoreIdentity.installerFor(pm, ownPackage);
+        BaseSettings.DEBUG.save(true);
+        try {
+            StoreIdentity.installerFor(pm, ownPackage);
+            assertEquals(Arrays.asList(StoreIdentity.STORE), answersLogged());
+        } finally {
+            BaseSettings.DEBUG.save(false);
+        }
+    }
+
+    static List<String> answersLogged() {
         String prefix = "Store identity: TikTok's installer read answered ";
         List<String> answers = new ArrayList<>();
         for (ShadowLog.LogItem item : ShadowLog.getLogs()) {

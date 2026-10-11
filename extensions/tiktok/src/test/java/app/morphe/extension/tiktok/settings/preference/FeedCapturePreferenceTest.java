@@ -2,14 +2,20 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Looper;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.feedfilter.FeedCapture;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
+import app.morphe.extension.tiktok.settings.preference.categories.DebugPreferenceCategory;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,6 +24,7 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
@@ -116,6 +123,38 @@ public class FeedCapturePreferenceTest {
         }
         settle();
         assertEquals("Capture the feed", String.valueOf(retry.getTitle()));
+    }
+
+    public static final class TestActivity extends PreferenceActivity {}
+
+    /**
+     * The row comes with the Diagnostic tools patch. A build with only the Feature Gate Lab still
+     * has the Diagnostics page, and no Capture the feed row on it.
+     */
+    @Test public void theRowIsOnlyOnABuildWithDiagnosticTools() {
+        boolean diagnostics = SettingsStatus.diagnosticsEnabled;
+        boolean recorder = SettingsStatus.featureGateRecorderEnabled;
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            Utils.setContext(controller.get());
+            SettingsStatus.featureGateRecorderEnabled = true;
+            SettingsStatus.diagnosticsEnabled = false;
+            PreferenceScreen withoutTools = debugPage(controller.get());
+            assertNotNull("the Feature Gate Lab case built no page, so it proves nothing",
+                    withoutTools.findPreference("feature_gate_recorder"));
+            assertNull("a build without Diagnostic tools has a Capture the feed row",
+                    withoutTools.findPreference(FeedCapturePreference.KEY));
+            SettingsStatus.diagnosticsEnabled = true;
+            assertNotNull(debugPage(controller.get()).findPreference(FeedCapturePreference.KEY));
+        } finally {
+            SettingsStatus.diagnosticsEnabled = diagnostics;
+            SettingsStatus.featureGateRecorderEnabled = recorder;
+        }
+    }
+
+    private static PreferenceScreen debugPage(PreferenceActivity activity) {
+        PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+        new DebugPreferenceCategory(activity, screen);
+        return screen;
     }
 
     /** The save thread finished and the row refresh it posts has run. */

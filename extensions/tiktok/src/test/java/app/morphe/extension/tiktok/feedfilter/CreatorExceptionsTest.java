@@ -27,6 +27,8 @@ import com.ss.android.ugc.aweme.feed.model.FeedItemList;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeImageInfo;
 import com.ss.android.ugc.aweme.feed.model.PhotoModeTextInfo;
 import com.ss.android.ugc.aweme.feed.model.RecReasonsStruct;
+import com.ss.android.ugc.aweme.follow.presenter.FollowFeed;
+import com.ss.android.ugc.aweme.follow.presenter.FollowFeedList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -376,6 +378,34 @@ public class CreatorExceptionsTest {
     /** The aids left on a page after the filter, in order, with no filter having thrown. */
     private static List<String> survivors(FeedItemList list) {
         FeedItemsFilter.filter(list);
+        assertNoFilterThrew();
+        List<String> aids = new ArrayList<>();
+        for (Object item : list.items) aids.add(((Aweme) item).getAid());
+        return aids;
+    }
+
+    /** The aids left in a Following list once TikTok reads it, with no filter having thrown. */
+    private static List<String> followingSurvivors(Item... items) {
+        FollowFeedList list = new FollowFeedList();
+        list.mItems = new ArrayList<>();
+        return followingSurvivors(list, items);
+    }
+
+    /** {@code items} appended to {@code list}, the way TikTok grows it, and the list read again. */
+    private static List<String> followingSurvivors(FollowFeedList list, Item... items) {
+        for (Item item : items) {
+            FollowFeed entry = new FollowFeed();
+            entry.aweme = item;
+            list.mItems.add(entry);
+        }
+        FeedItemsFilter.filterLate(list);
+        assertNoFilterThrew();
+        List<String> aids = new ArrayList<>();
+        for (Object entry : list.mItems) aids.add(((FollowFeed) entry).aweme.getAid());
+        return aids;
+    }
+
+    private static void assertNoFilterThrew() {
         try {
             java.lang.reflect.Field errors = FeedItemsFilter.class.getDeclaredField("filterExceptionLogCount");
             errors.setAccessible(true);
@@ -384,9 +414,6 @@ public class CreatorExceptionsTest {
         } catch (ReflectiveOperationException exception) {
             throw new AssertionError(exception);
         }
-        List<String> aids = new ArrayList<>();
-        for (Object item : list.items) aids.add(((Aweme) item).getAid());
-        return aids;
     }
 
     @Test
@@ -486,6 +513,72 @@ public class CreatorExceptionsTest {
             assertEquals(which.filter + " did not run on the feed, so the profile case proves nothing",
                     List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
         }
+    }
+
+    /**
+     * The Following tab on 47.1.4 reaches the filter only where TikTok reads its list, never
+     * through the response hook, and a blocked creator still showed there on a phone. Every feed
+     * rule runs on that read now, except two: the For You padding rule, which reads marks only
+     * For You carries, and Hide seen videos, since the list grows under the video playing.
+     */
+    @Test
+    public void theFollowingTabsReadRunsEveryFeedRuleButSeenAndForYouPadding() {
+        List<Case> cases = new ArrayList<>(subjectiveCases());
+        cases.addAll(hardCases());
+        for (Case which : cases) {
+            quiet();
+            which.enable.run();
+            Item post = tripped("post", which);
+            boolean seen = which.filter.equals("SeenVideoFilter");
+            if (seen) assertTrue("the post was never marked seen, so keeping it proves nothing",
+                    SeenVideoHistory.shouldHide("post"));
+            List<String> expected = seen || which.filter.equals("UnpersonalizedForYouFilter")
+                    ? List.of("post", "plain") : List.of("plain");
+            assertEquals(which.filter + " on the Following tab's read",
+                    expected, followingSurvivors(post, stranger("plain")));
+        }
+    }
+
+    /** A video watched while the list grows under it stays where it is. */
+    @Test
+    public void aFollowingVideoWatchedWhileTheListGrowsStays() {
+        Settings.HIDE_SEEN_VIDEOS.save(true);
+        FollowFeedList list = new FollowFeedList();
+        list.mItems = new ArrayList<>();
+        assertEquals(List.of("playing"), followingSurvivors(list, stranger("playing")));
+        SeenVideoHistory.onPlayProgressChange("playing", 9_000, 10_000);
+        assertTrue(SeenVideoHistory.shouldHide("playing"));
+        assertEquals(List.of("playing", "next"), followingSurvivors(list, stranger("next")));
+    }
+
+    @Test
+    public void anExceptedCreatorKeepsTheirFollowingPosts() {
+        Settings.HIDE_STORY.save(true);
+        Settings.CREATOR_FILTER_EXCEPTIONS.save("@" + HANDLE);
+        Item story = new Item("story");
+        story.story = true;
+        Item other = stranger("other");
+        other.story = true;
+        assertEquals(List.of("story"), followingSurvivors(story, other));
+    }
+
+    /**
+     * The For You read puts back the post closest to the length rule when it hides every one.
+     * The Following read doesn't: its list grows under the video playing, so one put back would
+     * go again from under the player as soon as a post that passes arrived.
+     */
+    @Test
+    public void theFollowingReadPutsNoLongVideoBack() {
+        Settings.MAX_VIDEO_SECONDS.save(1);
+        Item longOne = stranger("long");
+        longOne.durationMs = 5_000;
+        assertEquals("the control: For You keeps the closest one", List.of("long"), survivors(page(longOne)));
+        FollowFeedList list = new FollowFeedList();
+        list.mItems = new ArrayList<>();
+        Item longTwo = stranger("long-two");
+        longTwo.durationMs = 5_000;
+        assertEquals(List.of(), followingSurvivors(list, longTwo));
+        assertEquals(List.of("short"), followingSurvivors(list, stranger("short")));
     }
 
     /**

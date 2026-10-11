@@ -49,13 +49,13 @@ public final class StoreInstallSource {
     /** In place of {@link InstallSourceInfo#getInstallingPackageName()}. */
     @Nullable
     public static String installingOf(InstallSourceInfo info) {
-        return answered(info) ? StoreIdentity.installer() : info.getInstallingPackageName();
+        return answered(info) ? StoreIdentity.logged(StoreIdentity.installer()) : info.getInstallingPackageName();
     }
 
     /** In place of {@link InstallSourceInfo#getInitiatingPackageName()}. */
     @Nullable
     public static String initiatingOf(InstallSourceInfo info) {
-        return answered(info) ? StoreIdentity.installer() : info.getInitiatingPackageName();
+        return answered(info) ? StoreIdentity.logged(StoreIdentity.installer()) : info.getInitiatingPackageName();
     }
 
     /** In place of {@link InstallSourceInfo#getOriginatingPackageName()}. */
@@ -68,7 +68,7 @@ public final class StoreInstallSource {
         if (info == null || !OWN.containsKey(info)) return false;
         if (!logged) {
             logged = true;
-            Logger.printInfo(() -> "Store identity: the Play Store answered an install source read");
+            Logger.printInfo(() -> "Store identity: answered an install source read as a store install");
         }
         return true;
     }

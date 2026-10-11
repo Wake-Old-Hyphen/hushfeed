@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Kreator yang diblokir, kata yang diblokir, rentang tayangan dan suka, serta tombol seperti Sembunyikan video LIVE dan Sembunyikan Story kini juga berlaku di tab Mengikuti. Di TikTok 47.1.4 tab itu hanya kehilangan iklan dan video bertanda lokasi, jadi kreator yang sudah kamu blokir masih bisa muncul di sana.
+
 * **TikTok:** Kata yang bukan kode bahasa di Jangan terjemahkan otomatis bahasa ini sekarang cukup mendapat pesan "bukan kode bahasa". Sebelumnya muncul peringatan bahwa tidak ada video yang akan cocok, padahal itu peringatan filter bahasa keterangan dan tidak cocok untuk daftar yang hanya membiarkan teks tidak diterjemahkan (#121).
 
 * **TikTok:** Detail build sekarang juga menyebut patch yang hanya mengubah sumber daya TikTok, seperti Change app name, Custom launcher icon, dan Trust user certificates. Yang dicantumkan patch-nya, tidak pernah nama atau gambar yang kamu pilih di opsinya.

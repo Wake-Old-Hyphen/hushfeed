@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Creator bloccati, parole bloccate, gli intervalli di visualizzazioni e Mi piace e interruttori come Nascondi i video LIVE e Nascondi le storie ora funzionano anche nella scheda Seguiti. Su TikTok 47.1.4 quella scheda perdeva solo le pubblicità e i video con un luogo, quindi un creator che avevi bloccato poteva ancora comparire lì.
+
 * **TikTok:** Una parola che non è un codice lingua in Non tradurre automaticamente queste lingue ora riceve un semplice messaggio "non è un codice lingua". Prima avvisava che nessun video avrebbe mai corrisposto, che è l'avviso del filtro sulla lingua delle didascalie e non c'entra con un elenco che lascia solo il testo non tradotto (#121).
 
 * **TikTok:** Dettagli della build ora indica anche le patch che cambiano solo le risorse di TikTok, come Change app name, Custom launcher icon e Trust user certificates. Elenca la patch, mai il nome o l'immagine che hai scelto nelle sue opzioni.
