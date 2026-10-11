@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Təmiz ekranda başlıqları saxlayın açıq olanda, təmiz ekrandakı başlıq artıq aşağı kənara düşmür, TikTok-un idarəetmə düymələri gizlənməzdən əvvəl göstərdiyi yerdə qalır (#141). Hələ heç bir başlıq görünməyibsə, köhnə yerində qalır.
+
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda saatın altındakı zolaq yenə otağın yuxarı hissəsinin qalanı kimi kölgəli olur. TikTok-un panel üçün qara zolaq saxladığı telefonlarda o, aşağıdakı yayımdan açıq görünürdü (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** İki dəfə toxunma Hushfeed-in hərəkətlərindən birinə qoyulubsa, barmağın bir az çox qaldığı ikinci toxunuş artıq TikTok-un uzun basma menyusunu da açmır, yəni paylaşım paneli şərhlərin üstündə açılmır. (#63)
+* **TikTok:** İki dəfə toxunma Hushfeed-in hərəkətlərindən birinə qoyulubsa və Long-press controls yamağı tətbiq olunubsa, barmağın bir az çox qaldığı ikinci toxunuş artıq TikTok-un uzun basma menyusunu da açmır, yəni paylaşım paneli şərhlərin üstündə açılmır. (#63)
 
-* **TikTok:** LIVE idarəetmələri üçün Hushfeed ayarları > Oxutma altında üçüncü açar var, Hər LIVE otağında keyfiyyət seçimi təklif et. TikTok LIVE menyusunda Video keyfiyyəti seçimini yalnız yayım bunu istədikdə və ya TikTok hesabın üçün yeni keyfiyyət seçicisini açdıqda göstərir, ona görə bəzi otaqlarda keyfiyyət seçmək mümkün deyildi. Açar açıq olanda belə otaqlar yeni seçicini alır, növbəti otaq isə TikTok bağlanana qədər sonuncu seçdiyin keyfiyyətdə açılır. Standart olaraq bağlıdır. (#57)
+* **TikTok:** LIVE idarəetmələri üçün Hushfeed ayarları > Oxutma altında üçüncü açar var, Daha çox LIVE otağında keyfiyyət seçimi təklif et. TikTok LIVE menyusunda Video keyfiyyəti seçimini yalnız yayım bunu istədikdə və ya TikTok hesabın üçün yeni keyfiyyət seçicisini açdıqda göstərir, ona görə bəzi otaqlarda keyfiyyət seçmək mümkün deyildi. Açar açıq olanda belə otaqların çoxu yeni seçicini alır (yalnız səsli otaqlar almır), növbəti otaq isə TikTok bağlanana qədər sonuncu seçdiyin keyfiyyətdə açılır. Standart olaraq bağlıdır. (#57)
 
 * **TikTok:** Profil şəbəkəsində tarixləri göstərin və İştirak dərəcəsini göstərin indi TikTok 47.1.4-ün şəbəkələrində işləyir, həm profilin videolarında, həm də Sevimlilərdə və bəyənilən videolarda. Bu versiya hər xananın baxış sayını patçın çatmadığı yerdə yazır, ona görə orada nə tarix, nə də dərəcə görünürdü.
 

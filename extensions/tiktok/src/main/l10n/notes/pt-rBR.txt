@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Com Manter as legendas com a tela limpa ativado, a legenda na tela limpa agora fica onde o TikTok a mostrava antes de os controles sumirem, em vez de descer até a borda inferior (#141). Enquanto nenhuma legenda tiver aparecido, ela fica no lugar antigo.
+
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, a faixa sob o relógio volta a ter a mesma sombra do resto do topo da sala. Nos celulares em que o TikTok reserva uma faixa preta para a barra, ela aparecia mais clara que a transmissão abaixo (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Com Toque duplo em uma das ações do Hushfeed, um segundo toque em que o dedo fica um pouco demais não abre mais junto o menu de toque longo do TikTok, então o painel de compartilhar não aparece mais por cima dos comentários. (#63)
+* **TikTok:** Com Toque duplo em uma das ações do Hushfeed e Long-press controls no patch, um segundo toque em que o dedo fica um pouco demais não abre mais junto o menu de toque longo do TikTok, então o painel de compartilhar não aparece mais por cima dos comentários. (#63)
 
-* **TikTok:** Controles de LIVE tem uma terceira chave, Oferecer a qualidade da LIVE em todas as salas, em Configurações do Hushfeed > Reprodução. O TikTok só oferece Qualidade do vídeo no menu de uma LIVE quando a transmissão pede ou quando o TikTok liga o seletor de qualidade mais novo para a sua conta, então em algumas salas não dava para escolher. Com a chave ligada, as salas sem ele ganham o seletor novo, e a próxima sala abre na última qualidade que você escolheu até o TikTok ser fechado. Vem desligada. (#57)
+* **TikTok:** Controles de LIVE tem uma terceira chave, Oferecer a qualidade da LIVE em mais salas, em Configurações do Hushfeed > Reprodução. O TikTok só oferece Qualidade do vídeo no menu de uma LIVE quando a transmissão pede ou quando o TikTok liga o seletor de qualidade mais novo para a sua conta, então em algumas salas não dava para escolher. Com a chave ligada, a maioria das salas sem ele ganha o seletor novo (salas só de áudio não), e a próxima sala abre na última qualidade que você escolheu até o TikTok ser fechado. Vem desligada. (#57)
 
 * **TikTok:** Mostrar datas na grade do perfil e Mostrar taxa de engajamento agora funcionam nas grades do TikTok 47.1.4, tanto nos vídeos de um perfil quanto nos Favoritos e nos vídeos curtidos. Essa versão escreve as visualizações de cada quadro num lugar que o patch não alcançava, então nem a data nem a taxa apareciam ali.
 

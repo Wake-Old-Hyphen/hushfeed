@@ -154,7 +154,8 @@ public final class GestureActions {
     /**
      * The same for a press that arrives without its touch, from TikTok's own timers. They fire
      * 350 to 500 ms after the down, and the tap ran at that down, so a press that soon after the
-     * tap is its touch. A new one needs a lift and a full hold first.
+     * tap is its touch. A new one needs a lift and a full hold first, so only a third touch that
+     * goes down within about a third of a second of the tap and stays down loses its press here.
      */
     static boolean isTakenDoubleTap() {
         if (tookTapAt == Long.MIN_VALUE) return false;
@@ -184,7 +185,6 @@ public final class GestureActions {
 
     /** Eligibility callback from the native edge-speedup component before its 300 ms timer. */
     public static boolean allowNativeEdgeSpeedup(float x) {
-        if (isTakenDoubleTap()) return false;
         if (edgeSeekDelta(x) != 0) return false;
         return !takesLongPress(Settings.LONG_PRESS_ACTION.get());
     }

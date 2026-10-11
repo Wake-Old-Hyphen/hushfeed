@@ -460,6 +460,134 @@ public class CaptionToolsTest {
         }
     }
 
+    /**
+     * Clear display dropped the kept line to a fixed 96 dp, near the bottom edge and below where
+     * the reader had been looking (#141). It ends where TikTok's caption strip ended now, keeps
+     * the old spot until a strip has been seen, and carries the spot to the next video.
+     */
+    @Test @Config(qualifiers = "w360dp-h780dp-xxhdpi")
+    public void theKeptCaptionEndsWhereTikTokDrewTheCaption() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            int stripId = View.generateViewId();
+            CaptionStyle.resolveForTests("47.1.4:dm5", stripId);
+            FrameLayout source = new FrameLayout(activity);
+            FrameLayout strip = new FrameLayout(activity);
+            strip.setId(stripId);
+            FrameLayout.LayoutParams spot = new FrameLayout.LayoutParams(-1, 90, android.view.Gravity.BOTTOM);
+            spot.bottomMargin = 700;
+            source.addView(strip, spot);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            View decor = activity.getWindow().getDecorView();
+
+            CaptionTools.onVideoChanged("first");
+            strip.setVisibility(View.GONE);
+            CaptionTools.onCaption(source, "first", "EXPANDED", "Before any strip");
+            lay(decor);
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            CaptionTools.onClear(new Video("first"), true);
+            TextView caption = find(decor, "Before any strip");
+            assertNotNull(caption);
+            int fallback = Math.round(12 * activity.getResources().getDisplayMetrics().density) * 8;
+            assertEquals("with no strip seen yet the line should keep its old spot",
+                    fallback, ((FrameLayout.LayoutParams) caption.getLayoutParams()).bottomMargin);
+
+            CaptionTools.onClear(new Video("first"), false);
+            strip.setVisibility(View.VISIBLE);
+            CaptionTools.onCaption(source, null, "EXPANDED", "Where TikTok drew it");
+            lay(decor);
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            int stripBottom = bottom(strip);
+            CaptionTools.onClear(new Video("first"), true);
+            lay(decor);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals("Where TikTok drew it", caption.getText().toString());
+            assertEquals("the kept line should end where TikTok's strip ended", stripBottom, bottom(caption));
+
+            // Automatic clear display can clear the next video before its first caption shows.
+            CaptionTools.onVideoChanged("second");
+            strip.setVisibility(View.GONE);
+            CaptionTools.onCaption(source, "second", "EXPANDED", "The next video");
+            CaptionTools.onClear(new Video("second"), true);
+            lay(decor);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals("the spot should carry over to the next video", stripBottom, bottom(caption));
+        }
+    }
+
+    /**
+     * Every frame used to overwrite the spot, so the last frame of a strip sliding away in a swipe
+     * stuck, and the next video's line went halfway up or down to the edge. A window of another
+     * height can't use a spot read in this one either.
+     */
+    @Test @Config(qualifiers = "w360dp-h780dp-xxhdpi")
+    public void aStripCaughtMidSwipeOrInAnotherWindowSizeDoesNotPlaceTheLine() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            int stripId = View.generateViewId();
+            CaptionStyle.resolveForTests("47.1.4:dm5", stripId);
+            FrameLayout source = new FrameLayout(activity);
+            FrameLayout strip = new FrameLayout(activity);
+            strip.setId(stripId);
+            FrameLayout.LayoutParams spot = new FrameLayout.LayoutParams(-1, 90, android.view.Gravity.BOTTOM);
+            spot.bottomMargin = 700;
+            source.addView(strip, spot);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            View decor = activity.getWindow().getDecorView();
+
+            CaptionTools.onVideoChanged("first");
+            CaptionTools.onCaption(source, "first", "EXPANDED", "Settled");
+            lay(decor);
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            int settled = bottom(strip);
+            for (int margin : new int[] {800, 900, 1000}) {
+                spot.bottomMargin = margin;
+                strip.setLayoutParams(spot);
+                lay(decor);
+                decor.getViewTreeObserver().dispatchOnPreDraw();
+            }
+            strip.setVisibility(View.GONE);
+            CaptionTools.onClear(new Video("first"), true);
+            lay(decor);
+            TextView caption = find(decor, "Settled");
+            assertNotNull(caption);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals("a strip read partway through a swipe shouldn't move the line", settled, bottom(caption));
+
+            CaptionTools.onClear(new Video("first"), false);
+            android.util.DisplayMetrics screen = decor.getResources().getDisplayMetrics();
+            layAt(decor, screen.heightPixels - 300);
+            CaptionTools.onClear(new Video("first"), true);
+            int fallback = Math.round(12 * activity.getResources().getDisplayMetrics().density) * 8;
+            assertEquals("a spot read in a taller window should give way to the old one",
+                    fallback, ((FrameLayout.LayoutParams) caption.getLayoutParams()).bottomMargin);
+        }
+    }
+
+    private static void lay(View decor) {
+        layAt(decor, decor.getResources().getDisplayMetrics().heightPixels);
+    }
+
+    private static void layAt(View decor, int height) {
+        int width = decor.getResources().getDisplayMetrics().widthPixels;
+        decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        decor.layout(0, 0, width, height);
+    }
+
+    private static int bottom(View view) {
+        int[] at = new int[2];
+        view.getLocationInWindow(at);
+        return at[1] + view.getHeight();
+    }
+
     @Test public void preDrawTracksFocusAndSourceAttachmentWithoutAnotherCaption() {
         try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
             var activity = owner.get();

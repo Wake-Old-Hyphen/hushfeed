@@ -26,7 +26,7 @@ public final class LiveControls {
     }
 
     /**
-     * True while every LIVE room should offer TikTok's newer quality picker and a pick should
+     * True while LIVE rooms should offer TikTok's newer quality picker and a pick should
      * carry to the next room. TikTok's own setting for both is off unless its server turns it on,
      * which leaves a quality pick only in rooms whose stream asks for the older one. Paused, the
      * switch answers off and TikTok's setting decides again.

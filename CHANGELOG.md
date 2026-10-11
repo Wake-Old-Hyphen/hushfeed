@@ -4,11 +4,17 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** With Keep captions in Clear display on, the caption in Clear display now sits where TikTok showed it before the controls went away, instead of dropping to the bottom edge (#141). Before any caption has shown, it keeps the old spot.
+
+* **TikTok:** With Show a LIVE under the status bar on, the strip under the clock is shaded like the rest of the room's top again. On phones where TikTok keeps a black strip for the bar, it showed lighter than the stream below it (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** With Double tap set to one of Hushfeed's actions, a second tap your finger stays on a moment too long no longer brings up TikTok's long press menu as well, so the share panel stops opening on top of the comments. (#63)
+* **TikTok:** With Double tap set to one of Hushfeed's actions and Long-press controls patched in, a second tap your finger stays on a moment too long no longer brings up TikTok's long press menu as well, so the share panel stops opening on top of the comments. (#63)
 
-* **TikTok:** LIVE controls has a third switch, Offer LIVE quality in every room, under Hushfeed settings > Playback. TikTok offers Video quality in a LIVE's menu only when the stream asks for it or TikTok turns its newer quality picker on for your account, so in some rooms there was no way to pick one. With the switch on, rooms without it get the newer picker, and the next room opens at the quality you picked last until TikTok closes. It's off by default. (#57)
+* **TikTok:** LIVE controls has a third switch, Offer LIVE quality in more rooms, under Hushfeed settings > Playback. TikTok offers Video quality in a LIVE's menu only when the stream asks for it or TikTok turns its newer quality picker on for your account, so in some rooms there was no way to pick one. With the switch on, most rooms without it get the newer picker (audio-only rooms still don't), and the next room opens at the quality you picked last until TikTok closes. It's off by default. (#57)
 
 * **TikTok:** Show dates on profile grids and Show engagement rate work on TikTok 47.1.4's grids now, on a profile's videos and on Favorites and liked videos too. That version sets each cell's view count in a place the patch didn't reach, so neither the date nor the rate showed up there.
 

@@ -335,7 +335,7 @@ public class GestureActionsTest {
     /**
      * #63: a finger left down on a double tap's second touch got TikTok's long press as well, and
      * its share panel opened over the comments the tap had opened. A tap Hushfeed takes keeps its
-     * touch, on the detector's long press, the native timer's and the edge speedup alike.
+     * touch, on the detector's long press and the native timer's alike.
      */
     @Test public void aTakenDoubleTapKeepsItsSecondTouchFromTheLongPress() {
         try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup()) {
@@ -357,7 +357,9 @@ public class GestureActionsTest {
             assertTrue("the native timer's press went to TikTok", GestureActions.onLongPress(middle));
             Settings.LONG_PRESS_ACTION.save("default");
             assertTrue("TikTok's share panel opened", GestureActions.onLongPress(down(second, middle)));
-            assertFalse("the edge speedup started", GestureActions.allowNativeEdgeSpeedup(middle));
+            // TikTok asks about its edge hold as the second touch lands, before the tap runs, so
+            // the taken tap leaves that answer alone.
+            assertTrue(GestureActions.allowNativeEdgeSpeedup(middle));
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             assertEquals("the long press action ran", "before",
                     String.valueOf(clipboard.getPrimaryClip().getItemAt(0).getText()));
@@ -369,7 +371,6 @@ public class GestureActionsTest {
             long later = SystemClock.uptimeMillis();
             assertFalse(GestureActions.onLongPress(down(later - 500, middle)));
             assertFalse(GestureActions.onLongPress(middle));
-            assertTrue(GestureActions.allowNativeEdgeSpeedup(middle));
         } finally {
             Settings.DOUBLE_TAP_ACTION.resetToDefault();
             Settings.LONG_PRESS_ACTION.resetToDefault();
@@ -391,7 +392,6 @@ public class GestureActionsTest {
             assertFalse(GestureActions.onDoubleTap(down(second - 180, middle)));
             assertFalse(GestureActions.onLongPress(down(second, middle)));
             assertFalse(GestureActions.onLongPress(middle));
-            assertTrue(GestureActions.allowNativeEdgeSpeedup(middle));
         } finally {
             Settings.DOUBLE_TAP_ACTION.resetToDefault();
             Settings.LONG_PRESS_ACTION.resetToDefault();

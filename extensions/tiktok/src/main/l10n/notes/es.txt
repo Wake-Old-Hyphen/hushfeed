@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Con Mantener los subtítulos con los controles ocultos activado, el subtítulo con los controles ocultos ahora queda donde TikTok lo mostraba antes de que se ocultaran los controles, en vez de bajar hasta el borde inferior (#141). Mientras no se haya mostrado ningún subtítulo, se queda en el sitio de antes.
+
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, la franja bajo el reloj vuelve a tener la misma sombra que el resto de la parte superior de la sala. En los teléfonos donde TikTok deja una franja negra para la barra, se veía más clara que la transmisión de abajo (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Con Doble toque en una de las acciones de Hushfeed, un segundo toque en el que el dedo se queda un momento de más ya no abre también el menú de pulsación larga de TikTok, así que el panel de compartir ya no aparece encima de los comentarios. (#63)
+* **TikTok:** Con Doble toque en una de las acciones de Hushfeed y Long-press controls en el parche, un segundo toque en el que el dedo se queda un momento de más ya no abre también el menú de pulsación larga de TikTok, así que el panel de compartir ya no aparece encima de los comentarios. (#63)
 
-* **TikTok:** Controles de LIVE tiene un tercer interruptor, Ofrecer la calidad de LIVE en todas las salas, en Ajustes de Hushfeed > Reproducción. TikTok solo ofrece Calidad de video en el menú de un LIVE cuando la transmisión lo pide o cuando TikTok activa su selector de calidad más nuevo para tu cuenta, así que en algunas salas no había forma de elegirla. Con el interruptor activado, las salas sin él reciben el selector nuevo, y la siguiente sala se abre con la última calidad que elegiste hasta que cierres TikTok. Viene desactivado. (#57)
+* **TikTok:** Controles de LIVE tiene un tercer interruptor, Ofrecer la calidad de LIVE en más salas, en Ajustes de Hushfeed > Reproducción. TikTok solo ofrece Calidad de video en el menú de un LIVE cuando la transmisión lo pide o cuando TikTok activa su selector de calidad más nuevo para tu cuenta, así que en algunas salas no había forma de elegirla. Con el interruptor activado, la mayoría de las salas sin él reciben el selector nuevo (las salas solo de audio no), y la siguiente sala se abre con la última calidad que elegiste hasta que cierres TikTok. Viene desactivado. (#57)
 
 * **TikTok:** Mostrar fechas en la cuadrícula del perfil y Mostrar la tasa de interacción ya funcionan en las cuadrículas de TikTok 47.1.4, tanto en los vídeos de un perfil como en Favoritos y en los vídeos que te gustan. Esa versión pone las vistas de cada celda en un sitio al que el parche no llegaba, así que ni la fecha ni la tasa aparecían ahí.
 

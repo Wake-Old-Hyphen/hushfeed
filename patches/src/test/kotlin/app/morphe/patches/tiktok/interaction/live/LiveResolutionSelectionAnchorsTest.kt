@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Offer LIVE quality in every room answers true at the entry of the two methods that read TikTok's
+ * Offer LIVE quality in more rooms answers true at the entry of the two methods that read TikTok's
  * LIVE resolution selection setting. Each declared build has one of each, and nothing outside the
  * setting reads its value another way, so the two answers are the whole setting. The room menu
  * still gates the newer picker on the first, beside the stream's own showQualityButton, and the

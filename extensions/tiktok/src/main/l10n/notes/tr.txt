@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Temiz ekranda altyazıları koru açıkken, temiz ekrandaki altyazı artık alt kenara inmek yerine TikTok'un kontroller kaybolmadan önce gösterdiği yerde duruyor (#141). Henüz hiç altyazı görünmediyse eski yerinde kalır.
+
+* **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken saatin altındaki şerit yine odanın üst kısmının geri kalanı gibi gölgeli. TikTok'un çubuk için siyah şerit ayırdığı telefonlarda bu şerit alttaki yayından daha açık görünüyordu (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Çift dokunma Hushfeed'in eylemlerinden birine ayarlıysa, parmağın biraz fazla kaldığı ikinci dokunuş artık TikTok'un uzun basma menüsünü de açmıyor, yani paylaşım paneli artık yorumların üstünde açılmıyor. (#63)
+* **TikTok:** Çift dokunma Hushfeed'in eylemlerinden birine ayarlıysa ve Long-press controls yamada varsa, parmağın biraz fazla kaldığı ikinci dokunuş artık TikTok'un uzun basma menüsünü de açmıyor, yani paylaşım paneli artık yorumların üstünde açılmıyor. (#63)
 
-* **TikTok:** LIVE kontrolleri'nin Hushfeed ayarları > Oynatma altında üçüncü bir anahtarı var, Her LIVE odasında kalite seçimi sun. TikTok bir LIVE'ın menüsünde Video kalitesini yalnızca yayın bunu istediğinde ya da TikTok hesabın için yeni kalite seçicisini açtığında gösteriyor, bu yüzden bazı odalarda kalite seçilemiyordu. Anahtar açıkken bu odalar yeni seçiciyi alır ve sonraki oda, TikTok kapanana kadar en son seçtiğin kalitede açılır. Varsayılan olarak kapalı. (#57)
+* **TikTok:** LIVE kontrolleri'nin Hushfeed ayarları > Oynatma altında üçüncü bir anahtarı var, Daha fazla LIVE odasında kalite seçimi sun. TikTok bir LIVE'ın menüsünde Video kalitesini yalnızca yayın bunu istediğinde ya da TikTok hesabın için yeni kalite seçicisini açtığında gösteriyor, bu yüzden bazı odalarda kalite seçilemiyordu. Anahtar açıkken bu odaların çoğu yeni seçiciyi alır (yalnızca sesli odalar hariç) ve sonraki oda, TikTok kapanana kadar en son seçtiğin kalitede açılır. Varsayılan olarak kapalı. (#57)
 
 * **TikTok:** Profil ızgarasında tarihleri göster ve Etkileşim oranını göster artık TikTok 47.1.4'ün ızgaralarında çalışıyor, hem bir profilin videolarında hem de Favorilerde ve beğenilen videolarda. Bu sürüm her hücrenin izlenme sayısını yamanın ulaşmadığı bir yerde yazıyor, bu yüzden orada ne tarih ne de oran görünüyordu.
 

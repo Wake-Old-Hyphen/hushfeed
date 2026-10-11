@@ -190,7 +190,7 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown, can " +
         "show a LIVE's exact viewer count instead of a rounded one, and can offer a quality " +
-        "choice in every LIVE room. Starts off. Turn it on in Hushfeed settings > Playback.",
+        "choice in more LIVE rooms. Starts off. Turn it on in Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)

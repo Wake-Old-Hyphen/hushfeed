@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Ist Untertitel in der freien Ansicht behalten an, steht der Untertitel in der freien Ansicht jetzt dort, wo TikTok ihn gezeigt hat, bevor die Steuerung verschwand, statt an den unteren Rand zu rutschen (#141). Solange noch kein Untertitel zu sehen war, bleibt er an der alten Stelle.
+
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, ist der Streifen unter der Uhr wieder so abgedunkelt wie der restliche obere Teil des Raums. Auf Handys, auf denen TikTok einen schwarzen Streifen für die Leiste freihält, wirkte er heller als der Stream darunter (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Ist Doppeltippen auf eine Aktion von Hushfeed gestellt, öffnet ein zweites Tippen, auf dem der Finger etwas zu lange bleibt, nicht mehr zusätzlich TikToks Menü für langes Drücken. Das Teilen-Feld geht also nicht mehr über den Kommentaren auf. (#63)
+* **TikTok:** Ist Doppeltippen auf eine Aktion von Hushfeed gestellt und Long-press controls mitgepatcht, öffnet ein zweites Tippen, auf dem der Finger etwas zu lange bleibt, nicht mehr zusätzlich TikToks Menü für langes Drücken. Das Teilen-Feld geht also nicht mehr über den Kommentaren auf. (#63)
 
-* **TikTok:** LIVE-Steuerung hat unter Hushfeed-Einstellungen > Wiedergabe einen dritten Schalter, LIVE-Qualität in jedem Raum anbieten. TikTok bietet Videoqualität im Menü einer LIVE nur an, wenn der Stream es verlangt oder TikTok die neuere Qualitätsauswahl für dein Konto einschaltet, deshalb ließ sich in manchen Räumen keine Qualität wählen. Mit dem Schalter bekommen Räume ohne sie die neuere Auswahl, und der nächste Raum öffnet mit der zuletzt gewählten Qualität, bis TikTok geschlossen wird. Standardmäßig aus. (#57)
+* **TikTok:** LIVE-Steuerung hat unter Hushfeed-Einstellungen > Wiedergabe einen dritten Schalter, LIVE-Qualität in mehr Räumen anbieten. TikTok bietet Videoqualität im Menü einer LIVE nur an, wenn der Stream es verlangt oder TikTok die neuere Qualitätsauswahl für dein Konto einschaltet, deshalb ließ sich in manchen Räumen keine Qualität wählen. Mit dem Schalter bekommen die meisten Räume ohne sie die neuere Auswahl (reine Audio-Räume nicht), und der nächste Raum öffnet mit der zuletzt gewählten Qualität, bis TikTok geschlossen wird. Standardmäßig aus. (#57)
 
 * **TikTok:** Datum im Profilraster anzeigen und Interaktionsrate anzeigen wirken unter TikTok 47.1.4 jetzt auch in den Rastern, bei den Videos eines Profils genauso wie bei Favoriten und gelikten Videos. Diese Version setzt die Aufrufzahl einer Kachel an einer Stelle, die der Patch nicht erreicht hat, deshalb erschienen dort weder Datum noch Rate.
 

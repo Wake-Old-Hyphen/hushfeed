@@ -107,9 +107,9 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "A LIVE room shows how many people are watching as a rounded number like 1.2K. "
                             + "This shows the exact count instead.",
                     Settings.SHOW_EXACT_LIVE_VIEWERS));
-            addPreference(new TogglePreference(context, "Offer LIVE quality in every room",
+            addPreference(new TogglePreference(context, "Offer LIVE quality in more rooms",
                     "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video "
-                            + "quality to the menu in every room, and the next room opens at the quality "
+                            + "quality to the menu in most of the others, and the next room opens at the quality "
                             + "you picked last.",
                     Settings.OFFER_LIVE_QUALITY));
         }

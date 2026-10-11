@@ -232,6 +232,12 @@ public final class CaptionStyle {
         FOUND.clear();
     }
 
+    /** TikTok's caption strip in this container, or null when this build's name finds none. */
+    static View strip(View root) {
+        int id = identifier(root, BACKGROUND_IDS);
+        return id == 0 ? null : root.findViewById(id);
+    }
+
     /** Resolves a caption view id by this build's name, saying so once when this build has none. */
     private static int identifier(View view, String[] names) {
         if (view != null) {

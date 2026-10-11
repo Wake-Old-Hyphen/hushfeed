@@ -7,7 +7,13 @@ package app.morphe.extension.tiktok.feed;
 import android.app.Activity;
 import android.app.Application;
 import android.content.res.Resources;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -42,7 +48,8 @@ import java.util.WeakHashMap;
  * for the bar in October 2026, with or without Hushfeed (#137). The black is two things: the
  * offset that holds the room a bar lower, and a plain view the bar's height that TikTok draws
  * over the top of the room. Both go while the room is in front, and the room's controls are held
- * a bar lower again on their own, so only the stream reaches up under the clock.
+ * a bar lower again on their own, so only the stream reaches up under the clock. TikTok's dark
+ * shade across the top goes down with the controls, so its first color is drawn on into the strip.
  */
 public final class LiveStatusBar {
     /** TikTok's LIVE room, real-named on 47.0.3 and 47.1.3 (read off the S22, 2026-09-27). */
@@ -323,6 +330,87 @@ public final class LiveStatusBar {
         return layers;
     }
 
+    /**
+     * TikTok's dark shade across the top of a room's controls: a view as wide as the layer, at the
+     * top of what the layer lays out, no more than a third of it tall, with a gradient behind it.
+     * On 47.1.4 it sits three levels down (read off the S22, 2026-10-11).
+     */
+    static View findShade(ViewGroup layer) {
+        ArrayDeque<View> level = new ArrayDeque<>();
+        for (int i = 0; i < layer.getChildCount(); i++) level.add(layer.getChildAt(i));
+        int visited = 0;
+        for (int depth = 0; depth < 4 && !level.isEmpty(); depth++) {
+            ArrayDeque<View> next = new ArrayDeque<>();
+            for (View at : level) {
+                if (visited++ >= MAX_VISITS) return null;
+                if (at.getVisibility() != View.VISIBLE || topIn(at, layer) != layer.getPaddingTop()) continue;
+                if (at.getBackground() instanceof GradientDrawable && at.getWidth() * 10 >= layer.getWidth() * 9
+                        && at.getHeight() > 0 && at.getHeight() * 3 <= layer.getHeight()) {
+                    return at;
+                }
+                if (at instanceof ViewGroup) {
+                    ViewGroup group = (ViewGroup) at;
+                    for (int i = 0; i < group.getChildCount(); i++) next.add(group.getChildAt(i));
+                }
+            }
+            level = next;
+        }
+        return null;
+    }
+
+    private static int topIn(View view, View layer) {
+        int top = 0;
+        for (View at = view; at != layer; ) {
+            top += at.getTop();
+            if (!(at.getParent() instanceof View)) return -1;
+            at = (View) at.getParent();
+        }
+        return top;
+    }
+
+    /**
+     * The color a top-to-bottom shade starts with, as drawn: its own alpha and the view's taken in.
+     * 0 when the shade isn't a plain vertical gradient this can read.
+     */
+    static int topColor(View shade) {
+        if (Build.VERSION.SDK_INT < 24 || !(shade.getBackground() instanceof GradientDrawable)) return 0;
+        GradientDrawable gradient = (GradientDrawable) shade.getBackground();
+        int[] colors = gradient.getColors();
+        if (colors == null || colors.length == 0 || gradient.getGradientType() != GradientDrawable.LINEAR_GRADIENT) return 0;
+        int top;
+        if (gradient.getOrientation() == GradientDrawable.Orientation.TOP_BOTTOM) top = colors[0];
+        else if (gradient.getOrientation() == GradientDrawable.Orientation.BOTTOM_TOP) top = colors[colors.length - 1];
+        else return 0;
+        int alpha = Math.round(Color.alpha(top) * (gradient.getAlpha() / 255f) * shade.getAlpha());
+        return (top & 0x00FFFFFF) | (Math.max(0, Math.min(255, alpha)) << 24);
+    }
+
+    /**
+     * Fills the top of a controls layer held a bar lower with the color TikTok's shade starts with,
+     * so the strip under the clock is shaded like the rest of the top instead of showing as a
+     * lighter band above it (#137).
+     */
+    static final class BarShade extends Drawable {
+        final int color;
+        final int height;
+        private final Paint paint = new Paint();
+
+        BarShade(int color, int height) {
+            this.color = color;
+            this.height = height;
+            paint.setColor(color);
+        }
+
+        @Override public void draw(Canvas canvas) {
+            android.graphics.Rect bounds = getBounds();
+            canvas.drawRect(bounds.left, bounds.top, bounds.right, Math.min(bounds.bottom, bounds.top + height), paint);
+        }
+
+        @Override public void setAlpha(int alpha) { }
+        @Override public void setColorFilter(ColorFilter filter) { }
+        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+    }
+
     /** A padding or margin this took away, with the height it had. */
     static final class Offset {
         final WeakReference<View> view;
@@ -362,7 +450,7 @@ public final class LiveStatusBar {
         private final WeakReference<Activity> activity;
         private final WeakReference<View> decor;
         private Offset lifted;
-        private int searches, relifts, coverSearches;
+        private int searches, relifts, coverSearches, shadeSearches;
         private long fightStart;
         private boolean fought;
         private WeakReference<View> cover = new WeakReference<>(null);
@@ -388,6 +476,7 @@ public final class LiveStatusBar {
             } catch (Throwable failure) {
                 searches = MAX_SEARCHES;
                 coverSearches = MAX_SEARCHES;
+                shadeSearches = MAX_SEARCHES;
                 videoId = 0;
                 HookStatus.threw(HOOK_FAMILY, "top strip", failure);
                 Logger.printException(() -> "Could not take away the LIVE room's top strip", failure);
@@ -487,6 +576,29 @@ public final class LiveStatusBar {
                 loweredBy = lifted.value;
                 layer.setPadding(layer.getPaddingLeft(), own + loweredBy, layer.getPaddingRight(), layer.getPaddingBottom());
             }
+            shadeUnderBar();
+        }
+
+        /**
+         * TikTok's top shade is part of the controls, so it went a bar lower with them and the
+         * strip under the clock showed lighter than the rest of the top (#137). Each layer held
+         * lower gets the shade's first color across that strip once the shade is found; a layer
+         * with a background of TikTok's own is left alone.
+         */
+        private void shadeUnderBar() {
+            for (Map.Entry<View, Integer> entry : lowered.entrySet()) {
+                View layer = entry.getKey();
+                if (!(layer instanceof ViewGroup) || layer.getPaddingTop() != entry.getValue() + loweredBy) continue;
+                Drawable background = layer.getBackground();
+                if (background instanceof BarShade ? ((BarShade) background).height == loweredBy : background != null) continue;
+                if (shadeSearches >= MAX_SEARCHES) continue;
+                shadeSearches++;
+                View shade = findShade((ViewGroup) layer);
+                int color = shade == null ? 0 : topColor(shade);
+                if (Color.alpha(color) == 0) continue;
+                layer.setBackground(new BarShade(color, loweredBy));
+                HookStatus.bound(HOOK_FAMILY, "LIVE room shade kept under the bar");
+            }
         }
 
         /** Gives the controls their own padding back unless TikTok has set another. */
@@ -494,6 +606,7 @@ public final class LiveStatusBar {
             for (Map.Entry<View, Integer> entry : lowered.entrySet()) {
                 View layer = entry.getKey();
                 int own = entry.getValue();
+                if (layer != null && layer.getBackground() instanceof BarShade) layer.setBackground(null);
                 if (layer != null && layer.getPaddingTop() == own + loweredBy) {
                     layer.setPadding(layer.getPaddingLeft(), own, layer.getPaddingRight(), layer.getPaddingBottom());
                 }

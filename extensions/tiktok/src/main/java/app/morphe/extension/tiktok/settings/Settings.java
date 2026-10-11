@@ -498,7 +498,7 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SHOW_EXACT_LIVE_VIEWERS = new BooleanSetting("show_exact_live_viewers", FALSE);
     /**
-     * Offers TikTok's quality picker in every LIVE room and carries the last pick to the next
+     * Offers TikTok's quality picker in more LIVE rooms and carries the last pick to the next
      * room; the LIVE controls patch. Read when a room builds its menu and picks its starting
      * quality, so the next room follows a change.
      */

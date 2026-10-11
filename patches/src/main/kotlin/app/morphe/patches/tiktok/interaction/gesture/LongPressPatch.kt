@@ -34,6 +34,7 @@ private const val MOTION_EVENT = "Landroid/view/MotionEvent;"
 private const val EDGE_SPEEDUP = "Lcom/ss/android/ugc/aweme/feed/longvideo/edgespeedup/EdgeSpeedupAssem;"
 private const val FEED_PAGE_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/BaseFeedPageParams;"
 internal const val DIGG_CLASS = "Lcom/ss/android/ugc/aweme/feed/assem/digg/VideoDiggAssem;"
+internal const val LANDSCAPE_CELL = "Lcom/ss/android/ugc/aweme/feed/landscape/LandscapeVideoViewCell;"
 
 /** Whether the method is the coordinate callback: a public final one taking two floats. */
 private fun Method.isCoordinateCallback() =
@@ -146,16 +147,17 @@ internal fun MutableMethod.preserveConfiguredLongPressFromEdgeSpeedup() {
 /**
  * The feed's gesture listener. Its class name is obfuscated and changes between builds, so
  * it is found by shape: the OnGestureListener whose {@code onDoubleTap} hands the event to
- * the real-named {@code handleDoubleClick(MotionEvent)}. Only that listener does, and it is
- * the one VideoViewCell installs on its gradual-mask view. Ordinary cells also have a separate
- * coordinate timer hooked above. The landscape listener does not reach handleDoubleClick.
+ * the real-named {@code handleDoubleClick(MotionEvent)}, the one VideoViewCell installs on its
+ * gradual-mask view. Ordinary cells also have a separate coordinate timer hooked above. On
+ * 47.1.4 the landscape cell's listener reaches handleDoubleClick too, so it's told apart by the
+ * LandscapeVideoViewCell it holds rather than by which of the two the patcher meets first.
  */
-private object FeedLongPressFingerprint : Fingerprint(
+internal object FeedLongPressFingerprint : Fingerprint(
     name = "onLongPress",
     parameters = listOf(MOTION_EVENT),
     returnType = "V",
     custom = { _, classDef ->
-        classDef.methods.any { method ->
+        classDef.fields.none { it.type == LANDSCAPE_CELL } && classDef.methods.any { method ->
             method.name == "onDoubleTap" &&
                 method.parameterTypes == listOf(MOTION_EVENT) &&
                 method.implementation?.instructions?.any { instruction ->

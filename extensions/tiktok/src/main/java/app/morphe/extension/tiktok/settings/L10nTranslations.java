@@ -2201,8 +2201,8 @@ public final class L10nTranslations {
                 "Söndürülmüş dəyəri false, açıq isə true edir. Sıfırlama qərarı yenidən TikTok-a verir.");
         table.put("Off. TikTok can report views and typing.",
                 "Qapalıdır. TikTok baxışları və yazmanı bildirə bilər.");
-        table.put("Offer LIVE quality in every room",
-                "Hər LIVE otağında keyfiyyət seçimi təklif et");
+        table.put("Offer LIVE quality in more rooms",
+                "Daha çox LIVE otağında keyfiyyət seçimi təklif et");
         table.put("Offline videos",
                 "Oflayn videolar");
         table.put("Offline videos limit",
@@ -3656,8 +3656,8 @@ public final class L10nTranslations {
                 "TikTok kilidlidir");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "Bu telefonda ekran kilidi olmadığı üçün TikTok kilidli deyil");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok LIVE keyfiyyətini yalnız bəzi otaqlarda seçməyə imkan verir. Bu, hər otağın menyusuna Video keyfiyyəti əlavə edir və növbəti otaq sonuncu seçdiyin keyfiyyətdə açılır.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok LIVE keyfiyyətini yalnız bəzi otaqlarda seçməyə imkan verir. Bu, qalan otaqların çoxunun menyusuna Video keyfiyyəti əlavə edir və növbəti otaq sonuncu seçdiyin keyfiyyətdə açılır.");
     }
 
     private static void fillAz29(Map<String, String> table) {
@@ -6228,8 +6228,8 @@ public final class L10nTranslations {
                 "Aus erzwingt den Wert false, an erzwingt true. Zurücksetzen lässt TikTok wieder selbst entscheiden.");
         table.put("Off. TikTok can report views and typing.",
                 "Aus. TikTok kann Aufrufe und Tippaktivität melden.");
-        table.put("Offer LIVE quality in every room",
-                "LIVE-Qualität in jedem Raum anbieten");
+        table.put("Offer LIVE quality in more rooms",
+                "LIVE-Qualität in mehr Räumen anbieten");
         table.put("Offline videos",
                 "Offline-Videos");
         table.put("Offline videos limit",
@@ -7683,8 +7683,8 @@ public final class L10nTranslations {
                 "TikTok ist gesperrt");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "TikTok ist nicht gesperrt, weil dieses Handy keine Displaysperre hat");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok lässt dich die Qualität einer LIVE nur in manchen Räumen wählen. Damit steht Videoqualität in jedem Raum im Menü, und der nächste Raum öffnet mit der zuletzt gewählten Qualität.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok lässt dich die Qualität einer LIVE nur in manchen Räumen wählen. Damit steht Videoqualität auch in den meisten anderen Räumen im Menü, und der nächste Raum öffnet mit der zuletzt gewählten Qualität.");
     }
 
     private static void fillDe29(Map<String, String> table) {
@@ -10255,8 +10255,8 @@ public final class L10nTranslations {
                 "Desactivado fuerza el valor false, activado fuerza true. Restablecer deja que TikTok decida otra vez.");
         table.put("Off. TikTok can report views and typing.",
                 "Desactivado. TikTok puede informar de las visualizaciones y de que estás escribiendo.");
-        table.put("Offer LIVE quality in every room",
-                "Ofrecer la calidad de LIVE en todas las salas");
+        table.put("Offer LIVE quality in more rooms",
+                "Ofrecer la calidad de LIVE en más salas");
         table.put("Offline videos",
                 "Vídeos sin conexión");
         table.put("Offline videos limit",
@@ -11710,8 +11710,8 @@ public final class L10nTranslations {
                 "TikTok está bloqueado");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "TikTok no está bloqueado porque este teléfono no tiene bloqueo de pantalla");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok solo te deja elegir la calidad de un LIVE en algunas salas. Esto añade Calidad de video al menú de todas las salas, y la siguiente sala se abre con la última calidad que elegiste.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok solo te deja elegir la calidad de un LIVE en algunas salas. Esto añade Calidad de video al menú de casi todas las demás, y la siguiente sala se abre con la última calidad que elegiste.");
     }
 
     private static void fillEs29(Map<String, String> table) {
@@ -14282,8 +14282,8 @@ public final class L10nTranslations {
                 "Mati memaksa nilai false, nyala memaksa true. Reset mengembalikan keputusan ke TikTok.");
         table.put("Off. TikTok can report views and typing.",
                 "Nonaktif. TikTok dapat melaporkan tayangan dan aktivitas mengetik.");
-        table.put("Offer LIVE quality in every room",
-                "Tawarkan kualitas LIVE di setiap ruang");
+        table.put("Offer LIVE quality in more rooms",
+                "Tawarkan kualitas LIVE di lebih banyak ruang");
         table.put("Offline videos",
                 "Video offline");
         table.put("Offline videos limit",
@@ -15737,8 +15737,8 @@ public final class L10nTranslations {
                 "TikTok terkunci");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "TikTok tidak terkunci karena ponsel ini tidak punya kunci layar");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok hanya mengizinkan memilih kualitas LIVE di beberapa ruang. Ini menambahkan Kualitas video ke menu di setiap ruang, dan ruang berikutnya terbuka dengan kualitas yang terakhir kamu pilih.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok hanya mengizinkan memilih kualitas LIVE di beberapa ruang. Ini menambahkan Kualitas video ke menu di sebagian besar ruang lainnya, dan ruang berikutnya terbuka dengan kualitas yang terakhir kamu pilih.");
     }
 
     private static void fillIn29(Map<String, String> table) {
@@ -18309,8 +18309,8 @@ public final class L10nTranslations {
                 "Disattivato forza il valore false, attivato forza true. Reimposta lascia di nuovo decidere a TikTok.");
         table.put("Off. TikTok can report views and typing.",
                 "Disattivato. TikTok può segnalare le visualizzazioni e l'attività di digitazione.");
-        table.put("Offer LIVE quality in every room",
-                "Offri la qualità LIVE in ogni stanza");
+        table.put("Offer LIVE quality in more rooms",
+                "Offri la qualità LIVE in più stanze");
         table.put("Offline videos",
                 "Video offline");
         table.put("Offline videos limit",
@@ -19764,8 +19764,8 @@ public final class L10nTranslations {
                 "TikTok è bloccato");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "TikTok non è bloccato perché questo telefono non ha un blocco schermo");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok ti fa scegliere la qualità di una LIVE solo in alcune stanze. Questo aggiunge Qualità video al menu di ogni stanza, e la stanza successiva si apre con l'ultima qualità che hai scelto.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok ti fa scegliere la qualità di una LIVE solo in alcune stanze. Questo aggiunge Qualità video al menu di quasi tutte le altre, e la stanza successiva si apre con l'ultima qualità che hai scelto.");
     }
 
     private static void fillIt29(Map<String, String> table) {
@@ -22336,8 +22336,8 @@ public final class L10nTranslations {
                 "Desligado força o valor false, ligado força true. Redefinir deixa o TikTok decidir de novo.");
         table.put("Off. TikTok can report views and typing.",
                 "Desativado. O TikTok pode informar visualizações e quando você está digitando.");
-        table.put("Offer LIVE quality in every room",
-                "Oferecer a qualidade da LIVE em todas as salas");
+        table.put("Offer LIVE quality in more rooms",
+                "Oferecer a qualidade da LIVE em mais salas");
         table.put("Offline videos",
                 "Vídeos offline");
         table.put("Offline videos limit",
@@ -23791,8 +23791,8 @@ public final class L10nTranslations {
                 "O TikTok está bloqueado");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "O TikTok não está bloqueado porque este celular não tem bloqueio de tela");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "O TikTok só deixa escolher a qualidade de uma LIVE em algumas salas. Isso adiciona Qualidade do vídeo ao menu de todas as salas, e a próxima sala abre na última qualidade que você escolheu.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "O TikTok só deixa escolher a qualidade de uma LIVE em algumas salas. Isso adiciona Qualidade do vídeo ao menu da maioria das outras, e a próxima sala abre na última qualidade que você escolheu.");
     }
 
     private static void fillPt_rBR29(Map<String, String> table) {
@@ -26624,8 +26624,8 @@ public final class L10nTranslations {
                 "Выключено принудительно задаёт false, включено задаёт true. Сброс снова оставляет выбор за TikTok.");
         table.put("Off. TikTok can report views and typing.",
                 "Выкл. TikTok может сообщать о просмотрах и наборе текста.");
-        table.put("Offer LIVE quality in every room",
-                "Выбор качества LIVE в каждой комнате");
+        table.put("Offer LIVE quality in more rooms",
+                "Выбор качества LIVE в большем числе комнат");
         table.put("Offline videos",
                 "Офлайн-видео");
         table.put("Offline videos limit",
@@ -28136,8 +28136,8 @@ public final class L10nTranslations {
                 "TikTok заблокирован");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "TikTok не заблокирован, потому что на этом телефоне нет блокировки экрана");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok даёт выбрать качество LIVE только в некоторых комнатах. Этот переключатель добавляет Качество видео в меню каждой комнаты, а следующая комната открывается в последнем выбранном качестве.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok даёт выбрать качество LIVE только в некоторых комнатах. Этот переключатель добавляет Качество видео в меню большинства остальных, а следующая комната открывается в последнем выбранном качестве.");
         table.put("TikTok may have taken this message. Delivery isn't confirmed, so it won't be retried today.",
                 "TikTok мог принять это сообщение. Доставка не подтверждена, поэтому сегодня повторной попытки не будет.");
         table.put("TikTok only had its watermarked copy of this story, so that copy was saved to %1$s",
@@ -30738,8 +30738,8 @@ public final class L10nTranslations {
                 "Kapalı değeri false'a, açık true'ya zorlar. Sıfırla, kararı yine TikTok'a bırakır.");
         table.put("Off. TikTok can report views and typing.",
                 "Kapalı. TikTok görüntülemeleri ve yazıyor durumunu bildirebilir.");
-        table.put("Offer LIVE quality in every room",
-                "Her LIVE odasında kalite seçimi sun");
+        table.put("Offer LIVE quality in more rooms",
+                "Daha fazla LIVE odasında kalite seçimi sun");
         table.put("Offline videos",
                 "Çevrimdışı videolar");
         table.put("Offline videos limit",
@@ -32193,8 +32193,8 @@ public final class L10nTranslations {
                 "TikTok kilitli");
         table.put("TikTok isn't locked because this phone has no screen lock",
                 "Bu telefonda ekran kilidi olmadığı için TikTok kilitli değil");
-        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in every room, and the next room opens at the quality you picked last.",
-                "TikTok bir LIVE'ın kalitesini yalnızca bazı odalarda seçtirir. Bu, her odanın menüsüne Video kalitesi ekler ve sonraki oda en son seçtiğin kalitede açılır.");
+        table.put("TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.",
+                "TikTok bir LIVE'ın kalitesini yalnızca bazı odalarda seçtirir. Bu, diğer odaların çoğunun menüsüne Video kalitesi ekler ve sonraki oda en son seçtiğin kalitede açılır.");
     }
 
     private static void fillTr29(Map<String, String> table) {

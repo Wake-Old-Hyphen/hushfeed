@@ -8,6 +8,7 @@ import static org.robolectric.Shadows.shadowOf;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -281,6 +282,48 @@ public class LiveStatusBarTest {
         layOut(live);
         assertEquals("coming back left the controls up", 7 + bar, controls.getPaddingTop());
         room.pause().stop().destroy();
+    }
+
+    /**
+     * #137: TikTok's dark shade across the top is part of the controls, so it went a bar lower
+     * with them and the strip under the clock showed lighter than the rest of the top. That strip
+     * gets the shade's first color now, only on a layer that has a shade, and it goes as the room
+     * leaves.
+     */
+    @Test public void underTheBarTikToksTopShadeCarriesOnUnderTheClock() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        FrameLayout row = new FrameLayout(live);
+        controls.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
+        View shade = new View(live);
+        GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {0x66000000, Color.TRANSPARENT});
+        gradient.setAlpha(128);
+        shade.setBackground(gradient);
+        row.addView(shade, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
+        FrameLayout plain = page(live, stream);
+        room.start().resume().visible();
+        layOut(live);
+        layOut(live);
+
+        assertEquals("the controls went up under the clock", 7 + bar, controls.getPaddingTop());
+        assertTrue("the strip under the clock wasn't shaded", controls.getBackground() instanceof LiveStatusBar.BarShade);
+        LiveStatusBar.BarShade fill = (LiveStatusBar.BarShade) controls.getBackground();
+        assertEquals("the strip should be as tall as the bar", bar, fill.height);
+        assertEquals("the strip should start where the shade does, as drawn", 0x33000000, fill.color);
+        assertEquals("a layer without a shade got one", null, plain.getBackground());
+        assertEquals("the shade was moved", 0f, shade.getTranslationY(), 0f);
+
+        room.pause();
+        assertEquals("leaving kept the strip shaded", null, controls.getBackground());
+        assertEquals(7, controls.getPaddingTop());
+        room.stop().destroy();
     }
 
     /** With the bar hidden there's no clock to keep clear of, so the controls go up with the room. */

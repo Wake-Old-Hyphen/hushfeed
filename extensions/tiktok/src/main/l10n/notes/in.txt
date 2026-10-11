@@ -1,8 +1,14 @@
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Kalau Pertahankan keterangan saat tampilan bersih aktif, keterangan di tampilan bersih kini tetap di tempat TikTok menampilkannya sebelum kontrol disembunyikan, bukan turun ke tepi bawah (#141). Selama belum ada keterangan yang muncul, posisinya tetap di tempat lama.
+
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, strip di bawah jam kembali berbayang seperti bagian atas ruang lainnya. Di ponsel tempat TikTok menyisakan strip hitam untuk bilah, strip itu tampak lebih terang daripada siaran di bawahnya (#137).
+
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Kalau Ketuk dua kali diatur ke salah satu aksi Hushfeed, ketukan kedua yang jarinya tertahan sedikit terlalu lama tidak lagi ikut membuka menu tekan lama TikTok, jadi panel bagikan tidak lagi muncul di atas komentar. (#63)
+* **TikTok:** Kalau Ketuk dua kali diatur ke salah satu aksi Hushfeed dan Long-press controls ikut dipatch, ketukan kedua yang jarinya tertahan sedikit terlalu lama tidak lagi ikut membuka menu tekan lama TikTok, jadi panel bagikan tidak lagi muncul di atas komentar. (#63)
 
-* **TikTok:** Kontrol LIVE punya sakelar ketiga, Tawarkan kualitas LIVE di setiap ruang, di pengaturan Hushfeed > Pemutaran. TikTok hanya menawarkan Kualitas video di menu LIVE saat siarannya memintanya atau saat TikTok menyalakan pemilih kualitas yang lebih baru untuk akunmu, jadi di beberapa ruang kualitas tidak bisa dipilih. Dengan sakelar menyala, ruang tanpa pilihan itu mendapat pemilih yang baru, dan ruang berikutnya terbuka dengan kualitas yang terakhir kamu pilih sampai TikTok ditutup. Bawaannya mati. (#57)
+* **TikTok:** Kontrol LIVE punya sakelar ketiga, Tawarkan kualitas LIVE di lebih banyak ruang, di pengaturan Hushfeed > Pemutaran. TikTok hanya menawarkan Kualitas video di menu LIVE saat siarannya memintanya atau saat TikTok menyalakan pemilih kualitas yang lebih baru untuk akunmu, jadi di beberapa ruang kualitas tidak bisa dipilih. Dengan sakelar menyala, sebagian besar ruang tanpa pilihan itu mendapat pemilih yang baru (ruang khusus audio tidak), dan ruang berikutnya terbuka dengan kualitas yang terakhir kamu pilih sampai TikTok ditutup. Bawaannya mati. (#57)
 
 * **TikTok:** Tampilkan tanggal di kisi profil dan Tampilkan tingkat interaksi kini berfungsi di kisi TikTok 47.1.4, baik di video sebuah profil maupun di Favorit dan video yang disukai. Versi itu menulis jumlah tayangan tiap kotak di tempat yang tidak dijangkau patch, jadi tanggal dan tingkatnya tidak pernah muncul di sana.
 
