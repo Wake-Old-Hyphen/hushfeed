@@ -55,6 +55,25 @@ public class TakoAskBarTest {
         assertTrue(HookStatus.report().toString(), HookStatus.report().toString().contains("tako AI: 2 found"));
     }
 
+    /**
+     * Discussion #115: the Tako bubble at the bottom right of a feed video stayed with the switch
+     * on. With it off the view is left and the entrance's coroutine runs; with it on the view
+     * goes GONE and the true answer skips the coroutine.
+     */
+    @Test public void theCornerBubbleIsHiddenOnlyWhenTheSwitchIsOn() {
+        View bubble = new FrameLayout(RuntimeEnvironment.getApplication());
+        assertFalse("the bind was refused with the switch off", TakoAiFilter.shouldHideRightBottomEntrance());
+        assertFalse("the coroutine was skipped with the switch off", TakoAiFilter.hideRightBottomEntrance(bubble));
+        assertEquals(View.VISIBLE, bubble.getVisibility());
+
+        Settings.HIDE_TAKO_AI.save(true);
+        assertTrue("the bind ran with the switch on", TakoAiFilter.shouldHideRightBottomEntrance());
+        assertTrue("the coroutine ran with the switch on", TakoAiFilter.hideRightBottomEntrance(bubble));
+        assertEquals(View.GONE, bubble.getVisibility());
+        assertTrue(TakoAiFilter.hideRightBottomEntrance(null));
+        assertTrue(HookStatus.report().toString(), HookStatus.report().toString().contains("tako AI: 2 found"));
+    }
+
     @Test public void theExportNamesTheStripWhicheverWayTheSwitchIsSet() {
         TakoAiFilter.shouldHideAskBar();
         String report = HookStatus.report().toString();

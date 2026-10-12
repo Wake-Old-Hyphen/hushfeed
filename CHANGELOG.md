@@ -4,6 +4,20 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** With Show a LIVE under the status bar on, rooms further on keep the shade under the clock too. It used to go light again after the first few LIVEs you scrolled through (#137).
+
+* **TikTok:** Hide the Tako bubble now also hides the Tako bubble in the bottom right corner of feed videos, which some accounts get instead of the one above the profile button (#115).
+
+* **TikTok:** The Feature Gate Lab has a new Profile banner preset. It turns on Add background in TikTok's Edit profile without switching the rest of the profile to the new layout (#80).
+
+* **TikTok:** The collections popup you get by holding the Favorites button is dark now when TikTok is in dark mode, instead of white. Dark Favorites popup in Hushfeed settings > App turns it off (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Hide the status bar in LIVE rooms and Show a LIVE under the status bar now work on a LIVE opened from the preview under a creator's card in search too. TikTok opens that LIVE inside the page it uses for opened videos, which the switches didn't reach (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** With Keep captions in Clear display on, the caption in Clear display now sits where TikTok showed it before the controls went away, instead of dropping to the bottom edge (#141). Before any caption has shown, it keeps the old spot.

@@ -549,6 +549,9 @@ public final class FeatureGateLabStore {
             new Preset("comment_reposts", "Repost with a comment", CATALOG_BUILDS,
                     "tt_comment_repost_interaction:INT:1", "repost_support_reply:INT:1",
                     "repost_support_digg:INT:1"),
+            // Edit profile's Add background on its own (#80), without the layout below.
+            new Preset("profile_banner", "Profile banner", CATALOG_BUILDS,
+                    "profile_bg_in_allow_list:INT:1", "profile_bg_enable_consumption_group:INT:3"),
             new Preset("profile_layout", "Profile banner and new profile layout", CATALOG_BUILDS,
                     "profile_bg_in_allow_list:INT:1", "profile_bg_enable_consumption_group:INT:3",
                     "tux_profile_icon_update:INT:1", "profile_left_align:INT:1",

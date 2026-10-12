@@ -1,3 +1,17 @@
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, ruang-ruang berikutnya juga tetap berbayang di bawah jam. Sebelumnya strip itu kembali terang setelah beberapa LIVE pertama yang kamu gulir (#137).
+
+* **TikTok:** Sembunyikan gelembung Tako sekarang juga menyembunyikan gelembung Tako di pojok kanan bawah video feed, yang muncul di sebagian akun sebagai ganti gelembung di atas tombol profil (#115).
+
+* **TikTok:** Feature Gate Lab punya preset baru Banner profil. Preset ini menyalakan Add background di Edit profile TikTok tanpa mengubah bagian profil lainnya ke tata letak baru (#80).
+
+* **TikTok:** Popup koleksi yang muncul saat kamu menahan tombol Favorit sekarang gelap, bukan putih, saat TikTok dalam mode gelap. Popup Favorit gelap di pengaturan Hushfeed > Aplikasi mematikannya (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Sembunyikan bilah status di ruang LIVE dan Tampilkan LIVE di bawah bilah status sekarang juga berlaku untuk LIVE yang dibuka dari pratinjau di bawah kartu kreator di pencarian. TikTok membuka LIVE itu di dalam halaman yang dipakainya untuk video yang dibuka, yang sebelumnya tidak terjangkau oleh tombol-tombol itu (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** Kalau Pertahankan keterangan saat tampilan bersih aktif, keterangan di tampilan bersih kini tetap di tempat TikTok menampilkannya sebelum kontrol disembunyikan, bukan turun ke tepi bawah (#141). Selama belum ada keterangan yang muncul, posisinya tetap di tempat lama.

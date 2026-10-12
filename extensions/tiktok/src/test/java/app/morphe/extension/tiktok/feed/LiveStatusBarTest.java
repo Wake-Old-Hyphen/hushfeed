@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
+import com.ss.android.ugc.aweme.detail.ui.DetailActivity;
 import com.ss.android.ugc.aweme.live.LivePlayActivity;
 import java.time.Duration;
 import org.junit.After;
@@ -299,14 +300,7 @@ public class LiveStatusBarTest {
         FrameLayout stream = heldStream(live, bar);
         LiveStatusBar.videoContainerForTests = View.generateViewId();
         FrameLayout controls = page(live, stream);
-        FrameLayout row = new FrameLayout(live);
-        controls.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
-        View shade = new View(live);
-        GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {0x66000000, Color.TRANSPARENT});
-        gradient.setAlpha(128);
-        shade.setBackground(gradient);
-        row.addView(shade, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
+        View shade = shade(live, controls);
         FrameLayout plain = page(live, stream);
         room.start().resume().visible();
         layOut(live);
@@ -316,7 +310,7 @@ public class LiveStatusBarTest {
         assertTrue("the strip under the clock wasn't shaded", controls.getBackground() instanceof LiveStatusBar.BarShade);
         LiveStatusBar.BarShade fill = (LiveStatusBar.BarShade) controls.getBackground();
         assertEquals("the strip should be as tall as the bar", bar, fill.height);
-        assertEquals("the strip should start where the shade does, as drawn", 0x33000000, fill.color);
+        assertEquals("the strip should start where the shade does, as drawn", 0x33000000, fill.color());
         assertEquals("a layer without a shade got one", null, plain.getBackground());
         assertEquals("the shade was moved", 0f, shade.getTranslationY(), 0f);
 
@@ -324,6 +318,54 @@ public class LiveStatusBarTest {
         assertEquals("leaving kept the strip shaded", null, controls.getBackground());
         assertEquals(7, controls.getPaddingTop());
         room.stop().destroy();
+    }
+
+    /**
+     * #137: scrolling on through LIVE rooms, the strip under the clock went light again after the
+     * first few. The shade search had one budget for the whole visit, and TikTok keeps a room's
+     * shade hidden for a while, so a busy LIVE's layout passes used it up. A hidden shade is taken
+     * now and its fill shows only while the shade does, and each layer has a budget of its own.
+     */
+    @Test public void roomsFurtherOnStillGetTheShadeUnderTheClock() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout first = page(live, stream);
+        View firstShade = shade(live, first);
+        firstShade.setVisibility(View.INVISIBLE);
+        page(live, stream);
+        room.start().resume().visible();
+        for (int pass = 0; pass < 60; pass++) layOut(live);
+
+        assertTrue("a hidden shade got no fill to follow it", first.getBackground() instanceof LiveStatusBar.BarShade);
+        LiveStatusBar.BarShade fill = (LiveStatusBar.BarShade) first.getBackground();
+        assertEquals("the strip was shaded while TikTok's shade was hidden", 0, fill.color());
+        firstShade.setVisibility(View.VISIBLE);
+        assertEquals("the strip didn't follow the shade in", 0x33000000, fill.color());
+
+        FrameLayout later = page(live, stream);
+        shade(live, later);
+        layOut(live);
+        layOut(live);
+        assertTrue("a room further on got no shade under the clock", later.getBackground() instanceof LiveStatusBar.BarShade);
+        room.pause().stop().destroy();
+    }
+
+    /** TikTok's top shade as 47.1.4 has it: a gradient across the top of a row in the controls. */
+    private static View shade(Activity live, FrameLayout controls) {
+        FrameLayout row = new FrameLayout(live);
+        controls.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 150));
+        View shade = new View(live);
+        GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {0x66000000, Color.TRANSPARENT});
+        gradient.setAlpha(128);
+        shade.setBackground(gradient);
+        row.addView(shade, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
+        return shade;
     }
 
     /** With the bar hidden there's no clock to keep clear of, so the controls go up with the room. */
@@ -453,6 +495,89 @@ public class LiveStatusBarTest {
         assertEquals("the bar wasn't hidden", WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES,
                 live.getWindow().getAttributes().layoutInDisplayCutoutMode);
         room.pause().stop().destroy();
+    }
+
+    /**
+     * #137: a LIVE opened from the preview under a creator's card in search is a page of TikTok's
+     * detail pager, held a bar lower by the page's own padding (read off the S22 on 47.1.4), and
+     * the switches did nothing there. It's handled like a room while it's on screen now, and
+     * swiping on to a video gives everything back.
+     */
+    @Test public void aLiveOpenedFromSearchIsUnderTheBarWhileItsPageIsOnScreen() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<DetailActivity> opened = Robolectric.buildActivity(DetailActivity.class).create();
+        DetailActivity detail = opened.get();
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout pager = new FrameLayout(detail);
+        FrameLayout livePage = detailPage(detail, pager, bar);
+        FrameLayout controls = page(detail, livePage);
+        detail.setContentView(pager);
+        detail.getWindow().setStatusBarColor(Color.BLACK);
+        opened.start().resume().visible();
+        layOut(detail);
+
+        assertEquals("the page's strip stayed", 0, livePage.getPaddingTop());
+        assertEquals("the controls went up under the clock", 7 + bar, controls.getPaddingTop());
+        assertEquals("the bar wasn't made see through", Color.TRANSPARENT, detail.getWindow().getStatusBarColor());
+
+        livePage.setTranslationY(-2316);
+        layOut(detail);
+        assertEquals("swiping on didn't give the strip back", bar, livePage.getPaddingTop());
+        assertEquals(7, controls.getPaddingTop());
+        assertEquals("swiping on didn't give the bar's color back", Color.BLACK, detail.getWindow().getStatusBarColor());
+
+        livePage.setTranslationY(0);
+        layOut(detail);
+        assertEquals("swiping back left the strip", 0, livePage.getPaddingTop());
+
+        opened.pause();
+        assertEquals("leaving didn't give the strip back", bar, livePage.getPaddingTop());
+        opened.stop().destroy();
+    }
+
+    /** The detail pager is mostly videos: the bar is hidden only while a LIVE page is in view. */
+    @Test public void aDetailPageHidesTheBarOnlyWhileALiveIsOnScreen() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<DetailActivity> opened = Robolectric.buildActivity(DetailActivity.class).create();
+        DetailActivity detail = opened.get();
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout pager = new FrameLayout(detail);
+        FrameLayout video = detailPage(detail, pager, bar);
+        FrameLayout livePage = detailPage(detail, pager, bar);
+        page(detail, livePage);
+        livePage.setTranslationY(2316);
+        detail.setContentView(pager);
+        opened.start().resume().visible();
+        layOut(detail);
+
+        assertFalse("a video page hid the bar", LiveStatusBar.isHidden(detail));
+        assertEquals("a video page lost its padding", bar, video.getPaddingTop());
+        assertEquals("the LIVE below the screen lost its strip", bar, livePage.getPaddingTop());
+
+        video.setTranslationY(-2316);
+        livePage.setTranslationY(0);
+        layOut(detail);
+        assertTrue("the LIVE in view kept its bar", LiveStatusBar.isHidden(detail));
+        assertEquals("the LIVE in view kept its strip", 0, livePage.getPaddingTop());
+        assertEquals(bar, video.getPaddingTop());
+
+        opened.pause();
+        assertFalse("leaving kept the bar hidden", LiveStatusBar.isHidden(detail));
+        assertEquals(bar, livePage.getPaddingTop());
+        opened.stop().destroy();
+    }
+
+    /** A page of the detail pager as 47.1.4 has it for a LIVE: held a bar lower by its own padding. */
+    private static FrameLayout detailPage(Activity detail, FrameLayout pager, int bar) {
+        FrameLayout page = new FrameLayout(detail);
+        page.setPadding(0, bar, 0, 0);
+        pager.addView(page, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        return page;
     }
 
     private static FrameLayout heldStream(Activity live, int bar) {

@@ -186,6 +186,13 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "profile. This keeps the tab and your saved videos.",
                     Settings.KEEP_FAVORITES_TAB
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Dark Favorites popup",
+                    "When TikTok is in dark mode, the list of collections you get by holding "
+                            + "the Favorites button is dark too instead of white.",
+                    Settings.DARK_QUICK_FAVORITES
+            ));
         }
         if (SettingsStatus.followStatusEnabled) {
             addPreference(new TogglePreference(

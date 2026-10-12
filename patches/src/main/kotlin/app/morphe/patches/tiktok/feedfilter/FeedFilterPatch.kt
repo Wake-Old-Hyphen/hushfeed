@@ -774,6 +774,44 @@ val feedFilterPatch = bytecodePatch(
             )
         }
 
+        // The Tako bubble at the bottom right of a feed video (discussion #115), drawn by one of
+        // two subclasses of a shared entrance and none of the components above. Each bind only
+        // tells the entrance's view model whether to show, so the guard returns before it does.
+        // Each onViewCreated launches the coroutine that applies that answer once the base has
+        // laid the view out, so the view is hidden right there and the coroutine never starts.
+        listOf(
+            TakoRightBottomFixedEntranceBindFingerprint,
+            TakoRightBottomInCellEntranceBindFingerprint,
+        ).forEach {
+            it.method.guardAtEntry(
+                "Feed filter",
+                "invoke-static {}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->shouldHideRightBottomEntrance()Z",
+                "return-void",
+            )
+        }
+        listOf(
+            TakoRightBottomFixedEntranceCreatedFingerprint,
+            TakoRightBottomInCellEntranceCreatedFingerprint,
+        ).forEachIndexed { ordinal, fingerprint ->
+            fingerprint.method.apply {
+                requireLocals("Feed filter", 1)
+                val superIndex = indexOfFirstInstructionOrThrow {
+                    opcode == Opcode.INVOKE_SUPER &&
+                        getReference<MethodReference>()?.name == "onViewCreated"
+                }
+                addInstructionsWithLabels(
+                    superIndex + 1,
+                    """
+                        invoke-static/range {p1 .. p1}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->hideRightBottomEntrance(Landroid/view/View;)Z
+                        move-result v0
+                        if-eqz v0, :morphe_tako_entrance_kept_$ordinal
+                        return-void
+                    """,
+                    ExternalLabel("morphe_tako_entrance_kept_$ordinal", getInstruction(superIndex + 1)),
+                )
+            }
+        }
+
         // The share prompt that pops up after a like, asking the reader to share the video
         // with friends. Upstream #22. The method name changes on every build (O, J, H, D)
         // but the string "share_guide" and the parameter shape are stable. Returning early

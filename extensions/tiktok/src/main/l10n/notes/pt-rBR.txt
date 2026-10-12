@@ -1,3 +1,17 @@
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, as salas seguintes também mantêm a sombra sob o relógio. Antes a faixa voltava a ficar clara depois das primeiras LIVEs que você passava (#137).
+
+* **TikTok:** Esconder a bolha do Tako agora também esconde a bolha do Tako no canto inferior direito dos vídeos do feed, que algumas contas recebem no lugar da que fica acima do botão de perfil (#115).
+
+* **TikTok:** O Feature Gate Lab tem uma nova predefinição Banner de perfil. Ela liga Add background no Edit profile do TikTok sem mudar o resto do perfil para o novo layout (#80).
+
+* **TikTok:** A janela de coleções que aparece ao segurar o botão de Favoritos agora fica escura em vez de branca quando o TikTok está no modo escuro. Janela de Favoritos escura nas configurações do Hushfeed > Aplicativo desliga isso (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Ocultar a barra de status nas LIVEs e Mostrar a LIVE sob a barra de status agora também funcionam numa LIVE aberta pela prévia abaixo do cartão de um criador na busca. O TikTok abre essa LIVE dentro da página que usa para vídeos abertos, onde as chaves não chegavam (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** Com Manter as legendas com a tela limpa ativado, a legenda na tela limpa agora fica onde o TikTok a mostrava antes de os controles sumirem, em vez de descer até a borda inferior (#141). Enquanto nenhuma legenda tiver aparecido, ela fica no lugar antigo.

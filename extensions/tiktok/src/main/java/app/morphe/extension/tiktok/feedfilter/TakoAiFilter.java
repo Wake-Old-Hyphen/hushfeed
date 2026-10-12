@@ -75,6 +75,27 @@ public final class TakoAiFilter {
     }
 
     /**
+     * The Tako bubble at the bottom right of a feed video (discussion #115), an entrance of its
+     * own. Its bind only tells the entrance's view model whether to show, and is asked first, so
+     * nothing ever says show.
+     */
+    public static boolean shouldHideRightBottomEntrance() {
+        boolean enabled = Settings.HIDE_TAKO_AI.get();
+        HookStatus.bound(HOOK_FAMILY, "corner bubble " + (enabled ? "hidden" : "left"));
+        return enabled;
+    }
+
+    /**
+     * The same entrance's view, just laid out by its base class. With the switch on it goes GONE
+     * and the true answer skips the coroutine that would show it again.
+     */
+    public static boolean hideRightBottomEntrance(View view) {
+        if (!shouldHideRightBottomEntrance()) return false;
+        if (view != null) view.setVisibility(View.GONE);
+        return true;
+    }
+
+    /**
      * The Tako entrance floating over the search page (issue #22), either a lone Ask Tako bubble
      * or a Voice and Ask Tako pill. Asked before TikTok inflates it, so nothing is built.
      */

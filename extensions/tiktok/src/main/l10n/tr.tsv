@@ -597,7 +597,7 @@ The Message requests row leaves the Inbox. Requests keep arriving and wait there
 The New followers row leaves the top of the Inbox. The accounts still follow you.	Yeni takipçiler satırı Gelen Kutusu'nun üstünden kalkar. Hesaplar seni takip etmeye devam eder.
 Hide the Report button on videos	Videolardaki Bildir düğmesini gizle
 Hide the Send to row	Şuraya gönder satırını gizle
-Hide the Tako AI bubble above the profile button, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.	Profil düğmesinin üzerindeki Tako AI balonunu, videoların altındaki Sor çubuğunu, arama sayfasındaki Tako'ya Sor düğmesini, arama sonuçlarındaki Tako'ya Sor sekmesini ve yorumların üstündeki Tako çubuğunu gizle.
+Hide the Tako AI bubble above the profile button or in the bottom corner of videos, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.	Profil düğmesinin üzerindeki veya videoların alt köşesindeki Tako AI balonunu, videoların altındaki Sor çubuğunu, arama sayfasındaki Tako'ya Sor düğmesini, arama sonuçlarındaki Tako'ya Sor sekmesini ve yorumların üstündeki Tako çubuğunu gizle.
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.	Tako asistanıyla olan sohbet Gelen Kutusu listesinden kalkar. Akıştaki Tako balonunun Akış sekmeleri altında kendi anahtarı var.
 Hide the Tako bubble	Tako balonunu gizle
 Hide the Tako chat	Tako sohbetini gizle
@@ -677,6 +677,8 @@ Keep a paused video paused	Duraklatılan videoyu duraklatılmış tut
 Keep captions in Clear display	Temiz ekranda altyazıları koru
 Keep going	Devam et
 Keep the Favorites tab	Favoriler sekmesini koru
+Dark Favorites popup	Koyu Favoriler penceresi
+When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white.	TikTok karanlık moddayken Favoriler düğmesine basılı tutunca açılan koleksiyon listesi de beyaz yerine koyu olur.
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	TikTok açıkken saati ve durum simgelerini ekrandan uzak tut. Onlara göz atmak için üstten aşağı kaydır.
 Keep the screen's refresh rate	Ekranın yenileme hızını koru
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Seçtiğin hızı sonraki videoda da koru. Kapalıyken her yeni video 1x hızında başlar ve elle yapılan seçim yalnızca o video için geçerli olur.
@@ -1589,6 +1591,7 @@ Unpersonalized For You videos	Kişiselleştirilmemiş Senin İçin videoları
 Reviewed presets for TikTok %1$s	TikTok %1$s için doğrulanmış hazır ayarlar
 No presets have been reviewed for TikTok %1$s yet	TikTok %1$s için henüz doğrulanmış hazır ayar yok
 Repost with a comment	Yorumla yeniden paylaş
+Profile banner	Profil afişi
 Profile banner and new profile layout	Profil afişi ve yeni profil düzeni
 Comment with live photos, the camera or audio	Canlı fotoğraf, kamera ya da sesle yorum yap
 Save comments to Favorites	Yorumları Favorilere kaydet

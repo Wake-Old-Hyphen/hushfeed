@@ -38,6 +38,7 @@ import app.morphe.patches.tiktok.interaction.engagement.gridCountSite
 import app.morphe.patches.tiktok.interaction.engagement.holderCountSites
 import app.morphe.patches.tiktok.interaction.feedtoolbar.SidebarIconViewFingerprint
 import app.morphe.patches.tiktok.interaction.feedtoolbar.isToolbarEnabledCheck
+import app.morphe.patches.tiktok.interaction.favorites.isQuickFavoritePanelShow
 import app.morphe.patches.tiktok.profile.BASE_UI_COMPONENT
 import app.morphe.patches.tiktok.profile.HEADER_TEXT_ITEM
 import app.morphe.patches.tiktok.profile.PROFILE_COMMON_INFO
@@ -247,6 +248,79 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 takoGate.implementation!!.instructions.any {
                     it.opcode == Opcode.CONST_4 && (it as NarrowLiteralInstruction).narrowLiteral == 0
                 })
+        }
+    }
+
+    /**
+     * Discussion #115. Both bottom-right Tako entrances keep one bind of the guarded shape and
+     * an onViewCreated that calls the base first, each with a local for the guard's answer, so
+     * the bind can return early and the view can be hidden before the coroutine starts.
+     */
+    @Test
+    fun `both bottom right Tako entrances keep one bind and a guardable onViewCreated on every retained fixture`() {
+        val base = "Lcom/ss/android/ugc/aweme/tako/otherpage/feed/mainentrance/ui/AbsTakoRightBottomEntrance;"
+        val variants = listOf("TakoRightBottomFixedEntrance", "TakoRightBottomInCellEntrance")
+            .map { "Lcom/ss/android/ugc/aweme/tako/otherpage/feed/mainentrance/ui/$it;" }
+        val apks = fixtures()
+        for (apk in apks) {
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .filter { it.type in variants }.associateBy { it.type }
+            assertEquals("${apk.name}: bottom right Tako entrances", variants.toSet(), classes.keys)
+            for ((type, entrance) in classes) {
+                assertEquals("${apk.name}: $type extends the shared entrance", base, entrance.superclass)
+                val binds = entrance.methods.filter {
+                    it.returnType == "V" && it.implementation != null &&
+                        it.parameterTypes.map(CharSequence::toString) == listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;")
+                }
+                assertEquals("${apk.name}: $type bind", 1, binds.size)
+                assertTrue("${apk.name}: $type bind has no local for the guard",
+                    binds.single().implementation!!.registerCount - 2 >= 1)
+                val created = entrance.methods.single {
+                    it.name == "onViewCreated" && it.returnType == "V" &&
+                        it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;")
+                }
+                val body = created.implementation!!
+                assertTrue("${apk.name}: $type onViewCreated has no local for the guard", body.registerCount - 2 >= 1)
+                val instructions = body.instructions.toList()
+                val superIndex = instructions.indexOfFirst {
+                    it.opcode == Opcode.INVOKE_SUPER &&
+                        ((it as ReferenceInstruction).reference as MethodReference).name == "onViewCreated"
+                }
+                assertEquals("${apk.name}: $type onViewCreated calls the base first", 0, superIndex)
+                assertTrue("${apk.name}: $type onViewCreated ends at the base call",
+                    superIndex + 1 < instructions.size)
+            }
+        }
+    }
+
+    /**
+     * Issue #142. The quick favorites popup comes in a horizontal and a vertical version under
+     * one abstract base, each with one renamed method that shows the dialog through TikTok's
+     * call interceptor (so it carries the base's name and "show") and returns normally, which is
+     * where the extension is handed the popup.
+     */
+    @Test
+    fun `both quick favorites popups keep one traced show on every retained fixture`() {
+        val apks = fixtures()
+        for (apk in apks) {
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val shows = classes.flatMap { classDef ->
+                classDef.methods.filter { it.isQuickFavoritePanelShow() }.map { classDef to it }
+            }
+            assertEquals("${apk.name}: quick favorites shows ${shows.map { it.first.type }}", 2, shows.size)
+            assertEquals("${apk.name}: one show per popup", 2, shows.map { it.first.type }.toSet().size)
+            val bases = shows.map { it.first.superclass }.toSet()
+            assertEquals("${apk.name}: both popups share one base", 1, bases.size)
+            val base = classes.single { it.type == bases.single() }
+            assertTrue("${apk.name}: the shared base is abstract", AccessFlags.ABSTRACT.isSet(base.accessFlags))
+            for ((classDef, show) in shows) {
+                assertTrue("${apk.name}: ${classDef.type}->${show.name} never returns",
+                    show.implementation!!.instructions.any { it.opcode == Opcode.RETURN_VOID })
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 {
-  "version": "v0.71.1",
+  "version": "v0.71.3",
   "appNames": {
     "com.zhiliaoapp.musically": "TikTok"
   },
@@ -2778,7 +2778,7 @@
     },
     {
       "name": "Keep the Favorites tab",
-      "description": "Keeps the Favorites tab and your saved videos on your profile when TikTok tries out a version of the app that hides them. On by default. Turn it off in Hushfeed settings > App.",
+      "description": "Keeps the Favorites tab and your saved videos on your profile when TikTok tries out a version of the app that hides them, and makes the collections popup you get by holding the Favorites button dark when TikTok is. Both are on by default. Turn them off in Hushfeed settings > App.",
       "category": "Settings",
       "use": true,
       "dependencies": [

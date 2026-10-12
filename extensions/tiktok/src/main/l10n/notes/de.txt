@@ -1,3 +1,17 @@
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, behalten auch spätere Räume den Schatten unter der Uhr. Nach den ersten paar LIVEs, durch die man gescrollt hatte, wurde der Streifen wieder heller (#137).
+
+* **TikTok:** Tako-Blase ausblenden blendet jetzt auch die Tako-Blase unten rechts in Feed-Videos aus, die manche Konten statt der Blase über der Profil-Schaltfläche bekommen (#115).
+
+* **TikTok:** Das Feature Gate Lab hat eine neue Vorlage Profilbanner. Sie schaltet Add background in TikToks Edit profile ein, ohne den Rest des Profils auf das neue Layout umzustellen (#80).
+
+* **TikTok:** Das Sammlungen-Fenster, das beim Gedrückthalten der Favoriten-Schaltfläche erscheint, ist jetzt dunkel statt weiß, wenn TikTok im dunklen Modus ist. Dunkles Favoriten-Fenster in den Hushfeed-Einstellungen > App schaltet es ab (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Statusleiste in LIVE-Räumen ausblenden und LIVE unter der Statusleiste zeigen wirken jetzt auch bei einem LIVE, das über die Vorschau unter der Karte eines Creators in der Suche geöffnet wird. TikTok öffnet dieses LIVE in der Seite für geöffnete Videos, die die Schalter bisher nicht erreicht haben (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** Ist Untertitel in der freien Ansicht behalten an, steht der Untertitel in der freien Ansicht jetzt dort, wo TikTok ihn gezeigt hat, bevor die Steuerung verschwand, statt an den unteren Rand zu rutschen (#141). Solange noch kein Untertitel zu sehen war, bleibt er an der alten Stelle.

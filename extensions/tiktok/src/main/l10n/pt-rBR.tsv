@@ -574,7 +574,7 @@ Hide LIVE videos from the feed.	Esconder vídeos LIVE do feed.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.	A linha Solicitações de mensagem some da caixa de entrada. As solicitações continuam chegando e ficam esperando lá até você desligar isto.
 The New followers row leaves the top of the Inbox. The accounts still follow you.	A linha Novos seguidores some do topo da caixa de entrada. As contas continuam seguindo você.
 Hide the Send to row	Esconder a linha Enviar para
-Hide the Tako AI bubble above the profile button, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.	Esconder a bolha do Tako AI acima do botão de perfil, a barra do Tako abaixo dos vídeos, o botão Perguntar ao Tako na página de busca, a aba Perguntar ao Tako nos resultados da busca e a barra do Tako acima dos comentários.
+Hide the Tako AI bubble above the profile button or in the bottom corner of videos, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.	Esconder a bolha do Tako AI acima do botão de perfil ou no canto inferior dos vídeos, a barra do Tako abaixo dos vídeos, o botão Perguntar ao Tako na página de busca, a aba Perguntar ao Tako nos resultados da busca e a barra do Tako acima dos comentários.
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.	A conversa com o assistente Tako some da lista da caixa de entrada. A bolha do Tako no feed tem um interruptor próprio em Abas do feed.
 The activity status control leaves the Inbox header. Whether others see you as active is unchanged.	O controle de status de atividade some do cabeçalho da caixa de entrada. Se os outros veem você como ativo não muda.
 Hide the add people icon	Esconder o ícone de adicionar pessoas
@@ -650,6 +650,8 @@ Move to the next video when the current one ends. Pauses, open dialogs and scree
 Keep captions in Clear display	Manter as legendas com a tela limpa
 Keep going	Continuar
 Keep the Favorites tab	Manter a aba Favoritos
+Dark Favorites popup	Janela de Favoritos escura
+When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white.	Quando o TikTok está no modo escuro, a lista de coleções que aparece ao segurar o botão de Favoritos também fica escura em vez de branca.
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.	Manter o relógio e os ícones de status fora da tela enquanto o TikTok está aberto. Deslize de cima para dar uma olhada.
 Keep the screen's refresh rate	Manter a taxa de atualização da tela
 Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.	Mantém a velocidade escolhida para o próximo vídeo. Desligado, cada vídeo novo começa em 1x e uma escolha manual vale só para aquele vídeo.
@@ -1589,6 +1591,7 @@ Unpersonalized For You videos	Vídeos do Para você não personalizados
 Reviewed presets for TikTok %1$s	Predefinições verificadas para o TikTok %1$s
 No presets have been reviewed for TikTok %1$s yet	Ainda não há predefinições verificadas para o TikTok %1$s
 Repost with a comment	Repostar com um comentário
+Profile banner	Banner de perfil
 Profile banner and new profile layout	Banner de perfil e novo layout de perfil
 Comment with live photos, the camera or audio	Comentar com fotos ao vivo, a câmera ou áudio
 Save comments to Favorites	Salvar comentários nos Favoritos

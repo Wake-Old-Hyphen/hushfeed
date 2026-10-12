@@ -569,7 +569,7 @@ Hide LIVE videos from the feed.,Sembunyikan video LIVE dari feed.
 The Message requests row leaves the Inbox. Requests keep arriving and wait there until you turn this off.,Baris Permintaan pesan hilang dari Kotak Masuk. Permintaan tetap masuk dan menunggu di sana sampai kamu mematikan ini.
 The New followers row leaves the top of the Inbox. The accounts still follow you.,Baris Pengikut baru hilang dari bagian atas Kotak Masuk. Akun-akun itu tetap mengikutimu.
 Hide the Send to row,Sembunyikan baris Kirim ke
-"Hide the Tako AI bubble above the profile button, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.","Sembunyikan gelembung Tako AI di atas tombol profil, bilah Tako di bawah video, tombol Tanya Tako di halaman pencarian, tab Tanya Tako di hasil pencarian, dan bilah Tako di atas komentar."
+"Hide the Tako AI bubble above the profile button or in the bottom corner of videos, the Ask bar under videos, the Ask Tako button on the search page, the Ask Tako tab on search results and the Tako bar above comments.","Sembunyikan gelembung Tako AI di atas tombol profil atau di pojok bawah video, bilah Tako di bawah video, tombol Tanya Tako di halaman pencarian, tab Tanya Tako di hasil pencarian, dan bilah Tako di atas komentar."
 The Tako assistant's conversation leaves the Inbox list. The Tako bubble on the feed has its own switch under Feed tabs.,Percakapan dengan asisten Tako hilang dari daftar Kotak Masuk. Gelembung Tako di feed punya sakelar sendiri di Tab feed.
 The activity status control leaves the Inbox header. Whether others see you as active is unchanged.,Kontrol status aktivitas hilang dari bagian atas Kotak Masuk. Apakah orang lain melihatmu aktif tidak berubah.
 Hide the add people icon,Sembunyikan ikon tambah orang
@@ -645,6 +645,8 @@ Keep a paused video paused,Biarkan video yang dijeda tetap dijeda
 Keep captions in Clear display,Pertahankan keterangan saat tampilan bersih
 Keep going,Lanjutkan
 Keep the Favorites tab,Pertahankan tab Favorit
+Dark Favorites popup,Popup Favorit gelap
+"When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white.","Saat TikTok dalam mode gelap, daftar koleksi yang muncul saat kamu menahan tombol Favorit juga gelap, bukan putih."
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Sembunyikan jam dan ikon status selama TikTok terbuka. Geser dari atas untuk mengintipnya.
 Keep the screen's refresh rate,Pertahankan laju penyegaran layar
 "Keep the speed you chose for the next video. Off, each new video starts at 1x and a manual choice lasts for that video only.","Menyimpan kecepatan yang dipilih untuk video berikutnya. Mati, setiap video baru dimulai dari 1x dan pilihan manual hanya berlaku untuk video itu."
@@ -1580,6 +1582,7 @@ Unpersonalized For You videos,Video Untuk Kamu yang tidak dipersonalisasi
 Reviewed presets for TikTok %1$s,Preset teruji untuk TikTok %1$s
 No presets have been reviewed for TikTok %1$s yet,Belum ada preset yang diuji untuk TikTok %1$s
 Repost with a comment,Posting ulang dengan komentar
+Profile banner,Banner profil
 Profile banner and new profile layout,Banner profil dan tata letak profil baru
 "Comment with live photos, the camera or audio","Berkomentar dengan foto live, kamera, atau audio"
 Save comments to Favorites,Simpan komentar ke Favorit

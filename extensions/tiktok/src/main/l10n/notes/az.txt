@@ -1,3 +1,17 @@
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda sonrakı otaqlarda da saatın altındakı kölgə qalır. Əvvəllər ilk bir neçə LIVE-dan sonra zolaq yenə açıq görünürdü (#137).
+
+* **TikTok:** Tako qabarcığını gizlədin indi lent videolarının sağ alt küncündəki Tako qabarcığını da gizlədir. Bəzi hesablarda profil düyməsinin üstündəki qabarcıq əvəzinə o görünür (#115).
+
+* **TikTok:** Feature Gate Lab-da yeni Profil banneri hazır ayarı var. O, profilin qalanını yeni görünüşə keçirmədən TikTok-un Edit profile səhifəsində Add background seçimini açır (#80).
+
+* **TikTok:** TikTok qaranlıq rejimdə olanda Favoritlər düyməsini basıb saxlayanda açılan kolleksiyalar pəncərəsi artıq ağ yox, qaranlıqdır. Hushfeed parametrləri > Tətbiq bölməsindəki Qaranlıq Favoritlər pəncərəsi onu söndürür (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** LIVE otaqlarında status panelini gizlədin və LIVE-ı status panelinin altında göstərin artıq axtarışda yaradıcının kartının altındakı önizləmədən açılan LIVE-da da işləyir. TikTok həmin LIVE-ı açılmış videolar üçün istifadə etdiyi səhifənin içində açır, açarlar ora çatmırdı (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** Təmiz ekranda başlıqları saxlayın açıq olanda, təmiz ekrandakı başlıq artıq aşağı kənara düşmür, TikTok-un idarəetmə düymələri gizlənməzdən əvvəl göstərdiyi yerdə qalır (#141). Hələ heç bir başlıq görünməyibsə, köhnə yerində qalır.

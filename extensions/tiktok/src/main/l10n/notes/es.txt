@@ -1,3 +1,17 @@
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, las salas siguientes también mantienen la sombra bajo el reloj. Antes la franja volvía a verse clara después de los primeros LIVE que pasabas (#137).
+
+* **TikTok:** Ocultar la burbuja de Tako ahora también oculta la burbuja de Tako en la esquina inferior derecha de los videos del feed, que algunas cuentas ven en lugar de la que está encima del botón de perfil (#115).
+
+* **TikTok:** Feature Gate Lab tiene un nuevo ajuste Banner de perfil. Activa Add background en Edit profile de TikTok sin pasar el resto del perfil al nuevo diseño (#80).
+
+* **TikTok:** La ventana de colecciones que aparece al mantener pulsado el botón de Favoritos ahora es oscura en vez de blanca cuando TikTok está en modo oscuro. Ventana de Favoritos oscura en los ajustes de Hushfeed > Aplicación la desactiva (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Ocultar la barra de estado en los LIVE y Mostrar el LIVE bajo la barra de estado ahora también funcionan en un LIVE abierto desde la vista previa bajo la tarjeta de un creador en la búsqueda. TikTok abre ese LIVE dentro de la página que usa para los videos abiertos, a la que los interruptores no llegaban (#137).
+
 ## 0.71.1 (2026-10-11)
 
 * **TikTok:** Con Mantener los subtítulos con los controles ocultos activado, el subtítulo con los controles ocultos ahora queda donde TikTok lo mostraba antes de que se ocultaran los controles, en vez de bajar hasta el borde inferior (#141). Mientras no se haya mostrado ningún subtítulo, se queda en el sitio de antes.

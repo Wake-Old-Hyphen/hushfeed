@@ -749,6 +749,42 @@ internal object TakoFeedTriggerRoofBindFingerprint : Fingerprint(
     },
 )
 
+private const val TAKO_RIGHT_BOTTOM_ENTRANCE = "Lcom/ss/android/ugc/aweme/tako/otherpage/feed/mainentrance/ui/"
+
+/**
+ * The Tako bubble at the bottom right of a feed video (discussion #115), a component of its own
+ * in the Tako package rather than the tikbot button or the ask bar. TikTok draws it from one of
+ * two subclasses of a shared base: the fixed one that stays put while the pager scrolls and the
+ * one inside each cell. Each binds through a single {@code (VideoItemParams)V} method that only
+ * tells the entrance's view model whether to show (Mr on 47.1.4), and each launches the
+ * coroutine that applies that answer from {@code onViewCreated}, right after the base lays out.
+ */
+internal object TakoRightBottomFixedEntranceBindFingerprint : Fingerprint(
+    definingClass = "${TAKO_RIGHT_BOTTOM_ENTRANCE}TakoRightBottomFixedEntrance;",
+    returnType = "V",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
+)
+
+internal object TakoRightBottomInCellEntranceBindFingerprint : Fingerprint(
+    definingClass = "${TAKO_RIGHT_BOTTOM_ENTRANCE}TakoRightBottomInCellEntrance;",
+    returnType = "V",
+    parameters = listOf("Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"),
+)
+
+internal object TakoRightBottomFixedEntranceCreatedFingerprint : Fingerprint(
+    definingClass = "${TAKO_RIGHT_BOTTOM_ENTRANCE}TakoRightBottomFixedEntrance;",
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;"),
+)
+
+internal object TakoRightBottomInCellEntranceCreatedFingerprint : Fingerprint(
+    definingClass = "${TAKO_RIGHT_BOTTOM_ENTRANCE}TakoRightBottomInCellEntrance;",
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;"),
+)
+
 /**
  * The two Tako entrances on the search page, the one opened by the magnifier on the feed
  * (issue #22). TikTok serves either a lone "Ask Tako" bubble or a "Voice | Ask Tako" pill above
