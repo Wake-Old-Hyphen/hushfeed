@@ -19,11 +19,13 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * The reads TikTok makes about this device, answered without handing it the real value while the
  * matching switch is on: what you copied, whether you're on a VPN, and the advertising id with
- * its limit ad tracking flag.
+ * its limit ad tracking flag, and the reviewed root status and root-tool diagnostics.
  *
  * <p>One method per intercepted signature, each returning what the call site expects. A single
  * helper returning {@link ClipData} for all three clipboard reads handed a ClipData back where
@@ -31,8 +33,9 @@ import java.util.Enumeration;
  * class as soon as it loads rather than failing at the call. The VPN and advertising-id intercepts
  * keep to the same rule.
  *
- * <p>Each switch is read at the call, so none needs a restart, and a switch answers off while
- * Hushfeed is paused, so a paused build hands TikTok its real clipboard, VPN state and id.
+ * <p>Each switch is read at the call and answers off while Hushfeed is paused. The clipboard,
+ * VPN and advertising-id switches need no restart. Root collectors can retain an earlier answer,
+ * so changing the root switch needs a restart.
  *
  * <p>TikTok checks its connection and its ad SDKs read the id early in startup. A read before
  * the settings context exists takes the switch straight from the saved file
@@ -47,6 +50,8 @@ public final class DevicePrivacyGuard {
     static final String VPN_KEY = "hide_vpn";
     /** {@link Settings#BLOCK_ADVERTISING_ID}'s key. */
     static final String ADVERTISING_ID_KEY = "block_advertising_id";
+    /** {@link Settings#HIDE_ROOT}'s key. */
+    static final String ROOT_KEY = "hide_root";
 
     /** What Android hands back for the advertising id once the user has deleted it. */
     private static final String BLANK_ADVERTISING_ID = "00000000-0000-0000-0000-000000000000";
@@ -165,6 +170,48 @@ public final class DevicePrivacyGuard {
     public static boolean interceptLimitAdTracking(boolean limited) {
         if (blocksAdvertisingId("answered limit ad tracking as limited")) return true;
         return limited;
+    }
+
+    /** Only the five reviewed root methods ask this before running their original probes. */
+    public static boolean hideRoot() {
+        boolean on = Utils.getContext() != null ? Settings.HIDE_ROOT.get() : EarlySwitch.isOn(ROOT_KEY);
+        if (on) Logger.printInfo(() -> "Device privacy guard: hid a root check");
+        return on;
+    }
+
+    /** Native JSONObject(Map) consumers require the original value types and nested schema. */
+    public static Map<String, Object> hiddenRootPackages() {
+        return rootSummary("rootPackage");
+    }
+
+    public static Map<String, Object> hiddenRootPaths() {
+        return rootSummary("rootPath");
+    }
+
+    private static Map<String, Object> rootSummary(String kind) {
+        Map<String, Object> summary = new LinkedHashMap<>();
+        summary.put("hit", 0);
+        summary.put("unknown", 0);
+        summary.put(kind, false);
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("summary", summary);
+        result.put("items", new ArrayList<>());
+        return result;
+    }
+
+    public static Map<String, Object> hiddenWhichSu() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("state", "not_detected");
+        result.put("path", "");
+        return result;
+    }
+
+    public static Map<String, Object> hiddenSuCommand() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("state", "not_detected");
+        // TikTok serializes String.valueOf(boolean), not a Boolean, for this field.
+        result.put("uidZero", "false");
+        return result;
     }
 
     private static String realAdvertisingId(Object info) {

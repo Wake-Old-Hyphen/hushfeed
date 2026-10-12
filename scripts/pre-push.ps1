@@ -309,39 +309,62 @@ function Invoke-FixturePatching {
     if (Test-Path -LiteralPath $kept) { Remove-Item -LiteralPath $kept -Recurse -Force }
     Write-Step ("patch sources changed, applying $($bundles[0].Name) to TikTok " +
         (Format-VersionList -Versions @($Fixtures | ForEach-Object { $_.Version })) + ' with the desktop CLI')
-    $runs = @(Invoke-WithoutGitEnvironment {
-        foreach ($fixture in $Fixtures) {
-            $job = Start-Job -ArgumentList $verify, $fixture.Apk, $env:HUSHFEED_DESKTOP_JAR,
-                (Join-Path $work $fixture.Version), $bundles[0].FullName, $patchList, (Join-Path $kept $fixture.Version) -ScriptBlock {
-                param($Verify, $Apk, $Jar, $WorkDir, $Bundle, $PatchList, $KeepIn)
-                $global:LASTEXITCODE = 0
-                try {
-                    & $Verify -Apk $Apk -DesktopJar $Jar -WorkDir $WorkDir -Bundle $Bundle -PatchList $PatchList -KeepIn $KeepIn *>&1 |
-                        ForEach-Object { "$_" }
-                    $code = $LASTEXITCODE
-                } catch {
-                    "$_"
-                    $code = 1
+    $runs = New-Object 'System.Collections.Generic.List[object]'
+    try {
+        Invoke-WithoutGitEnvironment {
+            foreach ($fixture in $Fixtures) {
+                $job = Start-Job -ArgumentList $verify, $fixture.Apk, $env:HUSHFEED_DESKTOP_JAR,
+                    (Join-Path $work $fixture.Version), $bundles[0].FullName, $patchList, (Join-Path $kept $fixture.Version) -ScriptBlock {
+                    param($Verify, $Apk, $Jar, $WorkDir, $Bundle, $PatchList, $KeepIn)
+                    $global:LASTEXITCODE = 0
+                    try {
+                        & $Verify -Apk $Apk -DesktopJar $Jar -WorkDir $WorkDir -Bundle $Bundle -PatchList $PatchList -KeepIn $KeepIn *>&1 |
+                            ForEach-Object { "$_" }
+                        $code = $LASTEXITCODE
+                    } catch {
+                        "$_"
+                        $code = 1
+                    }
+                    [pscustomobject]@{ ExitCode = $code }
                 }
-                [pscustomobject]@{ ExitCode = $code }
+                $runs.Add([pscustomobject]@{ Version = $fixture.Version; Job = $job })
+                # A desktop CLI run can take a quarter of the machine's memory, so a machine short of
+                # it sets HUSHFEED_GATE_SERIAL=1 and applies one build at a time.
+                if ($env:HUSHFEED_GATE_SERIAL -eq '1') { Wait-Job -Job $job | Out-Null }
             }
-            [pscustomobject]@{ Version = $fixture.Version; Job = $job }
-            # A desktop CLI run can take a quarter of the machine's memory, so a machine short of
-            # it sets HUSHFEED_GATE_SERIAL=1 and applies one build at a time.
-            if ($env:HUSHFEED_GATE_SERIAL -eq '1') { Wait-Job -Job $job | Out-Null }
         }
-    })
-    $failed = @()
-    foreach ($run in $runs) {
-        $code = 1
-        foreach ($item in @(Receive-Job -Job $run.Job -Wait -AutoRemoveJob -ErrorAction Continue)) {
-            if ($null -ne $item -and $item.PSObject.Properties['ExitCode']) { $code = [int]$item.ExitCode } else { Write-Host "[$($run.Version)] $item" }
+        $failed = @()
+        foreach ($run in $runs) {
+            $code = 1
+            try {
+                foreach ($item in @(Receive-Job -Job $run.Job -Wait -ErrorAction Stop)) {
+                    if ($null -ne $item -and $item.PSObject.Properties['ExitCode']) { $code = [int]$item.ExitCode } else { Write-Host "[$($run.Version)] $item" }
+                }
+            } catch {
+                Write-Host "[$($run.Version)] Could not collect fixture result: $_"
+                $code = 1
+            }
+            if ($code -ne 0) { $failed += $run.Version }
         }
-        if ($code -ne 0) { $failed += $run.Version }
-    }
-    if ($failed.Count -gt 0) {
-        throw ("The bundle this push builds did not apply to TikTok $(Format-VersionList -Versions $failed). " +
-            "Read the [verify] lines above; the results are in $work. Push anyway with HUSHFEED_SKIP_PRE_PUSH=1.")
+        if ($failed.Count -gt 0) {
+            throw ("The bundle this push builds did not apply to TikTok $(Format-VersionList -Versions $failed). " +
+                "Read the [verify] lines above; the results are in $work.")
+        }
+    } finally {
+        # Receive-Job -AutoRemoveJob can remove a job twice when it completes during the initial
+        # backlog drain. This invocation owns disposal, including partially started batches.
+        $cleanupErrors = New-Object 'System.Collections.Generic.List[string]'
+        foreach ($run in $runs) {
+            try {
+                if ($run.Job.State -notin @('Completed', 'Failed', 'Stopped')) {
+                    Stop-Job -Job $run.Job -ErrorAction Stop
+                }
+                Remove-Job -Job $run.Job -ErrorAction Stop
+            } catch {
+                $cleanupErrors.Add("[$($run.Version)] $_")
+            }
+        }
+        if ($cleanupErrors.Count -gt 0) { throw "Fixture-job cleanup failed: $($cleanupErrors -join '; ')" }
     }
     Remove-Item -LiteralPath $work -Recurse -Force -ErrorAction SilentlyContinue
 }

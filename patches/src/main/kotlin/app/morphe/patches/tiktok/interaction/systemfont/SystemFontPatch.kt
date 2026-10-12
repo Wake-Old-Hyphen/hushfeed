@@ -46,9 +46,9 @@ private const val ENGINE_MARKER = "font/TikTokSans-VF.otf"
 @Suppress("unused")
 val systemFontPatch = bytecodePatch(
     name = "Use system font",
-    description = "Shows TikTok's text in your phone's own font instead of TikTok's, and can " +
-        "use your phone's emoji too. Starts off. Turn it on in Hushfeed settings > App, then " +
-        "restart TikTok.",
+    description = "Shows TikTok's text in your phone's own font or in a .ttf or .otf font file " +
+        "you import, instead of TikTok's, and can use your phone's emoji too. Starts off. Turn " +
+        "it on in Hushfeed settings > App, then restart TikTok.",
 ) {
     category("Interface")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -67,7 +67,10 @@ val systemFontPatch = bytecodePatch(
         // name a patch can carry, so it is found by having both method shapes and naming the
         // variable font. Both implementations (the modern and the pre-26 fallback) match, which
         // is what we want: the running build uses one of them. The icon, gift and mention fonts
-        // load elsewhere and never reach this engine.
+        // load elsewhere and never reach this engine. TikTok's static nine-parameter typeface
+        // factory and its Compose font loader both build through the engine's interface, so
+        // hooking them as well would only answer the same faces twice; SystemFontAnchorsTest
+        // holds that. An imported font file rides the same exit: the extension decides there.
         //
         // The same pass finds the emoji switch's anchor (see isEmojiGlyphCheck), so the app's
         // classes are walked once for both.

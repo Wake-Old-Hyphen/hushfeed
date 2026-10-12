@@ -4,14 +4,14 @@ import argparse
 import contextlib
 import io
 import json
-from pathlib import Path
 import sys
 import tempfile
 import unittest
+from pathlib import Path
 
 # py -I leaves the script's own folder off the path.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import release_text  # noqa: E402  # pyright: ignore[reportMissingImports]
+import release_text  # pyright: ignore[reportMissingImports]
 
 CHANGELOG = """# Changelog
 
@@ -50,6 +50,9 @@ class ReleaseTextTest(unittest.TestCase):
         (self.root / "extensions/tiktok/src/main/l10n/notes").mkdir(parents=True)
         (self.root / ".github/ISSUE_TEMPLATE").mkdir(parents=True)
         self.write("CHANGELOG.md", CHANGELOG)
+        self.write("extensions/tiktok/src/main/l10n/notes/en.txt",
+                   CHANGELOG[CHANGELOG.index("## Unreleased"):].replace("Hide footnotes is new", "Hide footnotes")
+                   .replace("About 6.7 MB smaller", "Saves 6.7 MB"))
         self.write("README.md", README)
         self.write("patches-list.json", catalog("1.0.0", "1.1.0"))
         self.write("patches-bundle.json", json.dumps({"created_at": "", "description": "", "download_url": "",
@@ -85,8 +88,51 @@ class ReleaseTextTest(unittest.TestCase):
         changelog = self.read("CHANGELOG.md")
         self.assertIn("## Unreleased\n\n## 0.2.0 (2026-10-09)\n\n* **TikTok:** Hide footnotes", changelog)
         self.assertEqual(changelog.count("## 0.1.0 (2026-01-01)"), 1)
-        for lang in release_text.LANGUAGES:
+        for lang in ("en",) + release_text.LANGUAGES:
             self.assertTrue(self.read(f"extensions/tiktok/src/main/l10n/notes/{lang}.txt").startswith("## 0.2.0 (2026-10-09)\n"))
+
+    def test_cut_requires_complete_curated_english_before_writing_any_file(self):
+        for text in ("## Unreleased\n", "## Unreleased\n\n* **TikTok:** Wrong (#9).\n",
+                     "## Unreleased\n\n* **TikTok:** Wrong (#9).\n\n* **TikTok:** Size.\n"):
+            self.write("extensions/tiktok/src/main/l10n/notes/en.txt", text)
+            with self.subTest(text=text), self.assertRaises(SystemExit):
+                self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
+            self.assertEqual(CHANGELOG, self.read("CHANGELOG.md"))
+            self.assertEqual(text, self.read("extensions/tiktok/src/main/l10n/notes/en.txt"))
+
+    def test_cut_rejects_inexact_or_duplicate_release_headings_before_writing_any_file(self):
+        self.translate_all()
+        paths = [self.root / "CHANGELOG.md", release_text.NOTES / "en.txt"]
+        paths.extend(release_text.NOTES / f"{lang}.txt" for lang in release_text.LANGUAGES)
+        for path in paths:
+            original = path.read_text(encoding="utf-8")
+            for bad in (original.replace("## Unreleased\n", "## Unreleased (draft)\n", 1),
+                        original.replace("## Unreleased\n", "## Unreleased\n\n## Unreleased\n", 1),
+                        original.replace("## 0.1.0 (2026-01-01)", "## 0.1.0 draft", 1),
+                        original + "\n## 0.1.0 (2026-01-02)\n\n* **TikTok:** Duplicate.\n"):
+                path.write_text(bad, encoding="utf-8", newline="\n")
+                before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+                with self.subTest(path=path.name, heading=bad.splitlines()[0]), self.assertRaises(SystemExit):
+                    self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
+                self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+            path.write_text(original, encoding="utf-8", newline="\n")
+
+    def test_published_summary_check_allows_legacy_changelog_introductions(self):
+        self.write("CHANGELOG.md", CHANGELOG.replace("* **TikTok:** First.", "An older release introduction.\n\n* **TikTok:** First."))
+        self.run_command(release_text.check_translations, version="0.1.0", unreleased=False)
+
+    def test_cut_preserves_inherited_linked_prerelease_history(self):
+        history = "\n## [0.0.1-dev.2](https://example.com/compare/v0.0.1-dev.1...v0.0.1-dev.2) (2025-12-01)\n\n* Old.\n"
+        self.write("CHANGELOG.md", CHANGELOG + history)
+        self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
+        self.assertTrue(self.read("CHANGELOG.md").endswith(history))
+
+    def test_cut_rejects_an_older_version_before_writing_any_file(self):
+        self.translate_all()
+        before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(SystemExit):
+            self.run_command(release_text.cut, version="0.0.9", date="2026-10-09")
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
 
     def test_cut_refuses_unscoped_bullets_and_partial_translations_without_writing(self):
         self.write("CHANGELOG.md", CHANGELOG.replace("* **TikTok:** About", "* **Docs:** About"))
@@ -125,6 +171,8 @@ class ReleaseTextTest(unittest.TestCase):
                          checked=str(self.root / "checked.md"), out=str(out))
         notes = out.read_text(encoding="utf-8")
         self.assertIn("## What's changed\n\n* Hide footnotes is new (#5).\n* About 6.7 MB smaller.\n", notes)
+        self.assertNotIn("* Hide footnotes (#5).", notes)
+        self.assertIn("* **TikTok:** Hide footnotes (#5).", self.read("extensions/tiktok/src/main/l10n/notes/en.txt"))
         self.assertNotIn("**TikTok:**", notes)
         self.assertIn("Morphe Manager 1.34.0 or newer", notes)
         self.assertTrue(notes.startswith("Intro line.\n\n") and notes.endswith("* Checked on a phone.\n"))

@@ -28,7 +28,8 @@ import java.util.WeakHashMap;
  * handles it, so a wrapper TikTok keeps away outside Clear display (it hides some per post) stays
  * away. While the faded Clear display lasts, the noted views are kept VISIBLE, the wrappers at
  * full so the column's level is what shows. If the fade stops while TikTok is still clear (Pause,
- * or the level set to 0 or 100), each gets back what TikTok had given it. When TikTok leaves Clear
+ * the level set to 0 or 100, or Keep faded controls in Clear display turned off), each gets back
+ * what TikTok had given it. When TikTok leaves Clear
  * display it shows them itself, and the wrappers are held at full through its animation up from
  * 0 so they don't blink out under the column's level.
  */

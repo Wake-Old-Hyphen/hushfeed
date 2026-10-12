@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.detail.ui.DetailActivity;
@@ -184,6 +185,43 @@ public class LiveStatusBarTest {
 
         room.pause();
         assertEquals("leaving didn't give the strip back", bar, container.getPaddingTop());
+        room.stop().destroy();
+    }
+
+    /**
+     * The room's side drawer (`qwo` on 47.1.4) waits INVISIBLE off to the side, padded a bar tall,
+     * one level above the container that holds the stream's strip. The search passes it by and
+     * lifts the strip; the drawer keeps its padding for when it slides in.
+     */
+    @Test public void aHiddenDrawerPaddedForTheBarKeepsItsPaddingAndTheStripGoes() {
+        Settings.HIDE_STATUS_BAR_IN_LIVE.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout layer = new FrameLayout(live);
+        RelativeLayout drawer = new RelativeLayout(live);
+        drawer.setPadding(0, bar, 0, 0);
+        drawer.setVisibility(View.INVISIBLE);
+        layer.addView(drawer, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        FrameLayout page = new FrameLayout(live);
+        layer.addView(page, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        FrameLayout container = new FrameLayout(live);
+        container.setPadding(0, bar, 0, 0);
+        page.addView(container, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        live.setContentView(layer);
+        room.start().resume().visible();
+
+        layOut(live);
+        assertEquals("the hidden drawer lost its padding", bar, drawer.getPaddingTop());
+        assertEquals("the strip stayed", 0, container.getPaddingTop());
+
+        room.pause();
+        assertEquals("leaving didn't give the strip back", bar, container.getPaddingTop());
+        assertEquals(bar, drawer.getPaddingTop());
         room.stop().destroy();
     }
 

@@ -67,7 +67,12 @@ public final class StorySeekbar {
     static final class Cell {
         WeakReference<View> root = new WeakReference<>(null);
         WeakReference<Object> params = new WeakReference<>(null);
-        @Nullable StorySeekbarView line;
+        /**
+         * Held weakly, like the rest: the line's frame is in the cell's views, and TikTok's views
+         * lead back to the component that keys {@link #CELLS}, so a line held here kept a closed
+         * story viewer's component, views and Activity for as long as the switch stayed on.
+         */
+        WeakReference<StorySeekbarView> line = new WeakReference<>(null);
         /** The root was searched and holds no single video frame, so it is not searched again. */
         boolean noFrame;
 
@@ -123,7 +128,7 @@ public final class StorySeekbar {
             Cell cell = cellOf(component);
             if (cell.params.get() == params) return;
             cell.params = new WeakReference<>(params);
-            StorySeekbarView line = cell.line;
+            StorySeekbarView line = cell.line.get();
             // The same story bound again keeps its line. Any other story starts without one,
             // until its own first tick.
             if (line != null && !line.aid.equals(cell.videoAid())) detach(cell);
@@ -136,6 +141,9 @@ public final class StorySeekbar {
     public static void onProgress(@Nullable Object controller, @Nullable String aid,
                                   long positionMs, long durationMs) {
         if (controller == null) return;
+        // Every player's ticks come through here, the feed's too. Off with no line left there's
+        // nothing to do, so a tick from another thread isn't posted to the main one.
+        if (!anyLine && !isEnabled()) return;
         if (Looper.myLooper() != Looper.getMainLooper()) {
             Utils.runOnMainThread(() -> onProgress(controller, aid, positionMs, durationMs));
             return;
@@ -148,7 +156,7 @@ public final class StorySeekbar {
             PLAYING.put(controller, aid);
             if (aid == null || CELLS.isEmpty()) return;
             for (Cell cell : new ArrayList<>(CELLS.values())) {
-                StorySeekbarView line = cell.line;
+                StorySeekbarView line = cell.line.get();
                 if (aid.equals(cell.videoAid()) && durationMs > 0L) {
                     if (line == null) line = attach(cell, aid);
                     if (line != null) line.update(controller, positionMs, durationMs);
@@ -203,15 +211,17 @@ public final class StorySeekbar {
 
     /** Takes the line out of the cell, if it has one. */
     static void detach(Cell cell) {
-        StorySeekbarView line = cell.line;
-        cell.line = null;
-        if (line == null) return;
-        ViewParent parent = line.getParent();
-        if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(line);
-        line.abandon();
+        StorySeekbarView line = cell.line.get();
+        cell.line = new WeakReference<>(null);
+        if (line != null) {
+            ViewParent parent = line.getParent();
+            if (parent instanceof ViewGroup) ((ViewGroup) parent).removeView(line);
+            line.abandon();
+        }
+        // Counted again even when the line was already collected with its viewer.
         anyLine = false;
         for (Cell other : CELLS.values()) {
-            if (other.line != null) {
+            if (other.line.get() != null) {
                 anyLine = true;
                 break;
             }
@@ -253,7 +263,7 @@ public final class StorySeekbar {
         StorySeekbarView line = new StorySeekbarView(frame.getContext(), cell, aid);
         frame.addView(line, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, line.stripHeight(), Gravity.BOTTOM));
-        cell.line = line;
+        cell.line = new WeakReference<>(line);
         anyLine = true;
         return line;
     }

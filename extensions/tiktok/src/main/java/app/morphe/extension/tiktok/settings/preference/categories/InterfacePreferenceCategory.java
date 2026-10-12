@@ -6,7 +6,6 @@ package app.morphe.extension.tiktok.settings.preference.categories;
 
 import android.content.Context;
 import android.preference.PreferenceScreen;
-import android.preference.Preference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -448,14 +447,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
         }
         if (SettingsStatus.captchaPopupSuppressionEnabled) {
-            Preference captcha = new Preference(context);
-            captcha.setTitle(L10n.t(context, "Hide CAPTCHA popups"));
-            captcha.setSummary(L10n.t(context,
-                    "Unavailable on these TikTok builds. All verification challenges stay visible."));
-            captcha.setKey("hushfeed_captcha_unavailable");
-            captcha.setEnabled(false);
-            captcha.setSelectable(false);
-            addPreference(captcha);
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide CAPTCHA popups",
+                    "Skip the puzzle TikTok shows while you're just browsing. A puzzle right after "
+                            + "you like, follow, comment or repost still shows, and so do sign-in, "
+                            + "SMS and two-step checks. If something stops working, turn this off.",
+                    Settings.HIDE_CAPTCHA_POPUPS
+            ));
         }
         if (SettingsStatus.popupLabelsEnabled) {
             addPreference(new PopupLabelChecklistPreference(context));
@@ -554,8 +553,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             addPreference(new NumberInputPreference(
                     context,
                     "Fade the video controls",
-                    "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
+                    "Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.",
                     Settings.FADE_CONTROLS_OPACITY, "%1$s%%"
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Keep faded controls in Clear display",
+                    "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",
+                    Settings.FADE_IN_CLEAR_DISPLAY
             ));
             addPreference(new ChoicePreference(context, "Burn-in guard", Settings.BURN_IN_GUARD,
                     new String[]{"Off", "Dim when idle", "Dim when idle and shift"},

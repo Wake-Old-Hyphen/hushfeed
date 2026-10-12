@@ -13,8 +13,10 @@ import app.morphe.extension.tiktok.privacy.StoreIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
+import app.morphe.extension.tiktok.settings.preference.ImportedFontPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.ProfileShortcutChecklistPreference;
+import app.morphe.extension.tiktok.settings.preference.LocalProfileCountsPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 
@@ -52,6 +54,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.keepFavoritesTabEnabled
                 || SettingsStatus.promotionalBannersEnabled
                 || SettingsStatus.profileShortcutsEnabled
+                || SettingsStatus.profileBackgroundEnabled
                 || SettingsStatus.followStatusEnabled
                 || SettingsStatus.copyIdsEnabled
                 || SettingsStatus.hdUploadEnabled
@@ -111,6 +114,18 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "phone doesn't have yet may show as a box or in pieces.",
                     Settings.SYSTEM_EMOJI
             ));
+            // The same hook again: the font engine's exit asks one question, imported font
+            // first, then the system font, then TikTok's own.
+            addPreference(new TogglePreference(
+                    context,
+                    "Use an imported font",
+                    "Shows TikTok's text in the font file you import below. While both are on, "
+                            + "this one wins over Use system font. If the file is removed or "
+                            + "can't be read, the text goes back to what Use system font shows.",
+                    Settings.IMPORTED_FONT
+            ));
+            addPreference(ImportedFontPreference.pickRow(context));
+            addPreference(ImportedFontPreference.removeRow(context));
         }
         if (SettingsStatus.turnOffHapticsEnabled) {
             addPreference(new TogglePreference(
@@ -175,7 +190,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
         }
         if (SettingsStatus.keepFavoritesTabEnabled || SettingsStatus.promotionalBannersEnabled
                 || SettingsStatus.profileShortcutsEnabled || SettingsStatus.followStatusEnabled
-                || SettingsStatus.copyIdsEnabled) {
+                || SettingsStatus.copyIdsEnabled || SettingsStatus.profileBackgroundEnabled) {
             addPreference(new SectionHeadingPreference(context, "Profile"));
         }
         if (SettingsStatus.keepFavoritesTabEnabled) {
@@ -203,6 +218,16 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                             + "that don't follow you back.",
                     Settings.SHOW_FOLLOW_STATUS
             ));
+            addPreference(new TogglePreference(context, "Local profile counts",
+                    "Show chosen counts on your own profile on this phone. Other people see the real counts.",
+                    Settings.LOCAL_PROFILE_COUNTS));
+            addPreference(new LocalProfileCountsPreference(context));
+            addPreference(new TogglePreference(context, "Local verified badge",
+                    "Show a verified badge on your own profile on this phone. Other people see your real status.",
+                    Settings.LOCAL_PROFILE_VERIFIED_BADGE));
+            addPreference(new TogglePreference(context, "Hide your account warning",
+                    "Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.",
+                    Settings.HIDE_OWN_PROFILE_RESTRICTION_NOTICE));
         }
         if (SettingsStatus.copyIdsEnabled) {
             addPreference(new TogglePreference(
@@ -248,6 +273,17 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                         Settings.HIDE_PROFILE_THOUGHTS
                 ));
             }
+        }
+        if (SettingsStatus.profileBackgroundEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Profile background",
+                    "Opens TikTok's own profile background editor in Edit profile, and shows the "
+                            + "backgrounds other profiles have set. TikTok's servers may still refuse "
+                            + "to save one for an account TikTok hasn't offered it to yet. Open Edit "
+                            + "profile again after turning this on.",
+                    Settings.PROFILE_BACKGROUND
+            ));
         }
         if (SettingsStatus.hdUploadEnabled) {
             addPreference(new SectionHeadingPreference(context, "Posting"));

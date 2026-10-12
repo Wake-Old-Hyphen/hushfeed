@@ -58,7 +58,8 @@ public final class H264Playback {
 
     /**
      * The same list with only its H.264 gears, when the switch is on and the list mixes H.264
-     * with another codec. Anything else goes back as it came.
+     * with another codec. Anything else goes back as it came, and so does a list whose H.264
+     * gears have no playable address while another gear has one ({@link PreferredGears}).
      */
     static List<?> keepH264(List<?> original) {
         // A switch saved on by a build that had the patch, or a restored backup, keeps its
@@ -69,8 +70,7 @@ public final class H264Playback {
         for (Object gear : original) {
             if (isH264(gear)) h264.add(gear);
         }
-        if (h264.isEmpty() || h264.size() == original.size()) return original;
-        return h264;
+        return PreferredGears.narrow(original, h264, "Prefer H.264 video");
     }
 
     private static List<?> filter(List<?> original, String member) {
@@ -98,5 +98,6 @@ public final class H264Playback {
 
     static void resetForTests() {
         described = false;
+        PreferredGears.resetForTests();
     }
 }

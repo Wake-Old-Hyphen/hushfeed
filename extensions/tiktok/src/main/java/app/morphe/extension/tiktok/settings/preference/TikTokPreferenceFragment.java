@@ -214,6 +214,26 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
     }
 
+    /** Import a font file, whose picker answers the page that asked. */
+    public static void openImportedFontPicker() {
+        if (activeFragment != null && activeFragment.isAdded()) {
+            ImportedFontPreference.pickFile(activeFragment);
+        } else {
+            SettingsActionBanner.showNotice(Utils.getContext(), L10n.t(
+                    "Reopen Hushfeed settings, then choose the file"));
+        }
+    }
+
+    /**
+     * Owes a restart for a file the next start reads rather than a setting, the way turning
+     * Hushfeed back on owes one for its marker file, and says so on the page open now.
+     */
+    static void noteFileRestartPending(String key) {
+        AbstractPreferenceFragment.restartPending.add(key);
+        TikTokPreferenceFragment open = active();
+        if (open != null) open.refreshRestartPending();
+    }
+
     /** Save or Restore seen history, whose picker answers the page that asked. */
     public static void openSeenHistoryFilePicker(int request) {
         if (activeFragment != null && activeFragment.isAdded()) {
@@ -1679,6 +1699,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (ImportSeenVideoHistoryPreference.onResult(this, requestCode, resultCode, data)) return;
         if (SeenHistoryFilePreference.onResult(this, requestCode, resultCode, data)) return;
         if (SettingsBackupPreference.onResult(this, requestCode, resultCode, data)) return;
+        if (ImportedFontPreference.onResult(this, requestCode, resultCode, data)) return;
         if (requestCode != REQUEST_DOWNLOAD_PATH_FOLDER) {
             return;
         }

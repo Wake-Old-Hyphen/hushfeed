@@ -169,7 +169,7 @@ val commentTranslationPatch = bytecodePatch(
         "don't have to tap Translate on each one. Starts off. Turn it on in Hushfeed settings > " +
         "Comments, where more rows list languages TikTok's automatic translation should leave alone, " +
         "pick the language translations come out in, and add TikTok's translate button beside the " +
-        "comment count.",
+        "comment count. Optional received-message and draft translation previews are under Inbox settings.",
     default = true,
 ) {
     category("Comments")
@@ -178,10 +178,24 @@ val commentTranslationPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
+        val dmPlans = findDmPreviewPlans(packageMetadata.versionName in declaredVersions(), ::classDefByOrNull) { feature, changed ->
+            println("Translate comments: $feature omitted on ${packageMetadata.versionName}: ${changed.message}")
+        }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableCommentTranslation()V",
         )
+        dmPlans.accounts?.let { hookDmTranslationAccountEvents(it) }
+        dmPlans.outgoing?.let { targets ->
+            hookDmTranslationPreview(targets)
+            SettingsStatusLoadFingerprint.method.addInstruction(0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableDmTranslationPreview()V")
+        }
+        dmPlans.received?.let { targets ->
+            hookReceivedDmTranslationPreview(targets)
+            SettingsStatusLoadFingerprint.method.addInstruction(0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableReceivedDmTranslationPreview()V")
+        }
 
         BaseCommentCellBindFingerprint.method.apply {
             val instructions = implementation!!.instructions

@@ -78,6 +78,8 @@ public class LaunchCrashCleanupTest {
         expected.put("settings/preference/ReleaseNotes.java", Arrays.asList(
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));
         expected.put("settings/CalmFeedPreset.java", Arrays.asList("PREFERENCES"));
+        expected.put("translation/DmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
+        expected.put("translation/ReceivedDmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("shared/settings/EarlySwitch.java", Arrays.asList("Setting.PREFERENCES_NAME"));
         expected.put("shared/settings/Setting.java", Arrays.asList("PREFERENCES_NAME"));
         expected.put("shared/settings/preference/AbstractPreferenceFragment.java", Arrays.asList("Setting.preferences.name"));

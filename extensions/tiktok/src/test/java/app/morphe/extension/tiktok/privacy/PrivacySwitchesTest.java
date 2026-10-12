@@ -139,6 +139,80 @@ public class PrivacySwitchesTest {
         assertEquals(1, cancellable.getCount());
     }
 
+    /** Counts the reads that reach it, so a blocked read can be shown never to have asked. */
+    public static class CountingProvider extends OneRowProvider {
+        static int reads;
+
+        @Override public Cursor query(Uri uri, String[] projection, String selection,
+                String[] selectionArgs, String sortOrder) {
+            reads++;
+            return super.query(uri, projection, selection, selectionArgs, sortOrder);
+        }
+    }
+
+    /**
+     * A null projection asks for every column. TikTok's file-name and path helpers ask that way
+     * and look _display_name up before they check for a row, so a blocked read keeps the contacts
+     * provider's columns in every overload, before Hushfeed has a context too, and the provider
+     * is never asked.
+     */
+    @Test public void aBlockedReadWithNoProjectionStillHasTheContactsColumns() {
+        Robolectric.setupContentProvider(CountingProvider.class, ContactsContract.AUTHORITY);
+        CountingProvider.reads = 0;
+        ContentResolver resolver = context.getContentResolver();
+        Uri[] uris = {
+                ContactsContract.Contacts.CONTENT_URI,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                ContactsContract.RawContacts.CONTENT_URI,
+                Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode("5551234")),
+                Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_VCARD_URI, "0r1-2"),
+        };
+        String[] wanted = {"_id", "lookup", "display_name", "has_phone_number", "contact_id",
+                "raw_contact_id", "mimetype", "data1", "number", "_display_name", "_size"};
+        Settings.BLOCK_CONTACT_LIST.save(true);
+        saveInTheFile(ContactListBlocker.SWITCH_KEY, true);
+        EarlyApplication.set(context);
+        for (boolean early : new boolean[]{false, true}) {
+            if (early) Utils.setContext(null);
+            try {
+                for (Uri uri : uris) {
+                    Cursor[] answers = {
+                            ContactListBlocker.interceptQuery(resolver, uri, null, null, null, null),
+                            ContactListBlocker.interceptQuery(resolver, uri, null, null, null, null, null),
+                            ContactListBlocker.interceptQuery(resolver, uri, null, (Bundle) null, null),
+                    };
+                    for (Cursor cursor : answers) {
+                        assertEquals(uri + " has no rows", 0, cursor.getCount());
+                        for (String column : wanted) cursor.getColumnIndexOrThrow(column);
+                        assertEquals(-1, cursor.getColumnIndex("relative_path"));
+                    }
+                }
+            } finally {
+                Utils.setContext(context);
+            }
+        }
+        assertEquals("the real provider is never asked while the switch is on", 0, CountingProvider.reads);
+
+        Cursor named = ContactListBlocker.interceptQuery(resolver,
+                ContactsContract.Contacts.CONTENT_URI, new String[]{"display_name"}, null, null, null);
+        assertEquals("a named projection keeps its own shape", 1, named.getColumnCount());
+        Cursor first = ContactListBlocker.interceptQuery(resolver,
+                ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        first.getColumnNames()[0] = "changed";
+        Cursor second = ContactListBlocker.interceptQuery(resolver,
+                ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        assertEquals("one caller's edit to its column names doesn't reach the next", 0,
+                second.getColumnIndexOrThrow("_id"));
+        assertEquals("no column is listed twice", ContactListBlocker.ALL_COLUMNS.length,
+                new java.util.HashSet<>(java.util.Arrays.asList(ContactListBlocker.ALL_COLUMNS)).size());
+
+        Settings.BLOCK_CONTACT_LIST.save(false);
+        saveInTheFile(ContactListBlocker.SWITCH_KEY, false);
+        assertEquals("with the switch off the real provider answers", 1, ContactListBlocker.interceptQuery(
+                resolver, ContactsContract.Contacts.CONTENT_URI, null, null, null, null).getCount());
+        assertEquals(1, CountingProvider.reads);
+    }
+
     @Test public void theLauncherEnumerationIsTheOnlyPackageQueryRefused() {
         Intent inventory = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
         Intent share = new Intent(Intent.ACTION_SEND).setType("text/plain");

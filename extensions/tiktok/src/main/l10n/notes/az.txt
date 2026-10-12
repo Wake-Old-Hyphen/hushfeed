@@ -1,449 +1,535 @@
+## Unreleased
+
+* **TikTok:** Yeni Show commenter handle and region yaması: şərhlər şərh yazanın görünən adı əvəzinə @istifadəçi adını, şərhin vaxtından sonra isə hesabında qurulmuş ölkəni göstərə bilər. Hər birinin Hushfeed ayarları > Şərhlər bölməsində öz açarı var və hər ikisi əvvəlcə söndürülüdür. na-x-ril-in onlynazril yamalarından götürülüb.
+
+* **TikTok:** Sistem şriftindən istifadə edin indi TikTok mətnini idxal etdiyiniz .ttf və ya .otf faylı ilə də göstərə bilər. Tətbiq bölməsində İdxal edilmiş şriftdən istifadə edin seçimini açın, faylı seçin və TikTok-u yenidən başladın. Fayl silinərsə və ya oxuna bilməzsə, mətn Sistem şriftindən istifadə edin seçiminin göstərdiyinə qayıdır. na-x-ril-in onlynazril yamalarından götürülüb.
+
+* **TikTok:** Yeni Profile background yaması: Tətbiq bölməsində Profil altındakı açar TikTok-un öz profil fonu redaktorunu Profili redaktə et bölməsində açır və digər profillərin qoyduğu fonları göstərir. TikTok bu funksiyanı hesabınıza təklif etməyibsə, TikTok serverləri onu saxlamaqdan yenə də imtina edə bilər. Söndürülmüş başlayır. na-x-ril-in onlynazril yamalarından götürülüb.
+
+* **TikTok:** CAPTCHA pəncərələrini gizlədin yenidən açar oldu, Hushfeed ayarları > Lent ekranı bölməsində, və söndürülmüş başlayır. TikTok-un sən sadəcə gəzərkən göstərdiyi tapmacanı keçir. Bəyənmə, izləmə, şərh və ya yenidən paylaşımdan dərhal sonra gələn tapmaca yenə göstərilir, giriş, SMS və iki addımlı yoxlamalar da. Hide the risk control CAPTCHA yaması ilə o yoxlamanın gəzərkən çıxan tapmacaları da keçilir. Qayda na-x-ril-in onlynazril yamalarından gəlir.
+
+* **TikTok:** Kontakt siyahısına girişi bloklayın açıq olanda bütün sütunları istəyən kontakt oxuması artıq kontakt sütunlarını yenə də saxlayan boş siyahı alır, beləliklə kontakt kartının adını axtaran TikTok ekranı çatışmayan sütuna ilişmir.
+
+* **TikTok:** H.264 videoya üstünlük ver və HDR əvəzinə SDR oynat artıq üstünlük verilən versiyaların heç birinin oynatmaq üçün ünvanı olmadıqda videonun digər versiyalarını saxlayır, beləliklə oynatma keyfiyyəti yenə oynayan versiyalar arasından seçir.
+
+* **TikTok:** Təmiz ekranda müəllifin profilinə sürüşdürüb geri qayıdanda alt tablar gizli qalır (#84).
+
+* **TikTok:** Öz profilinizin sayları sahələrinə yazdığınız rəqəmlər redaktor açıq ikən ekran fırlananda və ya tema dəyişəndə sahələrdə qalır.
+
+* **TikTok:** Yüklənmiş fəaliyyətdə axtarış hansısa TikTok buildində uğursuz olarsa, onun paneli yox olur və tətbiq bağlanmaq əvəzinə TikTok-un öz siyahısı ekranda qalır. Axtarış TikTok yenidən başladılana qədər söndürülmüş qalır.
+
+* **TikTok:** Video idarəetmələrini solğunlaşdır altına standart olaraq açıq olan Təmiz ekranda solğun idarəetmələri saxlayın açarı əlavə olundu. Onu söndürsəniz, Təmiz ekran düymələri və başlığı yenə gizlədir, solğunluq isə başqa hər yerdə işləməyə davam edir (#84).
+
+* **TikTok:** Video hekayələrdə irəli-geri çəkmə zolağı açıq olanda bağladığınız hekayə pəncərəsi TikTok-dan istifadəyə davam etdiyiniz müddətdə artıq yaddaşda qalmır.
+
+* **TikTok:** Müəllif sətrindəki ad sürətli sürüşdürmədən sonra və ya foto paylaşımının nişanı ikonaya kiçiləndə artıq qısaldılmış qalmır (#127).
+
+* **TikTok:** Profiliniz bu telefonda təsdiq nişanı göstərə və ya hesab xəbərdarlığını gizlədə bilər. Başqaları həqiqi statusunuzu görür.
+
+* **TikTok:** Media yoxlamaları indi quraşdırılmış multipleksoru yaradılmış kliplərlə sınayır və nəticənin oynadıldığını yoxlayır. Sınaq faylları yoxlamadan sonra silinir.
+
+* **TikTok:** Axtarışdan sonra Fəaliyyət kateqoriyasını dəyişmək artıq tətbiqi çökdürmür. Axtarış ekranda görünən siyahıdan başlaya bilər.
+
+* **TikTok:** Cihaz yoxlamaları indi açılan menyuları aid olduqları tətbiqə görə tanıyır. Digər tətbiqlərə və uyğun gəlməyən pəncərələrə giriş yenə rədd edilir.
+
+* **TikTok:** Öz profilinizdə bu telefonda seçdiyiniz saylar göstərilə bilər. Boş sahələr TikTok-un saylarını saxlayır. Başqaları həqiqi dəyərləri görür.
+
+* **TikTok:** Yüklənmiş Fəaliyyət bildirişləri üçün istəyə bağlı axtarış əlavə edildi. Axtarış əlavə yükləməni dayandırır. Sorğunu təmizləmək cari siyahını və mövqeyi bərpa edir.
+
+* **TikTok:** Təmiz ekranda idarələr solğun olduqda foto paylaşımlarının X düyməsi işlək qalır. Digər solğun idarələr toxunuşları videoya ötürür (#84).
+
+* **TikTok:** Kiçik ART köməkçisində Android 6 üzərində altyazı üslubu və boş lent emalı yoxlanıldı.
+
+* **TikTok:** Solğun şərh paneli üzərində parlaqlıq və səs səviyyəsi sürüşdürmələri yoxlanıldı. Cihaz yoxlamaları hər sürüşdürmədən sonra parlaqlığı, səsi və müvəqqəti ayarları bərpa edir.
+
+* **TikTok:** Səssiz axın səs səviyyəsini gizlətdikdə jest yoxlamaları girişdən imtina edir və vaxt həddindən sonra bitən jestləri rədd edir.
+
+* **TikTok:** Cihaz yoxlamaları artıq həqiqi iki barmaq jestlərini dəstəkləyir. Yan paneldə hər iki barmaq mövqeyinin Ekranı təmizlə rejimindən çıxardığı təsdiqləndi (#84).
+
+* **TikTok:** TikTok şəffaflığı dəyişəndə və ya sətri əvəz edəndə Ekranı təmizlə rejiminin gizli sürüşdürmə çubuğu şəffaf qalır. Gizlətmə ayarını söndürmək TikTok-un son şəffaflığını bərpa edir (#84).
+
+* **TikTok:** Eyni videonu yeni baxış pəncərəsində yenidən açanda Avtomatik Ekranı təmizlə yenidən cəhd edir. Şərhlərdən və ya qısa fokus itkisindən qayıdanda əl ilə çıxış seçiminiz saxlanılır (#84).
+
+* **TikTok:** Sessiya fasiləsi buraxıldıqda və ya bitdikdə başqa tətbiq səs fokusunu qaytarana qədər videonun dayandığı yoxlanıldı.
+
+* **TikTok:** Yerli inkişaf indeksi önizləmələri paketin faktiki versiyasını və Manager-in main/dev sırasını yoxlayır. Sabit indeks dəyişmir və heç nə yayımlanmır.
+
+* **TikTok:** Kökü gizlət TikTok-un cihaz yoxlamalarında kök statusunu və kök alətləri haqqında məlumatı gizlədir. Əvvəlcə sönülüdür. Dəyişdikdən sonra TikTok-u yenidən başladın.
+
+* **TikTok:** Paylaşım panelində Bu yaradıcını blokla, Şikayət et yanında Blokla əməliyyatı əlavə edir. İlkin olaraq sönülüdür və TikTok təsdiqlədikdən sonra Geri al təklif edir. Əvvəlki Geri al eyni yaradıcının gözləyən bloklanmasını gözləyir.
+
+* **TikTok:** Alınmış DM stikerləri Medianı saxla düyməsi olan önbaxış açır. Saxlama seçilmiş stiker formatından istifadə edir və şifrələnmiş faylları yazmazdan əvvəl yoxlayır. Önbaxışın açılması mesaj göndərmir.
+
+* **TikTok:** Buraxılış yükləmələri paket, qəbz və yoxlama cəmləri endirilib yoxlanana qədər qaralamada qalır. Davam etmə mövcud faylları yoxlayır. İstəyə bağlı dəyişməzlik yoxlaması GitHub deposunun parametrini tələb edir və dərc edilmiş təsdiqi yoxlayır.
+
+* **TikTok:** TalkBack-in parametr bildirişinin əməlini Bağlamaq üçün iki dəfə toxunun kimi oxuduğu yoxlanıldı.
+
+* **TikTok:** Gələnlər qutusunda Hamısını təmizləyin düyməsi indi təklif olunan hesabların yanında görünür və tam ölçülü toxunma sahəsi üçün yer qalır.
+
+* **TikTok:** Yeniliklər hər dəyişikliyi ayarların dilində qısa göstərir, Bütün dəyişikliklər isə tam tarixçəni açır. Sonra və Aydındır əvvəlki kimi işləyir, dar ekranlarda və ya böyük mətnlə əməliyyatlar yeni sətrə keçir.
+
+* **TikTok:** Yeni şərh emojiləri TikTok-un yerli emoji sınağı üçün Laboratoriya seçimidir. Tətbiq etdikdən sonra yenidən başladın. Kataloq yoxlamaları, ehtiyat seçim, resurslar və server uyğunluğu nəyin görünəcəyini yenə müəyyən edir.
+
+* **TikTok:** Hər paylaşımda daha çox həştəq maksimumu və başqa başlıq yoxlamalarını dəyişmədən TikTok-un müştəri həştəq limitini söndürür. Tətbiq etdikdən sonra yenidən başladın. Server limiti yenə qüvvədə ola bilər.
+
+* **TikTok:** APK yoxlayıcısı faylları çıxarmadan 16 KB səhifələr üçün yerli kitabxana yükləmə düzülüşünü və sıxılmamış ZIP mövqelərini yoxlayır. Xətalar hər kitabxana üçün göstərilir, Android-də işləmə uyğunluğu isə ayrıca cihaz yoxlaması tələb edir.
+
+* **TikTok:** Ayarların tərcümə cədvəllərini cəm formalarını və yer tutucuları saxlayaraq XML-ə çıxarıb geri idxal etmək olar. İdxal cədvəli əvəz etməzdən əvvəl dəyişmiş açarları və çatışmayan tərcümələri rədd edir.
+
+* **TikTok:** Yama tətbiqi bitəndə sınaq çıxışının toplanması artıq təkrarlanan tapşırıq təmizləmə xətaları göstərmir. Uğursuz tətbiqetmələr yenə push əməliyyatını dayandırır.
+
+* **TikTok:** Yerli əməliyyatlar gec gələndə, sətirləri dəyişəndə və ya Saxla düyməsi yox olanda stiker önizləməsində Saxla bərpa olunur. Təkrar işlədilən önizləmə hazırda göstərilən stikeri saxlayır.
+
+* **TikTok:** Təklif olunan hesabları gizlət söndürüləndə hüceyrənin ilkin məsafələri, mənfi kənar boşluqlar da daxil, bərpa olunur.
+
+* **TikTok:** İlk bildirən şəxs paylaşım tarixinin Müəllif mətni ölçüsünə uyğunlaşdığını təsdiqləyib (#66).
+
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda keçdiyiniz hər otaq saatın altına qədər uzanır və arxasında kölgə olur. Bəzi otaqlarda orada qara zolaq qalırdı, ilk bir neçə LIVE-dan sonra isə zolaq yenə açıq görünə bilirdi (#137).
+* **TikTok:** LIVE-ı status panelinin altında göstərin indi hər otaqda yuxarı kənarı qara və ya açıq zolaqsız doldurur (#137).
 
-* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda LIVE-da təmiz ekran artıq saatın altında tünd zolaq qoymur, sola sürüşdürərək açdığınız yan panelin üst sırası da saatdan aşağıda qalır (#137).
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda Təmiz ekran artıq saatın altında zolaq qoymur, yan panellər də aşağıda qalır (#137).
 
-* **TikTok:** Tako qabarcığını gizlədin indi lent videolarının sağ alt küncündəki Tako qabarcığını da gizlədir. Bəzi hesablarda profil düyməsinin üstündəki qabarcıq əvəzinə o görünür (#115).
+* **TikTok:** Tako qabarcığını gizlədin indi lentin aşağı küncündəki variantı da gizlədir (#115).
 
-* **TikTok:** Feature Gate Lab-da yeni Profil banneri hazır ayarı var. O, profilin qalanını yeni görünüşə keçirmədən TikTok-un Edit profile səhifəsində Add background seçimini açır (#80).
+* **TikTok:** Lab-dakı Profil banneri hazır ayarı profilin qalanını dəyişmədən Edit profile səhifəsinə Add background əlavə edir (#80).
 
-* **TikTok:** TikTok qaranlıq rejimdə olanda Favoritlər düyməsini basıb saxlayanda açılan kolleksiyalar pəncərəsi artıq ağ yox, qaranlıqdır. Hushfeed parametrləri > Tətbiq bölməsindəki Qaranlıq Favoritlər pəncərəsi onu söndürür (#142).
+* **TikTok:** Favoritlər kolleksiyaları pəncərəsi TikTok-un qaranlıq mövzusuna uyğundur. Tətbiq bölməsində Qaranlıq Favoritlər pəncərəsi açarı var (#142).
 
 ## 0.71.2 (2026-10-11)
 
-* **TikTok:** LIVE otaqlarında status panelini gizlədin və LIVE-ı status panelinin altında göstərin artıq axtarışda yaradıcının kartının altındakı önizləmədən açılan LIVE-da da işləyir. TikTok həmin LIVE-ı açılmış videolar üçün istifadə etdiyi səhifənin içində açır, açarlar ora çatmırdı (#137).
+* **TikTok:** Hər iki LIVE status paneli açarı indi axtarışdakı yaradıcı önizləməsindən açılan otaqlarda da işləyir (#137).
 
 ## 0.71.1 (2026-10-11)
 
-* **TikTok:** Təmiz ekranda başlıqları saxlayın açıq olanda, təmiz ekrandakı başlıq artıq aşağı kənara düşmür, TikTok-un idarəetmə düymələri gizlənməzdən əvvəl göstərdiyi yerdə qalır (#141). Hələ heç bir başlıq görünməyibsə, köhnə yerində qalır.
+* **TikTok:** Təmiz ekranda başlıqları saxlayın indi son yerli mövqeni saxlayır, köhnə mövqeyi yalnız ilk başlıq görünənədək işlədir (#141).
 
-* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda saatın altındakı zolaq yenə otağın yuxarı hissəsinin qalanı kimi kölgəli olur. TikTok-un panel üçün qara zolaq saxladığı telefonlarda o, aşağıdakı yayımdan açıq görünürdü (#137).
+* **TikTok:** LIVE-ı status panelinin altında göstərin indi saat zolağının kölgəsini otağa uyğunlaşdırır (#137).
 
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** İki dəfə toxunma Hushfeed-in hərəkətlərindən birinə qoyulubsa və Long-press controls yamağı tətbiq olunubsa, barmağın bir az çox qaldığı ikinci toxunuş artıq TikTok-un uzun basma menyusunu da açmır, yəni paylaşım paneli şərhlərin üstündə açılmır. (#63)
+* **TikTok:** Xüsusi jestlər açıq olanda ikinci toxunuşu saxlamaq artıq şərhlərin üstündə TikTok-un uzun basma menyusunu açmır (#63).
 
-* **TikTok:** LIVE idarəetmələri üçün Hushfeed ayarları > Oxutma altında üçüncü açar var, Daha çox LIVE otağında keyfiyyət seçimi təklif et. TikTok LIVE menyusunda Video keyfiyyəti seçimini yalnız yayım bunu istədikdə və ya TikTok hesabın üçün yeni keyfiyyət seçicisini açdıqda göstərir, ona görə bəzi otaqlarda keyfiyyət seçmək mümkün deyildi. Açar açıq olanda belə otaqların çoxu yeni seçicini alır (yalnız səsli otaqlar almır), növbəti otaq isə TikTok bağlanana qədər sonuncu seçdiyin keyfiyyətdə açılır. Standart olaraq bağlıdır. (#57)
+* **TikTok:** Daha çox LIVE otağında keyfiyyət seçimi təklif et dəstəklənən otaqlara seçici əlavə edir, yalnız səsli otaqlara yox. Seçim TikTok bağlananadək qalır, açar əvvəlcə bağlıdır (#57).
 
-* **TikTok:** Profil şəbəkəsində tarixləri göstərin və İştirak dərəcəsini göstərin indi TikTok 47.1.4-ün şəbəkələrində işləyir, həm profilin videolarında, həm də Sevimlilərdə və bəyənilən videolarda. Bu versiya hər xananın baxış sayını patçın çatmadığı yerdə yazır, ona görə orada nə tarix, nə də dərəcə görünürdü.
+* **TikTok:** Profil şəbəkəsində tarixlər və iştirak dərəcələri indi TikTok 47.1.4-də, Favoritlər və bəyənilən videolar daxil, işləyir.
 
-* **TikTok:** Bloklanmış yaradıcılar, bloklanmış sözlər, baxış və bəyənmə aralıqları və LIVE videoları gizlədin, Hekayələri gizlədin kimi açarlar indi İzlədiklərim tabında da işləyir. TikTok 47.1.4-də o tabdan yalnız reklamlar və məkan nişanlı videolar çıxırdı, ona görə blokladığınız yaradıcı orada yenə görünə bilirdi.
+* **TikTok:** İzlədiklərim indi bloklanmış yaradıcıları, sözləri, say aralıqlarını və digər lent filtrlərini, LIVE və hekayə qaydaları daxil, tətbiq edir.
 
-* **TikTok:** Bu dilləri avtomatik tərcümə etməyin sırasına dil kodu olmayan söz yazanda indi sadəcə "dil kodu deyil" mesajı çıxır. Əvvəl heç bir videonun uyğun gəlməyəcəyi barədə xəbərdarlıq edirdi. Bu, başlıq dili filtrinin xəbərdarlığıdır və yalnız mətni tərcüməsiz saxlayan siyahıya uyğun gəlmir (#121).
+* **TikTok:** Bu dilləri avtomatik tərcümə etmə indi başlıq süzgəcinin uyğunluq tapılmadı xəbərdarlığı əvəzinə aydın etibarsız dil kodu xəbərdarlığı verir (#121).
 
-* **TikTok:** Build təfərrüatları indi yalnız TikTok-un resurslarını dəyişən yamaları da adlandırır, məsələn Change app name, Custom launcher icon və Trust user certificates. Yamanın özü göstərilir, onun seçimlərində seçdiyiniz ad və ya şəkil heç vaxt göstərilmir.
+* **TikTok:** Build təfərrüatları indi seçdiyiniz tətbiq adını və ikon şəklini göstərmədən yalnız resursları dəyişən yamaları da sadalayır.
 
-* **TikTok:** Diaqnostikanı qeyd edin açıq olanda qeyd indi hər video üçün bir dəfə TikTok-un onunla irəliləmə çubuğu üçün neçə önizləmə şəkli göndərdiyini yazır. Çubuğu sürüşdürəndə önizləmə görünmürsə, diaqnostika ixracı videonun belə şəkillərlə gəlib-gəlmədiyini göstərir (#140).
+* **TikTok:** Diaqnostikanı qeyd edin açıq olduqda hər videonun önizləmə şəkillərinin sayı bir dəfə qeyd olunur. İxrac bu yolla irəliləyiş panelində önizləmənin niyə görünmədiyini araşdırmağa kömək edir (#140).
 
-* **TikTok:** Build təfərrüatları və tam jurnal ixracı indi quruluşunda TikTok-un kodunu dəyişən hər yamağı qısa adı ilə sadalayır, Comment send fix və Network request report kimi açarı olmayanlar da daxil.
+* **TikTok:** Build təfərrüatları və tam diaqnostika jurnalı indi açarı olmayanlar daxil bütün kod yamalarını göstərir.
 
-* **TikTok:** Yadda saxlanan və ya avtomatik Təmiz ekran indi axtarışdan açdığınız videonu da təmizləyir. TikTok həmin videonu açılan səhifəyə artıq oynayarkən ötürür, Təmiz ekran isə orada heç vaxt gəlməyən başlanğıcı gözləyirdi, ona görə düymələr və TikTok-un axtarış çubuğu qalırdı (#84).
+* **TikTok:** Yadda saxlanan və avtomatik Təmiz ekran indi açılan kimi oynayan axtarış nəticəsində də işləyir (#84).
 
-* **TikTok:** Video örtüklərini gizlədin və lent mətn ölçüləri indi keçid TikTok-u arxasında Sizin üçün lenti olmadan birbaşa axtarışda və ya videoda açanda da işləyir. Əvvəl belə açılan videolarda bütün örtüklər və TikTok-un öz mətn ölçüsü qalırdı (#84).
+* **TikTok:** Örtüklərin gizlədilməsi və lent mətn ölçüləri indi arxada Sizin üçün olmadan birbaşa açılan video və axtarışda da işləyir (#84).
 
-* **TikTok:** TikTok brauzerində xarici səhifələri qoruyun indi LIVE-ların və Mağazanın açdığı tapmaca CAPTCHA-nı TikTok-un öz səhifəsi sayır, buna görə tapmacanın TikTok ilə əlaqəsi qalır (#87). O, TikTok-un öz serverlərindən yüklənir, sadəcə açarın tanımadığı ünvandan.
+* **TikTok:** Brauzer məxfiliyi indi etibarlı tapmaca CAPTCHA səhifələrinin əlaqəsini saxlayır, LIVE və Mağaza da işləməyə davam edir (#87).
 
-* **TikTok:** Build təfərrüatları, Qoşulma statusu, Lisenziyalar və ya Yeniliklər üzərinə tez ikinci toxunuş artıq eyni pəncərəni bir-birinin üstündə iki dəfə açmır.
+* **TikTok:** Tez toxunuşlar artıq Build təfərrüatları, Qoşulma statusu, Lisenziyalar və Yeniliklər pəncərələrini iki dəfə açmır.
 
-* **TikTok:** Videonu bəyənin, İki dəfə toxunma və ya Uzun basma əməli kimi, indi hər növ lentdə baxdığınız videoda qalır. Həmin videoda basılacaq ürək yoxdursa, yanındakı videonu bəyənmək əvəzinə bunu sizə deyir.
+* **TikTok:** Bəyənmə jestləri indi ekrandakı videonu bəyənir, ürək yoxdursa qonşu videoya toxunmaq əvəzinə bunu bildirir.
 
-* **TikTok:** Hushfeed əməllərindən birinə qoyulmuş İki dəfə toxunma indi hər toxunuşda onu bir dəfə işlədir, hətta TikTok eyni toxunuşu öz iki işləyicisinə ötürsə belə.
+* **TikTok:** TikTok-un hər iki jest işləyicisi toxunuşu alsa belə, xüsusi ikiqat toxunuş əməli indi bir dəfə işləyir.
 
-* **TikTok:** Hushfeed-in siyahısında olmayan TikTok versiyasını patch etmək indi daha təhlükəsizdir. İrəliləyiş panelini göstərin əlavələri və şərh tərcümə düyməsi həmin versiyaya uyğun gəlmədikdə indi ayrıca kənarda qalır, ona görə patch-i dayandıra və ya yarımçıq qura bilməz.
+* **TikTok:** Dəstəklənməyən irəliləyiş əlavələri və şərh tərcüməsi qoşulmaları indi ayrıca ötürülür, yamağı pozmur və yarımçıq tətbiq etmir.
 
-* **TikTok:** Keep captions in Clear display və Automatic Clear display sətirləri indi Clear display sözünü TikTok-un yazdığı kimi yazır.
+* **TikTok:** Təmiz ekran ayarları indi TikTok-un yazılışını ardıcıl işlədir.
 
-* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda, axtarışdan və ya profildən açdığınız uzun videoda irəliləyiş paneli yenidən başlığın altında durur. Əvvəllər o, müəllifin adının üstündən keçirdi (#50).
+* **TikTok:** Açılmış videonun şərh paneli gizlədiləndə uzun videonun irəliləyiş paneli indi yaradıcının adından uzaqda, başlığın altında qalır (#50).
 
-* **TikTok:** Video idarəetmələrini solğunlaşdır indi dayandırılmış videoda irəliləyiş panelini, İzlənilənlər bölməsindəki hekayələr düyməsini, axtarışdan açılan videoda isə yuxarıdakı axtarış panelini, Tam ekran düyməsini və Şərh əlavə et panelini də solğunlaşdırır. Əvvəllər bunlar tam parlaqlıqda qalırdı (#84).
+* **TikTok:** Video idarəetmələrini solğunlaşdır indi dayandırılmış irəliləyiş panelinə, İzlədiklərim hekayələrinə və axtarışdan açılan videoların düymələrinə də çatır (#84).
 
-* **TikTok:** Hekayəni indi paylaşma vərəqindən saxlamaq olar. Endirmələr bölməsində Hekayəni paylaşma vərəqindən saxlayın seçimini yandırın, orada saxla düyməsi görünəcək. TikTok-da su nişanı olmayan nüsxə varsa onu saxlayır, yalnız su nişanlı nüsxə olduqda isə bunu bildirir (#93).
+* **TikTok:** Paylaşım panelindən hekayəni saxla Endirmələrə açar və düymə əlavə edir. Mümkünsə təmiz nüsxəni saxlayır, yoxdursa xəbər verir (#93).
 
-* **TikTok:** İrəliləyiş panelini göstərin seçiminin Oxutma bölməsində yeni açarı var: Video hekayələrdə irəli-geri çəkmə zolağı, əvvəlcə söndürülüdür. O, video hekayənin altına nazik bir xətt qoyur, onu çəkərək geri qayıda və ya irəli keçə bilərsiniz, çəkərkən vaxt göstərilir. Toxunmaq yenə hekayələr arasında keçid edir (#72).
+* **TikTok:** Video hekayələrində irəliləyiş paneli sürüşdürmə və vaxt əlavə edir. Əvvəlcə bağlıdır, toxunuş yenə növbəti hekayəyə keçir (#72).
 
-* **TikTok:** Fonda oxutmağa davam edin indi video bitəndə onu yenidən başlada bilər, beləliklə hər dəfə bildirişdə Oxut düyməsini basmağa ehtiyac qalmır. Oxutma bölməsində Fonda təkrar oxut seçimini yandırın. Zəng və ya başqa tətbiqin səsi onu yenə dayandırır (#99).
+* **TikTok:** Arxa planda təkrar oxut bitmiş videonu yenidən başlada bilir, zənglər və başqa tətbiqin səsi isə yenə dayandırır (#99).
 
-* **TikTok:** Musiqi diski yenidən fırlana bilər. TikTok 47.1.4 onu əvvəlcədən sabit saxlayır, ona görə Lent ekranında indi Musiqi diskini fırladın var, heç fırlanmasını istəmirsinizsə Musiqi diskini sabit saxlayın da var. İkisi də yenidən başlatma tələb edir (#68).
+* **TikTok:** Musiqi diskini fırlat və Musiqi diskini sabit saxla yenidən başlatma tələb edən lent seçimləri əlavə edir, 47.1.4-ün sabit diski daxil (#68).
 
-* **TikTok:** İrəliləyiş panelini göstərin üçün Oxutma bölməsində iki yeni açar var, ikisi də əvvəlcə söndürülüb. İrəliləyiş panelinin yanında vaxtı göstərin panelin sonuna oxudulan vaxtı və videonun uzunluğunu əlavə edir, Daha böyük irəliləyiş paneli tutacağı isə bir az qalın xətt üzərində daha böyük tutacaq çəkir (#90).
+* **TikTok:** İrəliləyiş panelinin yanında vaxtı göstərin keçən və ümumi vaxtı əlavə edir. Daha böyük irəliləyiş paneli tutacağı daha böyük tutacaq və qalın xətt verir. Hər ikisi sönülü başlayır (#90).
 
-* **TikTok:** Təmiz ekran idarəetmələrini gizlədin açıq olanda TikTok-un yüklənmə xətti, video yüklənərkən aşağı kənar boyunca ortadan böyüyən nazik zolaq, ekran təmizlənəndə artıq o da gizlənir (#84).
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin indi yüklənmə xəttini də götürür (#84).
 
-* **TikTok:** Şərhlər bölməsindəki yeni Şərhlərdə tərcümə düyməsi açarı TikTok-un öz tərcümə düyməsini şərh sayının yanında göstərir. Bir toxunuş bütün şərhləri və cavabları tərcümə edir, ikincisi isə orijinalları geri qaytarır (#85). Açar əvvəlcə söndürülüb.
+* **TikTok:** Şərhlərdə tərcümə düyməsi yüklənmiş şərh və cavabları tərcümə edir, ikinci toxunuş onları qaytarır. Əvvəlcə bağlıdır (#85).
 
-* **TikTok:** Təmiz ekran artıq hər yeni videonun altında bir neçə saniyəlik nazik xətt qoymur (#84). Bu, tab panelinin üst kənarındakı incə xətt idi və tablar gedəndə geridə qalırdı.
+* **TikTok:** Təmiz ekran artıq video ilə aşağı tablar arasında nazik xətt qoymur (#84).
 
-* **TikTok:** LIVE otaqlarında status panelini gizlədin yuxarıdakı qara zolağı bütün LIVE boyunca uzaqda saxlayır (#137). Əvvəllər TikTok zolağı bir neçə dəfə geri qaytardıqdan sonra, məsələn yayımın üstündə panellər açılıb bağlananda, bu işləməyi dayandırırdı. Yeni LIVE-ı status panelinin altında göstərin açarı LIVE-ın yuxarı kənara qədər uzanmasına imkan verir, saat və ikonlar onun üstündə qalır. Paneli saxlamaq istəyirsinizsə, bunu seçin. Açar əvvəlcə söndürülüb.
+* **TikTok:** LIVE-da status panelini gizlədin panellər açıq olanda da qalır. Yeni, əvvəlcə bağlı açar LIVE-ı saatın altında göstərir (#137).
 
-* **TikTok:** İki dəfə toxunma artıq Uzun basmanın etdiyi hər şeyi edə bilir, məsələn linki kopyalamaq və ya kadrı saxlamaq, Uzun basmada isə yeni Videonu bəyənin seçimi var (#136). Uzun basma ilə bəyənmə TikTok-un özününkü kimi işləyir və bəyənməni heç vaxt geri götürmür.
+* **TikTok:** İki dəfə toxunma indi bütün uzun basma əməllərini təklif edir, mövcud bəyənməni silməyən Videonu bəyənin daxil (#136).
 
-* **TikTok:** Videonu açdığınız kolleksiya və ya başqa şəbəkə içindəki bütün paylaşımları saxlayır, beləliklə Hide photo posts, bloklanmış sözlər və digər lent filtrləri artıq səhv videonun oynamasına səbəb olmur (#135). Açdığınız siyahıdan yalnız reklamlar çıxarılır.
+* **TikTok:** Kolleksiya və şəbəkədən açılmış videolarda indi reklamlardan başqa bütün paylaşımlar qalır ki, filtr yanlış videonu seçməsin (#135).
 
-* **TikTok:** Hide the Send to row artıq uzun basmanın açdığı kiçik paylaşım pəncərəsində Report, Download və digər əməliyyatlar sırasını da gizlətmir (#120). O pəncərədə TikTok hər iki sıranı bir çərçivəyə qoyur və bütün çərçivə gizlənirdi.
+* **TikTok:** Göndər sətrini gizlədin indi yığcam paylaşım panelinin əməl sətirlərini saxlayır (#120).
 
-* **TikTok:** Show the progress bar yenidən For You lentində zolağı göstərir, qısa videolarda da (#134). 47.1.4-də o, TikTok-un səhv yoxlamasını, videonun reklam olub-olmadığını həll edən yoxlamanı işə salırdı, ona görə video oynayanda zolaq heç geri gəlmirdi.
+* **TikTok:** İrəliləyiş panelini göstərin indi 47.1.4-də Sizin üçün lentində, qısa videolar daxil, işləyir (#134).
 
-* **TikTok:** Diaqnostika hesabatında yeni Storage bölməsi var. O, TikTok yaddaşındakı ən böyük qovluqları göstərir, beləliklə hesabat yeri nəyin doldurduğunu göstərə bilir (#70). Yalnız qovluq adlarını yazır, fayl adlarını yox, hesab nömrələrini isə gizlədir.
+* **TikTok:** Diaqnostika indi fayl adları və hesab nömrələri olmadan ən böyük yaddaş qovluqlarını sadalayır (#70).
 
-* **TikTok:** Təmizlənmiş videoda geri düyməsinə basmaq və ya oradan paylaşma panelini açmaq artıq Clear display-i söndürmək sayılmır. Eyni videonu yenidən açanda o da başqaları kimi təmizlənir, yadda saxlanmış Clear display isə açıq qalır (#84).
+* **TikTok:** Geri və paylaşım əməlləri video açanda yadda saxlanan Təmiz ekranı artıq söndürmür (#84).
 
-* **TikTok:** Remove LIVE extras indi başqasının LIVE-ına qonaq kimi qoşulmaq üçün faylları da sildiyini deyir, ona görə onunla səsli və ya videolu qoşulmaq işləməyə bilər (#132). LIVE-lara qoşulursunuzsa, onu seçməyin.
+* **TikTok:** LIVE əlavələrini silin indi qonaq kimi səsli və video qoşulmaların pozula biləcəyini deyir. Otaqlara qoşulursunuzsa, bu yamağı seçməyin (#132).
 
-* **TikTok:** Clear display yadda saxlananda və ya Automatic Clear display gecikməsiz olanda, TikTok soyuq başlanğıcdan sonra yükləmə fırlanğacının altında tabları və ilk videonun düymələrini təxminən bir saniyə artıq göstərmir. Favorites və ya profildən açılan video da eyni şəkildə təmizlənmiş başlayır (#84).
+* **TikTok:** Yadda saxlanan və gecikməsiz avtomatik Təmiz ekran indi ilk videonun düymə və tablarını gizlədir, Favoritlər və profildən açılanlar daxil (#84).
 
-* **TikTok:** Show where a video was posted açıq olanda, sırada hər ikisinə yer varsa, yaradıcının adı artıq ölkəyə yer açmaq üçün qısaldılmır, ona görə "Rn D… · TR" yenə tam oxunur (#127). Həqiqətən çox uzun ad isə ölkə tam görünsün deyə yenə qısaldılır.
+* **TikTok:** Müəllif sətri indi adı qısaltmazdan əvvəl mövcud eni işlədir və yerləşəndə ölkə adını tam saxlayır (#127).
 
-* **TikTok:** Hide already seen videos artıq açdığınız kolleksiyadan videoları çıxarmır, ona görə saxlanmış videoya toxunanda səhv video və ya heç nə yox, yenə həmin video oynayır (#135). O, For You, Following və Friends lentlərində baxılmış videoları gizlətməyə davam edir.
+* **TikTok:** Artıq baxdığınız videoları gizlədin indi kolleksiyalara toxunmur, Sizin üçün, İzlədiklərim və Dostları yenə süzür (#135).
 
-* **TikTok:** Yeni Keep the app language patçı Tətbiq səhifəsində Sistem altına TikTok-da seçilən dili saxla açarını əlavə edir (#61). TikTok açılanda telefonun dilinin dəyişdiyinə qərar verərsə, öz ayarlarında seçdiyiniz dili atır və telefona uyğunlaşır. Açar yandırılanda seçiminiz qalır. Sönülü başlayır.
+* **TikTok:** TikTok-da seçilən dili saxla telefonun dili dəyişəndə TikTok dilinin dəyişməsinin qarşısını alır. Tətbiq > Sistem bölməsindədir və əvvəlcə bağlıdır (#61).
 
-* **TikTok:** Endirmələr bölməsindəki yeni İstifadəçi adını və açıqlamanı videonun üzərinə yaz açarı Hushfeed-in saxladığı videoların sol alt küncünə @istifadəçi adını və açıqlamanın ilk sətrini yazır. Bunun üçün telefon videonu yenidən kodlayır, ona görə belə saxlamalar daha uzun çəkir və gedişatı Ləğv edin düyməsi ilə göstərilir. Açar sönülü başlayır.
+* **TikTok:** Saxlanan videoya istifadəçi adı və başlıq yaz Endirmələrə əvvəlcə bağlı açar əlavə edir. Yenidən kodlama daha uzun çəkir, irəliləyiş və Ləğv var.
 
-* **TikTok:** Remove creation tools indi xəbərdarlıq edir ki, yaratma alətlərindən birini, məsələn kamerada effekt axtarışını açmaq TikTok-u bağlaya bilər (#133). Video çəkirsinizsə, onu seçməyin.
+* **TikTok:** Yaratma alətlərini silin indi video yaratma və effekt axtarışının tətbiqi bağlaya biləcəyini deyir. Paylaşım yaradırsınızsa, seçməyin (#133).
 
-* **TikTok:** Drop the animated image cache artıq TikTok-un kadr keşini yalnız bir kadr saxlayan keşlə əvəz etmir. Bu, şərhlərdəki animasiyalı stikerlərin ilk kadrda ilişib qalmasına səbəb ola bilərdi (#130). Onun açarı indi Animasiya kadrlarını əvvəlcədən hazırlama adlanır və açıq olanda yalnız TikTok-un kadrları göstərilməzdən əvvəl hazırlamasının qarşısını alır.
+* **TikTok:** Animasiya kadrlarını əvvəlcədən hazırlama Animasiya şəkli keşini at seçimini əvəz edir. Yalnız kadrların vaxtından əvvəl hazırlanmasını dayandırır və stikerlərin donmaması üçün TikTok-un kadr keşini saxlayır (#130).
 
-* **TikTok:** Lentin yuxarısındakı İzlənilənlər hekayələri balonu Təmiz ekran bitəndə geri qayıdır. TikTok onu Təmiz ekran başlayanda gizlədir və əvvəllər lent yenidən yüklənənə qədər gizli qalırdı. O, yalnız əvvəl görünürdüsə və içində hələ kimsə varsa geri qayıdır.
+* **TikTok:** Təmiz ekrandan çıxanda İzlədiklərim hekayə düyməsi yalnız əvvəl görünürdüsə və hekayələri vardısa qayıdır.
 
-* **TikTok:** Şərhlər bölməsindəki yeni Bu dilə tərcümə et sətri bir dil kodu qəbul edir, məsələn en və ya es. TikTok-un tərcümə etdiyi şərhlər və başlıqlar tətbiqin dili əvəzinə həmin dildə çıxır, beləliklə TikTok-u bir dildə saxlayıb tərcümələri başqa dildə oxuya bilərsiniz. TikTok-un seçimini saxlamaq üçün boş buraxın.
+* **TikTok:** Bu dilə tərcümə et tərcümə olunan şərhlər və başlıqlar üçün TikTok-un dilindən ayrı bir dil seçir. TikTok-un seçimini saxlamaq üçün boş qoyun.
 
-* **TikTok:** Təmiz ekran altında yeni Ekran yanmasından qoruma seçimi 5 saniyə toxunulmadıqda videonun üzərindəki düymələri, başlığı və tabları dörddə birə qədər solğunlaşdırır, növbəti toxunuşunuz onları geri qaytarır. Toxunulmayanda solğunlaşdır və sürüşdür ilə lentdəki hər şey həm də hər 2 dəqiqədən bir bir neçə piksel tərpənir ki, OLED ekran heç vaxt yerindən tərpənməyən idarəetmə elementlərinin altında yanmasın.
+* **TikTok:** Ekran yanmasından qoruma beş saniyə toxunulmadıqda video üzərindəki düymələrin, başlıqların və tabların parlaqlığını dörddəbirə endirir. Toxunulmayanda solğunlaşdır və sürüşdür lenti hər iki dəqiqədən bir də yerindən tərpədir. Toxunuş parlaqlığı bərpa edir.
 
-* **TikTok:** Açılmış videolarda şərh panelini gizlədin indi axtarışdan açdığınız foto paylaşımında da paneli götürür. Əvvəllər belə paylaşımlarda Şərh əlavə et paneli qalırdı.
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin indi axtarışdan açılan foto paylaşımlarına da çatır.
 
-* **TikTok:** Endirmələr bölməsindəki yeni Səs formatı seçimi Səsi də saxla və uzun basmadakı Orijinal səsi saxlayın əməliyyatlarına Opus faylları (.ogg) yaratmağa imkan verir. Onlar TikTok-un M4A faylından kiçikdir və telefonunuz onları yaratmaq üçün səsi yenidən kodlayır. Android 10 və ya daha yenisi lazımdır. Defolt olaraq TikTok-un göndərdiyi kimi qalır, ona görə bu saxlamalar əvvəlki kimi çıxır.
+* **TikTok:** Orijinal səsi saxlayın və Səsi də saxla indi Android 10 və yenidə Opus (.ogg) təklif edir. Çevrilmə daha uzun çəkir, standart format orijinal olaraq qalır.
 
-* **TikTok:** Video idarəetmələrini solğunlaşdır indi Təmiz ekranla da işləyir. 1 ilə 99 arasında olanda Təmiz ekran düymələri və başlığı götürmək əvəzinə seçdiyiniz səviyyədə ekranda saxlayır, onlara toxunuş isə videoya gedir, buna görə heç nə təsadüfən açılmır. Basıb saxlamaq və ya çimdik jesti sizi yenə Təmiz ekrandan çıxarır, ondan kənarda isə solğunlaşdırılmış idarəetmələr əvvəlki kimi toxunuşları qəbul edir (#84).
+* **TikTok:** Təmiz ekran 1-dən 99-a qədər idarəetmələri solğun saxlayır, toxunuş videoya çatır. Çıxmaq üçün saxlayın və ya çimdikləyin, kənardakı görünən düymələr işləyir (#84).
 
-* **TikTok:** Lent videolarını səssiz edin indi TikTok-u açıq və tünd arasında dəyişdikdən sonra da lenti səssiz saxlayır. Əvvəllər lentdən çıxıb geri qayıdana qədər növbəti videolar səslə oynaya bilirdi.
+* **TikTok:** Lent videolarını səssiz et indi TikTok açıq və qaranlıq mövzular arasında keçəndə də qalır.
 
-* **TikTok:** Neçəsinin süzüldüyünü göstərin və Gələnlər bölməsinin hissələrini gizlədən açarlar TikTok-u açıq və tünd görünüş arasında dəyişdikdən sonra da işləyir. Əvvəllər onlar TikTok yenidən başladılana qədər işləməyi dayandıra bilirdi.
+* **TikTok:** Süzülmüş paylaşım sayı və Gələnlərdə gizlətmələr indi TikTok mövzusu dəyişəndə də qalır.
 
-* **TikTok:** Hushfeed ayarları üçün Ana səhifəni uzun basın TikTok-u açıq və tünd görünüş arasında dəyişdikdən sonra da işləyir. Əvvəllər TikTok yenidən başladılana qədər işləmirdi.
+* **TikTok:** Əsas tabına uzun basaraq ayarları açmaq qısayolu indi mövzu dəyişəndə də qalır.
 
-* **TikTok:** Ehtiyat nüsxəni bərpa etmək artıq Şəbəkə proksisini açmır və artıq olan proksi ünvanınızı əvəz etmir, ona görə də başqasının hazırladığı ehtiyat nüsxə TikTok trafikinizi onun serverindən keçirə bilməz. Hələ proksi qurulmamış telefonda ünvan açar söndürülü halda gəlir və bərpadan sonra bu barədə qeyd göstərilir.
+* **TikTok:** Ehtiyat nüsxənin bərpası mövcud proksini saxlayır. Yeni telefonda ünvan bildirişlə, bağlı vəziyyətdə bərpa olunur.
 
-* **TikTok:** Bu dilləri avtomatik tərcümə etməyin indi zh-Hant, zh-TW, zh-HK və ya zh-MO yazanda ənənəvi Çin dilini yazıldığı kimi saxlayır, zh-Hans-TW isə yenə sadələşdirilmiş Çin dili deməkdir. Əvvəllər bu girişlər bunun əvəzinə sadələşdirilmiş Çin dilini qoruyurdu (#121).
+* **TikTok:** Bu dilləri avtomatik tərcümə etməyin indi ənənəvi Çin dili region teqlərini tanıyır, açıq sadələşdirilmiş Çin dili teqini yanlış oxumur (#121).
 
-* **TikTok:** Hide feed LIVE button indi yan menyu düyməsinin tapılmadığı TikTok versiyasına da tətbiq olunur. O hissə ötürülür, Yan menyu düyməsini gizlədin sətri isə yalnız düymə tapılanda görünür (#128).
+* **TikTok:** LIVE düyməsini gizlədin artıq olmayan yan panel dayağını tələb etmir. Yan panel ayarı yalnız dəstəklənəndə görünür (#128).
 
-* **TikTok:** Ayarlarda axtarış indi Build təfərrüatları və Yeniliklər bölmələrini tapır. Feature Gate Lab və Lisenziyalar kimi bəzi nəticələr indi olduqları qrupu göstərir, yalnız durğu işarələrindən ibarət axtarış isə Uyğun ayar yoxdur yazır.
+* **TikTok:** Ayar axtarışı indi Build təfərrüatları və Yenilikləri tapır, Lab və Lisenziyalar bölməsini göstərir, yalnız durğu işarəli sorğuları saymır.
 
-* **TikTok:** Hushfeed ayarlarının altında görünən bildiriş indi ona toxunanda bağlanır və toxunuş artıq altındakı ayara düşmür. TalkBack onun əməliyyatını Bağlayın kimi oxuyur.
+* **TikTok:** Ayar bildirişinə toxunmaq arxadakı sətri işə salmadan onu bağlayır. TalkBack-də Bağla əməli də var.
 
-* **TikTok:** Fasilə indi açıq olanda nəyin qaldığını sadə sözlərlə izah edir. Ayarlarınız saxlanılır, yamaqlayanda edilən dəyişikliklər də, məsələn tətbiqin adı və ya ikonu, qalır. TikTok-un Auto scroll funksiyası da indi hər sətirdə eyni cür yazılır.
+* **TikTok:** Fasilə mətni indi saxlanan seçimləri və yamaqlama vaxtı dəyişiklikləri izah edir. Avtomatik sürüşdürmə adı ardıcıl işlənir.
 
-* **TikTok:** Lent filtri və Şərhlər bölmələrindəki dil siyahıları indi en,,es kimi əlavə vergülü qəbul edir. Əvvəllər siyahı mesajda boş adla rədd edilirdi.
+* **TikTok:** Lent və şərh dil siyahıları indi kodlar arasında artıq vergülləri qəbul edir.
 
-* **TikTok:** Build təfərrüatlarını kopyalamaq alınmasa, mesaj indi Build təfərrüatlarını saxlayın seçimindən istifadə etməyi deyir.
+* **TikTok:** Build təfərrüatlarını kopyalama alınmayanda indi Saxla təklif olunur.
 
-* **TikTok:** Yeniliklər daha ayar adlarının ətrafında lazımsız tərs dırnaq işarələri göstərmir.
+* **TikTok:** Yeniliklər artıq Markdown tərs dırnaqlarını göstərmir.
 
-* **TikTok:** Seriyanı davam etdirin bölməsindəki Nə vaxt göndərilsin üçün vaxt seçicisi indi Hushfeed ayarlarına uyğun olaraq tünd və ya açıq açılır.
+* **TikTok:** Seriyanı davam etdirin vaxt seçicisi indi TikTok-un açıq və qaranlıq mövzusuna uyğundur.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling və Enable voice comments indi Hushfeed ayarlarında hər biri öz açarına malikdir, ona görə də Fasilə onları da söndürür və Morphe Manager-in sadə rejimi indi onları da seçir. Bu açarların hər biri söndürülmüş başlayır. Əvvəllər bu yamalardan biri ilə yamaqlamısınızsa, işləməyə davam etməsi üçün yenilədikdən sonra onun açarını yandırın. Açılış reklamını ötür, Yeniləmə yoxlamalarını ötür, Arxa fon trafikini məhdudlaşdır və Animasiya kadrlarını əvvəlcədən hazırlama Tətbiq səhifəsində Performans bölməsindədir. Cihazdaxili süni intellekt profilləşdirməsini dayandır Məxfilik bölməsində, Səsli şərhlərə icazə ver isə Şərhlər bölməsindədir.
+* **TikTok:** Altı daimi dəyişiklik indi açarlıdır və Fasiləyə tabedir. Əvvəlcə bağlıdır, köhnə istifadəçilər başlanğıc reklamı, yeniləmə, arxa plan, animasiya, AI profil qoruması və səsli şərh seçimlərini yenidən açmalıdır.
 
-* **TikTok:** Yeni yama, Skip passkey sign-in, Morphe Manager-in sadə rejimində açarı söndürülü halda seçilir (#102). Parol menecerləri yamaqlanmış tətbiqə passkey vermir, ona görə də passkey-i olan hesab TikTok-un passkey addımında ilişib qala bilərdi. Hushfeed ayarları > Tətbiq bölməsində Passkey olmadan daxil olun açarını yandırın, TikTok telefonunuza passkey dəstəkləməyən telefon kimi baxacaq və daxil olmağın başqa yollarını, məsələn parolunuzu və ya e-poçt ya da SMS ilə gələn kodu təklif edəcək. Hesabdan çıxmısınızsa, Hushfeed ayarlarını açmaq üçün Ana səhifəni uzun basın.
+* **TikTok:** Keçid açarı ilə girişi ötür Sadə rejimə gəlir, əvvəlcə bağlıdır və Tətbiqə parol, e-poçt və ya SMS üçün Keçid açarı olmadan daxil ol seçimini əlavə edir (#102).
 
 ## 0.70.0 (2026-10-09)
 
-* **TikTok:** Müəllif mətninin ölçüsü indi müəllifin adının yanındakı paylaşım tarixinin ölçüsünü də dəyişir, ona görə ikisi eyni ölçüdə qalır (#66).
+* **TikTok:** Müəllif mətn ölçüsü indi adın yanındakı paylaşım tarixini də əhatə edir (#66).
 
-* **TikTok:** Şərhlər ayarlarında yeni sıra var, Bu dilləri avtomatik tərcümə etməyin. Siz doldurmayana qədər boşdur (#121). `es, de` kimi dil kodları yazın, TikTok sizin yerinizə tərcümə edəndə bu dillərdəki başlıqlar və şərhlər yazıldığı kimi qalır. Tərcüməyə bax toxunanda yenə işləyir, TikTok-un öz Tərcümə etmə siyahısı isə dəyişmir.
+* **TikTok:** Bu dilləri avtomatik tərcümə etməyin başlıq və şərhlər üçün əvvəlcə boş Şərhlər siyahısı əlavə edir. Əl ilə tərcümə yenə işləyir (#121).
 
-* **TikTok:** Oflayn videoları siz silənə qədər saxlayın indi TikTok-un siyahını təmizlədiyi daha iki yolu əhatə edir. Açar aktiv olanda TikTok-un Auto adjust funksiyası TikTok açılanda oflayn video limitini azaltmır və siyahını kəsmir, oflayn videoları standart olaraq aktiv edən sınaq bitəndə TikTok-un işlətdiyi təmizləmə isə atlanır (#123). Açarı dəyişdikdən sonra TikTok-u yenidən başlat.
+* **TikTok:** Oflayn videoları saxla Avtomatik tənzimləmənin başlanğıcda limiti azaltmasını və siyahını kəsməsini önləyir, TikTok-un oflayn sınağı bitəndə də videoları saxlayır. Dəyişdikdən sonra TikTok-u yenidən başladın (#123).
 
-* **TikTok:** Köhnə TikTok versiyasında hazırlanmış ayarlar ehtiyat nüsxəsini bərpa etdikdə, bu versiyaya hələ də uyğun gələn Feature Gate Lab əvəzləmələri geri qayıdır. Uyğun gəlməyənlər saxlanılır, amma söndürülür.
+* **TikTok:** Köhnə TikTok versiyasının nüsxələri indi uyğun Lab əvəzetmələrini bərpa edir, uyğun olmayanları bağlı saxlayır.
 
-* **TikTok:** Lent ekranında yeni açar var, Yan menyu düyməsini gizlədin, siz yandırana qədər söndürülü qalır. O, lentin yuxarı sol küncündə LIVE-ın yanındakı, TikTok-un Your orders, TikTok Minis və başqalarının olduğu yan menyusunu açan düyməni götürür. Dəyişdirdikdən sonra TikTok-u yenidən başladın (#128).
+* **TikTok:** Yan menyu düyməsini gizlət LIVE yanındakı düymə üçün Lent ekranına əvvəlcə bağlı açar əlavə edir. Yenidən başlatmaq lazımdır (#128).
 
-* **TikTok:** Morphe Manager-dəki bütün yamaq təsvirləri sadə ingilis dilində yenidən yazılıb. İndi hər biri yamağın nəyi dəyişdiyini, onu niyə istəyə biləcəyini, açarının açıq və ya bağlı başladığını və Hushfeed ayarlarında harada olduğunu deyir. Bəzi yamaq seçimləri də daha aydın yazılıb, Skip push setup isə indi Skip notification setup adlanır.
+* **TikTok:** Manager yamaq təsvirləri indi nəticəni, standartı və ayarın yerini deyir. Push quraşdırmasını ötür adı Bildiriş quraşdırmasını ötür olur.
 
-* **TikTok:** Hushfeed ayarlarındakı sətirlər sadə ingiliscə ilə yenidən yazıldı. Privacy, Comments, Downloads, Feed filter, Screen time, Region və digər səhifələr indi texniki terminlər olmadan hər açarın nə etdiyini və nəyi hiss edəcəyinizi deyir. Bir neçə başlıq da dəyişdi, məsələn Stop TikTok's speed tests və Clean up shared links.
+* **TikTok:** Ayar başlıqları və təsvirləri daha sadə dillə yazılıb.
 
-* **TikTok:** Bir neçə mesaj və status sətri də sadələşdirildi, məsələn Ghost mode statusu, Hook status izahı, proksi parolu bildirişi və fayl adı önbaxışı.
+* **TikTok:** Gizli rejim, Qoşulma statusu, proksi parolu və fayl önizləməsi mesajları nəticəni daha aydın izah edir.
 
-* **TikTok:** Morphe Manager-dəki Dark background color seçimi indi "hex kod" əvəzinə "rəng kodu" deyir və qaranın OLED ekranlarda həmin pikselləri tamamilə söndürdüyünü izah edir.
+* **TikTok:** Manager-in qaranlıq fon seçimi indi rəng kodunu və OLED qara ayarını izah edir.
 
-* **TikTok:** Hushfeed ayarları indi yeddi qrupun üstündə yığcam status və axtarışla açılır. Əlaqəli səhifələr bir yerdədir, ehtiyat nüsxələr, diaqnostika və Feature Gate Lab isə Tətbiq və əlavə ayarlar bölməsindədir. Hushfeed haqqında bölməsində quruluş məlumatları və lisenziyalar bir yerdədir. Axtarış sizi yenə birbaşa ayara aparır və saxlanmış seçimləriniz qorunur. Dayandırma mətni indi saxlanmış ayarların və APK-ya daxil edilmiş dəyişikliklərin qaldığını izah edir.
+* **TikTok:** Ayarların ana səhifəsi indi yığcam status, axtarış və yeddi qrup göstərir. Nüsxələr, diaqnostika və Lab Tətbiqdədir, seçimləriniz qalır.
 
-* **TikTok:** Hushfeed indi yalnız TikTok 47.1.4-ü dəstəkləyir. 47.0.3 və ya 47.1.3 istifadə edirsənsə, 47.1.4 APK-sını APKMirror-dan endir və Morphe Manager-də eyni imza açarı ilə yamala ki, girişin və ayarların qalsın. Feature Gate Lab 47.1.4-də hələ də olan açarların dəyişikliklərini saxlayır, qalanlarını isə adi bildirişi ilə söndürür.
+* **TikTok:** İndi yalnız TikTok 47.1.4 dəstəklənir. Eyni imza açarı ilə yeniləmə giriş və ayarları saxlayır, uyğun olmayan Lab əvəzetmələrini söndürür.
 
-* **TikTok:** Fərdi oflayn videolar limitinin Hushfeed ayarları > Endirmələr bölməsində yeni açarı var, Oflayn videoları siz silənə qədər saxlayın. Siz yandırana qədər söndürülüdür (#123). TikTok oflayn baxış üçün saxladığı videoları müəyyən vaxtdan sonra, bəzən cəmi iki gündən sonra atır və bir dəfəyə saxlanan siyahı da bir dəfəyə yox olur, baxılıb-baxılmamasından asılı olmayaraq. Açar yanılı olanda onlar siz TikTok-un Oflayn videolar ayarlarında silənə qədər qalır, yeni dəst almağın yolu da budur. Telefonunuzda yer azalanda TikTok baxdığınız videoları yenə də silə bilər, daha aşağı limit seçmək də siyahını yenə qısaldır. Oflayn videolar limitinin altındakı yaddaş sətrinə göz qoyun. Açar TikTok növbəti dəfə açılanda işə düşür.
+* **TikTok:** Siz silənədək oflayn videoları saxla Endirmələrə əvvəlcə bağlı, yenidən başlatma tələb edən açar əlavə edir. Əl ilə silmə, az yaddaş təmizləməsi və aşağı limitlər qalır (#123).
 
-* **TikTok:** Profil qısayollarını gizlədin üçün Tətbiq altında yeni açar var, Profillərdə Thoughts-u gizlədin, siz yandırana qədər söndürülü qalır (#122). O, TikTok-un profil şəklinin üstünə qoyduğu Thoughts balonunu, öz profilinizdə isə onu paylaşmaq təklifini gizlədir. Dəyişdirdikdən sonra TikTok-u yenidən başladın.
+* **TikTok:** Profillərdə Düşüncələri gizlət həm qabarcığı, həm öz təklifinizi götürür. Tətbiqdədir, əvvəlcə bağlıdır, yenidən başlatmaq lazımdır (#122).
 
-* **TikTok:** Ekran görüntülərinə və Circle to Search-ə icazə verin indi təhlükəsiz pəncərə işarəsini onu öz pəncərə ayarlarında qoyan açılan və üzən pəncərələrdən də götürür, məsələn TikTok-un Compose açılan pəncərələrindən. Onlar ekrana yamanın artıq dəyişdiyi pəncərə çağırışlarından keçmədən çatırdı, ona görə ekran görüntülərində və ekran yazılarında hələ də qara görünə bilirdilər. İdeya icysymmetra-nın TikTok yamalarından gəlir.
+* **TikTok:** Ekran görüntülərinə icazə verin indi Circle to Search, üzən pəncərələr və Compose ekranlarına da çatır.
 
-* **TikTok:** Diaqnostika bölməsində yeni sətir var, Lenti qeydə alın. Göstərmək təsvir etməkdən asan olan lent problemləri üçündür. Ona toxunun, problem görünənə qədər sürüşdürün, sonra geri qayıdıb yenidən toxunun və Hushfeed Download/Hushfeed qovluğuna mətn faylı saxlayır. Faylda lent filtrlərinin qeyd zamanı işlədiyi hər video dəsti üçün bir sətir var, hər videonun nəticəsi və onu gizlədən qayda ilə birlikdə. Videolar və yaradıcılar yalnız hər qeyd üçün yenidən yaradılan qısa kodlarla görünür, faylda başlıqlar, adlar, istifadəçi adları və ya veb ünvanlar olmur. Yenə də paylaşmazdan əvvəl onu oxuyun. Siz qeydi başladana qədər heç nə qeyd edilmir. İdeya icysymmetra-nın TikTok yamalarından gəlir.
+* **TikTok:** Lenti qeydə alın süzgəc qərarlarını və gizlətmə qaydalarını yerli Download/Hushfeed mətn faylına yazır. Toxunuşla başlayır və dayanır. Hər qeyddə video və yaradıcılar üçün yeni kodlar işlənir, başlıqlar, adlar, istifadəçi adları və URL-lər yazılmır. Paylaşmazdan əvvəl oxuyun.
 
-* **TikTok:** Təmiz ekran idarəetmələrini gizlədin açarının təsviri indi Təmiz ekrandan çıxmağın başqa yolu kimi ekranı iki barmaqla sıxmağı da qeyd edir (#84).
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin indi çimdikləyərək necə çıxmağı deyir (#84).
 
-* **TikTok:** Bir neçə açar indi Hushfeed-in digər açarları kimi söndürülmüş başlayır, çünki onların yamaları susmaya görə seçimə daxil olur. Bu yamalardan birini əvvəl seçmisinizsə və işləməyə davam etməsini istəyirsinizsə, yenilədikdən sonra onun açarını yenidən yandırın. Məxfilik altında bunlar Kontakt siyahısına girişi bloklayın, Quraşdırılmış tətbiqlərin skanını bloklayın, Məkanı bloklayın, Mübadilə buferinin oxunmasını bloklayın, Hərəkət sensorlarını bloklayın, Yeni axtarışları saxlamayın və Kamera və ya mikrofon istifadə olunanda göstərin açarlarıdır. Şərhlər altında Bəyənməmə şərh yazanı bloklayır, Şərhlərdəki keçidlər açılır və Şərh pəncərəsi reklamlarını gizlədin, Tətbiq altında isə Haptik titrəməni söndürün və Ekran keçidlərini söndürün.
+* **TikTok:** Məxfilik, şərh və görünüş açarları Sadə rejim üçün indi əvvəlcə bağlıdır. Köhnə istifadəçilər istədiklərini yenidən açmalıdır.
 
-* **TikTok:** Morphe Manager-in sadə rejimi indi Hushfeed-in 130 yamasından 55 əvəzinə 107-sini seçir, ona görə də onların çoxu üçün artıq ekspert rejimi lazım deyil. Yeni seçilən yamaların əlavə etdiyi hər açar söndürülmüş başlayır və siz Hushfeed ayarlarında nəyisə yandırana qədər TikTok olduğu kimi görünür və işləyir. Qalan 23 yama yenə ekspert rejimindən seçilir, README-dəki Patches bölməsi isə hər birini kənarda qalma səbəbi ilə sadalayır. Hər yamanın təsviri indi açarının harada olduğunu və söndürülmüş başladığını deyir.
+* **TikTok:** Manager-in Sadə rejimində indi 130 yamaqdan 107-si var, yeni açarlar bağlıdır. Mütəxəssis rejimində qalan 23-ü var.
 
-* **TikTok:** Morphe Manager-də TikTok-un görünüşünü dəyişən yamalar üçün yeni Interface qrupu var. AMOLED qaranlıq mövzu, Sistem şriftindən istifadə edin və Ekran keçidlərini söndürün ora Performance qrupundan, Tətbiqin adını dəyişin, Fərdi başladıcı ikonu və Başladıcı qısayollarını gizlədin Settings qrupundan, Lent mətn ölçüləri isə Interaction qrupundan köçdü.
+* **TikTok:** Yeni İnterfeys kateqoriyası AMOLED, şrift, keçidlər, tətbiq adı, ikon, başlanğıc qısayolları və lent mətn ölçülərini birləşdirir.
 
 ## 0.69.0 (2026-10-08)
 
-* **TikTok:** Açdığınız TikTok video keçidi indi lent filtri onu gizlədəcək olsa belə öz videosunu göstərir, məsələn, əvvəl izlədiyiniz video üçün Artıq izlədiyiniz videoları gizlədin (#117). TikTok keçidlə açılan videonu ayrıca lent səhifəsi kimi yüklədiyi üçün onu süzmək orada TikTok-un xəta ekranını qoyurdu. Filtrlərdən yalnız həmin tək video keçir, o da keçiddən sonra yalnız bir dəqiqə ərzində. Foto paylaşımlarına keçidlər və mobil saytın köhnə `m.tiktok.com/v/<id>.html` keçidləri də həm burada, həm də `Lenti kilidlə` üçün bir paylaşım sayılır.
+* **TikTok:** Paylaşılan video və ya foto keçidi indi həmin paylaşımı bir dəqiqə lent filtrlərindən keçirir, köhnə mobil keçidlər və Lenti kilidlə daxil (#117).
 
-* **TikTok:** LIVE otağından çıxmaq artıq yama paketinizdə LIVE əlavələrini silin olanda TikTok-u bağlamır (#119). Yama hədiyyə effekti vidcetinin başlanğıc addımını keçirdi, halbuki otaq bağlananda TikTok-a o yenidən lazım olur. İndi həmin addımı saxlayır, vidcetin öz quraşdırmasını isə yenə keçir, beləliklə animasiyalı hədiyyələr söndürülü qalır.
+* **TikTok:** LIVE əlavələrini silin ilə otaqdan çıxmaq artıq tətbiqi bağlamır, animasiyalı hədiyyələr bağlı qalır (#119).
 
-* **TikTok:** Məzmun etimadnaməsi və kart skaneri resurslarını silin indi Pitaya-nın Python icra mühitini də boşaldır, yəni Pitaya modellərinin işlədiyi beş Python və NumPy kitabxanasını. Pitaya funksiyası aradan qalxandan sonra TikTok-da onları başqa heç nə yükləmir, bu yama isə həmin funksiyanı artıq boşaldır. APK əvvəlkindən təxminən 6,7 MB, ümumilikdə təxminən 19 MB kiçilir, bölünmüş paketlər isə yenə də uyğun gəlir, çünki arm64 üçün eyni faylları daşıyırlar.
+* **TikTok:** Məzmun sertifikatı və kart skaneri fayllarını sil indi Pitaya-nın işlənməyən Python mühitini də silir, əlavə 6,7 MB, ümumilikdə təxminən 19 MB qazandırır.
 
-* **TikTok:** Məzmun xəbərdarlıqlarını keçin üçün Lent ekranı altında ikinci açar əlavə olundu, Təsdiqlənməmiş məzmun bildirişlərini gizlət, siz yandırana qədər söndürülü qalır. O, TikTok-un təsdiqlənməmiş kimi işarələdiyi videoya qoyduğu Mənbələri yoxla bannerini və belə videonu paylaşmağa gedəndə göstərdiyi xəbərdarlıqları götürür. Toxunaraq keçilən örtüyü keçməyin isə hələ də öz açarı var.
+* **TikTok:** Təsdiqlənməmiş məzmun bildirişlərini gizlət Mənbələri yoxla və paylaşım xəbərdarlıqları üçün əvvəlcə bağlı açar əlavə edir. Davam etmək üçün toxunma xəbərdarlıqları ayrıdır.
 
-* **TikTok:** Yeni yama, İlk açılış quraşdırmasını keçin, susmaya görə seçilmir. Onu seçsəniz, təzə quraşdırma TikTok-un maraq seçicisi, dil və cins sualları, izlənəcək yaradıcılar, yuxarı sürüşdürmə dərsliyi və ya öz bildiriş səhifəsi olmadan birbaşa lentdə açılır. Razılıq, yaş və daxil olma ekranları yenə də göstərilir, Android-in öz bildiriş sorğusu da belə. Hushfeed ayarları > Tətbiq altındakı açar, TikTok-un quraşdırma ekranlarını keç, yandırılmış başlayır, çünki quraşdırma siz ora çatmamış işləyir.
+* **TikTok:** İlk açılış quraşdırmasını ötür seçilən zaman açarı açıq başlayan əlavə yamaqdır. TikTok suallarını ötürür, razılıq, yaş, giriş və Android bildiriş icazəsi qalır.
 
-* **TikTok:** Pop-up pəncərələri blokla üçün Lent ekranı altında yeni açar var, TikTok-un sakitləşmə ekranlarını gizlət, siz yandırana qədər söndürülü qalır. O, TikTok-un lentin üstünə çıxardığı yatmazdan əvvəl sakitləşmə ekranını, nəfəs məşqini və gündəlik limit ekranını dayandırır. Yalnız TikTok-un öz ayarlarına görə yetkinə məxsus olan hesabda işləyir. Yeniyetmə hesabı onların hamısını saxlayır, Ailə Cütləşməsi ilə valideynə bağlanmış hesab da belədir. TikTok vaxtın bitdiyini dedikdə çıxın yandırılıbsa, gündəlik limit ekranı yenə də çıxır ki, həmin açar onun üzərində işləyə bilsin, Hushfeed-i durdurun isə hamısını geri qaytarır.
+* **TikTok:** TikTok-un istirahət ekranlarını gizlət əvvəlcə bağlıdır və yalnız Family Pairing olmayan yetkin hesablarda işləyir. Vaxt bitəndə çıx ayarına lazım olan gündəlik limit qalır.
 
-* **TikTok:** Video örtüklərini gizlədin üçün Lent ekranı altında yeni Footnotes-u gizlədin açarı, Gələnlər elementlərini gizlədin üçün isə Gələnlər altında daha iki açar var, Bulletin board-u gizlədin və Qrup söhbəti təklifini gizlədin. Hamısı siz yandırana qədər söndürülü qalır. Footnotes-u gizlədin qeydi olan videolardan TikTok-un bannerini kənarda saxlayır, Bulletin board-u gizlədin onun sətirlərini Gələnlərdən çıxarır, Qrup söhbəti təklifini gizlədin isə Gələnlərin yuxarısında qrup söhbəti başlatmağa dəvət edən bannerin qarşısını alır.
+* **TikTok:** Yeni, əvvəlcə bağlı açarlar videolardakı Footnotes, Gələnlərdə Bülleten lövhəsi və qrup söhbəti təklifini gizlədir.
 
-* **TikTok:** Parlaqlıq və səs üçün sürüşdür üçün Lent ekranı > Jestlər altında iki yeni sətir var, Sol kənar zolaq və Sağ kənar zolaq. Hər biri Parlaqlıq, Səs və ya Sürət ola bilər, Sürət isə Oxutma sürəti yaması yama paketinizdə olanda mövcuddur. Sürətə qoyulanda həmin kənar boyu sürüşdürmək videonu dörddə bir addımlarla, 0,5x-dən 3x-ə qədər sürətləndirir və ya yavaşladır, sürət gedərkən ekranda göstərilir. Dəyişiklik yalnız həmin video üçündür. Növbəti video saxladığınız defolt sürətlə başlayır və saxladığınız heç nə dəyişmir. Siz dəyişənə qədər sol kənar yenə parlaqlıqdır, sağ kənar yenə səsdir, başqa yerdən sürüşdürmə isə yenə lenti sürüşdürür.
+* **TikTok:** Kənar jestlər parlaqlığı, səsi və ya videonun sürətini 0,5x ilə 3x arasında dörddəbir addımlarla idarə edə bilər. Sürət öz yamasını tələb edir, növbəti video isə saxladığınız standart sürətlə başlayır. Dəyişənədək sol kənar parlaqlıq, sağ kənar səs olaraq qalır, başqa sürüşdürmələr isə lenti gəzdirir.
 
-* **TikTok:** Lent nişanları naviqasiyası indi Hushfeed ayarları > Lent nişanları bölməsindən alt nişan ikonlarının altındakı sözləri dəyişə bilir. Alt panel adlarını gizlət onları götürür, ikonları isə saxlayır. Ana səhifə, Dostlar, Gələnlər, Profil və Shop üçün ad sətri həmin nişanın altına sizin öz sözünüzü qoyur, boş sətir isə TikTok-unkunu saxlayır. İkisi də dərhal tətbiq olunur, adı silmək TikTok-unkunu geri qaytarır.
+* **TikTok:** Lent tabları indi aşağı tab adlarını gizlədə və ya öz mətninizlə dəyişə bilir. Boş ad TikTok adını dərhal qaytarır.
 
-* **TikTok:** Gələnlər elementlərini gizlədin üçün Gələnlər > Çatda altında daha iki açar var, ikisi də siz yandırana qədər söndürülü qalır. Reaksiya üçün iki dəfə toxunmanı söndür mesaja iki dəfə toxunmağın ona ürək qoymasının qarşısını alır, Cavab üçün sürüşdürməni söndür isə yana sürüşdürmənin cavab başlatmasının qarşısını alır. Mesaja bir dəfə toxunmaq və uzun basmaq hər iki halda eyni işləyir.
+* **TikTok:** Yeni, əvvəlcə bağlı söhbət açarları ikiqat toxunma reaksiyasını və cavab üçün sürüşdürməni söndürür. Adi toxunuş və uzun basma qalır.
 
-* **TikTok:** Mağaza tətbiqinin yanında işlədin indi adı dəyişdirilmiş nüsxədə TikTok-un paket adının qalıq istifadələrini nüsxənin özünə yönəldir. TikTok-un prosesləri arasında paylaşılan ayarlar və canlı divar kağızı xidmətinə verdiyi məlumat, Clone app nüsxəyə hansı adı veribsə həmin adla, yanında quraşdırılmış mağaza tətbiqinə yox, nüsxənin özünə gedir. TikTok-un öz paketini göstərən tətbiq ayarları və Play keçidləri yoxlamaları indi TikTok-un adı ilə yanaşı nüsxənin adını da qəbul edir. Mağaza adını saxlamış nüsxə və durdurulmuş Hushfeed əvvəlki kimi davranır.
+* **TikTok:** Mağaza tətbiqi ilə yanaşı işlət indi ortaq ayar, divar kağızı məlumatı və öz paket yoxlamalarını adı dəyişən nüsxəyə yönəldir.
 
-* **TikTok:** Region saxtalaşdırmanın Sorğulardakı region sahələrini uyğunlaşdır açarı indi daxil olma sorğularına toxunmur. Daxil olma, qeydiyyat, hesab yoxlamaları, token yeniləmələri və çıxış, TikTok-un işə düşərkən saxladığı sistem regionu və saat qurşağı daxil, real regionunuzla göndərilir. TikTok-un qalan sorğuları hazır ayarı saxlayır. Açarın Hushfeed ayarlarındakı təsvirində də bu deyilir.
+* **TikTok:** Sorğularda region uyğunlaşdırması giriş, qeydiyyat, hesab yoxlamaları, token yeniləmələri və çıxış üçün həqiqi regionunuzu və saat qurşağınızı saxlayır. Başqa sorğularda seçilmiş region qalır.
 
-* **TikTok:** Şəbəkə proksisi TikTok ekrana qayıdanda proksini yenidən yoxlayır, ən çox beş dəqiqədən bir, belə ki, sessiyanın ortasında cavab verməyi dayandıran proksi indi bir bildiriş çıxarır, əvvəl isə heç nə çıxmırdı. Host və ya port sahəsini boşaltmaq indi saxlanılır, bu da proksini söndürülü qoyur, Ayarları sıfırlayın isə proksinin istifadəçi adını və parolunu da təmizləyir. Onlar heç vaxt fayla yazılmır, buna görə Geri qaytarın onları boş qoyur.
+* **TikTok:** Proksi yoxlamaları indi ən çox beş dəqiqədən bir davam edir. Boş ünvan və ya port onu söndürür, Sıfırla nüsxə və Geri al-ın qaytarmadığı parolları silir.
 
-* **TikTok:** Yeni yama, İstifadəçi sertifikatlarına etibar edin, siz seçməyincə kənarda qalır. O, TikTok-a sistemin sertifikat orqanları ilə yanaşı Android ayarlarında quraşdırdığınız sertifikat orqanlarına da etibar etməyə imkan verir, tətbiqin trafikinə mitmproxy kimi proksi vasitəsilə baxmaq üçün. Həmin telefona sertifikat yerləşdirə bilən hər kəs TikTok-un trafikini də oxuya bilər, buna görə o, sınaq üçün istifadə etdiyiniz telefona nəzərdə tutulub.
+* **TikTok:** İstifadəçi sertifikatlarına etibar et əlavə sınaq yamağıdır. Quraşdırılmış sertifikat orqanları TikTok trafikini oxuya bilər, yalnız sınaq telefonunda işlədin.
 
-* **TikTok:** Paylaşma keçidlərini təmizləyin üçün Hushfeed ayarları > Məxfilik altında yeni açar var, Qısa linklər üçün tam linki kopyalayın, susmaya görə söndürülüb. Linki kopyala sizə vt.tiktok.com və ya vm.tiktok.com qısa linki verəndə Hushfeed onu arxa planda bir dəfə açır, hara apardığını oxuyur və əvəzində tam video linkini, digər link ayarlarınız tətbiq edilmiş halda, mübadilə buferinə qoyur. TikTok bu açılışı görür, hər kəs linkə toxunanda gördüyü kimi. Birbaşa başqa tətbiqə göndərdiyiniz link TikTok-un yaratdığı şəkildə gedir.
+* **TikTok:** Qısa keçidlər üçün tam keçidi kopyala əvvəlcə bağlıdır və kopyalanan keçidi arxa planda açır. TikTok sorğunu görür, birbaşa paylaşım dəyişmir.
 
-* **TikTok:** Bio və ID-ləri kopyala üçün Hushfeed ayarları > Tətbiq altında yeni açar var, Profillərdə hesab faktları, susmaya görə söndürülüb. Bundan sonra profilin paylaşma vərəqində kopyalama düymələrinin yanında Hesab faktları düyməsi olur. O, hesabın nə vaxt yarandığını, regionunu və dilini, istifadəçi adı və görünən adın sonuncu dəfə nə vaxt dəyişdiyini göstərir, hesabın gizli olduğunu və ya bəyəndiyi videoları göstərdiyini də bildirir, hamısı TikTok-un profil üçün artıq göndərdiyi məlumatdan. Əlavə heç nə yüklənmir, server tərəfindən buraxılmış tarix, region və ya dil isə Göndərilməyib yazır. Kopyala bütün siyahını mübadilə buferinə qoyur.
+* **TikTok:** Profillərdə hesab məlumatları əlavə sorğusuz TikTok-un göndərdiyi tarix, region və məxfiliyi göstərən paylaşım düyməsi əlavə edir. Əvvəlcə bağlıdır.
 
-* **TikTok:** Lent filtri üçün Əlavə altında yeni açar var, Neçəsinin süzüldüyünü göstərin, susmaya görə söndürülüb. O, TikTok-un yuxarı nişanlarının altına kiçik etiket qoyur və TikTok başlayandan bəri lent filtrinin çıxardığı paylaşımları, reklamları və qalanlarını birlikdə sayır. Filtrin paylaşımın içində gizlətdiyi etiketlər və bannerlər buna əlavə olunmur, TikTok-un keşindən yenidən sınadığı video da. O, yalnız nəsə çıxarılandan sonra Ana səhifə lentində görünür və toxunuşlar onun üstündən videoya keçir.
+* **TikTok:** Neçəsinin süzüldüyünü göstərin TikTok başlayandan silinən paylaşımlar üçün standart olaraq sönülü Ana səhifə sayğacı əlavə edir. İlk silinmədən sonra görünür. Keşdən təkrarlanan videolar və gizlədilən üst elementlər sayılmır, toxunuşlar isə videoya keçir.
 
-* **TikTok:** Lent filtri üçün Sözlər, ölkələr və dillər altında yeni açar var, Mətn stikerlərini də yoxlayın, susmaya görə söndürülüb. Yandırılanda Bloklanmış başlıq sözləri videodakı mətn stikerlərini, yəni yaradıcının TikTok redaktorunda onun üstünə yazdığı sözləri də oxuyur və biri uyğun gələndə videonu başlıqdakı uyğunluq kimi gizlədir. Şəklin özünün hissəsi olan mətni oxumaq mümkün deyil. Filtrləriniz TikTok-un yenicə göndərdiyi hər şeyi gizlədəndə, bildiriş bunları Mətn stikeri sözləri adlandırır.
+* **TikTok:** Mətn stikerlərini də yoxla bloklanmış başlıq sözlərini redaktorda əlavə edilən mətndə axtarır, şəklin içindəki yazıda yox. Əvvəlcə bağlıdır.
 
-* **TikTok:** Qabaqcıl endirmələr üçün Video altında yeni açar var, Su nişanlı nüsxəyə keçin, susmaya görə söndürülüb. Su nişansız video əldə edilə bilməyəndə Hushfeed heç nə əvəzinə TikTok-un öz su nişanlı nüsxəsini saxlayır və bitəndə bunu bildirir. Bu nüsxə TikTok-un öz saxlamasının istifadə etdiyi ölçüdədir, buna görə seçdiyiniz keyfiyyətdən kiçik ola bilər. Ləğv etmə və ya yerin ya da vaxtın bitməsi saxlamanı yenə əvvəlki kimi dayandırır.
+* **TikTok:** Su nişanlı nüsxəyə keç əvvəlcə bağlıdır və təmiz video yoxdursa TikTok-un daha kiçik nüsxəsini saxlaya bilir. Ləğv və saxlama limitləri qalır.
 
-* **TikTok:** Qabaqcıl endirmələr üçün Video altında yeni açar var, Saxlanılmış videoları işarələyin, susmaya görə söndürülüb. O, Hushfeed-in bu telefonda saxladığı şəbəkədəki hər videonun baxış sayından əvvəl ✓ qoyur, belə ki, nəyin artıq sizdə olduğunu açmadan görə bilərsiniz. Lentdə saxlanılmış video yaradıcı sətrində vaxtdan əvvəl eyni işarəni alır, bu vaxtı Paylaşım tarixini həmişə göstərin harada göstərirsə orada. O, Artıq saxlanılmış videoları yoxlayın açarının apardığı qeydə əsaslanır, buna görə yalnız həmin açar yandırılanda işləyir, foto paylaşımları isə heç vaxt işarə almır. Sonradan sildiyiniz video Saxlanılmış videoları unudun istifadə edənə qədər işarəni saxlayır. Hushfeed-i durdurun bunu söndürür.
+* **TikTok:** Saxlanılmış videoları işarələyin video torlarında və yaradıcı sətirlərində standart olaraq sönülü işarə əlavə edir. Saxlanılmış video yoxlamasını tələb edir və tarixçəni unudanadək işarələr qalır. Şəkillər işarələnmir, Fasilə isə bunu söndürür.
 
-* **TikTok:** Video örtüklərini saxlamaq olar. Qabaqcıl endirmələr üçün Video altında yeni açar var, Örtüyü də saxla, susmaya görə söndürülüb. Yandırılanda Endir düyməsi həm də videonun örtüyünü TikTok-un göndərdiyi ən böyük ölçüdə saxlayır. Endir keçidi başqa tətbiqə verəndə və ya artıq saxladığınız videonu yenidən saxlamaq əvəzinə açanda isə saxlamır. Uzun basma idarəetmələri üçün uyğun seçim var, Videonun örtüyünü saxlayın. Örtüklər foto qovluğunuza gedir, videonun adı ilə adlanır, HEIF və ya WebP örtük isə Android onu çevirə bildikdə JPEG kimi çıxır.
+* **TikTok:** Örtüyü də saxla sönülü başlayır və video ilə ən böyük örtüyü saxlayır. Başqa tətbiqə ötürəndə və ya artıq saxlanmış videonu açanda örtük saxlanmır. Uzun basmaqla örtüyü ayrıca saxlamaq olar. Şəkillər videonun adı ilə şəkil qovluğuna yazılır, çevrilə bildikdə JPEG olur.
 
-* **TikTok:** Fərdi başladıcı ikonu üçün yeni seçim var, İkon şəkli. Ona tərəfi 432-dən 1024 pikselə qədər olan kvadrat PNG-nin yolunu verin, Android 8 və daha yenisində o, TikTok-un musiqi notunun olduğu yerə sizin şəklinizi qoyur. İkon üslubu yenə də arxadakı rəngi seçir, şəkil olanda isə tematik versiya olmur. Fayldan istifadə etmək mümkün olmasa, TikTok-da heç nə dəyişməmiş yamalama dayanır və səbəbi deyir.
+* **TikTok:** İkon şəkli Android 8 və yenidə 432-dən 1024 pikselə kvadrat PNG qəbul edir. Mövzu qatı yoxdur, yararsız fayl yamaqlamanı təhlükəsiz dayandırır.
 
-* **TikTok:** Qabaqcıl endirmələr üçün Video altında iki yeni açar var, ikisi də susmaya görə söndürülüb. Saxlanılan videolara təfərrüatlarını etiket kimi yazın başlığı, yaradıcını, paylaşım tarixini və keçidi saxlanılan MP4-ə yazır, media pleyerlər və ffprobe onları ad, ifaçı, tarix, şərh və təsvir kimi oxuyur. Təfərrüatları JSON kimi saxlayın videonun yanındakı təfərrüat faylını sadə mətn əvəzinə JSON faylı edir. Quruluşu etiketlərin yazılmasına imkan verməyən video yenə də saxlanılır, sadəcə onlarsız.
+* **TikTok:** Yeni, əvvəlcə bağlı Endirmələr açarları paylaşım məlumatını MP4-ə yazır və JSON kimi saxlayır. Uyğun olmayan MP4 teqlərsiz yenə saxlanır.
 
-* **TikTok:** Paylaşım tarixini həmişə göstərin üçün Lent ekranı > Video məlumatı altında iki yeni açar var, ikisi də susmaya görə söndürülüb. Vaxtı saniyəsinə qədər göstərin yaradıcının adının yanındakı TikTok-un qısa tarixini tam tarix və vaxtla əvəz edir, saniyələr və saat qurşağınız daxil, telefonunuzun ayarına görə 12 və ya 24 saatlıq formatda. Profil şəbəkəsində tarixləri göstərin hər videonun paylaşıldığı günü baxış sayının altında göstərir, məsələn, Oct 7, başqa ildən olan paylaşımlar üçün il əlavə olunur. İştirak dərəcəsini göstərin də yandırılanda tarix say və dərəcənin altında öz sətrində durur. TikTok-un vaxtsız göndərdiyi şəbəkə videosu yenə də tarix alır, bu tarix paylaşım vaxtını daşıyan ID-dən oxunur.
+* **TikTok:** Standart olaraq sönülü tarix seçimləri yaradıcıların yanında saniyələri və saat qurşağınızı telefonun saat biçimində göstərən vaxt, torlarda isə paylaşım tarixi əlavə edir. Çatışmayan tarix video ID-sindən alınır. Köhnə paylaşımlarda il görünür, iştirak dərəcəsi ilə birlikdə tarix ayrıca sətirdə verilir.
 
-* **TikTok:** Şərh alətləri üçün daha bir yeni açar var, Şərh qutusundakı düymələri gizlədin, susmaya görə söndürülüb. O, şərh yazdığınız qutudan foto, @ və hədiyyə düymələrini çıxarır. Emoji düyməsi qalır, yazmaq və göndərmək dəyişmir. O, Hushfeed ayarları > Şərhlər altındadır, Hushfeed-i durdurun isə onu söndürür.
+* **TikTok:** Şərh qutusu düymələrini gizlət foto, @ və hədiyyə düymələrini götürür, emoji, yazma və göndərmə qalır. Əvvəlcə bağlıdır.
 
-* **TikTok:** Şərh alətləri üçün yeni açar var, Şərhlərdəki rəy sorğularını gizlədin, susmaya görə söndürülüb. TikTok bəzən fikrinizi soruşmaq üçün şərh siyahısına sual kartı qoyur, açar yandırılanda isə siyahı TikTok-un heç bir sorğu göndərmədiyi hesabda necə qurulursa, elə qurulur. O, Hushfeed ayarları > Şərhlər altında, Şərh sorğularını gizlədin seçiminin aşağısındadır, Hushfeed-i durdurun isə onu söndürür.
+* **TikTok:** Şərh sorğularını gizlət şərhlərdən sual kartlarını götürür. Yeni açar əvvəlcə bağlıdır.
 
-* **TikTok:** Bildiriş idarəetmələri üçün Gələnlər altında yeni açar var, Push bildirişlərini söndürün, susmaya görə söndürülüb. Yandırılanda tətbiq başlayanda TikTok-un push xidməti qurulmur və TikTok-un göndərdiyi heç nə, media idarəetmələri kimi davamlı olmayınca, bildiriş panelinə çatmır. TikTok-un wake lock-ları da keçilir, sizin apardığınız LIVE üçün olanlar və öz bildirişini göstərən arxa plan işi üçün olanlar istisna. TikTok-u açana qədər yeni mesajlardan xəbər tutmayacaqsınız və açar yandırılanda atılmış bildiriş geri qayıtmır. Yenidən başlatmadan sonra qüvvəyə minir, onu söndürmək və ya Hushfeed-i durdurmaq push-u TikTok-un növbəti başlamasında yenidən qurur. Arxa plan trafikini məhdudlaşdırın daxilindəki Push quraşdırmasını keçin seçimindən fərqli olaraq, onu geri qaytarmaq üçün yenidən yamalamaq lazım deyil.
+* **TikTok:** Push bildirişlərini söndürün sönülü başlayır və yenidən başlatma tələb edir. Mesajları TikTok-u açanda görürsünüz, atılan bildirişlər qayıtmır və davam edən iş bildirişləri qalır. Yayımladığınız LIVE-lar və öz bildirişi olan işlər xaric, oyaq saxlama kilidləri bloklanır. Söndürmək və ya Fasilə növbəti yenidən başlatmada push-u bərpa edir.
 
-* **TikTok:** Ekran vaxtı üçün yeni açar var, Paylaşılan videoları ayrıca aç, susmaya görə söndürülüb. Bir videoya keçid, məsələn, dostunuzun başqa tətbiqdə sizə göndərdiyi, yalnız həmin videonu açır və lent ondan o yana sürüşmür, belə ki, düşəcəyiniz növbəti video yoxdur. Başqa video oynayan kimi, məsələn, yeniləmədən və ya İzlənilənlərə toxunandan sonra, yaxud TikTok-dan 10 dəqiqə və ya daha çox uzaq qaldıqdan sonra qayıdanda lent yenə sürüşür. Nə Avtomatik keçid, nə də TikTok-un öz avtomatik sürüşdürməsi ondan irəli keçmir, İzlənilənlər və ya Dostlar kimi digər lent nişanları isə həmişəki kimi sürüşür. Bu sətir Müəllifi bloklama düyməsi və Lent nişanları naviqasiyası yamalarını tələb edir, Hushfeed-i durdurun isə onu söndürür.
+* **TikTok:** Paylaşılan videoları ayrıca aç sönülü başlayır və başqa video oynayanadək və ya on dəqiqə sonra qayıdanadək bir keçidin videosunda saxlayır. Avtomatik keçid və avtomatik sürüşdürmə onu keçə bilmir. Müəllifi bloklama düyməsi və Lent tabları arasında keçid yamaları lazımdır. Başqa tablar sürüşür, Fasilə isə bunu söndürür.
 
-* **TikTok:** Avtomatik video keçidi üçün Oxutma altında yeni açar var, Axtarış nəticələrində avtomatik keçid, susmaya görə söndürülüb. O, TikTok-un öz axtarış avtomatik sürüşdürmə bayrağına bəli deyir, axtarış nəticələri Sənin üçün bayrağının əvəzinə onu oxuyur, buna görə axtarışdan açılan videolar da sonda irəli keçə bilir. Sürüşdürmə gedərkən axtarışdan çıxsanız, TikTok sürüşdürməni növbəti axtarışınızda davam etdirir və o da hər biri kimi Avtomatik keçid sessiya limitində və Ekran vaxtı üçün dayanır. Yandırdıqdan sonra TikTok-u yenidən başladın.
+* **TikTok:** Axtarış nəticələrində avtomatik keçid əvvəlcə bağlıdır, yenidən başlatmaq lazımdır. Axtarış sürüşdürməsi keçid və ekran vaxtı limitlərinə tabedir.
 
-* **TikTok:** Pop-up pəncərələri blokla yoxlama siyahısı indi TikTok serverinin kampaniya kimi göndərdiyi vərəqləri və üzən kartları da kampaniyanın öz adı altında göstərir, belə ki, birini işarələmək onu qurulmamış dayandırır. Onlar əvvəllər yoxlama siyahısına heç çatmırdı. Lent ekranı > Pop-uplar altında yeni açar, LIVE qabarcığını gizlədin, susmaya görə söndürülüb, TikTok-un sizi LIVE-a yönəltmək üçün lentin yuxarısında üzdürdüyü qabarcığı dayandırır.
+* **TikTok:** Pəncərə siyahısında indi server kampaniyaları da var. LIVE qabarcığını gizlət lentin üzən LIVE təklifi üçün əvvəlcə bağlı açar əlavə edir.
 
-* **TikTok:** Sistem şriftindən istifadə edin üçün ikinci açar var, Sistem emojilərindən istifadə edin, hər emojini cihazınızın öz emoji şriftində çəkir. TikTok-un şriftlərində emoji yoxdur, buna görə çoxu artıq cihazınızdan gəlir, amma TikTok cihazınızda olmayan ən yeni emojiləri Google-un emojiləri ilə doldurur. Açar yandırılanda bunu etmir və həmin emojilər əvəzində qutu kimi və ya hissə-hissə görünə bilər. Susmaya görə söndürülüb və yenidən başlatma tələb edir. Açar Hushfeed ayarları > Tətbiq altındadır.
+* **TikTok:** Sistem emojisini işlət əvvəlcə bağlıdır, yenidən başlatmaq lazımdır. Telefonda olmayan emoji qutu və ya ayrı hissələr kimi görünə bilər.
 
-* **TikTok:** İki yeni yama, Haptik titrəməni söndürün və Ekran keçidlərini söndürün. Birincisi TikTok-un öz toxunuşlarında və jestlərində verdiyi qısa vibrasiyaları, uzun basma titrəyişi də daxil, dayandırır, klaviaturanızın və telefonunuzun öz haptikası isə qalır. İkincisi TikTok-un ekranlarını sürüşmə effekti olmadan açıb bağlayır, ekran daxilindəki sürüşdürmələr isə yenə barmağınızı izləyir. Heç biri susmaya görə seçilmir və hər açar yamasını seçdiyiniz anda yandırılmış başlayır, Hushfeed ayarları > Tətbiq > Görünüş altında.
+* **TikTok:** Əlavə Vibrasiyanı söndür və Ekran keçidlərini söndür yamalarının açarları seçiləndə açıq başlayır. Klaviatura vibrasiyası və ekran içi sürüşdürmə qalır.
 
-* **TikTok:** Uzun basma üçün yeni seçim var, Ekrandakı kadrı foto kimi saxlayın. Basma videonun göstərdiyi şəkli JPEG kimi Foto təyinatı qovluğunda saxlayır, dəyişməsəniz DCIM/TikTok. O, videonun özündən oxunur, buna görə üstündə çəkilmiş başlıq və düymələr onun içində olmur. Dəqiq kadrı seçmək üçün əvvəlcə fasilə verin. Fayl videonun adını və kadrın haradan gəldiyini götürür, məsələn, `_frame_1m05s`.
+* **TikTok:** Uzun basmaqla ekrandakı video kadrını üst elementlərsiz JPEG kimi Şəkil təyinat qovluğuna saxlamaq olar. Adı video və kadrın vaxtından götürülür. Dəqiq kadr seçmək üçün əvvəl dayandırın.
 
-* **TikTok:** Fərdi oflayn videolar limiti indi 10 000 videoya qədər gedir (əvvəl 1 000-də dayanırdı) və limit sətri o qədər videonun təxminən nə qədər yaddaş tutduğunu göstərir. TikTok-un həqiqətən neçəsini göndərməsi isə hələ də onun serverlərindən asılıdır.
+* **TikTok:** Oflayn video limiti indi 10.000-ə çatır və yaddaş təxmini göstərir. TikTok göndərəcəyi sayı yenə özü seçir.
 
-* **TikTok:** Lent filtri > Əlavə altında yeni açar var, Oflayn videoları lentdən kənarda saxlayın, susmaya görə söndürülüb. TikTok kifayət qədər yeni video yükləyə bilməyəndə oflayn baxış üçün saxladığı videoları Sənin üçün lentinə geri qatır, açar yandırılanda isə hamısı, oflayn ehtiyat siyahısının hamısı daxil, çıxarılır. Oflayn siyahınız olduğu kimi qalır, TikTok-un oflayn videolarını süzün isə yeni açar yandırılanda boz olur.
+* **TikTok:** Oflayn videoları lentdən uzaq tut əvvəlcə bağlıdır, oflayn ehtiyat paylaşımlarını çıxarır, saxlanan oflayn siyahını dəyişmir.
 
-* **TikTok:** Uzun basma üçün yeni seçim var, TikTok-u bağlayan yuxu taymeri qurun. Basma 15, 30, 45, 60 və ya 90 dəqiqəlik seçici açır və qısa bildiriş TikTok-un nə vaxt bağlanacağını deyir. Vaxt bitəndə video dayanır və TikTok, Son tətbiqlərdən kənara sürüşdürmənin bağladığı kimi bağlanır, arxa planda oxutma da daxil. Taymer işləyərkən yenidən basmaq onu söndürməyi təklif edir. Telefon sonu heç nə oynamadan yatıbsa, TikTok ertəsi səhər üstünüzə bağlanmaq əvəzinə açıq qalır.
+* **TikTok:** Uzun basmaq 15, 30, 45, 60 və ya 90 dəqiqəlik yuxu taymeri açır. Taymer oxutmanı, arxa plan daxil olmaqla, dayandırır və TikTok-u bağlayır. Ləğv etmək üçün yenidən basın. Telefon müddəti heç nə oynatmadan yuxuda keçiribsə, TikTok açıq qalır.
 
-* **TikTok:** Yeni yama, Baxış tarixçəsini qeyd etməyi dayandırın, siz yandırana qədər söndürülü qalan Məxfilik açarı ilə. O, TikTok-un izlədiyiniz hər video üçün göndərdiyi baxış hesabatını saxlayır, videolar Fəaliyyət mərkəzi > Baxış tarixçəsinə belə düşür. Baxışlarınız baxış sayına əlavə olunmağı dayandırır və Sənin üçün öyrənməyə daha az şey tapır, TikTok isə yenə bəyənmələri, izləmələri, axtarışları və öz istifadə jurnallarını görür. Baxış tarixçəsində artıq olan videolar qalır.
+* **TikTok:** İzləmə tarixçəsini yazmağı dayandır əvvəlcə bağlıdır və yeni video baxış hesabatlarını saxlayır. Köhnə tarixçə və digər TikTok hesabatları qalır.
 
-* **TikTok:** Hushfeed ayarları > Lent filtri > İzlənmiş videolar altında iki yeni sətir var, İzlənmiş videoları fayla saxla və İzlənmiş videoları fayldan bərpa et. Saxla daxil olmuş hesabın izlənmiş videolarını və hər birinin nə vaxt izlənildiyini hesabın adını çəkməyən və heç bir ayar daşımayan JSON faylına yazır, sətir də faylın baxış tarixçəsi olduğunu açıq deyir. Bərpa et əvvəlcə bütün faylı yoxlayır, sonra onu faylı seçən hesaba əlavə edir. Hər ikisində olan video daha yeni tarixi saxlayır, banner isə nəyin əlavə edildiyini və nəyin artıq orada olduğunu, çox köhnə olduğunu, telefonun saatından irəli tarixli olduğunu və ya 10 000 video limitini aşdığını sayır. Birləşdirmədən əvvəl hesabları dəyişmək və ya yavaş fayl tətbiqini dayandırmaq heç nə dəyişmir, fayl tətbiqinin artıq saxladığı fayl isə cavab verəndən sonra bildirilir. TikTok-un öz məlumat ixracı hələ də İzləmə tarixçəsini idxal et vasitəsilə gedir.
+* **TikTok:** Baxılmış videolar tarixçəsini seçilmiş hesab üçün ad və ayarlar olmadan yerli JSON kimi saxlayın və bərpa edin. İdxal birləşdirmədən əvvəl yoxlanır, daha yeni baxış tarixlərini saxlayır, köhnə və gələcək tarixlərə və 10.000 video limitinə əməl edir. Hesabı dəyişmək və ya ilişmiş idxalı dayandırmaq tarixçəni dəyişmir. TikTok ixracları yenə Baxış tarixçəsini idxal et ilə açılır.
 
-* **TikTok:** Hushfeed ayarları > Lent filtri altındakı Bloklanmış başlıq sözləri və Gizlədilən LIVE kateqoriyaları redaktorlarında indi nümunə qutusu var. Qaydalarınızın altında başlıq və ya kateqoriya yazın, redaktor heç nə saxlamadan əvvəl hansı qaydanın ona uyğun gəldiyini, heç nəyin uyğun gəlmədiyini və ya qaydada nəyin səhv olduğunu deyir. O, lentin istifadə etdiyi eyni uyğunlaşdırmanı işlədir və yalnız bu söz qaydalarını əhatə edir, hər filtri yox. Siz sınayarkən heç nə saxlanmır, sayılmır və ya göndərilmir.
+* **TikTok:** Bloklanmış başlıq sözləri və Gizli LIVE kateqoriyaları indi qaydanı saxlamadan, saymadan və göndərmədən sınamaq üçün nümunə qutusu göstərir.
 
-* **TikTok:** Ekran vaxtı üçün yeni açar var, İlk videonu başlatmayın, susmaya görə söndürülüb (#83). TikTok-u ikonundan açanda lentdəki ilk video bir toxunuşu gözləyir, bunun üçün Qayıdanda lenti başlatmayın seçiminin istifadə etdiyi eyni tutucu işlənir, alt panel isə sərbəst qalır. TikTok-u keçiddən, bildirişdən (TikTok-un ikona toxunuş kimi göndərdikləri daxil) və ya qısayoldan açmaq saxlanmır, Son tətbiqlərdən yenidən açmaq da. Tutucu indi həm də o qaldırıldıqdan sonra çəkilən alt panel üçün yer buraxır.
+* **TikTok:** İlk videonu başlatma əvvəlcə bağlıdır, ikondan açanda toxunuş gözləyir. Keçid, bildiriş, qısayol və son tətbiqlər yenə adi oynayır (#83).
 
-* **TikTok:** Hushfeed ayarları > Endirmələr altındakı Video fayl adı, Foto fayl adı və Şərh mediasının fayl adı redaktorları indi şablonu yazdıqca önizləyir. Uydurma bir paylaşımın Hushfeed-in endiricisindən və TikTok-un öz endiricisindən alacağı qovluğu və fayl adını, üstəlik yandırdığınız səs, təfərrüat və altyazı fayllarını görürsünüz, fiqurlu mötərizədə token olmayan hər şeyin adı çəkilir ki, yazı səhvi növbəti saxlamaya qədər nəzərdən qaçmasın. {original} və {media_id} Hushfeed-in endiricisi altında öz qeydini alır, o, onları yazıldığı kimi saxlayır.
+* **TikTok:** Endirmə fayl adları yazdıqca qovluq və yanaşı faylları göstərir, naməlum işarələri adlandırır, {original} və {media_id} izah edir.
 
-* **TikTok:** Yeni yama, Mağaza tətbiqinin yanında işlədin, mağazadakının yanında ikinci TikTok üçün. Morphe-nin Clone app yaması yamalanmış tətbiqə yeni paket adı verir ki, Android hər ikisini quraşdırsın, lakin adı dəyişdirilmiş nüsxə telefonunuzu həmin yeni adla qeydiyyatdan keçirirdi, TikTok serverləri ona cihaz ID-si vermirdi və daxil olmaq alınmırdı. Bu yamanı Clone app ilə birlikdə seçin, nüsxə TikTok-un öz adı ilə qeydiyyatdan keçir, hər tətbiq isə öz məlumatını və girişini saxlayır. TikTok-un paket adını saxlayan quruluşa toxunulmur, Hushfeed-i durdurmaq isə nüsxənin öz adını geri qaytarır. Google və Facebook ilə daxil olma adı dəyişdirilmiş nüsxədə işləyə bilməz, buna görə orada e-poçt və ya telefon nömrənizlə daxil olun. Susmaya görə seçilmir.
+* **TikTok:** Mağaza tətbiqinin yanında işlə Morphe-nin Tətbiqi klonla yamasına könüllü əlavədir. Adı dəyişmiş nüsxəni TikTok-da qeydiyyatdan keçirir, hər tətbiqin məlumatı və girişi ayrı qalır. Orada Google və Facebook girişi işləmir, e-poçt və ya telefonla daxil olun. Adi paket adları dəyişmir, Fasilə isə klonun adını qaytarır.
 
-* **TikTok:** Diaqnostika bölməsində yeni sətir var, Diaqnostikanı 15 dəqiqə qeyd edin. Xətanı təkrar etməzdən əvvəl ona toxunun, hər şey on beş dəqiqə qeyd olunur, sonra qeydetmə özü dayanır. Sətir bitmə vaxtını göstərir, ikinci toxunuş isə onu vaxtından əvvəl dayandırır. TikTok-u yenidən başlatmaq eyni bitmə vaxtını saxlayır, telefonun saatını geri çəkmək onu uzada bilməz, telefonu yenidən başlatmaq isə onu bitirir. O, heç vaxt Diaqnostikanı qeyd edin açarını yerindən tərpətmir, belə ki, açıq qoyduğunuz qeydetmə açıq qalır, ehtiyat nüsxələr isə onu kənarda qoyur. Diaqnostikanı qeyd edin açarı indi siz söndürənə qədər yandırılmış qaldığını açıq deyir.
+* **TikTok:** Diaqnostikanı 15 dəqiqə qeyd edin bitmə vaxtını göstərir və ikinci toxunuşla vaxtından əvvəl dayanır. TikTok-u yenidən başlatmaq və saatı geri çəkmək bitmə vaxtını dəyişmir, telefonu yenidən başlatmaq isə sessiyanı bitirir. Sessiyalar ehtiyat nüsxələrə daxil edilmir və daimi qeydə təsir etmir. Diaqnostikanı qeyd edin indi siz söndürənədək açıq qalacağını deyir.
 
-* **TikTok:** Cihaz məxfilik qoruyucusundakı Reklam identifikatorunu bloklayın indi TikTok-un onu oxuduğu hər yeri əhatə edir. Tətbiqin içindəki iki reklam SDK-sı Play Services-dən keçmək əvəzinə identifikatoru Google-un reklam xidmətindən özləri istəyirdi və yenə də həqiqisini alırdı. Açar yandırılanda onlar da boş identifikator alır və reklamların fərdiləşdirilməsindən imtina edib-etmədiyinizin hər yoxlaması imtina etdiyinizi göstərir, Android reklam identifikatorunuzu sildikdən sonra tətbiqlərə məhz bunu deyir. Hushfeed-i durdurun TikTok-a yenə də həqiqi cavabları verir.
+* **TikTok:** Reklam ID-sini blokla indi reklam xidmətinə birbaşa sorğulara da çatır və fərdiləşdirməni bağlı göstərir. Fasilə həqiqi cavabları qaytarır.
 
-* **TikTok:** Yeni yama, Şəbəkə proksisi. Hushfeed ayarları > Region altında HTTP və ya SOCKS5 proksi qurun, TikTok-u yenidən başladın, onun öz şəbəkə steki lenti, axtarışı, şərhləri və API-nin qalanını onun vasitəsilə göndərir. Adi Java bağlantıları da ondan keçir. Videolar və LIVE yayımları birbaşa qalır, çünki TikTok-un pleyeri öz bağlantılarını açır. TikTok-un şəbəkə steki proksiyə daxil ola bilmir, buna görə istifadəçi adı və parol yalnız Java tərəfinə çatır, parol isə heç vaxt ayarların ehtiyat nüsxəsinə düşmür. TikTok başlayanda proksi cavab verməsə, mesaj bunu deyir. Digər tətbiqlərə təsir etmir, susmaya görə söndürülüb.
+* **TikTok:** Şəbəkə proksisi sönülü başlayır və yenidən başlatmadan sonra API və Java trafikini yönəldir. Video və LIVE birbaşa qalır, giriş məlumatları isə yalnız Java bağlantılarında işləyir. Parollar ehtiyat nüsxələrə daxil edilmir, əlçatmaz proksi barədə başlanğıcda xəbərdarlıq görünür.
 
-* **TikTok:** Yeni yama, Şəkil içində şəkil. Hushfeed ayarları > Oxutma altında Kiçik pəncərədə izləməyə davam et seçimini yandırın, video oynayarkən TikTok-dan çıxsanız, o, digər tətbiqlərinizin üstündə yalnız video görünərək, düymələr və başlıq olmadan davam edir. Pəncərədə oxut və dayandır düyməsi var və videonun öz formasını alır. O, lentdə və profildən, axtarışdan və ya səsdən açdığınız videolarda işləyir, Android 8 və ya daha yenisini tələb edir. Susmaya görə söndürülüb.
+* **TikTok:** Şəkil içində şəkil Android 8 və yenidə lent və açılmış videolar üçün oxutma və dayandırma düyməli, əvvəlcə bağlı kiçik pəncərə əlavə edir.
 
-* **TikTok:** Yeni yama, Həmişə HD keyfiyyətdə yüklə. Onu Hushfeed ayarları > Tətbiq altında, Paylaşım bölməsində yandırın, paylaşdığınız hər video TikTok-un öz HD yükləməsindən keçir, sanki paylaşma səhifəsində HD-ni özünüz yandırmısınız. TikTok-un yüksək keyfiyyətli saymadığı klip həmişə olduğu kimi paylaşılır. O yandırılıbsa, paylaşma səhifəsində HD-ni söndürmək tutmayacaq. Susmaya görə söndürülüb.
+* **TikTok:** Həmişə HD yüklə əvvəlcə bağlıdır, uyğun kliplər üçün TikTok-un HD yolunu işlədir və açıq olanda HD-ni açıq saxlayır.
 
-* **TikTok:** Yeni yama, Çıxarılmış səsləri saxlayın. Səs müəllif hüququna görə və ya sizin regionda çıxarılanda TikTok onu istifadə edən hər videonu səssizləşdirir. Hushfeed ayarları > Oxutma altında TikTok-un çıxardığı səsləri oynat seçimini yandırın, həmin videolar yenə də audiosu ilə oynayır, həm lentdə, həm də axtarışda. TikTok səsi yenə də əlçatmaz kimi göstərə bilər. Susmaya görə söndürülüb.
+* **TikTok:** TikTok-un götürdüyü səsləri oxut əvvəlcə bağlıdır. TikTok səsi əlçatmaz saysa da lent və axtarış videolarında mövcud səsi qaytarır.
 
-* **TikTok:** Region saxtalaşdırma üçün Hushfeed ayarları > Region altında yeni açar var, Sorğulardakı region sahələrini uyğunlaşdır. TikTok-un göndərdiyi hər sorğu serverlərinin telefonunuzda sonuncu saxladığı regionu və şəbəkənizin ölkə kodunu daşıyır, əvvəllər isə heç biri hazır ayara uymurdu. Açar yandırılanda hər ikisi uyur. Sorğudakı digər region sahələri artıq Dil mühitini və saat qurşağını ölkəyə uyğunlaşdırın seçiminə uyur. Susmaya görə söndürülüb.
+* **TikTok:** Sorğularda region sahələrini uyğunlaşdır əvvəlcə bağlıdır, TikTok-a göndərilən saxlanmış region və şəbəkə ölkəsini hazır ayara uyğunlaşdırır.
 
-* **TikTok:** LIVE idarəetmələri üçün Hushfeed ayarları > Oxutma altında ikinci açar var, Dəqiq LIVE izləyici sayını göstər. LIVE otağının yuxarı sağdakı izləyici sayı TikTok-un yuvarlaqlaşdırılmış 1,2K göstəricisi əvəzinə, məsələn, 1 234 kimi real rəqəmi göstərir, planlaşdırılmış LIVE-dakı say da belədir, yığılmış, açılmış və ya landşaft rejimində. Susmaya görə söndürülüb.
+* **TikTok:** LIVE izləyici sayını dəqiq göstər otaq və planlı LIVE-larda, üfüqi görünüş daxil, tam rəqəm üçün əvvəlcə bağlı açar əlavə edir.
 
-* **TikTok:** Yeni yama, LIVE idarəetmələri. Lentinizdə görünən LIVE geri sayıb sizi toxunuşsuz otağa sala bilər. Hushfeed ayarları > Oxutma altında LIVE önizləmələrinin özbaşına açılmasını dayandır seçimini yandırın, o, siz toxunana qədər önizləmə olaraq qalır. Susmaya görə söndürülüb.
+* **TikTok:** LIVE önizləmələrinin öz-özünə açılmasını dayandır əvvəlcə bağlıdır, toxunanadək önizləməni otaqdan kənarda saxlayır.
 
-* **TikTok:** Cihaz məxfilik qoruyucusuna Məxfilik altında daha iki açar əlavə olunur, ikisi də siz yandırana qədər söndürülü qalır. VPN bağlantısını gizlə TikTok-un VPN-də olduğunuzu bilməsinin qarşısını alır və ona yalnız VPN söndürülmüş kimi görünür, digər bağlantılarınız olduğu kimi qalır. Reklam identifikatorunu bloklayın TikTok-a Android-in sizinki sıfırlandıqdan sonra verdiyi boş identifikatoru verir, beləliklə bu cihaz onunla tətbiqlər arasında uyğunlaşdırıla bilmir. İkisi də yenidən başlatmadan qüvvəyə minir, Hushfeed-i durdurun isə TikTok-a həqiqi VPN vəziyyətinizi və identifikatorunuzu geri verir.
+* **TikTok:** Əvvəlcə bağlı məxfilik açarları VPN-i gizlədir və reklam ID-sini dərhal bloklayır. Fasilə hər iki həqiqi cavabı qaytarır.
 
-* **TikTok:** Yeni yama, Axtarışda avtomatik oxutmanı dayandırın. Hushfeed ayarları > Tətbiq altında Axtarış nəticələri özbaşına oynamasın seçimini yandırın, axtarış nəticələrindəki videolar siz birini açana qədər örtüyündə qalır. Lent həmişəki kimi oynayır.
+* **TikTok:** Axtarışda avtomatik oxutmanı dayandır açılanadək nəticələri üz qabığında saxlayır, əsas lent adi oynayır.
 
-* **TikTok:** Xəyal rejimi üçün Hushfeed ayarları > Məxfilik altında onun altında yeni Onlayn statusu gizlət açarı var. İkisi də yandırılanda TikTok tətbiqdə olarkən dostlarınıza yaşıl nöqtə və ya Hazırda aktiv göstərən fəaliyyət hesabatını göndərməyi dayandırır. Həmin hesabat eyni zamanda dostlarınızın statusunu geri gətirir, buna görə o yandırılıbsa, onlarınkı sizin üçün yenilənməyi dayandıra bilər. Susmaya görə söndürülüb.
+* **TikTok:** Onlayn statusu gizlət əvvəlcə bağlıdır və Gizli rejim lazımdır. Dostlar fəaliyyətinizi görməyə, onların statusu da sizdə yenilənməyə bilər.
 
-* **TikTok:** TikTok-un yoxlamalarına mağaza tətbiqi kimi görünün indi TikTok-un quraşdırıcısı kimi başqa mağazanı göstərə bilir. Hushfeed ayarları > Tətbiq altında açarın altında Play Store (hələ də defolt), Galaxy Store, AppGallery və ya Amazon Appstore seçin, sonra TikTok-u yenidən başladın.
+* **TikTok:** Mağaza tətbiqi kimi görün indi quraşdırıcı olaraq Play Store (standart), Galaxy Store, AppGallery və ya Amazon Appstore göstərə bilər. Seçdikdən sonra yenidən başladın.
 
-* **TikTok:** Parlaqlıq və səs üçün sürüşdür, Lent ekranı > Jestlər altında yeni açar, videonun sol kənarı boyu yuxarı və ya aşağı sürüşdürərək ekran parlaqlığını, sağ kənarı boyu isə səsi dəyişməyə imkan verir, ekranda kiçik səviyyə göstəricisi görünür. O, lentdə və profildən açılmış videoda işləyir. Başqa yerdən başlayan sürüşdürmə yenə də lenti sürüşdürür, toxunuş isə həmişə etdiyini edir. Kənar zolağın eni kənarların nə qədər geniş olduğunu ekranın 5-dən 30 faizinə qədər təyin edir. Siz yandırana qədər söndürülü qalır, videodan çıxanda isə parlaqlıq telefonunuzun ayarına qayıdır.
+* **TikTok:** Parlaqlıq və səs üçün sürüşdür sönülü başlayır. Lentdə və açılmış videolarda sol kənar parlaqlığı, sağ kənar səsi dəyişir. Kənarın eni 5% ilə 30% arasındadır, başqa sürüşdürmələr lenti gəzdirir və videodan çıxanda parlaqlıq bərpa olunur.
 
-* **TikTok:** Gələnlər elementlərini gizlədin indi söhbətin içinə də çatır. Gələnlər > Çatda altında üç yeni açar var, hamısı siz yandırana qədər söndürülü qalır. Zəng düymələrini gizlədin söhbətin yuxarısından səsli və video zəng düymələrini çıxarır, Stiker təkliflərini gizlədin stiker bannerini götürür, Təklif olunan cavabları gizlədin isə TikTok-un cavab təkliflərini və onları təqdim edən bannerin qarşısını alır. Söhbət təfərrüatları düyməsinə və göndərdiyiniz hər şeyə toxunulmur.
+* **TikTok:** Üç əvvəlcə bağlı söhbət açarı zəng düymələrini, stiker və cavab təkliflərini gizlədir, söhbət təfərrüatları və göndərilənlər dəyişmir.
 
-* **TikTok:** Video idarəetmələrini solğunlaşdır, Təmiz ekran altında yeni rəqəm, videonun üstündəki düymələri, başlığı, musiqi diskini, axtarış çubuğunu və nişanları gizlətmək əvəzinə seçdiyiniz səviyyəyə qədər tutqunlaşdırır, bu da hər şeyin harada olduğunu hələ də görə bildiyiniz halda ekranda yanıq izi qalmasına qarşı kömək edir. 100 TikTok-u olduğu kimi saxlayır, solğunlaşdırılmış idarəetmələr isə yenə toxunuşları qəbul edir. 0-da düymələr və başlıq Təmiz ekranın gizlətdiyi kimi gizlənir, nişanlar isə 10-da qalır ki, yolunuzu yenə tapa biləsiniz.
+* **TikTok:** Video idarəetmələrini solğunlaşdır örtükləri zəiflədir. 100-də dəyişmir, 0-da gizlənir, tablar 10-da qalır. Solğun düymələr yenə toxunuş alır.
 
-* **TikTok:** Lenti kilidlə, Ekran vaxtı altında yeni açar, Sənin üçün, İzlənilənlər və digər lent nişanlarını sakit panelin arxasında saxlayır və lent sürüşmür. Gələnlər, profillər və axtarış həmişəki kimi işləyir, bir videoya keçid yenə həmin videonu açır, tətbiq isə bağladığınız lent əvəzinə Gələnlərdə açılır. Dostlar nişanının lenti də əhatə olunur və idarəetmələri ekrandan təmizləmək paneli qaldırmır. Yalnız tək videoya keçid keçir, profilə və ya axtarışa keçid yox. Büdcəni yumşaltmaq üçün bir gün gözləyin yandırılanda Lenti kilidlə söndürmək günün yenidən başlamasını gözləyir, daha uzun büdcədə olduğu kimi. Siz yandırana qədər söndürülü qalır, Hushfeed-i durdurun isə onu hər şeylə birlikdə söndürür.
+* **TikTok:** Lenti kilidlə sönülü başlayır, Gələnlər qutusunda açır və profilləri, axtarışı, tək video keçidlərini saxlayaraq lent tablarını bağlayır. Büdcənin gecikdirilmiş yumşaldılması kilidi açmağa da aiddir. Fasilə kilidi söndürür.
 
-* **TikTok:** Yeni yama, Pop-up pəncərələri blokla. Lent ekranı > Pop-uplar altındakı yoxlama siyahısı TikTok-un telefonunuzda göstərməyə çalışdığı hər pop-up pəncərəni, məsələn, dostlarınızı izləyin kartını, sadalayır və işarələdiklərinizi növbəti dəfə çıxanda dayandırır. Nəsə işarələməyincə heç nə bloklanmır. CAPTCHA, doğrulama, daxil olma, yaş, qadağa və hüquqi razılıq ekranları heç vaxt siyahıda görünmür və heç vaxt bloklanmır.
+* **TikTok:** Pəncərələri blokla yalnız seçdiyiniz siyahı elementlərini gizlədir. CAPTCHA, giriş, yoxlama, yaş, qadağa və hüquqi razılıq ekranları həmişə qorunur.
 
-* **TikTok:** Yeni yama, Hekayə idarəetmələri. Oxutma altında iki açar, ikisi də siz yandırana qədər söndürülü qalır. Hekayəni təkrarla hekayə bitəndə növbətiyə keçmək əvəzinə onu əvvəldən yenidən oynadır, Foto hekayəni saxla isə fotonu siz toxunana və ya sürüşdürənə qədər ekranda saxlayır. Toxunuş və ya sürüşdürmə hər iki halda yenə irəli keçir.
+* **TikTok:** Hekayə idarəetmələri video hekayəni təkrarlamaq və fotonu saxlamaq üçün əvvəlcə bağlı açarlar əlavə edir. Toxunuş və sürüşdürmə yenə keçir.
 
-* **TikTok:** Şərhləri ixrac et, Şərhlər altında yeni açar, şərh axtarış qutusunun altına CSV ixracı və JSON ixracı əlavə edir. Hər biri videonun yüklədiyi şərhləri və cavabları seçdiyiniz fayla saxlayır, hər sətir üçün müəllif, mətn, vaxt, bəyənmələr, cavab sayı, sancaqlanıb, yaradıcı bəyənib, şəkil sayı və dil ilə, düymələrin yanında isə fayldakı sətirlərə uyğun gələn say göstərilir. Əvvəlcə istədiyiniz cavab zəncirlərini açın, çünki TikTok zəncirin cavablarını yalnız siz açanda yükləyir. Fayl tətbiqiniz ilişsə, tətbiq Gözləməni dayandır təklif edir. Siz yandırana qədər söndürülü qalır və Şərhlər daxilində axtarın tələb edir.
+* **TikTok:** Şərhləri ixrac et yüklənmiş şərhlər və cavablar üçün standart olaraq sönülü CSV və JSON ixracı əlavə edir. Şərhlər içində axtarış tələb olunur, cavab zəncirlərini isə əvvəl açmalısınız. İlişmiş fayl əməliyyatları Gözləməyi dayandır seçimini verir.
 
-* **TikTok:** Lent reklamlarını silin indi "Find fresh ideas on Lemon8" kartını da Sənin üçün lentindən kənarda saxlayır. Bu, TikTok-un videoların arasına qoyduğu quraşdırma tanıtımıdır, buna görə onu heç bir reklam bayrağı işarələmir. Hushfeed TikTok-un onu istəməsinin qarşısını alır və buna baxmayaraq biri gəlsə, lentdən atır, o, lent filtri hesabatında Reklamlar altında görünür.
+* **TikTok:** Lent reklamlarını sil indi Sizin üçün lentindən Lemon8 quraşdırma kartını da götürür.
 
-* **TikTok:** Yeni yama, Tətbiq kilidi. Məxfilik altında TikTok-u kilidləyin seçimini yandırın, TikTok başlayanda və seçdiyiniz gecikmədən sonra (dərhal və ya 1, 5 yaxud 15 dəqiqə sonra) qayıdanda barmaq izinizi, üzünüzü və ya ekran kilidi PIN-inizi istəyir. Kilidi açana qədər heç nə görünmür və video dayanmış qalır. Başqa tətbiqdən açdığınız keçid daxil olandan sonra yenə də öz videosuna çatır, kilid yandırılıbsa, TikTok-un son tətbiqlərdəki önizləməsi boşdur. Android 9 və daha yenisi sistemin kilid açma sorğusundan istifadə edir, köhnə telefonlar isə ekran kilidi yoxlamasını alır. Ekran kilidi olmayan telefon TikTok-u əvvəlki kimi açır və səbəbi deyir. Hushfeed-i durdurun kilidi yandırılmış saxlayır, beləliklə dayandırmaq onu keçmək yolu deyil.
+* **TikTok:** Tətbiq kilidi başlanğıcda və qayıdanda dərhal, 1, 5 və ya 15 dəqiqəlik gecikmədən sonra ekran kilidinizi tələb edir. Açılanadək oxutmanı gizlədir və Son tətbiqlər önizləməsini boşaldır. Android 9 və yenisi sistem sorğusundan, köhnə telefonlar ekran kilidi yoxlamasından istifadə edir. Fasilə onu keçmir, ekran kilidi olmayan telefonlar isə işləyir.
 
-* **TikTok:** Qabaqcıl endirmələr foto paylaşımını səsi ilə birlikdə tək MP4 kimi saxlaya bilir. Endirmələr altında Foto paylaşımlarını video kimi saxla seçimini yandırın. Onda TikTok-un tək fotolu paylaşımdakı Videonu endir düyməsi logosuz, istifadəçi adısız və son kartsız təmiz video hazırlayır, bir neçə fotolu paylaşım isə seçdiyiniz fotoları, yoxsa onlardan hazırlanmış videonu istədiyinizi soruşur. Hər foto susmaya görə 3 saniyə göstərilir (Hər foto üçün saniyə 1-dən 10-a qədərdir), səs uyğunlaşdırılmaq üçün kəsilir və ya təkrarlanır, əldə edilə bilməsə, video səssiz saxlanılır və bildiriş bunu deyir.
+* **TikTok:** Foto paylaşımlarını video kimi saxla səsli təmiz MP4 yaradır. Standart hər foto 3 saniyədir, 1-dən 10-a dəyişir. Səs yoxdursa xəbər verərək səssiz saxlayır.
 
-* **TikTok:** Yeni yama, H.264 oxutmasına üstünlük verin. Oxutma altında H.264 videoya üstünlük ver seçimini yandırın, TikTok-un H.264-də də təklif etdiyi video HEVC və ya ByteVC2 əvəzinə həmin versiyada oynayır, bu da donan və ya qızan telefona kömək edə bilər. H.264 versiyası olmayan video əvvəlki kimi oynayır. HDR əvəzinə SDR oynat və ya Oxutma keyfiyyəti də yandırılıbsa, onlar H.264 versiyaları arasından seçir.
+* **TikTok:** H.264 oxutmanı üstün tut mövcud H.264 nüsxəsini seçir, SDR və keyfiyyət seçimini onun içində tətbiq edir. Belə nüsxəsiz video yenə oynayır.
 
-* **TikTok:** Yeni yama, İştirak dərəcəsini göstərin. Onun Lent ekranı > Video məlumatı altındakı açarı videonun bəyənmələrini, şərhlərini, paylaşımlarını və saxlamalarını baxışlarının faizi kimi hesablayır, TikTok-un onunla artıq göndərdiyi saylardan, belə ki, əlavə heç nə endirilmir. Dərəcə izlədiyiniz videoda yaradıcının adından sonra, profil şəbəkələrində isə baxış sayından sonra göstərilir, məsələn, 12,3K · 4,2%. Baxış sayı olmayan video heç nə göstərmir.
+* **TikTok:** İştirak dərəcəsini göstərin lentdə və profildə bəyənmə, şərh, paylaşım və saxlamaların cəmini baxışların faizi kimi göstərir. TikTok-un artıq göndərdiyi saylardan istifadə edir. Baxış sayı olmayan videoda heç nə göstərilmir.
 
-* **TikTok:** Lent ekranı > Sağ sütun altında yeni Dəqiq rəqəmləri göstər açarı. O, bəyənmələri, şərhləri, paylaşımları və digər sayları 1,2M əvəzinə, məsələn, 1 234 567 kimi tam rəqəmlə, telefonunuzun rəqəm qruplaşdırmasından istifadə edərək göstərir.
+* **TikTok:** Dəqiq sayları göstər bəyənmə, şərh, paylaşım və digər sayları yuvarlaq yox, yerli rəqəm bölgüsü ilə tam göstərir.
 
-* **TikTok:** Yeni yama, Fərdi başladıcı ikonu. O, TikTok-un ikonuna tematik qat verir, belə ki, Android 13 və daha yenisində tematik ikonlar yandırılanda not divar kağızınızın rəngini alır. Onun İkon üslubu seçimi həm də Android 8 və daha yenisində qara fon, yaxud sadə qara üzərində ağ və ya ağ üzərində qara not seçməyə imkan verir.
+* **TikTok:** Xüsusi başlanğıc ikonu Android 13 və yenidə divar kağızı rəngli mövzu ikonu, Android 8 və yenidə başqa ikon üslubları əlavə edir.
 
-* **TikTok:** Yeni yama, Mətn uzunluğu limitlərini qaldır. Onun Şərhlər > Yazmaq altındakı açarı şərhin, yenidən paylaşma qeydinin və ya bionun TikTok tətbiqinin yazmağı dayandırdığı uzunluğu keçməsinə imkan verir, sizi sayğacda kəsmir. Mətnin nə qədər uzun olacağına isə TikTok serverləri yenə də özü qərar verir.
+* **TikTok:** Mətn uzunluğu limitlərini götür daha uzun şərh, təkrar paylaşım qeydi və bio yazmağa imkan verir. TikTok serverləri qəbul ediləni yenə seçir.
 
-* **TikTok:** Yeni yama, Avatar halqalarını silin. Lent ekranı > Sağ sütun altındakı iki açar lentdə və şərhlərdə profil şəkillərindən hekayə halqasını və döyünən LIVE halqasını, profillərdən isə hekayə halqasını götürür. Onlar yandırılanda şəkilə toxunmaq yaradıcının hekayəsi və ya LIVE yayımı əvəzinə onun profilini açır.
+* **TikTok:** Avatar halqalarını sil hekayə və LIVE halqalarını gizlədir. Həmin şəklə toxunuş sonra hekayə və ya LIVE əvəzinə profili açır.
 
-* **TikTok:** Yeni yama, HDR əvəzinə SDR oynat. Onu Oxutma altında yandırın, HDR-də də olan videolar standart versiyasında oynayır, belə ki, biri başlayanda ekran tam parlaqlığa atılmır. TikTok-un yalnız HDR-də təklif etdiyi video yenə oynayır. Oxutma keyfiyyəti də yandırılıbsa, o, standart versiyalar arasından seçir.
+* **TikTok:** HDR əvəzinə SDR oxut mövcud standart nüsxəni seçir, keyfiyyəti onun içində tətbiq edir. Yalnız HDR olan video yenə oynayır.
 
-* **TikTok:** Yeni yama, Bio və ID-ləri kopyala. Profilin biosunu kopyalamaq üçün ona uzun basın. Profilin menyusunun açdığı paylaşma vərəqində İstifadəçi adını kopyala və İstifadəçi ID-sini kopyala düymələri, videonun paylaşma vərəqində isə Video ID-sini kopyala düyməsi olur. Hər kopyalama nəyi kopyaladığını qısa bildirişlə deyir. Açar Hushfeed ayarları > Tətbiq > Bio və ID-ləri kopyala altındadır.
+* **TikTok:** Bio və ID-ləri kopyala bio üçün uzun basma, paylaşım panelinə istifadəçi adı, istifadəçi və video ID-si düymələri əlavə edir.
 
-* **TikTok:** Yeni yama, İzləmə vəziyyətini göstər. Sizi izləyən profili açın, @istifadəçi adının altında "Sizi izləyir" görünür. Siz onu izləyirsinizsə və o sizi geri izləmirsə, əvəzində "Sizi geri izləmir" yazır. İzləyici və izlənilən siyahılarınız sizin izlədiyiniz, lakin sizi geri izləməyən hesabları işarələyir. O, TikTok-un artıq göndərdiyi izləmə vəziyyətindən istifadə edir, buna görə əlavə heç nə yüklənmir. Açar Hushfeed ayarları > Tətbiq > İzləmə vəziyyətini göstər altındadır.
+* **TikTok:** İzləmə statusunu göstər TikTok-un göndərdiyi məlumatla profil və siyahılarda izləyiciləri və geri izləməyənləri işarələyir.
 
-* **TikTok:** Lent filtri üçün yeni Dostlar bölməsində yalnız qarşılıqlı dostları göstərin açarı var. O yandırılanda Dostlar bölməsi sizi geri izləməyən izlədiyiniz hesabların, tanımadıqlarınızın və təklif olunan hesabların paylaşımlarını, yenidən paylaşımlarını və LIVE-larını atır. Dostun yenidən paylaşımı video başqasına aid olsa da qalır, öz paylaşımlarınız və yenidən paylaşımlarınız isə həmişə qalır.
+* **TikTok:** Dostlar tabında yalnız qarşılıqlı dostları göstər dostların və özünüzün paylaşım və təkrarlarını saxlayır, qarşılıqsız və təklif edilən hesabları çıxarır.
 
-* **TikTok:** Süni intellektlə yaradılmış videoları gizlədin indi daha çox şeyi tutur. TikTok-un görünən süni intellekt etiketindən əlavə, o, TikTok-un paylaşımda saxladığı, lakin həmişə göstərmədiyi süni intellekt işarələrini oxuyur, yəni yaradıcının süni intellekt bəyanını, TikTok-un öz moderasiya qərarını, məzmun etimadnamələrindəki (C2PA) süni intellekt mənbələrini, AI Alive, AI remix və AI portrait kimi TikTok süni intellekt effektləri ilə hazırlanmış paylaşımları və #ai və ya #aigenerated kimi etiketləri. Filtr hesabatı hər birini AiSignals altında onu tutan işarəyə görə sayır. Lent filtri həm də Dostlar nişanı lentinin daha yeni versiyasını əhatə edir, beləliklə qaydaları orada da tətbiq olunur.
+* **TikTok:** AI yaradılmış videoları gizlət indi gizli bildiriş, moderasiya, sertifikat, effekt və AI teqlərini yoxlayır. Filtrlər yeni Dostlar lentinə də çatır.
 
-* **TikTok:** Videonun harada paylaşıldığını göstərin indi TikTok-un paylaşım vaxtını gizlətdiyi videolarda da işləyir, bu da Paylaşım tarixini həmişə göstərin yandırılmayınca Sənin üçün lentinin çoxudur. O, həm də axtarışdan, yaradıcının profilindən və ya paylaşılmış keçiddən açdığınız videolarda görünür və açılmış video başlayan kimi lentdəki ölkəni saxlamaq əvəzinə düzgün ölkəyə keçir. Uzun ad bir az qısaldılır ki, ölkə də onunla birlikdə kəsilməsin.
+* **TikTok:** Müəllif regionları indi görünən tarix olmadan və açılmış videolarda da görünür, cari videonu izləyir, uzun ad yanında yer saxlayır.
 
-* **TikTok:** Feature Gate Lab-da əvəzləmələri qapının öz səhifəsindən yandırmaq indi Məcburi nəticə açarını dərhal açır. Əvvəl o, səhifədən çıxıb qayıdanadək boz qalırdı.
+* **TikTok:** Lab əvəzetmələrini qapının səhifəsində açmaq indi Məcburi nəticəni dərhal əlçatan edir.
 
-* **TikTok:** LIVE əlavələrini silin indi təsvirində LIVE-da qırmızı və mavi döyüş xal çubuğunu və ortaq aparıcı qonaqların adlarını götürə biləcəyini deyir. Siz seçməyincə söndürülüdür, buna görə döyüşlərə baxırsınızsa, onu işarəsiz qoyun.
+* **TikTok:** LIVE əlavələrini silin indi döyüş xalı və qonaq adlarının itə biləcəyini deyir. Döyüşlərə baxırsınızsa, bu əlavə yamağı seçməyin.
 
-* **TikTok:** Animasiyalı şəkil keşini atın indi fərqli işləyir (#100). Köhnə versiya keşlənmiş kadrları atırdı, buna görə animasiyalı stikerlər və GIF-lər qırıq-qırıq oynayırdı və yaddaş istifadəsi azalmırdı. İndi TikTok hər animasiya üçün yalnız ekrandakı kadrı saxlayır və kadrları əvvəlcədən deşifrə etməyi dayandırır, hər növbəti kadr isə ondan əvvəlkindən çəkilir.
+* **TikTok:** Animasiya şəkil keşini sil indi kadrları atıb ilişdirmək əvəzinə cari kadrı saxlayır və qabaqcadan açmağı dayandırır (#100).
 
-* **TikTok:** Təmiz ekran idarəetmələrini gizlədin Videonun ətrafında bölməsinin sonundan Lent ekranı > Təmiz ekran altına, birbaşa Avtomatik təmiz ekranın altına köçürüldü.
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin indi Lent ekranı > Təmiz ekran bölməsində Avtomatik Təmiz ekran yanındadır.
 
-* **TikTok:** Təmiz ekran indi əsas lentdə alt nişanları (Ana səhifə, Dostlar, Gələnlər, Profil) bitənə qədər kənarda saxlayır. Avtomatik təmiz ekran yandırılıbsa, TikTok təzədən açıldıqdan sonra onlar ilk videonun üstündə qala bilirdi. Bildirişdən açılmış Gələnlər kimi digər səhifələr öz nişanlarını saxlayır.
+* **TikTok:** Təmiz ekran indi ilk lent videosunda aşağı tabları gizlədir, digər səhifələrdə tablar qalır.
 
-* **TikTok:** Avtomatik təmiz ekran yandırılıbsa və gecikmə yoxdursa, növbəti video ona sürüşdürərkən düymələrini, başlığını, irəliləyiş çubuğunu və nişanlarını bir anlıq göstərmək əvəzinə təmiz qalır (#84). Ekranı bərpa et düyməsinə toxunmaq hər şeyi yenə geri qaytarır.
+* **TikTok:** Gecikməsiz avtomatik Təmiz ekran indi sürüşdürmə boyu növbəti videonu təmiz saxlayır. Görünüşü bərpa et düymələri yenə qaytarır (#84).
 
-* **TikTok:** Təmiz ekranda başlığın altındakı axtarış, məkan və ya məhsul keçidinə təsadüfən toxunmaq artıq mümkün deyil, TikTok-un daha yeni versiyalarının aşağıya qoyduğu geniş axtarış çubuğuna da. TikTok onu yalnız solğunlaşdırırdı, buna görə videonun aşağısına yaxın toxunuş görmədiyiniz axtarışı aça bilərdi (#84).
+* **TikTok:** Təmiz ekranda gizli başlıq keçidləri və aşağı axtarış çubuqları artıq təsadüfi toxunuş almır (#84).
 
-* **TikTok:** Təmiz ekran indi həm də axtarışdan və ya profildən açdığınız foto və videolardan Şərh əlavə et panelini götürür, Ekranı bərpa et isə onu geri qaytarır (#84). Əvvəl o, Açılmış videolarda şərh panelini gizlədin yandırılmayınca aşağıda qalırdı.
+* **TikTok:** Təmiz ekran indi açılmış video və fotonun şərh panelini gizlədir, Görünüşü bərpa et onu qaytarır (#84).
 
-* **TikTok:** Təmiz ekran idarəetmələrini gizlədin yandırılıbsa, irəliləyiş çubuğu sürüşdürmək üçün hələ də oradadır, sadəcə görünmür, beləliklə Təmiz ekrandan çıxmadan videonun aşağı kənarı boyu irəliləyə bilərsiniz (#84).
+* **TikTok:** Təmiz ekran idarəetmələrini gizlədin aşağı kənarda görünməyən, sürüşdürülən irəliləyiş panelini saxlayır (#84).
 
-* **TikTok:** Feature Gate Lab-da digər TikTok modlarının bayraqla açdığı funksiyalar üçün 13 yeni nəzərdən keçirilmiş hazır ayar var. Bunlar Şərhlə yenidən paylaşın, Profil banneri və yeni profil görünüşü, Canlı fotolar, kamera və ya səslə şərh yazın, Şərhləri Sevimlilərə saxlayın, Şərh sıralaması və bəyənməmə üslubları, Mesaj balonu rəngləri, Gələnlər arxivi və daha çox söhbətə paylaşma, Mövzuları idarə edin, Vizual axtarış, AI Self, Hər paylaşımda uzun basma menyusu, TikTok-un basıb saxlayaraq sürətləndirməsi, TikTok-un arxa planda oynatma və avtomatik sürüşdürməsi və Lentdə paylaşım tarixləridir. Hər hazır ayar 47.0.3, 47.1.3 və 47.1.4 versiyalarına qarşı yoxlanılıb. Tərcüməyə bax düyməsini göstərin yalnız 47.1.3 üçün idi, indi üçünü də əhatə edir. Siyahı yalnız quraşdırdığınız TikTok üçün olan hazır ayarları göstərir. Bu funksiyaların bəziləri həm də TikTok serverlərinin hesabınız üçün nəyə icazə verdiyindən asılıdır.
+* **TikTok:** Laboratoriya şərhli təkrar paylaşım, profil banneri və tərtibatı, canlı şəkillər, kamera və səsli şərhlər, şərh Sevimliləri və sıralama/bəyənməmə üslubları, söhbət rəngləri/arxiv/birdən çox söhbətə paylaşma, Mövzuları idarə et, vizual axtarış, AI Self, hər paylaşımda uzun basma menyuları, basıb sürətləndirmə, arxa planda oxutma, avtomatik sürüşdürmə və lent tarixləri üçün 13 seçim əlavə edir. Tərcüməyə bax seçimini göstər indi 47.0.3, 47.1.3 və 47.1.4-ü də əhatə edir. Yalnız quraşdırılmış versiyanın seçimləri görünür və server uyğunluğu yenə qüvvədədir.
 
-* **TikTok:** Reklamları silin indi TikTok-un reklam kimi işlətdiyi yaradıcı paylaşımlarını da tutur. Onlar TikTok-un reklam bayrağını daşımır, buna görə keçirdilər, lakin TikTok onları paylaşımın kommersiya təfərrüatlarında işarələyir və Hushfeed TikTok-un oxuduğu eyni işarəni oxuyur. Filtr hesabatı onları AdSignals altında sayır. Açılış reklamını keçin həm də TopView ələ keçirmə reklamlarını əvvəlcədən yükləyən və serverdən real vaxtlı açılış reklamı istəyən başlanğıc tapşırıqlarını dayandırır.
+* **TikTok:** Reklamları sil indi reklam edilən yaradıcı paylaşımlarını tutur, Başlanğıc reklamını ötür də takeover ön yükləməsini və canlı splash sorğularını dayandırır.
 
-* **TikTok:** Lent filtri üçün yeni Fərdiləşdirilməmiş Sənin üçün videolarını gizlədin açarı var. O, TikTok sizin üçün heç nə seçə bilməyəndə Sənin üçün lentini doldurmaq üçün qoyduğu doldurucu videoları, for_you_page_999 hovuzundan heç bir səbəb göstərmədən göndərdiklərini gizlədir. Bütöv bir dəstə doldurucudursa, dəstə qalır, belə ki, lent onun üzərində heç vaxt ilişmir. Filtr hesabatı hər Sənin üçün dəstəsini TikTok-un hansı hovuzdan gəldiyini dediyi hovuza görə, açarın neçəsini çıxardığının yanında sayır. Yaradıcı istisnaları ondan digər seçim filtrlərindən keçdiyi kimi keçir.
+* **TikTok:** Fərdiləşdirilməmiş Sizin üçün videolarını gizlət doldurma paylaşımlarını çıxarır, amma dayanma olmasın deyə tam doldurma qrupunu saxlayır. Yaradıcı istisnaları keçir.
 
-* **TikTok:** Hushfeed ayarlarında axtarış adı uyğun gələn ayarı yalnız təsvirində həmin sözləri xatırladan ayarın üstünə qoyur, buna görə "original photos" axtarışı indi əvvəlcə Orijinal fotoları endirin, ardınca Foto fayl adı göstərir. "debug", "debugging", "logs" və ya "logging" axtarışı Diaqnostikanı qeyd edin seçimini tapır, hər tərcümənin də bunun üçün öz sözləri var.
+* **TikTok:** Ayar axtarışı indi başlıq uyğunluğunu əvvəl göstərir və hər ayar dilində diaqnostika sözlərini tanıyır.
 
-* **TikTok:** TikTok-un yalnız HEIF kimi göndərdiyi fotonun JPEG-ə çevrilməsi üçün indi ikinci yol var. Samsung-un şəkil dekoderi TikTok-un HEIF-ini rədd edir, buna görə Hushfeed onu əvəzində telefonun media skanerinin oxuduğu kimi oxuyur və TikTok-un göndərdiyi faylı yalnız heç biri onu oxuya bilməyəndə saxlayır.
+* **TikTok:** Yalnız HEIF olan fotoların indi ikinci JPEG çevrilmə yolu var. Hər iki oxuyucu alınmasa, Hushfeed orijinal faylı saxlayır.
 
-* **TikTok:** Yeniliklər indi buraxılışı telefonun dilində göstərə bilir (#91). 0.68.0 və 0.67.1 qeydləri Hushfeed ayarlarının mövcud olduğu səkkiz dilin hamısına tərcümə olunub, daha köhnə buraxılışlar isə bunu deyən qısa sətirlə ingiliscə qalır.
+* **TikTok:** Yeniliklər indi 0.68.0 və 0.67.1-i səkkiz ayar dilinə tərcümə edir, köhnə buraxılışlar üçün ingilis dili bildirişi göstərir (#91).
 
-* **TikTok:** Debug jurnalı yandırılıbsa, diaqnostika faylı indi Hushfeed-in gizlətdiyi hər paylaşma vərəqi elementini, onun hansı sətirdə olduğunu və hansı növ görünüş olduğunu sadalayır (#120). Send to sətrindəki insanlar adları olmadan sadalanır. O, nəsə gizlədiləndə TikTok-un kiçik paylaşma vərəqinin niyə sətirlərini itirdiyini dəqiqləşdirmək üçündür.
+* **TikTok:** Sazlama hesabatları indi Göndər sətrində adamları adlandırmadan gizli paylaşım sətir və görünüşlərini təsvir edir (#120).
 
-* **TikTok:** Hushfeed-in GitHub səhifəsindəki FAQ bəzi insanların AMOLED tünd tema olmadan gördüyü tam qara Profil və Gələnləri izah edir. Bu, TikTok 47.1.4-ün öz tünd rejimindən gəlir və həmin yaması olmayan quruluş Hushfeed durdurulanda eyni rəngləri göstərir (#69).
+* **TikTok:** FAQ indi AMOLED qaranlıq mövzusuz da görünən TikTok 47.1.4-ün öz qara Profil və Gələnlər fonlarını izah edir (#69).
 
-* **TikTok:** Hushfeed-in GitHub səhifəsindəki problemlərin aradan qaldırılması bələdçisi indi Feature Gate Lab-ın CAPTCHA pəncərələrini gizlədib-gizlədə bilməyəcəyinə (gizlədə bilməz) cavab verir və Lab-ın nəzərdən keçirilmiş hazır ayarlarından birini sınamağı addım-addım göstərir (#111).
+* **TikTok:** Nasazlıq bələdçisi indi Lab-ın CAPTCHA gizlətmədiyini deyir və yoxlanmış hazır ayarı sınamağı göstərir (#111).
 
 ## 0.68.0 (2026-10-06)
 
-* **TikTok:** Orijinal fotoları endirin indi hər fotonu JPEG kimi saxlayır (#105). TikTok hər fotonu əvvəlcə HEIF nüsxəsi kimi göstərir, buna görə fotolar çox qalereya tətbiqinin və kompüterin aça bilmədiyi .heif faylları kimi düşürdü. Samsung daxil bəzi telefonlar TikTok-un HEIF-ini ümumiyyətlə deşifrə edə bilmir. Hushfeed indi TikTok-un hər HEIF-in yanında göstərdiyi WebP nüsxəsini götürüb Android 9 və daha yenisində tam ölçülü JPEG kimi yenidən saxlayır. TikTok JPEG nüsxəsi göstərəndə, həmin nüsxə bayt-bayt saxlanır. Çevrilə bilməyən foto TikTok-un göndərdiyi faylı saxlayır, şəffaf hissələri olan foto da belədir. Ayarın təsvirində də indi JPEG yazılıb, hekayə fotoları da eyni şəkildə işləyir.
+* **TikTok:** Orijinal fotolar Android 9 və yenidə, hekayələr daxil, tam ölçülü JPEG seçir. Çevrilməyən və şəffaf şəkillər öz formatını saxlayır (#105).
 
-* **TikTok:** Status panelini gizlətmək indi TikTok-un onun üçün videoların üstündə saxladığı qara zolağı da aradan qaldırır. Android 14 və daha köhnəsində video kamera kəsiyinin altında yox, arxasında çəkilir (#97). Yeni Təmiz ekran idarəetmələrini gizlədin açarı, Təmiz ekran açıq olarkən bağla düyməsini, irəliləyiş çubuğunu və dayandır ilə sürət düymələrini ekrandan götürür, foto paylaşımlarının küncdə göstərdiyi bağla düyməsini də. Təmiz ekrandan çıxan kimi geri qayıdırlar.
+* **TikTok:** Status panelini gizlətmək indi boş zolağı silir və Android 14 və köhnə versiyalarda kamera kəsiyinə qədər doldurur. Yeni seçim çıxanadək Təmiz ekran idarələrini gizlədir (#97).
 
-* **TikTok:** Təmiz ekran indi TikTok-un açıq saxladığı hekayələr düyməsini İzlənilənlər-in üstündə gizlədir və Təmiz ekrandan çıxan kimi geri qoyur (#84). Dayandır həm hekayələr düyməsini, həm də üstdəki tabları TikTok-a buraxır. Avtomatik təmiz ekran həmçinin bir cəhdi saymazdan əvvəl TikTok-un ekranı həqiqətən təmizləməsini gözləyir, beləliklə TikTok-un hələ hazır olmadığı ilk video da təmizlənir.
+* **TikTok:** Təmiz ekran indi İzlədiklərim hekayə düyməsini gizlədir və qaytarır, avtomatik cəhd isə TikTok həqiqətən təmizləyənədək gözləyir (#84).
 
-* **TikTok:** Avtomatik təmiz ekran fokus qayıtdıqdan sonra cari videoda yenidən cəhd edir, başlanğıcdan sonrakı ilk video da daxil (#84). Ləğv edilmiş və ya uğursuz cəhd artıq yenisinə mane olmur. Əl ilə çıxışa hələ də hörmət edilir və əvvəlki videonun geri çağırışları artıq növbəti videonun taymerini ləğv edə bilmir.
+* **TikTok:** Avtomatik Təmiz ekran fokus qayıdanda, başlanğıc daxil, yenidən sınayır. Əl ilə çıxışa hörmət edir, köhnə video çağırışlarını saymır (#84).
 
-* **TikTok:** Ehtiyat nüsxə yaradın, Bərpa edin və İzləmə tarixçəsini idxal edin artıq yavaş fayl tətbiqinin arxasında ilişib qalmır. Fayl tətbiqi bir neçə saniyə ərzində cavab verməsə, sətir gözləməyi dayandırmağı təklif edir. Nə isə oxunmamış və ya yazılmamış dayandırsanız, ayarlarınız və tarixçəniz olduğu kimi qalır. Yeganə istisna fayl tətbiqində artıq olan ehtiyat nüsxədir: sətir fayl tətbiqinin onu saxlayıb-saxlamadığını hələ bildirmədiyini deyir və həqiqi cavabı o bildirən kimi alırsınız. Faylı heç buraxmayan fayl tətbiqi yalnız həmin sətri saxlayır, sətir də bunu deyir, arxasında daha çox iş yığmır. Bərpa zamanı telefonu çevirsəniz, bərpa davam edir.
+* **TikTok:** Ehtiyat nüsxə, bərpa və baxış tarixçəsi idxalı ilişmiş fayl tətbiqləri üçün Gözləməyi dayandır verir. Oxumadan və ya yazmadan əvvəl dayandırmaq məlumatı dəyişmir. Tətbiqə ötürülmüş nüsxənin son nəticəsi cavab gələndə göstərilir. İlişmiş fayl yalnız öz sətrini tutur, ekranı çevirmək isə bərpanı dayandırmır.
 
-* **TikTok:** Feature Gate Lab-dakı Yüklənmiş dəyərləri ixrac edin və Yüklənmiş dəyərləri idxal edin artıq yavaş fayl tətbiqinin arxasında ilişib qalmır. Fayl tətbiqi bir neçə saniyə ərzində cavab verməsə, Lab gözləməyi dayandırmağı təklif edir. Nə isə oxunmamış və ya yazılmamış dayandırsanız, heç nə dəyişmir, üzərinə yazmaq üçün seçdiyiniz fayl belə. Fayl hələ açıq olarkən bunlardan birinə yenidən toxunsanız, bunu deyir, əvvəlki kimi birincisi bitəndə işləyəcək daha birini növbəyə qoymur. Bundan əlavə, daha köhnə və daha böyük ixracın üzərinə ixrac etmək artıq köhnə faylın sonunu geridə qoymur, bu isə yenisini oxunmaz edirdi.
+* **TikTok:** Lab idxal və ixracı ilişən fayl tətbiqini gözləməyi dayandırır, təkrar işi önləyir və daha uzun ixracı təhlükəsiz əvəz edir.
 
-* **TikTok:** Üzərinə yazmaq üçün mövcud ehtiyat nüsxə faylını seçmək artıq onu itirmək riski daşımır. Ehtiyat nüsxə dayansa və ya fayla heç nə girmədən uğursuz olsa (məsələn, lent qaydaları siyahısı ehtiyat nüsxə üçün çox uzundursa), seçdiyiniz fayl silinmək əvəzinə köhnə ehtiyat nüsxənizi saxlayır. Fayl seçicinin ehtiyat nüsxə üçün yaratdığı boş fayl hələ də təmizlənir.
+* **TikTok:** Ləğv edilən və ya alınmayan nüsxə yazı başlayanadək köhnə faylı saxlayır, yeni boş faylları yenə təmizləyir.
 
-* **TikTok:** Ayar axtarışı axtardığınız sözün tam söz olduğu sətirləri əvvəl göstərir. "Say" axtarmaq əvvəllər yalnız daha uzun sözün içində keçdiyi Təsdiqlənmiş hesabları gizlədin və Bloklanmış yaradıcılar sətirlərini, həqiqətən saylarla bağlı sətirlərin üstünə qoyurdu. Yalnız daha uzun sözün içində uyğun gələn sətirlər səhifə sırası ilə arxadan gəlir, tərcümə olunmuş ayarlar da eyni qaydayla sıralanır.
+* **TikTok:** Ayar axtarışı bütün dillərdə tam söz uyğunluğunu sözün içindəki uyğunluqdan əvvəl göstərir.
 
-* **TikTok:** Ayar axtarışı indi yoxlama siyahısındakı hər xananı tapır, işarəli olsun-olmasın. Yəni "say" axtarmaq sağ sütun siyahısında Düymələrin altındakı say göstəriciləri-ni tapır. Xananın nəticəsini açmaq siyahını həmin xanaya sürüşdürülmüş halda açır və xananı dəyişmir. Ekran dönərkən açıq olan siyahı saxlanmamış işarələrinizlə geri qayıdır.
+* **TikTok:** Ayar axtarışı indi hər siyahı seçimini tapır və yerində açır. Ekran çevriləndə saxlanmamış işarələr qalır.
 
-* **TikTok:** Hushfeed ayarlarındakı açar sətirləri ekran dar və yazı böyük olanda formasını dəyişir. Açar mətnin altına, sətrin sonuna keçir, başlıq və təsvir isə bütün eni alır. Kiçik telefonda iki qat yazı ölçüsündə Alman dilində başlıq artıq sözün ortasından dörd qısa sətrə bölünmür. Daha geniş ekranlar adi düzənini saxlayır və bir formadan digərinə sürüşdürülən sətir yenidən dəyişir.
+* **TikTok:** Dar ayar sətirləri indi böyük mətnin altında açar qoyur ki, başlıq tam eni işlətsin.
 
-* **TikTok:** Yeniliklər indi qalan ayarlar sizin dilinizdə olanda qeydlərin ingiliscə olduğunu bildirir. Qeydlər həmçinin ekran oxuyucuları üçün ingilis mətni kimi işarələnib.
+* **TikTok:** Yeniliklər indi ingiliscə qeydləri bildirir və ekran oxuyucusuna düzgün mətn dilini verir.
 
-* **TikTok:** İzlənmiş videoların təmizlənməsini geri qaytarın indi tarixçəni arxa planda bərpa edir və təmizlənmiş qeydlərdən neçəsinin tarixçə limitlərinə hələ də sığdığını bildirir. Daha yeni izləmələr üçün yer qoymayanda artıq videoların bərpa edildiyini demir. Saxlama uğursuz olsa, Geri qaytar əlçatan qalır.
+* **TikTok:** Geri al baxış tarixçəsini arxa planda bərpa edir, yalnız yerləşənləri sayır və yazı alınmayanda əlçatan qalır.
 
-* **TikTok:** Geri qaytar indi bərpa zamanı qeydə alınmış izləmələri saymazdan əvvəl təsdiqləyir. Növbədəki köhnə yazmalar da Geri qaytar-ın artıq saxladığı daha yeni izləmə vaxtlarını qoruyur.
+* **TikTok:** Geri al indi bərpa vaxtı baxışları sayır, yeni baxış vaxtlarını köhnə növbəli yazılardan qoruyur.
 
-* **TikTok:** Media saxlama indi yönləndirməyə əməl etməzdən və ya başqa güzgü ya da subtitr treki sınamazdan əvvəl serverin tam gözləmə müddətinə, HTTP tarixləri daxil, hörmət edir. Saxlamanın vaxt limitini aşan gözləmə işi aydın mesajla dayandırır və artıq saxlanmış faylları qoruyur. Ləğv etmə də təkrar cəhd gözləməsini kəsir.
+* **TikTok:** Media saxlamaları indi serverin tam təkrar gecikməsinə və Ləğvə tabedir. İş limitini keçən gözləmə xəbərdarlıqla dayanır, bitmiş fayllar qalır.
 
-* **TikTok:** Diaqnostika hesabatını və ya feature gate hesabatını saxlamaq öz axınında işləyir, beləliklə yavaş media anbarı Hushfeed-in qalan hissəsinin paylaşdığı axınları saxlaya bilmir. Hesabat hələ saxlanarkən yenidən Saxla düyməsinə toxunmaq ikincisini başlatmaq əvəzinə bunu deyir.
+* **TikTok:** Diaqnostika və Lab hesabatları indi ayrıca işçilərdə saxlanır, təkrar toxunuş artıq gedən yazını bildirir.
 
-* **TikTok:** Hushfeed indi Morphe patcher 1.15.1 üzərində qurulur, buna görə Morphe Manager 1.34.0 və ya daha yenisi lazımdır. Manager 1.33.0 paketi yükləməzdən əvvəl yeniləmə istəyir. ARSCLib patcher-i 9b742c412d versiyasına qədər izləyir, heşləri endirilmiş fayllara qarşı yoxlanılır və buraxılış yamanı masaüstü CLI 1.18.1 ilə yoxlayır.
+* **TikTok:** Hushfeed indi patcher 1.15.1 ilə Morphe Manager 1.34.0 və ya yenisini tələb edir. Buraxılış yoxlamaları CLI 1.18.1 işlədir.
 
-* **TikTok:** Quruluşdakı hər Guava sorğusu indi GHSA-xxph-c9ww-hj94 xaricindəki buraxılış olan 33.7.2-yə çözülür, yalnız kataloqun sancağının çatdığı yerlərdə yox, ayarlar, plagin və layihə qrafiklərinin hamısında. Yoxlama məbləğləri sərt asılılıq yoxlaması qəbul etməzdən əvvəl Maven Central-a qarşı təsdiqləndi. Guava quruluş və yamalama tərəfində qalır: yama paketi və genişlənmə ondan heç nə daşımır. Yama mənbələrinin Guava-nı birbaşa idxal etmədiyini yoxlayan yoxlama əvvəllər bir fayl belə oxumadan keçirdi. İndi faylları oxuyur.
+* **TikTok:** Yığımlar yoxlanmış həşlərlə təhlükəsizlik xəbərdarlığından kənar Guava 33.7.2-ni ardıcıl istifadə edir. Guava tətbiqə və ya yama paketinə daxil edilmir. Mənbə idxalı yoxlaması indi yoxladığı yama fayllarını oxuyur.
 
-* **TikTok:** Yalnız Java genişlənməsində edilən dəyişiklik artıq APK fixture-lərinə qarşı barmaq izi yoxlamalarını yenidən işə salmır, çünki onlar genişlənməni heç oxumur. Tam test əmrləri və buraxılış yoxlamaları hər testi əhatə etməyə davam edir, yamada, testdə, asılılıqda və ya fixture-də dəyişiklik isə onları yenə yenidən işə salır.
+* **TikTok:** Yalnız Java genişlənmə dəyişiklikləri artıq əlaqəsiz APK izi testlərini təkrarlamır. Tam testlər və buraxılış yoxlamaları yenə onları işlədir.
 
-* **TikTok:** Sənədləşmə redaktələri artıq dəyişməmiş APK fixture testlərini yenidən işə salmır. Tam test əmrləri və buraxılış yoxlamaları hər testi əhatə etməyə davam edir, mənbə oxuyan yoxlamalar isə indi xarici girişlərini izləyir. Ölçü və vaxt möhürü eyni olsa belə, APK-nı dəyişmək test nəticələrini etibarsız edir.
+* **TikTok:** Sənəd dəyişiklikləri dəyişməyən APK testlərini təkrarlamır. Əvəzlənən APK vaxt və ölçü eyni olsa da keş nəticəsini etibarsız edir.
 
-* **TikTok:** Yerli yaddaş skaneri yoxlamaları indi Windows PowerShell-də uğurlu icraları xəta saymadan Java diaqnostikasını görünən saxlayır.
+* **TikTok:** Windows yaddaş skaneri yoxlamaları indi uğurlu işi səhv saymadan Java diaqnostikasını göstərir.
 
-* **TikTok:** Yerli APK imzalama indi yığın və CPU limitlərindən yaranan zərərsiz Java başlanğıc mesajlarını qəbul edir. Etibarsız sertifikatlar və uğursuz imza yoxlamaları quraşdırmanı dayandırmağa davam edir.
+* **TikTok:** APK imzalama indi zərərsiz Java başlanğıc mesajlarını qəbul edir, yararsız sertifikat və alınmayan yoxlamaları yenə rədd edir.
 
 ## 0.67.1 (2026-10-03)
 
-* **TikTok:** Ayarları tapmaq daha asandır. Hushfeed-in videolarda çəkdiyi beş düymənin hamısı Lent ekranı > Videolardakı düymələr altında bir yerdədir. Oxutma indi irəliləyiş çubuğu və onun miniatürü daxil bütün player açarlarını, təkrarı dayandırmağı və sürüşdürdükdən sonra davam etməyi saxlayır, bunlar əvvəl Tətbiq-də idi. Ekran görüntüləri və status paneli TikTok-un yoxlamalarına mağaza tətbiqi kimi görünün ilə birlikdə Tətbiq > Sistem altına köçdü. Duet və Stitch-ə yenə də icazə verin indi Paylaşma vərəqi-ndədir. Saxlanmış seçimləriniz olduğu kimi qalır.
+* **TikTok:** Ayarlar indi video düymələrini birləşdirir, pleyer seçimlərini Oxutmaya, sistem seçimlərini Tətbiqə qoyur. Saxlanan ayarlar qalır.
 
-* **TikTok:** Hushfeed-in videolarda çəkdiyi hər düymə indi söndürülmüş başlayır: bloklama, gizlətmə, səsi bloklama, Maraqlanmıram və səssiz. Təzə quraşdırma, Lent ekranı > Videolardakı düymələr altından birini yandırana qədər heç birini göstərmir. Səssiz düyməsindən istifadə etmisinizsə, Videolarda səssiz düyməsini göstərin seçimini yenidən yandırın.
+* **TikTok:** Beş lent düyməsinin hamısı indi əvvəlcə bağlıdır. Səssiz düyməsini işlədirdinizsə, Videolarda səssiz düyməsini göstər seçimini yenidən açın.
 
-* **TikTok:** İstifadə olunmayan dil paketlərini silin, Saxlanacaq dillər Hamısı olaraq qaldıqda və APK yoxlanmamış dil dəsti daşıdıqda, məsələn tək dillə birləşdirilmiş bölünmüş paket, artıq bütün yama icrasını dayandırmır. Bu halda heç nə silinmir və yama jurnalı səbəbi deyir (#96).
+* **TikTok:** İşlənməyən dil paketlərini sil Saxlanacaq dillər hamısı olanda yoxlanmamış dil dəstinə toxunmur, yamaqlamanı dayandırmır (#96).
 
-* **TikTok:** Seriyanı davam etdirin altındakı seriya sətri, TikTok bütün mesajları qəbul etdikdə "15/15 söhbətə göndərildi" yazır. Çatdırılmanı yalnız təhvilində xəta baş vermiş və ya heç bitməmiş söhbət üçün təsdiqlənməmiş adlandırır (#92).
+* **TikTok:** Seriya statusu TikTok bütün mesajları götürəndə Göndərildi deyir, təsdiqsiz sözünü yalnız alınmayan və ya bitməyən ötürməyə saxlayır (#92).
 
-* **TikTok:** Videolarda gizlətmə düyməsini göstərin və Səsi bloklama düyməsini göstərin, Videolarda bloklama düyməsini göstərin söndürülü olsa belə, indi öz lent idarəetmələrini çəkir. Hər ikisi Lent filtri vasitəsilə işləyir, buna görə yalnız həmin yama daxil olduqda siyahıda görünür. Yeni quraşdırmalar bu iki köməkçi açarı söndürülmüş başladır, beləliklə müəllif bloklama düyməsini seçmək siz istəyənə qədər əlavə çip əlavə etmir (#95).
+* **TikTok:** Gizlətmə və səsi bloklama düymələri indi blok düyməsindən ayrı işləyir, Lent filtri lazımdır və əvvəlcə bağlıdır (#95).
 
-* **TikTok:** Dayandır, saxlanmış Ana səhifə uzun basma qısayolunu əlçatan saxlayır, beləliklə qonaqlar ekranı bağladıqdan sonra ayarları yenidən açıb Hushfeed-i davam etdirə bilir. Deaktiv edilmiş qısayol deaktiv qalır, adi Ana səhifə toxunuşları işləməyə davam edir və TikTok-un öz uzun basma əməliyyatı qorunur (#89).
+* **TikTok:** Fasilə açıq Ana səhifə uzun basma qısayolunu saxlayır ki, qonaqlar Hushfeed-i davam etdirə bilsin. Sönülü qısayollar açılmır, adi toxunuşlar əvvəlki kimi işləyir və TikTok-un öz uzun basma əməli qalır (#89).
 
-* **TikTok:** Android 6-dakı ayarlar, rusca one, few və many daxil, birlikdə gələn dillərin cəm formalarından istifadə edir. Çatışmayan say tərcümələri düzgün tək formayla ingiliscəyə qayıdır. Daha yeni Android versiyaları öz ICU qaydalarını saxlayır.
+* **TikTok:** Android 6 indi daxil edilən dillərin cəm formalarını işlədir, olmayan saylarda düzgün ingilis formasına keçir.
 
-* **TikTok:** Yeniliklər mətn böyüdükcə tam buraxılış tarixçəsini saxlayır. Böyük qeydlər və beynəlxalq mətn artıq Java-nın tək sətir qurma limitini aşmır.
+* **TikTok:** Yeniliklər indi tərcümə mətni artanda Java mətn limitini keçmədən bütün tarixçəni saxlayır.
 
-* **TikTok:** Morphe Manager 1.33.0 bütün 106 yamanı on kateqoriyasında göstərir, heç biri kateqoriyasız qalmır. Hər quruluşdan əvvəl işləyən yoxlamalar indi dəstəklənən hər TikTok versiyasında tək ABI girişlərini əhatə edir və dəyişdirilmiş yerli kitabxanaları və ya boş yama nəticəsini rədd edir. Dərc edilmiş paketlər GitHub buraxılış təsdiqlərinə və ya sancaqlanmış imza açarına qarşı yoxlanıla bilər.
+* **TikTok:** Manager 1.33.0 indi 106 yamağın hamısını kateqoriyalaşdırır. Quruluş yoxlamaları tək ABI-ni əhatə edir, dəyişmiş faylları rədd edir və buraxılışı yoxlamağa imkan verir.
 
-* **TikTok:** Arxa plan trafikini məhdudlaşdırın, Hamısı seçildikdə belə, push quraşdırmasını susmaya görə toxunulmaz saxlayır. İstəyə bağlı Push quraşdırmasını keçin seçimi söndürülmüş başlayır və yandırıldıqda mesajları və digər bildirişləri dayandıra bilər. Mövcud APK-ları push quraşdırmasını geri qaytarmaq üçün TikTok-un orijinal APK-sından yenidən yamalamaq lazımdır. Dayandır, yama zamanı edilən bu dəyişikliyi geri qaytara bilmir (#86).
+* **TikTok:** Arxa plan trafikini məhdudlaşdır indi standartda push quraşdırmasını saxlayır. Silinmişini qaytarmaq üçün orijinal APK yenidən yamaqlanmalıdır, Fasilə bunu geri ala bilmir (#86).
 
-* **TikTok:** Ayarları bərpa edin indi cari quruluşun bərpa edə bilmədiyi açarları köhnə ehtiyat nüsxədə çatışmayan ayarlardan ayrıca bildirir. Daşına bilən ayarlar TikTok versiyaları arasında köçməyə davam edir, yerli cihaz vəziyyəti toxunulmaz qalır, Feature Gate Lab uyğunluğu və Geri qaytar əvvəlki kimi davranır.
+* **TikTok:** Bərpa indi dəstəklənməyən açarları nüsxədə olmayan ayarlardan ayırır, daşınan ayarları, yerli vəziyyəti, Lab uyğunluğunu və Geri al davranışını saxlayır.
 
-* **TikTok:** Lent filtri-nin İzlənmiş videolar bölməsi nəzərdən keçirilmiş TikTok JSON izləmə tarixçəsi ixracını idxal edə bilir. İzləmə tarixləri və seçilmiş hesab idxala bağlı qalır, mövcud yaş limiti tətbiq olunur və bannər əlavə edilmiş və keçilmiş qeydləri bildirir. İdxalı təkrarlamaq heç nə əlavə etmir. Etibarsız və ya dəstəklənməyən fayllar və uğursuz yazmalar saxlanmış tarixçəni dəyişməz qoyur. Fayllar 2 MB və 10 000 qeydlə məhdudlaşdırılıb, keçidlər isə heç vaxt telefondan çıxmır. Tarixçə əlavə edən idxal əvvəlki təmizləmə üçün Geri qaytar-ı bitirir və bu dəyişikliyi izah edir.
+* **TikTok:** Baxış tarixçəsi idxalı 2 MB və 10.000 qeydə qədər yoxlanmış TikTok JSON-u qəbul edir, seçilmiş hesabı, baxış tarixlərini və yaş limitlərini saxlayır. Təkrar idxal heç nə əlavə etmir, etibarsız fayl və uğursuz yazı tarixçəni dəyişmir. Keçidlər telefondan çıxmır. Tarixçə əlavə etmək əvvəlki təmizləmənin Geri al imkanını bitirir və səbəbini deyir.

@@ -174,7 +174,11 @@ private fun Instruction.passes(register: Int): Boolean {
  * to StoryShareSave.actions and stores the row it gets back. Off, paused or on anything but a
  * story, that is the row TikTok built.
  */
-internal fun MutableMethod.addStorySaveToSnapshot(fields: SnapshotActionFields) {
+internal fun MutableMethod.addStorySaveToSnapshot(fields: SnapshotActionFields) =
+    addShareActionToSnapshot(fields, STORY_SHARE_SAVE)
+
+/** Both additions read the current finished row, so neither replaces the other's action. */
+internal fun MutableMethod.addShareActionToSnapshot(fields: SnapshotActionFields, extension: String) {
     val code = implementation?.instructions?.toList()
         ?: throw PatchException("$SHARE_SAVE: $definingClass->$name has no code")
     val returns = code.indices.filter { code[it].opcode == Opcode.RETURN_VOID }
@@ -193,7 +197,7 @@ internal fun MutableMethod.addStorySaveToSnapshot(fields: SnapshotActionFields) 
                 $copy
                 iget-object v0, $self, $sharePackage
                 iget-object v1, $self, $actions
-                invoke-static { v0, v1 }, $STORY_SHARE_SAVE->actions(Ljava/lang/Object;$SAVE_LIST)$SAVE_LIST
+                invoke-static { v0, v1 }, $extension->actions(Ljava/lang/Object;$SAVE_LIST)$SAVE_LIST
                 move-result-object v1
                 iput-object v1, $self, $actions
             """,

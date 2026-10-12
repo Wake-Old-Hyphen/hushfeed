@@ -82,11 +82,16 @@ mkdir -p "$SP"
 
 parse_top() {
     awk '
-        /^[[:space:]]*Display: mDisplayId=/ {
+        /^WINDOW MANAGER / {
+            default_display = 0
+            displays_section = ($0 ~ /^WINDOW MANAGER DISPLAY CONTENTS \(/)
+            next
+        }
+        displays_section && /^[[:space:]]*Display: mDisplayId=/ {
             default_display = ($0 ~ /^[[:space:]]*Display: mDisplayId=0([[:space:]]|$)/)
             next
         }
-        default_display && /^[[:space:]]*mCurrentFocus=/ {
+        displays_section && default_display && /^[[:space:]]*mCurrentFocus=/ {
             record = $0
             while (record !~ /}/ && record !~ /=null[[:space:]]*$/ && (getline continuation) > 0) {
                 record = record " " continuation
@@ -104,7 +109,67 @@ parse_top() {
         END { if (!found) exit 1 }
     '
 }
-top() { local result; result=$(timeout 30 "$ADB" -s "$S" shell dumpsys window displays 2>/dev/null) || return $?; printf '%s\n' "$result" | parse_top; }
+parse_popup_top() {
+    # A panel title has no package. Require its real owner and application token to match.
+    awk -v package="$PKG" '
+        function normalise(value) { gsub(/[[:space:]]+/, " ", value); sub(/^ /, "", value); sub(/ $/, "", value); return value }
+        function scalar(block, name, value) {
+            if (!match(block, "(^| )" name "=[^ ]+")) return ""
+            value = substr(block, RSTART, RLENGTH); sub(/^ ?[^=]+=/, "", value); return value
+        }
+        function activity(block, name, value) {
+            if (!match(block, name "=ActivityRecord\\{[^}]+}")) return ""
+            value = substr(block, RSTART, RLENGTH); sub(/^[^=]+=/, "", value); return normalise(value)
+        }
+        /^WINDOW MANAGER / {
+            current = ""; default_display = 0
+            windows_section = ($0 ~ /^WINDOW MANAGER WINDOWS \(/)
+            displays_section = ($0 ~ /^WINDOW MANAGER DISPLAY CONTENTS \(/)
+            next
+        }
+        windows_section && /^[[:space:]]*Window #[0-9]+ Window\{/ {
+            current = $0; sub(/^.*Window\{/, "", current); sub(/[[:space:]].*$/, "", current)
+            if (current in blocks) duplicate = 1
+            blocks[current] = ""
+        }
+        windows_section && current != "" { blocks[current] = blocks[current] " " normalise($0) }
+        displays_section && /^[[:space:]]*Display: mDisplayId=/ {
+            default_display = ($0 ~ /^[[:space:]]*Display: mDisplayId=0([[:space:]]|$)/)
+            next
+        }
+        displays_section && default_display && /^[[:space:]]*m(CurrentFocus|FocusedApp)=/ {
+            record = $0
+            while (record !~ /}/ && record !~ /=null[[:space:]]*$/ && (getline continuation) > 0) record = record " " continuation
+            if (record ~ /mCurrentFocus=/) { focus = normalise(record); focus_count++ }
+            else { app = activity(normalise(record), "mFocusedApp"); app_count++ }
+        }
+        END {
+            if (duplicate || focus_count != 1 || app_count != 1 || app == "") exit 1
+            if (focus !~ /mCurrentFocus=Window\{[^ ]+ u[0-9]+ PopupWindow:[[:xdigit:]]+}$/) exit 1
+            id = focus; sub(/^.*Window\{/, "", id); sub(/ .*/, "", id)
+            popup = blocks[id]
+            if (scalar(popup, "mDisplayId") != "0" || scalar(popup, "package") != package ||
+                    popup !~ /(^| )ty=APPLICATION_PANEL( |$)/ || activity(popup, "mActivityRecord") != app) exit 1
+            uid = scalar(popup, "mOwnerUid")
+            if (uid !~ /^[0-9]+$/) exit 1
+            component = app; sub(/^ActivityRecord\{[^ ]+ u[0-9]+ /, "", component); sub(/ .*/, "", component)
+            if (index(component, package "/") != 1 || component !~ /^[^ ]+\/[^ ]+$/) exit 1
+            for (owner in blocks) {
+                title = blocks[owner]; sub(/^ *Window #[0-9]+ Window\{[^ ]+ u[0-9]+ /, "", title); sub(/}.*/, "", title)
+                if (title == component && scalar(blocks[owner], "mDisplayId") == "0" &&
+                        scalar(blocks[owner], "package") == package && scalar(blocks[owner], "mOwnerUid") == uid &&
+                        activity(blocks[owner], "mActivityRecord") == app) { print component; exit 0 }
+            }
+            exit 1
+        }
+    '
+}
+top() {
+    local result
+    result=$(timeout 30 "$ADB" -s "$S" shell dumpsys window -a 2>/dev/null) || return $?
+    if printf '%s\n' "$result" | parse_top; then return 0; fi
+    printf '%s\n' "$result" | parse_popup_top
+}
 # Written to a temporary name and moved into place only after a zero exit: the redirection
 # creates the file before adb runs, so a dropped device or a timeout left an empty .png where
 # a device check expected evidence.

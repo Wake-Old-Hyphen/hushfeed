@@ -28,10 +28,11 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.annotation.LooperMode;
 import org.robolectric.shadows.ShadowToast;
 
-/** Enters through the control installed on the same header shape as TikTok 47.0.3. */
+/** Enters through the full-width title wrapper served by TikTok 47.1.4. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28, qualifiers = "en")
 @LooperMode(LooperMode.Mode.PAUSED)
@@ -124,6 +125,47 @@ public class InboxClearControlTest {
         assertTrue("Clear all has no ripple: " + (background == null ? "null"
                         : background.getClass().getSimpleName()),
                 background instanceof android.graphics.drawable.RippleDrawable);
+    }
+
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void theNativeFullWidthTitleWrapperLeavesAVisibleHitTarget() {
+        TextView clear = clearControl();
+        header.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(2316, View.MeasureSpec.AT_MOST));
+        header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
+        int minimum = Math.round(48 * activity.getResources().getDisplayMetrics().density);
+        assertTrue("the full-width title consumed Clear all: " + clear.getWidth(),
+                clear.getWidth() >= minimum);
+        assertTrue("the native row squeezed the touch target", clear.getHeight() >= minimum);
+        assertTrue("Clear all was placed outside the header", clear.getRight() <= header.getWidth());
+        assertTrue("Clear all overlapped the native title wrapper",
+                header.getChildAt(0).getRight() <= clear.getLeft());
+    }
+
+    @Test public void aReplacedControlKeepsTheNativeTitleWrapperAndItsReservedWidth() {
+        TextView original = clearControl();
+        header.removeView(original);
+        layout();
+        TextView replacement = clearControl();
+        assertNotSame(original, replacement);
+        assertEquals(2, header.getChildCount());
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) replacement.getLayoutParams();
+        assertEquals(LinearLayout.LayoutParams.WRAP_CONTENT, params.width);
+        assertEquals(0f, params.weight, 0f);
+    }
+
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void largerTextKeepsTheNativeHelpIconInsideItsRemainingSpace() {
+        LinearLayout nativeTitle = (LinearLayout) header.getChildAt(0);
+        ((TextView) nativeTitle.getChildAt(0)).setTextSize(28);
+        clearControl().setTextSize(28);
+        header.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(2316, View.MeasureSpec.AT_MOST));
+        header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
+        View help = nativeTitle.getChildAt(1);
+        assertTrue("the help icon escaped the title wrapper",
+                help.getRight() <= nativeTitle.getWidth());
+        assertTrue("the action escaped the header", clearControl().getRight() <= header.getWidth());
     }
 
     @Test public void aRunHoldsTheControlUntilItReportsAndThenHandsItBack() {
@@ -336,7 +378,8 @@ public class InboxClearControlTest {
             view.setContentDescription(description(Integer.toString(dismissed.size())));
         });
         clearControl().performClick();
-        advance(60 * 300);
+        // Include layout work between paced steps. This checks the cap, not an exact deadline.
+        advance(60 * 500);
         assertEquals(60, dismissed.size());
         assertEquals("Dismissed 60 suggested accounts", ShadowToast.getTextOfLatestToast());
         assertEquals(List.of("Dismissed 60 suggested accounts"), header.announcements);
@@ -398,8 +441,8 @@ public class InboxClearControlTest {
         assertTrue(clear.isShown());
         assertTrue(clear.getMinimumHeight() >= Math.round(48 * activity.getResources().getDisplayMetrics().density));
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) clear.getLayoutParams();
-        assertEquals(0, params.width);
-        assertEquals(1f, params.weight, 0f);
+        assertEquals(LinearLayout.LayoutParams.WRAP_CONTENT, params.width);
+        assertEquals(0f, params.weight, 0f);
 
         clear.performClick();
         advance(0);
@@ -432,7 +475,11 @@ public class InboxClearControlTest {
         title.setId(id("47.1.4:u4x"));
         title.setText("Suggested accounts");
         title.setTextColor(Color.WHITE);
-        header.addView(title);
+        LinearLayout nativeTitle = new LinearLayout(activity);
+        nativeTitle.setOrientation(LinearLayout.HORIZONTAL);
+        nativeTitle.addView(title);
+        nativeTitle.addView(new View(activity), new LinearLayout.LayoutParams(14, 14));
+        header.addView(nativeTitle, new LinearLayout.LayoutParams(-1, -2));
         rows.addView(header, new LinearLayout.LayoutParams(-1, 48));
         activity.setContentView(root);
         InboxFilter.install(activity);

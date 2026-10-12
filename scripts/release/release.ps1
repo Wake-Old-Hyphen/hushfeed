@@ -15,8 +15,8 @@
       build      From the pushed, clean release commit: the bundle (timestamp pinned, classes.dex
                  present), the receipt over every declared fixture and SHA256SUMS.txt, into
                  build/release-assets/<version>.
-      publish    Notes from the whole CHANGELOG section, a lightweight tag, the GitHub release
-                 with the three assets, each downloaded back and compared.
+      publish    Notes from the whole CHANGELOG section and a lightweight tag. Download and
+                 compare all three assets from a draft before publishing it.
       index      patches-bundle.json, the README intro and counts, the bug form and the repository
                  description. Then commit "chore(release): point Manager to the verified X.Y.Z
                  bundle" and push (pre-push compares the hosted bundle byte for byte).
@@ -39,7 +39,8 @@ param(
     [string]$ReadmeSummary,
     [string]$BundleSummary,
     [string]$DeviceLine = '',
-    [string]$Repository = 'SysAdminDoc/HushFeed'
+    [string]$Repository = 'SysAdminDoc/HushFeed',
+    [switch]$RequireImmutableRelease
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,6 +49,11 @@ $tag = "v$Version"
 $assets = Join-Path $root "build/release-assets/$Version"
 $bundleName = "patches-$Version.mpp"
 $receiptName = "release-receipt-$Version.json"
+. (Join-Path $root 'scripts/common.ps1')
+. (Join-Path $root 'scripts/release-attestation.ps1')
+if ($RequireImmutableRelease -and $Stage -notin @('publish', 'index')) {
+    throw '-RequireImmutableRelease applies to publish or index.'
+}
 
 foreach ($name in 'HUSHFEED_FIXTURE_DIR', 'HUSHFEED_BUILD_WRAPPER', 'HUSHFEED_DEVICE_SERIAL', 'HUSHFEED_DESKTOP_JAR', 'BUILD_QUEUE_SCRIPT') {
     if (-not (Get-Item "env:$name" -ErrorAction SilentlyContinue)) {
@@ -113,6 +119,281 @@ function Get-TestCount([string[]]$Directories) {
         foreach ($file in $files) { $count += @(([xml](Get-Content -LiteralPath $file.FullName -Raw)).testsuite.testcase).Count }
     }
     return $count
+}
+
+function Invoke-PublicationCommand {
+    param([string]$File, [string[]]$Arguments, [switch]$AllowFailure)
+    $preference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    $global:LASTEXITCODE = 0
+    try {
+        $output = @(& $File @Arguments 2>&1)
+        $code = $LASTEXITCODE
+    } finally { $ErrorActionPreference = $preference }
+    $text = $output -join "`n"
+    if ($code -ne 0 -and -not $AllowFailure) { throw "$File $($Arguments[0]) failed (exit $code): $text" }
+    return [pscustomobject]@{ ExitCode = $code; Text = $text }
+}
+
+function Get-PublicationApi {
+    param([string]$Endpoint, [switch]$AllowMissing, [string[]]$Parameters = @())
+    # Only an actual HTTP 404 means absent. Auth, transport and invalid JSON failures must stop.
+    $response = Invoke-PublicationCommand gh (@('api', $Endpoint, '--include') + $Parameters) -AllowFailure
+    $text = $response.Text.Replace("`r`n", "`n")
+    $status = [regex]::Match($text, '(?m)^HTTP/\S+ (\d{3})\b')
+    if ($response.ExitCode -ne 0 -and $AllowMissing -and $status.Groups[1].Value -eq '404') { return $null }
+    if ($response.ExitCode -ne 0) { throw "gh api $Endpoint failed (exit $($response.ExitCode)): $text" }
+    $body = $text.IndexOf("`n`n")
+    if (-not $status.Success -or $status.Groups[1].Value -ne '200' -or $body -lt 0) {
+        throw "gh api $Endpoint returned incomplete HTTP metadata."
+    }
+    try { return $text.Substring($body + 2) | ConvertFrom-Json -ErrorAction Stop }
+    catch { throw "gh api $Endpoint returned invalid JSON: $($_.Exception.Message)" }
+}
+
+function Get-PublicationRelease {
+    param([string]$Repository, [string]$Tag, [switch]$AllowMissing)
+    $release = Get-PublicationApi "repos/$Repository/releases/tags/$([Uri]::EscapeDataString($Tag))" -AllowMissing
+    if ($null -eq $release) {
+        # REST's tag endpoint only finds published releases. The CLI also locates pending
+        # draft tags with this GraphQL query, then reads the draft through its database ID.
+        $owner, $name = $Repository -split '/', 2
+        $query = 'query($owner: String!, $name: String!, $tag: String!) { repository(owner: $owner, name: $name) { nameWithOwner release(tagName: $tag) { databaseId isDraft } } }'
+        $lookup = Get-PublicationApi graphql -Parameters @('-f', "query=$query", '-f', "owner=$owner", '-f', "name=$name", '-f', "tag=$Tag")
+        if ($lookup.errors -or $lookup.data.repository.nameWithOwner -ine $Repository) { throw "Draft release lookup failed for $Repository $Tag." }
+        $pending = $lookup.data.repository.release
+        if ($null -eq $pending) {
+            if ($AllowMissing) { return $null }
+            throw "Release $Tag was not found."
+        }
+        if ([string]$pending.databaseId -notmatch '^[1-9][0-9]*$' -or $pending.isDraft -isnot [bool]) { throw "Invalid draft release identity for $Tag." }
+        $release = Get-PublicationApi "repos/$Repository/releases/$($pending.databaseId)"
+        if ([string]$release.id -cne [string]$pending.databaseId) { throw "Draft release identity changed for $Tag." }
+    }
+    if ($null -eq $release -or $release.tag_name -cne $Tag -or [string]$release.id -notmatch '^[1-9][0-9]*$' -or
+        $release.draft -isnot [bool] -or $release.prerelease -isnot [bool] -or $release.immutable -isnot [bool] -or
+        $release.assets -isnot [array]) {
+        throw "GitHub returned incomplete or mismatched release metadata for $Tag."
+    }
+    return $release
+}
+
+function Get-PublishedReleaseDate {
+    param([object]$Release, [string]$Tag)
+    if ($null -eq $Release -or $Release.tag_name -cne $Tag -or $Release.draft -isnot [bool] -or
+        $Release.draft -or -not $Release.published_at) { throw "$Tag isn't published. Run -Stage publish first." }
+    # PowerShell 7's ConvertFrom-Json already returns a UTC DateTime. Parsing its culture string
+    # again reads it as local time and moves the index date by the machine's UTC offset.
+    $at = $Release.published_at
+    $utc = if ($at -is [DateTime]) { $at.ToUniversalTime() } else {
+        [DateTime]::Parse([string]$at, [Globalization.CultureInfo]::InvariantCulture,
+            [Globalization.DateTimeStyles]::AdjustToUniversal -bor [Globalization.DateTimeStyles]::AssumeUniversal)
+    }
+    return $utc.ToString('yyyy-MM-ddTHH:mm:ss')
+}
+
+function Assert-ImmutablePublicationEnabled {
+    param([string]$Repository)
+    # Read only. Requiring immutability must not publish into a repo where it is off.
+    $setting = Get-PublicationApi "repos/$Repository/immutable-releases" -AllowMissing
+    if ($null -eq $setting -or $setting.enabled -isnot [bool] -or -not $setting.enabled) {
+        throw 'Immutable releases must already be enabled before publishing with -RequireImmutableRelease.'
+    }
+}
+
+function Assert-PublicationTag {
+    param([string]$Root, [string]$Repository, [string]$Tag, [string]$ExpectedCommit, [switch]$CreateIfMissing)
+    $head = (Invoke-PublicationCommand git @('-C', $Root, 'rev-parse', '--verify', 'HEAD')).Text.Trim()
+    if ($head -ine $ExpectedCommit) { throw "HEAD changed from $ExpectedCommit to $head." }
+    $local = (Invoke-PublicationCommand git @('-C', $Root, 'tag', '--list', $Tag)).Text.Trim()
+    if ($local) {
+        $commit = (Invoke-PublicationCommand git @('-C', $Root, 'rev-parse', "refs/tags/$Tag^{commit}")).Text.Trim()
+        if ($local -cne $Tag -or $commit -ine $ExpectedCommit) { throw "Local tag $Tag doesn't point at $ExpectedCommit." }
+    }
+    $remote = (Invoke-PublicationCommand git @('-C', $Root, 'ls-remote', '--tags', 'origin', "refs/tags/$Tag", "refs/tags/$Tag^{}")).Text
+    $refs = @{}
+    foreach ($line in @($remote -split "`n" | Where-Object { $_.Trim() })) {
+        $parts = $line.Trim() -split '\s+'
+        if ($parts.Count -ne 2 -or $parts[0] -notmatch '^[0-9a-fA-F]{40}([0-9a-fA-F]{24})?$' -or
+            $parts[1] -cnotin @("refs/tags/$Tag", "refs/tags/$Tag^{}") -or $refs.ContainsKey($parts[1])) {
+            throw "Invalid remote tag metadata for $Tag."
+        }
+        $refs[$parts[1]] = $parts[0]
+    }
+    if ($refs.Count) {
+        $remoteCommit = if ($refs.ContainsKey("refs/tags/$Tag^{}")) { $refs["refs/tags/$Tag^{}"] } else { $refs["refs/tags/$Tag"] }
+        if (-not $refs.ContainsKey("refs/tags/$Tag") -or $remoteCommit -ine $ExpectedCommit) {
+            throw "Remote tag $Tag doesn't point at $ExpectedCommit."
+        }
+    } else {
+        if (-not $CreateIfMissing) { throw "Remote tag $Tag is missing for an existing release." }
+        if (-not $local) { Invoke-PublicationCommand git @('-C', $Root, 'tag', $Tag, $ExpectedCommit) | Out-Null }
+        Invoke-PublicationCommand git @('-C', $Root, 'push', 'origin', "refs/tags/${Tag}:refs/tags/$Tag") | Out-Null
+    }
+    # The selected GitHub repository must resolve the tag too, even if origin names another repo.
+    $hosted = (Invoke-PublicationCommand gh @('api', "repos/$Repository/commits/$([Uri]::EscapeDataString($Tag))", '--jq', '.sha')).Text.Trim()
+    if ($hosted -ine $ExpectedCommit) { throw "GitHub tag $Tag doesn't point at $ExpectedCommit in $Repository." }
+}
+
+function Assert-PublicationRelease {
+    param([object]$Release, [string]$Tag, [string]$ExpectedCommit, [string]$Notes,
+        [hashtable]$Files, [hashtable]$Hashes, [bool]$IsDraft, [string]$ReleaseId, [switch]$Complete)
+    # Older published releases recorded a branch here. The existing tag's independently
+    # resolved commit is authoritative; drafts created by this flow name the exact commit.
+    $target = [string]$Release.target_commitish
+    $targetMismatch = -not $target -or (($IsDraft -or $target -match '^[0-9a-fA-F]{40}([0-9a-fA-F]{24})?$') -and $target -ine $ExpectedCommit)
+    if ($Release.draft -ne $IsDraft -or ($ReleaseId -and [string]$Release.id -cne $ReleaseId) -or
+        $targetMismatch -or $Release.name -cne $Tag -or $Release.prerelease -or
+        ([string]$Release.body).Replace("`r`n", "`n").TrimEnd("`n") -cne $Notes.Replace("`r`n", "`n").TrimEnd("`n") -or
+        ($IsDraft -and $Release.immutable)) { throw "$Tag has an unexpected release identity, target, notes or draft state." }
+    $seen = @{}
+    $ids = @{}
+    $fingerprints = foreach ($asset in $Release.assets) {
+        $name = [string]$asset.name
+        if ($name -cnotin @($Files.Keys) -or $seen.ContainsKey($name) -or [string]$asset.id -notmatch '^[1-9][0-9]*$' -or
+            $ids.ContainsKey([string]$asset.id) -or $asset.state -cne 'uploaded' -or $asset.size -ne $Files[$name].Length -or
+            ($asset.digest -and $asset.digest -ine "sha256:$($Hashes[$name])")) {
+            throw "$Tag has an unexpected, incomplete or mismatched asset: $name"
+        }
+        $seen[$name] = $true
+        $ids[[string]$asset.id] = $true
+        "$($asset.id)|$name|$($asset.size)|$($asset.digest)"
+    }
+    if ($Complete -and $seen.Count -ne 3) { throw "$Tag must contain exactly the three release assets." }
+    return (($fingerprints | Sort-Object) -join "`n")
+}
+
+function Assert-PublicationDownloads {
+    param([object]$Release, [string]$Repository, [string]$Tag, [hashtable]$Hashes, [string]$Work)
+    $check = Resolve-WithinRoot -Root $Work -Path (Join-Path $Work ([guid]::NewGuid().ToString('N')))
+    $null = New-Item -ItemType Directory -Path $check
+    $arguments = @('release', 'download', $Tag, '-R', $Repository, '--dir', $check)
+    foreach ($asset in $Release.assets) { $arguments += @('--pattern', $asset.name) }
+    Invoke-PublicationCommand gh $arguments | Out-Null
+    $downloaded = @(Get-ChildItem -LiteralPath $check -Force)
+    if ($downloaded.Count -ne $Release.assets.Count -or @($downloaded | Where-Object { $_.PSIsContainer -or $_.Name -cnotin @($Release.assets.name) }).Count) {
+        throw "$Tag download is missing assets or contains unexpected files."
+    }
+    foreach ($file in $downloaded) {
+        if ((Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash -ine $Hashes[$file.Name]) {
+            throw "The hosted $($file.Name) differs from the local one."
+        }
+        Step "$($file.Name) matches the hosted copy"
+    }
+}
+
+function Invoke-ReleasePublication {
+    [CmdletBinding()]
+    param([Parameter(Mandatory = $true)][string]$Root,
+        [Parameter(Mandatory = $true)][ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')][string]$Repository,
+        [Parameter(Mandatory = $true)][ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version,
+        [Parameter(Mandatory = $true)][ValidatePattern('^[0-9a-fA-F]{40}([0-9a-fA-F]{24})?$')][string]$ExpectedCommit,
+        [Parameter(Mandatory = $true)][string]$Assets, [Parameter(Mandatory = $true)][string]$NotesPath,
+        [switch]$RequireImmutableRelease)
+    $tag = "v$Version"
+    $names = @("patches-$Version.mpp", "release-receipt-$Version.json", 'SHA256SUMS.txt')
+    $files = @{}
+    $hashes = @{}
+    foreach ($name in $names) {
+        $file = Get-Item -LiteralPath (Join-Path $Assets $name) -ErrorAction Stop
+        if ($file.PSIsContainer) { throw "Release asset isn't a file: $name" }
+        $files[$name] = $file
+        $hashes[$name] = (Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash.ToLowerInvariant()
+    }
+    $notes = [IO.File]::ReadAllText((Get-Item -LiteralPath $NotesPath -ErrorAction Stop).FullName)
+    $receipt = Get-Content -LiteralPath $files[$names[1]].FullName -Raw | ConvertFrom-Json
+    if ([string]$receipt.source.commit -ine $ExpectedCommit) { throw "The receipt isn't for $ExpectedCommit." }
+    $expectedSums = ($names[0..1] | ForEach-Object { "$($hashes[$_])  $_" }) -join "`n"
+    if ([IO.File]::ReadAllText($files[$names[2]].FullName).Replace("`r`n", "`n").TrimEnd("`n") -cne $expectedSums) {
+        throw 'SHA256SUMS.txt does not match the two local release assets.'
+    }
+    $release = Get-PublicationRelease -Repository $Repository -Tag $tag -AllowMissing
+    $alreadyPublished = $null -ne $release -and -not $release.draft
+    if ($RequireImmutableRelease) {
+        if ($alreadyPublished) {
+            if (-not $release.immutable) { throw "$tag is mutable. An immutable release is required." }
+        } else {
+            Assert-ImmutablePublicationEnabled -Repository $Repository
+        }
+    }
+    Assert-PublicationTag -Root $Root -Repository $Repository -Tag $tag -ExpectedCommit $ExpectedCommit -CreateIfMissing:($null -eq $release)
+    if ($null -eq $release) {
+        Step "creating draft $tag"
+        Invoke-PublicationCommand gh @('release', 'create', $tag, '-R', $Repository, '--draft', '--verify-tag',
+            '--target', $ExpectedCommit, '--title', $tag, '--notes-file', $NotesPath) | Out-Null
+        $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+        if (-not $release.draft) { throw "$tag was not created as a draft." }
+    }
+    $identity = @{
+        Tag = $tag; ExpectedCommit = $ExpectedCommit; Notes = $notes; Files = $files; Hashes = $hashes
+        ReleaseId = [string]$release.id; IsDraft = (-not $alreadyPublished)
+    }
+    $fingerprint = Assert-PublicationRelease -Release $release @identity -Complete:$alreadyPublished
+    $temporaryRoot = [IO.Path]::GetTempPath()
+    $work = Resolve-WithinRoot -Root $temporaryRoot -Path (Join-Path $temporaryRoot ("hushfeed-publication-$Version-" + [guid]::NewGuid().ToString('N')))
+    $null = New-Item -ItemType Directory -Path $work
+    try {
+        if ($release.assets.Count) {
+            Assert-PublicationDownloads -Release $release -Repository $Repository -Tag $tag -Hashes $hashes -Work $work
+            $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+            if ((Assert-PublicationRelease -Release $release @identity -Complete:$alreadyPublished) -cne $fingerprint) {
+                throw "$tag assets changed during download verification."
+            }
+        }
+        if (-not $alreadyPublished) {
+            $missing = @($names | Where-Object { $_ -cnotin @($release.assets.name) })
+            if ($missing.Count) {
+                $paths = @($missing | ForEach-Object { $files[$_].FullName })
+                Invoke-PublicationCommand gh (@('release', 'upload', $tag, '-R', $Repository) + $paths) | Out-Null
+                $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+                $fingerprint = Assert-PublicationRelease -Release $release @identity -Complete
+                Assert-PublicationDownloads -Release $release -Repository $Repository -Tag $tag -Hashes $hashes -Work $work
+                $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+                if ((Assert-PublicationRelease -Release $release @identity -Complete) -cne $fingerprint) {
+                    throw "$tag assets changed during download verification."
+                }
+            }
+        }
+        foreach ($name in $names) {
+            if ((Get-FileHash -Algorithm SHA256 -LiteralPath $files[$name].FullName).Hash -ine $hashes[$name]) {
+                throw "Local release asset changed during verification: $name"
+            }
+        }
+        if ([IO.File]::ReadAllText($NotesPath) -cne $notes) { throw 'Local release notes changed during verification.' }
+        Assert-PublicationTag -Root $Root -Repository $Repository -Tag $tag -ExpectedCommit $ExpectedCommit
+        if (-not $alreadyPublished) {
+            if ($RequireImmutableRelease) { Assert-ImmutablePublicationEnabled -Repository $Repository }
+            $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+            if ((Assert-PublicationRelease -Release $release @identity -Complete) -cne $fingerprint) {
+                throw "$tag assets changed before publication."
+            }
+            Step "publishing verified draft $tag"
+            # Patch the checked database ID. Editing by tag would resolve it again and
+            # could publish a replacement draft that never passed these asset checks.
+            Get-PublicationApi "repos/$Repository/releases/$($identity.ReleaseId)" -Parameters @('--method', 'PATCH', '-F', 'draft=false') | Out-Null
+            $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+            $identity.IsDraft = $false
+            if ((Assert-PublicationRelease -Release $release @identity -Complete) -cne $fingerprint) { throw "$tag assets changed at publication." }
+            Assert-PublicationTag -Root $Root -Repository $Repository -Tag $tag -ExpectedCommit $ExpectedCommit
+        }
+        Get-PublishedReleaseDate -Release $release -Tag $tag | Out-Null
+        if ($release.immutable -or $RequireImmutableRelease) {
+            foreach ($name in $names) {
+                Test-ReleaseAttestation -Repository $Repository -Tag $tag -ArtifactPath $files[$name].FullName -AssetName $name `
+                    -ExpectedCommit $ExpectedCommit -RequireImmutableRelease | Out-Null
+            }
+        } else { Step "$Repository $tag is mutable; release attestation verification skipped" }
+        $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+        if ((Assert-PublicationRelease -Release $release @identity -Complete) -cne $fingerprint) {
+            throw "$tag assets changed during final verification."
+        }
+        Get-PublishedReleaseDate -Release $release -Tag $tag | Out-Null
+        Assert-PublicationTag -Root $Root -Repository $Repository -Tag $tag -ExpectedCommit $ExpectedCommit
+        return [pscustomobject]@{
+            Tag = $tag; Commit = $ExpectedCommit; ReleaseId = [string]$release.id; Immutable = $release.immutable
+            AlreadyPublished = $alreadyPublished; VerifiedAssets = 3
+        }
+    } finally { Remove-GeneratedPath -Root $temporaryRoot -Path $work }
 }
 
 switch ($Stage) {
@@ -207,32 +488,25 @@ switch ($Stage) {
         if ($receipt.source.commit -and $receipt.source.commit -ne $head) { throw "The receipt is for $($receipt.source.commit), HEAD is $head." }
         $notes = Join-Path $assets 'notes.md'
         Invoke-Native 'release notes' { py -3.13 (Join-Path $root 'tools/release_text.py') github-notes --version $Version --intro $Intro --checked $Checked --out $notes }
-        if (-not (git -C $root tag --list $tag)) { Invoke-Native 'tag' { git -C $root tag $tag $head } }
-        if ((git -C $root rev-parse "$tag^{commit}").Trim() -ne $head) { throw "$tag doesn't point at $head." }
-        Invoke-Native 'tag push' { git -C $root push origin $tag }
-        Step "publishing $tag"
-        Invoke-Native 'gh release create' {
-            gh release create $tag -R $Repository --verify-tag --title $tag --notes-file $notes `
-                (Join-Path $assets $bundleName) (Join-Path $assets $receiptName) (Join-Path $assets 'SHA256SUMS.txt')
-        }
-        $check = Join-Path ([IO.Path]::GetTempPath()) "hushfeed-published-$Version"
-        Remove-Item -LiteralPath $check -Recurse -Force -ErrorAction SilentlyContinue
-        Invoke-Native 'download back' { gh release download $tag -R $Repository -D $check }
-        foreach ($name in $bundleName, $receiptName, 'SHA256SUMS.txt') {
-            $local = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $assets $name)).Hash
-            $hosted = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $check $name)).Hash
-            if ($local -ne $hosted) { throw "The hosted $name differs from the local one." }
-            Step "$name matches the hosted copy"
-        }
-        Remove-Item -LiteralPath $check -Recurse -Force
+        Invoke-ReleasePublication -Root $root -Repository $Repository -Version $Version -ExpectedCommit $head `
+            -Assets $assets -NotesPath $notes -RequireImmutableRelease:$RequireImmutableRelease | Out-Null
         Step 'published. Write the README and bundle summaries, then -Stage index'
     }
     'index' {
-        Assert-PushedHead | Out-Null
+        $head = Assert-PushedHead
         if (-not $ReadmeSummary -or -not $BundleSummary) { throw '-ReadmeSummary and -BundleSummary are the release''s README line and Manager text.' }
-        $published = gh release view $tag -R $Repository --json publishedAt --jq .publishedAt
-        if (-not $published) { throw "$tag isn't published. Run -Stage publish first." }
-        $created = ([DateTime]::Parse($published).ToUniversalTime()).ToString('yyyy-MM-ddTHH:mm:ss')
+        $published = Get-PublicationRelease -Repository $Repository -Tag $tag
+        $created = Get-PublishedReleaseDate -Release $published -Tag $tag
+        # Read before anything is written: a failed read used to come back empty and was then
+        # written over the live description.
+        $description = [string](gh repo view $Repository --json description --jq .description)
+        if ($LASTEXITCODE -ne 0) { throw "Couldn't read the $Repository description (exit $LASTEXITCODE), so nothing was indexed." }
+        if ($RequireImmutableRelease) {
+            foreach ($name in $bundleName, $receiptName, 'SHA256SUMS.txt') {
+                Test-ReleaseAttestation -Repository $Repository -Tag $tag -ArtifactPath (Join-Path $assets $name) `
+                    -AssetName $name -ExpectedCommit $head -RequireImmutableRelease | Out-Null
+            }
+        }
         $runtime = Get-TestCount @('extensions/tiktok/build/test-results/testDebugUnitTest')
         $patch = Get-TestCount @('patches/build/test-results/test', 'patches/build/test-results/nativeTest', 'patches/build/test-results/documentationTest')
         Invoke-Native 'index' {
@@ -240,7 +514,6 @@ switch ($Stage) {
                 --readme-summary $ReadmeSummary --bundle-summary $BundleSummary --device-line $DeviceLine --runtime $runtime --patch $patch
         }
         Copy-Item -LiteralPath (Join-Path $assets $receiptName) -Destination (Join-Path $root $receiptName) -Force
-        $description = gh repo view $Repository --json description --jq .description
         $list = Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json
         $count = @($list.patches).Count
         $updated = $description -replace 'Hushfeed v\d+\.\d+\.\d+', "Hushfeed v$Version" -replace '\b\d+ patches\b', "$count patches"

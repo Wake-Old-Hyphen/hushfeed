@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.interaction.systemfont
 
 import app.morphe.Fixtures
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -77,8 +78,66 @@ class SystemFontAnchorsTest {
         }
     }
 
+    /**
+     * TikTok has other ways to a text face than the engine's two build methods: a static factory
+     * taking nine parameters (size, weight, width, slant, optical size and a mask of defaults),
+     * which picks TikTok Display or TikTok Text, and a Compose font loader. Another TikTok patch
+     * bundle hooks the factory to swap in a font file. Use system font and Use an imported font
+     * stand only at the engine's exit, which covers these too only while each of them builds
+     * through the engine's interface and never asks Android for a typeface itself. This holds
+     * that, and that the nine-parameter factory is among what it checked.
+     */
+    @Test
+    fun `TikTok's other text font entry points build through the engine on each build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val classes = classesOf(apk)
+            val engines = classes.filter(::isFontEngine)
+            val engineTypes = engines.map { it.type }.toSet()
+            val engineInterfaces = engines.map { it.interfaces.toSet() }.reduce { a, b -> a intersect b }
+            assertTrue("$version: the engines share no interface", engineInterfaces.isNotEmpty())
+
+            val entryPoints = classes.filter { it.type !in engineTypes }.flatMap { classDef ->
+                classDef.methods.filter { method ->
+                    method.returnType == TYPEFACE && method.implementation?.instructions?.any { instruction ->
+                        val text = ((instruction as? ReferenceInstruction)?.reference as? StringReference)?.string
+                        text != null && TEXT_FONT_FILES.any { text.startsWith(it) }
+                    } == true
+                }
+            }
+            assertTrue(
+                "$version: no nine-parameter factory among ${entryPoints.map { "${it.definingClass}->${it.name}" }}",
+                entryPoints.any { method ->
+                    AccessFlags.STATIC.isSet(method.accessFlags) &&
+                        method.parameterTypes.map { it.toString() } == NINE_PARAMETER_FACTORY
+                },
+            )
+            entryPoints.forEach { method ->
+                val calls = method.implementation!!.instructions.mapNotNull {
+                    (it as? ReferenceInstruction)?.reference as? MethodReference
+                }
+                val where = "$version: ${method.definingClass}->${method.name}"
+                assertTrue("$where never calls the engine", calls.any { call ->
+                    call.definingClass in engineInterfaces && call.returnType == TYPEFACE &&
+                        call.parameterTypes.joinToString("").let { it == VARIATION || it == ASSET }
+                })
+                val own = calls.filter { it.returnType == TYPEFACE && it.definingClass.startsWith("Landroid/") }
+                assertTrue("$where asks Android for a typeface itself: ${own.map { "${it.definingClass}->${it.name}" }}",
+                    own.isEmpty())
+            }
+        }
+    }
+
     private companion object {
         const val TYPEFACE = "Landroid/graphics/Typeface;"
+        const val VARIATION = "[Landroid/graphics/fonts/FontVariationAxis;IZ"
+        const val ASSET = "Ljava/lang/String;"
+
+        /** The static faces the factory and the Compose loader fall back to below Android 8. */
+        val TEXT_FONT_FILES = listOf("font/TikTok-Display-", "font/TikTok-Text-")
+        val NINE_PARAMETER_FACTORY = listOf(
+            "F", "I", "F", "F", "Ljava/lang/Float;", "F", "I", "Ljava/util/Map;", "I",
+        )
         const val ICON_DRAWABLE = "Lcom/bytedance/tux/drawable/TuxIconDrawable;"
 
         /** Font files the patch description says keep their own look. */

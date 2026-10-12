@@ -266,6 +266,10 @@ val downloadsPatch = bytecodePatch(
             }
         }
 
+        // The received DM sticker's exact preview tap. Its declared native service is empty;
+        // the extension owns this small local preview and its Save action, never a send action.
+        hookDmStickerPreview()
+
         // The clip of a live photo in a comment (upstream #169). TikTok's own Save photo hands its
         // downloader the still's UrlModel alone, so the clip in livePhotoInfoModel.urlList never
         // lands. Once the save routine has the comment and the tapped photo's index (the index

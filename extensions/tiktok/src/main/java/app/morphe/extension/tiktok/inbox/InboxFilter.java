@@ -140,6 +140,63 @@ public final class InboxFilter {
         }
     }
 
+    /** Called after native normal/payload notification binds, with the current PowerCell item. */
+    public static void onNotificationRowBound(Object holder) {
+        InboxQueryOwners.bound(holder);
+    }
+
+    /** Receives the native getter's result, without asking a dormant widget to create a VM. */
+    public static void onNotificationVmObserved(Object widget, Object vm) {
+        InboxQueryOwners.observedVm(widget, vm);
+    }
+
+    public static void onLoadedFragmentBound(Object fragment) { InboxQueryOwners.fragmentBound(fragment); }
+
+    public static java.util.List<?> onLoadedPublication(Object state, java.util.List<?> models,
+            boolean first, boolean second, Runnable completion, int mask) {
+        return InboxQueryNative.publication(state, models, first, second, completion, mask);
+    }
+
+    public static void onLoadedStubPublication(Object stub, Object wrapper, Object metadata) {
+        InboxQueryNative.stubPublication(stub, wrapper, metadata);
+    }
+
+    public static void onLoadedDiffSubmitted(Object diff, java.util.List<?> oldFiltered,
+            java.util.List<?> old, java.util.List<?> aggregate, Object metadata) {
+        InboxQueryNative.submitted(diff, oldFiltered, old, aggregate, metadata);
+    }
+
+    public static void onLoadedDiffAccepted(Object diff, Object metadata) { InboxQueryNative.accepted(diff, metadata); }
+
+    public static void onLoadedIndexedCallback(Object closure, Object helper, java.util.List<?> original, Object pair) {
+        InboxQueryNative.indexed(closure, helper, original, pair);
+    }
+
+    public static java.util.List<?> onLoadedIndexedList(Object fragment, java.util.List<?> original) {
+        return InboxQueryNative.indexedList(fragment, original);
+    }
+
+    public static boolean allowLoadedVisibleIndices(Object fragment, boolean loadingRow) {
+        return InboxQueryNative.visibleIndices(fragment, loadingRow);
+    }
+
+    public static boolean allowLoadedNotificationClick(Object holder) { return InboxQueryNative.click(holder); }
+    public static boolean allowLoadedRefresh(Object spring, boolean starting) { return InboxQueryNative.refresh(spring, starting); }
+    public static boolean allowLoadedManualRefresh(Object spring) { return InboxQueryNative.refresh(spring, true); }
+    public static boolean allowLoadedRequest(Object target) { return InboxNativeRequests.allowed(target); }
+    public static boolean beginLoadedRequest(Object target) { return InboxNativeRequests.begin(target); }
+    public static void returnedLoadedRequest(Object target) { InboxNativeRequests.returned(target); }
+    public static void onLoadedRequestJob(Object target, Object job) { InboxNativeRequests.launched(target, job); }
+    public static boolean beginLoadedClosureRequest(Object closure) {
+        return InboxNativeRequests.begin(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"));
+    }
+    public static void returnedLoadedClosureRequest(Object closure) {
+        InboxNativeRequests.returned(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"));
+    }
+    public static void onLoadedClosureRequestJob(Object closure, Object job) {
+        InboxNativeRequests.launched(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"), job);
+    }
+
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);
     private static final GlobalLayoutHook LAYOUT_HOOK = new GlobalLayoutHook();
 
@@ -420,6 +477,7 @@ public final class InboxFilter {
         clearAll.setTextSize(TypedValue.COMPLEX_UNIT_SP, SettingsUi.TEXT_BODY_SMALL);
         clearAll.setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
         clearAll.setContentDescription(L10n.t(activity, "Clear all suggested accounts"));
+        clearAll.setMinimumWidth(SettingsUi.dp(activity, 48));
         clearAll.setMinimumHeight(SettingsUi.dp(activity, 48));
         int padding = SettingsUi.dp(activity, 16);
         clearAll.setPadding(padding, 0, padding, 0);
@@ -440,16 +498,45 @@ public final class InboxFilter {
         // all", enabled, while a run it silently refuses is still working through the list.
         setClearAllBusy(clearingSuggested);
 
-        // The heading is a horizontal LinearLayout (the view class behind q3m extends one on
-        // 47.0.3, as it did on 46.2.3, where the title ran from x 45 to 457 and Learn more
-        // from 470 to 501, of 1080), so zero width with weight takes the slack and the
-        // end gravity parks the text at the right edge. Any other parent would keep the
-        // zero width and drop the weight, leaving an invisible control, so it gets a
-        // plain wrap instead.
-        ViewGroup.LayoutParams params = headerGroup instanceof LinearLayout
-                ? new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
-                : new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        // 47.1.4 wraps the title and help icon in a MATCH_PARENT child. Giving only our
+        // action weight leaves it zero pixels wide beyond the screen. Reserve the action's
+        // measured width and give that native wrapper the remaining space instead.
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (headerGroup instanceof LinearLayout
+                && ((LinearLayout) headerGroup).getOrientation() == LinearLayout.HORIZONTAL) {
+            boolean hasFullWidthChild = false;
+            for (int index = 0; index < headerGroup.getChildCount(); index++) {
+                View child = headerGroup.getChildAt(index);
+                ViewGroup.LayoutParams original = child.getLayoutParams();
+                if (!(original instanceof LinearLayout.LayoutParams)) continue;
+                if (original.width != ViewGroup.LayoutParams.MATCH_PARENT
+                        && !(original.width == 0
+                                && ((LinearLayout.LayoutParams) original).weight > 0f)) continue;
+                LinearLayout.LayoutParams remaining = new LinearLayout.LayoutParams(
+                        (LinearLayout.LayoutParams) original);
+                remaining.width = 0;
+                remaining.weight = 1f;
+                child.setLayoutParams(remaining);
+                hasFullWidthChild = true;
+                // The native title must leave room for its help icon as its wrapper shrinks.
+                View title = findOptional(activity, SUGGESTED_TITLE_IDS);
+                if (title != null && title.getParent() == child
+                        && child instanceof LinearLayout
+                        && ((LinearLayout) child).getOrientation() == LinearLayout.HORIZONTAL
+                        && title.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                    LinearLayout.LayoutParams text = new LinearLayout.LayoutParams(
+                            (LinearLayout.LayoutParams) title.getLayoutParams());
+                    text.width = 0;
+                    text.weight = 1f;
+                    title.setLayoutParams(text);
+                }
+            }
+            params = hasFullWidthChild
+                    ? new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT)
+                    : new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        }
         headerGroup.addView(clearAll, params);
 
         Logger.printDebug(() -> "Clear all control added to the suggested accounts heading");

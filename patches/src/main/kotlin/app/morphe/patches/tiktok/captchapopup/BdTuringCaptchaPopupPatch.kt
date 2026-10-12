@@ -27,20 +27,20 @@ internal object RiskControlServiceExecuteFingerprint : Fingerprint(
 
 /**
  * BdTuring has a separate entry point from SecApiImpl and oecverify. Its hook uses the
- * same gate and diagnostic record. No reviewed browsing scene is available, so the
- * current gate preserves every challenge, including SMS and two-factor verification.
+ * same gate and diagnostic record, so it hides only what Hide CAPTCHA popups hides, and SMS
+ * and two-factor verification always show.
  */
 @Suppress("unused")
 val bdTuringCaptchaPopupPatch = bytecodePatch(
     // The name is what Morphe Manager lists. BdTuring is ByteDance's own SDK name and means
     // nothing to anyone reading that list or the description, so neither uses it.
     name = "Hide the risk control CAPTCHA",
-    description = "Notes in the diagnostic report when TikTok's account safety check decides " +
-        "to show a verification puzzle. It doesn't hide anything, so it's only useful for " +
-        "research. It sits on TikTok's account checks, which is why it isn't picked for you.",
+    description = "Lets Hide CAPTCHA popups also skip the puzzle TikTok's account safety check " +
+        "raises while you're just browsing. SMS and two-step checks always show. It sits on " +
+        "TikTok's account checks, which is why it isn't picked for you.",
     default = false,
 ) {
-    // Retain the request attribution and the legacy setting's unavailable row together.
+    // The request attribution and the Hide CAPTCHA popups switch this hook answers to.
     dependsOn(sharedExtensionPatch, captchaRequestRecorderPatch, hideCaptchaPopupsPatch)
     // Beside Hide CAPTCHA popups, whose switch it answers.
     category("Feed")

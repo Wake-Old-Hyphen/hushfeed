@@ -93,9 +93,6 @@ public class FeedScreenCoverageTest {
 
     private static final Reach YES = Reach.YES, NONE = Reach.NONE, UNCHECKED = Reach.UNCHECKED;
 
-    /** Rows on the page that switch nothing. */
-    private static final Set<String> NOT_A_SWITCH = Set.of("hushfeed_captcha_unavailable");
-
     /**
      * The rows whose reach in one window only a phone can settle. Each needs a look with the
      * switch on, in a video opened from a profile or search (or a LIVE room for the LIVE ones),
@@ -185,6 +182,8 @@ public class FeedScreenCoverageTest {
         // Popups. The promotion and popup hooks sit where TikTok parses or raises them, which
         // every window goes through.
         put("hide_homepage_coin", YES, YES, NONE);
+        // SecApiImpl's puzzle entry points serve every window, and LiveHostUser has its own copy.
+        put("hide_browsing_captcha_popups", YES, YES, YES);
         put("popup_label_checklist", YES, YES, YES);
         put("hide_live_bubble", YES, YES, NONE);
         put("hide_wind_down_screens", YES, YES, NONE);
@@ -203,6 +202,7 @@ public class FeedScreenCoverageTest {
         put("automatic_clear_display_delay", YES, YES, NONE);
         put("hide_clear_display_controls", YES, YES, NONE);
         put("fade_controls_opacity", YES, YES, NONE);
+        put("fade_in_clear_display", YES, YES, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
         put("burn_in_guard", YES, YES, NONE);
 
@@ -270,7 +270,7 @@ public class FeedScreenCoverageTest {
             for (BooleanSetting setting : ((SwitchListPreference) preference).settings()) {
                 into.put(setting.key, preference);
             }
-        } else if (preference.getKey() != null && !NOT_A_SWITCH.contains(preference.getKey())) {
+        } else if (preference.getKey() != null) {
             into.put(preference.getKey(), preference);
         }
         if (preference instanceof PreferenceGroup) {

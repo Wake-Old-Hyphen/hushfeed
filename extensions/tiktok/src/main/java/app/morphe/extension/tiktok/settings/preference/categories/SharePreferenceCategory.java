@@ -40,6 +40,7 @@ public final class SharePreferenceCategory extends ConditionalPreferenceCategory
             addPreference(new TogglePreference(context, "Hide sharing apps", "Hide the Share via row.", Settings.HIDE_SHARE_CHANNELS));
             addPreference(new ShareAppPickerPreference(context));
             addPreference(new TogglePreference(context, "Hide video actions", "Hide the actions row of the share sheet.", Settings.HIDE_SHARE_ACTIONS));
+            addPreference(new TogglePreference(context, "Block this creator", null, Settings.SHARE_BLOCK_AUTHOR));
             addPreference(new TogglePreference(
                     context,
                     "Hide the Send to row",

@@ -106,6 +106,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
+    // Use system font's hook draws TikTok's text in the imported font file while this is on and
+    // the file loads; it wins over SYSTEM_FONT. The file itself lives in TikTok's files, not here.
+    public static final BooleanSetting IMPORTED_FONT = new BooleanSetting("imported_font", FALSE, true);
     // Off by default: both patches are in the default selection, so the switch is the ask.
     public static final BooleanSetting TURN_OFF_HAPTICS = new BooleanSetting("turn_off_haptics", FALSE);
     public static final BooleanSetting TURN_OFF_SCREEN_TRANSITIONS =
@@ -332,6 +335,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting FRIENDS_MUTUALS_ONLY = new BooleanSetting("friends_mutuals_only", FALSE);
     public static final BooleanSetting HIDE_SHARE_CHANNELS = new BooleanSetting("hide_share_channels", FALSE);
     public static final BooleanSetting HIDE_SHARE_ACTIONS = new BooleanSetting("hide_share_actions", FALSE);
+    public static final BooleanSetting SHARE_BLOCK_AUTHOR = new BooleanSetting("share_block_author", FALSE);
     public static final BooleanSetting REMOVE_ADS = new BooleanSetting("remove_ads", TRUE, true);
     public static final BooleanSetting HIDE_LIVE = new BooleanSetting("hide_live", FALSE, true);
     public static final BooleanSetting HIDE_SHOP = new BooleanSetting("hide_shop", FALSE, true);
@@ -339,7 +343,11 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_SEARCH_SHOP = new BooleanSetting("hide_search_shop", FALSE);
     public static final BooleanSetting HIDE_STORY = new BooleanSetting("hide_story", FALSE, true);
     public static final BooleanSetting HIDE_IMAGE = new BooleanSetting("hide_image", FALSE, true);
-    public static final BooleanSetting HIDE_CAPTCHA_POPUPS = new BooleanSetting("hide_captcha_popups", FALSE, true);
+    /**
+     * Its own key, not the old hide_captcha_popups: that row was unavailable for several
+     * releases, so a true saved under it was never a choice made for the browsing rule.
+     */
+    public static final BooleanSetting HIDE_CAPTCHA_POPUPS = new BooleanSetting("hide_browsing_captcha_popups", FALSE, true);
     public static final BooleanSetting HIDE_HOMEPAGE_COIN = new BooleanSetting("hide_homepage_coin", FALSE, true);
     public static final BooleanSetting HIDE_PROFILE_REWARDS_SHORTCUT =
             new BooleanSetting("hide_profile_rewards_shortcut", FALSE);
@@ -415,6 +423,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_TAKO_AI = new BooleanSetting("hide_tako_ai", FALSE, true);
     public static final BooleanSetting HIDE_BOTTOM_SEARCH_BAR = new BooleanSetting("hide_bottom_search_bar", FALSE, true);
     public static final BooleanSetting COMMENT_BATCH_TRANSLATION = new BooleanSetting("comment_batch_translation", FALSE);
+    public static final BooleanSetting DM_TRANSLATION_PREVIEW = new BooleanSetting("dm_translation_preview", FALSE);
+    public static final BooleanSetting RECEIVED_DM_TRANSLATION_PREVIEW = new BooleanSetting("received_dm_translation_preview", FALSE);
     /** Languages TikTok's automatic translation leaves alone, added to its own Don't translate list (#121). */
     public static final StringSetting DONT_AUTO_TRANSLATE_LANGUAGES = new StringSetting("dont_auto_translate_languages", "");
     /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
@@ -706,10 +716,16 @@ public class Settings extends BaseSettings {
      * TikTok draws them, lower fades the rail, caption, music row and tabs while they keep taking
      * taps, and 0 hides the rail and caption the way Clear display does (#84). In Clear display a
      * level between keeps the rail and caption in sight at that level and lets taps through them
-     * to the video (VideoOverlayHider, TapThroughControls).
+     * to the video (VideoOverlayHider, TapThroughControls), unless FADE_IN_CLEAR_DISPLAY is off.
      */
     public static final IntegerSetting FADE_CONTROLS_OPACITY =
             new IntegerSetting("fade_controls_opacity", 100).withRange(0, 100);
+    /**
+     * Whether a fade between 0 and 100 keeps the controls in sight in Clear display (#84). Off,
+     * Clear display takes them away as it does at 100, and the fade only reaches them outside it,
+     * for those who want the fade on the feed and Clear display still clear.
+     */
+    public static final BooleanSetting FADE_IN_CLEAR_DISPLAY = new BooleanSetting("fade_in_clear_display", TRUE);
     /**
      * Burn-in guard for OLED screens (BurnInGuard): "dim" draws the controls the fade covers at a
      * quarter after a few seconds without a touch, "dim_shift" also moves the window's content a
@@ -777,6 +793,7 @@ public class Settings extends BaseSettings {
             new BooleanSetting("hide_inbox_conversations", FALSE);
     public static final BooleanSetting HIDE_INBOX_ADD_PEOPLE = new BooleanSetting("hide_inbox_add_people", FALSE);
     public static final BooleanSetting HIDE_INBOX_SEARCH = new BooleanSetting("hide_inbox_search", FALSE);
+    public static final BooleanSetting INBOX_LOADED_SEARCH = new BooleanSetting("inbox_loaded_search", FALSE);
     public static final BooleanSetting HIDE_INBOX_ACTIVITY_STATUS =
             new BooleanSetting("hide_inbox_activity_status", FALSE);
     /** The banner at the top of the Inbox that invites you to start a group chat. */
@@ -864,6 +881,8 @@ public class Settings extends BaseSettings {
     // answers TikTok's real value.
     public static final BooleanSetting HIDE_VPN = new BooleanSetting("hide_vpn", FALSE);
     public static final BooleanSetting BLOCK_ADVERTISING_ID = new BooleanSetting("block_advertising_id", FALSE);
+    // Native root collectors can retain an earlier answer, so a change requires a restart.
+    public static final BooleanSetting HIDE_ROOT = new BooleanSetting("hide_root", FALSE, true);
     public static final BooleanSetting BLOCK_MOTION_SENSORS = new BooleanSetting("block_motion_sensors", FALSE);
     // Off by default for the same reason, and read at each history write, so no restart.
     public static final BooleanSetting STOP_SEARCH_HISTORY = new BooleanSetting("stop_search_history", FALSE);
@@ -889,6 +908,9 @@ public class Settings extends BaseSettings {
     // Keep the app language (#61), in the default selection with this off. TikTok's reset runs
     // once early in each start, so a change counts from the next one, with no restart asked for.
     public static final BooleanSetting KEEP_APP_LANGUAGE = new BooleanSetting("keep_app_language", FALSE);
+    // Profile background (#80), in the default selection with this off. TikTok asks its gate as
+    // Edit profile or a profile is built, so a change counts from the next one, no restart.
+    public static final BooleanSetting PROFILE_BACKGROUND = new BooleanSetting("profile_background", FALSE);
     // App lock. Off until the reader turns it on, and read as each screen starts, so no restart.
     // The delay is whole minutes TikTok may spend in the background before it asks again.
     public static final BooleanSetting APP_LOCK = new BooleanSetting("app_lock", FALSE);
@@ -956,6 +978,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_COMMENT_BOX_BUTTONS = new BooleanSetting("hide_comment_box_buttons", FALSE);
     /** Draws a comment poll's results before the reader votes, from the counts TikTok already sends. */
     public static final BooleanSetting SHOW_POLL_RESULTS = new BooleanSetting("show_poll_results", FALSE);
+    /**
+     * A commenter's @username in place of their display name, and in a reply's label once the
+     * person it answers has been drawn. Read on each comment bind, so no restart.
+     */
+    public static final BooleanSetting SHOW_COMMENTER_HANDLE = new BooleanSetting("show_commenter_handle", FALSE);
+    /** The country a commenter's account is set to, after the comment's time. Read on each bind. */
+    public static final BooleanSetting SHOW_COMMENTER_REGION = new BooleanSetting("show_commenter_region", FALSE);
     /** Tapping "more" under a video opens its comments with the caption at the top (upstream #156). */
     public static final BooleanSetting CAPTION_OPENS_COMMENTS = new BooleanSetting("caption_opens_comments", FALSE);
     /** Every video's comments open with its caption at the top. */
@@ -998,6 +1027,12 @@ public class Settings extends BaseSettings {
     public static final StringSetting POPUP_LABEL_CATALOG = new StringSetting("popup_label_catalog", "");
     // "Follows you" under the @username on a profile, and a mark on the follow list accounts that don't follow back.
     public static final BooleanSetting SHOW_FOLLOW_STATUS = new BooleanSetting("show_follow_status", TRUE);
+    public static final BooleanSetting LOCAL_PROFILE_COUNTS = new BooleanSetting("local_profile_counts", FALSE, true);
+    public static final BooleanSetting LOCAL_PROFILE_VERIFIED_BADGE = new BooleanSetting("local_profile_verified_badge", FALSE, true);
+    public static final BooleanSetting HIDE_OWN_PROFILE_RESTRICTION_NOTICE = new BooleanSetting("hide_own_profile_restriction_notice", FALSE, true);
+    // Account-scoped presentation choices stay on this phone, apart from portable settings backups.
+    public static final StringSetting LOCAL_PROFILE_COUNT_VALUES =
+            new StringSetting("local_profile_count_values", "", true, false);
     // Long-press a bio to copy it, and copy buttons for a profile's or a video's IDs on the share sheet.
     public static final BooleanSetting COPY_IDS = new BooleanSetting("copy_ids", TRUE);
     // An Account facts button on a profile's share sheet, from what TikTok already sent about the account.

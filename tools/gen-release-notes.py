@@ -1,14 +1,14 @@
-"""Embed published CHANGELOG entries from 0.60.0 onward in the Android extension.
+"""Embed curated release summaries from 0.60.0 onward in the Android extension.
 
 Translated sections live in extensions/tiktok/src/main/l10n/notes/<table>.txt, one file per
-settings table, each holding "## X.Y.Z (date)" sections in the CHANGELOG's own shape. A release
+settings table, with en.txt holding the English summaries. Each CHANGELOG bullet has one
+summary in the same order under its original release heading. A release
 is translated for every table or for none (#91), so What's new never shows one language a
 release in its own words and the next language the English.
 """
 
-from pathlib import Path
 import re
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CHANGELOG = ROOT / "CHANGELOG.md"
@@ -45,9 +45,20 @@ def releases(text: str) -> dict:
     text = text.replace("\r\n", "\n")
     matches = list(HEADING.finditer(text))
     found = {}
+    previous = None
+    headings = [line for line in text.split("\n") if line.startswith("## ")]
+    if "## Unreleased" in headings and (headings[0] != "## Unreleased" or headings.count("## Unreleased") != 1):
+        raise ValueError("Unreleased must appear once before published releases")
+    for line in headings:
+        if line != "## Unreleased" and not re.fullmatch(r"## \d+\.\d+\.\d+ \([^\n)]+\)", line):
+            raise ValueError(f"invalid release heading: {line}")
     for index, match in enumerate(matches):
+        version = tuple(map(int, match.groups()))
+        if previous is not None and version >= previous:
+            raise ValueError("release headings must be unique and newest first")
+        previous = version
         end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        found[tuple(map(int, match.groups()))] = text[match.start():end].strip()
+        found[version] = text[match.start():end].strip()
     return found
 
 
@@ -59,24 +70,60 @@ def name(version: tuple) -> str:
     return ".".join(map(str, version))
 
 
+def summary_section(summary: str, source: str, where: str) -> None:
+    if summary.splitlines()[0] != source.splitlines()[0]:
+        raise ValueError(f"{where}: release heading differs")
+    items = [line for line in summary.split("\n")[1:] if line.strip()]
+    original = [line for line in source.split("\n") if line.startswith("* ")]
+    if len(items) != len(original):
+        raise ValueError(f"{where}: {len(items)} bullets, expected {len(original)}")
+    for number, (item, full) in enumerate(zip(items, original), 1):
+        if not item.startswith("* **TikTok:** "):
+            raise ValueError(f"{where} bullet {number}: expected one TikTok-scoped line")
+        if re.findall(r"#\d+", item) != re.findall(r"#\d+", full):
+            raise ValueError(f"{where} bullet {number}: issue references differ")
+
+
+def table(path: Path) -> dict:
+    raw = path.read_bytes()
+    if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw:
+        raise ValueError(f"{path.name}: BOM or CR line endings")
+    return releases(raw.decode("utf-8"))
+
+
+def summaries(english: str) -> str:
+    """Require one authored English summary for every embedded CHANGELOG bullet."""
+    shipped = releases(english)
+    path = NOTES / "en.txt"
+    sections = table(path)
+    if sections.keys() != shipped.keys():
+        missing = sorted(shipped.keys() - sections.keys(), reverse=True)
+        extra = sorted(sections.keys() - shipped.keys(), reverse=True)
+        raise ValueError(f"en.txt release coverage differs: missing {list(map(name, missing))}, "
+                         f"extra {list(map(name, extra))}")
+    for version, section in sections.items():
+        summary_section(section, shipped[version], f"en.txt {name(version)}")
+    return "\n\n".join(sections.values()) + "\n"
+
+
 def translations(english: str) -> dict:
     """The translated notes by table, after checking every release is in every table or none."""
     shipped = releases(english)
     found = {}
     if NOTES.is_dir():
         for path in sorted(NOTES.glob("*.txt")):
+            if path.stem == "en":
+                continue
             if path.stem not in LANGUAGES:
                 raise ValueError(f"{path.name} has no settings table to go with it")
-            sections = releases(path.read_text(encoding="utf-8"))
+            sections = table(path)
             if not sections:
                 raise ValueError(f"{path.name} has no release heading")
             for version, section in sections.items():
                 if version not in shipped:
                     raise ValueError(f"{path.name} translates {name(version)}, which the CHANGELOG "
                                      "hasn't published")
-                if bullets(section) != bullets(shipped[version]):
-                    raise ValueError(f"{path.name} has {bullets(section)} bullets for {name(version)}, "
-                                     f"the CHANGELOG has {bullets(shipped[version])}")
+                summary_section(section, shipped[version], f"{path.name} {name(version)}")
             found[path.stem] = sections
     for version in sorted({v for sections in found.values() for v in sections}, reverse=True):
         missing = [language for language in LANGUAGES if version not in found.get(language, {})]
@@ -118,7 +165,7 @@ def constant(language: str) -> str:
 
 
 def main() -> None:
-    notes = published(CHANGELOG.read_text(encoding="utf-8"))
+    notes = summaries(published(CHANGELOG.read_text(encoding="utf-8")))
     translated = translations(notes)
     lines = [
         "/*",
@@ -129,7 +176,7 @@ def main() -> None:
         " */",
         "package app.morphe.extension.tiktok.settings.preference;",
         "",
-        "/** Published CHANGELOG entries carried inside the patched app. Run tools/gen-release-notes.py after release edits. */",
+        "/** Curated published summaries carried inside the app. Run tools/gen-release-notes.py after release edits. */",
         "public final class ReleaseNotesData {",
         "    private ReleaseNotesData() {}",
         "    public static final String TEXT = new StringBuilder()",
@@ -156,7 +203,7 @@ def main() -> None:
         lines.append("            .toString();")
     lines.append("}")
     OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-    print(f"embedded {len(notes.splitlines())} published changelog lines and "
+    print(f"embedded {bullets(notes)} published summaries and "
           f"{len(translated)} translations")
 
 

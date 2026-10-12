@@ -36,7 +36,8 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.hideCommentEggsEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.lengthLimitsEnabled
-                || SettingsStatus.voiceCommentsEnabled;
+                || SettingsStatus.voiceCommentsEnabled
+                || SettingsStatus.commenterDetailsEnabled;
     }
 
     @Override
@@ -52,7 +53,8 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
-                || SettingsStatus.copyCommentsWithoutUsernameEnabled;
+                || SettingsStatus.copyCommentsWithoutUsernameEnabled
+                || SettingsStatus.commenterDetailsEnabled;
         if (reading) {
             addPreference(new SectionHeadingPreference(context, "Reading"));
         }
@@ -159,6 +161,23 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     "Copy comments without username",
                     "Copy only the comment text when using TikTok's copy comment action.",
                     Settings.COPY_COMMENTS_WITHOUT_USERNAME
+            ));
+        }
+        if (SettingsStatus.commenterDetailsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Show commenters' handles",
+                    "Show each commenter's @username instead of the display name they chose. A reply "
+                            + "to a reply names the person it answers the same way once their own "
+                            + "comment has loaded.",
+                    Settings.SHOW_COMMENTER_HANDLE
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show where commenters are from",
+                    "Show the country a commenter's account is set to after the comment's time. "
+                            + "Comments from accounts TikTok sends no country for stay as they are.",
+                    Settings.SHOW_COMMENTER_REGION
             ));
         }
 

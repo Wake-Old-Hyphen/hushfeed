@@ -4,6 +4,90 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** New Show commenter handle and region patch: comments can show each commenter's @username instead of their display name, and the country their account is set to after the comment's time. Each has its own switch in Hushfeed settings > Comments, and both start off. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** Use system font can also show TikTok's text in a .ttf or .otf file you import. Turn on Use an imported font in App, pick the file and restart TikTok. If the file is removed or can't be read, the text goes back to what Use system font shows. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** New Profile background patch: a switch under Profile in App opens TikTok's own profile background editor in Edit profile and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to. It starts off. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** Hide CAPTCHA popups is a switch again, in Hushfeed settings > Feed screen, and starts off. It skips the puzzle TikTok raises while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. With Hide the risk control CAPTCHA patched in, that check's browsing puzzles are skipped too. The rule comes from na-x-ril's onlynazril patches.
+
+* **TikTok:** With Block contact list access on, a contacts read that asks for every column now gets back an empty list that still has the contacts columns, so a TikTok screen that looks up a contact card's name doesn't trip over a missing column.
+
+* **TikTok:** Prefer H.264 video and Play SDR instead of HDR now keep a video's other versions when none of the preferred ones has an address to play from, so Playback quality still picks among versions that play.
+
+* **TikTok:** In Clear display, the bottom tabs stay hidden after you swipe over to a creator's profile and back (#84).
+
+* **TikTok:** Numbers typed into Own profile counts stay in their fields when the screen rotates or the theme changes while the editor is open.
+
+* **TikTok:** If the loaded Activity search fails on a TikTok build, its bar goes away and TikTok's own list stays on screen instead of the app closing. The search stays off until TikTok restarts.
+
+* **TikTok:** A new switch under Fade the video controls, Keep faded controls in Clear display, is on by default. Turn it off and Clear display hides the buttons and caption again while the fade still works everywhere else (#84).
+
+* **TikTok:** With Seek bar on video stories on, a story viewer you've closed doesn't stay in memory anymore while you keep using TikTok.
+
+* **TikTok:** A creator's name on the author line no longer stays cut short after a quick scroll, or after a photo post's badge shrinks to an icon (#127).
+
+* **TikTok:** Your profile can show a verified badge or hide its account warning on this phone. Other people see your real status.
+
+* **TikTok:** Media checks now exercise the installed muxer with generated clips and verify playable output. Test files are removed after verification.
+
+* **TikTok:** Switching Activity categories after a search no longer crashes the app. Search can start from the list already on screen.
+
+* **TikTok:** Device checks now recognize popup menus through their app ownership. Other apps and unmatched windows still refuse input.
+
+* **TikTok:** Your own profile can show counts you choose on this phone. Blank fields keep TikTok's counts. Other people see the real values.
+
+* **TikTok:** Added optional search for loaded Activity notifications. Search pauses loading more, and clearing the query restores the current list and position.
+
+* **TikTok:** Photo posts keep their X usable when the controls are faded in Clear display. Other faded controls still pass taps through to the video (#84).
+
+* **TikTok:** Verified caption styling and empty feed handling on Android 6 in the small ART helper.
+
+* **TikTok:** Verified brightness and volume drags over the faded comment rail. Device checks restore brightness, audio and temporary settings after each drag.
+
+* **TikTok:** Gesture checks now refuse input when a muted stream hides its volume and reject gestures that finish after the deadline.
+
+* **TikTok:** Device checks now support real two-finger gestures. Both finger positions on the rail were verified to exit Clear display (#84).
+
+* **TikTok:** A hidden Clear display seekbar stays transparent after TikTok changes its opacity or replaces the row. Turning the hide setting off restores TikTok's latest opacity (#84).
+
+* **TikTok:** Automatic Clear display tries again when you reopen the same video in a new viewer. A manual exit still lasts while you return from comments or another brief focus loss (#84).
+
+* **TikTok:** Verified that releasing or expiring a session hold keeps video paused until another app returns audio focus.
+
+* **TikTok:** Local development index previews check the bundle's actual version and Manager's main/dev ordering. They leave the stable index untouched and don't publish anything.
+
+* **TikTok:** Hide root keeps root status and root-tool details out of TikTok's device checks. It starts off. Restart TikTok after changing it.
+
+* **TikTok:** Block this creator under Share sheet adds a Block action beside Report. It starts off and offers Undo after TikTok confirms. An older Undo waits for a pending block of the same creator.
+
+* **TikTok:** Received DM stickers open a preview with Save media. Saving uses the chosen sticker format and checks encrypted files before writing them. Opening the preview sends no message.
+
+* **TikTok:** Release uploads now stay in a draft until the bundle, receipt and checksums have been downloaded and verified. Interrupted uploads resume only after existing assets match. An optional immutable check requires GitHub's repository setting and verifies the published attestation.
+
+* **TikTok:** Verified that TalkBack announces a settings notice's action as Double tap to close.
+
+* **TikTok:** Clear all is visible beside Suggested accounts in the Inbox again. TikTok's full-width title wrapper now leaves room for a button with a full-size touch target.
+
+* **TikTok:** What's new now shows a concise summary of each change in the settings language. Full changelog opens the complete release history. Later and Got it keep their existing behavior, and the actions wrap on narrow screens or with larger text.
+
+* **TikTok:** Feature Gate Lab has a New comment emoji preset. It enables the native comment emoji experiment while keeping TikTok's catalog availability and fallback checks. Restart TikTok after applying it. Assets and server eligibility still determine what appears.
+
+* **TikTok:** Feature Gate Lab has a More hashtags per post preset. It turns off the client hashtag cap without changing the maximum or unrelated caption checks. Restart TikTok after applying it. TikTok may still enforce a server limit.
+
+* **TikTok:** A new APK inspector checks native library load alignment and stored ZIP offsets for 16 KB pages. It reports failures per library without extracting files. Android runtime compatibility still needs a separate device check.
+
+* **TikTok:** Settings tables can be exported as XML, translated and imported before regeneration. The exchange preserves plural forms and format placeholders, and rejects changed keys or incomplete translations before replacing a table.
+
+* **TikTok:** Fixture checks no longer print duplicate job-removal errors when patching finishes during output collection. Failed applications still reject the push.
+
+* **TikTok:** A sticker preview gets its Save action when TikTok adds the native actions late, replaces their row or removes the Save button. Reusing the preview still saves the sticker currently shown.
+
+* **TikTok:** Turning off Hide suggested accounts restores a suggestion cell's original spacing, including negative margins.
+
+* **TikTok:** The original reporter confirmed that the post date follows Author text size (#66).
+
 ## 0.71.3 (2026-10-11)
 
 * **TikTok:** With Show a LIVE under the status bar on, every room you scroll to reaches up under the clock with the shade behind it. Some rooms kept a black band there, and after the first few LIVEs the strip could go light again (#137).

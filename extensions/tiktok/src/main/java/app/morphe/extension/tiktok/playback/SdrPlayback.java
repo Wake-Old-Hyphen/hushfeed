@@ -50,8 +50,9 @@ public final class SdrPlayback {
 
     /**
      * The same list without its HDR gears, when the switch is on and at least one SDR gear is
-     * left. Playback quality calls this first so it picks among SDR gears only, whichever of the
-     * two hooks runs first.
+     * left, unless no SDR gear has a playable address while an HDR one does
+     * ({@link PreferredGears}). Playback quality calls this first so it picks among SDR gears
+     * only, whichever of the two hooks runs first.
      */
     static List<?> dropHdr(List<?> original) {
         if (original == null || original.size() < 2 || !Settings.PLAY_SDR.get()) return original;
@@ -59,8 +60,7 @@ public final class SdrPlayback {
         for (Object gear : original) {
             if (!isHdr(gear)) sdr.add(gear);
         }
-        if (sdr.isEmpty() || sdr.size() == original.size()) return original;
-        return sdr;
+        return PreferredGears.narrow(original, sdr, "Play SDR instead of HDR");
     }
 
     /**
@@ -98,5 +98,6 @@ public final class SdrPlayback {
 
     static void resetForTests() {
         described = false;
+        PreferredGears.resetForTests();
     }
 }

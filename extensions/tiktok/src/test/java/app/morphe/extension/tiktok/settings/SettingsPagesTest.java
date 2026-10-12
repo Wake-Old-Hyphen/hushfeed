@@ -193,62 +193,20 @@ public class SettingsPagesTest {
         }
     }
 
-    @Test public void anUnvalidatedCaptchaSwitchStaysUnavailableOnAMountedPage() throws Exception {
-        assertUnavailableCaptchaRow(null);
-    }
-
-    @Test @Config(sdk = 29)
-    public void theUnavailableCaptchaRowRendersInDarkTheme() throws Exception {
-        assertUnavailableCaptchaRow("dark");
-    }
-
-    @Test @Config(sdk = 29, qualifiers = "w480dp-h960dp-notnight-mdpi")
-    public void theUnavailableCaptchaRowRendersInLightTheme() throws Exception {
-        assertUnavailableCaptchaRow("light");
-    }
-
-    private void assertUnavailableCaptchaRow(String theme) throws Exception {
+    /** Hide CAPTCHA popups is a switch again, for its own setting, with the old notice row gone. */
+    @Test public void theCaptchaRowSwitchesItsOwnSetting() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
-            for (boolean saved : new boolean[]{false, true}) {
-                Settings.HIDE_CAPTCHA_POPUPS.save(saved);
-                TikTokPreferenceFragment page = attachSection(activity, "INTERFACE");
-                Preference row = page.findPreference("hushfeed_captcha_unavailable");
-                assertNotNull(row);
-                assertFalse(row.isEnabled());
-                assertFalse(row.isSelectable());
-                assertFalse(row instanceof android.preference.SwitchPreference);
-                assertNull(app.morphe.extension.shared.settings.Setting
-                        .getSettingFromPath(row.getKey()));
-                assertEquals(L10n.t(activity,
-                        "Unavailable on these TikTok builds. All verification challenges stay visible."),
-                        String.valueOf(row.getSummary()));
-                assertEquals(saved, Settings.HIDE_CAPTCHA_POPUPS.savedValue());
-                if (theme != null) {
-                    ListView list = page.getView().findViewById(android.R.id.list);
-                    int position = positionOf(list, row.getKey());
-                    assertTrue("the unavailable row isn't in the mounted list", position >= 0);
-                    list.setSelectionFromTop(position, 70);
-                    Shadows.shadowOf(Looper.getMainLooper()).idle();
-                    View rendered = list.getChildAt(position - list.getFirstVisiblePosition());
-                    assertNotNull(rendered);
-                    assertNull("an informational row must not advertise navigation",
-                            rendered.findViewWithTag("hushfeed_chevron"));
-                    UiCapture.save(page.getView(), "pages/" + theme
-                            + "/captcha-unavailable-saved-" + saved + ".png");
-                }
-                Settings.HIDE_CAPTCHA_POPUPS.save(!saved);
-                refreshAvailability(page);
-                assertFalse("a stored-value refresh re-enabled the information row", row.isEnabled());
-                assertEquals(!saved, Settings.HIDE_CAPTCHA_POPUPS.savedValue());
-                app.morphe.extension.shared.settings.PausedProcess.set(true);
-                refreshAvailability(page);
-                assertFalse("Pause re-enabled the information row", row.isEnabled());
-                app.morphe.extension.shared.settings.PausedProcess.set(false);
-            }
+            TikTokPreferenceFragment page = attachSection(activity, "INTERFACE");
+            assertNull(page.findPreference("hushfeed_captcha_unavailable"));
+            Preference row = page.findPreference(Settings.HIDE_CAPTCHA_POPUPS.key);
+            assertNotNull(row);
+            assertTrue(row instanceof android.preference.SwitchPreference);
+            assertTrue(row.isEnabled());
+            assertSame(Settings.HIDE_CAPTCHA_POPUPS,
+                    app.morphe.extension.shared.settings.Setting.getSettingFromPath(row.getKey()));
         } finally {
-            app.morphe.extension.shared.settings.PausedProcess.set(false);
             Settings.HIDE_CAPTCHA_POPUPS.resetToDefault();
         }
     }
@@ -645,6 +603,13 @@ public class SettingsPagesTest {
                 String name = "pages/" + theme + "/" + SECTIONS[i].toLowerCase(java.util.Locale.ROOT);
                 UiCapture.save(page.getView(), name + ".png");
                 ListView list = page.getView().findViewById(android.R.id.list);
+                if ("PRIVACY".equals(SECTIONS[i])) {
+                    int root = positionOf(list, Settings.HIDE_ROOT.key);
+                    assertTrue("the root privacy control is missing", root > 0);
+                    list.setSelectionFromTop(Math.max(0, root - 2), 70);
+                    Shadows.shadowOf(Looper.getMainLooper()).idle();
+                    UiCapture.save(page.getView(), name + "-device.png");
+                }
                 if ("SHARE".equals(SECTIONS[i])) {
                     for (int row = 0; row < list.getCount(); row++) {
                         Object item = list.getAdapter().getItem(row);

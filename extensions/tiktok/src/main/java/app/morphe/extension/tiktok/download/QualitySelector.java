@@ -97,7 +97,7 @@ public final class QualitySelector {
         }
         Object best = null;
         for (Object gear : gears) {
-            if (!usable(Reflect.property(gear, "getPlayAddr", "playAddr"))) continue;
+            if (!hasUsableAddress(gear)) continue;
             if (forFile && !playable(gear)) continue;
             if (target > 0 && height(gear) == 0) continue;
             if (best == null || better(gear, best, target, "lowest".equals(mode), forFile)) best = gear;
@@ -174,6 +174,15 @@ public final class QualitySelector {
     private static long number(Object value, String getter, String field) {
         Object raw = Reflect.property(value, getter, field);
         return raw instanceof Number ? ((Number) raw).longValue() : 0;
+    }
+
+    /**
+     * Whether a rendition's play address holds a URL this would choose: the same test for the
+     * player's gears and a save's, and nothing about the codec, so ByteVC2 passes it. A missing,
+     * empty or unreadable address does not.
+     */
+    public static boolean hasUsableAddress(Object gear) {
+        return usable(Reflect.property(gear, "getPlayAddr", "playAddr"));
     }
 
     private static boolean usable(Object address) {

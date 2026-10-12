@@ -121,7 +121,13 @@ public class InboxLayoutLifecycleTest {
         assertSame(replacement, replacementClear.getParent());
         assertEquals(Color.BLACK, replacementClear.getCurrentTextColor());
         assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, replacementClear.getLayoutParams().width);
-        assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, replacementClear.getLayoutParams().height);
+        assertEquals(ViewGroup.LayoutParams.WRAP_CONTENT, replacementClear.getLayoutParams().height);
+        replacement.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        replacement.layout(0, 0, replacement.getMeasuredWidth(), replacement.getMeasuredHeight());
+        assertTrue("the replacement keeps a full-size touch target",
+                replacementClear.getMeasuredHeight() >= Math.round(
+                        48 * inbox.activity.getResources().getDisplayMetrics().density));
         assertTrue(replacementClear.isShown());
         assertTrue(replacementTitle.performClick());
         assertEquals("the host title's own click remains installed", 1, hostClicks[0]);

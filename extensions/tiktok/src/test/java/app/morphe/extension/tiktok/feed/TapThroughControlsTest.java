@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Gravity;
@@ -41,13 +42,14 @@ import org.robolectric.annotation.Config;
  * its own flags untouched, and Pause gives TikTok its look and its taps back.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 28)
+@Config(sdk = 28, qualifiers = "w1080dp-h1920dp-mdpi")
 public class TapThroughControlsTest {
     private static final int CELL_ID = 0x7f0a0f01;
     private static final int COLUMN_ID = 0x7f0a0f02;
     private static final int FRAME_ID = 0x7f0a0f03;
     private static final int COVER_ID = 0x7f0a0f04;
     private static final int SEARCH_ID = 0x7f0a0f05;
+    private static final int PHOTO_EXIT_ID = 0x7f0a0f06;
     private static final int WIDTH = 1080;
     private static final int HEIGHT = 1920;
 
@@ -68,6 +70,8 @@ public class TapThroughControlsTest {
         VideoOverlayHider.resolveForTests("47.1.4:bqv", FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER_ID);
         VideoOverlayHider.resolveForTests("47.1.4:ll8", SEARCH_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:v1c", PHOTO_EXIT_ID);
+        Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
     }
@@ -78,12 +82,15 @@ public class TapThroughControlsTest {
         RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(false, 2));
         Settings.CLEAR_DISPLAY.save(false);
         Settings.FADE_CONTROLS_OPACITY.save(100);
+        Settings.FADE_IN_CLEAR_DISPLAY.save(true);
+        Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         SettingsStatus.videoOverlaysEnabled = overlays;
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         VideoOverlayHider.resolveForTests("47.1.4:llj", 0);
         VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
         VideoOverlayHider.resolveForTests("47.1.4:ll8", 0);
+        VideoOverlayHider.resolveForTests("47.1.4:v1c", 0);
         ClearDisplayShownControls.resetForTests();
     }
 
@@ -117,6 +124,25 @@ public class TapThroughControlsTest {
 
     private static void clear(boolean on) {
         RememberClearDisplayPatch.rememberClearDisplayEvent(new VideoOverlayHiderTest.ClearEvent(on, on ? 0 : 2));
+    }
+
+    /** On the phone the photo close is inside the full-width rail, beside ordinary buttons. */
+    private View[] photoControls(int[] closes) {
+        ViewGroup cell = (ViewGroup) column.getParent();
+        int index = cell.indexOfChild(column);
+        cell.removeView(column);
+        FrameLayout rail = new FrameLayout(activity);
+        rail.setId(COLUMN_ID);
+        column = rail;
+        cell.addView(rail, index, new FrameLayout.LayoutParams(WIDTH, 600, Gravity.BOTTOM));
+        View close = new View(activity);
+        close.setId(PHOTO_EXIT_ID);
+        close.setOnClickListener(v -> closes[0]++);
+        rail.addView(close, new FrameLayout.LayoutParams(124, 124, Gravity.START | Gravity.BOTTOM));
+        View ordinary = new View(activity);
+        ordinary.setOnClickListener(v -> columnClicks++);
+        rail.addView(ordinary, new FrameLayout.LayoutParams(160, 180, Gravity.END | Gravity.TOP));
+        return new View[]{close, ordinary};
     }
 
     private void frameDrawn() {
@@ -229,6 +255,150 @@ public class TapThroughControlsTest {
             assertTrue("TikTok's own flags were never changed", column.isClickable());
             assertFalse(column.isLongClickable());
             assertTrue(column.isEnabled());
+        }
+    }
+
+    /**
+     * #84 on 0.71.2: any fade below 100 kept the buttons in sight in Clear display, and someone
+     * who wanted the fade on the feed had no way to keep Clear display clear. With Keep faded
+     * controls in Clear display off, the fade stays outside it and Clear display clears as at 100.
+     */
+    @Test
+    public void withTheFadeKeptOutOfClearDisplayItClearsAsAt100() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            Settings.FADE_IN_CLEAR_DISPLAY.save(false);
+
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("outside Clear display the fade still applies", 0.5f, column.getAlpha(), 0f);
+            tap(column);
+            assertEquals(1, columnClicks);
+
+            clear(true);
+            VideoOverlayHider.applyTo(activity);
+            // TikTok's Clear display takes the controls to 0, and that's what stays.
+            column.setAlpha(0f);
+            frame.setAlpha(0f);
+            frameDrawn();
+            assertEquals("the rail isn't held at the level", 0f, column.getAlpha(), 0f);
+            assertEquals(0f, frame.getAlpha(), 0f);
+            assertFalse("no tap is sent through", VideoOverlayHider.tapsGoThroughNow());
+            assertFalse(TapThroughControls.isMarked(column));
+            assertFalse(TapThroughControls.isMarked(frame));
+
+            Settings.FADE_IN_CLEAR_DISPLAY.save(true);
+            VideoOverlayHider.applyTo(activity);
+            frameDrawn();
+            assertEquals("switched back on, the level holds again", 0.5f, column.getAlpha(), 0f);
+            assertTrue(VideoOverlayHider.tapsGoThroughNow());
+        }
+    }
+
+    /** Switched off while Clear display is already on, the controls go back to TikTok's cleared look. */
+    @Test
+    public void turningTheSwitchOffInClearDisplayLetsTheControlsClear() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+
+            clear(true);
+            VideoOverlayHider.applyTo(activity);
+            column.setAlpha(0f);
+            frame.setAlpha(0f);
+            frameDrawn();
+            assertEquals(0.5f, column.getAlpha(), 0f);
+            assertTrue(VideoOverlayHider.tapsGoThroughNow());
+            assertTrue(TapThroughControls.isMarked(column));
+
+            Settings.FADE_IN_CLEAR_DISPLAY.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertFalse("taps stop going through at once", VideoOverlayHider.tapsGoThroughNow());
+            assertFalse(TapThroughControls.isMarked(column));
+            assertFalse(TapThroughControls.isMarked(frame));
+
+            // The level is let go the way a Clear display exit lets it go: held through one
+            // frame, then TikTok's 0 once the hold has run out.
+            column.setAlpha(0f);
+            frame.setAlpha(0f);
+            frameDrawn();
+            org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofMillis(1001));
+            column.setAlpha(0f);
+            frame.setAlpha(0f);
+            frameDrawn();
+            assertEquals("the rail clears with TikTok", 0f, column.getAlpha(), 0f);
+            assertEquals(0f, frame.getAlpha(), 0f);
+        }
+    }
+
+    @Test
+    public void aVisiblePhotoCloseInsideTheFadedRailKeepsItsNativeTap() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            int[] closes = {0};
+            View[] controls = photoControls(closes);
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            clear(true);
+            VideoOverlayHider.applyTo(activity);
+            float[] point = at(controls[0], 0.5f, 0.5f);
+            Rect hit = new Rect();
+            assertTrue("the native close has a clipped visible hit area", controls[0].getGlobalVisibleRect(hit));
+            assertTrue("the window tap is inside that hit area", hit.contains((int) point[0], (int) point[1]));
+            tap(controls[0]);
+            assertEquals("the photo close must remain usable inside its faded ancestor", 1, closes[0]);
+            assertEquals(0, videoClicks);
+            tap(controls[1]);
+            assertEquals("other faded controls still pass through", 0, columnClicks);
+            assertEquals(1, videoClicks);
+            assertEquals("the rail never stays displaced", 0f, column.getTranslationX(), 0f);
+        }
+    }
+
+    @Test
+    public void aHiddenOrDisabledPhotoCloseNeverKeepsItsRailInTheTouchSearch() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            int[] closes = {0};
+            View close = photoControls(closes)[0];
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            clear(true);
+            VideoOverlayHider.applyTo(activity);
+            close.setAlpha(0f);
+            tap(close);
+            close.setAlpha(1f);
+            close.setEnabled(false);
+            tap(close);
+            close.setEnabled(true);
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
+            VideoOverlayHider.applyTo(activity);
+            tap(close);
+            assertEquals(0, closes[0]);
+            assertEquals("invisible or disabled controls cannot trap the three taps", 3, videoClicks);
+        }
+    }
+
+    @Test
+    public void aSecondFingerOnThePhotoCloseStillBelongsToTheVideoPinch() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            feed(controller.get());
+            View close = photoControls(new int[]{0})[0];
+            List<Integer> videoEvents = new ArrayList<>();
+            List<Integer> closeEvents = new ArrayList<>();
+            video.setOnTouchListener((v, event) -> { videoEvents.add(event.getActionMasked()); return true; });
+            close.setOnTouchListener((v, event) -> { closeEvents.add(event.getActionMasked()); return true; });
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            clear(true);
+            VideoOverlayHider.applyTo(activity);
+            float[] first = at(video, 0.3f, 0.3f);
+            float[] second = at(close, 0.5f, 0.5f);
+            long now = SystemClock.uptimeMillis();
+            send(MotionEvent.obtain(now, now, MotionEvent.ACTION_DOWN, first[0], first[1], 0));
+            send(twoFingers(now, MotionEvent.ACTION_POINTER_DOWN | (1 << MotionEvent.ACTION_POINTER_INDEX_SHIFT), first, second));
+            send(twoFingers(now, MotionEvent.ACTION_POINTER_UP | (1 << MotionEvent.ACTION_POINTER_INDEX_SHIFT), first, second));
+            send(MotionEvent.obtain(now, now + 40, MotionEvent.ACTION_UP, first[0], first[1], 0));
+            assertTrue("the close must not split off the second finger", closeEvents.isEmpty());
+            assertEquals(List.of(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN,
+                    MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP), videoEvents);
         }
     }
 

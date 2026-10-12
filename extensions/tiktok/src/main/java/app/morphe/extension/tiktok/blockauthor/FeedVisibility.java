@@ -182,6 +182,18 @@ public final class FeedVisibility {
     }
 
     /**
+     * @return true while the feed's page is scrolled sideways to a creator's profile, a page of
+     *         the same pager, with the Home tab still selected on it. {@link #isOnFeed} answers
+     *         no there; this is for what rides on the feed's page and has to stay as it was
+     *         for the swipe back (#84).
+     */
+    public static boolean isFeedPageScrolledAway(Activity activity) {
+        View homeTab = homeTab(activity);
+        return homeTab != null && homeTab.isSelected() && homeTab.getVisibility() == View.VISIBLE
+                && isScrolledAway(homeTab) && !isDetailVisible() && !isStoryVisible(activity);
+    }
+
+    /**
      * @return true while TikTok's clear display has the feed's controls put away: the Home tab
      *         selected and in place, hidden by nothing but its own bar, with no detail page or
      *         story over it.

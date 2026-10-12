@@ -512,8 +512,9 @@ public final class VideoOverlayHider {
             // level instead of taking them away, and lets taps through them (#84). Across a
             // carried swipe the incoming video's controls show the same way rather than going.
             // Asked of the chosen level: the burn-in dim lowers what's drawn, never what Clear
-            // display does.
-            fadedClear = clearLive && chosenFade > 0 && chosenFade < 100;
+            // display does. With Keep faded controls in Clear display off, Clear display clears
+            // them as it does at 100 and the fade is left to the rest of the time.
+            fadedClear = clearLive && chosenFade > 0 && chosenFade < 100 && Settings.FADE_IN_CLEAR_DISPLAY.get();
             fadeLevel = BurnInGuard.pass(activity, chosenFade, overlaysOn);
             boolean carryHides = carry && !fadedClear;
             boolean tabStrip = !detailPager && clearLive;
@@ -569,8 +570,12 @@ public final class VideoOverlayHider {
                 wanted[SURVEY_TARGET] = surveys;
                 wanted[TAB_STRIP_TARGET] = tabStrip;
                 // Only over the Home feed. A live state that outlasts the feed (Inbox opened from
-                // a notification) must not take the tabs off another page.
-                wanted[BOTTOM_TABS_TARGET] = tabStrip && FeedVisibility.isOnFeed(activity);
+                // a notification) must not take the tabs off another page. The tabs ride on the
+                // feed's page, so they stay away while it's scrolled sideways to a creator's
+                // profile: put back there, nothing took them off again when the swipe back
+                // settled without a layout pass (#84).
+                wanted[BOTTOM_TABS_TARGET] = tabStrip && (FeedVisibility.isOnFeed(activity)
+                        || FeedVisibility.isFeedPageScrolledAway(activity));
                 wanted[BOTTOM_TABS_DIVIDER_TARGET] = wanted[BOTTOM_TABS_TARGET];
                 wanted[FOLLOWING_STORY_TARGET] = tabStrip && !FeedVisibility.isStoryVisible(activity);
                 wanted[DETAIL_COMMENT_BAR_TARGET] = detailCommentBar;
@@ -629,6 +634,8 @@ public final class VideoOverlayHider {
                             touchScale != 1f);
                     alignBarRows(found, TRAVERSAL.selected, hidden);
                     fadeFullscreenEntries();
+                    int photoExit = TRAVERSAL.selected[CLEAR_PHOTO_EXIT_TARGET];
+                    TapThroughControls.photoExits(activity, !clearControls && photoExit >= 0 ? found.get(photoExit) : null);
                     if (fadedClear && TapThroughControls.anyMarked()) TapThroughControls.watch(activity);
                     // The size goes on the icon inside each button, not the button. The slots
                     // are packed with no room between them, so a grown button lands on its
@@ -745,7 +752,8 @@ public final class VideoOverlayHider {
             }
         }
         View watched = rescaleRoot.get();
-        if (touchScale != 1f || !FADED_TO.isEmpty() || ClearDisplayShownControls.anyKept()) {
+        if (touchScale != 1f || !FADED_TO.isEmpty() || !FADED_HERE.isEmpty()
+                || ClearDisplayShownControls.anyKept()) {
             if (watched != root && root != null) {
                 if (watched != null && watched.getViewTreeObserver().isAlive()) {
                     watched.getViewTreeObserver().removeOnPreDrawListener(RESCALE);
@@ -792,8 +800,17 @@ public final class VideoOverlayHider {
     /** The pre-draw pass: every faded view TikTok has written its own opacity to, faded again. */
     static void reapplyFade() {
         ClearDisplayShownControls.apply(tapsGoThroughNow(), clearOn());
-        if (FADED_TO.isEmpty()) return;
+        if (FADED_TO.isEmpty() && FADED_HERE.isEmpty()) return;
         int corrected = 0;
+        for (Map.Entry<View, Float> entry : FADED_HERE.entrySet()) {
+            View view = entry.getKey();
+            if (view == null || !view.isAttachedToWindow()) continue;
+            float nativeAlpha = view.getAlpha();
+            if (nativeAlpha == 0f) continue;
+            entry.setValue(nativeAlpha);
+            view.setAlpha(0f);
+            corrected++;
+        }
         for (Map.Entry<View, float[]> entry : FADED_TO.entrySet()) {
             View view = entry.getKey();
             float[] held = entry.getValue();
@@ -1064,8 +1081,8 @@ public final class VideoOverlayHider {
                 for (View view : found.get(chosen)) {
                     // The progress bar only goes see-through, so a drag along the bottom edge
                     // still seeks while it's out of sight (#84). Otherwise it fades with the
-                    // controls. TikTok writes alpha on the SeekBar inside the row (a paused video
-                    // sets it to 1), never on the row, so the fade on the row stays.
+                    // controls. A native alpha write or comments rebind can bring the row back,
+                    // so the pre-draw pass keeps the transparent row out of sight too.
                     if (target == CLEAR_SEEK_BAR_TARGET) {
                         if (wanted) {
                             setFaded(view, 100);
@@ -1397,8 +1414,11 @@ public final class VideoOverlayHider {
         }
 
         if (transparent) {
-            if (!FADED_HERE.containsKey(view)) FADED_HERE.put(view, view.getAlpha());
-            if (view.getAlpha() != 0f) view.setAlpha(0f);
+            float nativeAlpha = view.getAlpha();
+            if (!FADED_HERE.containsKey(view) || nativeAlpha != 0f) {
+                FADED_HERE.put(view, nativeAlpha);
+            }
+            if (nativeAlpha != 0f) view.setAlpha(0f);
             return;
         }
 
@@ -1478,11 +1498,12 @@ public final class VideoOverlayHider {
 
     /**
      * Whether a finger goes through the faded controls right now: Clear display (live, or carried
-     * across a swipe) with the fade between 0 and 100, not paused, and the overlay patch in. Asked
-     * on every finger down, so it reads the live state rather than the last pass's.
+     * across a swipe) with the fade between 0 and 100 kept in it, not paused, and the overlay patch
+     * in. Asked on every finger down, so it reads the live state rather than the last pass's.
      */
     static boolean tapsGoThroughNow() {
         if (HushfeedPause.isPaused() || !SettingsStatus.videoOverlaysEnabled) return false;
+        if (!Settings.FADE_IN_CLEAR_DISPLAY.get()) return false;
         int level = Settings.FADE_CONTROLS_OPACITY.get();
         return level > 0 && level < 100 && (RememberClearDisplayPatch.isClearDisplayNow()
                 || RememberClearDisplayPatch.isCarryingClear());

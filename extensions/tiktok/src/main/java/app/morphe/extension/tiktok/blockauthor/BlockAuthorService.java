@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.blockauthor;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.SignedInUser;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -89,13 +90,26 @@ public final class BlockAuthorService {
         submit(author, UNBLOCK, callback);
     }
 
+    /** A share-sheet action belongs to the account that opened it, including while queued. */
+    public static void block(VideoAuthor author, String account, Callback callback) {
+        submit(author, BLOCK, account == null ? "" : account, callback);
+    }
+
+    public static void unblock(VideoAuthor author, String account, Callback callback) {
+        submit(author, UNBLOCK, account == null ? "" : account, callback);
+    }
+
     private static void submit(VideoAuthor author, int blockType, Callback callback) {
+        submit(author, blockType, null, callback);
+    }
+
+    private static void submit(VideoAuthor author, int blockType, String account, Callback callback) {
         try {
             Utils.submitOnBackgroundThread(() -> {
                 Result result = Result.UNCONFIRMED;
 
                 try {
-                    result = execute(author, blockType);
+                    result = execute(author, blockType, account);
                 } catch (UnsupportedOperationException ex) {
                     Logger.printInfo(() -> "Block endpoint unavailable: " + ex.getMessage());
                 } catch (Throwable ex) {
@@ -112,7 +126,8 @@ public final class BlockAuthorService {
         }
     }
 
-    private static Result execute(VideoAuthor author, int blockType) throws Exception {
+    private static Result execute(VideoAuthor author, int blockType, String account) throws Exception {
+        if (!accountMatches(account)) return Result.UNCONFIRMED;
         Method block = blockMethod();
         Object service = service();
 
@@ -123,7 +138,7 @@ public final class BlockAuthorService {
         Logger.printDebug(() -> "Sending block_type=" + blockType + " for " + author.reference());
 
         Object call = block.invoke(service, uid, secUid, blockType, SOURCE_UNSPECIFIED);
-        if (call == null) {
+        if (call == null || !accountMatches(account)) {
             return Result.UNCONFIRMED;
         }
 
@@ -132,6 +147,7 @@ public final class BlockAuthorService {
         // as a body with a non-zero status code rather than an exception.
         Method execute = call.getClass().getMethod("execute");
         execute.setAccessible(true);
+        if (!accountMatches(account)) return Result.UNCONFIRMED;
         Object response = execute.invoke(call);
         if (response == null) {
             return Result.UNCONFIRMED;
@@ -146,6 +162,11 @@ public final class BlockAuthorService {
             return Result.REJECTED;
         }
         return Result.CONFIRMED;
+    }
+
+    private static boolean accountMatches(String account) {
+        // Null is the existing feed/comment contract. Account-bound callers must supply a UID.
+        return account == null || !account.isEmpty() && account.equals(SignedInUser.id());
     }
 
     /**

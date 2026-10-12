@@ -1,0 +1,883 @@
+## Unreleased
+
+* **TikTok:** New Show commenter handle and region patch: comments can show each commenter's @username instead of their display name, and the country their account is set to after the comment's time. Each has its own switch in Hushfeed settings > Comments, and both start off. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** Use system font can also show TikTok's text in a .ttf or .otf file you import. Turn on Use an imported font in App, pick the file and restart TikTok. If the file is removed or can't be read, the text goes back to what Use system font shows. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** New Profile background patch: a switch under Profile in App opens TikTok's own profile background editor in Edit profile and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to. It starts off. Ported from na-x-ril's onlynazril patches.
+
+* **TikTok:** Hide CAPTCHA popups is a switch again, in Hushfeed settings > Feed screen, and starts off. It skips the puzzle TikTok raises while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. With Hide the risk control CAPTCHA patched in, that check's browsing puzzles are skipped too. The rule comes from na-x-ril's onlynazril patches.
+
+* **TikTok:** With Block contact list access on, a contacts read that asks for every column now gets back an empty list that still has the contacts columns, so a TikTok screen that looks up a contact card's name doesn't trip over a missing column.
+
+* **TikTok:** Prefer H.264 video and Play SDR instead of HDR now keep a video's other versions when none of the preferred ones has an address to play from, so Playback quality still picks among versions that play.
+
+* **TikTok:** In Clear display, the bottom tabs stay hidden after you swipe over to a creator's profile and back (#84).
+
+* **TikTok:** Numbers typed into Own profile counts stay in their fields when the screen rotates or the theme changes while the editor is open.
+
+* **TikTok:** If the loaded Activity search fails on a TikTok build, its bar goes away and TikTok's own list stays on screen instead of the app closing. The search stays off until TikTok restarts.
+
+* **TikTok:** A new switch under Fade the video controls, Keep faded controls in Clear display, is on by default. Turn it off and Clear display hides the buttons and caption again while the fade still works everywhere else (#84).
+
+* **TikTok:** With Seek bar on video stories on, a story viewer you've closed doesn't stay in memory anymore while you keep using TikTok.
+
+* **TikTok:** A creator's name on the author line no longer stays cut short after a quick scroll, or after a photo post's badge shrinks to an icon (#127).
+
+* **TikTok:** Your profile can show a verified badge or hide its account warning on this phone. Other people see your real status.
+
+* **TikTok:** Media checks now exercise the installed muxer with generated clips and verify playable output. Test files are removed after verification.
+
+* **TikTok:** Switching Activity categories after a search no longer crashes the app. Search can start from the list already on screen.
+
+* **TikTok:** Device checks now recognize popup menus through their app ownership. Other apps and unmatched windows still refuse input.
+
+* **TikTok:** Your own profile can show counts you choose on this phone. Blank fields keep TikTok's counts. Other people see the real values.
+
+* **TikTok:** Added optional search for loaded Activity notifications. Search pauses loading more, and clearing the query restores the current list and position.
+
+* **TikTok:** Photo posts keep their X usable when the controls are faded in Clear display. Other faded controls still pass taps through to the video (#84).
+
+* **TikTok:** Verified caption styling and empty feed handling on Android 6 in the small ART helper.
+
+* **TikTok:** Verified brightness and volume drags over the faded comment rail. Device checks restore brightness, audio and temporary settings after each drag.
+
+* **TikTok:** Gesture checks now refuse input when a muted stream hides its volume and reject gestures that finish after the deadline.
+
+* **TikTok:** Device checks now support real two-finger gestures. Both finger positions on the rail were verified to exit Clear display (#84).
+
+* **TikTok:** A hidden Clear display seekbar stays transparent after TikTok changes its opacity or replaces the row. Turning the hide setting off restores TikTok's latest opacity (#84).
+
+* **TikTok:** Automatic Clear display tries again when you reopen the same video in a new viewer. A manual exit still lasts while you return from comments or another brief focus loss (#84).
+
+* **TikTok:** Verified that releasing or expiring a session hold keeps video paused until another app returns audio focus.
+
+* **TikTok:** Local development index previews check the bundle's actual version and Manager's main/dev ordering. They leave the stable index untouched and don't publish anything.
+
+* **TikTok:** Hide root keeps root status and root-tool details out of TikTok's device checks. It starts off. Restart TikTok after changing it.
+
+* **TikTok:** Block this creator under Share sheet adds a Block action beside Report. It starts off and offers Undo after TikTok confirms. An older Undo waits for a pending block of the same creator.
+
+* **TikTok:** Received DM stickers open a preview with Save media. Saving uses the chosen sticker format and checks encrypted files before writing them. Opening the preview sends no message.
+
+* **TikTok:** Release uploads stay in a draft until the bundle, receipt and checksums are downloaded and verified. Resuming checks existing assets. An optional immutable check requires GitHub's repository setting and verifies the published attestation.
+
+* **TikTok:** Verified that TalkBack reads a settings notice's action as Double tap to close.
+
+* **TikTok:** Inbox Clear all now stays visible beside Suggested accounts, with room for its full-size touch target.
+
+* **TikTok:** What's new summarizes every change in the settings language, with Full changelog for complete history. Later and Got it keep their behavior, and actions wrap on narrow screens or with larger text.
+
+* **TikTok:** New comment emoji is a Lab preset for TikTok's native emoji experiment. Restart after applying it. Catalog checks, fallback, assets and server eligibility still decide what appears.
+
+* **TikTok:** More hashtags per post disables TikTok's client cap without changing the maximum or other caption checks. Restart after applying it. A server limit may still apply.
+
+* **TikTok:** An APK inspector checks native load alignment and stored ZIP offsets for 16 KB pages without extracting files. Per-library failures are reported, while Android runtime compatibility needs a separate device check.
+
+* **TikTok:** Settings translation tables can round-trip through XML, preserving plural forms and placeholders. Imports reject changed keys or missing translations before replacing a table.
+
+* **TikTok:** Fixture output collection no longer reports duplicate job-cleanup errors when patching finishes. Failed applications still reject a push.
+
+* **TikTok:** Sticker previews regain Save when native actions arrive late, their row changes or the Save button disappears. Reused previews save the sticker currently shown.
+
+* **TikTok:** Turning off Hide suggested accounts restores original cell spacing, including negative margins.
+
+* **TikTok:** The original reporter confirmed that post dates follow Author text size (#66).
+
+## 0.71.3 (2026-10-11)
+
+* **TikTok:** Show LIVE under the status bar now fills the top edge in every room, without a black band or pale strip (#137).
+
+* **TikTok:** With Show LIVE under the status bar on, Clear display no longer leaves a strip under the clock, and side panels stay below it (#137).
+
+* **TikTok:** Hide the Tako bubble now covers the version in the feed's bottom corner (#115).
+
+* **TikTok:** The Lab's Profile banner preset now adds Add background to Edit profile without changing the rest of the layout (#80).
+
+* **TikTok:** The Favorites collections popup follows TikTok's dark theme, with a Dark Favorites popup switch under App (#142).
+
+## 0.71.2 (2026-10-11)
+
+* **TikTok:** Both LIVE status bar switches now work when you enter a room from a creator's search preview (#137).
+
+## 0.71.1 (2026-10-11)
+
+* **TikTok:** Keep captions in Clear display now retains their last native position, using the old position only before any caption appears (#141).
+
+* **TikTok:** Show LIVE under the status bar now matches the clock strip's shade to the room (#137).
+
+## 0.71.0 (2026-10-11)
+
+* **TikTok:** A held second tap no longer opens TikTok's long-press sheet over comments when custom gestures are on (#63).
+
+* **TikTok:** Offer LIVE quality in more rooms adds a picker where supported, except audio-only rooms, and remembers your choice until TikTok closes. It's off by default (#57).
+
+* **TikTok:** Profile grid dates and engagement rates now work on TikTok 47.1.4, including Favorites and liked videos.
+
+* **TikTok:** Following now applies blocked creators, words, count ranges and the other feed filters, including LIVE and story rules.
+
+* **TikTok:** Don't auto-translate these languages now gives a plain invalid-language-code warning instead of the caption filter's no-match warning (#121).
+
+* **TikTok:** Build details now lists resource-only patches without revealing your chosen app name or icon picture.
+
+* **TikTok:** With Log diagnostics on, each video's preview-picture count is logged once so an export can help explain missing seek-bar previews (#140).
+
+* **TikTok:** Build details and the full diagnostic log now list every code patch, including those without a switch.
+
+* **TikTok:** Remembered and automatic Clear display now work on a search result that starts playing as it opens (#84).
+
+* **TikTok:** Overlay hiding and Feed text sizes now work when a video or search opens directly, without For You behind it (#84).
+
+* **TikTok:** Browser privacy now lets trusted puzzle CAPTCHA pages use their bridge while keeping LIVE and Shop working (#87).
+
+* **TikTok:** Rapid taps no longer open duplicate Build details, Hook status, Licenses or What's new dialogs.
+
+* **TikTok:** Gesture actions now like the video on screen, or report a missing Like button instead of touching a neighboring video.
+
+* **TikTok:** A custom double-tap action now runs once even when both of TikTok's gesture handlers receive the tap.
+
+* **TikTok:** Unsupported seek-bar extras and comment translation hooks are skipped individually instead of breaking or partly applying a patch.
+
+* **TikTok:** Clear display settings now use TikTok's spelling consistently.
+
+* **TikTok:** Hiding an opened video's comment bar now leaves a long video's seek bar below its caption, away from the creator's name (#50).
+
+* **TikTok:** Fade the video controls now covers paused seek bars, Following stories and the controls on videos opened from search (#84).
+
+* **TikTok:** Save story from the share sheet adds a Downloads switch and button, using a clean copy when available and warning when it isn't (#93).
+
+* **TikTok:** Seek bar on video stories adds dragging and time display. It's off by default, and tapping still advances the story (#72).
+
+* **TikTok:** Replay in the background can restart a finished video while calls and other apps' audio still pause playback (#99).
+
+* **TikTok:** Spin the music disc and Keep the music disc still add feed choices that need a restart, including on 47.1.4's still disc (#68).
+
+* **TikTok:** Show the time beside the progress bar adds elapsed and total time. Bigger progress bar handle adds a larger handle and thicker line. Both start off (#90).
+
+* **TikTok:** Hide the Clear display controls now also removes the buffering line (#84).
+
+* **TikTok:** Translate button in comments translates the loaded comments and replies, with another tap restoring them. It starts off (#85).
+
+* **TikTok:** Clear display no longer leaves a hairline between the video and bottom tabs (#84).
+
+* **TikTok:** Hide the status bar in LIVE stays active through panels, and a new, default-off switch lets LIVE draw under the clock (#137).
+
+* **TikTok:** Double tap now offers every long-press action, including Like video, which never removes an existing like (#136).
+
+* **TikTok:** Videos opened from collections and grids now keep every post except ads, so filtering can't select the wrong video (#135).
+
+* **TikTok:** Hide the Send to row now keeps the compact share sheet's action rows (#120).
+
+* **TikTok:** Show the progress bar now works in For You on 47.1.4, including short videos (#134).
+
+* **TikTok:** Diagnostics now lists the biggest storage folders without filenames or account numbers (#70).
+
+* **TikTok:** Back and share actions no longer turn off remembered Clear display when opening a video (#84).
+
+* **TikTok:** Remove LIVE extras now warns that guest voice and video joins may break. Leave it out if you join rooms (#132).
+
+* **TikTok:** Remembered and immediate automatic Clear display now hide first-video controls and tabs, including videos opened from Favorites or profiles (#84).
+
+* **TikTok:** The author line now uses its available width before shortening a name and keeps the full country where it fits (#127).
+
+* **TikTok:** Hide videos you have already seen now leaves collections alone while still filtering For You, Following and Friends (#135).
+
+* **TikTok:** Keep the chosen TikTok language prevents a phone-language change from switching TikTok's language. It's under App > System and starts off (#61).
+
+* **TikTok:** Write username and caption on saved video adds a default-off Downloads switch. It re-encodes the video, takes longer and offers progress and Cancel.
+
+* **TikTok:** Remove creation tools now warns that creating videos and searching effects may crash. Leave it out if you create posts (#133).
+
+* **TikTok:** Don't decode animated frames ahead replaces Drop the animated image cache. It stops only early frame decoding and preserves TikTok's frame cache to prevent frozen stickers (#130).
+
+* **TikTok:** Leaving Clear display now restores Following's stories button only when it was visible and had stories.
+
+* **TikTok:** Translate into chooses one language for translated comments and captions independently of TikTok's language. Leave it empty to follow TikTok.
+
+* **TikTok:** Burn-in guard dims overlay buttons, captions and tabs to one-quarter brightness after five idle seconds. Dim when idle and shift also moves the feed every two minutes. Touch restores brightness.
+
+* **TikTok:** Hide the comment bar on opened videos now also covers photo posts opened from search.
+
+* **TikTok:** Save original sound and Save sound as well now offer Opus (.ogg) on Android 10 or newer. Conversion takes longer, and the original format stays the default.
+
+* **TikTok:** Clear display keeps controls faded at levels 1 to 99 while taps reach the video. Hold or pinch to exit, and visible controls outside it remain usable (#84).
+
+* **TikTok:** Mute feed videos now stays active when TikTok changes between light and dark themes.
+
+* **TikTok:** The filtered-post count and Inbox hiding now survive TikTok theme changes.
+
+* **TikTok:** The Home long-press settings shortcut now survives TikTok theme changes.
+
+* **TikTok:** Restoring a backup keeps an existing proxy intact. On a new phone, its address is restored disabled with a notice.
+
+* **TikTok:** Don't auto-translate these languages now recognizes Traditional Chinese region tags without misreading an explicit Simplified Chinese tag (#121).
+
+* **TikTok:** Hide the LIVE button no longer requires a missing sidebar anchor, and the sidebar setting appears only where supported (#128).
+
+* **TikTok:** Settings search now finds Build details and What's new, shows Lab and Licenses context, and ignores punctuation-only queries.
+
+* **TikTok:** Tapping a settings notice closes it without activating the row behind it. TalkBack also has a Close action.
+
+* **TikTok:** Pause text now explains saved choices and patch-time changes, and settings consistently call TikTok's scrolling feature Auto scroll.
+
+* **TikTok:** Feed and comment language lists now accept extra commas between codes.
+
+* **TikTok:** A failed Copy build details now offers Save instead.
+
+* **TikTok:** What's new no longer displays Markdown backticks.
+
+* **TikTok:** The Keep a streak going time picker now follows TikTok's light or dark theme.
+
+* **TikTok:** Six formerly permanent changes now have switches and obey Pause. They start off, so existing users must re-enable splash/update skipping, background limits, animated frame limits, AI profiling protection and voice comments.
+
+* **TikTok:** Skip passkey sign-in joins Simple mode, starts off, and adds Sign in without a passkey under App for password, email or SMS fallback (#102).
+
+## 0.70.0 (2026-10-09)
+
+* **TikTok:** Author text size now includes the publication date beside the name (#66).
+
+* **TikTok:** Don't auto-translate these languages adds an empty-by-default Comments list for caption and comment translation exceptions. Manual translation still works (#121).
+
+* **TikTok:** Keep offline videos prevents Auto adjust lowering the limit or trimming the list at startup, and preserves videos when TikTok's offline experiment ends. Restart TikTok after changing it (#123).
+
+* **TikTok:** Backups from older TikTok builds now restore compatible Lab overrides and leave incompatible ones off.
+
+* **TikTok:** Hide the side menu button adds a default-off Feed screen switch for the button beside LIVE. It needs a restart (#128).
+
+* **TikTok:** Manager patch descriptions now explain outcomes, defaults and settings locations, and Skip push setup is called Skip notification setup.
+
+* **TikTok:** Settings titles and descriptions use plainer English.
+
+* **TikTok:** Ghost mode, Hook status, proxy password and file-preview messages now explain their results more clearly.
+
+* **TikTok:** Manager's dark-background option now explains its color code and OLED black setting.
+
+* **TikTok:** Settings home now has a compact status card, search and seven groups, with backups, diagnostics and Lab under App and your choices preserved.
+
+* **TikTok:** TikTok 47.1.4 is now the only supported build. Updating with the same signing key preserves login and settings, with incompatible Lab overrides disabled.
+
+* **TikTok:** Keep offline videos until you delete them adds a default-off Downloads switch that needs a restart. Manual deletion, low-space cleanup and lower limits still work (#123).
+
+* **TikTok:** Hide Thoughts on profiles removes both the bubble and your own prompt. It's under App, starts off and needs a restart (#122).
+
+* **TikTok:** Allow screenshots now covers Circle to Search, floating popups and Compose screens.
+
+* **TikTok:** Capture the feed records filter verdicts and hiding rules in a local Download/Hushfeed text file, starting and stopping on tap. Each capture uses fresh video and creator codes, without captions, names, handles or URLs. Read it before sharing.
+
+* **TikTok:** Hide the Clear display controls now explains how to pinch to exit (#84).
+
+* **TikTok:** Privacy, comment and appearance switches now start off for Simple mode. Existing users must turn their chosen switches back on.
+
+* **TikTok:** Manager's Simple mode now includes 107 of 130 patches, with new switches off. Expert mode holds the remaining 23.
+
+* **TikTok:** A new Interface category groups AMOLED, fonts, transitions, app name, icon, launcher shortcuts and feed text sizes.
+
+## 0.69.0 (2026-10-08)
+
+* **TikTok:** A shared video or photo link now bypasses feed filters for that post for one minute, including older mobile-site links and Lock the feed (#117).
+
+* **TikTok:** Leaving a LIVE room no longer crashes with Remove LIVE extras, and animated gifts stay off (#119).
+
+* **TikTok:** Remove content credential and card scanner assets now removes Pitaya's unused Python runtime too, saving another 6.7 MB, about 19 MB in all.
+
+* **TikTok:** Hide unverified content notices adds a default-off switch for Check sources banners and sharing warnings, separate from tap-through warnings.
+
+* **TikTok:** Skip first-launch setup is an optional patch whose switch starts on. It skips TikTok's setup questions while keeping consent, age, sign-in and Android notification prompts.
+
+* **TikTok:** Hide TikTok's wind-down screens starts off and applies only to adult accounts outside Family Pairing. Daily limits remain when Leave when TikTok says time is up needs them.
+
+* **TikTok:** New, default-off switches hide Footnotes on videos, Bulletin board rows and the group chat prompt in Inbox.
+
+* **TikTok:** Edge gestures can control brightness, volume or per-video speed in quarter steps from 0.5x to 3x. Speed needs its patch, and the next video keeps your saved default. Left stays brightness and right stays volume until changed, while other drags still scroll.
+
+* **TikTok:** Feed tabs can now hide bottom-tab labels or replace each with your own text. Empty names restore TikTok's labels immediately.
+
+* **TikTok:** New, default-off chat switches disable double-tap reactions and swipe-to-reply while keeping single taps and long presses.
+
+* **TikTok:** Run beside the store app now directs shared settings, wallpaper data and self-package checks to the renamed copy.
+
+* **TikTok:** Region request matching keeps your real region and time zone for sign-in, sign-up, account checks, token refreshes and logout. Other requests keep the preset.
+
+* **TikTok:** Proxy checks now resume at most every five minutes. Empty host or port disables it, and Reset clears credentials that backups and Undo never restore.
+
+* **TikTok:** Trust user certificates is an optional testing patch. It also lets installed certificate authorities read TikTok traffic, so use it only on a test phone.
+
+* **TikTok:** Copy the full link for short links starts off and expands copied links in the background. TikTok sees the request, and direct shares stay unchanged.
+
+* **TikTok:** Account facts on profiles adds a default-off share-sheet button for dates, region and privacy details TikTok already sent, without extra requests.
+
+* **TikTok:** Show how many were filtered adds a default-off Home counter for posts removed since TikTok started, shown after the first removal. Cached repeats and hidden overlays don't count, and taps pass through.
+
+* **TikTok:** Match text stickers too lets blocked caption words match editor-added text, excluding words baked into the picture. It starts off.
+
+* **TikTok:** Fall back to the watermarked copy starts off and can save TikTok's smaller copy when a clean video is unavailable. Cancel and save limits still apply.
+
+* **TikTok:** Mark saved videos adds a default-off check mark on video grids and creator rows. It needs saved-video checking and keeps marks until you forget that history. Photos never get a mark, and Pause disables it.
+
+* **TikTok:** Save the cover as well starts off and saves the largest cover with a video, except when handing off to another app or opening an already-saved video. Long press can save covers separately. Images use the video's name in your photo folder, as JPEG when conversion works.
+
+* **TikTok:** Icon picture accepts a square 432 to 1024 pixel PNG on Android 8 or newer. It has no themed layer, and invalid files stop patching safely.
+
+* **TikTok:** New, default-off Downloads switches tag MP4s with post details and save details as JSON. Unsupported MP4s still save without tags.
+
+* **TikTok:** Default-off date switches add timestamps with seconds and your time zone in your phone's clock format beside creators, plus posting dates on grids. Missing dates come from the video ID, with years for older posts and a separate line alongside engagement rates.
+
+* **TikTok:** Hide comment box buttons removes photo, @ and gift buttons while keeping emoji, typing and sending. It starts off.
+
+* **TikTok:** Hide comment surveys removes question cards from comment lists. The new switch starts off.
+
+* **TikTok:** Turn off push notifications starts off and needs a restart. Messages wait until you open TikTok, dropped notifications stay dropped, and ongoing notifications remain. Wake locks are blocked except hosted LIVEs and work with its own notification. Disabling or pausing restores push on the next restart.
+
+* **TikTok:** Open shared videos alone starts off and holds one linked video until another plays or you return after ten minutes. Auto-advance and auto-scroll can't move past it. It needs Block author button and Feed tab navigation. Other tabs still swipe, and Pause disables it.
+
+* **TikTok:** Auto-advance in search results starts off and needs a restart. Search scrolling follows your advance and screen-time limits.
+
+* **TikTok:** The popup checklist now includes server campaigns, and Hide the LIVE bubble adds a default-off switch for the feed's floating LIVE prompt.
+
+* **TikTok:** Use system emoji starts off and needs a restart. Emoji your phone lacks may appear as boxes or separate pieces.
+
+* **TikTok:** Optional Turn off haptics and Turn off screen transitions patches start their switches on when selected. Keyboard haptics and in-screen swipes remain.
+
+* **TikTok:** Long press can save the current video frame as a JPEG without overlays in your Photo destination, named after the video and frame time. Pause first to choose an exact frame.
+
+* **TikTok:** The offline video limit now reaches 10,000 and estimates storage use. TikTok still decides how many videos it sends.
+
+* **TikTok:** Keep offline videos out of the feed starts off, removes offline fallback posts and keeps your saved offline list intact.
+
+* **TikTok:** Long press offers a 15, 30, 45, 60 or 90 minute sleep timer that stops playback and closes TikTok, including background play. Press again to cancel. If the phone slept past the deadline without playback, TikTok stays open.
+
+* **TikTok:** Stop recording watch history starts off and blocks new video view reports. Existing history and other TikTok activity reports remain.
+
+* **TikTok:** Save and restore seen history as local JSON for the chosen account, without account names or settings. Imports validate before merging, keep newer dates and enforce age, future-date and 10,000-video limits. Account changes or stopping a stalled import leave history untouched. TikTok exports still use Import watch history.
+
+* **TikTok:** Blocked caption words and Hidden LIVE categories now have a sample box to try rules without saving, counting or sending the sample.
+
+* **TikTok:** Don't start the first video starts off and waits for a tap after an icon launch. Links, notifications, shortcuts and Recents still play normally (#83).
+
+* **TikTok:** Download filename editors now preview folders and companion files as you type, naming unknown tokens and explaining {original} and {media_id}.
+
+* **TikTok:** Run beside the store app is an optional companion to Morphe's Clone app. It lets the renamed copy register with TikTok while keeping each app's data and login separate. Use email or phone sign-in because Google and Facebook sign-in won't work there. Normal package names stay untouched, and Pause restores the clone's name.
+
+* **TikTok:** Log diagnostics for 15 minutes shows the deadline and stops early on a second tap. TikTok restarts and clock rollback preserve the deadline, while a phone restart ends the session. Sessions stay out of backups and leave persistent logging unchanged. Log diagnostics now says it stays on until you turn it off.
+
+* **TikTok:** Block the advertising id now also covers direct ad-service reads and reports personalization as off. Pause restores TikTok's real answers.
+
+* **TikTok:** Network proxy starts off and routes API and Java traffic after a restart. Video and LIVE stay direct, and credentials work only for Java connections. Passwords stay out of backups, and a startup warning reports an unreachable proxy.
+
+* **TikTok:** Picture-in-picture adds a default-off small video window on Android 8 or newer, with play and pause for feed and opened videos.
+
+* **TikTok:** Always upload in HD starts off and uses TikTok's HD route for eligible clips, keeping HD on while the switch is enabled.
+
+* **TikTok:** Play sounds TikTok pulled starts off and restores available audio on muted feed and search videos, even if TikTok labels the sound unavailable.
+
+* **TikTok:** Match region fields in requests starts off and applies your region preset to the saved region and network country sent to TikTok.
+
+* **TikTok:** Show exact LIVE viewer counts adds a default-off switch for full numbers in rooms and scheduled LIVEs, including landscape.
+
+* **TikTok:** Stop LIVE previews opening by themselves starts off and keeps a preview out of its room until you tap.
+
+* **TikTok:** Default-off privacy switches hide VPN state and block the advertising id immediately. Pause restores both real answers.
+
+* **TikTok:** Stop search autoplay keeps search results on their covers until opened while the main feed plays as usual.
+
+* **TikTok:** Hide online status starts off and needs Ghost mode. Friends may stop seeing your activity, and their status may stop updating for you.
+
+* **TikTok:** Look like the store app can report Play Store (the default), Galaxy Store, AppGallery or Amazon Appstore as installer. Restart after choosing one.
+
+* **TikTok:** Swipe for brightness and volume starts off, with brightness on the left edge and volume on the right in feed and opened videos. Edge width ranges from 5% to 30%, other drags still scroll, and brightness resets when you leave the video.
+
+* **TikTok:** Three default-off chat switches hide call buttons, sticker suggestions and suggested replies without changing chat details or sent content.
+
+* **TikTok:** Fade the video controls dims overlays instead of hiding them. At 100 they're unchanged, at 0 they're hidden with tabs at 10, and faded controls still take taps.
+
+* **TikTok:** Lock the feed starts off, opens on Inbox and blocks feed tabs while keeping profiles, search and single-video links. Delayed budget loosening also applies to unlocking it. Pause disables the lock.
+
+* **TikTok:** Block popups hides only the checklist entries you choose. CAPTCHA, sign-in, verification, age, ban and legal consent screens are always protected.
+
+* **TikTok:** Story controls adds default-off switches to loop video stories or hold photo stories. Taps and swipes still advance.
+
+* **TikTok:** Export comments adds default-off CSV and JSON export for loaded comments and replies. It needs Search within comments, and you must open reply threads first. Stalled file operations offer Stop waiting.
+
+* **TikTok:** Remove feed ads now also removes the Lemon8 install-promotion card from For You.
+
+* **TikTok:** App lock requires your screen lock on launch and return after a delay of immediately, 1, 5 or 15 minutes, hides playback until unlocked and blanks Recents. Android 9 and newer use the system prompt, with screen lock fallback on older phones. Pause can't bypass it, and phones without a screen lock stay usable.
+
+* **TikTok:** Save photo posts as a video makes a clean MP4 with sound, using 3 seconds per photo by default, adjustable from 1 to 10. Missing audio saves silent with a notice.
+
+* **TikTok:** Prefer H.264 playback selects an available H.264 copy, with SDR and quality choices applied within it. Videos without one still play.
+
+* **TikTok:** Show engagement rate adds likes, comments, shares and saves as a percentage of views on feed and profile videos, using counts TikTok already sent. Videos without a view count show nothing.
+
+* **TikTok:** Show exact counts displays full, locally grouped like, comment, share and other counts instead of rounded figures.
+
+* **TikTok:** Custom launcher icon adds wallpaper-colored themed icons on Android 13 or newer and alternate icon styles on Android 8 or newer.
+
+* **TikTok:** Lift text length limits lets you type longer comments, repost notes and bios. TikTok's servers still decide what they'll accept.
+
+* **TikTok:** Remove avatar rings hides story and LIVE rings. Tapping an affected picture then opens the profile rather than its story or LIVE.
+
+* **TikTok:** Play SDR instead of HDR prefers an available standard copy, with quality choices applied within it. HDR-only videos still play.
+
+* **TikTok:** Copy bio and IDs adds long-press bio copying and share-sheet buttons for usernames, user IDs and video IDs.
+
+* **TikTok:** Show follow status marks followers and accounts that don't follow you back on profiles and lists, using data TikTok already sent.
+
+* **TikTok:** Show only mutual friends on the Friends tab keeps friends' posts and reposts plus your own, while dropping non-mutual and suggested accounts.
+
+* **TikTok:** Hide AI-generated videos now checks hidden disclosures, moderation, credentials, effects and AI tags. Feed rules also reach the newer Friends feed.
+
+* **TikTok:** Author regions now show without a visible post date and on opened videos, update with the current video and keep room beside long names.
+
+* **TikTok:** Enabling Lab overrides from a gate's page now makes Forced result available immediately.
+
+* **TikTok:** Remove LIVE extras now warns about missing battle scores and guest names. Leave this optional patch out if you watch battles.
+
+* **TikTok:** Drop the animated image cache now keeps the current frame and stops decoding ahead instead of discarding frames and causing stutter (#100).
+
+* **TikTok:** Hide the Clear display controls now sits beside Automatic clear display under Feed screen > Clear display.
+
+* **TikTok:** Clear display now keeps bottom tabs hidden on the first feed video while other pages keep their tabs.
+
+* **TikTok:** Immediate Automatic clear display now keeps the next video cleared throughout a swipe. Restore display still brings controls back (#84).
+
+* **TikTok:** Hidden caption links and bottom search bars can no longer receive accidental taps in Clear display (#84).
+
+* **TikTok:** Clear display now hides the comment bar on opened videos and photos, with Restore display bringing it back (#84).
+
+* **TikTok:** Hide the Clear display controls keeps an invisible, draggable progress bar along the bottom edge (#84).
+
+* **TikTok:** The Lab adds 13 presets for repost with a comment, profile banners/layouts, live photos, camera/audio comments, comment Favorites and sort/dislike styles, chat colors/archive/multi-chat sharing, Manage topics, visual search, AI Self, long-press menus on every post, hold to speed up, background play, auto-scroll and feed dates. Show See translation now covers 47.0.3, 47.1.3 and 47.1.4 too. Only presets for your installed build appear, and server eligibility still applies.
+
+* **TikTok:** Remove ads now catches promoted creator posts, and Skip the splash ad also stops takeover preloading and real-time splash requests.
+
+* **TikTok:** Hide unpersonalized For You videos removes fill-in posts but keeps an all-fill-in batch to avoid stalls. Creator exceptions still pass.
+
+* **TikTok:** Settings search now ranks title matches first and recognizes diagnostic logging terms in each settings language.
+
+* **TikTok:** HEIF-only photos now have a second JPEG conversion route. If neither decoder works, Hushfeed keeps the original file.
+
+* **TikTok:** What's new now translates 0.68.0 and 0.67.1 into all eight settings languages, with an English notice for older releases (#91).
+
+* **TikTok:** Debug reports now describe hidden share-sheet rows and views without naming people in Send to (#120).
+
+* **TikTok:** The FAQ now explains TikTok 47.1.4's own black Profile and Inbox backgrounds, which also appear without AMOLED dark theme (#69).
+
+* **TikTok:** Troubleshooting now explains that the Lab can't hide CAPTCHA and shows how to try a reviewed preset (#111).
+
+## 0.68.0 (2026-10-06)
+
+* **TikTok:** Original photos now prefer full-size JPEG on Android 9 or newer, including stories. Failed conversions and transparent images keep their original format (#105).
+
+* **TikTok:** Hiding the status bar now removes its empty strip and fills camera cutouts on Android 14 and older. A new switch hides Clear display controls until you exit (#97).
+
+* **TikTok:** Clear display now hides and restores Following's stories button, and automatic attempts wait until TikTok has really cleared the screen (#84).
+
+* **TikTok:** Automatic clear display now retries after focus returns, including startup, while respecting manual exit and ignoring stale video callbacks (#84).
+
+* **TikTok:** Backups, restores and watch-history imports offer Stop waiting for stalled file apps. Stopping before reading or writing leaves data unchanged, while handed-off backups report their final result when the app answers. A stuck file blocks only its row, and rotation keeps restores running.
+
+* **TikTok:** Lab import and export can stop waiting on stalled file apps, prevent duplicate jobs and safely replace longer exports.
+
+* **TikTok:** A canceled or failed backup now preserves an existing file until writing starts, while still cleaning up newly created empty files.
+
+* **TikTok:** Settings search now ranks whole-word matches above matches inside longer words, in every language.
+
+* **TikTok:** Settings search now finds every checklist choice and opens it in place. Rotation preserves unsaved ticks.
+
+* **TikTok:** Narrow settings rows now put the switch below large text so titles keep their full width.
+
+* **TikTok:** What's new now labels English notes and gives screen readers the correct text language.
+
+* **TikTok:** Undo restores seen history in the background, reports only records that still fit and remains available after a failed save.
+
+* **TikTok:** Undo now counts watches recorded during restoration and preserves newer watch times against older queued writes.
+
+* **TikTok:** Media saves now respect full server retry delays and Cancel. Delays beyond the job's limit stop it with a notice and keep completed files.
+
+* **TikTok:** Diagnostic and Lab report saves now use dedicated workers, and repeated taps report the save already running.
+
+* **TikTok:** Hushfeed now requires Morphe Manager 1.34.0 or newer with patcher 1.15.1. Release checks use CLI 1.18.1.
+
+* **TikTok:** Builds consistently use Guava 33.7.2 outside the affected security advisory, with verified checksums. Guava isn't shipped in the app or bundle. The source-import check now reads the patch files it checks.
+
+* **TikTok:** Java-only extension edits no longer rerun unrelated APK fingerprint tests. Full tests and release checks still run them.
+
+* **TikTok:** Docs edits no longer rerun unchanged APK fixtures, while replaced APKs invalidate cached results even with matching timestamps and sizes.
+
+* **TikTok:** Windows storage-scanner checks now show Java diagnostics without mistaking a successful run for failure.
+
+* **TikTok:** APK signing now accepts harmless Java startup diagnostics while still rejecting invalid certificates and failed checks.
+
+## 0.67.1 (2026-10-03)
+
+* **TikTok:** Settings now group video buttons together, put player choices in Playback and move system choices under App. Saved settings stay intact.
+
+* **TikTok:** All five feed buttons now start off. If you used the mute button, turn Show the mute button on videos back on.
+
+* **TikTok:** Remove unused language packs now leaves unchecked language sets intact when Languages to keep is all, instead of stopping patching (#96).
+
+* **TikTok:** Streak status now says Sent once TikTok takes every message, reserving unconfirmed for failed or unfinished handoffs (#92).
+
+* **TikTok:** Hide and block-sound buttons now work independently of the block button, require Feed filter and start off (#95).
+
+* **TikTok:** Pause keeps an enabled Home long-press settings shortcut so guests can resume Hushfeed. Disabled shortcuts stay off, ordinary taps work as before and TikTok's own long-press action remains (#89).
+
+* **TikTok:** Android 6 now uses shipped language plural forms, with correct English fallback for missing quantities.
+
+* **TikTok:** What's new now keeps its full history without exceeding Java's string limit as translated text grows.
+
+* **TikTok:** Manager 1.33.0 now categorizes all 106 patches. Build checks cover single-ABI inputs, reject altered files and support release verification.
+
+* **TikTok:** Limit background traffic now keeps push setup by default. Restoring removed setup requires repatching the original APK, and Pause can't undo it (#86).
+
+* **TikTok:** Restore now distinguishes unsupported keys from missing backup settings while keeping portable settings, local state, Lab compatibility and Undo behavior.
+
+* **TikTok:** Seen-history import accepts reviewed TikTok JSON up to 2 MB and 10,000 entries, preserving the chosen account, watch dates and age limits. Repeating an import adds nothing, and invalid files or failed writes leave history unchanged. Links stay on the phone. Adding history ends an earlier clear's Undo and explains why.
+
+## 0.67.0 (2026-10-02)
+
+* **TikTok:** Block suggested video notifications starts on when selected and blocks recommended-video pushes while keeping messages and updates from followed accounts.
+
+* **TikTok:** Hide search rewards now removes floating coins and banners. Restart after changing it (#21).
+
+* **TikTok:** Hushfeed settings now include Azerbaijani and follow TikTok's language (#77).
+
+* **TikTok:** Resource optimizers now accept reviewed single-ABI APKs while still rejecting changed files and incomplete library sets (#43).
+
+* **TikTok:** Show author region now updates the video on screen after a downward swipe (#75).
+
+* **TikTok:** Stop saving search history starts on when selected and blocks new local history. Existing history and TikTok's server records remain, and Pause restores recording.
+
+* **TikTok:** Streaks now accept multiple usernames, deduplicate chats and retry them separately. Unconfirmed handoffs aren't resent, and each send checks the account (#73).
+
+* **TikTok:** Feed text sizes adds separate description and creator sizes from 8 to 48. Both start at 0 to keep TikTok's size, with Android scaling still applied. Spoken captions keep their own size (#66).
+
+* **TikTok:** Build details now copies or saves verified patch choices without diagnostics enabled. Already-patched APKs are rejected, so use TikTok's original APK.
+
+* **TikTok:** Patching now accepts bundle paths containing plus signs, spaces, percent signs and non-English characters.
+
+* **TikTok:** Unfinished-save recovery records now survive cache clearing, with verified migration and unreadable records preserved.
+
+* **TikTok:** Finished downloads now release temporary-file ownership even after deletion fails, allowing later cleanup without affecting active retries.
+
+* **TikTok:** Share actions hidden by name now use accessible titles and recheck late or recycled rows when the sheet reopens (#74).
+
+* **TikTok:** Unknown CAPTCHA challenges stay visible. CAPTCHA hiding remains unavailable until its browsing scene is validated.
+
+* **TikTok:** Hide the music line now removes both the track name and Contains credit on feed and opened videos. The disc keeps its own switch (#68).
+
+* **TikTok:** Install docs now list all supported builds and explain which removals need repatching to undo, with an updated Share settings tour.
+
+* **TikTok:** Video quality and Remove sound now leave photo posts to original-photo saving, while live-photo motion clips keep their native route (#71).
+
+* **TikTok:** Download video on photo posts now saves original stills first, with file counts and Cancel even for small posts. Live-photo video choices stay native (#71).
+
+* **TikTok:** LIVE feed filters now cover categories, creators and viewer or follower ranges after the first room. One room passes after five empty pages to prevent stalls (#57).
+
+* **TikTok:** Comment gestures now open the video on screen or report unavailable, rather than opening a neighboring video's comments (#63).
+
+* **TikTok:** Link, sound and edge-seek gestures now target the current video. An unsupported or not-yet-playing video won't redirect them behind the screen (#63).
+
+* **TikTok:** Hide the status bar now also covers videos opened from profiles, hashtags, sounds and search (#50).
+
+* **TikTok:** Hide the comment bar on opened videos adds a default-off Feed screen switch that gives the video that space while keeping its comment button (#50).
+
+* **TikTok:** Stop TikTok's benchmark runs comes with Resource and battery governor and starts off. Restart TikTok to stop an active run. Disabling or pausing restores the service. Turn it off before repatching without its patch, or the service stays off until reinstall (#64).
+
+* **TikTok:** Hide profile shortcuts lets you choose server-provided names after opening your profile. Nothing starts hidden, and changes need a restart (#49).
+
+* **TikTok:** Hushfeed view tools now work in a renamed Clone app copy. Signing in may still be refused, leaving the copy usable only logged out (#59).
+
+* **TikTok:** Remove unused language packs now keeps every language by default. To restore a lost language, repatch with it listed or the patch off (#67).
+
+* **TikTok:** Feed tabs now calls Explore Explore or Community so accounts using either label can find it (#62).
+
+* **TikTok:** Hushfeed now requires Morphe Manager 1.33.0 or newer with patcher 1.15.0, which finishes patching within a 768 MB memory limit.
+
+## 0.66.0 (2026-10-01)
+
+* **TikTok:** Settings now include Italian and Russian, with Russian's different count forms (#61, #60).
+
+* **TikTok:** Change app name adds an optional launcher name in Manager. It needs resource decoding and more memory, and TikTok keeps its name inside the app (#59).
+
+* **TikTok:** Fit the video to the screen now refits after layout changes, with recent sizes recorded in diagnostics (#29).
+
+* **TikTok:** Settings now respect English-first language lists and use the displayed language's count rules.
+
+* **TikTok:** Portuguese zero counts and Russian counts such as 21 now display their actual number with the right plural form.
+
+* **TikTok:** Diagnostics now reports feed-mute settings, muted players and audio-focus refusals, including whether Hushfeed is paused (#58).
+
+* **TikTok:** Removed the ineffective friend-send confirmation. Tapping a friend still selects them, and TikTok's Send button sends the message (#58).
+
+* **TikTok:** Share via can now include installed link-sharing apps you choose, with cleaned links and no duplicate or uninstalled entries.
+
+* **TikTok:** Look like the store app adds a default-off signature and installer override that needs a restart. Native checks may still reject likes or follows (#55).
+
+* **TikTok:** Keep a streak going is an optional patch for one daily message to a chosen recipient from its configured account, at your chosen time with a default 🔥 message. Failed sends retry every 15 minutes up to three more times, then when TikTok opens that day. Enabling or changing recipients after the send time starts tomorrow, without duplicate daily sends. Send it now sends today's message. It adds exact-alarm and boot permissions, with nameless diagnostics of the last attempt.
+
+* **TikTok:** Let the last video finish starts off and holds the feed's final budgeted video until it ends, waiting at most three minutes.
+
+* **TikTok:** All patches now support TikTok 47.1.4 alongside 47.0.3 and 47.1.3, including reviewed split-bundle resources (#56).
+
+* **TikTok:** Hide effect and template tags removes effect, CapCut and AI-style labels while keeping place, film and drama tags (#51).
+
+* **TikTok:** Patching now searches fewer unrelated methods, reducing patch time while producing the same patched app (#54).
+
+* **TikTok:** Keep playing in the background starts off and needs a restart. Videos and photos keep playing, other audio still pauses them, and feed videos stop at the end (#52).
+
+* **TikTok:** Stop on-device AI profiling now prevents Pitaya's plugin and engine from starting, and refuses to apply if those hooks move.
+
+## 0.65.0 (2026-09-29)
+
+* **TikTok:** Screen time now refreshes immediately after Start today over and when a new day begins while its page is open.
+
+* **TikTok:** Motion-sensor descriptions now name what they block without claiming unmeasured battery savings.
+
+* **TikTok:** Trimming-patch docs now show measured storage savings and memory results, including about 13 MB less loaded code with all enabled.
+
+* **TikTok:** AMOLED patching now recommends 768 MB without requiring it. It also finishes at 640 MB, more slowly.
+
+* **TikTok:** Package names, hosts, handles, codes, filenames and speeds now use a plain keyboard that won't capitalize or space their punctuation.
+
+* **TikTok:** Text and list settings now take effect even if you leave settings immediately after saving.
+
+* **TikTok:** Startup now reports interrupted saves and cleans old partial files. Completed gallery files count as saved, and nothing restarts automatically.
+
+* **TikTok:** Finishing a save or adding another progress row on a popup no longer crashes TikTok.
+
+* **TikTok:** Sounds saved with a {creator}/ filename now follow the video's creator folder, under Music on Android 10 or newer.
+
+* **TikTok:** Queued saves now show waiting status and Cancel immediately. Three run at once, with a compact count for further jobs and duplicate-request feedback.
+
+* **TikTok:** Block, Unblock and sticker Save media actions no longer crash on Android 10 or older.
+
+* **TikTok:** Diagnostics can capture a screen and its open sheets' layout after twenty seconds, without recording text. The next exported report carries the capture.
+
+* **TikTok:** Feed controls and mute now follow videos opened from profiles, hashtags and sounds, then return to the feed.
+
+* **TikTok:** Screen-time labels and fades now leave Profile, Inbox and other tabs, and the fade stays above the tab bar.
+
+* **TikTok:** Time budgets now stop long or looping videos immediately, including when you lower a budget below today's usage.
+
+* **TikTok:** Forget saved videos clears the saved-video record without deleting files, offers Undo and excludes already-running saves from repopulating it.
+
+* **TikTok:** Mute now correctly releases and reacquires audio focus after settings changes, and its button stays off stories and LIVE replays.
+
+* **TikTok:** Commenter blocks now stay with the account that made them, and taps during Undo can't send duplicate unblocks.
+
+* **TikTok:** Hushfeed now requires Manager 1.32.0 or newer with patcher 1.14.1, preserving untouched resource values and translated quote marks.
+
+* **TikTok:** Feed tab navigation now offers a Home long-press settings shortcut while ordinary Home taps stay unchanged (#45).
+
+* **TikTok:** Settings name failed Reset and Undo actions, clear Calm feed's old Undo after Reset, accept 06:00 or 0600 and keep restore results readable. YTDLnis and store-region rows explain the right fields and dependencies. Two playback rows move out of Auto-advance, and the Lab explains when preset Undo ends.
+
+* **TikTok:** Downloads now connect to the exact checked public address over HTTPS, retaining certificate checks and preventing a second lookup from reaching local addresses.
+
+* **TikTok:** Feed mute now works on 47.1.3 and photo posts on 47.0.3, including preloaded videos and returns from messages, profiles or search.
+
+* **TikTok:** Troubleshooting now explains TikTok's bulk-unfollow checkboxes and its server-enforced 10,000-follow limit.
+
+* **TikTok:** Feed diagnostics now identifies cached-video routes used during lag and at the end of the feed.
+
+* **TikTok:** SIM preset choices now align their operator lines and reserve selection-mark space at every text size.
+
+* **TikTok:** Docs now explain why TikTok watermarks rendered one-photo videos and how Download image saves the clean photo.
+
+* **TikTok:** Playback-quality logging now records each mode and size ladder once, leaving diagnostic space for other events.
+
+## 0.64.0 (2026-09-28)
+
+* **TikTok:** Right-column button hiding now also works on videos opened from profiles, hashtags and sounds (#47).
+
+* **TikTok:** Hide TikTok Shop now also hides LIVEs selling products, without requiring every LIVE to be hidden (#46).
+
+* **TikTok:** Pause Hushfeed search results now open its settings row instead of crashing TikTok.
+
+* **TikTok:** Settings search now finds dependent rows even while they're disabled and explains which switch enables them.
+
+* **TikTok:** Dependent choices, including playback speed, subtitle language, control-hide delay and edge press step, now disable with their parent switch and put the enabling instruction on its own line.
+
+* **TikTok:** Undo restore or reset now keeps the replaced settings for another Undo, while retiring conflicting Lab Undo when needed.
+
+* **TikTok:** A restore that preserves a download folder now survives startup recovery if TikTok closed during cleanup.
+
+* **TikTok:** Budget timers now resume after internal screens, returning-tap holds require leaving TikTok, and expired holds clear on return.
+
+* **TikTok:** Opening comments or returning to TikTok with the feed muted no longer pauses another app's music.
+
+* **TikTok:** Clear all suggested Inbox accounts now works on TikTok 47.1.3.
+
+* **TikTok:** A saved story now counts as saved when only its companion sound failed, avoiding duplicate retries.
+
+* **TikTok:** Already-saved choices now appear over the current video, including opened profiles and search results.
+
+* **TikTok:** Automatic saves now keep TikTok's watermark when Remove watermark is off, including saves handled for progress or details.
+
+* **TikTok:** Progress-only downloads now fall back to TikTok's saver when needed, and failed jobs no longer claim they're stopping after a file.
+
+* **TikTok:** Caption-language filters now recognize three-letter codes such as eng and spa.
+
+* **TikTok:** Videos shorter than one second can now count as seen.
+
+* **TikTok:** Like and follow confirmation switches now let taps through when TikTok hasn't identified the playing post.
+
+* **TikTok:** The Lab now explains refused edits and rule limits, and presets wait for the full gate list before checking compatibility.
+
+* **TikTok:** The Lab now keeps its selection bar clear at large text sizes and supports opening and selecting gates with accessibility actions.
+
+* **TikTok:** Diagnostics now removes network addresses, TikTok server names and saved video IDs, and spoofing logs no longer reveal the real carrier.
+
+## 0.63.0 (2026-09-27)
+
+* **TikTok:** Diagnostics now removes quoted credentials, headers and account IDs before logging, with bounded long messages and exception chains.
+
+* **TikTok:** Browser links now preserve ordinary target parameters and unwrap only verified TikTok safety links, rejecting lookalike hostnames.
+
+* **TikTok:** Ghost mode now keeps persistent reporting warnings and shows whether calls were seen. Blocking a local report still doesn't prove viewer-list privacy (#39).
+
+* **TikTok:** Delayed budget changes survive failed saves and restore and recover with settings. Tightening a limit saves its value and cancels its pending change together. Failed edits stay open for retry.
+
+* **TikTok:** Failed settings transactions now restore all live values, and screen-time reminders check their original screen before closing TikTok.
+
+* **TikTok:** Failed exports now remove newly created files or explain refused cleanup, and backup actions stay disabled throughout active writes.
+
+* **TikTok:** Lab drafts now survive failed or older saves, keep untouched fields and reset to the actual restored values.
+
+* **TikTok:** Multi-file and audio saves now stop on storage refusal or deadlines with the real reason instead of retrying or counting a skip.
+
+* **TikTok:** Sticker saves now check destination space throughout conversion, remove unfinished output and preserve older saved files.
+
+* **TikTok:** Share-action and button checklists now preserve choices after failed saves so Apply can be retried.
+
+* **TikTok:** Clearing seen history now waits for storage, preserves history and Undo on failure, and can't offer recovery for the wrong account.
+
+* **TikTok:** Undo and Unblock now honor Android's requested action time, and Calm feed keeps its action visible at large text sizes.
+
+* **TikTok:** Release receipts verify clean, stable source snapshots and source commits, rejecting dirty, ignored-source or changing builds. Equivalent line endings are accepted. Previously published receipts need the verified archive's exact recorded bytes and bundle identity.
+
+## 0.62.0 (2026-09-27)
+
+* **TikTok:** Install docs now identify the published bundle, clarify Android verification and remove the inherited donation button.
+
+* **TikTok:** Show download progress adds a default-off video progress bar, using percentages for known sizes and a busy indicator otherwise (#27).
+
+* **TikTok:** Default-off Downloads choices add TXT details and saved-video checking. A {creator}/ filename creates creator folders without changing existing templates.
+
+* **TikTok:** The Lab now leaves more room on small screens, scrolls large-text tabs and keeps search and overrides visible (#42).
+
+* **TikTok:** Lab reviewed presets now offer See translation on 47.1.3, with value review and Undo. Presets for other builds won't apply.
+
+* **TikTok:** Mute feed videos adds a movable button and Playback switch without changing phone volume. Other music can continue, while DMs, stories and LIVE keep sound.
+
+* **TikTok:** Playback quality now caches the last four video quality lists instead of parsing them on every switch.
+
+* **TikTok:** Hide the status bar in LIVE rooms comes with Hide video overlays, fills the top edge and cutout, and restores the bar when you leave the room or app (#38).
+
+* **TikTok:** Only these caption languages filters original caption languages immediately. Missing or invalid tags and translated-only captions stay, profiles remain unaffected, and diagnostics counts hidden videos. The section is now Words, countries and languages.
+
+* **TikTok:** Restore now preserves download folders that can't accept a backup's older shared-folder choice and reports it, with Undo intact.
+
+* **TikTok:** Disabled number settings now put Turn on first instructions on a separate line.
+
+* **TikTok:** Lab and number editors now use clearer labels, show valid ranges and call an empty maximum No limit.
+
+* **TikTok:** Block from comment has a hit area up to a 48 dp square where the row has room, without stealing taps from the heart, text or neighboring comments. Easier comment likes still works beside it.
+
+* **TikTok:** Ghost mode now blocks the second story play report while leaving feed reports unchanged. Two-account viewer-list acceptance remains unverified (#39).
+
+* **TikTok:** Count a video as seen after adds a watched percentage. The default 0 keeps the old timing, videos without duration count after two seconds, and short clips never need their last second.
+
+* **TikTok:** Settings and Lab searches now both ignore case, accents and punctuation.
+
+* **TikTok:** Settings actions now use persistent result banners, with Restart now when required.
+
+* **TikTok:** Oversized feed-rule lists no longer prevent restore, reset or Undo. Backups name an over-limit list instead of writing an unusable file.
+
+* **TikTok:** The Lab uses the installed build's gate list and names the build in exports and backups. Updates retain compatible overrides, disable the rest and report how many changed.
+
+* **TikTok:** Lab caller observations now record no-default reads correctly after reads that specify a default.
+
+* **TikTok:** LIVE button diagnostics now explains whether Hushfeed, TikTok's tabs or removed tabs decided its visibility (#28).
+
+* **TikTok:** Stay on the video in full screen removes the next-video countdown and automatic advance, while swiping still works.
+
+* **TikTok:** Share-sheet contact hiding now accepts one name per line as well as commas.
+
+* **TikTok:** Share-sheet tools now scan screens once per layout pass instead of four times.
+
+* **TikTok:** The comment block symbol now follows TikTok's text color so it remains visible in dark comments.
+
+* **TikTok:** Seen history now belongs to each account. Unassigned older history hides nothing until you explicitly add it to an account.
+
+* **TikTok:** Downloads now reject reserved network addresses beyond private ranges while keeping IPv4 saves working on IPv6-only networks.
+
+* **TikTok:** Your own posts now stay visible wherever TikTok shows them, including location-tagged posts on your profile (#35).
+
+* **TikTok:** Profiles, Favorites and repost grids now keep every post except ads, instead of applying feed preferences.
+
+* **TikTok:** Camera and microphone indicators now stay visible during native recording on Android 11 or newer. Older versions keep their existing checks.
+
+* **TikTok:** Patching now fails with a named method when a hook can't be written, instead of silently omitting it.
+
+* **TikTok:** Long-press Save story now uses TikTok's stable story data and works again on 47.0.3 and 47.1.3.
+
+## 0.61.0 (2026-09-26)
+
+* **TikTok:** Sticker Save media now shows a pressed state like TikTok's neighboring buttons.
+
+* **TikTok:** Sticker saving now reads TikTok's stable data, saves the displayed image and reports renamed data in Hook status.
+
+* **TikTok:** Every patch now supports TikTok 47.1.3 alongside 47.0.3, including reviewed universal and split APK resources (#33).
+
+* **TikTok:** Lab exports now use UTC filenames like other Hushfeed exports.
+
+* **TikTok:** Restored count ranges now accept spaces around their numbers.
+
+* **TikTok:** Numeric CAPTCHA types now use their scene's name in diagnostics.
+
+* **TikTok:** Frequently used screen and region lookups are now cached, and the block overlay releases closed screens.
+
+* **TikTok:** Potentially stalling creator patterns are rejected in editors or skipped with a warning in backups and older saved lists.
+
+* **TikTok:** Feed buttons no longer stay missing when a video starts as the feed loads.
+
+* **TikTok:** Restored out-of-range numbers no longer cause startup recovery to undo the backup.
+
+* **TikTok:** Daily budget locks now survive a restart after the phone's time zone moves forward.
+
+* **TikTok:** Empty settings-search results now explain that switches from unselected patches aren't shown.
+
+* **TikTok:** Camera and microphone indicators now use distinct shapes, and video banners have clearer contrast.
+
+* **TikTok:** Settings controls now announce and show focus correctly, and refused budget or Pause changes keep their reason visible.
+
+* **TikTok:** Settings use clearer restart and retry messages and formatted number ranges. The Lab replaces Boolean with On or off, explains invalid values and JSON, and adds a loading ellipsis, menu title and Cancel.
+
+* **TikTok:** Settings home spacing and status shapes now match its cards, and Lab buttons show keyboard or d-pad focus.
+
+* **TikTok:** Settings recovery has a proper title and highlights Retry. Choice marks align under titles and Cancel follows the dialog's language. What's new adds Got it, Later and its own icon. Failed Undo and Restart now messages name the failed action.
+
+* **TikTok:** After updates, What's new lists the installed and skipped releases. Later keeps the row, while Got it dismisses it until the next release.
+
+* **TikTok:** Optional Hide Play Store update offer changes Update to Open. Android then refuses lower-code APK updates, so switching back may require removing the app.
+
+* **TikTok:** Settings home and search now use clearer cards, pink headings and larger section titles.
+
+* **TikTok:** Repost diagnostics now records requests and results without video IDs or repost notes.
+
+* **TikTok:** Removing the top LIVE tab now keeps the corner LIVE button available unless its own hide switch is on.
+
+* **TikTok:** Folding or unfolding a split-comment screen no longer filters out the playing video and jumps to another.
+
+* **TikTok:** Camera and microphone marks now appear on TikTok's camera screen from its first opening.
+
+* **TikTok:** Copy comments without username now works from the comment menu again, preserving stickers and emoji.
+
+## 0.60.0 (2026-09-25)
+
+* **TikTok:** Comment send fix is selected by default and fixes silent drops caused by a missing screen, with diagnostics for reports that still fail.
+
+* **TikTok:** Caption above comments now removes the duplicate video caption, while Hide the caption still works independently.
+
+* **TikTok:** Allow Duet and Stitch now covers account-wide restrictions as well as video settings. TikTok's servers still decide whether uploads succeed.

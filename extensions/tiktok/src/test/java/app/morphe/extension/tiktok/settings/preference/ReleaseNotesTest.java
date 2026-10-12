@@ -8,16 +8,22 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Rect;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.UiCapture;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -48,17 +54,20 @@ public class ReleaseNotesTest {
         Path cursor = Path.of(System.getProperty("user.dir"));
         while (!Files.isRegularFile(cursor.resolve("CHANGELOG.md"))) cursor = cursor.getParent();
         Path root = temporary.getRoot().toPath();
-        String notes = "## 0.67.0 (date)\nNewest starts.\n" + "content 🚀 \000 ".repeat(7_000)
-                + "\nNewest ends.\n\n## 0.60.0 (date)\nOldest kept.\n";
+        String notes = "## 0.67.0 (date)\n\n* **TikTok:** Newest starts. " + "content 🚀 \000 ".repeat(7_000)
+                + "\n\n* **TikTok:** Newest ends.\n\n## 0.60.0 (date)\n\n* **TikTok:** Oldest kept.\n";
         assertTrue(notes.getBytes(StandardCharsets.UTF_8).length > 65_535);
         Path changelog = root.resolve("CHANGELOG.md");
         Files.write(changelog, ("## Unreleased\nDraft stays out.\n\n" + notes).getBytes(StandardCharsets.UTF_8));
+        Path summaries = root.resolve("notes/en.txt");
+        Files.createDirectories(summaries.getParent());
+        Files.write(summaries, notes.getBytes(StandardCharsets.UTF_8));
         Path source = root.resolve("ReleaseNotesData.java");
         String generate = "import importlib.util,sys; from pathlib import Path; "
                 + "s=importlib.util.spec_from_file_location('notes',sys.argv[1]); "
                 + "m=importlib.util.module_from_spec(s); s.loader.exec_module(m); "
                 + "m.CHANGELOG=Path(sys.argv[2]); m.OUTPUT=Path(sys.argv[3]); "
-                + "m.NOTES=Path(sys.argv[3]).parent / 'no-notes'; m.main()";
+                + "m.NOTES=Path(sys.argv[3]).parent / 'notes'; m.main()";
         Process generator = new ProcessBuilder("python", "-c", generate,
                 cursor.resolve("tools/gen-release-notes.py").toString(), changelog.toString(), source.toString())
                 .redirectErrorStream(true).start();
@@ -115,20 +124,19 @@ public class ReleaseNotesTest {
     }
 
     @Test
-    public void bundledTextMatchesPublishedChangelogAndLeavesDraftsOut() throws Exception {
+    public void bundledTextMatchesCuratedPublishedSummariesAndLeavesDraftsOut() throws Exception {
         Path cursor = Path.of(System.getProperty("user.dir")).toAbsolutePath();
         while (cursor != null && !Files.exists(cursor.resolve("CHANGELOG.md"))) {
             cursor = cursor.getParent();
         }
         assertTrue("repository changelog missing", cursor != null);
-        String changelog = new String(Files.readAllBytes(cursor.resolve("CHANGELOG.md")),
+        String summaries = new String(Files.readAllBytes(cursor.resolve("extensions/tiktok/src/main/l10n/notes/en.txt")),
                 StandardCharsets.UTF_8)
                 .replace("\r\n", "\n");
-        int first = changelog.indexOf("\n## ", changelog.indexOf("## Unreleased") + 2) + 1;
-        int end = changelog.indexOf("\n## 0.59.0 ", first);
-        assertTrue("release headings missing", first > 0 && end > first);
-        assertEquals("run tools/gen-release-notes.py after CHANGELOG edits",
-                changelog.substring(first, end).trim() + "\n", ReleaseNotesData.TEXT);
+        java.util.regex.Matcher heading = java.util.regex.Pattern.compile("(?m)^## \\d+\\.\\d+\\.\\d+ ").matcher(summaries);
+        assertTrue("release headings missing", heading.find());
+        assertEquals("run tools/gen-release-notes.py after summary edits",
+                summaries.substring(heading.start()).trim() + "\n", ReleaseNotesData.TEXT);
         assertFalse(ReleaseNotesData.TEXT.contains("## Unreleased"));
     }
 
@@ -293,6 +301,102 @@ public class ReleaseNotesTest {
             assertTrue(rowRemoved.get());
             assertFalse(ReleaseNotes.pending(activity, "0.60.0"));
             assertFalse(ReleaseNotes.pending(activity, "0.59.0"));
+        }
+    }
+
+    @Test @Config(manifest = Config.NONE, sdk = 28, qualifiers = "de")
+    public void fullChangelogOpensTheDetailsWithoutDismissingTheUpdate() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            activity.getSharedPreferences(ReleaseNotes.PREFS_NAME, Context.MODE_PRIVATE).edit().clear().commit();
+            AtomicBoolean rowRemoved = new AtomicBoolean();
+            ReleaseNotes.show(activity, "0.68.0", () -> rowRemoved.set(true));
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertEquals("Alle Änderungen",
+                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).getText().toString());
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Intent opened = org.robolectric.Shadows.shadowOf(org.robolectric.RuntimeEnvironment.getApplication())
+                    .getNextStartedActivity();
+            assertNotNull(opened);
+            assertEquals(Intent.ACTION_VIEW, opened.getAction());
+            assertEquals("https://github.com/SysAdminDoc/hushfeed/blob/main/CHANGELOG.md", opened.getDataString());
+            assertTrue(ReleaseNotes.pending(activity, "0.68.0"));
+            assertFalse(rowRemoved.get());
+            assertEquals(null, activity.getSharedPreferences(ReleaseNotes.PREFS_NAME, Context.MODE_PRIVATE)
+                    .getString("dismissed_version", null));
+        }
+    }
+
+    @Test @Config(qualifiers = "en-w390dp-h844dp-night-mdpi")
+    public void actualDialogCapturesEnglishDarkWithReadableActionsAndScrolling() throws Exception {
+        captureDialog("dialogs/dark/whats-new.png", true);
+    }
+
+    @Test @Config(qualifiers = "en-w390dp-h844dp-notnight-mdpi")
+    public void actualDialogCapturesEnglishLightWithReadableActionsAndScrolling() throws Exception {
+        captureDialog("dialogs/light/whats-new.png", false);
+    }
+
+    @Test @Config(qualifiers = "de-w320dp-h640dp-night-mdpi")
+    public void actualDialogCapturesNarrowGermanWithReadableActionsAndScrolling() throws Exception {
+        captureDialog("dialogs/dark/whats-new-german-narrow.png", true);
+    }
+
+    @Test @Config(qualifiers = "de-w320dp-h640dp-night-mdpi", fontScale = 2)
+    public void actualDialogCapturesLargeGermanWithReadableActionsAndScrolling() throws Exception {
+        captureDialog("dialogs/dark/whats-new-german-large.png", true);
+    }
+
+    private static void captureDialog(String name, boolean dark) throws Exception {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            Utils.setIsDarkModeEnabled(dark);
+            activity.getSharedPreferences(ReleaseNotes.PREFS_NAME, Context.MODE_PRIVATE).edit()
+                    .putString("dismissed_version", "0.67.0").commit();
+            ReleaseNotes.show(activity, "0.71.3", () -> {});
+            AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            View decor = dialog.getWindow().getDecorView();
+            android.util.DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+            decor.measure(View.MeasureSpec.makeMeasureSpec(metrics.widthPixels, View.MeasureSpec.AT_MOST),
+                    View.MeasureSpec.makeMeasureSpec(metrics.heightPixels, View.MeasureSpec.AT_MOST));
+            decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
+            java.util.List<Rect> placed = new java.util.ArrayList<>();
+            for (int which : new int[]{AlertDialog.BUTTON_NEUTRAL, AlertDialog.BUTTON_NEGATIVE,
+                    AlertDialog.BUTTON_POSITIVE}) {
+                Button button = dialog.getButton(which);
+                assertEquals(View.VISIBLE, button.getVisibility());
+                Rect bounds = new Rect();
+                button.getDrawingRect(bounds);
+                ((ViewGroup) decor).offsetDescendantRectToMyCoords(button, bounds);
+                assertTrue(button.getText() + " is clipped", bounds.left >= 0 && bounds.top >= 0
+                        && bounds.right <= decor.getWidth() && bounds.bottom <= decor.getHeight());
+                for (Rect previous : placed) assertFalse("dialog actions overlap", Rect.intersects(previous, bounds));
+                placed.add(bounds);
+                android.text.Layout text = button.getLayout();
+                assertNotNull(text);
+                for (int line = 0; line < text.getLineCount(); line++) {
+                    assertEquals("button text was shortened", 0, text.getEllipsisCount(line));
+                    assertTrue("button text runs past its edge", text.getLineMax(line)
+                            <= button.getWidth() - button.getCompoundPaddingLeft() - button.getCompoundPaddingRight() + 1);
+                }
+                assertTrue("button text is cut vertically", text.getHeight()
+                        <= button.getHeight() - button.getCompoundPaddingTop() - button.getCompoundPaddingBottom());
+            }
+            ViewGroup custom = dialog.findViewById(android.R.id.custom);
+            ScrollView scroller = (ScrollView) custom.getChildAt(0);
+            assertTrue("release history must scroll", scroller.canScrollVertically(1));
+            UiCapture.save(decor, name, decor.getWidth(), decor.getHeight());
+            scroller.scrollTo(0, scroller.getChildAt(0).getHeight());
+            assertTrue("older releases must remain reachable", scroller.getScrollY() > 0
+                    && scroller.canScrollVertically(-1));
+            UiCapture.save(decor, name.replace(".png", "-end.png"), decor.getWidth(), decor.getHeight());
+            dialog.dismiss();
         }
     }
 

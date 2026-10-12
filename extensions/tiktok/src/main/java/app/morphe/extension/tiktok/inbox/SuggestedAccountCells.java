@@ -37,8 +37,8 @@ public final class SuggestedAccountCells {
     private static final String HOOK_FAMILY = "suggested accounts";
 
     /**
-     * What a cell was before it was collapsed: width, height, visibility, then the four margins
-     * (or {@code -1} for a cell whose params carry none).
+     * What a cell was before it was collapsed: width, height, visibility, followed by the four
+     * margins only when the original params carried them. Negative margins are valid values.
      */
     private static final Map<View, int[]> COLLAPSED = new WeakHashMap<>();
 
@@ -65,11 +65,11 @@ public final class SuggestedAccountCells {
             int[] original = COLLAPSED.get(view);
             if (hide) {
                 if (original == null && params != null) {
-                    COLLAPSED.put(view, new int[]{params.width, params.height, view.getVisibility(),
-                            margins == null ? -1 : margins.leftMargin,
-                            margins == null ? -1 : margins.topMargin,
-                            margins == null ? -1 : margins.rightMargin,
-                            margins == null ? -1 : margins.bottomMargin});
+                    COLLAPSED.put(view, margins == null
+                            ? new int[]{params.width, params.height, view.getVisibility()}
+                            : new int[]{params.width, params.height, view.getVisibility(),
+                                    margins.leftMargin, margins.topMargin,
+                                    margins.rightMargin, margins.bottomMargin});
                 }
                 if (params != null) {
                     params.width = 0;
@@ -85,7 +85,7 @@ public final class SuggestedAccountCells {
             if (params != null) {
                 params.width = original[0];
                 params.height = original[1];
-                if (margins != null && original[3] >= 0) {
+                if (margins != null && original.length == 7) {
                     margins.setMargins(original[3], original[4], original[5], original[6]);
                 }
                 view.setLayoutParams(params);

@@ -107,9 +107,9 @@ private fun BytecodePatchContext.dismissCall(type: String, name: String): String
 @Suppress("unused")
 val hideCaptchaPopupsPatch = bytecodePatch(
     name = "Hide CAPTCHA popups",
-    description = "Notes in Hushfeed's diagnostic report when TikTok shows a verification " +
-        "puzzle. Its hide switch isn't available on this TikTok version, so every puzzle still " +
-        "shows. Works as soon as you patch it in.",
+    description = "Skips the puzzle TikTok shows while you're just browsing. A puzzle right after " +
+        "you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step " +
+        "checks. Starts off. Turn it on in Hushfeed settings > Feed screen, then restart TikTok.",
     default = true,
 ) {
     category("Feed")

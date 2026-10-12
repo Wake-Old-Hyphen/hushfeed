@@ -35,7 +35,9 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
                 || SettingsStatus.expandActivityListEnabled
                 || SettingsStatus.notificationControlsEnabled
                 || SettingsStatus.suggestedVideoPushBlockEnabled
-                || SettingsStatus.autoStreakEnabled;
+                || SettingsStatus.autoStreakEnabled
+                || SettingsStatus.dmTranslationPreviewEnabled
+                || SettingsStatus.receivedDmTranslationPreviewEnabled;
     }
 
     @Override
@@ -45,7 +47,20 @@ public final class InboxPreferenceCategory extends ConditionalPreferenceCategory
 
     @Override
     public void addPreferences(Context context) {
+        if (SettingsStatus.receivedDmTranslationPreviewEnabled) {
+            addPreference(new TogglePreference(context, "Received message translation",
+                    "Preview a translation from a received text message's menu. The original message stays unchanged.",
+                    Settings.RECEIVED_DM_TRANSLATION_PREVIEW));
+        }
+        if (SettingsStatus.dmTranslationPreviewEnabled) {
+            addPreference(new TogglePreference(context, "DM translation preview",
+                    "Preview a translation of your draft before sending it.",
+                    Settings.DM_TRANSLATION_PREVIEW));
+        }
         if (SettingsStatus.inboxFilterEnabled) {
+            addPreference(new TogglePreference(context, "Search loaded activity",
+                    "Search Activity notifications already loaded on this screen. Loading more pauses while you search.",
+                    Settings.INBOX_LOADED_SEARCH));
             addPreference(new SectionHeadingPreference(context, "Rows"));
             addPreference(new TogglePreference(
                     context,

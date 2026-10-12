@@ -5,13 +5,17 @@
 
 package app.morphe.extension.tiktok.download;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -31,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -56,10 +61,16 @@ import java.lang.ref.WeakReference;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 @SuppressWarnings("unused")
 public final class StickerGallerySaver {
@@ -81,13 +92,18 @@ public final class StickerGallerySaver {
     /** A sticker is a few hundred KB. Anything past this is not one. */
     private static final long MAX_STICKER_BYTES = 24L * 1024 * 1024;
     private static final long MAX_STICKER_PIXELS = 16L * 1024 * 1024;
+    private static final long MAX_DM_PREVIEW_PIXELS = 1024L * 1024;
+    private static final int MAX_DM_PREVIEW_SIDE = 1024;
+    private static final String DM_STICKER_VIEW = "com.ss.android.ugc.aweme.views.RoundingCornerLayout";
+    private static final String SMART_IMAGE_VIEW = "com.bytedance.lighten.loader.SmartImageView";
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 20_000;
 
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
-    /** The sticker each decorated sheet is currently showing, so a reused sheet saves its own. */
+    /** The sticker each bound sheet is currently showing, so a reused sheet saves its own. */
     private static final WeakHashMap<View, StickerAsset> ATTACHED_SHEETS = new WeakHashMap<>();
     private static final WeakHashMap<Object, Object> STICKER_SOURCES = new WeakHashMap<>();
+    private static final WeakHashMap<Activity, WeakReference<AlertDialog>> DM_PREVIEWS = new WeakHashMap<>();
 
     private StickerGallerySaver() {
     }
@@ -97,6 +113,173 @@ public final class StickerGallerySaver {
         synchronized (STICKER_SOURCES) {
             STICKER_SOURCES.put(previewModel, source);
         }
+    }
+
+    /**
+     * The received sticker's tap, after the host's preview call. On the declared build that
+     * call is a stub. This owns its own preview, never a composer cell or the chat's root.
+     * The snapshot is only a poster; Save reads and authenticates the complete source media.
+     */
+    public static void openDmStickerPreview(View tapped, Object template) {
+        Bitmap poster = null;
+        try {
+            if (Looper.myLooper() != Looper.getMainLooper()) return;
+            View image = dmStickerImage(tapped);
+            if (image == null) return;
+            StickerAsset asset = findDmStickerAsset(template);
+            if (asset == null) {
+                HookStatus.missingMember(HOOK_FAMILY, "model", "DM sticker", "usable sticker source");
+                Utils.showToastShort(L10n.t("That sticker is in a format Hushfeed can't read"));
+                return;
+            }
+            Activity activity = tapped == null ? null : activityFrom(tapped.getContext());
+            if (image == null || asset == null || activity == null
+                    || activity.isFinishing() || activity.isDestroyed()) return;
+
+            // Only the image inside the verified small sticker bubble is drawn. Never walk up
+            // to a larger parent, and never retain the native view after this synchronous draw.
+            poster = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+            image.draw(new Canvas(poster));
+            showDmStickerPreview(activity, poster, asset);
+            poster = null; // The dialog now owns the bitmap, including dismissal cleanup.
+        } catch (RuntimeException failure) {
+            Logger.printInfo(() -> "Could not open sticker preview");
+            Utils.showToastShort(L10n.t("The sticker couldn't be saved. Try again."));
+        } finally {
+            if (poster != null) poster.recycle();
+        }
+    }
+
+    private static Activity activityFrom(Context context) {
+        for (int depth = 0; context != null && depth < 10; depth++) {
+            if (context instanceof Activity) return (Activity) context;
+            if (!(context instanceof ContextWrapper)) return null;
+            Context next = ((ContextWrapper) context).getBaseContext();
+            if (next == context) return null;
+            context = next;
+        }
+        return null;
+    }
+
+    /** No parent fallback: the only accepted view is the exact native message sticker bubble. */
+    static View dmStickerImage(View tapped) {
+        if (tapped == null || !DM_STICKER_VIEW.equals(tapped.getClass().getName())
+                || !boundedDmPreview(tapped)) return null;
+        List<View> images = new ArrayList<>();
+        int[] visited = {0};
+        collectDmImages(tapped, images, 0, visited);
+        if (visited[0] > 32 || images.size() != 1) return null;
+        View image = images.get(0);
+        return boundedDmPreview(image) && image.getWidth() <= tapped.getWidth()
+                && image.getHeight() <= tapped.getHeight() ? image : null;
+    }
+
+    private static boolean boundedDmPreview(View view) {
+        int width = view.getWidth(), height = view.getHeight();
+        int limit = Math.min(MAX_DM_PREVIEW_SIDE, SettingsUi.dp(view.getContext(), 320));
+        return width > 0 && height > 0 && width <= limit && height <= limit
+                && (long) width * height <= MAX_DM_PREVIEW_PIXELS;
+    }
+
+    private static void collectDmImages(View view, List<View> images, int depth, int[] visited) {
+        if (++visited[0] > 32 || depth > 4) {
+            visited[0] = 33;
+            return;
+        }
+        for (Class<?> type = view.getClass(); type != null; type = type.getSuperclass()) {
+            if (SMART_IMAGE_VIEW.equals(type.getName())) {
+                images.add(view);
+                return;
+            }
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount() && visited[0] <= 32; i++) {
+                collectDmImages(group.getChildAt(i), images, depth + 1, visited);
+            }
+        }
+    }
+
+    static AlertDialog showDmStickerPreview(Activity activity, Bitmap poster, StickerAsset asset) {
+        WeakReference<AlertDialog> previous = DM_PREVIEWS.remove(activity);
+        AlertDialog prior = previous == null ? null : previous.get();
+        if (prior != null) prior.dismiss();
+        SettingsUi.syncDarkMode(activity);
+        LinearLayout content = new LinearLayout(activity);
+        content.setOrientation(LinearLayout.VERTICAL);
+        int inset = SettingsUi.dp(activity, 24);
+        content.setPadding(inset, 0, inset, inset);
+        ImageView image = new ImageView(activity);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setImageBitmap(poster);
+        image.setContentDescription(L10n.t(activity, "Sticker"));
+        content.addView(image, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, Math.min(SettingsUi.dp(activity, 240),
+                        activity.getResources().getDisplayMetrics().heightPixels / 3)));
+        ViewGroup actions = SettingsUi.actionRow(activity);
+        TextView close = new TextView(activity);
+        close.setText(L10n.t(activity, "Close"));
+        SettingsUi.styleTextAction(close, false);
+        synchronized (ATTACHED_SHEETS) {
+            ATTACHED_SHEETS.put(content, asset);
+        }
+        TextView save = createActionButton(close, content);
+        save.setSingleLine(false);
+        save.setEllipsize(null);
+        SettingsUi.styleTextAction(save, true);
+        actions.addView(close);
+        actions.addView(save);
+        content.addView(actions);
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+                .setTitle(L10n.t(activity, "Sticker")).setView(content).create();
+        close.setOnClickListener(ignored -> dialog.dismiss());
+        dialog.setOnShowListener(ignored -> {
+            SettingsUi.styleStandardAlertDialog(dialog);
+            SettingsUi.styleTextAction(close, false);
+            SettingsUi.styleTextAction(save, true);
+        });
+        dialog.setOnDismissListener(ignored -> {
+            synchronized (ATTACHED_SHEETS) {
+                ATTACHED_SHEETS.remove(content);
+            }
+            WeakReference<AlertDialog> current = DM_PREVIEWS.get(activity);
+            if (current != null && current.get() == dialog) DM_PREVIEWS.remove(activity);
+            image.setImageDrawable(null);
+            poster.recycle();
+        });
+        dialog.show();
+        DM_PREVIEWS.put(activity, new WeakReference<>(dialog));
+        HookStatus.bound(HOOK_FAMILY, "DM sticker preview");
+        return dialog;
+    }
+
+    /** Only named model members, copied now so recycling the native message cannot change Save. */
+    static StickerAsset findDmStickerAsset(Object template) {
+        Object image = readNamedField(template, "imageComponent");
+        if (image == null || !hasNamedField(image.getClass(), "decryptKey")) return null;
+        List<String> urls = usableUrlList(readNamedField(image, "urls"));
+        if (urls.isEmpty()) return null;
+        Object rawKey = readNamedField(image, "decryptKey");
+        if (rawKey != null && !(rawKey instanceof String)) return null;
+        byte[] key = null;
+        if (rawKey != null && !((String) rawKey).isEmpty()) {
+            key = dmStickerKey((String) rawKey);
+            if (key == null) return null;
+        }
+        return new StickerAsset(urls, false, true, key);
+    }
+
+    static byte[] dmStickerKey(String hex) {
+        if (hex == null || (hex.length() != 32 && hex.length() != 48 && hex.length() != 64)) return null;
+        byte[] key = new byte[hex.length() / 2];
+        for (int i = 0; i < key.length; i++) {
+            if (hex.charAt(i * 2) > 127 || hex.charAt(i * 2 + 1) > 127) return null;
+            int high = Character.digit(hex.charAt(i * 2), 16);
+            int low = Character.digit(hex.charAt(i * 2 + 1), 16);
+            if (high < 0 || low < 0) return null;
+            key[i] = (byte) ((high << 4) | low);
+        }
+        return key;
     }
 
     public static void attachSaveImageButton(View sheetView, Object sheetModel) {
@@ -114,15 +297,11 @@ public final class StickerGallerySaver {
                 return;
             }
 
-            // The button is added once per sheet, but the sheet is reused for whatever sticker
-            // is opened next. Recording it before anything below can return keeps the button
-            // pointed at what is on screen whatever happens after this.
-            boolean alreadyDecorated;
+            // The sheet can receive its actions after a bind or replace their parent. Refresh
+            // its sticker first, then check the current action row for our button below.
             synchronized (ATTACHED_SHEETS) {
-                alreadyDecorated = ATTACHED_SHEETS.containsKey(sheetView);
                 ATTACHED_SHEETS.put(sheetView, asset);
             }
-            if (alreadyDecorated) return;
 
             List<View> actionButtons = findActionButtons(sheetView);
             ViewGroup actionParent = findCommonParent(actionButtons);
@@ -173,7 +352,7 @@ public final class StickerGallerySaver {
             synchronized (ATTACHED_SHEETS) {
                 showing = ATTACHED_SHEETS.get(sheetView);
             }
-            if (showing == null) {
+            if (showing == null || (showing.privateMedia && !sheetView.isShown())) {
                 debugLog("[Morphe Stickers] the sheet no longer names a sticker");
                 return;
             }
@@ -271,7 +450,7 @@ public final class StickerGallerySaver {
         // cancelled while it waited, or refused by a full queue.
         WeakReference<View> anchor = new WeakReference<>(button);
         MediaJobScheduler.Job job = MediaJobScheduler.submit(
-                "sticker", "sticker " + asset.url, stickerSaveWork(context, asset), handBackLater(anchor));
+                "sticker", stickerJobKey(asset), stickerSaveWork(context, asset), handBackLater(anchor));
         String saying = L10n.t("Saving the sticker");
         MediaJobScheduler.acknowledge(job, saying, saying);
     }
@@ -286,10 +465,18 @@ public final class StickerGallerySaver {
                     debugLog("[Morphe Stickers] saved sticker path=" + result.path);
                 } else if (BaseSettings.DEBUG.get()) {
                     Logger.printInfo(() -> "[Morphe Stickers] save failed reason=" + result.message
-                            + " url=" + summarizeUrl(asset.url));
+                            + " source=" + diagnosticSource(asset));
                 }
             });
         };
+    }
+
+    static String stickerJobKey(StickerAsset asset) {
+        return asset.privateMedia ? null : "sticker " + asset.url;
+    }
+
+    static String diagnosticSource(StickerAsset asset) {
+        return asset.privateMedia ? "private sticker" : summarizeUrl(asset.url);
     }
 
     /** Hands the button back on the main thread, once the save's job is over. */
@@ -308,14 +495,22 @@ public final class StickerGallerySaver {
         IOException failure = new IOException("No sticker URL succeeded");
         for (String url : asset.urls) {
             File source = null;
+            File decoded = null;
             try {
                 source = MediaCache.createTempFile(context, "sticker-source-", ".tmp");
                 String contentType = downloadSticker(url, source, context, deadline);
-                SaveResult result = saveDownloadedSticker(context, asset, url, source, contentType);
+                File media = source;
+                if (asset.decryptKey != null) {
+                    decoded = MediaCache.createTempFile(context, "sticker-decoded-", ".tmp");
+                    decryptDmSticker(source, decoded, asset.decryptKey, deadline);
+                    media = decoded;
+                }
+                SaveResult result = saveDownloadedSticker(context, asset, url, media, contentType);
                 if (!result.success) throw new IOException(result.message);
                 return result;
             } catch (MediaBudget.StopException refusal) {
-                Logger.printException(() -> "Sticker save stopped", refusal);
+                if (asset.privateMedia) Logger.printInfo(() -> "Private sticker save stopped (" + refusal.reason + ")");
+                else Logger.printException(() -> "Sticker save stopped", refusal);
                 if (refusal.reason == MediaBudget.StopException.Reason.SERVER_WAIT) {
                     return SaveResult.failure(L10n.t("The server asked us to wait. Try again later."));
                 }
@@ -324,10 +519,19 @@ public final class StickerGallerySaver {
                 }
                 return SaveResult.failure(L10n.t("The sticker couldn't be saved. Try again."));
             } catch (Throwable error) {
-                failure.addSuppressed(new IOException(
-                        "Sticker mirror failed (" + error.getClass().getSimpleName() + "): "
-                                + summarizeUrl(url), error));
+                if (asset.privateMedia) {
+                    // Transport causes can contain a private URL. Keep only its error class,
+                    // never the cause chain, key, native ID or any part of the message model.
+                    failure.addSuppressed(privateStickerFailure(error));
+                } else {
+                    failure.addSuppressed(new IOException(
+                            "Sticker mirror failed (" + error.getClass().getSimpleName() + "): "
+                                    + summarizeUrl(url), error));
+                }
             } finally {
+                if (decoded != null && !MediaCache.delete(decoded)) {
+                    Logger.printInfo(() -> "Could not remove decoded sticker source file");
+                }
                 if (source != null && !MediaCache.delete(source)) {
                     Logger.printInfo(() -> "Could not remove sticker source file");
                 }
@@ -337,6 +541,68 @@ public final class StickerGallerySaver {
             Logger.printException(() -> "[Morphe Stickers] saveSticker failure", failure);
         }
         return SaveResult.failure(L10n.t("The sticker couldn't be saved. Try again."));
+    }
+
+    static IOException privateStickerFailure(Throwable error) {
+        return new IOException("Private sticker mirror failed (" + error.getClass().getSimpleName() + ")");
+    }
+
+    /** Native ImageEncryptUtils contract: hex AES key, 12-byte nonce, authenticated GCM body. */
+    static void decryptDmSticker(File source, File decoded, byte[] key, MediaBudget.Deadline deadline)
+            throws IOException, GeneralSecurityException {
+        if (key == null || (key.length != 16 && key.length != 24 && key.length != 32)
+                || source.length() <= 28 || source.length() > MAX_STICKER_BYTES) {
+            MediaCache.deletePartial(decoded);
+            throw new IOException("Invalid encrypted sticker");
+        }
+        MediaBudget.checkDiskSpace(decoded.getParentFile(), source.length(), deadline);
+        boolean authenticated = false;
+        try (InputStream input = new FileInputStream(source)) {
+            byte[] nonce = new byte[12];
+            int used = 0;
+            while (used < nonce.length) {
+                MediaBudget.check(deadline);
+                int count = input.read(nonce, used, nonce.length - used);
+                if (count < 0) throw new IOException("Truncated encrypted sticker");
+                used += count;
+            }
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, nonce));
+            try (OutputStream output = new FileOutputStream(decoded)) {
+                byte[] buffer = new byte[65536];
+                long encrypted = nonce.length, written = 0;
+                while (true) {
+                    MediaBudget.check(deadline);
+                    int count = input.read(buffer);
+                    if (count < 0) break;
+                    encrypted += count;
+                    if (encrypted > MAX_STICKER_BYTES) throw new IOException("Invalid encrypted sticker");
+                    written = writeDmPlaintext(output, cipher.update(buffer, 0, count), written, decoded, deadline);
+                }
+                // Providers may emit plaintext from update before checking the tag. It stays
+                // in private cache until this explicit final authentication succeeds.
+                written = writeDmPlaintext(output, cipher.doFinal(), written, decoded, deadline);
+                if (written == 0) throw new IOException("Empty decrypted sticker");
+                output.flush();
+            }
+            authenticated = true;
+        } finally {
+            if (!authenticated) MediaCache.deletePartial(decoded);
+        }
+    }
+
+    private static long writeDmPlaintext(OutputStream output, byte[] bytes, long written,
+            File decoded, MediaBudget.Deadline deadline) throws IOException {
+        if (bytes == null || bytes.length == 0) return written;
+        if (bytes.length > MAX_STICKER_BYTES - written) throw new IOException("Invalid decrypted sticker");
+        for (int offset = 0; offset < bytes.length;) {
+            MediaBudget.check(deadline);
+            MediaBudget.checkStreamingDiskSpace(decoded.getParentFile(), deadline);
+            int count = Math.min(65536, bytes.length - offset);
+            output.write(bytes, offset, count);
+            offset += count;
+        }
+        return written + bytes.length;
     }
 
     private static String downloadSticker(
@@ -422,8 +688,12 @@ public final class StickerGallerySaver {
     ) throws Exception {
         MediaBudget.check(null);
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source))) {
-            MediaFormat format = detectMediaFormat(contentType, url, inputStream, asset.animated);
-            String mediaId = Integer.toUnsignedString(url.hashCode(), 16);
+            // DM metadata can name encrypted bytes as an image. Only authenticated source
+            // headers decide the format, never a URL suffix or the server's content type.
+            MediaFormat format = detectMediaFormat(asset.privateMedia ? null : contentType,
+                    asset.privateMedia ? null : url, inputStream, asset.animated);
+            String mediaId = asset.privateMedia ? java.util.UUID.randomUUID().toString().replace("-", "")
+                    : Integer.toUnsignedString(url.hashCode(), 16);
             String displayName = DownloadFilenameFormatter.formatCommentMediaName(format.extension, mediaId);
 
             if (!format.convertToPng) {
@@ -1254,16 +1524,24 @@ public final class StickerGallerySaver {
         final String url;
         final List<String> urls;
         final boolean animated;
+        final boolean privateMedia;
+        final byte[] decryptKey;
 
         StickerAsset(String url, boolean animated) {
             this(Collections.singletonList(url), animated);
         }
 
         StickerAsset(List<String> urls, boolean animated) {
+            this(urls, animated, false, null);
+        }
+
+        StickerAsset(List<String> urls, boolean animated, boolean privateMedia, byte[] decryptKey) {
             this.urls = urls == null || urls.isEmpty()
                     ? Collections.emptyList() : List.copyOf(urls);
             this.url = this.urls.isEmpty() ? "" : this.urls.get(0);
             this.animated = animated;
+            this.privateMedia = privateMedia;
+            this.decryptKey = decryptKey == null ? null : Arrays.copyOf(decryptKey, decryptKey.length);
         }
     }
 

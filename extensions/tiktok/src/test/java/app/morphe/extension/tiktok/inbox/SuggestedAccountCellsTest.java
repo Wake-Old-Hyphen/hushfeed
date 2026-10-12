@@ -110,6 +110,38 @@ public class SuggestedAccountCellsTest {
         }
     }
 
+    /** Negative margins are real layout values, including -1, and survive repeated binds. */
+    @Test public void aCellComesBackWithNegativeMarginsAfterRepeatedBinds() {
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            LinearLayout list = new LinearLayout(activity);
+            for (int left : new int[]{-1, -12}) {
+                View item = new View(activity);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(300, 420);
+                params.setMargins(left, -8, 12, -4);
+                list.addView(item, params);
+                Cell cell = new Cell(item);
+
+                Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(true);
+                SuggestedAccountCells.onBind(cell);
+                SuggestedAccountCells.onBind(cell);
+                assertEquals(0, params.leftMargin);
+                assertEquals(0, params.topMargin);
+
+                Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(false);
+                SuggestedAccountCells.onBind(cell);
+                assertEquals(left, params.leftMargin);
+                assertEquals(-8, params.topMargin);
+                assertEquals(12, params.rightMargin);
+                assertEquals(-4, params.bottomMargin);
+                assertEquals(300, params.width);
+                assertEquals(420, params.height);
+                assertEquals(View.VISIBLE, item.getVisibility());
+            }
+        }
+    }
+
     /** A cell that was never collapsed is left exactly as TikTok bound it. */
     @Test public void aCellNeverCollapsedIsNotTouchedWhenTheSwitchIsOff() {
         try (var owner = Robolectric.buildActivity(Activity.class).setup()) {

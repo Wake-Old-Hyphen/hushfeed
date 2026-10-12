@@ -51,8 +51,9 @@ $phoneParserCommand = "PHONE_SERIAL=TESTPHONE01 HUSHFEED_DEVICE_SERIAL=TESTPHONE
     "PHONE_SHOTS=/tmp/hushfeed-phone-parser-contract '$escapedPhoneScript' parse_top"
 
 function Invoke-PhoneTopParser {
-    param([Parameter(Mandatory)][string]$Fixture)
-    $output = @($Fixture | & $bashHost @bashArguments $phoneParserCommand 2> $null)
+    param([Parameter(Mandatory)][string]$Fixture, [switch]$Popup)
+    $parserCommand = if ($Popup) { $phoneParserCommand -replace ' parse_top$', ' parse_popup_top' } else { $phoneParserCommand }
+    $output = @($Fixture | & $bashHost @bashArguments $parserCommand 2> $null)
     return [pscustomobject]@{
         ExitCode = $LASTEXITCODE
         Output   = ($output -join "`n").Trim()
@@ -94,6 +95,67 @@ $missingTop = Invoke-PhoneTopParser 'WINDOW MANAGER DISPLAY CONTENTS (dumpsys wi
 Assert-True ($missingTop.ExitCode -ne 0 -and -not $missingTop.Output) `
     'phone.sh accepted a dump with no default display.'
 
+$historicalTop = Invoke-PhoneTopParser @'
+WINDOW MANAGER LAST ANR (dumpsys window lastanr)
+  Display: mDisplayId=0
+  mCurrentFocus=Window{old123 u0 com.zhiliaoapp.musically/.MainActivity}
+WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)
+  Display: mDisplayId=0
+  mCurrentFocus=Window{new456 u0 com.example.other/.MainActivity}
+'@
+Assert-True ($historicalTop.ExitCode -eq 0 -and $historicalTop.Output -eq 'com.example.other/.MainActivity') `
+    'phone.sh trusted a historical foreground instead of the current display.'
+
+$ownedPopupFixture = @'
+WINDOW MANAGER WINDOWS (dumpsys window windows)
+  Window #0 Window{aaa111 u0 PopupWindow:abc123}:
+    mDisplayId=0 taskId=42
+    mOwnerUid=10434 showForAllUsers=false package=com.zhiliaoapp.musically appop=NONE
+    mAttrs={(0,199)(1080xwrap) ty=APPLICATION_PANEL fmt=TRANSPARENT}
+    mActivityRecord=ActivityRecord{bbb222 u0
+      com.zhiliaoapp.musically/.HostActivity t42}
+  Window #1 Window{ccc333 u0 com.zhiliaoapp.musically/.HostActivity}:
+    mDisplayId=0 taskId=42
+    mOwnerUid=10434 package=com.zhiliaoapp.musically
+    mActivityRecord=ActivityRecord{bbb222 u0 com.zhiliaoapp.musically/.HostActivity t42}
+WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)
+  Display: mDisplayId=55 (organized)
+    mCurrentFocus=Window{fff555 u0 com.example.other/.Activity}
+    mFocusedApp=ActivityRecord{fff666 u0 com.example.other/.Activity t55}
+  Display: mDisplayId=0
+    mCurrentFocus=Window{aaa111 u0 PopupWindow:abc123}
+    mFocusedApp=ActivityRecord{bbb222 u0 com.zhiliaoapp.musically/.HostActivity t42}
+'@
+$ownedPopup = Invoke-PhoneTopParser -Fixture $ownedPopupFixture -Popup
+Assert-True ($ownedPopup.ExitCode -eq 0 -and $ownedPopup.Output -eq 'com.zhiliaoapp.musically/.HostActivity') `
+    'phone.sh refused a popup with the same application token, package and UID as its focused owner.'
+$historicalWindows = $ownedPopupFixture.Replace('WINDOW MANAGER WINDOWS (dumpsys window windows)', 'WINDOW MANAGER LAST ANR (dumpsys window lastanr)').Replace('WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)', 'HISTORICAL DISPLAY CONTENTS').Replace('mOwnerUid=10434', 'mOwnerUid=99999')
+$afterHistorical = Invoke-PhoneTopParser -Fixture ($historicalWindows + "`n" + $ownedPopupFixture) -Popup
+Assert-True ($afterHistorical.ExitCode -eq 0 -and $afterHistorical.Output -eq 'com.zhiliaoapp.musically/.HostActivity') `
+    'phone.sh confused the last ANR snapshot with current popup ownership.'
+$onlyHistorical = Invoke-PhoneTopParser -Fixture $historicalWindows -Popup
+Assert-True ($onlyHistorical.ExitCode -ne 0 -and -not $onlyHistorical.Output) `
+    'phone.sh trusted historical windows without a current window list and display.'
+$unsafePopups = @(
+    $ownedPopupFixture.Replace('mCurrentFocus=Window{aaa111 u0 PopupWindow:abc123}', 'mCurrentFocus=null'),
+    $ownedPopupFixture.Replace('mCurrentFocus=Window{aaa111 u0 PopupWindow:abc123}', 'mCurrentFocus=Window{unknown u0 PopupWindow:abc123}'),
+    $ownedPopupFixture.Replace('mCurrentFocus=Window{aaa111 u0 PopupWindow:abc123}', 'mCurrentFocus=Window{aaa111 u0 SystemOverlay}'),
+    $ownedPopupFixture.Replace('mOwnerUid=10434 showForAllUsers=false', 'mOwnerUid=10435 showForAllUsers=false'),
+    $ownedPopupFixture.Replace('package=com.zhiliaoapp.musically appop=NONE', 'package=com.example.other appop=NONE'),
+    $ownedPopupFixture.Replace('mDisplayId=0 taskId=42', 'mDisplayId=55 taskId=42'),
+    $ownedPopupFixture.Replace('ty=APPLICATION_PANEL', 'ty=APPLICATION_OVERLAY'),
+    $ownedPopupFixture.Replace('com.zhiliaoapp.musically/.HostActivity t42}', 'com.zhiliaoapp.musically/.HostActivity t43}').Replace('mFocusedApp=ActivityRecord{bbb222 u0 com.zhiliaoapp.musically/.HostActivity t43}', 'mFocusedApp=ActivityRecord{bbb222 u0 com.zhiliaoapp.musically/.HostActivity t42}'),
+    $ownedPopupFixture.Replace('mFocusedApp=ActivityRecord{bbb222 u0 com.zhiliaoapp.musically/.HostActivity t42}', 'mFocusedApp=null'),
+    $ownedPopupFixture.Replace('Window #1 Window{ccc333 u0 com.zhiliaoapp.musically/.HostActivity}', 'Window #1 Window{ccc333 u0 com.example.other/.Activity}'),
+    $ownedPopupFixture.Replace('Window #1 Window{ccc333', 'Window #1 Window{aaa111'),
+    $ownedPopupFixture.Replace('Display: mDisplayId=0', 'Display: mDisplayId=9')
+)
+foreach ($fixture in $unsafePopups) {
+    $unsafePopup = Invoke-PhoneTopParser -Fixture $fixture -Popup
+    Assert-True ($unsafePopup.ExitCode -ne 0 -and -not $unsafePopup.Output) `
+        'phone.sh accepted a popup without a uniquely matched foreground application owner.'
+}
+
 $phoneSource = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'phone.sh') -Raw
 foreach ($verb in @('tap', 'swipe', 'keyevent', 'text')) {
     Assert-True ($phoneSource -match "shell input -d 0 $verb") `
@@ -131,7 +193,7 @@ trap 'rm -rf $fixture' EXIT
 cat > $fixture/adb <<'FAKE'
 #!/bin/sh
 case $* in
-    *dumpsys*) printf '  Display: mDisplayId=0\n  mCurrentFocus=Window{1 u0 com.zhiliaoapp.musically/.MainActivity}\n';;
+    *dumpsys*) printf 'WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)\n  Display: mDisplayId=0\n  mCurrentFocus=Window{1 u0 com.zhiliaoapp.musically/.MainActivity}\n';;
     *start*) printf '%s\n' $@ > ${0%/*}/am-start;;
 esac
 FAKE
@@ -3179,6 +3241,8 @@ foreach ($tool in @('strip-hunt.ps1', 'record-markers.ps1')) {
 Write-Host '[scripts] shared phone log contracts passed'
 
 & (Join-Path $Root 'scripts/test-storage-probe.ps1') -Root $Root
+& (Join-Path $Root 'scripts/test-fixture-jobs.ps1') -Root $Root
+& (Join-Path $Root 'scripts/test-release-publication.ps1') -Root $Root
 
 $global:LASTEXITCODE = 0
 Write-Host '[scripts] report, target, Java and guarded replacement contracts passed'

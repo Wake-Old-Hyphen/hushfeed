@@ -108,7 +108,7 @@ function Initialize-ProbeOutputDirectory {
                 if ($child.PSIsContainer) {
                     $generated = $relative -in @('classes', 'dex') -or $inClasses
                 } else {
-                    $generated = $relative -in @('.hushfeed-probe-output', 'probe-unsigned.apk', 'probe-aligned.apk',
+                    $generated = $relative -in @('.hushfeed-probe-output', 'd8-inputs.args', 'probe-unsigned.apk', 'probe-aligned.apk',
                         'hushfeed-verification-probe.apk', 'hushfeed-verification-probe.apk.idsig') -or
                         ($inClasses -and $child.Extension -eq '.class') -or $relative -match '^dex\\classes\d*\.dex$'
                 }
@@ -169,6 +169,7 @@ New-Item -ItemType Directory -Force -Path "$OutDir\classes", "$OutDir\dex" | Out
 # an array, and splatting a string spreads its characters, so javac is handed the colon out
 # of C:\ as though it were a flag.
 $sources = @(Get-ChildItem (Join-Path $here 'src') -Recurse -Filter *.java | ForEach-Object { $_.FullName })
+$sources += Join-Path $root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java'
 Write-Host "[probe] compiling $($sources.Count) source file(s)"
 # --release rather than -source/-target with a boot class path: a current JDK refuses that
 # pairing outright. android.jar stays on the ordinary class path, which is where the android.*
@@ -185,8 +186,14 @@ try {
 if ($compileStatus -ne 0) { throw 'javac failed.' }
 
 $classes = @(Get-ChildItem "$OutDir\classes" -Recurse -Filter *.class | ForEach-Object { $_.FullName })
-& (Join-Path $buildTools.FullName 'd8.bat') --lib $androidJar --min-api 23 --output "$OutDir\dex" @classes
-if ($LASTEXITCODE -ne 0) { throw 'd8 failed.' }
+# d8.bat crosses cmd.exe's command-length limit once the probe has enough inner classes.
+# Its argument file treats each line as one path, including spaces, without shell quoting.
+$dexInputs = Join-Path $OutDir 'd8-inputs.args'
+[IO.File]::WriteAllLines($dexInputs, $classes, (New-Object Text.UTF8Encoding($false)))
+try {
+    & (Join-Path $buildTools.FullName 'd8.bat') --lib $androidJar --min-api 23 --thread-count 2 --output "$OutDir\dex" "@$dexInputs"
+    if ($LASTEXITCODE -ne 0) { throw 'd8 failed.' }
+} finally { Remove-Item -LiteralPath $dexInputs -Force -ErrorAction SilentlyContinue }
 
 $unsigned = Join-Path $OutDir 'probe-unsigned.apk'
 & (Join-Path $buildTools.FullName 'aapt2.exe') link -I $androidJar `

@@ -276,28 +276,130 @@ public class CaptchaGateTest {
         assertFalse(CaptchaGate.shouldHideTuringCaptchaPopup(null, "twice_verify"));
     }
 
+    /**
+     * Signed in, with no write of the reader's in its window and nothing naming an account
+     * screen, a puzzle was raised while browsing, and every hook but TikTok Shop's hides it
+     * while the switch is on. The first hidden one says so on screen.
+     */
     @Test
-    public void aSignedInAccountDoesNotMakeAnUnclassifiedSceneSafeToHide() {
+    public void aSignedInBrowsingPuzzleIsHiddenByEveryHook() {
         CaptchaGate.accountServiceForTests = new SignedInAccount();
-        String[] details = {null, "", " ", "{", "unknown", "slide", "slide_captcha",
-                "common_verify", "{\"subtype\":\"slide\"}", "{\"scene\":\"feed\"}"};
+        String[] details = {"{", "unknown", "slide", "slide_captcha", "common_verify",
+                "{\"subtype\":\"slide\"}", "{\"scene\":\"feed\"}", "{\"verify_way\":\"slide\"}"};
         ShadowToast.reset();
         for (String detail : details) {
             ShadowLog.clear();
-            assertEquals("its scene has no reviewed browsing contract",
-                    CaptchaGate.showReason(null, detail, afterEveryWrite()));
-            assertFalse(CaptchaGate.shouldHideCaptchaPopup(null, detail));
-            assertFalse(CaptchaGate.shouldHideOecCaptchaPopup(new VerifyRequest(detail)));
-            assertFalse(CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest(detail)));
-            assertFalse(CaptchaGate.shouldHideTuringCaptchaPopup(null, detail));
-            assertTrue(ShadowLog.getLogs().stream().anyMatch(log ->
-                    log.msg.contains("Showing risk check")
-                            && log.msg.contains("no reviewed browsing contract")));
+            assertNull(detail, CaptchaGate.showReason(null, detail, afterEveryWrite()));
+            assertTrue(detail, CaptchaGate.shouldHideCaptchaPopup(null, detail));
+            assertTrue(detail, CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest(detail)));
+            assertTrue(detail, CaptchaGate.shouldHideTuringCaptchaPopup(null, detail));
+            assertTrue(ShadowLog.getLogs().stream().anyMatch(log -> log.msg.contains("Hid risk check")));
         }
-        assertFalse(CaptchaGate.shouldHideLegacyCaptchaPopup(null, 2148));
+        // popCaptchaV2's risk info and popCaptcha's error code describe nothing account-shaped
+        // when they're missing, the same as onlynazril's rule.
+        for (String detail : new String[]{null, "", " "}) {
+            assertTrue(CaptchaGate.shouldHideCaptchaPopup(null, detail));
+        }
+        assertTrue(CaptchaGate.shouldHideLegacyCaptchaPopup(null, 2148));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertNotNull(CaptchaGate.recentlySuppressedCheckId());
+        assertEquals("one notice for the session", 1, ShadowToast.shownToastCount());
+    }
+
+    /** Sign-in, SMS and two-step named anywhere in the check, inside JSON or a longer scene. */
+    @Test
+    public void anAccountWordAnywhereInTheCheckKeepsItVisible() {
+        CaptchaGate.accountServiceForTests = new SignedInAccount();
+        for (String detail : new String[]{"{\"verify_way\":\"sms\"}", "sms_verify",
+                "{\"subtype\":\"mobile_verify\"}", "twice_verify_v2", "{\"scene\":\"passport_bind\"}",
+                "email_otp", "{\"scene\":\"Login\"}"}) {
+            assertEquals(detail, "it is account verification",
+                    CaptchaGate.showReason(null, detail, afterEveryWrite()));
+            assertFalse(detail, CaptchaGate.shouldHideCaptchaPopup(null, detail));
+            assertFalse(detail, CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest(detail)));
+            assertFalse(detail, CaptchaGate.shouldHideTuringCaptchaPopup(null, detail));
+        }
         assertNull(CaptchaGate.recentlySuppressedCheckId());
-        assertEquals(0, ShadowToast.shownToastCount());
+    }
+
+    /** TikTok Shop's verification hands over no screen to judge, so it always shows. */
+    @Test
+    public void shopVerificationIsAlwaysShown() {
+        CaptchaGate.accountServiceForTests = new SignedInAccount();
+        for (String scene : new String[]{"feed", "slide", "{\"subtype\":\"slide\"}"}) {
+            ShadowLog.clear();
+            assertFalse(scene, CaptchaGate.shouldHideOecCaptchaPopup(new VerifyRequest(scene)));
+            assertTrue(ShadowLog.getLogs().stream().anyMatch(log ->
+                    log.msg.contains("Showing risk check") && log.msg.contains("TikTok Shop")));
+        }
+        assertNull(CaptchaGate.recentlySuppressedCheckId());
+    }
+
+    /**
+     * The other actions a hidden puzzle would quietly fail: saving, editing the profile,
+     * posting, messaging, gifts, Shop and account changes. Their paths are 47.1.4's. Follow
+     * diagnostics shares writeActionFor, so these stay out of it.
+     */
+    @Test
+    public void everyOtherWriteHoldsTheWindow() {
+        String[][] cases = {
+                {"/aweme/v1/aweme/collect/", "save"},
+                {"/aweme/v1/user/music/collect/", "save"},
+                {"/aweme/v1/commit/user/", "profile edit"},
+                {"/tiktok/privacy/user/settings/update/v2", "profile edit"},
+                {"/aweme/v1/create/aweme/", "post"},
+                {"/aweme/v2/create/", "post"},
+                {"/aweme/v1/aweme/delete/", "post"},
+                {"/v1/message/send", "message"},
+                {"/v2/conversation/create/", "message"},
+                {"/tiktok/v1/gift/send/", "gift"},
+                {"/webcast/gift/send/", "gift"},
+                {"/api/v1/trade/order/create", "purchase"},
+                {"/api/v1/shop/cart/add_item_to_cart", "purchase"},
+                {"/payment/v1/pay", "purchase"},
+                {"/passport/mobile/send_code/v1/", "sign-in change"},
+        };
+        for (String[] each : cases) {
+            assertEquals(each[0], each[1], CaptchaGate.heldActionFor(each[0]));
+            assertNull(each[0], CaptchaGate.writeActionFor(each[0]));
+            CaptchaGate.recordRequest(new Request(each[0]));
+            assertEquals(each[0], each[1], CaptchaGate.pendingWriteAction());
+            assertEquals("it gates a " + each[1], CaptchaGate.showReason(null, "slide", CaptchaGate.now()));
+        }
+        // The write families still answer through the shared list.
+        assertEquals("follow", CaptchaGate.heldActionFor("/aweme/v1/commit/follow/user/"));
+    }
+
+    /** Reads and telemetry, including the POSTs that never stop, open nothing. */
+    @Test
+    public void readsAndTelemetryHoldNoWindow() {
+        for (String path : new String[]{"/aweme/v1/feed/", "/aweme/v2/comment/list/",
+                "/monitor/collect/", "/service/2/device_sdk/stats_collect/",
+                "/aweme/v1/user/collect/count/", "/v1/client/report_metrics",
+                "/tiktok/v1/activity_status/report", "/aweme/v1/aweme/listcollection/", null}) {
+            assertNull(path, CaptchaGate.heldActionFor(path));
+        }
+    }
+
+    /** The old key's saved true dates from when the row did nothing, so it can't turn this on. */
+    @Test
+    public void theSwitchHasItsOwnKey() {
+        assertEquals("hide_browsing_captcha_popups", Settings.HIDE_CAPTCHA_POPUPS.key);
+        assertEquals(Boolean.FALSE, Settings.HIDE_CAPTCHA_POPUPS.defaultValue);
+    }
+
+    /** A verification request that names no scene might be the account's own, so it shows. */
+    @Test
+    public void aSignedInVerificationRequestWithNoReadableSceneIsShown() {
+        CaptchaGate.accountServiceForTests = new SignedInAccount();
+        for (String scene : new String[]{null, "", " "}) {
+            ShadowLog.clear();
+            assertFalse(CaptchaGate.shouldHideOecCaptchaPopup(new VerifyRequest(scene)));
+            assertFalse(CaptchaGate.shouldHideTuringDialog(null, new VerifyRequest(scene)));
+            assertTrue(ShadowLog.getLogs().stream().anyMatch(log ->
+                    log.msg.contains("Showing risk check") && log.msg.contains("its scene can't be read")));
+        }
+        assertNull(CaptchaGate.recentlySuppressedCheckId());
     }
 
     @Test
@@ -339,12 +441,12 @@ public class CaptchaGateTest {
     }
 
     @Test
-    public void offPauseAndWriteExpiryCannotTurnUnknownChallengesIntoBrowsingOnes() {
+    public void offAndPauseShowEveryChallengeAndAWriteHoldsItsWindow() {
         CaptchaGate.accountServiceForTests = new SignedInAccount();
         CaptchaGate.recordRequest(new Request("/aweme/v1/commit/item/digg/"));
         assertEquals("it gates a like", CaptchaGate.showReason(null, "slide",
                 now + CaptchaGate.WRITE_WINDOW_MS));
-        assertEquals("its scene has no reviewed browsing contract",
+        assertNull("once the like's window passes, the puzzle is a browsing one",
                 CaptchaGate.showReason(null, "slide", afterEveryWrite()));
         Settings.HIDE_CAPTCHA_POPUPS.save(false);
         assertEquals("the setting is off", CaptchaGate.showReason(null, "slide", now));

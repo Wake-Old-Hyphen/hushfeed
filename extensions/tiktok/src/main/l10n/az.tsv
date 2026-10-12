@@ -539,7 +539,7 @@ Hide activity status	Fəaliyyət statusunu gizlədin
 Hide ads, Shop posts, LIVE videos and replays, promotional music, and paid partnerships.	Reklamları, Shop paylaşımlarını, LIVE videoları və təkrarları, tanıtım musiqisini və ödənişli tərəfdaşlıqları gizlədin.
 Hide archive	Arxivi gizlədin
 Hide bottom tabs TikTok adds later unless you allow them.	TikTok-un sonradan əlavə etdiyi alt nişanları siz icazə verməyincə gizlədin.
-Unavailable on these TikTok builds. All verification challenges stay visible.	Bu TikTok buildlərində əlçatan deyil. Bütün doğrulama tapşırıqları görünən qalır.
+Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.	TikTok-un sən sadəcə gəzərkən göstərdiyi tapmacanı keçir. Bəyənmə, izləmə, şərh və ya yenidən paylaşımdan dərhal sonra gələn tapmaca yenə göstərilir, giriş, SMS və iki addımlı yoxlamalar da. Nəsə işləməyi dayandırsa, bunu söndür.
 Hide buttons in the right column	Sağ sütundakı düymələri gizlədin
 Hide comment polls	Şərh sorğularını gizlədin
 Show poll results before voting	Səs verməzdən əvvəl sorğu nəticələrini göstərin
@@ -1063,6 +1063,10 @@ Show the whole video instead of cropping it to the window. Nothing changes on a 
 Show what is left of the budget	Büdcədən nə qaldığını göstərin
 Show when the camera or microphone is in use	Kamera və ya mikrofon istifadə olunanda göstərin
 Show where a video was posted	Videonun harada paylaşıldığını göstərin
+Show commenters' handles	Şərh yazanların istifadəçi adlarını göstərin
+Show each commenter's @username instead of the display name they chose. A reply to a reply names the person it answers the same way once their own comment has loaded.	Hər şərh yazanın seçdiyi görünən ad əvəzinə @istifadəçi adını göstərin. Cavaba yazılan cavab, cavab verdiyi şəxsin öz şərhi yükləndikdən sonra onu da eyni şəkildə göstərir.
+Show where commenters are from	Şərh yazanların haradan olduğunu göstərin
+Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.	Şərhin vaxtından sonra şərh yazanın hesabında qurulmuş ölkəni göstərin. TikTok-un ölkə göndərmədiyi hesablardan gələn şərhlər olduğu kimi qalır.
 Showing %1$s again	%1$s yenidən göstərilir
 Silence the feed while comments are open	Şərhlər açıq olanda lenti səssiz edin
 Hide videos with blocked sounds	Bloklanmış səsləri olan videoları gizlədin
@@ -1680,7 +1684,9 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Hələ heç bir pop-up görünməyib
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	TikTok-dan bir müddət istifadə edin. Pop-up, TikTok onu ilk dəfə göstərməyə çalışdıqdan sonra burada görünür.
 Fade the video controls	Video idarəetmələrini solğunlaşdır
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Videonun üzərindəki düymələri, başlığı və tabları gizlətmək əvəzinə bu səviyyəyə qədər solğunlaşdırır. 100 onları TikTok-un çəkdiyi kimi saxlayır. Solğun idarəetmələr toxunuşları yenə qəbul edir. Təmiz ekranda düymələr və başlıq bu səviyyədə ekranda qalır, toxunuşlar isə onlardan keçib videoya çatır. 0-da düymələr və başlıq gizlənir, tablar isə 10-da qalır.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Videonun üzərindəki düymələri, başlığı və tabları gizlətmək əvəzinə bu səviyyəyə qədər solğunlaşdırır. 100 onları TikTok-un çəkdiyi kimi saxlayır. Solğun idarəetmələr toxunuşları yenə qəbul edir. 0-da düymələr və başlıq gizlənir, tablar isə 10-da qalır.
+Keep faded controls in Clear display	Təmiz ekranda solğun idarəetmələri saxlayın
+With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.	Solğunluq 100-dən aşağı olanda Təmiz ekranda düymələr və başlıq bu səviyyədə ekranda qalır, toxunuşlar isə onlardan keçib videoya çatır. Söndürüləndə Təmiz ekran onları 100-də olduğu kimi gizlədir.
 Loop a story	Hekayəni təkrarla
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Hekayə bitəndə növbətiyə keçmək əvəzinə başdan yenidən oxut. Keçmək üçün toxunun və ya sürüşdürün.
 Hold a photo story	Foto hekayəni saxla
@@ -1956,3 +1962,87 @@ Allow voice comments	Səsli şərhlərə icazə ver
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Hələ olmayan hesablarda TikTok-un səsli şərh yazmaq üçün düyməsini göstərir. Real hesabda sınaqdan keçirilməyib, ona görə də işləməyə bilər.
 Sign in without a passkey	Passkey olmadan daxil olun
 TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok telefonunuza passkey dəstəkləməyən telefon kimi baxır, ona görə də daxil olanda bunun əvəzinə parolunuzu və ya e-poçt ya da SMS ilə gələn kodu soruşur. Parol menecerləri yamaqlanmış tətbiqə passkey vermir.
+# context: opens the complete published changelog from the concise What's new dialog.
+Full changelog	Bütün dəyişikliklər
+More hashtags per post	Hər paylaşımda daha çox həştəq
+New comment emoji	Yeni şərh emojiləri
+Hide root	Rootu gizlət
+Hide root status and details about root tools from TikTok.	Root statusunu və root alətləri haqqında məlumatı TikTok-dan gizlət.
+Clear	Təmizlə
+Search Activity notifications already loaded on this screen. Loading more pauses while you search.	Bu ekranda artıq yüklənmiş Fəaliyyət bildirişlərində axtarın. Axtarış zamanı əlavə yükləmə dayanır.
+Search is unavailable on this screen	Bu ekranda axtarış mövcud deyil
+Search loaded activity	Yüklənmiş fəaliyyətdə axtarış
+Wait for loading to finish	Yükləmənin bitməsini gözləyin
+Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.	Daxil olduğunuz bu hesab üçün saylar seçin. TikTok-un sayını istifadə etmək üçün sahəni boş saxlayın. Sıfır sıfır göstərir. Seçimlər bu telefonda qalır.
+Followers	İzləyicilər
+Local profile counts	Yerli profil sayları
+Own profile counts	Öz profilinizin sayları
+Show chosen counts on your own profile on this phone. Other people see the real counts.	Bu telefonda öz profilinizdə seçdiyiniz sayları göstərin. Başqaları həqiqi sayları görür.
+Sign in to edit your own profile counts	Öz profilinizin saylarını dəyişmək üçün daxil olun
+Use a whole number from 0 to %1$s, or leave the field empty.	0 ilə %1$s arasında tam ədəd daxil edin və ya sahəni boş saxlayın.
+Your account changed. Open the count editor again.	Hesabınız dəyişdi. Say redaktorunu yenidən açın.
+
+# context: local own-profile appearance
+Local verified badge	Yerli təsdiq nişanı
+Show a verified badge on your own profile on this phone. Other people see your real status.	Bu telefonda öz profilinizdə təsdiq nişanı göstərin. Digər insanlar həqiqi statusunuzu görür.
+Hide your account warning	Hesab xəbərdarlığınızı gizlət
+Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.	Bu telefonda öz profilinizdə məhdudiyyət bildirişini gizlədin. TikTok məhdudiyyətləri və etiraz qaydaları qüvvədə qalır.
+
+# context: received-message and outgoing-draft translation previews
+DM translation preview	Şəxsi mesaj tərcüməsinə baxış
+Preview a translation of your draft before sending it.	Göndərməzdən əvvəl qaralamanızın tərcüməsinə baxın.
+Translate draft	Qaralamanı tərcümə et
+Translation preview	Tərcüməyə baxış
+Use translation	Tərcüməni istifadə et
+Translating…	Tərcümə olunur…
+Couldn't translate this draft. Try again in a moment.	Bu qaralama tərcümə olunmadı. Bir az sonra yenidən cəhd edin.
+Received message translation	Alınan mesajın tərcüməsi
+Preview a translation from a received text message's menu. The original message stays unchanged.	Alınan mətn mesajının menyusundan tərcüməyə baxın. Orijinal mesaj dəyişmir.
+Preview translation	Tərcüməyə bax
+Original message	Orijinal mesaj
+Translated message	Tərcümə edilmiş mesaj
+Show original	Orijinalı göstər
+Show translation	Tərcüməni göstər
+Couldn't translate this message. Try again in a moment.	Bu mesaj tərcümə olunmadı. Bir az sonra yenidən cəhd edin.
+Saved posts	Yadda saxlanmış paylaşımlar
+Blocked accounts	Bloklanmış hesablar
+These are posts saved by your signed-in account. Other Favorites categories aren't included.	Bunlar daxil olduğunuz hesabın yadda saxladığı paylaşımlardır. Digər Favoritlər kateqoriyaları daxil deyil.
+Read-only list. Accounts won't be opened or unblocked.	Yalnız oxumaq üçün siyahı. Hesablar açılmır və blokdan çıxarılmır.
+Load more	Daha çox yükləyin
+%1$s items loaded	Yüklənmiş elementlər: %1$s
+TikTok's total: %1$s. Filtered accounts: %2$s.	TikTok-a görə cəmi: %1$s. Süzgəclənmiş hesablar: %2$s.
+Your account changed. Close this list and open it again.	Hesabınız dəyişdi. Bu siyahını bağlayıb yenidən açın.
+Loading cancelled. The list is incomplete.	Yükləmə ləğv edildi. Siyahı natamamdır.
+Loading page %1$s...	%1$s səhifəsi yüklənir...
+TikTok reports no more items in this list.	TikTok bu siyahıda başqa element olmadığını bildirir.
+More items are available.	Daha çox element var.
+Sign in to view this list	Bu siyahını görmək üçün daxil olun
+This list isn't available on this TikTok build.	Bu siyahı bu TikTok buildində əlçatan deyil.
+Couldn't read this list. Close it and try again.	Bu siyahını oxumaq alınmadı. Onu bağlayıb yenidən cəhd edin.
+TikTok refused this request (%1$s).	TikTok bu sorğunu rədd etdi (%1$s).
+The request timed out. The list may be incomplete.	Sorğunun vaxtı bitdi. Siyahı natamam ola bilər.
+The list stopped making progress. Results are incomplete.	Siyahı irəliləməyi dayandırdı. Nəticələr natamamdır.
+The list reached its limit. More items may remain.	Siyahı limitinə çatdı. Başqa elementlər qala bilər.
+The list changed while loading. Results are incomplete.	Siyahı yüklənərkən dəyişdi. Nəticələr natamamdır.
+TikTok reports additional filtered accounts. This list is incomplete.	TikTok əlavə süzgəclənmiş hesablar olduğunu bildirir. Bu siyahı natamamdır.
+Saved post	Yadda saxlanmış paylaşım
+Blocked account	Bloklanmış hesab
+Use an imported font	İdxal edilmiş şriftdən istifadə edin
+Shows TikTok's text in the font file you import below. While both are on, this one wins over Use system font. If the file is removed or can't be read, the text goes back to what Use system font shows.	TikTok mətnini aşağıda idxal etdiyiniz şrift faylı ilə göstərir. Hər ikisi açıq olduqda bu ayar Sistem şriftindən istifadə edin ayarından üstündür. Fayl silinərsə və ya oxuna bilməzsə, mətn Sistem şriftindən istifadə edin ayarının göstərdiyi kimi olur.
+Import a font file	Şrift faylını idxal edin
+Remove the imported font	İdxal edilmiş şrifti silin
+Pick a .ttf or .otf file of up to %1$s MB.	Ən çoxu %1$s MB olan .ttf və ya .otf faylı seçin.
+Imported: %1$s. Pick another file to replace it.	İdxal edilib: %1$s. Onu əvəz etmək üçün başqa fayl seçin.
+Reading the font file	Şrift faylı oxunur
+Deletes %1$s from TikTok's storage.	%1$s faylını TikTok-un yaddaşından silir.
+No font is imported	İdxal edilmiş şrift yoxdur
+%1$s is imported. Restart TikTok to see it.	%1$s idxal edildi. Dəyişikliyi görmək üçün TikTok-u yenidən başladın.
+%1$s is imported. Turn on Use an imported font to see it.	%1$s idxal edildi. Onu görmək üçün İdxal edilmiş şriftdən istifadə edin ayarını açın.
+%1$s is removed. Restart TikTok to see the change.	%1$s silindi. Dəyişikliyi görmək üçün TikTok-u yenidən başladın.
+%1$s is removed	%1$s silindi
+Couldn't remove the imported font. Try again.	İdxal edilmiş şrift silinə bilmədi. Yenidən cəhd edin.
+Couldn't save the font in TikTok's storage. Free up some space and try again.	Şrift TikTok-un yaddaşında saxlanıla bilmədi. Bir az yer boşaldıb yenidən cəhd edin.
+That file is larger than %1$s MB. Choose a smaller font file.	Bu fayl %1$s MB-dan böyükdür. Daha kiçik şrift faylı seçin.
+That file isn't a font Android can use. Choose a .ttf or .otf file.	Bu fayl Android-in istifadə edə biləcəyi şrift deyil. .ttf və ya .otf faylı seçin.
+Profile background	Profil fonu
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	TikTok-un öz profil fonu redaktorunu Profili redaktə et bölməsində açır və digər profillərin qoyduğu fonları göstərir. TikTok bu funksiyanı hesabınıza hələ təklif etməyibsə, TikTok serverləri onu saxlamaqdan yenə də imtina edə bilər. Bunu açdıqdan sonra Profili redaktə et bölməsini yenidən açın.

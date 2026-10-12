@@ -128,6 +128,8 @@ public class AndroidTargetChangesGuardTest {
                 "not a host: the scheme itself, put in front of an address that arrived without "
                         + "one before a browser is asked to open it, and asked about before a "
                         + "share link is reused");
+        REVIEWED_ADDRESSES.put("https://github.com/SysAdminDoc/hushfeed/blob/main/CHANGELOG.md",
+                "not fetched: the full release history link, opened in the reader's browser");
         REVIEWED_ADDRESSES.put("https://github.com/SysAdminDoc/hushfeed/blob/main/LICENSE",
                 "not fetched: the button beside the notice, opened in the reader's browser");
         REVIEWED_ADDRESSES.put("https://github.com/MorpheApp/morphe-patches",

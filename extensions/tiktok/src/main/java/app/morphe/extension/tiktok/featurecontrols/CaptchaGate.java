@@ -3,6 +3,7 @@
  * https://github.com/SysAdminDoc/hushfeed
  *
  * Built on icysymmetra/tiktok-patches-for-morphe (GPL-3.0).
+ * Follows na-x-ril/onlynazril-patches (GPL-3.0).
  */
 package app.morphe.extension.tiktok.featurecontrols;
 
@@ -11,7 +12,10 @@ import android.content.Intent;
 import android.os.SystemClock;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import app.morphe.extension.shared.Logger;
@@ -24,10 +28,15 @@ import app.morphe.extension.tiktok.settings.Settings;
 /**
  * The single place that decides whether one of TikTok's risk control puzzles may be hidden.
  *
- * A recent account write is a reason to preserve a challenge. Its absence does not prove
- * the challenge is safe to hide. Every hook shares that decision and its diagnostic record.
- * No browsing scene has a reviewed contract on the declared hosts, so even a saved legacy
- * hide setting leaves all challenges visible until such a contract exists.
+ * A challenge is shown when it can stand in front of something the reader asked for: a write
+ * of theirs went out in the last {@link #WRITE_WINDOW_MS} (see {@link #heldActionFor}: a follow,
+ * like, comment, repost, save, post, message, gift, purchase or sign-in change, which fails with
+ * nothing on screen when its puzzle is hidden), it belongs to an account screen or route
+ * (sign-in, SMS, two-factor), it is TikTok Shop's own verification, or nobody is signed in.
+ * What's left is a puzzle TikTok raised while the reader was only browsing, and that is what
+ * the switch hides.
+ * The rule follows na-x-ril/onlynazril-patches' Hide CAPTCHA popups (GPL-3.0), with the write
+ * window added. Every hook shares the decision and its diagnostic record.
  */
 public final class CaptchaGate {
     private static final String HOOK_FAMILY = "CAPTCHA account state";
@@ -116,7 +125,7 @@ public final class CaptchaGate {
     }
 
     static void recordRequestPath(String path) {
-        String action = writeActionFor(path);
+        String action = heldActionFor(path);
         if (action != null) {
             pendingWrite = new Stamped(action, now());
             // The recorder is what tells a puzzle over a write from a browsing one, so an
@@ -176,6 +185,53 @@ public final class CaptchaGate {
         return null;
     }
 
+    /**
+     * Every action a puzzle can stand in front of: the shared write families above plus the
+     * others a hidden puzzle would fail with nothing on screen. The paths are TikTok 47.1.4's.
+     * Telemetry also POSTs all the time, so the request method alone can't open the window.
+     */
+    static String heldActionFor(String path) {
+        String action = writeActionFor(path);
+        if (action != null || path == null) return action;
+        String value = path.toLowerCase(Locale.ROOT);
+        if (value.contains("/aweme/collect/")
+                || value.contains("/music/collect")
+                || value.contains("/effect/favorite")
+                || value.contains("/collection/item_archive/manage/")) {
+            return "save";
+        }
+        if (value.contains("/commit/user")
+                || value.contains("/privacy/user/settings/update/")
+                || value.contains("/privacy/item/settings/update/")
+                || value.contains("/kids/edit/user")) {
+            return "profile edit";
+        }
+        if (value.contains("/aweme/v1/create/")
+                || value.contains("/aweme/v2/create/")
+                || value.contains("/thought/create/")
+                || value.contains("/aweme/delete/")) {
+            return "post";
+        }
+        if (value.contains("/message/send") || value.contains("/conversation/create")) {
+            return "message";
+        }
+        if (value.contains("/gift/send/")) {
+            return "gift";
+        }
+        if (value.contains("/order/")
+                || value.contains("/cart/")
+                || value.contains("/checkout")
+                || value.contains("/payment/")
+                || value.contains("/cashier/")
+                || value.contains("/iap/pay")) {
+            return "purchase";
+        }
+        if (value.contains("/passport/") || value.contains("/user/mobile/")) {
+            return "sign-in change";
+        }
+        return null;
+    }
+
     /** The write still inside its window, or null when the app is only browsing. */
     public static String pendingWriteAction() {
         return pendingWriteAction(now());
@@ -212,14 +268,21 @@ public final class CaptchaGate {
         if (writeAction != null) return "it gates a " + writeAction;
 
         if (isAccountVerification(activity, detail)) return "it is account verification";
+        // Signed out, a puzzle can be the sign-in's own, raised before any account screen opens.
         if (!isLoggedIn()) return "no account is signed in";
-        // A puzzle type or the absence of a recent write cannot establish browsing intent.
-        // No browsing scene has a reviewed contract on the declared hosts yet.
-        return "its scene has no reviewed browsing contract";
+        return null;
     }
 
     /** The whole decision for one check. True hides it. */
     public static boolean shouldHide(Activity activity, String checkId, String detail) {
+        return decide(activity, checkId, detail, null);
+    }
+
+    /**
+     * @param unreadable why the check has to be shown when nothing else stops it, or null when
+     *                   its description could be read.
+     */
+    private static boolean decide(Activity activity, String checkId, String detail, String unreadable) {
         ensureInstalled();
         HookStatus.bound(HOOK_FAMILY, RISK_CHECK_HOOKS);
         if (!hooksReported) {
@@ -227,6 +290,7 @@ public final class CaptchaGate {
             Logger.printInfo(() -> "A risk check reached the CAPTCHA gate: " + checkId);
         }
         String reason = showReason(activity, detail, now());
+        if (reason == null) reason = unreadable;
         if (reason != null) {
             // At the level the export keeps, the same as a hidden check: a report of a write
             // that failed has to show whether the puzzle reached the reader and why.
@@ -268,9 +332,13 @@ public final class CaptchaGate {
         return shouldHide(activity, "error " + errorCode, null);
     }
 
-    /** The oecverify risk control service, whose request names the verification scene. */
+    /**
+     * The oecverify risk control service, TikTok Shop's. It hands over no screen, so nothing
+     * can tell a checkout's puzzle from a browsing one, and it is always shown.
+     */
     public static boolean shouldHideOecCaptchaPopup(Object verifyRequest) {
-        return shouldHideVerifyRequest(null, verifyRequest);
+        String scene = verificationScene(verifyRequest);
+        return decide(null, checkId("scene", scene), scene, "it is TikTok Shop's verification");
     }
 
     /** {@code BdTuring.showVerifyDialog}, reached when network verification skips SecApiImpl. */
@@ -284,7 +352,8 @@ public final class CaptchaGate {
      */
     private static boolean shouldHideVerifyRequest(Activity activity, Object verifyRequest) {
         String scene = verificationScene(verifyRequest);
-        return shouldHide(activity, checkId("scene", scene), scene);
+        boolean read = scene != null && !scene.trim().isEmpty();
+        return decide(activity, checkId("scene", scene), scene, read ? null : "its scene can't be read");
     }
 
     /**
@@ -346,17 +415,25 @@ public final class CaptchaGate {
         return isAccountRoute(route) || isAccountRoute(detail);
     }
 
-    private static boolean isAccountRoute(String value) {
+    /** Words that name sign-in, SMS, two-step or account recovery anywhere in a check. */
+    private static final Set<String> ACCOUNT_WORDS = new HashSet<>(Arrays.asList(
+            "login", "logout", "signin", "signup", "register", "passport", "sms", "otp", "twice",
+            "2fa", "mobile", "phone", "email", "password", "pwd"));
+
+    /**
+     * Whether a route, risk info or scene names account verification anywhere in it. Split on
+     * everything but letters and digits, so {"verify_way":"sms"}, sms_verify and
+     * /passport/mobile/ all match while slide_captcha and common_verify don't. A miss hides the
+     * puzzle, so the list leans wide: a word here only ever makes a puzzle show. verify_way
+     * itself isn't one: it's the key every risk info names its puzzle type under.
+     */
+    static boolean isAccountRoute(String value) {
         if (value == null) return false;
         String normalized = value.toLowerCase(Locale.ROOT);
-        return normalized.equals("login")
-                || normalized.equals("passport")
-                || normalized.equals("sms")
-                || normalized.equals("twice_verify")
-                || normalized.contains("/passport/")
-                || normalized.contains("/login/")
-                || normalized.contains("\"passport\"")
-                || normalized.contains("\"login\"");
+        for (String word : normalized.split("[^a-z0-9]+")) {
+            if (ACCOUNT_WORDS.contains(word)) return true;
+        }
+        return false;
     }
 
     private static boolean isLoggedIn() {

@@ -519,7 +519,7 @@ Hide activity,Sembunyikan aktivitas
 Hide activity status,Sembunyikan status aktivitas
 Hide archive,Sembunyikan arsip
 Hide bottom tabs TikTok adds later unless you allow them.,"Sembunyikan tab bawah yang TikTok tambahkan kemudian, kecuali kamu mengizinkannya."
-Unavailable on these TikTok builds. All verification challenges stay visible.,Tidak tersedia pada versi TikTok ini. Semua verifikasi tetap terlihat.
+"Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.","Lewati teka-teki yang ditampilkan TikTok saat kamu hanya menjelajah. Teka-teki tepat setelah kamu menyukai, mengikuti, berkomentar, atau memposting ulang tetap muncul, begitu juga pemeriksaan masuk, SMS, dan dua langkah. Jika ada yang berhenti berfungsi, matikan ini."
 Hide buttons in the right column,Sembunyikan tombol di kolom kanan
 Hide comment polls,Sembunyikan jajak pendapat komentar
 Show poll results before voting,Tampilkan hasil polling sebelum memilih
@@ -1025,6 +1025,10 @@ Show the whole Activity and New followers lists instead of stopping at a View al
 Show what is left of the budget,Tampilkan sisa batas harian
 Show when the camera or microphone is in use,Tampilkan saat kamera atau mikrofon dipakai
 Show where a video was posted,Tampilkan asal unggahan video
+Show commenters' handles,Tampilkan nama pengguna pengomentar
+Show each commenter's @username instead of the display name they chose. A reply to a reply names the person it answers the same way once their own comment has loaded.,"Tampilkan @namapengguna setiap pengomentar, bukan nama tampilan yang mereka pilih. Balasan untuk balasan juga menyebut orang yang dibalasnya dengan cara yang sama setelah komentar orang itu sendiri dimuat."
+Show where commenters are from,Tampilkan asal pengomentar
+Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,Tampilkan negara yang diatur di akun pengomentar setelah waktu komentar. Komentar dari akun yang negaranya tidak dikirim TikTok tetap seperti semula.
 Showing %1$s again,Tampilkan %1$s lagi
 Hide videos with blocked sounds,Sembunyikan video dengan suara yang diblokir
 Skip content warnings,Lewati peringatan konten
@@ -1670,7 +1674,9 @@ Block popups,Blokir popup
 No popups have been seen yet,Belum ada popup yang terlihat
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.,Pakai TikTok sebentar. Sebuah popup muncul di sini setelah TikTok pertama kali mencoba menampilkannya.
 Fade the video controls,Pudarkan kontrol video
-"Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.","Memudarkan tombol, keterangan, dan tab di atas video sampai tingkat ini, bukan menyembunyikannya. Pada 100, semuanya tampil seperti gambar TikTok. Kontrol yang pudar tetap menerima ketukan. Di Tampilan bersih, tombol dan keterangan tetap terlihat di tingkat ini, dan ketukan diteruskan ke video di belakangnya. Pada 0 tombol dan keterangan disembunyikan, dan tab tetap di 10."
+"Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.","Memudarkan tombol, keterangan, dan tab di atas video sampai tingkat ini, bukan menyembunyikannya. Pada 100, semuanya tampil seperti gambar TikTok. Kontrol yang pudar tetap menerima ketukan. Pada 0 tombol dan keterangan disembunyikan, dan tab tetap di 10."
+Keep faded controls in Clear display,Pertahankan kontrol pudar di Tampilan bersih
+"With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.","Saat tingkat pudar di bawah 100, tombol dan keterangan tetap terlihat di tingkat itu di Tampilan bersih, dan ketukan diteruskan ke video di belakangnya. Jika nonaktif, Tampilan bersih menyembunyikannya seperti pada 100."
 Loop a story,Ulangi story
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,"Memutar ulang story dari awal saat selesai, bukan pindah ke story berikutnya. Ketuk atau geser untuk lanjut."
 Hold a photo story,Tahan story foto
@@ -1947,3 +1953,82 @@ Sign in without a passkey,Masuk tanpa kunci sandi
 "Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Menambahkan tombol simpan ke menu yang dibuka tombol Bagikan pada Story. Tombol itu menyimpan Story yang sedang kamu tonton, dan menahan Story tetap menjedanya."
 Save a story from its share sheet,Simpan Story dari menu bagikan
 "TikTok only had its watermarked copy of this story, so that copy was saved to %1$s","TikTok hanya punya salinan bertanda air dari Story ini, jadi salinan itu yang disimpan di %1$s"
+Full changelog,Semua perubahan
+More hashtags per post,Lebih banyak tagar per postingan
+New comment emoji,Emoji komentar baru
+"Hide root","Sembunyikan root"
+"Hide root status and details about root tools from TikTok.","Sembunyikan status root dan detail alat root dari TikTok."
+Clear,Hapus
+Search Activity notifications already loaded on this screen. Loading more pauses while you search.,Cari notifikasi Aktivitas yang sudah dimuat di layar ini. Pemuatan berikutnya berhenti saat Anda mencari.
+Search is unavailable on this screen,Pencarian tidak tersedia di layar ini
+Search loaded activity,Cari aktivitas yang dimuat
+Wait for loading to finish,Tunggu hingga pemuatan selesai
+Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,Pilih jumlah untuk akun yang sedang masuk. Kosongkan kolom untuk memakai jumlah TikTok. Nol menampilkan nol. Pilihan tetap di ponsel ini.
+Followers,Pengikut
+Local profile counts,Jumlah profil lokal
+Own profile counts,Jumlah profil sendiri
+Show chosen counts on your own profile on this phone. Other people see the real counts.,Tampilkan jumlah pilihan pada profil sendiri di ponsel ini. Orang lain melihat jumlah sebenarnya.
+Sign in to edit your own profile counts,Masuk untuk mengedit jumlah profil sendiri
+"Use a whole number from 0 to %1$s, or leave the field empty.","Gunakan bilangan bulat dari 0 sampai %1$s, atau kosongkan kolom."
+Your account changed. Open the count editor again.,Akun Anda berubah. Buka kembali editor jumlah.
+Local verified badge,Lencana verifikasi lokal
+Show a verified badge on your own profile on this phone. Other people see your real status.,Tampilkan lencana verifikasi di profil sendiri pada ponsel ini. Orang lain melihat status asli Anda.
+Hide your account warning,Sembunyikan peringatan akun Anda
+Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.,Sembunyikan pemberitahuan pembatasan di profil sendiri pada ponsel ini. Pembatasan dan proses banding TikTok tetap berlaku.
+DM translation preview,Pratinjau terjemahan pesan pribadi
+Preview a translation of your draft before sending it.,Pratinjau terjemahan draf sebelum mengirimnya.
+Translate draft,Terjemahkan draf
+Translation preview,Pratinjau terjemahan
+Use translation,Gunakan terjemahan
+Translating…,Menerjemahkan…
+Couldn't translate this draft. Try again in a moment.,Draf ini tidak bisa diterjemahkan. Coba lagi sebentar.
+Received message translation,Terjemahan pesan masuk
+Preview a translation from a received text message's menu. The original message stays unchanged.,Lihat terjemahan dari menu pesan teks yang diterima. Pesan asli tidak berubah.
+Preview translation,Pratinjau terjemahan
+Original message,Pesan asli
+Translated message,Pesan terjemahan
+Show original,Tampilkan asli
+Show translation,Tampilkan terjemahan
+Couldn't translate this message. Try again in a moment.,Pesan ini tidak bisa diterjemahkan. Coba lagi sebentar.
+Saved posts,Postingan tersimpan
+Blocked accounts,Akun yang diblokir
+These are posts saved by your signed-in account. Other Favorites categories aren't included.,Ini adalah postingan yang disimpan oleh akun yang sedang masuk. Kategori Favorit lainnya tidak disertakan.
+Read-only list. Accounts won't be opened or unblocked.,Daftar hanya-baca. Akun tidak akan dibuka atau dibuka blokirnya.
+Load more,Muat lebih banyak
+%1$s items loaded,Item dimuat: %1$s
+TikTok's total: %1$s. Filtered accounts: %2$s.,Total menurut TikTok: %1$s. Akun yang difilter: %2$s.
+Your account changed. Close this list and open it again.,Akun kamu berubah. Tutup daftar ini lalu buka lagi.
+Loading cancelled. The list is incomplete.,Pemuatan dibatalkan. Daftar ini tidak lengkap.
+Loading page %1$s...,Memuat halaman %1$s...
+TikTok reports no more items in this list.,TikTok melaporkan tidak ada item lagi di daftar ini.
+More items are available.,Masih ada item lain.
+Sign in to view this list,Masuk untuk melihat daftar ini
+This list isn't available on this TikTok build.,Daftar ini tidak tersedia pada versi TikTok ini.
+Couldn't read this list. Close it and try again.,Daftar ini tidak dapat dibaca. Tutup lalu coba lagi.
+TikTok refused this request (%1$s).,TikTok menolak permintaan ini (%1$s).
+The request timed out. The list may be incomplete.,Permintaan melewati batas waktu. Daftar ini mungkin tidak lengkap.
+The list stopped making progress. Results are incomplete.,Daftar berhenti bergerak maju. Hasilnya tidak lengkap.
+The list reached its limit. More items may remain.,Daftar mencapai batasnya. Mungkin masih ada item lain.
+The list changed while loading. Results are incomplete.,Daftar berubah saat dimuat. Hasilnya tidak lengkap.
+TikTok reports additional filtered accounts. This list is incomplete.,TikTok melaporkan ada akun lain yang difilter. Daftar ini tidak lengkap.
+Saved post,Postingan tersimpan
+Blocked account,Akun yang diblokir
+Use an imported font,Gunakan font yang diimpor
+"Shows TikTok's text in the font file you import below. While both are on, this one wins over Use system font. If the file is removed or can't be read, the text goes back to what Use system font shows.","Menampilkan teks TikTok dengan berkas font yang kamu impor di bawah. Jika keduanya menyala, pengaturan ini lebih diutamakan daripada Gunakan font sistem. Jika berkasnya dihapus atau tidak dapat dibaca, teks kembali seperti yang ditampilkan Gunakan font sistem."
+Import a font file,Impor berkas font
+Remove the imported font,Hapus font yang diimpor
+Pick a .ttf or .otf file of up to %1$s MB.,Pilih berkas .ttf atau .otf maksimal %1$s MB.
+Imported: %1$s. Pick another file to replace it.,Diimpor: %1$s. Pilih berkas lain untuk menggantinya.
+Reading the font file,Membaca berkas font
+Deletes %1$s from TikTok's storage.,Menghapus %1$s dari penyimpanan TikTok.
+No font is imported,Belum ada font yang diimpor
+%1$s is imported. Restart TikTok to see it.,%1$s sudah diimpor. Mulai ulang TikTok untuk melihat perubahannya.
+%1$s is imported. Turn on Use an imported font to see it.,%1$s sudah diimpor. Nyalakan Gunakan font yang diimpor untuk melihatnya.
+%1$s is removed. Restart TikTok to see the change.,%1$s sudah dihapus. Mulai ulang TikTok untuk melihat perubahannya.
+%1$s is removed,%1$s sudah dihapus
+Couldn't remove the imported font. Try again.,Font yang diimpor tidak dapat dihapus. Coba lagi.
+Couldn't save the font in TikTok's storage. Free up some space and try again.,Font tidak dapat disimpan di penyimpanan TikTok. Kosongkan sedikit ruang lalu coba lagi.
+That file is larger than %1$s MB. Choose a smaller font file.,Berkas lebih besar dari %1$s MB. Pilih berkas font yang lebih kecil.
+That file isn't a font Android can use. Choose a .ttf or .otf file.,Berkas itu bukan font yang dapat dipakai Android. Pilih berkas .ttf atau .otf.
+Profile background,Latar profil
+"Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.","Membuka editor latar profil milik TikTok di Edit profil, dan menampilkan latar yang dipasang profil lain. Server TikTok mungkin tetap menolak menyimpannya untuk akun yang belum ditawari fitur ini oleh TikTok. Buka lagi Edit profil setelah menyalakan ini."

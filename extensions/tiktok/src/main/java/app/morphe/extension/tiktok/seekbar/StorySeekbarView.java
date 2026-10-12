@@ -316,7 +316,7 @@ final class StorySeekbarView extends View {
     }
 
     private void leave() {
-        if (cell.line == this) StorySeekbar.detach(cell);
+        if (cell.line.get() == this) StorySeekbar.detach(cell);
     }
 
     @Override

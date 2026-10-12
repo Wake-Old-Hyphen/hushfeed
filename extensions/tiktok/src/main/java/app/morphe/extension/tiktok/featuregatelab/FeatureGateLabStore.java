@@ -570,6 +570,10 @@ public final class FeatureGateLabStore {
             new Preset("comment_media", "Comment with live photos, the camera or audio", CATALOG_BUILDS,
                     "comment_enable_live_photo:INT:1", "comment_by_shooting:INT:1",
                     "audio_comment_publish:INT:1"),
+            // The shared INT reader serves both the comment UI and native emoji catalog fetch.
+            // Group 2 enables send and view while retaining availability and V0 fallback checks.
+            new Preset("comment_emoji", "New comment emoji", CATALOG_BUILDS,
+                    "tt_cmt_new_emoji:INT:2"),
             new Preset("comment_favorites", "Save comments to Favorites", CATALOG_BUILDS,
                     "add_comments_to_favorites:INT:3", "enable_favorite_long_click:INT:2"),
             new Preset("comment_dislike", "Comment sort and dislike styles", CATALOG_BUILDS,
@@ -593,6 +597,9 @@ public final class FeatureGateLabStore {
                     "background_play_enable:INT:1", "fyp_auto_scroll:INT:1"),
             new Preset("feed_timestamps", "Post dates in the feed", CATALOG_BUILDS,
                     "feed_title_timestamp_trial:STRING:v3"),
+            // Disable the client check; changing its separate maximum to 0 would reject all tags.
+            new Preset("hashtag_limit", "More hashtags per post", CATALOG_BUILDS,
+                    "studio_publish_limit_hashtag_switch:BOOLEAN:false"),
     };
 
     /**

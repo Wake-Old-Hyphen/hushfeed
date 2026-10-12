@@ -51,11 +51,40 @@ def write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
-def section(text: str, heading: str) -> str | None:
+def section(text: str, heading: str, *, legacy: bool = False) -> str | None:
     """The body under a `## <heading>` line up to the next `## ` line, or None."""
-    match = re.search(rf"^## {re.escape(heading)}[^\n]*\n", text, re.MULTILINE)
-    if not match:
+    seen = set()
+    previous = None
+    for index, line in enumerate(re.findall(r"^## [^\n]*", text, re.MULTILINE)):
+        if line == "## Unreleased":
+            key = "Unreleased"
+            if index != 0:
+                fail("## Unreleased must precede published releases")
+        elif legacy and re.fullmatch(r"## \[\d+\.\d+\.\d+(?:-[^\]]+)?\]\(https://[^)]+\) \([^\n)]+\)", line):
+            # Keep the inherited linked/prerelease history unchanged in the full CHANGELOG.
+            continue
+        else:
+            match = re.fullmatch(r"## (\d+\.\d+\.\d+) \([^\n)]+\)", line)
+            if not match:
+                fail(f"invalid release heading: {line}")
+            key = match.group(1)
+            version = tuple(map(int, key.split(".")))
+            if previous is not None and version >= previous:
+                fail("published release headings must be unique and newest first")
+            previous = version
+        if key in seen:
+            fail(f"duplicate ## {key} heading")
+        seen.add(key)
+    if heading == "Unreleased":
+        pattern = r"^## Unreleased(?:\n|$)"
+    else:
+        version = heading.removesuffix(" (")
+        pattern = (rf"^## {re.escape(version)} \([^\n)]+\)(?:\n|$)" if VERSION.fullmatch(version)
+                   else rf"^## {re.escape(heading)}(?:\n|$)")
+    matches = list(re.finditer(pattern, text, re.MULTILINE))
+    if not matches:
         return None
+    match = matches[0]
     rest = text[match.end():]
     following = re.search(r"^## ", rest, re.MULTILINE)
     return rest[: following.start()] if following else rest
@@ -80,13 +109,16 @@ def heading_of(version: str) -> str:
 def cut(args) -> None:
     if not VERSION.match(args.version):
         fail(f"{args.version} isn't X.Y.Z")
-    date = args.date or datetime.date.today().isoformat()
+    date = args.date or datetime.datetime.now().astimezone().date().isoformat()
     text = read(CHANGELOG)
     if re.search(rf"^## {re.escape(args.version)} ", text, re.MULTILINE):
         fail(f"CHANGELOG already has {args.version}")
-    body = section(text, "Unreleased")
+    body = section(text, "Unreleased", legacy=True)
     if body is None:
         fail("CHANGELOG has no ## Unreleased")
+    newest = re.search(r"^## (\d+\.\d+\.\d+) \(", text, re.MULTILINE)
+    if newest and tuple(map(int, args.version.split("."))) <= tuple(map(int, newest.group(1).split("."))):
+        fail(f"{args.version} must be newer than {newest.group(1)}")
     items = bullets(body)
     if not items:
         fail("Unreleased is empty")
@@ -102,13 +134,12 @@ def cut(args) -> None:
     have = [lang for lang, b in drafted.items() if b is not None and b.strip()]
     if have and len(have) != len(LANGUAGES):
         fail("translated in some tables only (" + ", ".join(have) + "): translate every table or none")
-    if have:
-        # Translated as the bullets landed: hold them to the English before they become the release.
-        check_translations(argparse.Namespace(version=None, unreleased=True))
+    # Curated English is mandatory, with translations held to those same summaries.
+    check_translations(argparse.Namespace(version=None, unreleased=True))
     write(CHANGELOG, text[:start] + new + text[end:].lstrip("\n"))
-    for lang in have:
-        table = read(tables[lang])
-        write(tables[lang], table.replace("## Unreleased\n", heading + "\n", 1))
+    for path in [NOTES / "en.txt"] + [tables[lang] for lang in have]:
+        table = read(path)
+        write(path, table.replace("## Unreleased\n", heading + "\n", 1))
     print(f"[release] {len(items)} bullets under {heading}; "
           + (f"What's new translated in {len(have)} tables" if have else "What's new is English only"))
 
@@ -116,11 +147,37 @@ def cut(args) -> None:
 def check_translations(args) -> None:
     english_text = read(CHANGELOG)
     key = "Unreleased" if args.unreleased else args.version
-    english_body = section(english_text, key)
+    english_body = section(english_text, key, legacy=True)
     if english_body is None:
         fail(f"CHANGELOG has no {key} section")
-    english = bullets(english_body)
+    # Older published sections have introductory paragraphs as well as their change bullets.
+    full = bullets(english_body) if args.unreleased else [line for line in english_body.split("\n") if line.startswith("* ")]
     problems = []
+    english_path = NOTES / "en.txt"
+    if not english_path.exists():
+        fail("en.txt is missing: write one concise summary per CHANGELOG bullet")
+    raw = english_path.read_bytes()
+    if raw.startswith(b"\xef\xbb\xbf") or b"\r" in raw:
+        problems.append("en: BOM or CR line endings")
+    summary_body = section(raw.decode("utf-8"), key)
+    if summary_body is None or not summary_body.strip():
+        fail(f"en.txt has no {key} summaries")
+    english = bullets(summary_body)
+    if len(english) != len(full):
+        problems.append(f"en: {len(english)} summaries, the CHANGELOG has {len(full)} bullets")
+    for number, (original, summary) in enumerate(zip(full, english), 1):
+        if not summary.startswith(SCOPE):
+            problems.append(f"en bullet {number}: doesn't start {SCOPE.strip()}")
+        if re.findall(r"#\d+", original) != re.findall(r"#\d+", summary):
+            problems.append(f"en bullet {number}: issue references differ")
+        if any(d in summary for d in DASHES):
+            problems.append(f"en bullet {number}: em or en dash")
+    if not args.unreleased:
+        expected_heading = heading_of(args.version)
+        for path in [english_path] + [NOTES / f"{lang}.txt" for lang in LANGUAGES]:
+            if (path.exists() and section(read(path), key)
+                    and expected_heading not in read(path).splitlines()):
+                problems.append(f"{path.stem}: release heading differs")
     found = 0
     for lang in LANGUAGES:
         path = NOTES / f"{lang}.txt"
@@ -135,7 +192,7 @@ def check_translations(args) -> None:
         found += 1
         items = bullets(body)
         if len(items) != len(english):
-            problems.append(f"{lang}: {len(items)} bullets, the CHANGELOG has {len(english)}")
+            problems.append(f"{lang}: {len(items)} bullets, English has {len(english)} summaries")
         pattern = re.compile(FOREIGN[lang])
         for number, (a, b) in enumerate(zip(english, items), 1):
             where = f"{lang} bullet {number}"
@@ -159,7 +216,7 @@ def check_translations(args) -> None:
         problems.append(f"{found} of {len(LANGUAGES)} tables translate {key}: every table or none")
     if problems:
         fail("translation check failed:\n  " + "\n  ".join(problems[:40]))
-    print(f"[release] {key}: {len(english)} bullets, {found} tables translated and consistent")
+    print(f"[release] {key}: {len(english)} summaries, {found} tables translated and consistent")
 
 
 MANAGER = re.compile(r"Use Morphe Manager (\d+\.\d+\.\d+) or newer")
@@ -173,7 +230,7 @@ def manager_floor() -> str:
 
 
 def github_notes(args) -> None:
-    body = section(read(CHANGELOG), args.version + " (")
+    body = section(read(CHANGELOG), args.version + " (", legacy=True)
     if body is None:
         fail(f"CHANGELOG has no published {args.version}")
     items = bullets(body)

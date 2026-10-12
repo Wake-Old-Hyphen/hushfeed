@@ -25,7 +25,7 @@ class DefaultSelectionPolicyTest {
         "Custom launcher icon" to "changes the launcher icon",
         "Feature Gate Recorder" to "a developer tool for reading TikTok's feature gates",
         "Hide Play Store update offer" to "raises the version code, so a lower-coded build won't install over it",
-        "Hide the risk control CAPTCHA" to "sits on TikTok's account verification path and only records for now",
+        "Hide the risk control CAPTCHA" to "sits on TikTok's account verification path",
         "Look like the store app" to "answers TikTok's signature and installer checks as the store app",
         "Network request report" to "a research tool that counts every API request, with no switch",
         "Region spoof" to "rewrites every locale and timezone read, sign-in included, and its store region switch is experimental",

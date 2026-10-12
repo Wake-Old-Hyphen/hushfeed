@@ -109,6 +109,7 @@ public final class Probe extends Instrumentation {
             @Override public void run() {
                 try {
                     ClassLoader loader = waitForHushfeed(context);
+                    BudgetFocusProbe.recoverOnStart(context, loader);
                     IntentFilter filter = new IntentFilter(ACTION);
                     BroadcastReceiver receiver = new Commands(context, loader);
                     // The sender is adb, which is another uid, so the receiver has to be
@@ -185,6 +186,24 @@ public final class Probe extends Instrumentation {
                         openSettings();
                         Log.i(TAG, "ok settings opened");
                         break;
+                    case "settings-notice": {
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getVisibleActivity").invoke(null);
+                        if (activity == null || !SETTINGS_ACTIVITY.equals(activity.getClass().getName())) {
+                            throw new IllegalStateException("Hushfeed settings must be in front");
+                        }
+                        loader.loadClass("app.morphe.extension.tiktok.settings.preference.SettingsActionBanner")
+                                .getMethod("showNotice", Context.class, String.class)
+                                .invoke(null, activity, "Settings notice.");
+                        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                            android.view.View banner = activity.findViewById(android.R.id.content)
+                                    .findViewWithTag("hushfeed_settings_action_banner");
+                            boolean focused = banner != null && banner.performAccessibilityAction(
+                                    android.view.accessibility.AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
+                            Log.i(TAG, "ok settings-notice focused=" + focused);
+                        }, 250);
+                        break;
+                    }
                     case "dump":
                         Log.i(TAG, "ok dump\n" + dump());
                         break;
@@ -197,6 +216,9 @@ public final class Probe extends Instrumentation {
                         break;
                     case "feed":
                         Log.i(TAG, "ok feed\n" + feedReport());
+                        break;
+                    case "inbox-query":
+                        Log.i(TAG, "ok inbox-query\n" + InboxQuerySnapshot.read(loader));
                         break;
                     case "ad-evidence":
                         // Technical booleans only. Never emit the video id, creator, visible
@@ -1898,6 +1920,22 @@ public final class Probe extends Instrumentation {
                         }, "hushfeed-probe-fieldswatch").start();
                         break;
                     }
+                    case "session-hold": {
+                        SessionHoldProbe.run(loader, intent.getStringExtra("op"), intent.getIntExtra("seconds", 15));
+                        break;
+                    }
+                    case "budget-focus": {
+                        BudgetFocusProbe.run(app, loader, intent.getStringExtra("op"), intent.getStringExtra("mode"));
+                        break;
+                    }
+                    case "edge-drag": {
+                        EdgeDragProbe.run(app, loader, intent);
+                        break;
+                    }
+                    case "native-media": {
+                        NativeMediaProbe.run(app, loader, intent);
+                        break;
+                    }
                     case "playerspeed": {
                         // The feed player's own speed and how far its position moves over a gap,
                         // read through the player TikTok's static getter hands out. The holder
@@ -2547,6 +2585,7 @@ public final class Probe extends Instrumentation {
                         .append(" at=").append(where[0]).append(',').append(where[1])
                         .append(" size=").append(view.getWidth()).append('x').append(view.getHeight())
                         .append(" scale=").append(view.getScaleX());
+                appendLayoutInfo(view, out);
                 if (find != null) {
                     out.append(" shown=").append(view.isShown())
                             .append(" clickable=").append(view.isClickable())
@@ -2564,11 +2603,50 @@ public final class Probe extends Instrumentation {
                     }
                 }
                 out.append('\n');
+                if (find != null && view instanceof android.view.ViewGroup) {
+                    appendLayoutChildren((android.view.ViewGroup) view, 0, out, resources);
+                }
             }
             if (view instanceof android.view.ViewGroup) {
                 android.view.ViewGroup group = (android.view.ViewGroup) view;
                 for (int i = 0, count = group.getChildCount(); i < count; i++) {
                     walkViews(group.getChildAt(i), depth + 1, find, out, resources);
+                }
+            }
+        }
+
+        private static void appendLayoutInfo(android.view.View view, StringBuilder out) {
+            android.view.ViewGroup.LayoutParams params = view.getLayoutParams();
+            if (params != null) {
+                out.append(" lp=").append(params.width).append('x').append(params.height);
+                if (params instanceof android.widget.LinearLayout.LayoutParams) {
+                    out.append(" weight=").append(((android.widget.LinearLayout.LayoutParams) params).weight);
+                }
+                if (params instanceof android.view.ViewGroup.MarginLayoutParams) {
+                    android.view.ViewGroup.MarginLayoutParams margins =
+                            (android.view.ViewGroup.MarginLayoutParams) params;
+                    out.append(" margins=").append(margins.leftMargin).append(',')
+                            .append(margins.topMargin).append(',').append(margins.rightMargin)
+                            .append(',').append(margins.bottomMargin);
+                }
+            }
+            if (view instanceof android.widget.LinearLayout) {
+                out.append(" orientation=").append(((android.widget.LinearLayout) view).getOrientation());
+            }
+        }
+
+        private static void appendLayoutChildren(android.view.ViewGroup parent, int depth,
+                StringBuilder out, android.content.res.Resources resources) {
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                android.view.View child = parent.getChildAt(i);
+                out.append(" child ").append(depth).append('.').append(i).append(' ')
+                        .append(child.getClass().getSimpleName()).append(" id=")
+                        .append(idName(child, resources)).append(" size=")
+                        .append(child.getWidth()).append('x').append(child.getHeight());
+                appendLayoutInfo(child, out);
+                out.append('\n');
+                if (depth < 2 && child instanceof android.view.ViewGroup) {
+                    appendLayoutChildren((android.view.ViewGroup) child, depth + 1, out, resources);
                 }
             }
         }

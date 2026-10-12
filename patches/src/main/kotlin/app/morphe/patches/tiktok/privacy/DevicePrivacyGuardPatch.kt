@@ -189,9 +189,9 @@ private fun BytecodePatchContext.answerReads(
 @Suppress("unused")
 val devicePrivacyGuardPatch = bytecodePatch(
     name = "Device privacy guard",
-    description = "Stops TikTok reading what you copied, hides that you're on a VPN, and " +
-        "gives it a blank advertising ID so apps can't match you by it. Each has its own switch. " +
-        "Starts off. Turn it on in Hushfeed settings > Privacy.",
+    description = "Stops TikTok reading what you copied and gives it a blank advertising ID. " +
+        "Can also hide a VPN connection and root status with details about root tools. " +
+        "Each switch starts off in Hushfeed settings > Privacy. Changing Hide root needs a restart.",
 ) {
     category("Privacy")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -278,5 +278,6 @@ val devicePrivacyGuardPatch = bytecodePatch(
             "[Device privacy guard] Answered ${serviceReads.size} direct advertising id service reads " +
                 "and ${fieldReads.size} advertising id field reads.",
         )
+        hookRootSignals()
     }
 }

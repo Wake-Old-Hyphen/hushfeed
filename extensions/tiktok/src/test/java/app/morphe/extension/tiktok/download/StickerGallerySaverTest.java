@@ -129,12 +129,12 @@ public class StickerGallerySaverTest {
 
     @Test public void aReusedSheetHoldsTheStickerItIsShowingNow() throws Exception {
         app.morphe.extension.shared.Utils.setContext(RuntimeEnvironment.getApplication());
-        View sheet = new View(RuntimeEnvironment.getApplication());
+        StickerSheet sheet = new StickerSheet(RuntimeEnvironment.getApplication());
 
         PreviewModel first = new PreviewModel();
         StickerGallerySaver.registerStickerSource(first, sticker("https://example.invalid/first.png"));
-        // The sheet has already been given its button, which is the state a second bind meets.
-        attached().put(sheet, findAsset(first));
+        StickerGallerySaver.attachSaveImageButton(sheet, first);
+        View save = sheet.actions.getChildAt(2);
         assertEquals("https://example.invalid/first.png", url(attached().get(sheet)));
 
         // The reader closes it and opens a different sticker. TikTok binds the same sheet.
@@ -144,6 +144,8 @@ public class StickerGallerySaverTest {
 
         // The button reads this when it is pressed, so it has to be the sticker on screen.
         assertEquals("https://example.invalid/second.png", url(attached().get(sheet)));
+        assertEquals(3, sheet.actions.getChildCount());
+        assertSame(save, sheet.actions.getChildAt(2));
     }
 
     /**
@@ -171,6 +173,98 @@ public class StickerGallerySaverTest {
         // The same sheet bound again for the next sticker keeps one button.
         StickerGallerySaver.attachSaveImageButton(sheet, preview);
         assertEquals(3, sheet.actions.getChildCount());
+    }
+
+    @Test public void actionsThatArriveAfterTheFirstBindStillGetASaveButton() throws Exception {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        app.morphe.extension.shared.diagnostics.HookStatus.clear();
+        StickerSheet sheet = new StickerSheet(context);
+        sheet.actions.removeAllViews();
+
+        PreviewModel first = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(first, sticker("https://example.invalid/first.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, first);
+        assertEquals(0, sheet.actions.getChildCount());
+        String report = app.morphe.extension.shared.diagnostics.HookStatus.report().toString();
+        assertTrue(report, report.contains("sticker saves") && report.contains("1 missing"));
+
+        sheet.actions.addView(sheet.share);
+        sheet.actions.addView(sheet.favorite);
+        PreviewModel second = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(second, sticker("https://example.invalid/second.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, second);
+
+        assertEquals(3, sheet.actions.getChildCount());
+        assertSame(sheet.share, sheet.actions.getChildAt(0));
+        assertSame(sheet.favorite, sheet.actions.getChildAt(1));
+        assertEquals("morphe_save_media", sheet.actions.getChildAt(2).getTag());
+        assertEquals("https://example.invalid/second.png", url(attached().get(sheet)));
+        StickerGallerySaver.attachSaveImageButton(sheet, second);
+        assertEquals(3, sheet.actions.getChildCount());
+    }
+
+    @Test public void aReplacementActionParentGetsItsOwnSaveButton() {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        StickerSheet sheet = new StickerSheet(context);
+        PreviewModel preview = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(preview, sticker("https://example.invalid/sticker.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+        android.widget.LinearLayout previous = sheet.actions;
+        View previousSave = previous.getChildAt(2);
+
+        int position = sheet.indexOfChild(previous);
+        sheet.removeView(previous);
+        previous.removeView(sheet.share);
+        previous.removeView(sheet.favorite);
+        sheet.actions = new android.widget.LinearLayout(context);
+        sheet.actions.addView(sheet.share);
+        sheet.actions.addView(sheet.favorite);
+        sheet.addView(sheet.actions, position);
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+
+        assertEquals(3, sheet.actions.getChildCount());
+        assertSame(sheet.share, sheet.actions.getChildAt(0));
+        assertSame(sheet.favorite, sheet.actions.getChildAt(1));
+        assertEquals("morphe_save_media", sheet.actions.getChildAt(2).getTag());
+        assertEquals(1, previous.getChildCount());
+        assertSame(previousSave, previous.getChildAt(0));
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+        assertEquals(3, sheet.actions.getChildCount());
+    }
+
+    @Test public void aRemovedSaveButtonIsRestoredOnTheNextBind() {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        StickerSheet sheet = new StickerSheet(context);
+        PreviewModel preview = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(preview, sticker("https://example.invalid/sticker.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+        sheet.actions.removeViewAt(2);
+
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+
+        assertEquals(3, sheet.actions.getChildCount());
+        assertSame(sheet.share, sheet.actions.getChildAt(0));
+        assertSame(sheet.favorite, sheet.actions.getChildAt(1));
+        assertEquals("morphe_save_media", sheet.actions.getChildAt(2).getTag());
+    }
+
+    @Test public void anUnreadableRebindForgetsThePreviouslyShownSticker() throws Exception {
+        android.content.Context context = RuntimeEnvironment.getApplication();
+        app.morphe.extension.shared.Utils.setContext(context);
+        StickerSheet sheet = new StickerSheet(context);
+        PreviewModel preview = new PreviewModel();
+        StickerGallerySaver.registerStickerSource(preview, sticker("https://example.invalid/sticker.png"));
+        StickerGallerySaver.attachSaveImageButton(sheet, preview);
+        View save = sheet.actions.getChildAt(2);
+
+        StickerGallerySaver.attachSaveImageButton(sheet, new PreviewModel());
+
+        assertFalse(attached().containsKey(sheet));
+        assertEquals(3, sheet.actions.getChildCount());
+        assertSame(save, sheet.actions.getChildAt(2));
     }
 
     /**
@@ -261,7 +355,7 @@ public class StickerGallerySaverTest {
         final RenamedEveryBuild favorite;
         final RenamedEveryBuild share;
         final android.widget.ImageView close;
-        final android.widget.LinearLayout actions;
+        android.widget.LinearLayout actions;
 
         StickerSheet(android.content.Context context) {
             super(context);
@@ -286,14 +380,6 @@ public class StickerGallerySaverTest {
         Field f = StickerGallerySaver.class.getDeclaredField("ATTACHED_SHEETS");
         f.setAccessible(true);
         return (Map<View, Object>) f.get(null);
-    }
-
-    private static Object findAsset(Object model) throws Exception {
-        var method = StickerGallerySaver.class.getDeclaredMethod("findStickerAsset", Object.class);
-        method.setAccessible(true);
-        Object asset = method.invoke(null, model);
-        assertNotNull("the test double must be readable as a sticker", asset);
-        return asset;
     }
 
     private static String url(Object asset) throws Exception {

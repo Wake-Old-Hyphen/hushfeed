@@ -51,9 +51,8 @@ public final class HookStatus {
     }
 
     private static final class Family {
-        // newKeySet() is API 24 and D8 cannot backport it, so on Android 6 it throws where the
-        // callers catch Throwable and the diagnostics silently record nothing. This shape is
-        // the same concurrent set and resolves at API 1.
+        // newKeySet() is documented at API 24. Keep the concurrent-map-backed form for the
+        // declared API 23 floor instead of relying on methods some libcore builds expose early.
         /** Raw names, so the hot path compares what the caller already holds. */
         final Set<String> bound = Collections.newSetFromMap(new ConcurrentHashMap<>());
         final Set<String> missed = Collections.newSetFromMap(new ConcurrentHashMap<>());

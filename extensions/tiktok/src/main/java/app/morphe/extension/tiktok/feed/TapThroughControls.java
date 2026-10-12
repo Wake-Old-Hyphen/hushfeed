@@ -7,16 +7,20 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.Window;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -26,7 +30,8 @@ import java.util.WeakHashMap;
  * (#84). The reporter wanted the buttons and caption to stay faded on screen there, for the burn-in,
  * without a tap on them opening anything, since that breaks Clear display. A finger that goes down
  * on one goes to whatever is under it instead: the video's own layer, where TikTok's tap, press and
- * hold and pinch for Clear display live.
+ * hold and pinch for Clear display live. The native photo close keeps its visible hit area, even
+ * when its parent is faded. A second finger always goes through to the video.
  *
  * <p>Android has no flag that keeps a view drawn but out of the touch search, and TikTok's buttons
  * read touches in their own ways (the caption's links answer through the text's movement method,
@@ -44,6 +49,7 @@ final class TapThroughControls {
 
     /** The views a finger passes through while {@link VideoOverlayHider#tapsGoThroughNow} holds. */
     private static final Map<View, Boolean> MARKED = new WeakHashMap<>();
+    private static final Map<View, Boolean> PHOTO_EXITS = new WeakHashMap<>();
     private static final Map<Window, Boolean> WRAPPED = new WeakHashMap<>();
 
     private TapThroughControls() {
@@ -62,6 +68,48 @@ final class TapThroughControls {
 
     static boolean anyMarked() {
         return !MARKED.isEmpty();
+    }
+
+    /** The native photo close is inside the faded rail. Keep only its current hit area usable. */
+    static void photoExits(Activity activity, List<View> exits) {
+        View decor = activity.getWindow().peekDecorView();
+        if (decor == null) return;
+        Iterator<View> previous = PHOTO_EXITS.keySet().iterator();
+        while (previous.hasNext()) {
+            View view = previous.next();
+            if (view == null || !view.isAttachedToWindow() || view.getRootView() == decor) previous.remove();
+        }
+        if (exits == null) return;
+        for (View view : exits) {
+            if (view != null && view.isAttachedToWindow() && view.getRootView() == decor) {
+                PHOTO_EXITS.put(view, Boolean.TRUE);
+            }
+        }
+    }
+
+    private static View photoExitAt(View decor, MotionEvent event) {
+        if (event.getActionMasked() != MotionEvent.ACTION_DOWN || Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get()) return null;
+        Rect visible = new Rect();
+        for (View view : PHOTO_EXITS.keySet()) {
+            if (view == null || !view.isAttachedToWindow() || view.getRootView() != decor || !view.isEnabled()) continue;
+            boolean shown = true;
+            for (View part = view; part != null; ) {
+                if (part.getVisibility() != View.VISIBLE || part.getAlpha() <= 0f) { shown = false; break; }
+                ViewParent parent = part.getParent();
+                part = parent instanceof View ? (View) parent : null;
+            }
+            if (shown && view.getGlobalVisibleRect(visible) && visible.contains((int) event.getX(), (int) event.getY())) return view;
+        }
+        return null;
+    }
+
+    private static boolean contains(View ancestor, View descendant) {
+        for (View part = descendant; part != null; ) {
+            if (part == ancestor) return true;
+            ViewParent parent = part.getParent();
+            part = parent instanceof View ? (View) parent : null;
+        }
+        return false;
     }
 
     /** Wraps {@code activity}'s window touch dispatch, once per window. */
@@ -103,9 +151,11 @@ final class TapThroughControls {
             return inner.dispatchTouchEvent(event);
         }
         View decor = window.peekDecorView();
+        View photoExit = photoExitAt(decor, event);
         List<View> moved = new ArrayList<>();
         for (View view : MARKED.keySet()) {
-            if (view != null && view.isAttachedToWindow() && view.getRootView() == decor) moved.add(view);
+            if (view != null && view.isAttachedToWindow() && view.getRootView() == decor
+                    && !contains(view, photoExit)) moved.add(view);
         }
         float[] from = new float[moved.size()];
         int count = 0;

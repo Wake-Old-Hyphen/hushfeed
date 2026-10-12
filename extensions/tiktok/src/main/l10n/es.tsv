@@ -524,7 +524,7 @@ Hide activity	Ocultar la actividad
 Hide activity status	Ocultar el estado de actividad
 Hide archive	Ocultar el archivo
 Hide bottom tabs TikTok adds later unless you allow them.	Ocultar las pestañas inferiores que TikTok añada más adelante salvo que las permitas.
-Unavailable on these TikTok builds. All verification challenges stay visible.	No disponible en estas versiones de TikTok. Todas las verificaciones siguen visibles.
+Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.	Omite el rompecabezas que TikTok muestra mientras solo navegas. Un rompecabezas justo después de dar me gusta, seguir, comentar o republicar se sigue mostrando, igual que las verificaciones de inicio de sesión, SMS y dos pasos. Si algo deja de funcionar, desactiva esto.
 Hide buttons in the right column	Ocultar botones de la columna derecha
 Hide comment polls	Ocultar las encuestas en los comentarios
 Show poll results before voting	Mostrar resultados de encuestas antes de votar
@@ -1029,6 +1029,10 @@ Show the whole video instead of cropping it to the window. Nothing changes on a 
 Show what is left of the budget	Mostrar lo que queda del límite
 Show when the camera or microphone is in use	Mostrar cuando la cámara o el micrófono estén en uso
 Show where a video was posted	Mostrar desde dónde se publicó un vídeo
+Show commenters' handles	Mostrar el nombre de usuario de quien comenta
+Show each commenter's @username instead of the display name they chose. A reply to a reply names the person it answers the same way once their own comment has loaded.	Mostrar el @usuario de cada persona que comenta en vez del nombre visible que eligió. Una respuesta a otra respuesta nombra igual a la persona a la que responde en cuanto se haya cargado su propio comentario.
+Show where commenters are from	Mostrar de dónde es quien comenta
+Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.	Mostrar el país configurado en la cuenta de quien comenta después de la hora del comentario. Los comentarios de cuentas para las que TikTok no envía país se quedan como están.
 Showing %1$s again	Mostrando %1$s otra vez
 Hide videos with blocked sounds	Ocultar los vídeos con sonidos bloqueados
 Skip content warnings	Saltar los avisos de contenido
@@ -1680,7 +1684,9 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Aún no se ha visto ninguna ventana emergente
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	Usa TikTok un rato. Una ventana emergente aparece aquí cuando TikTok intenta mostrarla por primera vez.
 Fade the video controls	Atenuar los controles del vídeo
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Atenúa los botones, la descripción y las pestañas sobre el vídeo hasta este nivel en lugar de ocultarlos. Con 100 quedan como los dibuja TikTok. Los controles atenuados siguen respondiendo al toque. Con Controles ocultos, los botones y la descripción siguen en pantalla con este nivel, y los toques pasan a través de ellos al vídeo. Con 0 los botones y la descripción se ocultan, y las pestañas se quedan en 10.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Atenúa los botones, la descripción y las pestañas sobre el vídeo hasta este nivel en lugar de ocultarlos. Con 100 quedan como los dibuja TikTok. Los controles atenuados siguen respondiendo al toque. Con 0 los botones y la descripción se ocultan, y las pestañas se quedan en 10.
+Keep faded controls in Clear display	Mantener los controles atenuados con Controles ocultos
+With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.	Con la atenuación por debajo de 100, los botones y la descripción siguen en pantalla con ese nivel en Controles ocultos, y los toques pasan a través de ellos al vídeo. Desactivado, Controles ocultos los oculta como con 100.
 Loop a story	Repetir una historia
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Repite una historia desde el principio al terminar en lugar de pasar a la siguiente. Toca o desliza para avanzar.
 Hold a photo story	Mantener una historia con foto
@@ -1956,3 +1962,87 @@ Allow voice comments	Permitir comentarios de voz
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Muestra el botón de TikTok para grabar un comentario hablado en las cuentas que aún no lo tienen. No se ha probado con una cuenta real, así que puede que no funcione.
 Sign in without a passkey	Iniciar sesión sin llave de acceso
 TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok trata tu teléfono como uno sin llaves de acceso, así que al iniciar sesión te pide tu contraseña o un código por correo o SMS. Los gestores de contraseñas no le dan una llave de acceso a una app parcheada.
+# context: opens the complete published changelog from the concise What's new dialog.
+Full changelog	Todos los cambios
+More hashtags per post	Más hashtags por publicación
+New comment emoji	Nuevos emojis en comentarios
+Hide root	Ocultar root
+Hide root status and details about root tools from TikTok.	Oculta a TikTok el estado de root y los detalles de las herramientas de root.
+Clear	Borrar
+Search Activity notifications already loaded on this screen. Loading more pauses while you search.	Busca en las notificaciones de Actividad ya cargadas en esta pantalla. No se cargan más mientras buscas.
+Search is unavailable on this screen	La búsqueda no está disponible en esta pantalla
+Search loaded activity	Buscar en la actividad cargada
+Wait for loading to finish	Espera a que termine la carga
+Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.	Elige las cifras para esta cuenta. Deja un campo vacío para usar la cifra de TikTok. El cero muestra cero. Las opciones se guardan en este teléfono.
+Followers	Seguidores
+Local profile counts	Cifras locales del perfil
+Own profile counts	Cifras de tu perfil
+Show chosen counts on your own profile on this phone. Other people see the real counts.	Muestra las cifras elegidas en tu propio perfil en este teléfono. Los demás ven las cifras reales.
+Sign in to edit your own profile counts	Inicia sesión para editar las cifras de tu perfil
+Use a whole number from 0 to %1$s, or leave the field empty.	Usa un número entero de 0 a %1$s o deja el campo vacío.
+Your account changed. Open the count editor again.	Tu cuenta ha cambiado. Abre de nuevo el editor de cifras.
+
+# context: local own-profile appearance
+Local verified badge	Insignia de verificación local
+Show a verified badge on your own profile on this phone. Other people see your real status.	Muestra una insignia de verificación en tu propio perfil en este teléfono. Los demás ven tu estado real.
+Hide your account warning	Ocultar la advertencia de tu cuenta
+Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.	Oculta el aviso de restricción de tu propio perfil en este teléfono. Las restricciones y apelaciones de TikTok siguen vigentes.
+
+# context: received-message and outgoing-draft translation previews
+DM translation preview	Vista previa de traducción de mensajes
+Preview a translation of your draft before sending it.	Revisa una traducción de tu borrador antes de enviarlo.
+Translate draft	Traducir borrador
+Translation preview	Vista previa de la traducción
+Use translation	Usar traducción
+Translating…	Traduciendo…
+Couldn't translate this draft. Try again in a moment.	No se pudo traducir este borrador. Inténtalo de nuevo en un momento.
+Received message translation	Traducción de mensajes recibidos
+Preview a translation from a received text message's menu. The original message stays unchanged.	Consulta una traducción desde el menú de un mensaje de texto recibido. El mensaje original no cambia.
+Preview translation	Ver traducción
+Original message	Mensaje original
+Translated message	Mensaje traducido
+Show original	Mostrar original
+Show translation	Mostrar traducción
+Couldn't translate this message. Try again in a moment.	No se pudo traducir este mensaje. Inténtalo de nuevo en un momento.
+Saved posts	Publicaciones guardadas
+Blocked accounts	Cuentas bloqueadas
+These are posts saved by your signed-in account. Other Favorites categories aren't included.	Son las publicaciones que guardó tu cuenta con la sesión iniciada. No se incluyen otras categorías de Favoritos.
+Read-only list. Accounts won't be opened or unblocked.	Lista de solo lectura. Las cuentas no se abren ni se desbloquean.
+Load more	Cargar más
+%1$s items loaded	Elementos cargados: %1$s
+TikTok's total: %1$s. Filtered accounts: %2$s.	Total según TikTok: %1$s. Cuentas filtradas: %2$s.
+Your account changed. Close this list and open it again.	Tu cuenta cambió. Cierra esta lista y vuelve a abrirla.
+Loading cancelled. The list is incomplete.	Carga cancelada. La lista está incompleta.
+Loading page %1$s...	Cargando la página %1$s...
+TikTok reports no more items in this list.	TikTok indica que no hay más elementos en esta lista.
+More items are available.	Hay más elementos disponibles.
+Sign in to view this list	Inicia sesión para ver esta lista
+This list isn't available on this TikTok build.	Esta lista no está disponible en esta versión de TikTok.
+Couldn't read this list. Close it and try again.	No se pudo leer esta lista. Ciérrala e inténtalo de nuevo.
+TikTok refused this request (%1$s).	TikTok rechazó esta solicitud (%1$s).
+The request timed out. The list may be incomplete.	La solicitud tardó demasiado. Puede que la lista esté incompleta.
+The list stopped making progress. Results are incomplete.	La lista dejó de avanzar. Los resultados están incompletos.
+The list reached its limit. More items may remain.	La lista llegó a su límite. Puede que queden más elementos.
+The list changed while loading. Results are incomplete.	La lista cambió mientras se cargaba. Los resultados están incompletos.
+TikTok reports additional filtered accounts. This list is incomplete.	TikTok indica que hay más cuentas filtradas. Esta lista está incompleta.
+Saved post	Publicación guardada
+Blocked account	Cuenta bloqueada
+Use an imported font	Usar una fuente importada
+Shows TikTok's text in the font file you import below. While both are on, this one wins over Use system font. If the file is removed or can't be read, the text goes back to what Use system font shows.	Muestra el texto de TikTok con el archivo de fuente que importes abajo. Si las dos están activadas, esta tiene prioridad sobre Usar la fuente del sistema. Si el archivo se quita o no se puede leer, el texto vuelve a verse como lo muestra Usar la fuente del sistema.
+Import a font file	Importar un archivo de fuente
+Remove the imported font	Quitar la fuente importada
+Pick a .ttf or .otf file of up to %1$s MB.	Elige un archivo .ttf u .otf de hasta %1$s MB.
+Imported: %1$s. Pick another file to replace it.	Importado: %1$s. Elige otro archivo para reemplazarlo.
+Reading the font file	Leyendo el archivo de fuente
+Deletes %1$s from TikTok's storage.	Borra %1$s del almacenamiento de TikTok.
+No font is imported	No hay ninguna fuente importada
+%1$s is imported. Restart TikTok to see it.	%1$s se importó. Reinicia TikTok para ver el cambio.
+%1$s is imported. Turn on Use an imported font to see it.	%1$s se importó. Activa Usar una fuente importada para verla.
+%1$s is removed. Restart TikTok to see the change.	%1$s se quitó. Reinicia TikTok para ver el cambio.
+%1$s is removed	%1$s se quitó
+Couldn't remove the imported font. Try again.	No se pudo quitar la fuente importada. Inténtalo de nuevo.
+Couldn't save the font in TikTok's storage. Free up some space and try again.	No se pudo guardar la fuente en el almacenamiento de TikTok. Libera algo de espacio e inténtalo de nuevo.
+That file is larger than %1$s MB. Choose a smaller font file.	El archivo supera los %1$s MB. Elige un archivo de fuente más pequeño.
+That file isn't a font Android can use. Choose a .ttf or .otf file.	El archivo no es una fuente que Android pueda usar. Elige un archivo .ttf u .otf.
+Profile background	Fondo del perfil
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	Abre el editor de fondo de perfil del propio TikTok en Editar perfil y muestra los fondos que han puesto otros perfiles. Los servidores de TikTok pueden negarse a guardarlo si TikTok aún no le ha ofrecido la función a tu cuenta. Vuelve a abrir Editar perfil después de activarlo.

@@ -50,7 +50,7 @@ That JSON file doesn't contain the supported TikTok watch history.	Questo file J
 That watch-history file is damaged. Nothing was imported.	Il file della cronologia è danneggiato. Non è stato importato nulla.
 # Settings text, English on the left, Italian on the right, one entry per line, tab separated.
 # Keep %s and %d placeholders, {tokens} and product names as they are.
-# scripts/gen-l10n.py turns this into a table inside L10nTranslations.java.
+# scripts/gen-l10n.py turns this into L10nTranslationsIt.java.
 %1$d already matched	%1$d già corrispondenti
 %1$d areas were checked and everything they need is here.	%1$d aree sono state controllate e tutto ciò che serve è presente.
 %1$d fields overridden	%1$d campi sovrascritti
@@ -527,7 +527,7 @@ Hide activity	Nascondi l'attività
 Hide activity status	Nascondi lo stato di attività
 Hide archive	Nascondi l'archivio
 Hide bottom tabs TikTok adds later unless you allow them.	Nascondi le schede inferiori che TikTok aggiunge in seguito, a meno che tu non le consenta.
-Unavailable on these TikTok builds. All verification challenges stay visible.	Non disponibile in queste versioni di TikTok. Tutte le verifiche restano visibili.
+Skip the puzzle TikTok shows while you're just browsing. A puzzle right after you like, follow, comment or repost still shows, and so do sign-in, SMS and two-step checks. If something stops working, turn this off.	Salta il puzzle che TikTok mostra mentre stai solo navigando. Un puzzle subito dopo un mi piace, un follow, un commento o un repost compare comunque, così come i controlli di accesso, SMS e in due passaggi. Se qualcosa smette di funzionare, disattiva questa opzione.
 Hide buttons in the right column	Nascondi i pulsanti nella colonna di destra
 Hide comment polls	Nascondi i sondaggi nei commenti
 Show poll results before voting	Mostra i risultati del sondaggio prima di votare
@@ -1032,6 +1032,10 @@ Show the whole video instead of cropping it to the window. Nothing changes on a 
 Show what is left of the budget	Mostra quanto resta del budget
 Show when the camera or microphone is in use	Mostra quando la fotocamera o il microfono sono in uso
 Show where a video was posted	Mostra da dove è stato pubblicato un video
+Show commenters' handles	Mostra il nome utente di chi commenta
+Show each commenter's @username instead of the display name they chose. A reply to a reply names the person it answers the same way once their own comment has loaded.	Mostra il @nomeutente di ogni persona che commenta invece del nome visualizzato che ha scelto. Una risposta a una risposta indica allo stesso modo la persona a cui risponde, appena il suo commento è stato caricato.
+Show where commenters are from	Mostra da dove viene chi commenta
+Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.	Mostra il paese impostato nell'account di chi commenta dopo l'ora del commento. I commenti degli account per cui TikTok non invia un paese restano come sono.
 Showing %1$s again	%1$s mostrato di nuovo
 Hide videos with blocked sounds	Nascondi i video con audio bloccato
 Skip content warnings	Salta gli avvisi sui contenuti
@@ -1680,7 +1684,9 @@ Pick the popups to stop. The list holds the ones TikTok has tried to show on thi
 No popups have been seen yet	Nessun popup visto finora
 Use TikTok for a while. A popup shows up here after TikTok first tries to show it.	Usa TikTok per un po'. Un popup compare qui dopo che TikTok prova a mostrarlo per la prima volta.
 Fade the video controls	Attenua i controlli del video
-Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. In Clear display the buttons and caption stay on screen at this level, and taps go through them to the video. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Attenua i pulsanti, la didascalia e le schede sopra il video fino a questo livello invece di nasconderli. Con 100 restano come li disegna TikTok. I controlli attenuati rispondono ancora al tocco. Nella vista pulita i pulsanti e la didascalia restano sullo schermo a questo livello, e i tocchi li attraversano fino al video. Con 0 i pulsanti e la didascalia vengono nascosti, mentre le schede restano a 10.
+Fade the buttons, caption and tabs over the video to this level instead of hiding them. 100 leaves them as TikTok draws them. Faded controls still take taps. At 0 the buttons and caption are hidden, and the tabs stay at 10.	Attenua i pulsanti, la didascalia e le schede sopra il video fino a questo livello invece di nasconderli. Con 100 restano come li disegna TikTok. I controlli attenuati rispondono ancora al tocco. Con 0 i pulsanti e la didascalia vengono nascosti, mentre le schede restano a 10.
+Keep faded controls in Clear display	Mantieni i controlli attenuati nella vista pulita
+With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.	Con l'attenuazione sotto 100, nella vista pulita i pulsanti e la didascalia restano sullo schermo a quel livello, e i tocchi li attraversano fino al video. Disattivato, la vista pulita li nasconde come a 100.
 Loop a story	Ripeti una storia
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.	Riavvia una storia dall'inizio quando finisce invece di passare alla successiva. Tocca o scorri per andare avanti.
 Hold a photo story	Mantieni una storia con foto
@@ -1956,3 +1962,87 @@ Allow voice comments	Consenti i commenti vocali
 Show TikTok's button for recording a spoken comment, on accounts that don't have it yet. It hasn't been tried on a real account, so it may not work.	Mostra il pulsante di TikTok per registrare un commento vocale sugli account che non lo hanno ancora. Non è stato provato su un account reale, quindi potrebbe non funzionare.
 Sign in without a passkey	Accedi senza passkey
 TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.	TikTok tratta il tuo telefono come uno senza passkey, quindi per accedere chiede la password o un codice via email o SMS. I gestori di password non danno una passkey a un'app modificata.
+# context: opens the complete published changelog from the concise release summary dialog.
+Full changelog	Tutte le modifiche
+More hashtags per post	Più hashtag per post
+New comment emoji	Nuove emoji nei commenti
+Hide root	Nascondi root
+Hide root status and details about root tools from TikTok.	Nasconde a TikTok lo stato di root e i dettagli degli strumenti di root.
+Clear	Cancella
+Search Activity notifications already loaded on this screen. Loading more pauses while you search.	Cerca nelle notifiche di Attività già caricate in questa schermata. Il caricamento si ferma durante la ricerca.
+Search is unavailable on this screen	La ricerca non è disponibile in questa schermata
+Search loaded activity	Cerca nelle attività caricate
+Wait for loading to finish	Attendi il completamento del caricamento
+Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.	Scegli i conteggi per questo account. Lascia un campo vuoto per usare il conteggio di TikTok. Zero mostra zero. Le scelte restano su questo telefono.
+Followers	Follower
+Local profile counts	Conteggi locali del profilo
+Own profile counts	Conteggi del tuo profilo
+Show chosen counts on your own profile on this phone. Other people see the real counts.	Mostra i conteggi scelti sul tuo profilo in questo telefono. Gli altri vedono quelli reali.
+Sign in to edit your own profile counts	Accedi per modificare i conteggi del tuo profilo
+Use a whole number from 0 to %1$s, or leave the field empty.	Usa un numero intero da 0 a %1$s oppure lascia il campo vuoto.
+Your account changed. Open the count editor again.	L'account è cambiato. Riapri l'editor dei conteggi.
+
+# context: local own-profile appearance
+Local verified badge	Badge di verifica locale
+Show a verified badge on your own profile on this phone. Other people see your real status.	Mostra un badge di verifica sul tuo profilo su questo telefono. Gli altri vedono il tuo stato reale.
+Hide your account warning	Nascondi l’avviso del tuo account
+Hide the restriction notice on your own profile on this phone. TikTok's restrictions and appeals still apply.	Nascondi l’avviso di restrizione sul tuo profilo su questo telefono. Le restrizioni e i ricorsi di TikTok restano validi.
+
+# context: received-message and outgoing-draft translation previews
+DM translation preview	Anteprima traduzione dei messaggi
+Preview a translation of your draft before sending it.	Visualizza la traduzione della bozza prima di inviarla.
+Translate draft	Traduci bozza
+Translation preview	Anteprima traduzione
+Use translation	Usa traduzione
+Translating…	Traduzione in corso…
+Couldn't translate this draft. Try again in a moment.	Impossibile tradurre questa bozza. Riprova tra poco.
+Received message translation	Traduzione dei messaggi ricevuti
+Preview a translation from a received text message's menu. The original message stays unchanged.	Visualizza una traduzione dal menu di un messaggio di testo ricevuto. Il messaggio originale resta invariato.
+Preview translation	Anteprima della traduzione
+Original message	Messaggio originale
+Translated message	Messaggio tradotto
+Show original	Mostra l'originale
+Show translation	Mostra la traduzione
+Couldn't translate this message. Try again in a moment.	Impossibile tradurre questo messaggio. Riprova tra poco.
+Saved posts	Post salvati
+Blocked accounts	Account bloccati
+These are posts saved by your signed-in account. Other Favorites categories aren't included.	Questi sono i post salvati dal tuo account connesso. Le altre categorie dei Preferiti non sono incluse.
+Read-only list. Accounts won't be opened or unblocked.	Elenco di sola lettura. Gli account non vengono aperti né sbloccati.
+Load more	Carica altri
+%1$s items loaded	Elementi caricati: %1$s
+TikTok's total: %1$s. Filtered accounts: %2$s.	Totale secondo TikTok: %1$s. Account filtrati: %2$s.
+Your account changed. Close this list and open it again.	Il tuo account è cambiato. Chiudi questo elenco e riaprilo.
+Loading cancelled. The list is incomplete.	Caricamento annullato. L'elenco è incompleto.
+Loading page %1$s...	Caricamento della pagina %1$s...
+TikTok reports no more items in this list.	TikTok indica che non ci sono altri elementi in questo elenco.
+More items are available.	Sono disponibili altri elementi.
+Sign in to view this list	Accedi per vedere questo elenco
+This list isn't available on this TikTok build.	Questo elenco non è disponibile in questa versione di TikTok.
+Couldn't read this list. Close it and try again.	Impossibile leggere questo elenco. Chiudilo e riprova.
+TikTok refused this request (%1$s).	TikTok ha rifiutato questa richiesta (%1$s).
+The request timed out. The list may be incomplete.	La richiesta ha impiegato troppo tempo. L'elenco potrebbe essere incompleto.
+The list stopped making progress. Results are incomplete.	L'elenco ha smesso di avanzare. I risultati sono incompleti.
+The list reached its limit. More items may remain.	L'elenco ha raggiunto il suo limite. Potrebbero esserci altri elementi.
+The list changed while loading. Results are incomplete.	L'elenco è cambiato durante il caricamento. I risultati sono incompleti.
+TikTok reports additional filtered accounts. This list is incomplete.	TikTok indica altri account filtrati. Questo elenco è incompleto.
+Saved post	Post salvato
+Blocked account	Account bloccato
+Use an imported font	Usa un carattere importato
+Shows TikTok's text in the font file you import below. While both are on, this one wins over Use system font. If the file is removed or can't be read, the text goes back to what Use system font shows.	Mostra il testo di TikTok con il file di carattere che importi qui sotto. Se sono attive entrambe, questa ha la precedenza su Usa il carattere di sistema. Se il file viene rimosso o non si può leggere, il testo torna come lo mostra Usa il carattere di sistema.
+Import a font file	Importa un file di carattere
+Remove the imported font	Rimuovi il carattere importato
+Pick a .ttf or .otf file of up to %1$s MB.	Scegli un file .ttf o .otf fino a %1$s MB.
+Imported: %1$s. Pick another file to replace it.	Importato: %1$s. Scegli un altro file per sostituirlo.
+Reading the font file	Lettura del file di carattere
+Deletes %1$s from TikTok's storage.	Elimina %1$s dalla memoria di TikTok.
+No font is imported	Nessun carattere importato
+%1$s is imported. Restart TikTok to see it.	%1$s è stato importato. Riavvia TikTok per vedere la modifica.
+%1$s is imported. Turn on Use an imported font to see it.	%1$s è stato importato. Attiva Usa un carattere importato per vederlo.
+%1$s is removed. Restart TikTok to see the change.	%1$s è stato rimosso. Riavvia TikTok per vedere la modifica.
+%1$s is removed	%1$s è stato rimosso
+Couldn't remove the imported font. Try again.	Impossibile rimuovere il carattere importato. Riprova.
+Couldn't save the font in TikTok's storage. Free up some space and try again.	Impossibile salvare il carattere nella memoria di TikTok. Libera un po' di spazio e riprova.
+That file is larger than %1$s MB. Choose a smaller font file.	Il file supera i %1$s MB. Scegli un file di carattere più piccolo.
+That file isn't a font Android can use. Choose a .ttf or .otf file.	Il file non è un carattere che Android può usare. Scegli un file .ttf o .otf.
+Profile background	Sfondo del profilo
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	Apre l'editor dello sfondo del profilo di TikTok in Modifica profilo e mostra gli sfondi impostati dagli altri profili. I server di TikTok potrebbero comunque rifiutarsi di salvarlo per un account a cui TikTok non ha ancora offerto la funzione. Riapri Modifica profilo dopo averlo attivato.

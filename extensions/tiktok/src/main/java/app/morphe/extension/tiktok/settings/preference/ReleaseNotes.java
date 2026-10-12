@@ -12,10 +12,12 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.LocaleSpan;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
 
 import java.math.BigInteger;
@@ -32,6 +34,7 @@ public final class ReleaseNotes {
     static final String KEY = "action_release_notes";
     public static final String PREFS_NAME = "hushfeed_release_notes";
     private static final String DISMISSED = "dismissed_version";
+    private static final String CHANGELOG_URL = "https://github.com/SysAdminDoc/hushfeed/blob/main/CHANGELOG.md";
     private static final Pattern VERSION = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(\\S*)");
     private static final Pattern HEADING = Pattern.compile("(?m)^## (\\d+\\.\\d+\\.\\d+) ");
 
@@ -59,7 +62,7 @@ public final class ReleaseNotes {
         return render(sections(source, null, current, dismissed), Locale.ENGLISH).toString();
     }
 
-    /** One release's notes as shown, and whether they came from the English changelog. */
+    /** One release's summaries as shown, and whether they came from the English table. */
     static final class Section {
         final String text;
         final boolean english;
@@ -114,7 +117,7 @@ public final class ReleaseNotes {
     }
 
     /**
-     * The changelog's markdown as the dialog shows it. Every rule works line by line, so a
+     * The summaries' markdown as the dialog shows it. Every rule works line by line, so a
      * section formats the same alone as inside the whole text. The backticks around setting
      * names render as code on GitHub and only as stray marks in the dialog.
      */
@@ -160,7 +163,7 @@ public final class ReleaseNotes {
         if (SettingsUi.dialogOpen(KEY, context)) return;
         TextView body = new TextView(context);
         // A release translated for the phone's table shows in that language (#91), and the rest
-        // come from the English changelog. A LocaleSpan per run is what a screen reader that
+        // come from the English summary table. A LocaleSpan per run is what a screen reader that
         // switches languages reads; the text locale only sets line breaking and hyphenation.
         Locale own = L10n.shownLocale(context);
         List<Section> sections = sections(ReleaseNotesData.TEXT,
@@ -216,10 +219,28 @@ public final class ReleaseNotes {
                     onDismiss.run();
                 })
                 .setNegativeButton(L10n.t(context, "Later"), (target, which) -> target.dismiss())
+                .setNeutralButton(L10n.t(context, "Full changelog"), (target, which) -> Utils.openLink(CHANGELOG_URL))
                 .create();
         dialog.show();
         SettingsUi.dialogOpened(KEY, context, dialog);
         SettingsUi.styleStandardAlertDialog(dialog);
+        // Three translated actions can outgrow the platform's single button row. Keep the
+        // platform buttons and their dismissal handlers, but let the existing flow wrap them.
+        Button full = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        ViewGroup panel = (ViewGroup) full.getParent();
+        ViewGroup actions = SettingsUi.actionRow(context);
+        panel.removeAllViews();
+        for (int which : new int[]{AlertDialog.BUTTON_NEUTRAL, AlertDialog.BUTTON_NEGATIVE,
+                AlertDialog.BUTTON_POSITIVE}) {
+            Button button = dialog.getButton(which);
+            button.setSingleLine(false);
+            button.setMaxLines(Integer.MAX_VALUE);
+            button.setEllipsize(null);
+            actions.addView(button, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+        panel.addView(actions, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     /**

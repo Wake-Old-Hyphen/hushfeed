@@ -54,6 +54,96 @@ public class VideoOverlayHiderTest {
         VideoOverlayHider.resolveForTests("view_rootview", 0);
     }
 
+    @Test
+    public void hiddenSeekbarDefeatsNativeAlphaWritesWithoutAnyOtherFade() {
+        assertHiddenSeekbarDefeatsNativeAlphaWrites(100, false);
+    }
+
+    @Test
+    public void hiddenSeekbarDefeatsNativeAlphaWritesWhileOtherControlsAreFaded() {
+        assertHiddenSeekbarDefeatsNativeAlphaWrites(50, false);
+    }
+
+    @Test
+    public void hiddenSeekbarDefeatsNativeAlphaWritesAfterCommentsRebindTheRow() {
+        assertHiddenSeekbarDefeatsNativeAlphaWrites(50, true);
+    }
+
+    private void assertHiddenSeekbarDefeatsNativeAlphaWrites(int fade, boolean rebind) {
+        int exitId = 0x7f0a0f41, seekId = 0x7f0a0f42, railId = 0x7f0a0f43;
+        VideoOverlayHider.resolveForTests("47.1.4:e_5", exitId);
+        VideoOverlayHider.resolveForTests("video_seek_bar", seekId);
+        VideoOverlayHider.resolveForTests("47.1.4:llj", railId);
+        boolean previousHide = Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get();
+        int previousFade = Settings.FADE_CONTROLS_OPACITY.get();
+        Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
+        Settings.FADE_CONTROLS_OPACITY.save(fade);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout clearBar = new FrameLayout(activity);
+            View exit = new View(activity);
+            exit.setId(exitId);
+            clearBar.addView(exit);
+            root.addView(clearBar);
+            View rail = new View(activity);
+            rail.setId(railId);
+            root.addView(rail);
+            View row = new View(activity);
+            row.setId(seekId);
+            row.setAlpha(0.6f);
+            root.addView(row);
+            activity.setContentView(root);
+            View content = activity.findViewById(android.R.id.content);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, row.getAlpha(), 0f);
+            View previousRow = row;
+            if (rebind) {
+                root.removeView(row);
+                row = new View(activity);
+                row.setId(seekId);
+                row.setAlpha(0.8f);
+                root.addView(row);
+                VideoOverlayHider.applyTo(activity);
+                previousRow.setAlpha(0.4f);
+            }
+
+            // TikTok shows a paused/rebound seekbar by writing alpha without another layout.
+            row.setAlpha(1f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("native alpha escaped the hidden seekbar hold", 0f, row.getAlpha(), 0f);
+            assertEquals("the transparent seekbar must still take drags", View.VISIBLE, row.getVisibility());
+            if (rebind) assertEquals("a detached row was changed", 0.4f, previousRow.getAlpha(), 0f);
+
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("disabling lost the latest native animation opacity", 1f, row.getAlpha(), 0f);
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(true);
+            Settings.FADE_CONTROLS_OPACITY.save(fade);
+            VideoOverlayHider.applyTo(activity);
+
+            // A later native write, this time followed by layout, becomes the value to restore.
+            row.setAlpha(0.7f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, row.getAlpha(), 0f);
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
+            Settings.FADE_CONTROLS_OPACITY.save(100);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("disabling restored a stale native opacity", 0.7f, row.getAlpha(), 0f);
+            row.setAlpha(0.9f);
+            content.getViewTreeObserver().dispatchOnPreDraw();
+            assertEquals("a disabled hold still changed the row", 0.9f, row.getAlpha(), 0f);
+        } finally {
+            Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(previousHide);
+            Settings.FADE_CONTROLS_OPACITY.save(previousFade);
+            VideoOverlayHider.resolveForTests("47.1.4:e_5", 0);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:llj", 0);
+        }
+    }
+
     /**
      * Leaving a faded Clear display holds the whole level until TikTok's own opacity is back at
      * full (#84). A control TikTok rests lower never gets there, so the hold lets go after a second
@@ -923,6 +1013,72 @@ public class VideoOverlayHiderTest {
         } finally {
             app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
                     .rememberClearDisplayEvent(new ClearEvent(false, 2));
+        }
+    }
+
+    /**
+     * alexcsi on 0.71.2 (#84): swipe to a creator's profile and back a few times in Clear display
+     * and the bottom tabs stay up until the next scroll. The profile is a page of the feed's own
+     * pager and the tabs ride on the feed's page, so a pass while the profile showed put them
+     * back, and the swipe back only scrolls: no layout, no pass. They now stay away while the
+     * feed's page is scrolled aside, and another tab still gets them back.
+     */
+    @Test
+    public void clearDisplayKeepsTheBottomTabsAwayAcrossASwipeToTheProfileAndBack() {
+        int tabsId = 0x7f0a0b25;
+        int homeId = 0x7f0a0b26;
+        int cellId = 0x7f0a0b27;
+        VideoOverlayHider.resolveForTests("47.1.4:opp", tabsId);
+        VideoOverlayHider.resolveForTests("view_rootview", cellId);
+        try (var main = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = main.get();
+            Utils.setContext(activity);
+            FrameLayout pager = new FrameLayout(activity);
+            FrameLayout feedPage = new FrameLayout(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(cellId);
+            feedPage.addView(cell);
+            FrameLayout tabs = new FrameLayout(activity);
+            tabs.setId(tabsId);
+            View home = new View(activity);
+            home.setId(homeId);
+            home.setSelected(true);
+            tabs.addView(home, new FrameLayout.LayoutParams(60, 40));
+            feedPage.addView(tabs, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 40, android.view.Gravity.BOTTOM));
+            pager.addView(feedPage, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            activity.setContentView(pager);
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertTrue("the window never laid out", home.getWidth() > 0 && pager.getWidth() > 0);
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.resolveForTests(
+                    activity.getPackageName(), "47.1.4:oph", homeId);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, tabs.getVisibility());
+
+            // The swipe to the profile, and a layout pass while it's in front.
+            pager.scrollTo(pager.getWidth(), 0);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the profile pass put the tabs back", View.GONE, tabs.getVisibility());
+
+            // The swipe back only scrolls, so no pass runs; the tabs are still away.
+            pager.scrollTo(0, 0);
+            assertEquals(View.GONE, tabs.getVisibility());
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, tabs.getVisibility());
+
+            // Another tab selected is another page: the tabs come back there.
+            home.setSelected(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, tabs.getVisibility());
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.resolveForTests(
+                    RuntimeEnvironment.getApplication().getPackageName(), "47.1.4:oph", 0);
         }
     }
 

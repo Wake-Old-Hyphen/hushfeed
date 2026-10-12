@@ -190,6 +190,12 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                             + "reset yours. Apps can't use it to recognize your phone.",
                     Settings.BLOCK_ADVERTISING_ID
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide root",
+                    "Hide root status and details about root tools from TikTok.",
+                    Settings.HIDE_ROOT
+            ));
         }
         if (SettingsStatus.resourceGovernorEnabled) {
             addPreference(new TogglePreference(

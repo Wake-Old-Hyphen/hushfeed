@@ -1,449 +1,535 @@
+## Unreleased
+
+* **TikTok:** Patch baru Show commenter handle and region: komentar bisa menampilkan @namapengguna pengomentar sebagai ganti nama tampilannya, dan negara yang diatur di akunnya setelah waktu komentar. Masing-masing punya tombol sendiri di Pengaturan Hushfeed > Komentar, dan keduanya mati di awal. Diadaptasi dari patch onlynazril milik na-x-ril.
+
+* **TikTok:** Gunakan font sistem kini juga bisa menampilkan teks TikTok dengan file .ttf atau .otf yang kamu impor. Nyalakan Gunakan font yang diimpor di Aplikasi, pilih filenya, lalu mulai ulang TikTok. Jika file dihapus atau tidak bisa dibaca, teks kembali seperti yang ditampilkan Gunakan font sistem. Diadaptasi dari patch onlynazril milik na-x-ril.
+
+* **TikTok:** Patch baru Profile background: sakelar di Profil pada Aplikasi membuka editor latar profil milik TikTok di Edit profil dan menampilkan latar yang dipasang profil lain. Server TikTok mungkin tetap menolak menyimpannya untuk akun yang belum ditawari fitur ini. Awalnya mati. Diadaptasi dari patch onlynazril milik na-x-ril.
+
+* **TikTok:** Sembunyikan popup CAPTCHA kembali menjadi sakelar, di Pengaturan Hushfeed > Layar feed, dan mulai dalam keadaan mati. Sakelar ini melewati teka-teki yang ditampilkan TikTok saat kamu hanya menjelajah. Teka-teki tepat setelah kamu menyukai, mengikuti, berkomentar, atau memposting ulang tetap muncul, begitu juga pemeriksaan masuk, SMS, dan dua langkah. Dengan patch Hide the risk control CAPTCHA, teka-teki penjelajahan dari pemeriksaan itu juga dilewati. Aturannya berasal dari patch onlynazril milik na-x-ril.
+
+* **TikTok:** Dengan Blokir akses ke daftar kontak aktif, pembacaan kontak yang meminta semua kolom kini mendapat daftar kosong yang tetap punya kolom kontak, jadi layar TikTok yang mencari nama kartu kontak tidak tersandung kolom yang hilang.
+
+* **TikTok:** Utamakan video H.264 dan Putar SDR, bukan HDR kini mempertahankan versi lain sebuah video jika tidak ada versi pilihan yang punya alamat untuk diputar, jadi Kualitas pemutaran tetap memilih di antara versi yang bisa diputar.
+
+* **TikTok:** Dalam Tampilan bersih, tab bawah tetap tersembunyi setelah Anda menggeser ke profil kreator lalu kembali (#84).
+
+* **TikTok:** Angka yang diketik di Jumlah profil sendiri tetap ada di kolomnya saat layar diputar atau tema berganti selagi editor terbuka.
+
+* **TikTok:** Jika pencarian aktivitas yang dimuat gagal di suatu versi TikTok, bilahnya hilang dan daftar milik TikTok tetap tampil, bukan aplikasinya yang tertutup. Pencarian tetap nonaktif sampai TikTok dimulai ulang.
+
+* **TikTok:** Ada sakelar baru di bawah Pudarkan kontrol video, Pertahankan kontrol pudar di Tampilan bersih, yang aktif secara bawaan. Jika dimatikan, Tampilan bersih kembali menyembunyikan tombol dan keterangan, sementara efek pudar tetap berlaku di tempat lain (#84).
+
+* **TikTok:** Dengan Bilah geser di story video aktif, penampil story yang sudah ditutup tidak lagi tertahan di memori selama kamu tetap memakai TikTok.
+
+* **TikTok:** Nama di baris kreator tidak lagi tetap terpotong setelah menggulir cepat atau saat lencana postingan foto mengecil menjadi ikon (#127).
+
+* **TikTok:** Profilmu bisa menampilkan lencana verifikasi atau menyembunyikan peringatan akun di ponsel ini. Orang lain tetap melihat status aslimu.
+
+* **TikTok:** Pemeriksaan media kini menguji muxer terpasang dengan klip buatan dan memastikan hasilnya bisa diputar. File uji dihapus setelah pemeriksaan.
+
+* **TikTok:** Mengganti kategori Aktivitas setelah pencarian tidak lagi membuat aplikasi berhenti. Pencarian bisa memakai daftar yang sudah tampil di layar.
+
+* **TikTok:** Pemeriksaan perangkat kini mengenali menu pop-up dari aplikasi pemiliknya. Aplikasi lain dan jendela yang tidak cocok tetap menolak input.
+
+* **TikTok:** Profil Anda dapat menampilkan jumlah pilihan Anda di ponsel ini. Kolom kosong tetap memakai jumlah TikTok. Orang lain melihat nilai sebenarnya.
+
+* **TikTok:** Menambahkan pencarian opsional pada notifikasi Aktivitas yang sudah dimuat. Pencarian menjeda pemuatan berikutnya. Menghapus kueri memulihkan daftar saat ini dan posisinya.
+
+* **TikTok:** Tombol X pada postingan foto tetap dapat digunakan saat kontrol diredupkan dalam Tampilan bersih. Kontrol redup lainnya tetap meneruskan sentuhan ke video (#84).
+
+* **TikTok:** Gaya subtitel dan penanganan feed kosong telah diverifikasi di Android 6 melalui alat ART kecil.
+
+* **TikTok:** Geseran kecerahan dan volume di atas bilah komentar yang memudar telah diverifikasi. Pemeriksaan perangkat memulihkan kecerahan, audio, dan pengaturan sementara setelah setiap geseran.
+
+* **TikTok:** Pemeriksaan gestur menolak input saat aliran yang dibisukan menyembunyikan volumenya dan menolak gestur yang selesai setelah batas waktu.
+
+* **TikTok:** Pemeriksaan perangkat kini mendukung gerakan dua jari asli. Kedua posisi jari pada bilah samping terbukti keluar dari tampilan bersih (#84).
+
+* **TikTok:** Bilah pencarian yang disembunyikan pada tampilan bersih tetap transparan setelah TikTok mengubah opasitas atau mengganti baris. Menonaktifkan pengaturan sembunyikan memulihkan opasitas terakhir TikTok (#84).
+
+* **TikTok:** Tampilan bersih otomatis mencoba lagi saat video yang sama dibuka kembali di penampil baru. Pilihan keluar manual tetap berlaku saat kembali dari komentar atau setelah fokus hilang sebentar (#84).
+
+* **TikTok:** Sudah diverifikasi bahwa pelepasan atau berakhirnya jeda sesi tetap menjeda video sampai aplikasi lain mengembalikan fokus audio.
+
+* **TikTok:** Pratinjau indeks pengembangan lokal memeriksa versi bundel yang sebenarnya dan urutan main/dev Manager. Indeks stabil tidak diubah dan tidak ada yang dipublikasikan.
+
+* **TikTok:** Sembunyikan root menyembunyikan status root dan detail alat root dari pemeriksaan perangkat TikTok. Awalnya nonaktif. Mulai ulang TikTok setelah mengubahnya.
+
+* **TikTok:** Blokir kreator ini di panel berbagi menambahkan Blokir di samping Laporkan. Opsi ini awalnya nonaktif dan menawarkan Urungkan setelah TikTok mengonfirmasi. Urungkan sebelumnya menunggu pemblokiran kreator yang sama selesai.
+
+* **TikTok:** Stiker DM yang diterima membuka pratinjau dengan Simpan media. Penyimpanan memakai format stiker yang dipilih dan memeriksa berkas terenkripsi sebelum menulisnya. Membuka pratinjau tidak mengirim pesan.
+
+* **TikTok:** Unggahan rilis tetap menjadi draf hingga bundel, tanda terima, dan checksum diunduh serta diverifikasi. Pelanjutan memeriksa aset yang ada. Pemeriksaan rilis tetap yang opsional memerlukan pengaturan repositori GitHub dan memverifikasi pengesahan yang diterbitkan.
+
+* **TikTok:** Telah diverifikasi bahwa TalkBack membacakan tindakan pemberitahuan pengaturan sebagai Ketuk dua kali untuk menutup.
+
+* **TikTok:** Hapus semua di Kotak masuk kini tetap terlihat di samping akun yang disarankan, dengan ruang untuk area sentuh tombol berukuran penuh.
+
+* **TikTok:** Yang baru merangkum setiap perubahan dalam bahasa pengaturan, dengan Semua perubahan untuk riwayat lengkap. Nanti dan Mengerti tetap bekerja seperti sebelumnya, dan tombol pindah baris pada layar sempit atau teks lebih besar.
+
+* **TikTok:** Emoji komentar baru adalah preset Lab untuk eksperimen emoji bawaan TikTok. Mulai ulang setelah menerapkannya. Pemeriksaan katalog, fallback, aset dan kelayakan server tetap menentukan yang muncul.
+
+* **TikTok:** Lebih banyak tagar per postingan mematikan batas klien TikTok tanpa mengubah nilai maksimum atau pemeriksaan teks lainnya. Mulai ulang setelah menerapkannya. Batas server mungkin tetap berlaku.
+
+* **TikTok:** Pemeriksa APK memeriksa keselarasan pemuatan pustaka native dan offset ZIP tersimpan untuk halaman 16 KB tanpa mengekstrak berkas. Kegagalan dilaporkan per pustaka, sedangkan kompatibilitas runtime Android membutuhkan pemeriksaan perangkat terpisah.
+
+* **TikTok:** Tabel terjemahan pengaturan bisa diekspor ke XML dan diimpor kembali, mempertahankan bentuk jamak dan placeholder. Impor menolak kunci yang berubah atau terjemahan yang hilang sebelum mengganti tabel.
+
+* **TikTok:** Pengumpulan keluaran fixture tidak lagi melaporkan kesalahan pembersihan tugas ganda saat patch selesai. Penerapan yang gagal tetap menolak push.
+
+* **TikTok:** Pratinjau stiker mendapatkan kembali Simpan saat aksi native terlambat muncul, barisnya berubah atau tombol Simpan hilang. Pratinjau yang digunakan kembali menyimpan stiker yang sedang ditampilkan.
+
+* **TikTok:** Mematikan Sembunyikan akun yang disarankan memulihkan jarak sel semula, termasuk margin negatif.
+
+* **TikTok:** Pelapor awal mengonfirmasi bahwa tanggal postingan mengikuti Ukuran teks kreator (#66).
+
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, setiap ruang yang kamu gulir kini sampai ke bawah jam dengan bayangan di belakangnya. Beberapa ruang sebelumnya tetap punya strip hitam di sana, dan setelah beberapa LIVE pertama strip itu bisa kembali terang (#137).
+* **TikTok:** Tampilkan LIVE di bawah bilah status kini memenuhi tepi atas di setiap ruang tanpa pita hitam atau garis pucat (#137).
 
-* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, tampilan bersih di LIVE tidak lagi menyisakan strip gelap di bawah jam, dan baris atas panel samping yang kamu buka dengan menggeser ke kiri tetap berada di bawah jam, tidak tertimpa (#137).
+* **TikTok:** Jika Tampilkan LIVE di bawah bilah status aktif, Tampilan bersih tak lagi meninggalkan garis di bawah jam dan panel samping tetap di bawahnya (#137).
 
-* **TikTok:** Sembunyikan gelembung Tako sekarang juga menyembunyikan gelembung Tako di pojok kanan bawah video feed, yang muncul di sebagian akun sebagai ganti gelembung di atas tombol profil (#115).
+* **TikTok:** Sembunyikan gelembung Tako kini mencakup versi di sudut bawah feed (#115).
 
-* **TikTok:** Feature Gate Lab punya preset baru Banner profil. Preset ini menyalakan Add background di Edit profile TikTok tanpa mengubah bagian profil lainnya ke tata letak baru (#80).
+* **TikTok:** Preset Spanduk profil di Lab kini menambahkan Tambahkan latar belakang ke Edit profil tanpa mengubah tata letak lainnya (#80).
 
-* **TikTok:** Popup koleksi yang muncul saat kamu menahan tombol Favorit sekarang gelap, bukan putih, saat TikTok dalam mode gelap. Popup Favorit gelap di pengaturan Hushfeed > Aplikasi mematikannya (#142).
+* **TikTok:** Popup koleksi Favorit mengikuti tema gelap TikTok, dengan sakelar Popup Favorit gelap di Aplikasi (#142).
 
 ## 0.71.2 (2026-10-11)
 
-* **TikTok:** Sembunyikan bilah status di ruang LIVE dan Tampilkan LIVE di bawah bilah status sekarang juga berlaku untuk LIVE yang dibuka dari pratinjau di bawah kartu kreator di pencarian. TikTok membuka LIVE itu di dalam halaman yang dipakainya untuk video yang dibuka, yang sebelumnya tidak terjangkau oleh tombol-tombol itu (#137).
+* **TikTok:** Kedua sakelar bilah status LIVE kini berfungsi saat masuk ke ruang dari pratinjau kreator di pencarian (#137).
 
 ## 0.71.1 (2026-10-11)
 
-* **TikTok:** Kalau Pertahankan keterangan saat tampilan bersih aktif, keterangan di tampilan bersih kini tetap di tempat TikTok menampilkannya sebelum kontrol disembunyikan, bukan turun ke tepi bawah (#141). Selama belum ada keterangan yang muncul, posisinya tetap di tempat lama.
+* **TikTok:** Pertahankan teks di Tampilan bersih kini memakai posisi asli terakhir, dan memakai posisi lama hanya sebelum teks pertama muncul (#141).
 
-* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, strip di bawah jam kembali berbayang seperti bagian atas ruang lainnya. Di ponsel tempat TikTok menyisakan strip hitam untuk bilah, strip itu tampak lebih terang daripada siaran di bawahnya (#137).
+* **TikTok:** Tampilkan LIVE di bawah bilah status kini menyamakan warna area jam dengan ruang LIVE (#137).
 
 ## 0.71.0 (2026-10-11)
 
-* **TikTok:** Kalau Ketuk dua kali diatur ke salah satu aksi Hushfeed dan Long-press controls ikut dipatch, ketukan kedua yang jarinya tertahan sedikit terlalu lama tidak lagi ikut membuka menu tekan lama TikTok, jadi panel bagikan tidak lagi muncul di atas komentar. (#63)
+* **TikTok:** Menahan ketukan kedua tak lagi membuka menu tekan lama TikTok di atas komentar saat gestur khusus aktif (#63).
 
-* **TikTok:** Kontrol LIVE punya sakelar ketiga, Tawarkan kualitas LIVE di lebih banyak ruang, di pengaturan Hushfeed > Pemutaran. TikTok hanya menawarkan Kualitas video di menu LIVE saat siarannya memintanya atau saat TikTok menyalakan pemilih kualitas yang lebih baru untuk akunmu, jadi di beberapa ruang kualitas tidak bisa dipilih. Dengan sakelar menyala, sebagian besar ruang tanpa pilihan itu mendapat pemilih yang baru (ruang khusus audio tidak), dan ruang berikutnya terbuka dengan kualitas yang terakhir kamu pilih sampai TikTok ditutup. Bawaannya mati. (#57)
+* **TikTok:** Tawarkan kualitas LIVE di lebih banyak ruang menambahkan pemilih jika didukung, kecuali ruang audio, dan mengingat pilihan sampai TikTok ditutup. Awalnya mati (#57).
 
-* **TikTok:** Tampilkan tanggal di kisi profil dan Tampilkan tingkat interaksi kini berfungsi di kisi TikTok 47.1.4, baik di video sebuah profil maupun di Favorit dan video yang disukai. Versi itu menulis jumlah tayangan tiap kotak di tempat yang tidak dijangkau patch, jadi tanggal dan tingkatnya tidak pernah muncul di sana.
+* **TikTok:** Tanggal dan rasio interaksi di kisi profil kini berfungsi pada TikTok 47.1.4, termasuk Favorit dan video yang disukai.
 
-* **TikTok:** Kreator yang diblokir, kata yang diblokir, rentang tayangan dan suka, serta tombol seperti Sembunyikan video LIVE dan Sembunyikan Story kini juga berlaku di tab Mengikuti. Di TikTok 47.1.4 tab itu hanya kehilangan iklan dan video bertanda lokasi, jadi kreator yang sudah kamu blokir masih bisa muncul di sana.
+* **TikTok:** Mengikuti kini menerapkan blokir kreator, kata, rentang jumlah dan filter feed lainnya, termasuk aturan LIVE dan cerita.
 
-* **TikTok:** Kata yang bukan kode bahasa di Jangan terjemahkan otomatis bahasa ini sekarang cukup mendapat pesan "bukan kode bahasa". Sebelumnya muncul peringatan bahwa tidak ada video yang akan cocok, padahal itu peringatan filter bahasa keterangan dan tidak cocok untuk daftar yang hanya membiarkan teks tidak diterjemahkan (#121).
+* **TikTok:** Jangan terjemahkan otomatis bahasa ini kini memberi peringatan kode bahasa tidak valid yang jelas, bukan peringatan tidak ada kecocokan milik filter teks (#121).
 
-* **TikTok:** Detail build sekarang juga menyebut patch yang hanya mengubah sumber daya TikTok, seperti Change app name, Custom launcher icon, dan Trust user certificates. Yang dicantumkan patch-nya, tidak pernah nama atau gambar yang kamu pilih di opsinya.
+* **TikTok:** Detail versi kini mencantumkan patch khusus sumber daya tanpa mengungkap nama aplikasi atau gambar ikon pilihan Anda.
 
-* **TikTok:** Dengan Catat diagnostik aktif, log sekarang mencatat sekali per video berapa gambar pratinjau bilah progres yang dikirim TikTok bersamanya. Kalau pratinjau tidak muncul saat bilah digeser, ekspor diagnostik menunjukkan apakah video itu membawa gambar pratinjau (#140).
+* **TikTok:** Saat Catat diagnostik aktif, jumlah gambar pratinjau setiap video dicatat sekali agar ekspor dapat membantu menjelaskan pratinjau bilah progres yang hilang (#140).
 
-* **TikTok:** Detail build dan ekspor log lengkap kini mencantumkan setiap patch di build kamu yang mengubah kode TikTok, dengan nama singkat, termasuk yang tanpa sakelar seperti Comment send fix dan Network request report.
+* **TikTok:** Detail versi dan log diagnostik lengkap kini mencantumkan semua patch kode, termasuk yang tanpa sakelar.
 
-* **TikTok:** Tampilan bersih, yang diingat atau otomatis, kini juga membersihkan video yang kamu buka dari pencarian. TikTok menyerahkan video itu ke halaman yang dibuka dalam keadaan sudah diputar, dan Tampilan bersih menunggu awal pemutaran yang tidak pernah datang di sana, jadi tombol dan bilah pencarian TikTok tetap tampil (#84).
+* **TikTok:** Tampilan bersih yang diingat dan otomatis kini berfungsi pada hasil pencarian yang langsung diputar saat dibuka (#84).
 
-* **TikTok:** Sembunyikan overlay video dan ukuran teks feed kini juga berfungsi saat sebuah tautan membuka TikTok langsung ke pencarian atau video, tanpa feed Untuk Anda di belakangnya. Sebelumnya, video yang dibuka dengan cara itu tetap menampilkan semua overlay dan ukuran teks bawaan TikTok (#84).
+* **TikTok:** Penyembunyian lapisan dan Ukuran teks feed kini berfungsi saat video atau pencarian dibuka langsung tanpa Untuk Anda di belakangnya (#84).
 
-* **TikTok:** Lindungi halaman eksternal di browser TikTok kini menganggap CAPTCHA teka-teki yang dibuka LIVE dan Toko sebagai halaman TikTok sendiri, sehingga teka-teki tetap terhubung ke TikTok (#87). CAPTCHA itu dimuat dari server TikTok sendiri, hanya dari alamat yang belum dikenal sakelar ini.
+* **TikTok:** Privasi browser kini mengizinkan jembatan halaman CAPTCHA teka-teki tepercaya, sambil menjaga LIVE dan Shop berfungsi (#87).
 
-* **TikTok:** Ketukan kedua yang cepat pada Detail build, Pemeriksaan fitur, Lisensi, atau Yang baru tidak lagi membuka jendela yang sama dua kali secara bertumpuk.
+* **TikTok:** Ketukan cepat tak lagi membuka dialog Detail versi, Status hook, Lisensi atau Yang baru dua kali.
 
-* **TikTok:** Sukai video, sebagai aksi Ketuk dua kali atau Tekan lama, kini tetap pada video yang sedang kamu tonton di semua jenis feed. Kalau video itu tidak punya tombol hati, kamu diberi tahu, bukan video di sebelahnya yang disukai.
+* **TikTok:** Gestur suka kini memakai video di layar, atau memberi tahu jika tombol Suka tak ada, tanpa menyentuh video sebelahnya.
 
-* **TikTok:** Ketuk dua kali yang diatur ke salah satu aksi Hushfeed kini menjalankannya sekali per ketukan, meski TikTok meneruskan ketukan yang sama ke dua penanganannya.
+* **TikTok:** Aksi ketuk dua kali khusus kini berjalan sekali meski kedua penangan gestur TikTok menerima ketukan.
 
-* **TikTok:** Mem-patch versi TikTok yang tidak ada di daftar Hushfeed kini lebih aman. Tambahan Tampilkan bilah progres dan tombol terjemahan komentar kini dilewati sendiri-sendiri kalau tidak cocok dengan versi itu, jadi tidak bisa menghentikan patch atau terpasang setengah.
+* **TikTok:** Hook tambahan bilah pencarian dan terjemahan komentar yang tak didukung dilewati satu per satu, tanpa merusak atau menerapkan patch sebagian.
 
-* **TikTok:** Baris Keep captions in Clear display dan Automatic Clear display kini menulis Clear display seperti TikTok.
+* **TikTok:** Pengaturan Tampilan bersih kini memakai ejaan TikTok secara konsisten.
 
-* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, bilah progres pada video panjang yang kamu buka dari pencarian atau profil kini kembali berada di bawah keterangan. Sebelumnya bilah itu menimpa nama kreator (#50).
+* **TikTok:** Menyembunyikan bilah komentar video terbuka kini menempatkan bilah pencarian video panjang di bawah teks, jauh dari nama kreator (#50).
 
-* **TikTok:** Pudarkan kontrol video sekarang juga memudarkan bilah progres pada video yang dijeda, tombol story di tab Mengikuti, dan pada video yang dibuka dari pencarian, bilah pencarian di atas, tombol Layar penuh, dan bilah Tambahkan komentar. Sebelumnya semua itu tetap terlihat penuh (#84).
+* **TikTok:** Pudarkan kontrol video kini mencakup bilah pencarian yang dijeda, cerita Mengikuti dan kontrol video dari pencarian (#84).
 
-* **TikTok:** Story sekarang bisa disimpan dari menu bagikannya. Aktifkan Simpan Story dari menu bagikan di Unduhan, lalu tombol simpan muncul di sana. Tombol itu menyimpan salinan tanpa watermark kalau TikTok punya, dan memberi tahu kalau yang ada hanya salinan dengan watermark (#93).
+* **TikTok:** Simpan cerita dari panel berbagi menambahkan sakelar Unduhan dan tombol, memakai salinan bersih jika tersedia dan memberi tahu jika tidak (#93).
 
-* **TikTok:** Tampilkan bilah progres punya sakelar baru di Pemutaran, Bilah geser di story video, yang awalnya mati. Sakelar ini menaruh garis tipis di bagian bawah story video yang bisa kamu geser untuk mundur atau maju, dengan waktu yang tampil saat kamu menggeser. Mengetuk tetap berpindah antar story (#72).
+* **TikTok:** Bilah pencarian pada cerita video menambahkan geser dan waktu. Awalnya mati, dan ketukan tetap beralih ke cerita berikutnya (#72).
 
-* **TikTok:** Tetap putar di latar belakang sekarang bisa memulai ulang video saat selesai, jadi kamu tidak perlu menekan Putar di notifikasi setiap kali. Aktifkan Putar ulang di latar belakang di Pemutaran. Panggilan atau suara aplikasi lain tetap menjedanya (#99).
+* **TikTok:** Putar ulang di latar belakang dapat memulai ulang video yang selesai, sementara panggilan dan audio aplikasi lain tetap menjedanya (#99).
 
-* **TikTok:** Piringan musik bisa berputar lagi. TikTok 47.1.4 membuatnya diam sejak awal, jadi Layar feed sekarang punya Putar piringan musik, dan Biarkan piringan musik diam kalau kamu tidak ingin piringan itu berputar sama sekali. Keduanya perlu mulai ulang (#68).
+* **TikTok:** Putar cakram musik dan Pertahankan cakram musik diam menambahkan pilihan feed yang perlu mulai ulang, termasuk pada cakram diam 47.1.4 (#68).
 
-* **TikTok:** Tampilkan bilah progres punya dua tombol baru di Pemutaran, keduanya mati di awal. Tampilkan waktu di samping bilah progres menambahkan waktu yang sudah diputar dan durasi video di ujung bilah, dan Pegangan bilah progres lebih besar menggambar pegangan yang lebih besar di garis yang sedikit lebih tebal (#90).
+* **TikTok:** Tampilkan waktu di samping bilah progres menambahkan waktu berlalu dan durasi total. Pegangan bilah progres lebih besar menambahkan pegangan besar dan garis lebih tebal. Keduanya awalnya nonaktif (#90).
 
-* **TikTok:** Dengan Sembunyikan kontrol Tampilan bersih aktif, garis pemuatan TikTok, bilah tipis yang memanjang dari tengah di tepi bawah video saat memuat, sekarang ikut hilang selama layar bersih (#84).
+* **TikTok:** Sembunyikan kontrol Tampilan bersih kini juga menghapus garis buffering (#84).
 
-* **TikTok:** Tombol baru Tombol terjemahkan di komentar di bagian Komentar menampilkan tombol terjemahan milik TikTok sendiri di samping jumlah komentar. Sekali ketuk menerjemahkan semua komentar dan balasan, ketukan berikutnya mengembalikan teks aslinya (#85). Awalnya mati.
+* **TikTok:** Tombol terjemahkan di komentar menerjemahkan komentar dan balasan yang dimuat. Ketuk lagi untuk memulihkannya. Awalnya mati (#85).
 
-* **TikTok:** Tampilan bersih tidak lagi meninggalkan garis tipis di bagian bawah setiap video baru selama beberapa detik (#84). Itu garis halus di tepi atas bilah tab, yang tertinggal saat tabnya hilang.
+* **TikTok:** Tampilan bersih tak lagi meninggalkan garis tipis antara video dan tab bawah (#84).
 
-* **TikTok:** Sembunyikan bilah status di ruang LIVE menjauhkan strip hitam di atas selama LIVE berlangsung (#137). Dulu fitur ini menyerah setelah TikTok memasang strip itu lagi beberapa kali, misalnya saat panel dibuka dan ditutup di atas siaran. Tombol baru Tampilkan LIVE di bawah bilah status membiarkan LIVE sampai ke tepi atas dengan jam dan ikon di atasnya, kalau kamu lebih suka bilahnya tetap ada. Awalnya mati.
+* **TikTok:** Sembunyikan bilah status di LIVE tetap aktif saat panel dibuka. Sakelar baru yang awalnya mati memungkinkan LIVE tampil di bawah jam (#137).
 
-* **TikTok:** Ketuk dua kali sekarang bisa melakukan semua yang bisa dilakukan Tekan lama, seperti menyalin tautan atau menyimpan bingkai, dan Tekan lama punya pilihan baru Sukai video (#136). Suka lewat tekan lama bekerja seperti milik TikTok sendiri dan tidak pernah membatalkan suka.
+* **TikTok:** Ketuk dua kali kini menawarkan semua aksi tekan lama, termasuk Sukai video yang tak pernah membatalkan suka yang ada (#136).
 
-* **TikTok:** Koleksi atau grid lain tempat kamu membuka video tetap menyimpan semua postingannya, jadi Hide photo posts, kata yang diblokir, dan filter feed lainnya tidak lagi membuat video yang salah diputar (#135). Dari daftar yang kamu buka, hanya iklan yang dibuang.
+* **TikTok:** Video dari koleksi dan kisi kini mempertahankan semua postingan kecuali iklan, agar filter tak memilih video yang salah (#135).
 
-* **TikTok:** Hide the Send to row tidak lagi ikut menyembunyikan Report, Download, dan baris aksi lainnya di lembar bagikan kecil yang terbuka saat tekan lama (#120). Di lembar itu TikTok menaruh kedua baris dalam satu bingkai, dan seluruh bingkainya ikut disembunyikan.
+* **TikTok:** Sembunyikan baris Kirim ke kini mempertahankan baris aksi di panel berbagi ringkas (#120).
 
-* **TikTok:** Show the progress bar kembali menampilkan bilah di feed For You, termasuk untuk video pendek (#134). Di 47.1.4 patch ini menyalakan pemeriksaan TikTok yang salah, yaitu yang menentukan apakah sebuah video itu iklan, jadi bilahnya tidak pernah muncul lagi saat video diputar.
+* **TikTok:** Tampilkan bilah kemajuan kini berfungsi di Untuk Anda pada 47.1.4, termasuk video pendek (#134).
 
-* **TikTok:** Laporan diagnostik punya bagian Storage baru yang menampilkan folder terbesar di penyimpanan TikTok, jadi laporan bisa menunjukkan apa yang membuatnya penuh (#70). Bagian ini hanya menyebut nama folder, tidak pernah nama file, dan menyembunyikan nomor akun.
+* **TikTok:** Diagnostik kini mencantumkan folder penyimpanan terbesar tanpa nama file atau nomor akun (#70).
 
-* **TikTok:** Menekan kembali di video yang sudah bersih, atau membuka panel bagikan dari sana, tidak lagi dihitung sebagai mematikan Clear display. Membuka video yang sama lagi akan membersihkannya seperti video lain, dan Clear display yang diingat tetap menyala (#84).
+* **TikTok:** Aksi kembali dan berbagi tak lagi mematikan Tampilan bersih yang diingat saat membuka video (#84).
 
-* **TikTok:** Remove LIVE extras sekarang menyebutkan bahwa ia menghapus file untuk bergabung ke LIVE orang lain sebagai tamu, jadi bergabung lewat suara atau video bisa tidak berfungsi kalau patch ini dipakai (#132). Jangan pilih patch ini kalau kamu suka bergabung ke LIVE.
+* **TikTok:** Hapus tambahan LIVE kini memperingatkan bahwa bergabung sebagai tamu suara atau video dapat gagal. Jangan pilih patch ini jika Anda bergabung ke ruang (#132).
 
-* **TikTok:** Saat Clear display diingat, atau Automatic Clear display tanpa jeda, TikTok tidak lagi menampilkan tab di bawah putaran loading dan tombol video pertama selama sekitar satu detik setelah dibuka dari awal. Video yang dibuka dari Favorites atau profil juga langsung mulai bersih (#84).
+* **TikTok:** Tampilan bersih yang diingat dan otomatis tanpa jeda kini menyembunyikan kontrol serta tab video pertama, termasuk dari Favorit atau profil (#84).
 
-* **TikTok:** Dengan Show where a video was posted aktif, nama kreator tidak lagi dipotong agar negaranya muat kalau barisnya cukup untuk keduanya, jadi "Rn D… · TR" kembali terbaca utuh (#127). Nama yang memang terlalu panjang tetap dipendekkan supaya negaranya terlihat utuh.
+* **TikTok:** Baris kreator kini memakai lebar yang tersedia sebelum memendekkan nama dan mempertahankan nama negara lengkap jika muat (#127).
 
-* **TikTok:** Hide already seen videos tidak lagi menghapus video dari koleksi yang kamu buka, jadi mengetuk video tersimpan kembali memutar video itu, bukan video lain atau tidak ada sama sekali (#135). Video yang sudah ditonton tetap disembunyikan di For You, Following, dan Friends.
+* **TikTok:** Sembunyikan video yang sudah ditonton kini membiarkan koleksi, sambil tetap memfilter Untuk Anda, Mengikuti dan Teman (#135).
 
-* **TikTok:** Patch baru, Keep the app language, menambahkan sakelar Pertahankan bahasa yang dipilih di TikTok di Sistem pada Aplikasi (#61). Saat TikTok dimulai dan menganggap bahasa ponsel berubah, TikTok membuang bahasa yang kamu pilih di pengaturannya dan mengikuti ponsel. Dengan sakelar ini menyala, pilihanmu tetap. Awalnya mati.
+* **TikTok:** Pertahankan bahasa TikTok pilihan mencegah bahasa TikTok ikut berubah saat bahasa ponsel berubah. Ada di Aplikasi > Sistem dan awalnya mati (#61).
 
-* **TikTok:** Sakelar baru Tulis nama pengguna dan keterangan di video di Unduhan menulis @nama pengguna dan baris pertama keterangan di pojok kiri bawah video yang disimpan Hushfeed. Ponsel mengenkode ulang videonya untuk itu, jadi simpanan seperti ini lebih lama dan menampilkan progresnya dengan tombol Batal. Awalnya mati.
+* **TikTok:** Tulis nama pengguna dan teks pada video tersimpan menambahkan sakelar Unduhan yang awalnya mati. Video dikodekan ulang, lebih lama, dengan kemajuan dan Batal.
 
-* **TikTok:** Remove creation tools sekarang memperingatkan bahwa membuka alat pembuatan, seperti pencarian efek di kamera, bisa menutup TikTok (#133). Jangan pilih patch ini kalau kamu membuat video.
+* **TikTok:** Hapus alat kreasi kini memperingatkan bahwa pembuatan video dan pencarian efek dapat menyebabkan crash. Jangan pilih jika Anda membuat postingan (#133).
 
-* **TikTok:** Drop the animated image cache tidak lagi mengganti cache bingkai TikTok dengan cache yang hanya menyimpan satu bingkai, yang bisa membuat stiker animasi di komentar macet di bingkai pertamanya (#130). Sakelarnya sekarang bernama Jangan dekode bingkai animasi lebih dulu, dan jika dinyalakan hanya mencegah TikTok mendekode bingkai sebelum ditampilkan.
+* **TikTok:** Jangan dekode bingkai animasi lebih dulu menggantikan Buang cache gambar animasi. Fitur ini hanya menghentikan dekode lebih awal dan mempertahankan cache bingkai TikTok agar stiker tidak membeku (#130).
 
-* **TikTok:** Gelembung cerita Mengikuti di bagian atas feed muncul lagi saat Tampilan bersih berakhir. TikTok menyembunyikannya saat Tampilan bersih dimulai, dan dulu gelembung itu tetap hilang sampai feed dimuat ulang. Gelembung hanya muncul lagi jika tadinya terlihat dan masih ada orang di dalamnya.
+* **TikTok:** Keluar dari Tampilan bersih kini memulihkan tombol cerita Mengikuti hanya jika sebelumnya terlihat dan berisi cerita.
 
-* **TikTok:** Baris baru Terjemahkan ke di Komentar menerima satu kode bahasa, seperti en atau es. Komentar dan keterangan yang diterjemahkan TikTok muncul dalam bahasa itu, bukan bahasa aplikasi, jadi kamu bisa memakai TikTok dalam satu bahasa dan membaca terjemahan dalam bahasa lain. Biarkan kosong untuk memakai pilihan TikTok.
+* **TikTok:** Terjemahkan ke memilih satu bahasa untuk komentar dan teks video yang diterjemahkan, terpisah dari bahasa TikTok. Kosongkan untuk mengikuti pilihan TikTok.
 
-* **TikTok:** Pilihan baru Pelindung burn-in layar di bawah Tampilan bersih meredupkan tombol, keterangan, dan tab di atas video menjadi seperempat setelah 5 detik tanpa sentuhan, dan sentuhan berikutnya mengembalikannya. Dengan Redupkan saat diam dan geser, semua yang ada di feed juga bergeser beberapa piksel setiap 2 menit, supaya layar OLED tidak terbakar di bawah kontrol yang tidak pernah bergerak.
+* **TikTok:** Pelindung burn-in layar meredupkan tombol, teks dan tab di atas video menjadi seperempat kecerahan setelah lima detik tanpa sentuhan. Redupkan saat diam dan geser juga menggeser feed setiap dua menit. Sentuhan mengembalikan kecerahan.
 
-* **TikTok:** Sembunyikan bilah komentar di video yang dibuka sekarang juga menghilangkan bilah itu dari postingan foto yang kamu buka dari pencarian. Sebelumnya, bilah untuk menambah komentar tetap muncul di sana.
+* **TikTok:** Sembunyikan bilah komentar pada video terbuka kini juga mencakup postingan foto dari pencarian.
 
-* **TikTok:** Pilihan baru Format suara di Unduhan membuat Simpan suaranya juga dan Simpan suara asli saat tekan lama bisa membuat berkas Opus (.ogg). Berkasnya lebih kecil daripada M4A dari TikTok, dan ponselmu mengodekan ulang suaranya untuk membuatnya. Butuh Android 10 atau yang lebih baru. Seperti yang dikirim TikTok tetap jadi bawaan, jadi hasil simpanan itu sama seperti sebelumnya.
+* **TikTok:** Simpan suara asli dan Simpan suara juga kini menawarkan Opus (.ogg) pada Android 10 atau lebih baru. Konversi lebih lama, dan format asli tetap bawaan.
 
-* **TikTok:** Pudarkan kontrol video sekarang juga berlaku di Tampilan bersih. Antara 1 dan 99, Tampilan bersih membiarkan tombol dan keterangan tetap di layar pada tingkat yang kamu pilih alih-alih menghilangkannya, dan ketukan pada keduanya diteruskan ke video, jadi tidak ada yang terbuka tanpa sengaja. Tekan lama atau cubit tetap mengeluarkanmu dari Tampilan bersih, dan di luar itu kontrol yang dipudarkan tetap menerima ketukan seperti sebelumnya (#84).
+* **TikTok:** Tampilan bersih mempertahankan kontrol redup pada tingkat 1 sampai 99 sementara ketukan mencapai video. Tahan atau cubit untuk keluar, dan kontrol terlihat di luarnya tetap berfungsi (#84).
 
-* **TikTok:** Senyapkan video feed sekarang tetap membuat feed tanpa suara setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya, video berikutnya bisa berbunyi sampai kamu keluar dari feed lalu kembali.
+* **TikTok:** Bisukan video feed kini tetap aktif saat TikTok beralih antara tema terang dan gelap.
 
-* **TikTok:** Tampilkan jumlah yang disaring dan sakelar yang menyembunyikan bagian Kotak Masuk tetap berfungsi setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya keduanya bisa berhenti sampai TikTok dimulai ulang.
+* **TikTok:** Jumlah postingan terfilter dan penyembunyian Kotak masuk kini bertahan saat tema TikTok berubah.
 
-* **TikTok:** Tekan lama Beranda untuk pengaturan Hushfeed tetap berfungsi setelah kamu mengganti TikTok antara terang dan gelap. Sebelumnya fitur ini berhenti sampai TikTok dimulai ulang.
+* **TikTok:** Pintasan pengaturan lewat tekan lama Beranda kini bertahan saat tema TikTok berubah.
 
-* **TikTok:** Memulihkan cadangan tidak lagi menyalakan Proksi jaringan atau mengganti alamat proksi yang sudah kamu punya, jadi cadangan buatan orang lain tidak bisa mengalirkan lalu lintas TikTok-mu lewat server mereka. Di ponsel yang belum punya proksi, alamatnya ikut dengan sakelar mati, dan ada catatan setelah pemulihan yang memberitahukannya.
+* **TikTok:** Pemulihan cadangan mempertahankan proxy yang ada. Di ponsel baru, alamat dipulihkan dalam keadaan mati dengan pemberitahuan.
 
-* **TikTok:** Jangan terjemahkan otomatis bahasa ini sekarang membiarkan bahasa Mandarin Tradisional seperti aslinya saat kamu mengetik zh-Hant, zh-TW, zh-HK, atau zh-MO, sedangkan zh-Hans-TW tetap berarti Mandarin Sederhana. Sebelumnya, entri itu malah melindungi bahasa Mandarin Sederhana (#121).
+* **TikTok:** Jangan terjemahkan otomatis bahasa ini kini mengenali tag wilayah Mandarin Tradisional tanpa salah membaca tag Mandarin Sederhana yang eksplisit (#121).
 
-* **TikTok:** Hide feed LIVE button sekarang tetap bisa di-patch pada build TikTok yang tombol menu sampingnya tidak ditemukan. Bagian itu dilewati, dan baris Sembunyikan tombol menu samping hanya muncul kalau tombolnya ditemukan (#128).
+* **TikTok:** Sembunyikan tombol LIVE tak lagi memerlukan jangkar bilah samping yang hilang. Pengaturan bilah samping hanya muncul jika didukung (#128).
 
-* **TikTok:** Pencarian setelan sekarang menemukan Detail build dan Yang baru. Beberapa hasil, seperti Feature Gate Lab dan Lisensi, sekarang menyebut grupnya, dan pencarian yang hanya berisi tanda baca menampilkan Tidak ada setelan yang cocok.
+* **TikTok:** Pencarian pengaturan kini menemukan Detail versi dan Yang baru, menampilkan konteks Lab dan Lisensi, dan mengabaikan kueri yang hanya berisi tanda baca.
 
-* **TikTok:** Pemberitahuan di bagian bawah setelan Hushfeed sekarang tertutup saat kamu mengetuknya, dan ketukan itu tidak lagi mengenai setelan di bawahnya. TalkBack membacakan tindakannya sebagai Tutup.
+* **TikTok:** Mengetuk pemberitahuan pengaturan menutupnya tanpa mengaktifkan baris di belakang. TalkBack juga menyediakan aksi Tutup.
 
-* **TikTok:** Jeda sekarang menjelaskan dengan kata-kata sederhana apa yang tetap ada selama aktif. Pengaturanmu tetap tersimpan, begitu juga perubahan yang dibuat saat kamu mem-patch, seperti nama atau ikon aplikasi. Auto scroll milik TikTok juga kini ditulis sama di setiap baris.
+* **TikTok:** Teks Jeda kini menjelaskan pilihan tersimpan dan perubahan saat patching. Pengaturan memakai nama Gulir otomatis secara konsisten.
 
-* **TikTok:** Daftar bahasa di Filter feed dan Komentar sekarang menerima koma berlebih, seperti en,,es. Dulu daftarnya ditolak dengan nama kosong di pesannya.
+* **TikTok:** Daftar bahasa feed dan komentar kini menerima koma berlebih di antara kode.
 
-* **TikTok:** Kalau menyalin detail build gagal, pesannya sekarang menyuruhmu memakai Simpan detail build.
+* **TikTok:** Jika Salin detail versi gagal, kini disarankan memakai Simpan.
 
-* **TikTok:** Yang baru tidak lagi menampilkan tanda backtick yang tersisa di sekitar nama setelan.
+* **TikTok:** Yang baru tak lagi menampilkan tanda backtick Markdown.
 
-* **TikTok:** Pemilih waktu untuk Kapan dikirim di Pertahankan rentetan sekarang terbuka gelap atau terang sesuai setelan Hushfeed.
+* **TikTok:** Pemilih waktu Pertahankan streak kini mengikuti tema terang atau gelap TikTok.
 
-* **TikTok:** Skip the splash ad, Skip update checks, Limit background traffic, Drop the animated image cache, Stop on-device AI profiling, dan Enable voice comments kini masing-masing punya sakelar di pengaturan Hushfeed, jadi Jeda juga mematikannya dan mode sederhana Morphe Manager kini ikut memilihnya. Setiap sakelar itu mulai dalam keadaan mati. Kalau sebelumnya kamu sudah mem-patch dengan salah satu patch ini, nyalakan sakelarnya setelah memperbarui agar tetap berfungsi. Lewati iklan pembuka, Lewati pemeriksaan pembaruan, Batasi lalu lintas latar belakang, dan Jangan dekode bingkai animasi lebih dulu ada di Performa di bagian Aplikasi. Hentikan profiling AI di perangkat ada di Privasi, dan Izinkan komentar suara ada di Komentar.
+* **TikTok:** Enam perubahan yang tadinya permanen kini punya sakelar dan mengikuti Jeda. Awalnya mati, jadi aktifkan ulang pilihan iklan pembuka, pembaruan, batas latar belakang, bingkai animasi, perlindungan profil AI dan komentar suara.
 
-* **TikTok:** Patch baru, Skip passkey sign-in, ikut dipilih mode sederhana Morphe Manager dengan sakelarnya mati (#102). Pengelola kata sandi tidak memberikan kunci sandi ke aplikasi yang sudah di-patch, jadi akun yang punya kunci sandi bisa tertahan di langkah kunci sandi TikTok. Nyalakan Masuk tanpa kunci sandi di pengaturan Hushfeed > Aplikasi, lalu TikTok menganggap ponselmu tidak punya kunci sandi dan menawarkan cara masuk lainnya, seperti kata sandimu atau kode lewat email atau SMS. Kalau kamu sedang keluar dari akun, tekan lama Beranda untuk membuka pengaturan Hushfeed.
+* **TikTok:** Lewati masuk dengan passkey hadir di mode Sederhana, awalnya mati, dan menambahkan Masuk tanpa passkey di Aplikasi untuk kata sandi, email atau SMS (#102).
 
 ## 0.70.0 (2026-10-09)
 
-* **TikTok:** Ukuran nama kreator kini juga mengatur ukuran tanggal unggah di sebelah nama kreator, jadi keduanya tetap sama besar (#66).
+* **TikTok:** Ukuran teks kreator kini mencakup tanggal publikasi di samping nama (#66).
 
-* **TikTok:** Pengaturan Komentar punya baris baru, Jangan terjemahkan otomatis bahasa ini. Barisnya kosong sampai kamu mengisinya (#121). Ketik kode bahasa seperti `es, de`, dan saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa itu tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya, dan daftar Jangan terjemahkan milik TikTok sendiri tidak berubah.
+* **TikTok:** Jangan terjemahkan otomatis bahasa ini menambahkan daftar Komentar yang awalnya kosong untuk pengecualian terjemahan teks dan komentar. Terjemahan manual tetap berfungsi (#121).
 
-* **TikTok:** Simpan video offline sampai kamu menghapusnya sekarang mencakup dua cara lagi TikTok mengosongkan daftarmu. Saat sakelar menyala, Auto adjust TikTok tidak lagi menurunkan batas video offline atau memangkas daftar saat TikTok dimulai, dan pembersihan yang dijalankan TikTok saat ujicoba menyalakan video offline secara bawaan berakhir dilewati (#123). Mulai ulang TikTok setelah kamu mengubah sakelar.
+* **TikTok:** Simpan video offline mencegah Sesuaikan otomatis menurunkan batas atau memangkas daftar saat aplikasi dimulai, serta menyimpan video ketika eksperimen offline TikTok berakhir. Mulai ulang TikTok setelah mengubahnya (#123).
 
-* **TikTok:** Memulihkan cadangan pengaturan dari versi TikTok yang lebih lama sekarang mengembalikan penimpaan Feature Gate Lab yang masih cocok dengan versi ini. Yang tidak cocok tetap disimpan, tetapi dimatikan.
+* **TikTok:** Cadangan dari versi TikTok lama kini memulihkan override Lab yang kompatibel dan membiarkan yang lain mati.
 
-* **TikTok:** Layar feed punya sakelar baru, Sembunyikan tombol menu samping, yang mati sampai kamu menyalakannya. Sakelar ini menghilangkan tombol di pojok kiri atas feed, di samping LIVE, yang membuka menu samping TikTok berisi Pesananmu, TikTok Minis, dan lainnya. Mulai ulang TikTok setelah kamu mengubahnya (#128).
+* **TikTok:** Sembunyikan tombol menu samping menambahkan sakelar Layar feed yang awalnya mati untuk tombol di samping LIVE. Perlu mulai ulang (#128).
 
-* **TikTok:** Semua deskripsi patch di Morphe Manager ditulis ulang dalam bahasa Inggris yang sederhana. Masing-masing kini menjelaskan apa yang diubah patch, kenapa kamu mungkin menginginkannya, dan apakah sakelarnya mulai menyala atau mati serta letaknya di pengaturan Hushfeed. Beberapa opsi patch juga lebih jelas, dan Skip push setup kini bernama Skip notification setup.
+* **TikTok:** Deskripsi patch di Manager kini menjelaskan hasil, bawaan dan letak pengaturan. Lewati pengaturan push berganti nama menjadi Lewati pengaturan notifikasi.
 
-* **TikTok:** Baris di pengaturan Hushfeed ditulis ulang dalam bahasa Inggris yang sederhana. Privacy, Comments, Downloads, Feed filter, Screen time, Region, dan halaman lain kini menjelaskan tanpa istilah teknis apa yang dilakukan tiap sakelar dan apa yang akan kamu rasakan. Beberapa judul juga berubah, misalnya Stop TikTok's speed tests dan Clean up shared links.
+* **TikTok:** Judul dan deskripsi pengaturan memakai bahasa yang lebih mudah dipahami.
 
-* **TikTok:** Beberapa pesan dan baris status juga lebih mudah dipahami, misalnya status mode Ghost, penjelasan Hook status, pemberitahuan kata sandi proxy, dan pratinjau nama file.
+* **TikTok:** Pesan Mode hantu, Status hook, kata sandi proxy dan pratinjau file kini menjelaskan hasilnya lebih jelas.
 
-* **TikTok:** Opsi Dark background color di Morphe Manager kini menyebut "kode warna", bukan "kode hex", dan menjelaskan bahwa hitam mematikan piksel itu sepenuhnya di layar OLED.
+* **TikTok:** Opsi latar gelap Manager kini menjelaskan kode warna dan pengaturan hitam OLED.
 
-* **TikTok:** Pengaturan Hushfeed kini dibuka dengan status ringkas dan pencarian di atas tujuh grup. Halaman yang berkaitan berada bersama, sementara cadangan, diagnostik, dan Feature Gate Lab ada di Aplikasi & pengaturan lanjutan. Tentang Hushfeed menyatukan detail build dan lisensi. Pencarian tetap membawamu langsung ke pengaturan, dan pilihan yang tersimpan tetap ada. Keterangan Jeda kini menjelaskan bahwa pengaturan tersimpan dan perubahan yang tertanam dalam APK tetap ada.
+* **TikTok:** Beranda pengaturan kini punya kartu status ringkas, pencarian dan tujuh grup, dengan cadangan, diagnostik dan Lab di Aplikasi. Pilihan Anda tetap tersimpan.
 
-* **TikTok:** Hushfeed kini hanya mendukung TikTok 47.1.4. Jika kamu memakai 47.0.3 atau 47.1.3, unduh APK 47.1.4 dari APKMirror lalu patch di Morphe Manager dengan kunci penandatanganan yang sama, agar login dan pengaturanmu tetap ada. Feature Gate Lab mempertahankan setiap override yang sakelarnya masih ada di 47.1.4 dan mematikan sisanya dengan pemberitahuan seperti biasa.
+* **TikTok:** Kini hanya TikTok 47.1.4 yang didukung. Pembaruan dengan kunci penandatanganan yang sama mempertahankan login dan pengaturan, dengan override Lab yang tak kompatibel dimatikan.
 
-* **TikTok:** Batas video offline kustom punya sakelar baru di pengaturan Hushfeed > Unduhan, Simpan video offline sampai kamu menghapusnya. Sakelarnya mati sampai kamu menyalakannya (#123). TikTok membuang video yang disimpannya untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, dan daftar yang disimpan sekaligus juga hilang sekaligus, sudah ditonton atau belum. Dengan sakelar ini aktif, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok, dan begitu juga cara mendapatkan set baru. TikTok masih bisa menghapus video yang sudah kamu tonton saat penyimpanan ponselmu hampir penuh, dan memilih batas yang lebih rendah tetap memangkas daftarnya. Perhatikan baris penyimpanan di bawah batas video offline. Sakelar ini berlaku saat TikTok dibuka berikutnya.
+* **TikTok:** Pertahankan video offline sampai dihapus menambahkan sakelar Unduhan yang awalnya mati dan perlu mulai ulang. Penghapusan manual, pembersihan saat ruang habis dan batas lebih rendah tetap berlaku (#123).
 
-* **TikTok:** Sembunyikan pintasan profil punya sakelar baru di bawah Aplikasi, Sembunyikan Thoughts di profil, yang mati sampai kamu menyalakannya (#122). Sakelar ini menyembunyikan gelembung Thoughts yang TikTok pasang di atas foto profil, dan di profilmu sendiri ajakan untuk membagikannya. Mulai ulang TikTok setelah kamu mengubahnya.
+* **TikTok:** Sembunyikan Pikiran di profil menghapus gelembung dan ajakan milik Anda. Ada di Aplikasi, awalnya mati dan perlu mulai ulang (#122).
 
-* **TikTok:** Izinkan tangkapan layar dan Circle to Search kini juga melepas tanda jendela aman dari pop-up dan jendela mengambang yang memasangnya di pengaturan jendelanya sendiri, seperti pop-up Compose milik TikTok. Jendela itu muncul di layar tanpa lewat panggilan jendela yang sudah diubah patch ini, jadi masih bisa tampak hitam di tangkapan layar dan rekaman layar. Idenya berasal dari patch TikTok milik icysymmetra.
+* **TikTok:** Izinkan tangkapan layar kini mencakup Circle to Search, popup mengambang dan layar Compose.
 
-* **TikTok:** Diagnostik punya baris baru, Rekam feed, untuk masalah feed yang lebih mudah ditunjukkan daripada dijelaskan. Ketuk barisnya, gulir sampai masalahnya muncul, lalu kembali dan ketuk lagi, dan Hushfeed menyimpan file teks di Download/Hushfeed. File itu berisi satu baris untuk setiap kelompok video yang ditangani filter feed selama perekaman, dengan hasil untuk tiap video dan aturan yang menyembunyikannya. Video dan kreator hanya muncul sebagai kode pendek yang dibuat baru untuk setiap rekaman, dan file itu tidak berisi takarir, nama, nama pengguna, atau alamat web. Tetap baca dulu sebelum kamu membagikannya. Tidak ada yang direkam sampai kamu memulai rekaman. Idenya berasal dari patch TikTok milik icysymmetra.
+* **TikTok:** Rekam feed mencatat keputusan filter dan aturan yang menyembunyikan video ke berkas teks lokal Download/Hushfeed, dimulai dan dihentikan dengan ketukan. Setiap rekaman memakai kode video dan kreator baru, tanpa teks, nama, nama pengguna atau URL. Baca sebelum membagikannya.
 
-* **TikTok:** Deskripsi Sembunyikan kontrol Tampilan bersih kini menyebut mencubit layar sebagai cara lain untuk keluar dari Tampilan bersih (#84).
+* **TikTok:** Sembunyikan kontrol Tampilan bersih kini menjelaskan cara mencubit untuk keluar (#84).
 
-* **TikTok:** Beberapa sakelar kini mulai dalam keadaan mati, seperti sakelar Hushfeed lainnya, karena patch-nya masuk ke pilihan bawaan. Kalau sebelumnya kamu sudah memilih salah satu patch ini dan ingin patch itu tetap bekerja, nyalakan lagi sakelarnya setelah memperbarui. Di Privasi, sakelar itu adalah Blokir akses ke daftar kontak, Blokir pemindaian aplikasi terpasang, Blokir lokasi, Blokir pembacaan papan klip, Blokir sensor gerak, Jangan simpan pencarian baru, dan Tampilkan saat kamera atau mikrofon dipakai. Di Komentar ada Jempol ke bawah memblokir pengomentar, Tautan di komentar bisa dibuka, dan Sembunyikan iklan popup di komentar, lalu di Aplikasi ada Matikan getaran haptik dan Matikan transisi layar.
+* **TikTok:** Sakelar privasi, komentar dan tampilan kini awalnya mati untuk mode Sederhana. Pengguna lama perlu mengaktifkan kembali pilihan mereka.
 
-* **TikTok:** Mode sederhana Morphe Manager kini memilih 107 dari 130 patch Hushfeed, bukan 55 lagi, jadi sebagian besar patch tidak perlu mode ahli lagi. Setiap sakelar yang ditambahkan patch yang baru dipilih mulai dalam keadaan mati, dan TikTok tampil serta bekerja seperti aslinya sampai kamu menyalakan sesuatu di pengaturan Hushfeed. Sisa 23 patch tetap dipilih lewat mode ahli, dan bagian Patches di README mencantumkan masing-masing beserta alasan patch itu tidak ikut. Deskripsi setiap patch kini menyebut letak sakelarnya dan bahwa sakelar itu mulai dalam keadaan mati.
+* **TikTok:** Mode Sederhana Manager kini memuat 107 dari 130 patch, dengan sakelar baru mati. Mode Ahli memuat 23 sisanya.
 
-* **TikTok:** Morphe Manager punya grup baru, Interface, untuk patch yang mengubah tampilan TikTok. Tema gelap AMOLED, Gunakan font sistem, dan Matikan transisi layar pindah ke sana dari Performance, Ubah nama aplikasi, Ikon peluncur kustom, dan Sembunyikan pintasan peluncur dari Settings, serta Ukuran teks feed dari Interaction.
+* **TikTok:** Kategori Antarmuka baru mengelompokkan AMOLED, font, transisi, nama aplikasi, ikon, pintasan peluncur dan ukuran teks feed.
 
 ## 0.69.0 (2026-10-08)
 
-* **TikTok:** Tautan video TikTok yang kamu buka kini menampilkan videonya meski filter feed akan menyembunyikannya, seperti Sembunyikan video yang sudah kamu tonton untuk video yang pernah kamu tonton (#117). TikTok memuat video bertautan sebagai halaman feed tersendiri, jadi menyaringnya malah menyisakan layar error TikTok di situ. Hanya video itu yang lolos dari filter, dan hanya selama semenit setelah tautan dibuka. Tautan ke postingan foto dan tautan lama situs seluler `m.tiktok.com/v/<id>.html` juga dihitung sebagai satu postingan, di sini maupun untuk `Kunci feed`.
+* **TikTok:** Tautan video atau foto kini melewati filter feed untuk satu postingan selama satu menit, termasuk tautan situs seluler lama dan Kunci feed (#117).
 
-* **TikTok:** Keluar dari ruang LIVE tidak lagi menutup TikTok saat Hapus tambahan LIVE ada di bundelmu (#119). Patch itu melewati satu langkah awal widget efek hadiah yang dibutuhkan TikTok lagi saat ruangan ditutup. Sekarang langkah itu dipertahankan dan penyiapan widget itu sendiri tetap dilewati, jadi hadiah animasi tetap mati.
+* **TikTok:** Keluar dari ruang LIVE tak lagi menyebabkan crash dengan Hapus tambahan LIVE, dan hadiah animasi tetap mati (#119).
 
-* **TikTok:** Hapus aset kredensial konten dan pemindai kartu kini mengosongkan runtime Python milik Pitaya juga, yaitu lima pustaka Python dan NumPy yang dipakai model Pitaya. Tidak ada bagian lain TikTok yang memuatnya begitu fitur Pitaya hilang, dan fitur itu sudah dikosongkan oleh patch ini. APK jadi sekitar 6,7 MB lebih kecil dari sebelumnya, sekitar 19 MB secara keseluruhan, dan bundel terpisah tetap cocok karena membawa file yang sama untuk arm64.
+* **TikTok:** Hapus aset kredensial konten dan pemindai kartu kini juga menghapus runtime Python Pitaya yang tak dipakai, menghemat lagi 6,7 MB, sekitar 19 MB total.
 
-* **TikTok:** Lewati peringatan konten punya sakelar kedua di bawah Layar feed, Sembunyikan pemberitahuan konten yang belum diverifikasi, yang mati sampai kamu menyalakannya. Sakelar itu menghilangkan spanduk Periksa sumber yang dipasang TikTok pada video yang ditandainya belum diverifikasi, dan peringatan yang TikTok tampilkan saat kamu hendak membagikannya. Melewati lapisan yang harus diketuk tetap punya sakelarnya sendiri.
+* **TikTok:** Sembunyikan pemberitahuan konten belum terverifikasi menambahkan sakelar yang awalnya mati untuk banner Periksa sumber dan peringatan berbagi, terpisah dari peringatan ketuk lanjut.
 
-* **TikTok:** Patch baru, Lewati penyiapan peluncuran pertama, yang tidak ikut dalam pilihan bawaan. Pilih patch ini dan instalasi baru langsung membuka feed tanpa pemilih minat TikTok, pertanyaan bahasa dan jenis kelamin, kreator untuk diikuti, tutorial geser ke atas, atau halaman notifikasinya sendiri. Layar persetujuan, usia, dan masuk tetap tampil, begitu juga permintaan notifikasi bawaan Android. Sakelarnya, Lewati layar penyiapan TikTok di pengaturan Hushfeed > Aplikasi, mulai dalam keadaan nyala, karena penyiapan itu berjalan sebelum kamu sempat membukanya.
+* **TikTok:** Lewati pengaturan pertama adalah patch opsional yang sakelarnya awalnya aktif. Pertanyaan penyiapan TikTok dilewati, sementara persetujuan, usia, masuk dan izin notifikasi Android tetap muncul.
 
-* **TikTok:** Blokir popup punya sakelar baru di bawah Layar feed, Sembunyikan layar penenang TikTok, yang mati sampai kamu menyalakannya. Sakelar itu menghentikan layar penenang sebelum tidur, latihan pernapasan, dan layar batas harian yang dipasang TikTok di atas feed. Sakelar ini hanya bekerja di akun yang menurut pengaturan TikTok sendiri milik orang dewasa. Akun remaja tetap mendapat semuanya, begitu juga akun yang ditautkan Pemasangan Keluarga ke orang tua. Saat Keluar saat TikTok bilang waktunya habis menyala, layar batas harian tetap muncul agar sakelar itu bisa bekerja padanya, dan menjeda Hushfeed memunculkan semuanya kembali.
+* **TikTok:** Sembunyikan layar istirahat TikTok awalnya mati dan hanya berlaku untuk akun dewasa tanpa Family Pairing. Batas harian tetap muncul jika diperlukan oleh Keluar saat waktu TikTok habis.
 
-* **TikTok:** Sembunyikan overlay video punya sakelar baru Sembunyikan Footnotes di bawah Layar feed, dan Sembunyikan item Kotak Masuk punya dua lagi di bawah Kotak Masuk, Sembunyikan Bulletin board dan Sembunyikan ajakan obrolan grup. Semuanya mati sampai kamu menyalakannya. Sembunyikan Footnotes menjauhkan spanduk TikTok dari video yang membawa catatan, Sembunyikan Bulletin board mengeluarkan barisnya dari Kotak Masuk, dan Sembunyikan ajakan obrolan grup menghentikan spanduk di bagian atas Kotak Masuk yang mengajakmu membuat obrolan grup.
+* **TikTok:** Sakelar baru yang awalnya mati menyembunyikan Footnotes di video, baris Papan buletin dan ajakan obrolan grup di Kotak masuk.
 
-* **TikTok:** Geser untuk kecerahan dan volume punya dua baris baru di bawah Layar feed > Gerakan, Strip tepi kiri dan Strip tepi kanan. Masing-masing bisa diatur ke Kecerahan, Volume, atau Kecepatan, dan Kecepatan tersedia saat patch Kecepatan pemutaran ada di bundelmu. Kalau diatur ke Kecepatan, menggeser di sepanjang tepi itu mempercepat atau memperlambat video dalam langkah seperempat, dari 0,5x sampai 3x, dengan kecepatan yang tampil di layar selagi kamu menggeser. Perubahannya hanya untuk video itu. Video berikutnya mulai dari kecepatan bawaan yang kamu simpan, dan tidak ada pengaturan tersimpan yang berubah. Tepi kiri tetap kecerahan dan tepi kanan tetap volume sampai kamu mengubahnya, dan geseran dari tempat lain tetap menggulir feed.
+* **TikTok:** Gestur tepi bisa mengatur kecerahan, volume atau kecepatan per video dalam langkah seperempat dari 0,5x hingga 3x. Kecepatan membutuhkan patch-nya, dan video berikutnya memakai kecepatan bawaan yang disimpan. Tepi kiri tetap kecerahan dan kanan tetap volume sampai diubah, sementara geseran lain tetap menggulir.
 
-* **TikTok:** Navigasi tab feed kini bisa mengubah kata di bawah ikon tab bawah, dari pengaturan Hushfeed > Tab feed. Sembunyikan nama tab bawah menghilangkan nama itu dan menyisakan ikonnya. Baris nama untuk Beranda, Teman, Kotak Masuk, Profil, dan Toko memasang kata buatanmu sendiri di bawah tab itu, dan baris yang kosong memakai nama dari TikTok. Keduanya langsung berlaku, dan mengosongkan sebuah nama mengembalikan nama dari TikTok.
+* **TikTok:** Tab feed kini dapat menyembunyikan label tab bawah atau menggantinya dengan teks Anda. Nama kosong langsung memulihkan label TikTok.
 
-* **TikTok:** Sembunyikan item Kotak Masuk punya dua sakelar lagi di bawah Kotak Masuk > Di obrolan, keduanya mati sampai kamu menyalakannya. Matikan ketuk dua kali untuk bereaksi mencegah ketukan dua kali pada pesan memberinya hati, dan Matikan geser untuk membalas mencegah geseran ke samping memulai balasan. Satu ketukan dan tekan lama pada pesan bekerja sama saja, baik sakelarnya nyala maupun mati.
+* **TikTok:** Sakelar obrolan baru yang awalnya mati menonaktifkan reaksi ketuk dua kali dan geser untuk membalas, sambil mempertahankan ketuk sekali dan tekan lama.
 
-* **TikTok:** Jalankan berdampingan dengan aplikasi toko kini mengarahkan sisa pemakaian nama paket TikTok di salinan yang diganti namanya ke salinan itu sendiri. Pengaturannya yang dibagikan antarproses TikTok dan data yang diberikan ke layanan wallpaper hidup sekarang menuju salinan itu, dengan nama sesuai pemberian Clone app, bukan ke aplikasi toko yang terpasang di sebelahnya. Pemeriksaan TikTok untuk tautan pengaturan aplikasi dan Play yang menyebut paketnya sendiri kini menerima nama salinan itu selain nama TikTok. Salinan yang tetap memakai nama toko, dan Hushfeed yang dijeda, bekerja seperti sebelumnya.
+* **TikTok:** Jalankan di samping aplikasi toko kini mengarahkan pengaturan bersama, data wallpaper dan pemeriksaan paket sendiri ke salinan yang diganti namanya.
 
-* **TikTok:** Samakan kolom wilayah dalam permintaan di Pemalsuan wilayah kini tidak menyentuh permintaan masuk akun. Masuk, mendaftar, pemeriksaan akun, penyegaran token, dan keluar dikirim dengan wilayah aslimu, termasuk wilayah sistem dan zona waktu yang disimpan TikTok saat mulai. Permintaan TikTok lainnya tetap memakai preset. Deskripsi sakelar itu di pengaturan Hushfeed juga menyebutkannya.
+* **TikTok:** Pencocokan wilayah permintaan mempertahankan wilayah dan zona waktu asli untuk masuk, mendaftar, pemeriksaan akun, pembaruan token dan keluar. Permintaan lain tetap memakai preset.
 
-* **TikTok:** Proksi jaringan memeriksa proksinya lagi saat TikTok kembali ke layar, paling sering sekali setiap lima menit, jadi proksi yang berhenti menjawab di tengah sesi mendapat satu pemberitahuan, bukannya tidak ada sama sekali. Mengosongkan kolom host atau port kini tersimpan, yang membuat proksi mati, dan Setel ulang pengaturan menghapus nama pengguna dan kata sandi proksi juga. Keduanya tidak pernah masuk ke file, jadi Urungkan membiarkannya kosong.
+* **TikTok:** Pemeriksaan proxy kini dilanjutkan paling sering tiap lima menit. Host atau port kosong mematikannya, dan Reset menghapus kredensial yang tak pernah dipulihkan cadangan atau Urungkan.
 
-* **TikTok:** Patch baru, Percayai sertifikat pengguna, yang tidak ikut kecuali kamu memilihnya. Patch ini membuat TikTok memercayai otoritas sertifikat yang kamu pasang di pengaturan Android selain milik sistem, untuk melihat lalu lintas aplikasi lewat proksi seperti mitmproxy. Siapa pun yang berhasil memasang sertifikat di ponsel itu juga bisa membaca lalu lintas TikTok, jadi patch ini ditujukan untuk ponsel yang kamu pakai untuk menguji.
+* **TikTok:** Percayai sertifikat pengguna adalah patch pengujian opsional. Otoritas sertifikat yang dipasang juga dapat membaca lalu lintas TikTok, jadi gunakan hanya di ponsel uji.
 
-* **TikTok:** Bersihkan tautan berbagi punya sakelar baru di pengaturan Hushfeed > Privasi, Salin tautan lengkap untuk tautan pendek, yang mati secara default. Saat Salin tautan memberi tautan pendek vt.tiktok.com atau vm.tiktok.com, Hushfeed membukanya sekali di latar belakang, membaca ke mana tautan itu mengarah, lalu menaruh tautan video lengkap di papan klip sebagai gantinya, dengan pengaturan tautan lainnya diterapkan. TikTok melihat pembukaan itu, sama seperti saat siapa pun mengetuk tautannya. Tautan yang kamu kirim langsung ke aplikasi lain keluar seperti yang dibuat TikTok.
+* **TikTok:** Salin tautan lengkap untuk tautan pendek awalnya mati dan memperluas tautan yang disalin di latar belakang. TikTok melihat permintaannya, dan berbagi langsung tetap sama.
 
-* **TikTok:** Salin bio dan ID punya sakelar baru di pengaturan Hushfeed > Aplikasi, Fakta akun di profil, yang mati secara default. Menu bagikan profil lalu mendapat tombol Fakta akun di samping tombol salin. Tombol itu mencantumkan kapan akun bergabung, wilayah dan bahasanya, serta kapan nama pengguna dan nama tampilannya terakhir berubah, dan menyebutkan kalau akun itu privat atau menampilkan video yang disukainya, semuanya dari data yang sudah dikirim TikTok untuk profil itu. Tidak ada yang diambil tambahan, dan tanggal, wilayah, atau bahasa yang tidak disertakan server tertulis Tidak dikirim. Salin menaruh seluruh daftar di papan klip.
+* **TikTok:** Fakta akun di profil menambahkan tombol panel berbagi yang awalnya mati untuk tanggal, wilayah dan privasi yang sudah dikirim TikTok, tanpa permintaan tambahan.
 
-* **TikTok:** Filter feed punya sakelar baru di bawah Lanjutan, Tampilkan jumlah yang disaring, yang mati secara default. Sakelar itu memasang label kecil di bawah tab atas TikTok yang menghitung postingan yang disingkirkan filter feed sejak TikTok dimulai, baik iklan maupun yang lain. Tag dan spanduk yang disembunyikannya di dalam postingan tidak menambah hitungan, begitu juga video yang dicoba TikTok lagi dari cache-nya. Label ini hanya tampil di feed Beranda setelah ada yang disingkirkan, dan ketukan menembusnya ke video.
+* **TikTok:** Tampilkan jumlah yang disaring menambahkan penghitung Beranda yang awalnya nonaktif untuk postingan yang dihapus sejak TikTok dimulai. Penghitung muncul setelah penghapusan pertama. Pengulangan cache dan elemen di atas video yang disembunyikan tidak dihitung, dan ketukan diteruskan ke video.
 
-* **TikTok:** Filter feed punya sakelar baru di bawah Kata, negara, dan bahasa, Cocokkan stiker teks juga, yang mati secara default. Saat nyala, Kata yang diblokir di keterangan juga membaca stiker teks pada video, yaitu kata-kata yang diketik kreator di atasnya di editor TikTok, dan menyembunyikan video itu kalau ada yang cocok, sama seperti kecocokan di keterangan. Teks yang menjadi bagian dari gambar itu sendiri tidak bisa dibaca. Kalau filtermu suatu saat menyembunyikan semua yang baru dikirim TikTok, pemberitahuannya menyebut ini sebagai Kata di stiker teks.
+* **TikTok:** Cocokkan stiker teks juga membuat kata teks terblokir mencocokkan teks editor, bukan tulisan dalam gambar. Awalnya mati.
 
-* **TikTok:** Unduhan lanjutan punya sakelar baru di bawah Video, Gunakan salinan bertanda air sebagai cadangan, yang mati secara default. Kalau video tanpa tanda air tidak bisa diambil, Hushfeed menyimpan salinan bertanda air milik TikTok daripada tidak menyimpan apa pun, dan memberi tahu saat selesai. Salinan itu berukuran sama dengan hasil simpan bawaan TikTok, jadi bisa lebih kecil daripada kualitas yang kamu pilih. Pembatalan, atau kehabisan ruang atau waktu, tetap menghentikan penyimpanan seperti sebelumnya.
+* **TikTok:** Gunakan salinan bertanda air jika gagal awalnya mati dan dapat menyimpan salinan TikTok yang lebih kecil saat video bersih tak tersedia. Batal dan batas penyimpanan tetap berlaku.
 
-* **TikTok:** Unduhan lanjutan punya sakelar baru di bawah Video, Tandai video tersimpan, yang mati secara default. Sakelar itu menaruh tanda ✓ sebelum jumlah tayangan setiap video di kisi yang sudah disimpan Hushfeed di ponsel ini, jadi kamu bisa tahu mana yang sudah kamu punya tanpa membukanya. Video tersimpan di feed mendapat tanda yang sama sebelum waktu di baris kreatornya, di mana pun Selalu tampilkan tanggal unggah menampilkan waktu itu. Tanda ini mengikuti catatan yang disimpan Periksa video yang sudah disimpan, jadi hanya bekerja selama sakelar itu nyala, dan postingan foto tidak pernah mendapat tanda. Video yang sudah kamu hapus tetap bertanda sampai kamu memakai Lupakan video tersimpan. Jeda Hushfeed mematikannya.
+* **TikTok:** Tandai video tersimpan menambahkan tanda centang yang awalnya nonaktif pada kisi video dan baris kreator. Fitur ini membutuhkan pemeriksaan video tersimpan dan mempertahankan tanda sampai riwayat dilupakan. Foto tidak diberi tanda, dan Jeda menonaktifkannya.
 
-* **TikTok:** Sampul video kini bisa disimpan. Unduhan lanjutan punya sakelar baru di bawah Video, Simpan sampulnya juga, yang mati secara default. Saat nyala, Unduh juga menyimpan sampul video dalam ukuran terbesar yang dikirim TikTok. Sampul tidak disimpan saat Unduh menyerahkan tautan ke aplikasi lain, atau saat kamu membuka video yang sudah pernah disimpan, bukan menyimpannya lagi. Kontrol tekan lama punya pilihan yang sepadan, Simpan sampul video. Sampul masuk ke folder fotomu dengan nama sesuai videonya, dan sampul HEIF atau WebP keluar sebagai JPEG kalau Android bisa mengonversinya.
+* **TikTok:** Simpan sampulnya juga awalnya nonaktif dan menyimpan sampul terbesar bersama video, kecuali saat menyerahkan tautan ke aplikasi lain atau membuka video yang sudah disimpan. Tekan lama bisa menyimpan sampul secara terpisah. Gambar memakai nama video di folder foto, sebagai JPEG jika konversi berhasil.
 
-* **TikTok:** Ikon peluncur kustom punya opsi baru, Gambar ikon. Berikan path PNG persegi dengan sisi 432 sampai 1024 piksel dan gambarmu akan menggantikan not musik TikTok, di Android 8 ke atas. Gaya ikon tetap menentukan warna di belakangnya, dan dengan gambar tidak ada versi bertema. Kalau file tidak bisa dipakai, proses patch berhenti dan menjelaskan alasannya sebelum ada yang berubah di TikTok.
+* **TikTok:** Gambar ikon menerima PNG persegi 432 sampai 1024 piksel pada Android 8 atau lebih baru. Tak ada lapisan bertema, dan file tak valid menghentikan patching dengan aman.
 
-* **TikTok:** Unduhan lanjutan punya dua sakelar baru di bawah Video, keduanya mati secara default. Beri tag detail pada video yang disimpan menulis keterangan, kreator, tanggal publikasi, dan tautan ke dalam MP4 yang disimpan, tempat pemutar media dan ffprobe membacanya sebagai judul, artis, tanggal, komentar, dan deskripsi. Simpan detail sebagai JSON membuat file detail di samping video menjadi file JSON, bukan teks biasa. Video yang tata letaknya tidak bisa diberi tag tetap disimpan, hanya tanpa tag itu.
+* **TikTok:** Sakelar Unduhan baru yang awalnya mati menulis detail postingan ke MP4 dan menyimpan detail sebagai JSON. MP4 yang tak didukung tetap disimpan tanpa tag.
 
-* **TikTok:** Selalu tampilkan tanggal unggah punya dua sakelar baru di bawah Layar feed > Info video, keduanya mati secara default. Tampilkan waktu hingga detik menggantikan tanggal singkat TikTok di samping nama kreator dengan tanggal dan waktu lengkap, termasuk detik dan zona waktumu, dalam format jam 12 atau 24 jam sesuai pengaturan ponselmu. Tampilkan tanggal di kisi profil menaruh hari setiap video diunggah di bawah jumlah tayangannya, seperti 7 Okt, dengan tahun ditambahkan untuk postingan dari tahun lain. Kalau Tampilkan tingkat interaksi juga nyala, tanggalnya berada di barisnya sendiri di bawah jumlah dan tingkatnya. Video di kisi yang dikirim TikTok tanpa waktunya tetap mendapat tanggal, dibaca dari ID-nya, yang membawa waktu unggah.
+* **TikTok:** Sakelar tanggal yang awalnya nonaktif menambahkan waktu dengan detik dan zona waktu dalam format jam ponsel di samping kreator, serta tanggal postingan pada kisi. Tanggal yang hilang dibaca dari ID video. Postingan lama menampilkan tahun, dan tanggal berada di baris terpisah saat tingkat interaksi ditampilkan.
 
-* **TikTok:** Alat komentar punya satu sakelar baru lagi, Sembunyikan tombol di kotak komentar, yang mati secara default. Sakelar itu menghilangkan tombol foto, @, dan hadiah dari kotak tempat kamu menulis komentar. Tombol emoji tetap ada, dan mengetik serta mengirim tidak berubah. Sakelar ini ada di pengaturan Hushfeed > Komentar, dan Jeda Hushfeed mematikannya.
+* **TikTok:** Sembunyikan tombol kotak komentar menghapus tombol foto, @ dan hadiah, sambil mempertahankan emoji, mengetik dan mengirim. Awalnya mati.
 
-* **TikTok:** Alat komentar punya sakelar baru, Sembunyikan survei komentar, yang mati secara default. TikTok kadang menaruh kartu pertanyaan di daftar komentar untuk menanyakan pendapatmu, dan saat sakelarnya nyala daftar itu disusun seperti untuk akun yang tidak dikirimi survei oleh TikTok. Sakelar ini ada di pengaturan Hushfeed > Komentar, di bawah Sembunyikan jajak pendapat komentar, dan Jeda Hushfeed mematikannya.
+* **TikTok:** Sembunyikan survei komentar menghapus kartu pertanyaan dari komentar. Sakelar baru ini awalnya mati.
 
-* **TikTok:** Kontrol notifikasi punya sakelar baru di bawah Kotak Masuk, Matikan notifikasi push, yang mati secara default. Saat nyala, layanan push TikTok tidak disiapkan ketika aplikasi mulai, dan tidak ada yang diposting TikTok yang sampai ke panel notifikasi kecuali yang sedang berlangsung, seperti kontrol media. Wake lock TikTok juga dilewati, kecuali yang untuk LIVE yang sedang kamu siarkan dan untuk pekerjaan latar belakang yang menampilkan notifikasinya sendiri. Kamu tidak akan tahu ada pesan baru sampai membuka TikTok, dan notifikasi yang dibuang saat sakelar nyala tidak kembali. Efeknya berlaku setelah mulai ulang, dan mematikannya atau menjeda Hushfeed menyiapkan push lagi saat TikTok dimulai berikutnya. Berbeda dengan opsi Lewati penyiapan push milik Batasi lalu lintas latar belakang, sakelar ini tidak perlu patch ulang untuk membatalkannya.
+* **TikTok:** Matikan notifikasi push awalnya nonaktif dan membutuhkan mulai ulang. Pesan menunggu sampai TikTok dibuka, notifikasi yang dibuang tidak kembali, dan notifikasi berkelanjutan tetap ada. Kunci agar ponsel tetap aktif diblokir kecuali untuk LIVE yang kamu siarkan dan pekerjaan dengan notifikasinya sendiri. Mematikan atau menjeda memulihkan push saat mulai ulang berikutnya.
 
-* **TikTok:** Waktu layar punya sakelar baru, Buka video yang dibagikan secara terpisah, yang mati secara default. Tautan ke satu video, seperti yang dikirim temanmu di aplikasi lain, hanya membuka video itu, dan feed tidak bisa digeser melewatinya, jadi tidak ada video berikutnya yang menyeretmu masuk. Feed bisa digeser lagi begitu video lain diputar, misalnya setelah menyegarkan atau mengetuk Mengikuti, atau saat kamu kembali ke TikTok setelah pergi 10 menit atau lebih. Baik Lanjut otomatis maupun gulir otomatis milik TikTok sendiri tidak berpindah dari video itu, dan tab feed lainnya, seperti Mengikuti atau Teman, tetap bisa digeser seperti biasa. Barisnya memerlukan patch Tombol blokir penulis dan Navigasi tab feed, dan Jeda Hushfeed mematikannya.
+* **TikTok:** Buka video yang dibagikan secara terpisah awalnya nonaktif dan menahan satu video tertaut sampai video lain diputar atau kamu kembali setelah sepuluh menit. Lanjut otomatis dan gulir otomatis tidak bisa melewatinya. Fitur ini membutuhkan Tombol blokir kreator dan Navigasi tab feed. Tab lain tetap bisa digulir, dan Jeda menonaktifkannya.
 
-* **TikTok:** Lanjut video otomatis punya sakelar baru di bawah Pemutaran, Maju otomatis di hasil pencarian, yang mati secara default. Sakelar itu menjawab ya pada flag gulir otomatis pencarian milik TikTok sendiri, yang dibaca hasil pencarian sebagai ganti flag Untuk Kamu, sehingga video yang dibuka dari pencarian juga bisa berpindah di akhir. Kalau kamu meninggalkan pencarian saat sedang menggulir, TikTok melanjutkan gulir itu di pencarian berikutnya, dan pencarian itu tetap berhenti di batas Lanjut otomatis dan untuk Waktu layar seperti yang lain. Mulai ulang TikTok setelah menyalakannya.
+* **TikTok:** Lanjut otomatis di hasil pencarian awalnya mati dan perlu mulai ulang. Gulir pencarian mengikuti batas lanjut dan waktu layar Anda.
 
-* **TikTok:** Daftar centang Blokir popup kini juga mencantumkan lembar dan kartu mengambang yang dikirim server TikTok sebagai kampanye, dengan nama kampanyenya sendiri, jadi mencentang salah satunya menghentikannya sebelum dibangun. Sebelumnya semua itu tidak pernah masuk ke daftar. Sakelar baru di bawah Layar feed > Pop-up, Sembunyikan gelembung LIVE, yang mati secara default, menghentikan gelembung yang TikTok mengambangkan di bagian atas feed untuk mengarahkanmu ke sebuah LIVE.
+* **TikTok:** Daftar popup kini mencakup kampanye server, dan Sembunyikan gelembung LIVE menambahkan sakelar yang awalnya mati untuk ajakan LIVE mengambang.
 
-* **TikTok:** Gunakan font sistem punya sakelar kedua, Gunakan emoji sistem, yang menggambar setiap emoji dengan font emoji milik perangkatmu sendiri. Font TikTok tidak membawa emoji, jadi sebagian besar sudah berasal dari perangkatmu, tetapi TikTok menambal emoji terbaru yang tidak dimiliki perangkatmu dengan emoji Google. Saat sakelar nyala, TikTok tidak melakukannya, dan emoji itu mungkin tampil sebagai kotak atau terpecah-pecah. Sakelar ini mati secara default dan perlu mulai ulang. Sakelarnya ada di pengaturan Hushfeed > Aplikasi.
+* **TikTok:** Gunakan emoji sistem awalnya mati dan perlu mulai ulang. Emoji yang tak dimiliki ponsel dapat muncul sebagai kotak atau bagian terpisah.
 
-* **TikTok:** Dua patch baru, Matikan getaran haptik dan Matikan transisi layar. Yang pertama menghentikan getaran singkat yang dimainkan TikTok pada ketukan dan gerakannya sendiri, termasuk getaran tekan lama, sementara getaran keyboard dan haptik bawaan ponselmu tetap ada. Yang kedua membuka dan menutup layar TikTok tanpa gerak gesernya, sementara geseran di dalam layar tetap mengikuti jarimu. Keduanya tidak ada dalam pilihan bawaan, dan masing-masing sakelar mulai dalam keadaan nyala begitu kamu memilih patch-nya, di pengaturan Hushfeed > Aplikasi > Tampilan.
+* **TikTok:** Patch opsional Matikan haptik dan Matikan transisi layar mengaktifkan sakelarnya saat dipilih. Haptik keyboard dan geser di dalam layar tetap ada.
 
-* **TikTok:** Tekan lama punya pilihan baru, Simpan bingkai di layar sebagai foto. Tekanan itu menyimpan gambar yang sedang ditampilkan video sebagai JPEG di Folder tujuan foto, DCIM/TikTok kecuali sudah kamu ubah. Gambar dibaca dari videonya sendiri, jadi keterangan dan tombol yang digambar di atasnya tidak ikut. Jeda videonya dulu untuk memilih bingkai yang tepat. File memakai nama video ditambah asal bingkainya, seperti `_frame_1m05s`.
+* **TikTok:** Tekan lama bisa menyimpan bingkai video saat ini sebagai JPEG tanpa elemen di atasnya ke Tujuan foto, dengan nama video dan waktu bingkai. Jeda dahulu untuk memilih bingkai yang tepat.
 
-* **TikTok:** Batas video offline kustom kini bisa sampai 10.000 video (sebelumnya berhenti di 1.000), dan baris batas itu menyebutkan kira-kira berapa banyak penyimpanan yang dipakai sejumlah video itu. Berapa banyak yang sebenarnya dikirim TikTok tetap bergantung pada servernya.
+* **TikTok:** Batas video offline kini mencapai 10.000 dan memperkirakan ruang penyimpanan. TikTok tetap menentukan jumlah video yang dikirim.
 
-* **TikTok:** Filter feed > Lanjutan punya sakelar baru, Jauhkan video offline dari feed, yang mati secara default. TikTok menyelipkan kembali video yang disimpannya untuk ditonton offline ke Untuk Kamu saat tidak bisa memuat cukup video baru, dan saat sakelarnya nyala semuanya disingkirkan, termasuk seluruh daftar cadangan offline. Daftar offline-mu tetap seperti semula, dan Filter video offline TikTok jadi abu-abu selama sakelar baru itu nyala.
+* **TikTok:** Jauhkan video offline dari feed awalnya mati, menghapus postingan cadangan offline dan mempertahankan daftar offline tersimpan.
 
-* **TikTok:** Tekan lama punya pilihan baru, Atur pengatur waktu tidur yang menutup TikTok. Tekanan itu membuka pemilih 15, 30, 45, 60, atau 90 menit, dan pesan singkat memberi tahu kapan TikTok akan menutup. Saat waktunya habis, video berhenti dan TikTok menutup seperti saat digeser keluar dari aplikasi terbaru, termasuk pemutaran di latar belakang. Menekan lagi saat pengatur waktu berjalan menawarkan untuk mematikannya. Kalau ponsel tertidur melewati waktu berakhir tanpa ada yang diputar, TikTok tetap terbuka, bukan menutup sendiri keesokan paginya.
+* **TikTok:** Tekan lama menawarkan pengatur tidur 15, 30, 45, 60 atau 90 menit yang menghentikan pemutaran dan menutup TikTok, termasuk pemutaran latar belakang. Tekan lagi untuk membatalkan. Jika ponsel tertidur melewati batas tanpa pemutaran, TikTok tetap terbuka.
 
-* **TikTok:** Patch baru, Hentikan pencatatan riwayat tontonan, dengan sakelar Privasi yang tetap mati sampai kamu menyalakannya. Patch ini menahan laporan tontonan yang dikirim TikTok untuk setiap video yang kamu tonton, yaitu cara video masuk ke Pusat aktivitas > Riwayat tontonan. Tontonanmu tidak lagi menambah jumlah tayangan dan Untuk Kamu punya lebih sedikit bahan untuk dipelajari, dan TikTok tetap melihat suka, follow, pencarian, serta log penggunaannya sendiri. Video yang sudah ada di Riwayat tontonan tetap di sana.
+* **TikTok:** Berhenti mencatat riwayat tontonan awalnya mati dan memblokir laporan tontonan video baru. Riwayat lama dan laporan aktivitas TikTok lain tetap ada.
 
-* **TikTok:** Pengaturan Hushfeed > Filter feed > Video yang sudah dilihat punya dua baris baru, Simpan riwayat video yang dilihat ke file dan Pulihkan riwayat video yang dilihat dari file. Simpan menulis video yang sudah dilihat akun yang sedang masuk, beserta kapan masing-masing dilihat, ke file JSON yang tidak menyebut akunnya dan tidak membawa pengaturan apa pun, dan barisnya menyatakan dengan jelas bahwa file itu adalah riwayat tontonan. Pulihkan memeriksa seluruh file lebih dulu, lalu menambahkannya ke akun yang memilihnya. Video yang ada di keduanya mempertahankan tanggal yang lebih baru, dan spanduk menghitung apa yang ditambahkan dan apa yang sudah ada, terlalu lama, bertanggal lebih maju dari jam ponsel, atau melewati batas 10.000 video. Berganti akun atau menghentikan aplikasi file yang lambat sebelum penggabungan tidak mengubah apa pun, dan penyimpanan yang sudah dimiliki aplikasi file dilaporkan begitu aplikasi itu menjawab. Ekspor data milik TikTok sendiri tetap lewat Impor riwayat tontonan.
+* **TikTok:** Simpan dan pulihkan riwayat video ditonton sebagai JSON lokal untuk akun pilihan, tanpa nama akun atau pengaturan. Impor memvalidasi sebelum menggabungkan, mempertahankan tanggal terbaru dan mematuhi batas usia, tanggal mendatang serta 10.000 video. Mengganti akun atau menghentikan impor yang macet tidak mengubah riwayat. Ekspor TikTok tetap memakai Impor riwayat tontonan.
 
-* **TikTok:** Editor Kata yang diblokir di keterangan dan Kategori LIVE yang disembunyikan di pengaturan Hushfeed > Filter feed kini punya kotak contoh. Ketik sebuah keterangan atau kategori di bawah aturanmu dan editor memberi tahu aturan mana yang cocok, bahwa tidak ada yang cocok, atau apa yang salah pada sebuah aturan, sebelum kamu menyimpan apa pun. Pencocokannya sama dengan yang dipakai feed, dan hanya mencakup aturan kata ini, bukan semua filter. Tidak ada yang disimpan, dihitung, atau dikirim selama kamu mencobanya.
+* **TikTok:** Editor Kata teks terblokir dan Kategori LIVE tersembunyi kini punya kotak sampel untuk mencoba aturan tanpa menyimpan, menghitung atau mengirim sampel.
 
-* **TikTok:** Waktu layar punya sakelar baru, Jangan mulai video pertama, yang mati secara default (#83). Saat kamu membuka TikTok dari ikonnya, video pertama di feed menunggu satu ketukan, memakai penangkap ketukan yang sama dengan Jangan mulai feed saat kembali, dengan bilah tab tetap bebas. Membuka TikTok dari tautan, notifikasi (termasuk yang dikirim TikTok sebagai ketukan ikon), atau pintasan tidak ditahan, begitu juga membuka kembali dari aplikasi terbaru. Penangkap itu kini juga menyisakan ruang untuk bilah tab yang digambar setelah penangkap muncul.
+* **TikTok:** Jangan mulai video pertama awalnya mati dan menunggu ketukan setelah dibuka dari ikon. Tautan, notifikasi, pintasan dan aplikasi terbaru tetap diputar biasa (#83).
 
-* **TikTok:** Editor Nama berkas video, Nama berkas foto, dan Nama berkas media komentar di pengaturan Hushfeed > Unduhan kini menampilkan pratinjau templat saat kamu mengetiknya. Kamu melihat folder dan nama file yang akan diterima postingan rekaan dari pengunduh Hushfeed dan dari pengunduh TikTok sendiri, ditambah file suara, detail, dan subtitel yang kamu nyalakan, dan apa pun dalam kurung kurawal yang bukan token disebutkan namanya agar salah ketik tidak luput sampai penyimpanan berikutnya. {original} dan {media_id} punya catatan sendiri di bawah pengunduh Hushfeed, yang menyimpannya persis seperti diketik.
+* **TikTok:** Editor nama file unduhan kini menampilkan pratinjau folder dan file pendamping saat diketik, menyebut token tak dikenal dan menjelaskan {original} serta {media_id}.
 
-* **TikTok:** Patch baru, Jalankan berdampingan dengan aplikasi toko, untuk TikTok kedua di samping yang dari toko. Patch Clone app milik Morphe sudah memberi aplikasi yang dipatch nama paket baru agar Android memasang keduanya, tetapi salinan yang diganti namanya mendaftarkan ponselmu dengan nama baru itu, server TikTok tidak memberinya ID perangkat, dan proses masuk gagal. Pilih patch ini bersama Clone app dan salinan itu mendaftar dengan nama asli TikTok, sementara setiap aplikasi tetap memiliki data dan login-nya sendiri. Build yang mempertahankan nama paket TikTok tidak disentuh, dan menjeda Hushfeed mengembalikan nama salinan itu sendiri. Masuk dengan Google dan Facebook tidak bisa bekerja di salinan yang diganti namanya, jadi masuklah di sana dengan email atau nomor ponsel. Patch ini tidak dipilih secara default.
+* **TikTok:** Jalankan bersama aplikasi toko adalah pendamping opsional untuk Klona aplikasi dari Morphe. Salinan dengan nama paket baru bisa mendaftar ke TikTok sementara data dan login tiap aplikasi tetap terpisah. Gunakan email atau nomor telepon karena login Google dan Facebook tidak berfungsi di sana. Nama paket biasa tidak berubah, dan Jeda memulihkan nama klona.
 
-* **TikTok:** Diagnostik punya baris baru, Catat diagnostik selama 15 menit. Ketuk sebelum kamu mereproduksi bug dan semuanya dicatat selama seperempat jam, lalu pencatatan berhenti sendiri. Baris itu menampilkan kapan berakhirnya dan ketukan kedua menghentikannya lebih awal. Memulai ulang TikTok mempertahankan waktu berakhir yang sama, memundurkan jam ponsel tidak bisa memperpanjangnya, dan memulai ulang ponsel mengakhirinya. Baris ini tidak pernah menggeser sakelar Catat diagnostik, jadi pencatatan yang kamu biarkan nyala tetap nyala, dan cadangan tidak menyertakannya. Sakelar Catat diagnostik kini menyatakan dengan jelas bahwa ia tetap nyala sampai kamu mematikannya.
+* **TikTok:** Catat diagnostik selama 15 menit menampilkan waktu berakhir dan berhenti lebih awal saat diketuk lagi. Memulai ulang TikTok atau memundurkan jam tidak mengubah batas waktu, tetapi memulai ulang ponsel mengakhiri sesi. Sesi tidak disertakan dalam cadangan dan tidak mengubah pencatatan permanen. Catat diagnostik kini menyatakan bahwa fitur tetap aktif sampai Anda mematikannya.
 
-* **TikTok:** Blokir id iklan di Penjaga privasi perangkat kini mencakup setiap tempat TikTok membacanya. Dua SDK iklan di dalam aplikasi meminta id ke layanan iklan Google sendiri, tidak lewat Play Services, dan keduanya tetap mendapat id yang asli. Saat sakelar nyala, keduanya juga mendapat id kosong, dan setiap pemeriksaan apakah kamu memilih keluar dari personalisasi iklan menjawab sudah, yaitu jawaban yang diberikan Android ke aplikasi setelah kamu menghapus id iklanmu. Jeda Hushfeed tetap memberi TikTok jawaban yang asli.
+* **TikTok:** Blokir ID iklan kini juga mencakup akses layanan iklan langsung dan melaporkan personalisasi mati. Jeda memulihkan jawaban asli TikTok.
 
-* **TikTok:** Patch baru, Proksi jaringan. Atur proksi HTTP atau SOCKS5 di pengaturan Hushfeed > Wilayah, mulai ulang TikTok, dan stack jaringannya sendiri mengirim feed, pencarian, komentar, dan API lainnya lewat proksi itu. Koneksi Java biasa juga lewat sana. Video dan siaran LIVE tetap langsung, karena pemutar TikTok membuka koneksinya sendiri. Stack jaringan TikTok tidak bisa mengautentikasi ke proksi, jadi nama pengguna dan kata sandi hanya sampai ke sisi Java, dan kata sandi tidak pernah masuk ke cadangan pengaturan. Kalau proksi tidak menjawab saat TikTok dimulai, sebuah pesan memberi tahu. Aplikasi lain tidak terpengaruh, dan patch ini mati secara default.
+* **TikTok:** Proksi jaringan awalnya nonaktif dan mengarahkan lalu lintas API serta Java setelah mulai ulang. Video dan LIVE tetap langsung, dan kredensial hanya berfungsi untuk koneksi Java. Kata sandi tidak masuk cadangan, dan peringatan saat aplikasi dimulai melaporkan proksi yang tidak terjangkau.
 
-* **TikTok:** Patch baru, Picture-in-picture. Nyalakan Tetap menonton di jendela kecil di pengaturan Hushfeed > Pemutaran, dan saat kamu meninggalkan TikTok ketika video sedang diputar, video terus berjalan di atas aplikasi lain dengan hanya videonya yang tampil, tanpa tombol atau keterangan. Jendelanya punya tombol putar dan jeda serta mengikuti bentuk video itu sendiri. Ini bekerja di feed dan pada video yang kamu buka dari profil, pencarian, atau suara, dan memerlukan Android 8 atau lebih baru. Fitur ini mati secara default.
+* **TikTok:** Gambar dalam gambar menambahkan jendela video kecil yang awalnya mati pada Android 8 atau lebih baru, dengan putar dan jeda untuk feed serta video terbuka.
 
-* **TikTok:** Patch baru, Selalu unggah dalam HD. Nyalakan di pengaturan Hushfeed > Aplikasi, di bawah Memposting, dan setiap video yang kamu posting melewati unggahan HD milik TikTok sendiri, seolah-olah kamu menyalakan HD sendiri di halaman posting. Klip yang tidak dianggap TikTok berkualitas tinggi diposting seperti biasanya. Selama menyala, mematikan HD di halaman posting tidak akan bertahan. Patch ini mati secara default.
+* **TikTok:** Selalu unggah dalam HD awalnya mati dan memakai jalur HD TikTok untuk klip yang memenuhi syarat, mempertahankan HD aktif selama sakelar aktif.
 
-* **TikTok:** Patch baru, Pertahankan suara yang ditarik. Saat sebuah suara ditarik karena hak cipta atau di wilayahmu, TikTok membisukan setiap video yang memakainya. Nyalakan Putar suara yang ditarik TikTok di pengaturan Hushfeed > Pemutaran dan video itu diputar dengan audionya lagi, di feed maupun di pencarian. TikTok mungkin masih menampilkan suara itu sebagai tidak tersedia. Patch ini mati secara default.
+* **TikTok:** Putar suara yang ditarik TikTok awalnya mati dan memulihkan audio tersedia pada video feed serta pencarian yang dibisukan, meski TikTok menandai suara tak tersedia.
 
-* **TikTok:** Pemalsuan wilayah punya sakelar baru, Samakan kolom wilayah dalam permintaan, di pengaturan Hushfeed > Wilayah. Setiap permintaan yang dikirim TikTok membawa wilayah yang terakhir disimpan servernya di ponselmu dan kode negara jaringanmu, dan sebelumnya keduanya tidak mengikuti preset. Saat sakelar nyala, keduanya mengikuti. Kolom wilayah lain dalam permintaan sudah mengikuti Samakan lokal dan zona waktu dengan negara. Sakelar ini mati secara default.
+* **TikTok:** Cocokkan kolom wilayah dalam permintaan awalnya mati dan menerapkan preset wilayah ke wilayah tersimpan serta negara jaringan yang dikirim TikTok.
 
-* **TikTok:** Kontrol LIVE punya sakelar kedua, Tampilkan jumlah penonton LIVE yang tepat, di pengaturan Hushfeed > Pemutaran. Jumlah penonton ruang LIVE di kanan atas menampilkan angka sebenarnya, seperti 1.234, bukan 1,2 rb hasil pembulatan TikTok, begitu juga jumlah di LIVE terjadwal, baik diciutkan, diperluas, maupun dalam mode lanskap. Sakelar ini mati secara default.
+* **TikTok:** Tampilkan jumlah penonton LIVE tepat menambahkan sakelar yang awalnya mati untuk angka lengkap di ruang dan LIVE terjadwal, termasuk lanskap.
 
-* **TikTok:** Patch baru, Kontrol LIVE. LIVE yang muncul di feedmu bisa menghitung mundur lalu memasukkanmu ke ruangan tanpa ketukan. Nyalakan Hentikan pratinjau LIVE terbuka sendiri di pengaturan Hushfeed > Pemutaran dan LIVE itu tetap menjadi pratinjau sampai kamu mengetuknya. Sakelar ini mati secara default.
+* **TikTok:** Cegah pratinjau LIVE membuka sendiri awalnya mati dan mempertahankan pratinjau di luar ruang sampai diketuk.
 
-* **TikTok:** Penjaga privasi perangkat mendapat dua sakelar lagi di bawah Privasi, keduanya mati sampai kamu menyalakannya. Sembunyikan koneksi VPN mencegah TikTok mengetahui bahwa kamu memakai VPN, dan hanya VPN yang terbaca mati olehnya, jadi koneksimu yang lain tetap seperti semula. Blokir id iklan memberi TikTok id kosong yang diberikan Android setelah kamu mereset id iklanmu, sehingga perangkat ini tidak bisa dicocokkan di berbagai aplikasi lewat id itu. Keduanya berlaku tanpa mulai ulang, dan Jeda Hushfeed mengembalikan status VPN dan id yang asli ke TikTok.
+* **TikTok:** Sakelar privasi yang awalnya mati menyembunyikan VPN dan memblokir ID iklan segera. Jeda memulihkan kedua jawaban asli.
 
-* **TikTok:** Patch baru, Hentikan putar otomatis pencarian. Nyalakan Hentikan hasil pencarian diputar sendiri di pengaturan Hushfeed > Aplikasi dan video di hasil pencarianmu tetap menampilkan sampulnya sampai kamu membukanya. Feed diputar seperti biasa.
+* **TikTok:** Hentikan putar otomatis pencarian mempertahankan hasil pada sampul sampai dibuka, sementara feed utama diputar biasa.
 
-* **TikTok:** Mode siluman punya sakelar baru Sembunyikan status online di bawahnya di pengaturan Hushfeed > Privasi. Saat keduanya nyala, TikTok berhenti mengirim laporan aktivitas yang menampilkan titik hijau atau Aktif sekarang kepada temanmu selagi kamu berada di aplikasi. Laporan yang sama juga membawa kembali status temanmu, jadi status mereka mungkin berhenti diperbarui untukmu selama sakelar nyala. Sakelar ini mati secara default.
+* **TikTok:** Sembunyikan status online awalnya mati dan perlu Mode hantu. Teman mungkin tak melihat aktivitas Anda, dan status mereka mungkin berhenti diperbarui untuk Anda.
 
-* **TikTok:** Tampak seperti aplikasi dari toko kini bisa menyebut toko lain sebagai pemasang TikTok. Pilih Play Store (tetap bawaan), Galaxy Store, AppGallery, atau Amazon Appstore di bawah sakelarnya di pengaturan Hushfeed > Aplikasi, lalu mulai ulang TikTok.
+* **TikTok:** Terlihat seperti aplikasi toko bisa melaporkan Play Store (bawaan), Galaxy Store, AppGallery atau Amazon Appstore sebagai pemasang. Mulai ulang setelah memilihnya.
 
-* **TikTok:** Geser untuk kecerahan dan volume, sakelar baru di bawah Layar feed > Gerakan, memungkinkanmu menggeser ke atas atau bawah di sepanjang tepi kiri video untuk mengubah kecerahan layar, atau di tepi kanan untuk mengubah volume, dengan indikator tingkat kecil di layar. Ini bekerja di feed dan pada video yang dibuka dari profil. Geseran yang dimulai dari tempat lain tetap menggulir feed, dan ketukan tetap seperti biasa. Lebar strip tepi mengatur selebar apa tepinya, dari 5 sampai 30 persen layar. Sakelar ini mati sampai kamu menyalakannya, dan kecerahan kembali ke pengaturan ponselmu saat kamu meninggalkan video.
+* **TikTok:** Geser untuk kecerahan dan volume awalnya nonaktif, dengan kecerahan di tepi kiri dan volume di kanan pada feed dan video yang dibuka. Lebar tepi berkisar 5% hingga 30%, geseran lain tetap menggulir, dan kecerahan kembali saat kamu meninggalkan video.
 
-* **TikTok:** Sembunyikan item Kotak Masuk kini menjangkau sampai ke dalam obrolan juga. Di bawah Kotak Masuk > Di obrolan ada tiga sakelar baru, semuanya mati sampai kamu menyalakannya. Sembunyikan tombol panggilan menghilangkan tombol panggilan suara dan video dari bagian atas obrolan, Sembunyikan saran stiker menyingkirkan spanduk stiker, dan Sembunyikan balasan yang disarankan menghentikan saran balasan TikTok beserta spanduk yang memperkenalkannya. Tombol detail obrolan dan semua yang kamu kirim dibiarkan seperti semula.
+* **TikTok:** Tiga sakelar obrolan yang awalnya mati menyembunyikan tombol panggilan, saran stiker dan balasan, tanpa mengubah detail obrolan atau isi terkirim.
 
-* **TikTok:** Pudarkan kontrol video, angka baru di bawah Tampilan bersih, meredupkan tombol, keterangan, piringan musik, bilah pencarian, dan tab di atas video ke tingkat yang kamu pilih, bukan menyembunyikannya, yang membantu mencegah burn-in layar sementara kamu tetap bisa melihat letak semuanya. 100 membiarkan TikTok apa adanya, dan kontrol yang dipudarkan tetap menerima ketukan. Pada 0 tombol dan keterangan disembunyikan seperti cara Tampilan bersih menyembunyikannya, dan tab tetap di 10 agar kamu masih bisa menemukan jalan.
+* **TikTok:** Pudarkan kontrol video meredupkan lapisan. Pada 100 tak berubah, pada 0 tersembunyi dengan tab pada 10, dan kontrol redup tetap menerima ketukan.
 
-* **TikTok:** Kunci feed, sakelar baru di bawah Waktu layar, menjaga Untuk Kamu, Mengikuti, dan tab feed lainnya di balik panel yang tenang, dan feed tidak bisa digeser. Kotak Masuk, profil, dan pencarian bekerja seperti biasa, tautan ke satu video tetap membuka video itu, dan aplikasi terbuka di Kotak Masuk, bukan di feed yang sudah kamu tutup. Feed tab Teman juga tercakup, dan menyembunyikan kontrol lewat Tampilan bersih tidak mengangkat panel itu. Hanya tautan ke satu video yang lolos, bukan tautan profil atau pencarian. Saat Tunggu sehari untuk melonggarkan anggaran nyala, mematikan Kunci feed menunggu sampai hari dimulai ulang, sama seperti anggaran yang lebih panjang. Sakelar ini mati sampai kamu menyalakannya, dan Jeda Hushfeed mematikannya bersama semua yang lain.
+* **TikTok:** Kunci feed awalnya nonaktif, membuka Kotak masuk dan memblokir tab feed sambil mempertahankan profil, pencarian serta tautan satu video. Penundaan pelonggaran anggaran juga berlaku untuk membuka kuncinya. Jeda menonaktifkan kunci.
 
-* **TikTok:** Patch baru, Blokir popup. Daftar centangnya di bawah Layar feed > Pop-up mencantumkan setiap popup yang pernah dicoba ditampilkan TikTok di ponselmu, seperti kartu ikuti temanmu, dan menghentikan yang kamu centang saat muncul berikutnya. Tidak ada yang diblokir sampai kamu mencentang sesuatu. Layar CAPTCHA, verifikasi, masuk, usia, pemblokiran, dan persetujuan hukum tidak pernah muncul di daftar dan tidak pernah diblokir.
+* **TikTok:** Blokir popup hanya menyembunyikan entri pilihan Anda. CAPTCHA, masuk, verifikasi, usia, pemblokiran dan persetujuan hukum selalu dilindungi.
 
-* **TikTok:** Patch baru, Kontrol story. Dua sakelar di bawah Pemutaran, keduanya mati sampai kamu menyalakannya. Ulangi story memutar ulang story dari awal saat selesai, bukan pindah ke story berikutnya, dan Tahan story foto menjaga foto tetap di layar sampai kamu mengetuk atau menggeser. Mengetuk atau menggeser tetap berpindah dalam kedua kasus.
+* **TikTok:** Kontrol cerita menambahkan sakelar yang awalnya mati untuk mengulang cerita video atau menahan foto. Ketukan dan geser tetap beralih.
 
-* **TikTok:** Ekspor komentar, sakelar baru di bawah Komentar, menambahkan Ekspor CSV dan Ekspor JSON di bawah kotak pencarian komentar. Masing-masing menyimpan komentar dan balasan yang sudah dimuat video ke file yang kamu pilih, dengan penulis, teks, waktu, suka, jumlah balasan, disematkan, disukai kreator, jumlah gambar, dan bahasa untuk setiap baris, serta hitungan di samping tombol yang sesuai dengan jumlah baris di file. Buka dulu utas balasan yang kamu inginkan, karena TikTok baru memuat balasan sebuah utas saat kamu membukanya. Kalau aplikasi file macet, aplikasi menawarkan Berhenti menunggu. Sakelar ini mati sampai kamu menyalakannya, dan memerlukan Cari dalam komentar.
+* **TikTok:** Ekspor komentar menambahkan ekspor CSV dan JSON yang awalnya nonaktif untuk komentar dan balasan yang sudah dimuat. Fitur ini membutuhkan Cari dalam komentar, dan utas balasan harus dibuka dahulu. Operasi berkas yang macet menawarkan Berhenti menunggu.
 
-* **TikTok:** Hapus iklan di feed kini juga menjauhkan kartu "Find fresh ideas on Lemon8" dari Untuk Kamu. Kartu itu promo pemasangan yang diselipkan TikTok di antara video, jadi tidak ada flag iklan yang menandainya. Hushfeed menghentikan TikTok memintanya dan membuangnya dari feed kalau ada yang tetap datang, dan kartu itu muncul di laporan filter feed di bawah Iklan.
+* **TikTok:** Hapus iklan feed kini juga menghapus kartu promosi pemasangan Lemon8 dari Untuk Anda.
 
-* **TikTok:** Patch baru, Kunci aplikasi. Nyalakan Kunci TikTok di bawah Privasi dan TikTok meminta sidik jari, wajah, atau PIN kunci layarmu saat dimulai, dan lagi saat kamu kembali setelah penundaan yang kamu pilih (langsung, atau setelah 1, 5, atau 15 menit). Tidak ada yang tampil dan video tetap berhenti sampai kamu membukanya. Tautan yang kamu buka dari aplikasi lain tetap mendarat di videonya setelah kamu masuk, dan pratinjau TikTok di aplikasi terbaru kosong selama kunci menyala. Android 9 ke atas memakai dialog buka kunci dari sistem, dan ponsel yang lebih lama memakai pemeriksaan kunci layar. Ponsel tanpa kunci layar membuka TikTok seperti sebelumnya dan menjelaskan alasannya. Jeda Hushfeed membiarkan kunci tetap menyala, jadi menjeda bukan jalan untuk melewatinya.
+* **TikTok:** Kunci aplikasi meminta kunci layar saat aplikasi dimulai dan saat kembali, segera atau setelah 1, 5 atau 15 menit. Pemutaran disembunyikan sampai terbuka dan pratinjau aplikasi terbaru dikosongkan. Android 9 dan lebih baru memakai dialog sistem, ponsel lama memakai pemeriksaan kunci layar. Jeda tidak bisa melewatinya, dan ponsel tanpa kunci layar tetap dapat digunakan.
 
-* **TikTok:** Unduhan lanjutan bisa menyimpan postingan foto sebagai satu MP4 lengkap dengan suaranya. Nyalakan Simpan unggahan foto sebagai video di bawah Unduhan. Unduh video milik TikTok pada postingan satu foto lalu membuat video bersih tanpa logo, nama pengguna, atau kartu penutup, dan postingan dengan beberapa foto menanyakan apakah kamu ingin foto yang kamu pilih atau video dari foto-foto itu. Setiap foto tampil selama 3 detik secara default (Detik per foto berkisar dari 1 sampai 10), suaranya dipotong atau diulang agar pas, dan kalau suaranya tidak bisa diambil video disimpan tanpa suara dan pemberitahuannya memberi tahumu.
+* **TikTok:** Simpan postingan foto sebagai video membuat MP4 bersih dengan suara, awalnya 3 detik per foto, dapat diatur dari 1 sampai 10. Audio hilang menghasilkan video senyap dengan pemberitahuan.
 
-* **TikTok:** Patch baru, Utamakan pemutaran H.264. Nyalakan Utamakan video H.264 di bawah Pemutaran dan video yang juga ditawarkan TikTok dalam H.264 memutar versi itu, bukan HEVC atau ByteVC2, yang bisa membantu ponsel yang tersendat atau panas. Video tanpa versi itu diputar seperti sebelumnya. Kalau Putar SDR, bukan HDR atau Kualitas pemutaran juga nyala, keduanya memilih di antara versi H.264.
+* **TikTok:** Utamakan pemutaran H.264 memilih salinan H.264 tersedia, dengan SDR dan kualitas diterapkan di dalamnya. Video tanpa salinan itu tetap diputar.
 
-* **TikTok:** Patch baru, Tampilkan tingkat interaksi. Sakelarnya di bawah Layar feed > Info video menghitung suka, komentar, bagikan, dan simpan sebuah video sebagai persentase dari tayangannya, dari hitungan yang sudah dikirim TikTok bersamanya, jadi tidak ada yang diunduh tambahan. Tingkat itu tampil setelah nama kreator pada video yang sedang kamu tonton dan setelah jumlah tayangan di kisi profil, seperti 12,3 rb · 4,2%. Video tanpa jumlah tayangan tidak menampilkan apa-apa.
+* **TikTok:** Tampilkan tingkat interaksi menjumlahkan suka, komentar, bagikan dan simpan sebagai persentase tayangan pada feed dan profil, memakai jumlah yang sudah dikirim TikTok. Video tanpa jumlah tayangan tidak menampilkan apa pun.
 
-* **TikTok:** Sakelar baru Tampilkan angka persis di Layar feed > Kolom kanan. Sakelar ini menampilkan suka, komentar, bagikan, dan hitungan lain sebagai angka penuh, seperti 1.234.567 bukan 1,2 jt, dengan pengelompokan digit sesuai ponselmu.
+* **TikTok:** Tampilkan jumlah tepat menampilkan jumlah suka, komentar, berbagi dan lainnya secara lengkap dengan pemisah angka lokal, bukan pembulatan.
 
-* **TikTok:** Patch baru, Ikon peluncur kustom. Patch ini memberi ikon TikTok lapisan bertema, sehingga dengan ikon bertema menyala di Android 13 ke atas, not musiknya mengambil warna wallpaper-mu. Opsi Gaya ikon-nya juga menukar latar menjadi hitam, atau not putih di atas hitam atau hitam di atas putih polos, di Android 8 ke atas.
+* **TikTok:** Ikon peluncur khusus menambahkan ikon bertema warna wallpaper pada Android 13 atau lebih baru dan gaya lain pada Android 8 atau lebih baru.
 
-* **TikTok:** Patch baru, Lepas batas panjang teks. Sakelarnya di bawah Komentar > Menulis memungkinkan komentar, catatan repost, atau bio-mu melewati panjang yang membuat aplikasi TikTok berhenti menerima ketikan, alih-alih memotongmu di penghitung. Server TikTok tetap menentukan seberapa panjang teks yang mereka terima.
+* **TikTok:** Hapus batas panjang teks mengizinkan komentar, catatan repost dan bio lebih panjang. Server TikTok tetap menentukan apa yang diterima.
 
-* **TikTok:** Patch baru, Hapus cincin avatar. Dua sakelar di bawah Layar feed > Kolom kanan menghilangkan cincin story dan cincin LIVE yang berdenyut dari foto profil di feed dan di komentar, dan cincin story dari profil juga. Saat keduanya nyala, mengetuk fotonya membuka profil kreator, bukan story atau LIVE-nya.
+* **TikTok:** Hapus lingkaran avatar menyembunyikan lingkaran cerita dan LIVE. Ketukan gambar terkait lalu membuka profil, bukan cerita atau LIVE.
 
-* **TikTok:** Patch baru, Putar SDR, bukan HDR. Nyalakan di bawah Pemutaran dan video yang juga tersedia dalam HDR memutar versi standarnya, jadi layar tidak melonjak ke kecerahan penuh saat video dimulai. Video yang hanya ditawarkan TikTok dalam HDR tetap diputar. Kalau Kualitas pemutaran juga nyala, ia memilih di antara versi standar.
+* **TikTok:** Putar SDR bukan HDR mengutamakan salinan standar tersedia, dengan kualitas diterapkan di dalamnya. Video khusus HDR tetap diputar.
 
-* **TikTok:** Patch baru, Salin bio dan ID. Tekan lama bio sebuah profil untuk menyalinnya. Menu bagikan yang dibuka dari menu profil mendapat tombol Salin nama pengguna dan Salin ID pengguna, dan menu bagikan video mendapat Salin ID video. Setiap salinan menyebutkan apa yang disalin lewat pesan singkat. Sakelarnya ada di pengaturan Hushfeed > Aplikasi > Salin bio dan ID.
+* **TikTok:** Salin bio dan ID menambahkan salin bio lewat tekan lama dan tombol panel berbagi untuk nama pengguna, ID pengguna dan ID video.
 
-* **TikTok:** Patch baru, Tampilkan status mengikuti. Buka profil yang mengikutimu dan "Mengikuti Anda" tampil di bawah @nama penggunanya. Kalau kamu mengikutinya dan akun itu tidak mengikutimu balik, yang tampil adalah keterangan itu. Daftar pengikut dan yang diikutimu menandai akun yang kamu ikuti tetapi tidak mengikutimu balik. Patch ini memakai status mengikuti yang sudah dikirim TikTok, jadi tidak ada yang diambil tambahan. Sakelarnya ada di pengaturan Hushfeed > Aplikasi > Tampilkan status mengikuti.
+* **TikTok:** Tampilkan status mengikuti menandai pengikut dan akun yang tak mengikuti balik di profil serta daftar, dari data yang sudah dikirim TikTok.
 
-* **TikTok:** Filter feed punya sakelar baru Hanya tampilkan teman yang saling mengikuti di tab Teman. Saat nyala, tab Teman membuang postingan, repost, dan LIVE dari akun yang kamu ikuti tetapi tidak mengikutimu balik, serta dari orang asing dan akun yang disarankan. Repost seorang teman tetap ada meski videonya milik orang lain, dan postingan serta repostmu sendiri selalu tetap ada.
+* **TikTok:** Hanya teman bersama di tab Teman mempertahankan postingan dan repost teman serta milik Anda, sambil menghapus akun bukan teman bersama dan saran.
 
-* **TikTok:** Sembunyikan video buatan AI kini menangkap jauh lebih banyak. Selain label AI TikTok yang terlihat, ia membaca tanda AI yang disimpan TikTok pada sebuah postingan tanpa selalu menampilkannya, yaitu pengungkapan AI dari kreator, putusan moderasi TikTok sendiri, sumber AI di kredensial konten (C2PA), postingan yang dibuat dengan efek AI TikTok seperti AI Alive, AI remix, dan AI portrait, serta tag seperti #ai atau #aigenerated. Laporan filter menghitung masing-masing di bawah AiSignals menurut tanda yang menangkapnya. Filter feed juga mencakup versi terbaru feed tab Teman, jadi aturannya berlaku di sana juga.
+* **TikTok:** Sembunyikan video buatan AI kini memeriksa pengungkapan tersembunyi, moderasi, kredensial, efek dan tag AI. Aturan feed juga menjangkau feed Teman baru.
 
-* **TikTok:** Tampilkan asal unggahan video kini bekerja pada video yang waktu postingnya disembunyikan TikTok, yang mencakup sebagian besar Untuk Kamu kecuali Selalu tampilkan tanggal unggah menyala. Ini juga tampil pada video yang kamu buka dari pencarian, profil kreator, atau tautan yang dibagikan, dan berpindah ke negara yang tepat begitu video yang dibuka mulai diputar, bukan mempertahankan negara dari feed. Nama yang panjang dipersingkat sedikit agar negaranya tidak ikut terpotong.
+* **TikTok:** Wilayah kreator kini muncul tanpa tanggal postingan terlihat dan di video terbuka, mengikuti video saat ini dan menyisakan ruang di samping nama panjang.
 
-* **TikTok:** Di Feature Gate Lab, menyalakan override dari halaman sebuah gate kini langsung membuka kunci sakelar Hasil yang dipaksakan. Sebelumnya, sakelar itu tetap abu-abu sampai kamu keluar dari halaman lalu kembali.
+* **TikTok:** Mengaktifkan override Lab dari halaman gate kini langsung mengaktifkan Hasil paksa.
 
-* **TikTok:** Hapus tambahan LIVE kini menyebutkan di deskripsinya bahwa patch ini bisa menghilangkan bilah skor battle merah dan biru serta nama tamu co-host di LIVE. Patch ini mati kecuali kamu memilihnya, jadi biarkan tidak dicentang kalau kamu menonton battle.
+* **TikTok:** Hapus tambahan LIVE kini memperingatkan skor pertarungan dan nama tamu dapat hilang. Jangan pilih patch opsional ini jika Anda menonton pertarungan.
 
-* **TikTok:** Buang cache gambar animasi kini bekerja dengan cara berbeda (#100). Versi lama membuang frame yang di-cache, sehingga stiker animasi dan GIF tersendat dan pemakaian memori tidak turun. Sekarang TikTok hanya menyimpan frame yang ada di layar untuk setiap animasi dan berhenti mendekode frame lebih dulu, dan setiap frame berikutnya digambar dari frame sebelumnya.
+* **TikTok:** Buang cache gambar animasi kini mempertahankan bingkai saat ini dan menghentikan dekode lebih awal, bukan membuang bingkai hingga tersendat (#100).
 
-* **TikTok:** Sembunyikan kontrol Tampilan bersih pindah ke Layar feed > Tampilan bersih, tepat di bawah Tampilan bersih otomatis, bukan di akhir Di sekitar video.
+* **TikTok:** Sembunyikan kontrol Tampilan bersih kini ada di samping Tampilan bersih otomatis pada Layar feed > Tampilan bersih.
 
-* **TikTok:** Tampilan bersih kini menjauhkan tab bawah (Beranda, Teman, Kotak Masuk, Profil) di feed utama sampai selesai. Dengan Tampilan bersih otomatis menyala, tab itu bisa tetap berada di atas video pertama setelah TikTok baru dibuka. Halaman lain, seperti Kotak Masuk yang dibuka dari notifikasi, tetap memiliki tabnya.
+* **TikTok:** Tampilan bersih kini menyembunyikan tab bawah pada video feed pertama sementara halaman lain mempertahankannya.
 
-* **TikTok:** Dengan Tampilan bersih otomatis menyala dan tanpa penundaan, video berikutnya tetap bersih saat kamu menggeser ke sana, bukan menampilkan tombol, keterangan, bilah kemajuan, dan tabnya sejenak (#84). Mengetuk Pulihkan tampilan tetap mengembalikan semuanya.
+* **TikTok:** Tampilan bersih otomatis tanpa jeda kini menjaga video berikut tetap bersih saat digeser. Pulihkan tampilan tetap mengembalikan kontrol (#84).
 
-* **TikTok:** Di Tampilan bersih, tautan pencarian, tempat, atau produk di bawah keterangan tidak bisa lagi terketuk tanpa sengaja, begitu juga bilah pencarian lebar yang ditaruh TikTok versi lebih baru di bagian bawah. TikTok hanya memudarkannya, jadi ketukan di dekat bagian bawah video bisa membuka pencarian yang tidak terlihat olehmu (#84).
+* **TikTok:** Tautan teks dan bilah pencarian bawah yang tersembunyi tak lagi menerima ketukan tak sengaja di Tampilan bersih (#84).
 
-* **TikTok:** Tampilan bersih kini juga menyingkirkan bilah Tambahkan komentar dari foto dan video yang kamu buka dari pencarian atau profil, dan Pulihkan tampilan mengembalikannya (#84). Sebelumnya, bilah itu tetap di bagian bawah kecuali Sembunyikan bilah komentar di video yang dibuka menyala.
+* **TikTok:** Tampilan bersih kini menyembunyikan bilah komentar video dan foto terbuka, dan Pulihkan tampilan mengembalikannya (#84).
 
-* **TikTok:** Dengan Sembunyikan kontrol Tampilan bersih menyala, bilah kemajuan tetap ada untuk digeser, hanya tidak terlihat, jadi kamu bisa berpindah di dalam video di sepanjang tepi bawah tanpa keluar dari Tampilan bersih (#84).
+* **TikTok:** Sembunyikan kontrol Tampilan bersih mempertahankan bilah kemajuan tak terlihat yang dapat digeser di tepi bawah (#84).
 
-* **TikTok:** Feature Gate Lab punya 13 preset baru yang sudah ditinjau untuk fitur yang dibuka mod TikTok lain lewat flag. Isinya repost dengan komentar, banner profil dengan tata letak profil baru, live photo, komentar kamera dan audio, komentar yang disimpan ke Favorit, gaya urutan komentar dan tidak suka, warna gelembung pesan dengan arsip Kotak Masuk dan berbagi ke lebih banyak obrolan sekaligus, Kelola topik, pencarian visual, AI Self, menu tekan lama di setiap postingan, tahan untuk mempercepat bawaan TikTok sendiri, pemutaran latar belakang dan gulir otomatisnya, serta tanggal postingan di feed. Setiap preset diperiksa terhadap 47.0.3, 47.1.3, dan 47.1.4. Tampilkan Lihat terjemahan tadinya hanya untuk 47.1.3 dan kini mencakup ketiganya. Daftar hanya menampilkan preset untuk TikTok yang kamu pasang. Beberapa fitur ini juga bergantung pada apa yang diizinkan server TikTok untuk akunmu.
+* **TikTok:** Lab menambahkan 13 preset untuk repost dengan komentar, spanduk/tata letak profil, foto bergerak, komentar kamera/audio, Favorit komentar dan gaya urut/tidak suka, warna/arsip/berbagi ke banyak chat, Kelola topik, pencarian visual, AI Self, menu tekan lama di setiap postingan, tahan untuk mempercepat, pemutaran latar belakang, gulir otomatis dan tanggal feed. Tampilkan Lihat terjemahan kini juga mencakup 47.0.3, 47.1.3 dan 47.1.4. Hanya preset untuk versi terpasang yang muncul, dan kelayakan server tetap berlaku.
 
-* **TikTok:** Hapus iklan kini juga menangkap postingan kreator yang dijalankan TikTok sebagai iklan. Postingan itu tidak membawa flag iklan TikTok, jadi tadinya lolos, tetapi TikTok menandainya di detail komersial postingan dan Hushfeed membaca tanda yang sama dengan TikTok. Laporan filter menghitungnya di bawah AdSignals. Lewati iklan splash juga menghentikan tugas startup yang memuat awal iklan pengambilalihan TopView dan meminta splash real-time ke server.
+* **TikTok:** Hapus iklan kini menangkap postingan kreator berbayar, dan Lewati iklan pembuka menghentikan pramuat takeover serta permintaan splash langsung.
 
-* **TikTok:** Filter feed punya sakelar baru Sembunyikan video Untuk Kamu yang tidak dipersonalisasi. Sakelar itu menyembunyikan video pengisi yang dipakai TikTok untuk mengisi Untuk Kamu saat belum memilih apa pun untukmu, yaitu video yang dikirim dari kumpulan for_you_page_999 tanpa alasan terlampir. Kalau satu batch penuh berisi video pengisi, batch itu dibiarkan, jadi feed tidak pernah macet karenanya. Laporan filter menghitung setiap batch Untuk Kamu menurut kumpulan asal yang disebut TikTok, di samping jumlah yang disingkirkan sakelar. Pengecualian kreator lolos darinya dengan cara yang sama seperti lolos dari filter preferensi lainnya.
+* **TikTok:** Sembunyikan video Untuk Anda tak dipersonalisasi menghapus pengisi, tetapi mempertahankan satu kelompok yang seluruhnya pengisi agar tak macet. Pengecualian kreator tetap lolos.
 
-* **TikTok:** Mencari di pengaturan Hushfeed kini menaruh pengaturan yang namanya cocok di atas pengaturan yang hanya menyebut kata itu di deskripsinya, jadi "foto asli" sekarang menampilkan Unduh foto asli lebih dulu dan Nama berkas foto sesudahnya. Mencari "debug", "debugging", "logs", atau "logging" menemukan Catat diagnostik, dan setiap terjemahan punya kata-katanya sendiri untuk itu juga.
+* **TikTok:** Pencarian pengaturan kini mengutamakan kecocokan judul dan mengenali istilah log diagnostik dalam setiap bahasa pengaturan.
 
-* **TikTok:** Foto yang hanya dikirim TikTok sebagai HEIF kini punya cara kedua untuk menjadi JPEG. Dekoder gambar Samsung menolak HEIF dari TikTok, jadi Hushfeed membacanya seperti cara pemindai media ponsel, dan hanya mempertahankan file yang dikirim TikTok kalau keduanya tidak bisa membacanya.
+* **TikTok:** Foto khusus HEIF kini punya jalur konversi JPEG kedua. Jika kedua dekoder gagal, Hushfeed mempertahankan file asli.
 
-* **TikTok:** Yang baru kini bisa menampilkan rilis dalam bahasa ponsel (#91). Catatan 0.68.0 dan 0.67.1 diterjemahkan ke kedelapan bahasa yang tersedia di pengaturan Hushfeed, dan rilis yang lebih lama tetap berbahasa Inggris dengan satu baris singkat yang menyatakannya.
+* **TikTok:** Yang baru kini menerjemahkan 0.68.0 dan 0.67.1 ke delapan bahasa pengaturan, dengan pemberitahuan bahasa Inggris untuk versi lama (#91).
 
-* **TikTok:** Dengan pencatatan debug menyala, file diagnostik kini mencantumkan setiap item menu bagikan yang disembunyikan Hushfeed, di baris mana item itu berada, dan jenis view-nya (#120). Orang-orang di baris Kirim ke dicantumkan tanpa nama mereka. Ini ada untuk menemukan sebab menu bagikan TikTok yang lebih kecil kehilangan barisnya saat ada yang disembunyikan.
+* **TikTok:** Laporan debug kini menjelaskan baris dan tampilan panel berbagi tersembunyi tanpa menyebut nama orang di Kirim ke (#120).
 
-* **TikTok:** FAQ di halaman GitHub Hushfeed menjelaskan Profil dan Kotak Masuk hitam pekat yang dilihat sebagian orang tanpa tema gelap AMOLED. Itu berasal dari mode gelap bawaan TikTok 47.1.4, dan build tanpa patch tersebut menampilkan warna yang sama dengan Hushfeed dijeda (#69).
+* **TikTok:** FAQ kini menjelaskan latar hitam Profil dan Kotak masuk bawaan TikTok 47.1.4, yang juga muncul tanpa Tema gelap AMOLED (#69).
 
-* **TikTok:** Panduan pemecahan masalah di halaman GitHub Hushfeed kini menjawab apakah Feature Gate Lab bisa menyembunyikan popup CAPTCHA (tidak bisa), dan memandu cara mencoba salah satu preset Lab yang sudah ditinjau (#111).
+* **TikTok:** Pemecahan masalah kini menjelaskan bahwa Lab tak dapat menyembunyikan CAPTCHA dan menunjukkan cara mencoba preset terulas (#111).
 
 ## 0.68.0 (2026-10-06)
 
-* **TikTok:** Unduh foto asli kini menyimpan setiap foto sebagai JPEG (#105). TikTok mencantumkan setiap foto lebih dulu sebagai salinan HEIF, jadi fotonya tersimpan sebagai file .heif yang tidak bisa dibuka banyak aplikasi galeri dan komputer, dan beberapa ponsel, termasuk Samsung, sama sekali tidak bisa mendekode HEIF milik TikTok. Sekarang Hushfeed mengambil salinan WebP yang dicantumkan TikTok di samping setiap HEIF lalu menyimpannya ulang sebagai JPEG ukuran penuh di Android 9 ke atas. Kalau TikTok mencantumkan salinan JPEG, salinan itulah yang disimpan, byte demi byte. Foto yang tidak bisa dikonversi tetap memakai file yang dikirim TikTok, begitu juga foto yang punya bagian transparan. Deskripsi pengaturannya juga menyebut JPEG sekarang, dan foto story bekerja dengan cara yang sama.
+* **TikTok:** Foto asli kini mengutamakan JPEG ukuran penuh pada Android 9 atau lebih baru, termasuk cerita. Konversi gagal dan gambar transparan mempertahankan format asli (#105).
 
-* **TikTok:** Menyembunyikan bilah status kini juga menghilangkan strip hitam yang disisakan TikTok di atas video untuknya. Di Android 14 ke bawah, video digambar di belakang lubang kamera, bukan di bawahnya (#97). Sakelar baru, Sembunyikan kontrol Tampilan bersih, menghilangkan tombol tutup, bilah kemajuan, serta tombol jeda dan kecepatan dari layar selama Tampilan bersih aktif, bersama tombol tutup yang ditampilkan postingan foto di sudut. Semuanya muncul lagi begitu kamu keluar dari Tampilan bersih.
+* **TikTok:** Menyembunyikan bilah status kini menghapus ruang kosongnya dan mengisi area lubang kamera pada Android 14 dan lebih lama. Sakelar baru menyembunyikan kontrol Tampilan bersih sampai kamu keluar (#97).
 
-* **TikTok:** Tampilan bersih kini menyembunyikan tombol story di atas Mengikuti saat TikTok membiarkannya tampil, dan memunculkannya lagi begitu kamu keluar dari Tampilan bersih (#84). Jeda menyerahkan tombol story dan tab di atas kepada TikTok. Tampilan bersih otomatis juga menunggu sampai TikTok benar-benar membersihkan layar sebelum menghitung satu percobaan, jadi video pertama yang belum siap bagi TikTok tetap dibersihkan.
+* **TikTok:** Tampilan bersih kini menyembunyikan dan memulihkan tombol cerita Mengikuti, dan percobaan otomatis menunggu TikTok benar-benar membersihkan layar (#84).
 
-* **TikTok:** Tampilan bersih otomatis mencoba lagi di video saat ini setelah fokus kembali, termasuk video pertama setelah startup (#84). Percobaan yang dibatalkan atau gagal tidak lagi menghalangi percobaan berikutnya. Keluar manual tetap dihormati, dan panggilan balik dari video sebelumnya tidak bisa lagi membatalkan timer video berikutnya.
+* **TikTok:** Tampilan bersih otomatis kini mencoba lagi setelah fokus kembali, termasuk saat mulai, sambil menghormati keluar manual dan mengabaikan callback video lama (#84).
 
-* **TikTok:** Cadangkan, Pulihkan, dan Impor riwayat tontonan tidak lagi tersangkut di balik aplikasi file yang lambat. Kalau aplikasi file belum menjawab setelah beberapa detik, barisnya menawarkan untuk berhenti menunggu, dan berhenti sebelum ada yang dibaca atau ditulis membuat pengaturan dan riwayatmu tetap seperti semula. Cadangan yang sudah dimiliki aplikasi file adalah satu-satunya pengecualian: barisnya menyebut bahwa aplikasi file belum memberi tahu apakah cadangan itu tersimpan, dan kamu mendapat jawaban sebenarnya begitu ada. Aplikasi file yang tidak pernah melepas sebuah file hanya menahan baris itu, yang juga menyebutkannya, bukan menumpuk pekerjaan lain di belakangnya. Memutar ponsel di tengah pemulihan tidak menghentikan pemulihan.
+* **TikTok:** Pencadangan, pemulihan dan impor riwayat tontonan menawarkan Berhenti menunggu untuk aplikasi berkas yang macet. Berhenti sebelum membaca atau menulis tidak mengubah data, sementara cadangan yang sudah diserahkan melaporkan hasil akhirnya saat aplikasi menjawab. Berkas yang macet hanya menahan barisnya sendiri, dan rotasi tidak menghentikan pemulihan.
 
-* **TikTok:** Ekspor nilai yang dimuat dan Impor nilai yang dimuat di Feature Gate Lab tidak lagi tersangkut di balik aplikasi file yang lambat. Kalau aplikasi file belum menjawab setelah beberapa detik, Lab menawarkan untuk berhenti menunggu, dan berhenti sebelum ada yang dibaca atau ditulis tidak mengubah apa pun, bahkan file yang kamu pilih untuk ditimpa. Mengetuk salah satunya lagi saat sebuah file masih terbuka akan memberi tahu hal itu, bukan mengantrekan satu lagi yang berjalan setelah yang pertama selesai. Selain itu, mengekspor di atas ekspor lama yang lebih besar tidak lagi meninggalkan ujung file lama, yang membuat file baru tidak bisa dibaca.
+* **TikTok:** Impor dan ekspor Lab dapat berhenti menunggu aplikasi file yang macet, mencegah tugas ganda dan mengganti ekspor yang lebih panjang dengan aman.
 
-* **TikTok:** Memilih file cadangan yang sudah ada untuk ditimpa tidak lagi berisiko membuatnya hilang. Kalau pencadangan berhenti, atau gagal sebelum ada yang masuk ke file (daftar aturan feed yang terlalu panjang untuk cadangan, misalnya), file yang kamu pilih tetap menyimpan cadangan lamamu, bukan terhapus. File kosong yang dibuat pemilih file untuk cadangan tetap dibersihkan.
+* **TikTok:** Cadangan yang dibatalkan atau gagal kini mempertahankan file lama sampai penulisan dimulai, sambil tetap membersihkan file kosong baru.
 
-* **TikTok:** Pencarian pengaturan menampilkan lebih dulu baris yang kata pencarianmu berupa kata utuh. Mencari "angka" dulu menaruh Sembunyikan akun terverifikasi dan Kreator yang diblokir, yang hanya cocok di dalam kata lain, di atas baris yang memang membahas angka. Baris yang hanya cocok di dalam kata yang lebih panjang tetap menyusul, sesuai urutan halaman, dan pengaturan yang diterjemahkan diurutkan dengan aturan yang sama.
+* **TikTok:** Pencarian pengaturan kini mengutamakan kecocokan kata penuh daripada bagian kata, dalam setiap bahasa.
 
-* **TikTok:** Pencarian pengaturan kini menemukan setiap kotak dalam daftar centang, dicentang atau tidak, jadi mencari "angka" menemukan Angka di bawah tombol di daftar kolom kanan. Membuka hasil sebuah kotak akan membuka daftar yang digulir ke kotak itu tanpa mengubahnya. Daftar yang terbuka saat layar diputar kembali dengan centangmu yang belum disimpan.
+* **TikTok:** Pencarian pengaturan kini menemukan semua pilihan daftar dan membukanya di tempat. Rotasi mempertahankan centang belum tersimpan.
 
-* **TikTok:** Baris sakelar di pengaturan Hushfeed berubah bentuk saat layar sempit dan teks besar. Sakelarnya pindah ke bawah teks, di ujung baris, dan judul serta deskripsi mendapat seluruh lebar. Judul bahasa Jerman dengan teks dua kali lipat di ponsel kecil tidak lagi terpotong di tengah kata menjadi empat baris pendek. Layar yang lebih lebar tetap memakai tata letak biasa, dan baris yang digulir dari satu bentuk ke bentuk lain berubah kembali.
+* **TikTok:** Baris pengaturan sempit kini meletakkan sakelar di bawah teks besar agar judul memakai lebar penuh.
 
-* **TikTok:** Yang baru kini memberi tahu bahwa catatannya berbahasa Inggris saat pengaturan lainnya memakai bahasamu. Catatan itu juga ditandai sebagai teks bahasa Inggris untuk pembaca layar.
+* **TikTok:** Yang baru kini menandai catatan berbahasa Inggris dan memberi pembaca layar bahasa teks yang benar.
 
-* **TikTok:** Urungkan penghapusan video yang dilihat kini memulihkan riwayat di latar belakang dan melaporkan berapa banyak catatan terhapus yang masih muat dalam batas riwayat. Aplikasi tidak lagi bilang video sudah dipulihkan saat tontonan yang lebih baru tidak menyisakan ruang. Kalau penyimpanan gagal, Urungkan tetap tersedia.
+* **TikTok:** Urungkan memulihkan riwayat di latar belakang, hanya melaporkan catatan yang masih muat dan tetap tersedia setelah penyimpanan gagal.
 
-* **TikTok:** Urungkan kini menyimpan tontonan yang tercatat selama pemulihan sebelum menghitungnya. Penulisan antrean yang lebih lama juga menjaga waktu tonton yang lebih baru yang sudah disimpan Urungkan.
+* **TikTok:** Urungkan kini menghitung tontonan selama pemulihan dan melindungi tanggal lebih baru dari antrean penulisan lama.
 
-* **TikTok:** Penyimpanan media kini menghormati penuh waktu tunggu dari server, termasuk tanggal HTTP, sebelum mengikuti pengalihan atau mencoba mirror atau trek subtitel lain. Waktu tunggu yang melewati batas waktu penyimpanan menghentikan tugas dengan pesan yang jelas dan menyimpan file yang sudah tersimpan. Batalkan juga menghentikan waktu tunggu percobaan ulang.
+* **TikTok:** Penyimpanan media kini menghormati jeda percobaan server lengkap dan Batal. Jeda melewati batas tugas menghentikannya dengan pemberitahuan dan mempertahankan file selesai.
 
-* **TikTok:** Menyimpan laporan diagnostik atau laporan feature gate berjalan di thread tersendiri, jadi penyimpanan media yang lambat tidak bisa menahan thread yang dipakai bersama oleh seluruh Hushfeed. Mengetuk Simpan lagi saat laporan masih disimpan akan memberi tahu hal itu, bukan memulai laporan kedua.
+* **TikTok:** Penyimpanan laporan diagnostik dan Lab kini memakai pekerja tersendiri. Ketukan ulang memberi tahu bahwa penyimpanan sudah berjalan.
 
-* **TikTok:** Hushfeed kini dibangun dengan Morphe patcher 1.15.1, jadi perlu Morphe Manager 1.34.0 atau lebih baru. Manager 1.33.0 meminta pembaruan sebelum memuat bundel. ARSCLib mengikuti patcher ke 9b742c412d, dengan hash yang dicek terhadap file yang diunduh, dan rilis memeriksa patch dengan CLI desktop 1.18.1.
+* **TikTok:** Hushfeed kini memerlukan Morphe Manager 1.34.0 atau lebih baru dengan patcher 1.15.1. Pemeriksaan rilis memakai CLI 1.18.1.
 
-* **TikTok:** Setiap permintaan Guava di build kini diselesaikan ke 33.7.2, rilis di luar GHSA-xxph-c9ww-hj94, di grafik pengaturan, plugin, dan proyek, bukan hanya di tempat pin katalog menjangkau. Checksum-nya diverifikasi terhadap Maven Central sebelum pemeriksaan dependensi yang ketat menerimanya. Guava tetap di sisi build dan patching: bundel patch dan ekstensi tidak membawa apa pun darinya. Pemeriksaan bahwa sumber patch tidak mengimpor Guava secara langsung dulu lolos tanpa membaca satu file pun. Sekarang file-nya dibaca.
+* **TikTok:** Build memakai Guava 33.7.2 di luar peringatan keamanan secara konsisten, dengan checksum terverifikasi. Guava tidak disertakan dalam aplikasi atau bundel. Pemeriksaan impor sumber kini membaca berkas patch yang diperiksanya.
 
-* **TikTok:** Perubahan pada ekstensi Java saja tidak lagi menjalankan ulang pemeriksaan fingerprint terhadap fixture APK, karena fixture itu tidak pernah membacanya. Perintah tes lengkap dan pemeriksaan rilis tetap mencakup setiap tes, dan perubahan pada patch, tes, dependensi, atau fixture tetap menjalankannya ulang.
+* **TikTok:** Perubahan ekstensi Java saja tak lagi menjalankan ulang tes sidik jari APK yang tak terkait. Tes lengkap dan pemeriksaan rilis tetap menjalankannya.
 
-* **TikTok:** Pengeditan dokumentasi tidak lagi menjalankan ulang tes fixture APK yang tidak berubah. Perintah tes lengkap dan pemeriksaan rilis tetap mencakup setiap tes, dan pemeriksaan yang membaca sumber kini melacak masukan eksternalnya. Mengganti APK membatalkan hasil tes meskipun ukuran dan stempel waktunya sama.
+* **TikTok:** Perubahan dokumen tak lagi mengulang tes APK yang tak berubah, sementara APK pengganti membatalkan hasil cache meski waktu dan ukurannya sama.
 
-* **TikTok:** Pemeriksaan pemindai penyimpanan lokal kini tetap menampilkan diagnostik Java tanpa menganggap proses yang berhasil sebagai kegagalan di Windows PowerShell.
+* **TikTok:** Pemeriksaan pemindai penyimpanan Windows kini menampilkan diagnostik Java tanpa menganggap eksekusi berhasil sebagai kegagalan.
 
-* **TikTok:** Penandatanganan APK lokal kini menerima pesan startup Java yang tidak berbahaya akibat batas heap dan CPU. Sertifikat yang tidak valid dan pemeriksaan tanda tangan yang gagal tetap menghentikan instalasi.
+* **TikTok:** Penandatanganan APK kini menerima diagnostik awal Java yang aman sambil tetap menolak sertifikat tak valid dan pemeriksaan gagal.
 
 ## 0.67.1 (2026-10-03)
 
-* **TikTok:** Pengaturan jadi lebih mudah ditemukan. Kelima tombol yang digambar Hushfeed di video kini berkumpul di Layar feed > Tombol di video. Pemutaran sekarang memuat semua sakelar pemutar, termasuk bilah kemajuan dan gambar mininya, hentikan pengulangan, dan lanjutkan setelah menggulir, yang tadinya ada di Aplikasi. Tangkapan layar dan bilah status pindah ke Aplikasi > Sistem bersama Tampak seperti aplikasi dari toko bagi pemeriksaan TikTok. Tetap izinkan Duet dan Stitch kini ada di Menu bagikan. Pilihan yang sudah kamu simpan tetap seperti semula.
+* **TikTok:** Pengaturan kini mengelompokkan tombol video, menaruh pilihan pemutar di Pemutaran dan pilihan sistem di Aplikasi. Pengaturan tersimpan tetap utuh.
 
-* **TikTok:** Setiap tombol yang digambar Hushfeed di video kini mulai dalam keadaan mati: blokir, sembunyikan, blokir suara, Tidak tertarik, dan senyap. Instalasi baru tidak menampilkan satu pun sampai kamu menyalakannya di Layar feed > Tombol di video. Kalau kamu memakai tombol senyap, nyalakan lagi Tampilkan tombol senyap di video.
+* **TikTok:** Kelima tombol feed kini awalnya mati. Jika memakai tombol bisu, aktifkan kembali Tampilkan tombol bisu pada video.
 
-* **TikTok:** Hapus paket bahasa yang tidak terpakai tidak lagi menghentikan seluruh proses patch saat Bahasa yang dipertahankan diatur ke Semua dan APK membawa kumpulan bahasa yang belum diperiksa, seperti bundel terpisah yang digabung dengan satu bahasa. Dalam kasus itu tidak ada yang dihapus, dan log patch menjelaskan alasannya (#96).
+* **TikTok:** Hapus paket bahasa tak terpakai kini membiarkan kumpulan bahasa belum diperiksa saat Bahasa yang dipertahankan berisi semua, tanpa menghentikan patching (#96).
 
-* **TikTok:** Baris rentetan di bawah Pertahankan rentetan menulis "Terkirim ke 15/15 obrolan" begitu TikTok menerima semua pesan. Pengiriman hanya disebut belum terkonfirmasi untuk obrolan yang serah terimanya mengalami error atau tidak pernah selesai (#92).
+* **TikTok:** Status streak kini mengatakan Terkirim setelah TikTok menerima semua pesan, dan hanya mengatakan belum dikonfirmasi untuk penyerahan gagal atau belum selesai (#92).
 
-* **TikTok:** Tampilkan tombol sembunyikan di video dan Tampilkan tombol blokir suara kini menggambar kontrol feed mereka sendiri meski Tampilkan tombol blokir di video mati. Keduanya bekerja lewat Filter feed, jadi hanya tercantum saat patch itu disertakan. Instalasi baru memulai kedua sakelar pembantu itu dalam keadaan mati, sehingga memilih tombol blokir penulis tidak menambah chip ekstra sampai kamu memintanya (#95).
+* **TikTok:** Tombol sembunyikan dan blokir suara kini bekerja terpisah dari tombol blokir, perlu Filter feed dan awalnya mati (#95).
 
-* **TikTok:** Jeda tetap menyediakan pintasan tekan lama di Beranda yang tersimpan, sehingga tamu bisa membuka pengaturan lagi dan melanjutkan Hushfeed setelah layar ditutup. Pintasan yang dinonaktifkan tetap nonaktif, ketukan Beranda biasa tetap bekerja, dan aksi tekan lama milik TikTok tetap terjaga (#89).
+* **TikTok:** Jeda mempertahankan pintasan tekan lama Beranda yang aktif agar tamu bisa melanjutkan Hushfeed. Pintasan nonaktif tetap mati, ketukan biasa bekerja seperti sebelumnya dan aksi tekan lama TikTok tetap ada (#89).
 
-* **TikTok:** Pengaturan di Android 6 memakai bentuk jamak dari bahasa yang disertakan, termasuk one, few, dan many dalam bahasa Rusia. Terjemahan jumlah yang hilang kembali ke bahasa Inggris dengan bentuk tunggal yang benar. Android versi lebih baru tetap memakai aturan ICU mereka sendiri.
+* **TikTok:** Android 6 kini memakai bentuk jamak bahasa yang disertakan, dengan fallback Inggris yang benar untuk jumlah tanpa terjemahan.
 
-* **TikTok:** Yang baru menyimpan seluruh riwayat rilis saat teksnya bertambah. Catatan besar dan teks internasional tidak lagi melewati batas Java untuk menyusun satu string.
+* **TikTok:** Yang baru kini mempertahankan seluruh riwayat tanpa melewati batas string Java saat teks terjemahan bertambah.
 
-* **TikTok:** Morphe Manager 1.33.0 menampilkan semua 106 patch dalam sepuluh kategorinya, tanpa ada yang tak berkategori. Pemeriksaan yang berjalan sebelum setiap build kini mencakup input ABI tunggal di setiap versi TikTok yang didukung dan menolak pustaka native yang diubah atau hasil patch yang kosong. Bundel yang dipublikasikan bisa diperiksa dengan atestasi rilis GitHub atau kunci tanda tangan yang dipin.
+* **TikTok:** Manager 1.33.0 kini mengelompokkan semua 106 patch. Pemeriksaan build mencakup satu ABI, menolak file berubah dan mendukung verifikasi rilis.
 
-* **TikTok:** Batasi lalu lintas latar belakang menjaga penyiapan push tetap utuh secara default, termasuk saat Semua dipilih. Pilihan opsional Lewati penyiapan push mulai dalam keadaan mati dan bisa menghentikan pesan serta notifikasi lain bila dinyalakan. APK yang sudah ada perlu dipatch ulang dari APK asli TikTok untuk memulihkan penyiapan push. Jeda tidak bisa membalik perubahan waktu patch ini (#86).
+* **TikTok:** Batasi lalu lintas latar belakang kini mempertahankan penyiapan push secara bawaan. Pemulihan yang dihapus perlu patch ulang APK asli, dan Jeda tak dapat membatalkannya (#86).
 
-* **TikTok:** Pulihkan pengaturan kini melaporkan kunci yang tidak bisa dipulihkan oleh build saat ini, terpisah dari pengaturan yang hilang di cadangan yang lebih lama. Pengaturan portabel tetap berpindah antarversi TikTok, status perangkat lokal tetap utuh, dan kompatibilitas Feature Gate Lab serta Urungkan tetap bekerja seperti sebelumnya.
+* **TikTok:** Pemulihan kini membedakan kunci tak didukung dari pengaturan cadangan hilang, sambil mempertahankan pengaturan portabel, status lokal, kompatibilitas Lab dan Urungkan.
 
-* **TikTok:** Bagian Video yang sudah dilihat di Filter feed bisa mengimpor ekspor JSON riwayat tontonan TikTok yang sudah ditinjau. Tanggal tonton dan akun yang dipilih tetap melekat pada impor, batas usia yang ada tetap berlaku, dan spanduk melaporkan entri yang ditambahkan dan dilewati. Mengulang impor tidak menambahkan apa pun. File yang tidak valid atau tidak didukung dan penulisan yang gagal membuat riwayat tersimpan tidak berubah. File dibatasi 2 MB dan 10.000 entri, dan tautan tidak pernah keluar dari ponsel. Impor yang menambah riwayat mengakhiri Urungkan untuk pembersihan sebelumnya dan menjelaskan perubahan itu.
+* **TikTok:** Impor riwayat tontonan menerima JSON TikTok yang ditinjau hingga 2 MB dan 10.000 entri, mempertahankan akun pilihan, tanggal tontonan serta batas usia. Mengulang impor tidak menambah apa pun, dan berkas tidak valid atau penulisan gagal tidak mengubah riwayat. Tautan tetap di ponsel. Penambahan riwayat mengakhiri Urungkan penghapusan sebelumnya dan menjelaskan alasannya.

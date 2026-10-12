@@ -596,7 +596,7 @@ public class SettingsL10nTest {
         try (java.util.stream.Stream<java.nio.file.Path> files = java.nio.file.Files.walk(base)) {
             for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
                     .collect(java.util.stream.Collectors.toList())) {
-                if (file.getFileName().toString().equals("L10nTranslations.java")) continue;
+                if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
                 String text = new String(java.nio.file.Files.readAllBytes(file),
                         java.nio.charset.StandardCharsets.UTF_8);
                 for (String message : toastLiteralsIn(text)) {
@@ -1677,7 +1677,7 @@ public class SettingsL10nTest {
      * message written as several literals with a plus between them counts as its parts and as
      * the whole, the way the compiler joins it.
      *
-     * <p>L10nTranslations.java is skipped on purpose. It is generated from the tsv files and
+     * <p>L10nTranslations*.java is skipped on purpose. It is generated from the tsv files and
      * repeats every key back as a literal, so including it left the orphan check unable to fail:
      * a key was "shown" because the generator had written it out again.
      */
@@ -2184,7 +2184,7 @@ public class SettingsL10nTest {
                          java.nio.file.Files.walk(root.toPath())) {
                 for (java.nio.file.Path file : files.filter(p -> p.toString().endsWith(".java"))
                         .collect(java.util.stream.Collectors.toList())) {
-                    if (file.getFileName().toString().equals("L10nTranslations.java")) continue;
+                    if (file.getFileName().toString().startsWith("L10nTranslations")) continue;
                     collectStrings(new String(java.nio.file.Files.readAllBytes(file),
                             java.nio.charset.StandardCharsets.UTF_8), literals);
                 }

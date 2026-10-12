@@ -30,6 +30,7 @@ import com.bytedance.tux.widget.RadiusLayout;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import com.ss.android.ugc.aweme.feed.model.VideoItemParams;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -502,5 +503,38 @@ public class StorySeekbarTest {
         nested.addView(near);
         nested.addView(deeper);
         assertSame(near, StorySeekbar.videoFrame(nested));
+    }
+
+    /**
+     * A story viewer closed while its line is on. TikTok's views lead back to their component
+     * (a tag stands in for that here), and the line sits in those views, so a line the cell held
+     * strongly kept the component that keys it, and with it the views and their Activity.
+     */
+    @Test
+    public void aClosedStoryViewerIsLetGoWithItsLine() throws InterruptedException {
+        Settings.STORY_SEEKBAR.save(true);
+        WeakReference<Object> closed = openAViewerWithALine();
+
+        for (int attempt = 0; attempt < 20 && closed.get() != null; attempt++) {
+            System.gc();
+            Thread.sleep(10);
+        }
+        assertNull("the closed viewer is still held through its line", closed.get());
+    }
+
+    private WeakReference<Object> openAViewerWithALine() {
+        Object viewer = new Object();
+        Root viewerRoot = new Root(context);
+        RadiusLayout viewerFrame = new RadiusLayout(context);
+        viewerRoot.addView(viewerFrame, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        viewerRoot.setTag(viewer);
+        VideoItemParams shown = new VideoItemParams(Story.video("s9"));
+        StorySeekbar.onCellView(viewer, viewerRoot);
+        StorySeekbar.onCellBind(viewer, shown);
+        tick(controller, "s9", 1_000L, 10_000L);
+        assertEquals("the line went in", 1, viewerFrame.getChildCount());
+        assertTrue(viewerFrame.getChildAt(0) instanceof StorySeekbarView);
+        return new WeakReference<>(viewer);
     }
 }

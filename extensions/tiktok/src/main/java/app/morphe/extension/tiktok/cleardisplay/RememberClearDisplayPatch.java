@@ -128,7 +128,8 @@ public final class RememberClearDisplayPatch {
             cancel();
             onFocus = null;
             applied = false;
-            if (!manuallyChanged) currentId = null;
+            currentId = null;
+            manuallyChanged = false;
             if (view.getViewTreeObserver().isAlive()) view.getViewTreeObserver().removeOnWindowFocusChangeListener(FOCUS);
             view.removeOnAttachStateChangeListener(this);
             if (window.get() == view) window.clear();
@@ -145,7 +146,9 @@ public final class RememberClearDisplayPatch {
         cancel();
         onFocus = null;
         applied = false;
-        if (!manuallyChanged) currentId = null;
+        // A manual exit belongs to this viewer. Reopening the same video gets a new attempt.
+        currentId = null;
+        manuallyChanged = false;
         window = new WeakReference<>(view);
         view.getViewTreeObserver().addOnWindowFocusChangeListener(FOCUS);
         view.addOnAttachStateChangeListener(ATTACH);
