@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, as salas seguintes também mantêm a sombra sob o relógio. Antes a faixa voltava a ficar clara depois das primeiras LIVEs que você passava (#137).
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, cada sala para a qual você passa chega até embaixo do relógio com a sombra atrás. Algumas salas mantinham uma faixa preta ali, e depois das primeiras LIVEs a faixa podia voltar a ficar clara (#137).
+
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, a tela limpa numa LIVE não deixa mais uma faixa escura embaixo do relógio, e a fileira de cima do painel lateral que você abre deslizando para a esquerda fica abaixo do relógio (#137).
 
 * **TikTok:** Esconder a bolha do Tako agora também esconde a bolha do Tako no canto inferior direito dos vídeos do feed, que algumas contas recebem no lugar da que fica acima do botão de perfil (#115).
 

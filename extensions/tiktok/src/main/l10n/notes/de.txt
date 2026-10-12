@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, behalten auch spätere Räume den Schatten unter der Uhr. Nach den ersten paar LIVEs, durch die man gescrollt hatte, wurde der Streifen wieder heller (#137).
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, reicht jeder Raum, zu dem du scrollst, bis unter die Uhr, mit dem Schatten dahinter. Manche Räume behielten dort einen schwarzen Streifen, und nach den ersten paar LIVEs konnte der Streifen wieder heller werden (#137).
+
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, lässt die freie Ansicht in einem LIVE keinen dunklen Streifen mehr unter der Uhr, und die oberste Reihe der Seitenleiste, die du mit einem Wisch nach links öffnest, bleibt unterhalb der Uhr (#137).
 
 * **TikTok:** Tako-Blase ausblenden blendet jetzt auch die Tako-Blase unten rechts in Feed-Videos aus, die manche Konten statt der Blase über der Profil-Schaltfläche bekommen (#115).
 

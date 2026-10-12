@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda sonrakı otaqlarda da saatın altındakı kölgə qalır. Əvvəllər ilk bir neçə LIVE-dan sonra zolaq yenə açıq görünürdü (#137).
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda keçdiyiniz hər otaq saatın altına qədər uzanır və arxasında kölgə olur. Bəzi otaqlarda orada qara zolaq qalırdı, ilk bir neçə LIVE-dan sonra isə zolaq yenə açıq görünə bilirdi (#137).
+
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda LIVE-da təmiz ekran artıq saatın altında tünd zolaq qoymur, sola sürüşdürərək açdığınız yan panelin üst sırası da saatdan aşağıda qalır (#137).
 
 * **TikTok:** Tako qabarcığını gizlədin indi lent videolarının sağ alt küncündəki Tako qabarcığını da gizlədir. Bəzi hesablarda profil düyməsinin üstündəki qabarcıq əvəzinə o görünür (#115).
 

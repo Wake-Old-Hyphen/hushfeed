@@ -2070,6 +2070,98 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok topviews " + text.length() + " chars in " + pieces + " pieces");
                         break;
                     }
+                    case "liveroom": {
+                        // What the LIVE status bar code holds for each room in front (#137): the
+                        // view it lifted and how, its searches and relifts, the pages and layers it
+                        // changed. Technical fields only, read by reflection.
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        android.content.res.Resources resources = activity == null ? null : activity.getResources();
+                        Class<?> owner = loader.loadClass("app.morphe.extension.tiktok.feed.LiveStatusBar");
+                        Field hiddenField = owner.getDeclaredField("HIDDEN");
+                        hiddenField.setAccessible(true);
+                        Map<?, ?> hidden = (Map<?, ?>) hiddenField.get(null);
+                        StringBuilder out = new StringBuilder();
+                        for (Map.Entry<?, ?> entry : new java.util.HashMap<>(hidden).entrySet()) {
+                            Object room = entry.getValue();
+                            out.append("room of ").append(entry.getKey().getClass().getSimpleName());
+                            for (Field field : room.getClass().getDeclaredFields()) {
+                                if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) continue;
+                                field.setAccessible(true);
+                                Object value = field.get(room);
+                                out.append("\n  ").append(field.getName()).append('=');
+                                if (value instanceof java.lang.ref.Reference) value = ((java.lang.ref.Reference<?>) value).get();
+                                if (value instanceof android.view.View) {
+                                    out.append(liveRoomView((android.view.View) value, resources));
+                                } else if (value instanceof Map) {
+                                    out.append(((Map<?, ?>) value).size()).append(" [");
+                                    for (Map.Entry<?, ?> item : ((Map<?, ?>) value).entrySet()) {
+                                        Object key = item.getKey();
+                                        out.append(key instanceof android.view.View ? liveRoomView((android.view.View) key, resources) : String.valueOf(key))
+                                                .append("->").append(item.getValue()).append("; ");
+                                    }
+                                    out.append(']');
+                                } else if (value != null && value.getClass().getName().endsWith("$Offset")) {
+                                    Field viewField = value.getClass().getDeclaredField("view");
+                                    Field paddingField = value.getClass().getDeclaredField("padding");
+                                    Field valueField = value.getClass().getDeclaredField("value");
+                                    viewField.setAccessible(true);
+                                    paddingField.setAccessible(true);
+                                    valueField.setAccessible(true);
+                                    Object view = ((java.lang.ref.Reference<?>) viewField.get(value)).get();
+                                    out.append("Offset(").append(paddingField.get(value) == Boolean.TRUE ? "padding " : "margin ")
+                                            .append(valueField.get(value)).append(" on ")
+                                            .append(view instanceof android.view.View ? liveRoomView((android.view.View) view, resources) : "gone")
+                                            .append(')');
+                                } else if (value instanceof Number || value instanceof Boolean || value == null) {
+                                    out.append(value);
+                                } else {
+                                    out.append('<').append(value.getClass().getSimpleName()).append('>');
+                                }
+                            }
+                            // What findShade makes of each layer in front now, and every gradient
+                            // under it with the values the search goes by.
+                            Field loweredField = room.getClass().getDeclaredField("lowered");
+                            loweredField.setAccessible(true);
+                            java.lang.reflect.Method findShade = owner.getDeclaredMethod("findShade", android.view.ViewGroup.class);
+                            findShade.setAccessible(true);
+                            for (Object key : new java.util.ArrayList<>(((Map<?, ?>) loweredField.get(room)).keySet())) {
+                                if (!(key instanceof android.view.ViewGroup) || !((android.view.View) key).isAttachedToWindow()) continue;
+                                android.view.ViewGroup layer = (android.view.ViewGroup) key;
+                                Object found = findShade.invoke(null, layer);
+                                out.append("\n  findShade(").append(liveRoomView(layer, resources)).append(")=")
+                                        .append(found instanceof android.view.View ? liveRoomView((android.view.View) found, resources) : "null");
+                                java.util.ArrayDeque<android.view.View> walk = new java.util.ArrayDeque<>();
+                                walk.add(layer);
+                                while (!walk.isEmpty()) {
+                                    android.view.View at = walk.poll();
+                                    if (at != layer && at.getBackground() instanceof android.graphics.drawable.GradientDrawable) {
+                                        int top = 0, depth = 0;
+                                        for (android.view.View up = at; up != layer && up.getParent() instanceof android.view.View; up = (android.view.View) up.getParent()) {
+                                            top += up.getTop();
+                                            depth++;
+                                        }
+                                        out.append("\n    gradient ").append(liveRoomView(at, resources)).append(" depth=").append(depth)
+                                                .append(" vis=").append(at.getVisibility()).append(" topIn=").append(top)
+                                                .append(" w=").append(at.getWidth()).append(" h=").append(at.getHeight())
+                                                .append(" layerPad=").append(layer.getPaddingTop()).append(" layerH=").append(layer.getHeight());
+                                    }
+                                    if (at instanceof android.view.ViewGroup) {
+                                        android.view.ViewGroup group = (android.view.ViewGroup) at;
+                                        for (int i = 0; i < group.getChildCount(); i++) walk.add(group.getChildAt(i));
+                                    }
+                                }
+                            }
+                            out.append('\n');
+                        }
+                        String text = out.toString();
+                        int pieces = 0;
+                        for (int at = 0; at < text.length(); at += 3000, pieces++) {
+                            Log.i(TAG, "liveroom[" + pieces + "] " + text.substring(at, Math.min(text.length(), at + 3000)));
+                        }
+                        Log.i(TAG, "ok liveroom " + hidden.size() + " rooms");
+                        break;
+                    }
                     case "windowviews": {
                         // Dialogs and bottom sheets can live in a separate WindowManager root.
                         // TikTok 47.0.3's comment sheet leaves MainActivity's own content view
@@ -2226,8 +2318,23 @@ public final class Probe extends Instrumentation {
             if (drawable instanceof android.graphics.drawable.ColorDrawable) {
                 out.append('#').append(Integer.toHexString(((android.graphics.drawable.ColorDrawable) drawable).getColor()));
             } else if (drawable instanceof android.graphics.drawable.GradientDrawable) {
-                android.content.res.ColorStateList colors = ((android.graphics.drawable.GradientDrawable) drawable).getColor();
+                android.graphics.drawable.GradientDrawable gradient = (android.graphics.drawable.GradientDrawable) drawable;
+                android.content.res.ColorStateList colors = gradient.getColor();
                 out.append('#').append(colors == null ? "none" : Integer.toHexString(colors.getDefaultColor()));
+                int[] stops = android.os.Build.VERSION.SDK_INT >= 24 ? gradient.getColors() : null;
+                if (stops != null) {
+                    out.append(" stops=");
+                    for (int i = 0; i < stops.length; i++) out.append(i == 0 ? "" : "/").append(Integer.toHexString(stops[i]));
+                    out.append(' ').append(gradient.getOrientation()).append(" alpha=").append(gradient.getAlpha());
+                }
+            } else if (drawable.getClass().getSimpleName().equals("BarShade")) {
+                try {
+                    java.lang.reflect.Method color = drawable.getClass().getDeclaredMethod("color");
+                    color.setAccessible(true);
+                    out.append(" paints=").append(Integer.toHexString((Integer) color.invoke(drawable)));
+                } catch (ReflectiveOperationException e) {
+                    out.append(" paints=?");
+                }
             } else if (drawable instanceof android.graphics.drawable.LayerDrawable && depth < 3) {
                 android.graphics.drawable.LayerDrawable layers = (android.graphics.drawable.LayerDrawable) drawable;
                 out.append('[');
@@ -2292,6 +2399,15 @@ public final class Probe extends Instrumentation {
                 }
             }
             return null;
+        }
+
+        /** A view for the liveroom action: class, id, place on screen and top padding. */
+        private static String liveRoomView(android.view.View view, android.content.res.Resources resources) {
+            int[] at = new int[2];
+            view.getLocationInWindow(at);
+            return view.getClass().getSimpleName() + " id=" + (resources == null ? view.getId() : idName(view, resources))
+                    + " at=" + at[0] + "," + at[1] + " h=" + view.getHeight() + " padTop=" + view.getPaddingTop()
+                    + " attached=" + view.isAttachedToWindow();
         }
 
         /** The resource entry name of a view's id, the raw number for an id without one. */

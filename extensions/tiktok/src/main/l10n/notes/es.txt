@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, las salas siguientes también mantienen la sombra bajo el reloj. Antes la franja volvía a verse clara después de los primeros LIVE que pasabas (#137).
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, cada sala a la que pasas llega hasta debajo del reloj con la sombra detrás. Algunas salas mantenían ahí una franja negra, y después de los primeros LIVE la franja podía volver a verse clara (#137).
+
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, ocultar los controles en un LIVE ya no deja una franja oscura bajo el reloj, y la fila de arriba del panel lateral que abres deslizando a la izquierda queda por debajo del reloj (#137).
 
 * **TikTok:** Ocultar la burbuja de Tako ahora también oculta la burbuja de Tako en la esquina inferior derecha de los videos del feed, que algunas cuentas ven en lugar de la que está encima del botón de perfil (#115).
 

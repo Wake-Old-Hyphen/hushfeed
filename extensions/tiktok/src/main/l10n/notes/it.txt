@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Con Mostra il LIVE sotto la barra di stato attivo, anche le stanze successive tengono l'ombra sotto l'orologio. Prima la striscia tornava chiara dopo i primi LIVE scorsi (#137).
+* **TikTok:** Con Mostra il LIVE sotto la barra di stato attivo, ogni stanza a cui passi arriva fin sotto l'orologio con l'ombra dietro. Alcune stanze tenevano lì una striscia nera, e dopo i primi LIVE la striscia poteva tornare chiara (#137).
+
+* **TikTok:** Con Mostra il LIVE sotto la barra di stato attivo, la vista pulita in un LIVE non lascia più una striscia scura sotto l'orologio, e la riga in alto del pannello laterale che apri scorrendo a sinistra resta più in basso dell'orologio (#137).
 
 * **TikTok:** Nascondi la bolla di Tako ora nasconde anche la bolla di Tako nell'angolo in basso a destra dei video del feed, che alcuni account vedono al posto di quella sopra il pulsante del profilo (#115).
 

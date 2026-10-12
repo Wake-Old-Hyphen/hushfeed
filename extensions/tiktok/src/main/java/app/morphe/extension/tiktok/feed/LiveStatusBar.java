@@ -72,6 +72,12 @@ public final class LiveStatusBar {
     private static final int MAX_VISITS = 200;
     /** Layout passes that look for the strip before giving up on a room that has none. */
     private static final int MAX_SEARCHES = 40;
+    /**
+     * Least time between two shade searches on one layer. A LIVE room lays out many times a second
+     * while it loads, so a budget spent per pass was gone before TikTok's shade could be found and
+     * some rooms kept a light strip under the clock (#137, S22). Spaced out, it lasts 20 seconds.
+     */
+    private static final long SHADE_RETRY_MS = 500;
     /** Views looked at for the LIVE on screen in the detail pager, which is deeper than a room. */
     private static final int MAX_DETAIL_VISITS = 2000;
     /**
@@ -205,6 +211,7 @@ public final class LiveStatusBar {
             // The room's views are laid out after it resumes, and its insets are only known once
             // the window is attached, so the strip is looked for on the layout passes that follow.
             decor.getViewTreeObserver().addOnGlobalLayoutListener(room);
+            decor.getViewTreeObserver().addOnPreDrawListener(room.coverWatch);
             if (!hideBar) decor.getViewTreeObserver().addOnPreDrawListener(room.shadeWatch);
             HookStatus.bound(HOOK_FAMILY, hideBar ? "LIVE room status bar hidden" : "LIVE room under the status bar");
         } catch (Throwable failure) {
@@ -221,6 +228,7 @@ public final class LiveStatusBar {
             if (window == null) return;
             View decor = window.getDecorView();
             decor.getViewTreeObserver().removeOnGlobalLayoutListener(room);
+            decor.getViewTreeObserver().removeOnPreDrawListener(room.coverWatch);
             decor.getViewTreeObserver().removeOnPreDrawListener(room.shadeWatch);
             room.putBack();
             if (!room.barHidden) {
@@ -331,6 +339,24 @@ public final class LiveStatusBar {
     }
 
     /**
+     * The room pager, on the way up from one room's stream: the first view holding two children
+     * of one kind with a stream in each. On 47.1.4 that's the room pager with a page per room.
+     * Null while it holds a single room.
+     */
+    static ViewGroup findPager(View stream, View content, int videoId) {
+        for (View at = stream; at != content && at.getParent() instanceof ViewGroup; at = (View) at.getParent()) {
+            ViewGroup parent = (ViewGroup) at.getParent();
+            int rooms = 0;
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                View child = parent.getChildAt(i);
+                if (child.getClass() == at.getClass() && child.findViewById(videoId) != null) rooms++;
+            }
+            if (rooms >= 2) return parent;
+        }
+        return null;
+    }
+
+    /**
      * The LIVE stream on screen in the detail pager, or null. The pages either side of the one in
      * view are laid out too, so only a stream across the middle of the window counts.
      */
@@ -373,6 +399,36 @@ public final class LiveStatusBar {
                     if (child.getVisibility() != View.VISIBLE || child.getTop() != 0) continue;
                     if (child.getClass() == View.class && child.getBackground() != null
                             && child.getWidth() == content.getWidth() && isBar(child.getHeight(), bars)) {
+                        return child;
+                    }
+                    if (child instanceof ViewGroup) next.add((ViewGroup) child);
+                }
+            }
+            level = next;
+        }
+        return null;
+    }
+
+    /**
+     * TikTok's Clear display cover on a room's page: a plain view exactly a status bar tall across
+     * the top of the page, shown while Clear display is on. On 47.1.4 it sits beside the layout
+     * with the stream and the controls (read off the S22, 2026-10-11). Looked for three levels
+     * down, only along views that start at the top.
+     */
+    static View findPageCover(View page, int[] bars) {
+        if (!(page instanceof ViewGroup)) return null;
+        ArrayDeque<ViewGroup> level = new ArrayDeque<>();
+        level.add((ViewGroup) page);
+        int visited = 0;
+        for (int depth = 0; depth < 3 && !level.isEmpty(); depth++) {
+            ArrayDeque<ViewGroup> next = new ArrayDeque<>();
+            for (ViewGroup group : level) {
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    if (visited++ >= MAX_VISITS) return null;
+                    View child = group.getChildAt(i);
+                    if (child.getVisibility() != View.VISIBLE || child.getTop() != 0) continue;
+                    if (child.getClass() == View.class && child.getBackground() != null
+                            && child.getWidth() == page.getWidth() && isBar(child.getHeight(), bars)) {
                         return child;
                     }
                     if (child instanceof ViewGroup) next.add((ViewGroup) child);
@@ -511,14 +567,43 @@ public final class LiveStatusBar {
         /** The strip's color now: the shade's first color as drawn, or 0 while the shade is hidden. */
         int color() {
             View at = shade.get();
-            if (at == null || !at.isShown()) return 0;
+            if (at == null || !at.isShown() || at.getWidth() == 0 || at.getHeight() == 0) return 0;
             Drawable background = at.getBackground();
             if (!(background instanceof GradientDrawable)) return 0;
             if (background != read) {
                 read = background;
                 first = firstColor((GradientDrawable) background);
             }
-            return asDrawn(first, background.getAlpha(), at.getAlpha());
+            return asDrawn(first, background.getAlpha(), drawnAlpha(at));
+        }
+
+        /**
+         * The shade's alpha times that of every view between it and the layer this fills. Clear
+         * display in a LIVE fades the controls, and a strip that went by the shade's own alpha
+         * alone stayed shaded under the clock once the rest of the top was clear (#137).
+         */
+        private float drawnAlpha(View at) {
+            View layer = getCallback() instanceof View ? (View) getCallback() : null;
+            if (layer == null) return at.getAlpha();
+            float alpha = 1f;
+            for (View up = at; up != null && up != layer; up = up.getParent() instanceof View ? (View) up.getParent() : null) {
+                alpha *= up.getAlpha();
+            }
+            return alpha;
+        }
+
+        /**
+         * Whether the shade it follows is still laid out. On 47.1.4 TikTok shows one shade as a
+         * room opens and swaps it for another a moment later, putting the first out of the layout,
+         * so a fill left on the first stayed clear over a shaded room (S22, #137).
+         */
+        boolean following() {
+            View at = shade.get();
+            if (at == null || !at.isAttachedToWindow()) return false;
+            for (View up = at; up != null; up = up.getParent() instanceof View ? (View) up.getParent() : null) {
+                if (up.getVisibility() == View.GONE) return false;
+            }
+            return true;
         }
 
         /** Whether the shade showed, hid or faded since the strip was last drawn. */
@@ -569,6 +654,16 @@ public final class LiveStatusBar {
     }
 
     /** One visit to a LIVE room with its bar hidden. It holds its views weakly. */
+    /** The shade searches spent on one layer and when the last one ran. */
+    private static final class ShadeSearches {
+        int spent;
+        long last;
+
+        @Override public String toString() {
+            return spent + " last at " + last;
+        }
+    }
+
     private static final class Room implements ViewTreeObserver.OnGlobalLayoutListener {
         final int cutout;
         /** Whether the bar was hidden, or only the strip taken away under a bar left showing. */
@@ -579,13 +674,22 @@ public final class LiveStatusBar {
         private final WeakReference<View> decor;
         /** The LIVE page's stream in the detail pager, or nothing for a room of its own. */
         final WeakReference<View> stream;
+        /** The strip found by the search over the window, where there's no stream to go by. */
         private Offset lifted;
+        /**
+         * The strips taken from above each room's stream, by the view that held them. On the S22
+         * every room is a page of the room pager, and the pager pads a page as it binds a room to
+         * it, so some rooms kept a black band under the clock (#137).
+         */
+        private final WeakHashMap<View, Offset> strips = new WeakHashMap<>();
+        /** The room pager, found from a stream once it holds two rooms. */
+        private WeakReference<ViewGroup> pager = new WeakReference<>(null);
         private int searches, relifts, coverSearches;
         /**
          * Shade searches spent on each layer held lower. One budget for the whole visit ran out
          * in the first few rooms, so rooms further on kept a light strip under the clock (#137).
          */
-        private final WeakHashMap<View, Integer> shadeSearches = new WeakHashMap<>();
+        private final WeakHashMap<View, ShadeSearches> shadeSearches = new WeakHashMap<>();
         private boolean shadeWatchFailed;
         /** Redraws a strip whose shade TikTok showed, hid or faded since the last frame. */
         final ViewTreeObserver.OnPreDrawListener shadeWatch = () -> {
@@ -601,6 +705,25 @@ public final class LiveStatusBar {
                 Logger.printException(() -> "Could not follow the LIVE room's top shade", failure);
             }
             return true;
+        };
+        /**
+         * TikTok's covers over the top of a room's page, hidden while its strip is away. Clear
+         * display (a swipe right in the room) shows a black view a bar tall across the top of the
+         * page, so the band under the clock came back over the stream (#137, read off the S22).
+         */
+        private final WeakHashMap<View, Boolean> pageCovers = new WeakHashMap<>();
+        private boolean coverWatchFailed;
+        /** Hides a page cover TikTok showed again without a layout pass, before it's drawn. */
+        final ViewTreeObserver.OnPreDrawListener coverWatch = () -> {
+            if (this.left || coverWatchFailed) return true;
+            try {
+                return !hidePageCovers();
+            } catch (Throwable failure) {
+                coverWatchFailed = true;
+                HookStatus.threw(HOOK_FAMILY, "cover watch", failure);
+                Logger.printException(() -> "Could not keep the LIVE room's Clear display cover away", failure);
+                return true;
+            }
         };
         private long fightStart;
         private boolean fought;
@@ -630,6 +753,7 @@ public final class LiveStatusBar {
             try {
                 keepCoverAway();
                 keepStripAway();
+                keepPageCoversAway();
                 if (!barHidden) keepControlsBelowBar();
             } catch (Throwable failure) {
                 searches = MAX_SEARCHES;
@@ -641,21 +765,15 @@ public final class LiveStatusBar {
         }
 
         private void keepStripAway() {
+            if (stream == null && videoId() != 0) {
+                keepRoomStripsAway();
+                return;
+            }
             if (lifted != null) {
                 View target = lifted.view.get();
                 // TikTok put the strip back, on a relayout of its own: a panel opening or
                 // closing in the room does it.
-                if (target == null || fought || lifted.current(target) != lifted.value) return;
-                long now = SystemClock.uptimeMillis();
-                if (now - fightStart > FIGHT_WINDOW_MS) {
-                    fightStart = now;
-                    relifts = 0;
-                }
-                if (++relifts > MAX_RELIFTS) {
-                    fought = true;
-                    Logger.printDebug(() -> "TikTok keeps putting the LIVE room's top strip back; leaving it");
-                    return;
-                }
+                if (target == null || fought || lifted.current(target) != lifted.value || !mayRelift()) return;
                 lifted.set(target, 0);
                 return;
             }
@@ -673,6 +791,114 @@ public final class LiveStatusBar {
             lifted = offset;
             offset.set(target, 0);
             HookStatus.bound(HOOK_FAMILY, "LIVE room top strip taken away");
+        }
+
+        /**
+         * A room of its own: the strip is looked for just above each room's stream, on every page
+         * of the room pager and on every pass, since a page gets its strip as a room is bound to
+         * it. The search over the window took the first view held down a bar's height, which on
+         * 47.1.4 is a panel shown while a room opens, and left every room page as it was.
+         */
+        private void keepRoomStripsAway() {
+            Activity room = activity.get();
+            View window = decor.get();
+            if (fought || room == null || window == null) return;
+            View content = room.findViewById(android.R.id.content);
+            if (content == null || content.getHeight() == 0) return;
+            ViewGroup rooms = pager.get();
+            if (rooms == null || !rooms.isAttachedToWindow()) {
+                View first = content.findViewById(videoId);
+                if (first == null) return;
+                rooms = findPager(first, content, videoId);
+                pager = new WeakReference<>(rooms);
+                if (rooms == null) {
+                    liftAbove(first, content, barHeights(window));
+                    return;
+                }
+            }
+            int[] bars = barHeights(window);
+            for (int i = 0; i < rooms.getChildCount() && !fought; i++) {
+                View shown = rooms.getChildAt(i).findViewById(videoId);
+                if (shown != null) liftAbove(shown, content, bars);
+            }
+        }
+
+        /** Takes the strip above one room's stream, once, or again when TikTok has put it back. */
+        private void liftAbove(View shown, View content, int[] bars) {
+            Offset strip = stripAbove(shown, content, bars);
+            View target = strip == null ? null : strip.view.get();
+            if (target == null) return;
+            if (strips.containsKey(target) && !mayRelift()) return;
+            strips.put(target, strip);
+            strip.set(target, 0);
+            HookStatus.bound(HOOK_FAMILY, "LIVE room top strip taken away");
+        }
+
+        /** Counts a strip TikTok put back; false once it has done so too often to keep up with. */
+        private boolean mayRelift() {
+            long now = SystemClock.uptimeMillis();
+            if (now - fightStart > FIGHT_WINDOW_MS) {
+                fightStart = now;
+                relifts = 0;
+            }
+            if (++relifts > MAX_RELIFTS) {
+                fought = true;
+                Logger.printDebug(() -> "TikTok keeps putting the LIVE room's top strip back; leaving it");
+                return false;
+            }
+            return true;
+        }
+
+        /** Finds the cover on each page whose strip is away and hides every cover found so far. */
+        private void keepPageCoversAway() {
+            View window = decor.get();
+            if (window == null) return;
+            int[] bars = null;
+            for (View page : liftedTargets()) {
+                if (!page.isAttachedToWindow()) continue;
+                if (bars == null) bars = barHeights(window);
+                View found = findPageCover(page, bars);
+                if (found != null && pageCovers.put(found, Boolean.TRUE) == null) {
+                    HookStatus.bound(HOOK_FAMILY, "LIVE room Clear display cover taken away");
+                }
+            }
+            hidePageCovers();
+        }
+
+        /** Hides the page covers TikTok is showing; true when one was. */
+        private boolean hidePageCovers() {
+            boolean hid = false;
+            for (View known : pageCovers.keySet()) {
+                if (known != null && known.getVisibility() == View.VISIBLE && known.isAttachedToWindow()) {
+                    known.setVisibility(View.INVISIBLE);
+                    hid = true;
+                }
+            }
+            return hid;
+        }
+
+        /** The views that hold a strip this took away and haven't had it put back. */
+        private List<View> liftedTargets() {
+            List<View> targets = new ArrayList<>();
+            View target = lifted == null ? null : lifted.view.get();
+            if (target != null && lifted.current(target) == 0) targets.add(target);
+            for (Map.Entry<View, Offset> entry : strips.entrySet()) {
+                View held = entry.getKey();
+                if (held != null && entry.getValue().current(held) == 0) targets.add(held);
+            }
+            return targets;
+        }
+
+        /** The stream's view id, looked up once; 0 when TikTok has none. */
+        private int videoId() {
+            if (videoId < 0) {
+                Activity room = activity.get();
+                if (room == null) return 0;
+                videoId = videoContainerForTests != 0 ? videoContainerForTests
+                        : room.getResources().getIdentifier(VIDEO_CONTAINER, "id", room.getPackageName());
+                if (videoId == 0) HookStatus.missingViewId(HOOK_FAMILY, VIDEO_CONTAINER);
+            }
+            return videoId;
         }
 
         /**
@@ -708,31 +934,28 @@ public final class LiveStatusBar {
          * button stay clear of the clock (#137). With the strip back, they go back up with it.
          */
         private void keepControlsBelowBar() {
-            View target = lifted == null ? null : lifted.view.get();
-            if (target == null || lifted.current(target) != 0) {
+            List<View> targets = liftedTargets();
+            if (targets.isEmpty()) {
                 raiseControls();
                 return;
             }
-            if (videoId < 0) {
-                Activity room = activity.get();
-                if (room == null) return;
-                videoId = videoContainerForTests != 0 ? videoContainerForTests
-                        : room.getResources().getIdentifier(VIDEO_CONTAINER, "id", room.getPackageName());
-                if (videoId == 0) HookStatus.missingViewId(HOOK_FAMILY, VIDEO_CONTAINER);
-            }
-            if (videoId == 0) return;
-            for (View layer : findControls(target, videoId)) {
-                Integer own = lowered.get(layer);
-                if (own == null) {
-                    own = layer.getPaddingTop();
-                    lowered.put(layer, own);
-                    if (lowered.size() == 1) HookStatus.bound(HOOK_FAMILY, "LIVE room controls kept below the bar");
-                } else if (layer.getPaddingTop() != own) {
-                    // Already a bar lower, or TikTok set a padding of its own.
-                    continue;
+            if (videoId() == 0) return;
+            for (View target : targets) {
+                Offset strip = strips.get(target);
+                int by = strip != null ? strip.value : lifted.value;
+                for (View layer : findControls(target, videoId)) {
+                    Integer own = lowered.get(layer);
+                    if (own == null) {
+                        own = layer.getPaddingTop();
+                        lowered.put(layer, own);
+                        if (lowered.size() == 1) HookStatus.bound(HOOK_FAMILY, "LIVE room controls kept below the bar");
+                    } else if (layer.getPaddingTop() != own) {
+                        // Already a bar lower, or TikTok set a padding of its own.
+                        continue;
+                    }
+                    loweredBy = by;
+                    layer.setPadding(layer.getPaddingLeft(), own + loweredBy, layer.getPaddingRight(), layer.getPaddingBottom());
                 }
-                loweredBy = lifted.value;
-                layer.setPadding(layer.getPaddingLeft(), own + loweredBy, layer.getPaddingRight(), layer.getPaddingBottom());
             }
             shadeUnderBar();
         }
@@ -740,7 +963,8 @@ public final class LiveStatusBar {
         /**
          * TikTok's top shade is part of the controls, so it went a bar lower with them and the
          * strip under the clock showed lighter than the rest of the top (#137). Each layer held
-         * lower gets a fill across that strip that follows the shade once it's found; a layer
+         * lower gets a fill across that strip that follows the shade once it's found, and is
+         * looked for again when TikTok puts that shade out of the layout for another; a layer
          * with a background of TikTok's own is left alone.
          */
         private void shadeUnderBar() {
@@ -748,10 +972,25 @@ public final class LiveStatusBar {
                 View layer = entry.getKey();
                 if (!(layer instanceof ViewGroup) || layer.getPaddingTop() != entry.getValue() + loweredBy) continue;
                 Drawable background = layer.getBackground();
-                if (background instanceof BarShade ? ((BarShade) background).height == loweredBy : background != null) continue;
-                Integer spent = shadeSearches.get(layer);
-                if (spent != null && spent >= MAX_SEARCHES) continue;
-                shadeSearches.put(layer, spent == null ? 1 : spent + 1);
+                if (background instanceof BarShade) {
+                    BarShade fill = (BarShade) background;
+                    if (fill.height == loweredBy && fill.following()) continue;
+                } else if (background != null) {
+                    continue;
+                }
+                // Until it's laid out a bar lower nothing in it is where the shade is looked for,
+                // and a room scrolled away can't show a strip.
+                if (layer.isLayoutRequested() || !layer.isAttachedToWindow()) continue;
+                ShadeSearches searches = shadeSearches.get(layer);
+                long now = SystemClock.uptimeMillis();
+                if (searches == null) {
+                    searches = new ShadeSearches();
+                    shadeSearches.put(layer, searches);
+                } else if (searches.spent >= MAX_SEARCHES || now - searches.last < SHADE_RETRY_MS) {
+                    continue;
+                }
+                searches.spent++;
+                searches.last = now;
                 View shade = findShade((ViewGroup) layer);
                 if (shade == null || Color.alpha(firstColor((GradientDrawable) shade.getBackground())) == 0) continue;
                 layer.setBackground(new BarShade(shade, loweredBy));
@@ -778,7 +1017,17 @@ public final class LiveStatusBar {
             View known = cover.get();
             if (known != null && known.getVisibility() == View.INVISIBLE) known.setVisibility(View.VISIBLE);
             cover = new WeakReference<>(null);
+            for (View pageCover : pageCovers.keySet()) {
+                if (pageCover != null && pageCover.getVisibility() == View.INVISIBLE) pageCover.setVisibility(View.VISIBLE);
+            }
+            pageCovers.clear();
             raiseControls();
+            for (Map.Entry<View, Offset> entry : strips.entrySet()) {
+                View held = entry.getKey();
+                if (held != null && entry.getValue().current(held) == 0) entry.getValue().set(held, entry.getValue().value);
+            }
+            strips.clear();
+            pager = new WeakReference<>(null);
             if (lifted == null) return;
             View target = lifted.view.get();
             if (target != null && lifted.current(target) == 0) lifted.set(target, lifted.value);

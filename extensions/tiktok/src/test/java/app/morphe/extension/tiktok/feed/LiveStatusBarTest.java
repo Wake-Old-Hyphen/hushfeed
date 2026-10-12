@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -353,6 +354,219 @@ public class LiveStatusBarTest {
         layOut(live);
         assertTrue("a room further on got no shade under the clock", later.getBackground() instanceof LiveStatusBar.BarShade);
         room.pause().stop().destroy();
+    }
+
+    /**
+     * #137, seen on the S22 after the strip fix: a LIVE room lays out many times a second while it
+     * loads, and TikTok's shade isn't there to find yet, so the layer's 40 searches were gone in a
+     * second and the room kept a light strip under the clock once the shade showed.
+     */
+    @Test public void aBusyRoomStillFindsItsShadeOnceTikTokShowsIt() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        View shade = shade(live, controls);
+        shade.setVisibility(View.GONE);
+        room.start().resume().visible();
+        for (int pass = 0; pass < 100; pass++) layOut(live);
+        assertEquals("a shade not there yet got a fill", null, controls.getBackground());
+
+        shade.setVisibility(View.VISIBLE);
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(600));
+        layOut(live);
+        assertTrue("the busy room's searches ran out before the shade showed",
+                controls.getBackground() instanceof LiveStatusBar.BarShade);
+        room.pause().stop().destroy();
+    }
+
+    /**
+     * #137, seen on the S22: TikTok shows one shade as a room opens and a moment later puts it out
+     * of the layout for another. The fill stayed on the first, so it drew nothing and the strip
+     * under the clock was clear over a shaded room.
+     */
+    @Test public void whenTikTokSwapsItsShadeTheFillFollowsTheNewOne() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        View opening = shade(live, controls);
+        room.start().resume().visible();
+        layOut(live);
+        layOut(live);
+        LiveStatusBar.BarShade first = (LiveStatusBar.BarShade) controls.getBackground();
+        assertEquals(0x33000000, first.color());
+
+        opening.setVisibility(View.GONE);
+        View swapped = new View(live);
+        swapped.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {0x4D000000, Color.TRANSPARENT}));
+        ((FrameLayout) opening.getParent()).addView(swapped, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100));
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(600));
+        layOut(live);
+        layOut(live);
+
+        assertTrue(controls.getBackground() instanceof LiveStatusBar.BarShade);
+        assertEquals("the fill stayed on the shade TikTok put away", 0x4D000000,
+                ((LiveStatusBar.BarShade) controls.getBackground()).color());
+        room.pause().stop().destroy();
+    }
+
+    /**
+     * #137, from BynchPOP: Clear display in a LIVE (swipe right) fades the controls with the shade
+     * in them, but the strip under the clock stayed shaded, a dark band over a clear room.
+     */
+    @Test public void clearDisplayTakesTheStripsShadeAwayWithTheControls() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        FrameLayout stream = heldStream(live, bar);
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout controls = page(live, stream);
+        View shade = shade(live, controls);
+        room.start().resume().visible();
+        layOut(live);
+        layOut(live);
+        LiveStatusBar.BarShade fill = (LiveStatusBar.BarShade) controls.getBackground();
+        assertEquals(0x33000000, fill.color());
+
+        View row = (View) shade.getParent();
+        row.setAlpha(0f);
+        assertEquals("the controls faded out and the strip stayed shaded", 0, fill.color());
+        row.setAlpha(0.5f);
+        assertEquals("the strip didn't fade with the controls", 0x1A000000, fill.color());
+        row.setAlpha(1f);
+        assertEquals(0x33000000, fill.color());
+        room.pause().stop().destroy();
+    }
+
+    /**
+     * #137, from BynchPOP and read off the S22: Clear display in a LIVE shows a black view a bar
+     * tall across the top of the room's page, so the band under the clock came back over the
+     * stream. It stays hidden while the page's strip is away, and goes back as the room closes.
+     */
+    @Test public void clearDisplaysBlackBandStaysAwayWithTheStrip() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout pager = new FrameLayout(live);
+        live.setContentView(pager);
+        FrameLayout first = roomPage(live, pager, bar);
+        roomPage(live, pager, bar);
+        View band = new View(live);
+        band.setBackgroundColor(Color.BLACK);
+        band.setVisibility(View.GONE);
+        ((FrameLayout) first.getChildAt(0)).addView(band,
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, bar));
+        room.start().resume().visible();
+        layOut(live);
+        layOut(live);
+        assertEquals(0, first.getPaddingTop());
+        assertEquals(View.GONE, band.getVisibility());
+
+        band.setVisibility(View.VISIBLE);
+        layOut(live);
+        assertEquals("Clear display's band covered the stream under the clock", View.INVISIBLE, band.getVisibility());
+
+        band.setVisibility(View.VISIBLE);
+        assertTrue("a band shown again without a layout pass wasn't kept out of the frame",
+                live.getWindow().getDecorView().getViewTreeObserver().dispatchOnPreDraw());
+        assertEquals(View.INVISIBLE, band.getVisibility());
+
+        room.pause();
+        assertEquals("leaving kept TikTok's band hidden", View.VISIBLE, band.getVisibility());
+        room.stop().destroy();
+    }
+
+    /**
+     * #137, seen on the S22 with 0.71.3: every room is a page of the room pager, and the pager
+     * pads a page as it binds a room to it. The search over the window took the panel TikTok
+     * shows while a room opens, the first view held down a bar's height, and left every page
+     * alone, so some rooms kept a black band under the clock. The strip is looked for above each
+     * room's stream now, on every page. TikTok's side panel (swipe left in a room) is held down a
+     * bar's height too, and BynchPOP saw its top row under the clock, so it's left alone as well.
+     */
+    @Test public void everyRoomPageLosesItsStripAndTikToksPanelsAreLeftAlone() {
+        Settings.LIVE_UNDER_STATUS_BAR.save(true);
+        followFromTheMainActivity();
+        int bar = platformBar();
+        ActivityController<LivePlayActivity> room = Robolectric.buildActivity(LivePlayActivity.class).create();
+        LivePlayActivity live = room.get();
+        LiveStatusBar.videoContainerForTests = View.generateViewId();
+        FrameLayout root = new FrameLayout(live);
+        FrameLayout opening = new FrameLayout(live);
+        opening.setPadding(0, bar, 0, 0);
+        root.addView(opening, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 626));
+        FrameLayout side = new FrameLayout(live);
+        side.setPadding(0, bar, 0, 0);
+        root.addView(side, new FrameLayout.LayoutParams(939, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END));
+        FrameLayout pager = new FrameLayout(live);
+        root.addView(pager, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        live.setContentView(root);
+        FrameLayout first = roomPage(live, pager, 0);
+        FrameLayout second = roomPage(live, pager, bar);
+        shade(live, controlsOf(second));
+        room.start().resume().visible();
+        layOut(live);
+        layOut(live);
+
+        assertEquals("the opening panel was taken for the strip", bar, opening.getPaddingTop());
+        assertEquals("the side panel's top row went up under the clock", bar, side.getPaddingTop());
+        assertEquals("a room without a strip was moved", 0, first.getPaddingTop());
+        assertEquals("a room without a strip had its controls lowered", 7, controlsOf(first).getPaddingTop());
+        assertEquals("the next room kept its strip", 0, second.getPaddingTop());
+        assertEquals("the next room's controls went up under the clock", 7 + bar, controlsOf(second).getPaddingTop());
+        assertTrue("the next room got no shade under the clock",
+                controlsOf(second).getBackground() instanceof LiveStatusBar.BarShade);
+
+        FrameLayout later = roomPage(live, pager, bar);
+        layOut(live);
+        assertEquals("a page the pager made later kept its strip", 0, later.getPaddingTop());
+        assertEquals(7 + bar, controlsOf(later).getPaddingTop());
+
+        // The pager binding another room to a page pads it again.
+        first.setPadding(0, bar, 0, 0);
+        layOut(live);
+        assertEquals("a page padded as a room was bound kept its strip", 0, first.getPaddingTop());
+        assertEquals(7 + bar, controlsOf(first).getPaddingTop());
+
+        room.pause();
+        assertEquals("leaving didn't give the rooms their strip back", bar, second.getPaddingTop());
+        assertEquals(bar, later.getPaddingTop());
+        assertEquals(bar, first.getPaddingTop());
+        assertEquals("leaving didn't give the controls back", 7, controlsOf(second).getPaddingTop());
+        assertEquals(null, controlsOf(second).getBackground());
+        assertEquals(bar, opening.getPaddingTop());
+        assertEquals(bar, side.getPaddingTop());
+        room.stop().destroy();
+    }
+
+    /** A room page as 47.1.4 has it on the S22: held down by {@code strip}, the stream and controls inside. */
+    private static FrameLayout roomPage(Activity live, FrameLayout pager, int strip) {
+        FrameLayout page = new FrameLayout(live);
+        page.setPadding(0, strip, 0, 0);
+        pager.addView(page, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        page(live, page);
+        return page;
+    }
+
+    private static FrameLayout controlsOf(FrameLayout roomPage) {
+        return (FrameLayout) ((ViewGroup) roomPage.getChildAt(0)).getChildAt(1);
     }
 
     /** TikTok's top shade as 47.1.4 has it: a gradient across the top of a row in the controls. */

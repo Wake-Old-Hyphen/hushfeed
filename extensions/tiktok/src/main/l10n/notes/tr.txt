@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken sonraki odalar da saatin altındaki gölgeyi koruyor. Önceden ilk birkaç LIVE'dan sonra şerit yine açık görünüyordu (#137).
+* **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken kaydırdığın her oda, arkasında gölgeyle saatin altına kadar uzanıyor. Bazı odalarda orada siyah bir şerit kalıyordu, ilk birkaç LIVE'dan sonra da şerit yine açık görünebiliyordu (#137).
+
+* **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken bir LIVE'da temiz ekran artık saatin altında koyu bir şerit bırakmıyor, sola kaydırarak açtığın yan panelin üst sırası da saatin aşağısında kalıyor (#137).
 
 * **TikTok:** Tako balonunu gizle artık akış videolarının sağ alt köşesindeki Tako balonunu da gizliyor. Bazı hesaplar bu balonu profil düğmesinin üzerindeki yerine görüyor (#115).
 

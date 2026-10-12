@@ -1,6 +1,8 @@
 ## 0.71.3 (2026-10-11)
 
-* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, ruang-ruang berikutnya juga tetap berbayang di bawah jam. Sebelumnya strip itu kembali terang setelah beberapa LIVE pertama yang kamu gulir (#137).
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, setiap ruang yang kamu gulir kini sampai ke bawah jam dengan bayangan di belakangnya. Beberapa ruang sebelumnya tetap punya strip hitam di sana, dan setelah beberapa LIVE pertama strip itu bisa kembali terang (#137).
+
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, tampilan bersih di LIVE tidak lagi menyisakan strip gelap di bawah jam, dan baris atas panel samping yang kamu buka dengan menggeser ke kiri tetap berada di bawah jam, tidak tertimpa (#137).
 
 * **TikTok:** Sembunyikan gelembung Tako sekarang juga menyembunyikan gelembung Tako di pojok kanan bawah video feed, yang muncul di sebagian akun sebagai ganti gelembung di atas tombol profil (#115).
 
