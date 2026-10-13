@@ -6,10 +6,9 @@
 # ==========================================
 # HUSHFEED CONFLICT RESOLUTION
 # ==========================================
-# We disable these Hushfeed patches so Nai64 can cleanly apply the 
-# Netherlands profile without double-hooking the same Android methods.
 hushfeed_disabled:
-  
+  - "SIM spoof"
+  - "Region spoof"
 
 # ==========================================
 # HUSHFEED OPTIONS
@@ -70,11 +69,6 @@ patches:
     enabled: true
     options:
       timeZoneId: "Europe/Amsterdam"
-
-  - name: "Spoof Locale"
-    enabled: true
-    options:
-      spoofLocaleTag: "en-US"
 
   - name: "Spoof SIM Country"
     enabled: true
@@ -142,7 +136,10 @@ patches:
   - name: "Hide Hardware Address"
     enabled: true
 
-  # --- Explicitly Disabled (Handled by Hushfeed or High Risk) ---
+  # --- Explicitly Disabled ---
+  - name: "Spoof Locale"
+    enabled: false
+    note: "CRASHES Morphe smali compiler on 47.1.4 (GetterSpoofer foldLocaleGetDefault empty collection)"
   - name: "Empty Clipboard Report"
     enabled: false
     note: "Hushfeed Device privacy guard owns clipboard"
@@ -167,6 +164,7 @@ patches:
   - name: "Spoof Build Fingerprint"
     enabled: false
     note: "High risk: hardware spoofing triggers anti-fraud"
+  # "Spoof Android ID" removed entirely per request (unlisted = disabled).
 
 # ==========================================
 # KVELD9 UNIVERSAL PATCHES (allowlist: only these run;
@@ -181,8 +179,8 @@ kveld9_patches:
     options:
       stripBootPermission: true
       disableBootReceivers: true
-      disableWorkManager: false     # ← FIXED: kept true to prevent DataTransport crash
-      stripWakeLock: false          # keeps playback wakelocks alive
+      disableWorkManager: false     # kept false to prevent DataTransport crash
+      stripWakeLock: false
 
   - name: "DPI Resource Slimmer"
     enabled: true
@@ -203,7 +201,7 @@ kveld9_patches:
   - name: "Universal Hosts Blocker"
     enabled: true
     options:
-      hostsFile: "build/hosts-blocklist.txt"   # fetched by the workflow at build time
+      hostsFile: "build/hosts-blocklist.txt"
       sinkIp: "0.0.0.0"
       matchSubdomains: true
 
@@ -219,7 +217,7 @@ kveld9_patches:
       stripNotifications: true
       stripCamera: true
       stripMicrophone: true
-      stripMediaAndStorage: false   # keeps save-to-gallery working
+      stripMediaAndStorage: false
       stripLocation: true
       stripContacts: true
       stripCalendar: true
@@ -234,13 +232,13 @@ kveld9_patches:
       disableServices: true
       disableReceivers: true
       injectOptOutFlags: true
-      disableFirebaseInit: false        # Nai64 owns Firebase auto-init
-      disablePushServices: false        # keeps notifications working
+      disableFirebaseInit: false
+      disablePushServices: false
       disableGoogleAnalytics: true
       disableMetaAnalytics: true
       disableCrashDetectors: true
-      disableDeviceIdProviders: false   # login-safety: off
-      disableMlKit: false               # scanner-safety: off
+      disableDeviceIdProviders: false
+      disableMlKit: false
       disableAdStartupInitializers: false
 
   - name: "Universal WebP Asset Optimizer"
@@ -248,4 +246,4 @@ kveld9_patches:
     options:
       stripExif: true
       stripXmp: true
-      stripIcc: false               # preserves color fidelity
+      stripIcc: false
