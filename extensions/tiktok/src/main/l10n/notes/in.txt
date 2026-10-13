@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Unduhan punya sakelar baru di bawah Kualitas unduhan video: Tanyakan kualitas setiap kali menyimpan. Jika aktif, Unduh menampilkan kualitas yang tersedia untuk video, dengan ukuran yang diberikan TikTok untuk masing-masing, lalu menyimpan yang Anda pilih. Otomatis, yaitu file TikTok sendiri, selalu ada di urutan pertama. Kualitas yang Anda atur tetap sama untuk penyimpanan berikutnya.
+
+* **TikTok:** Sakelar baru di samping Tekan lama, Menu tekan lama lengkap di video kreator, membuat tekan lama pada video yang kamu buka dari profil seseorang membuka menu lengkap yang sama seperti di Untuk Kamu, bukan menu bagikan yang kecil (#120).
+
+* **TikTok:** Sakelar baru di halaman Menu bagikan, Salin tautan dengan sekali tekan Bagikan, membuat tekanan pada Bagikan di bawah video menyalin tautan video itu, dibersihkan seperti tautan yang dibagikan. Tekanan kedua tepat setelahnya membuka menu bagikan seperti biasa.
+
+* **TikTok:** Senyapkan feed saat komentar terbuka sekarang bernama Jeda video saat komentar terbuka, sesuai dengan fungsinya.
+
+* **TikTok:** Dengan Tampilan bersih otomatis tanpa jeda, video yang kamu buka dari pencarian, profil, hashtag, atau suara sekarang mulai dengan kontrol yang sudah tersembunyi, juga setelah kamu memunculkannya lagi di feed untuk membuka pencarian. Sebelumnya, tombol-tombolnya dan bilah pencarian di atas terlihat sekitar setengah detik (#84).
+
+* **TikTok:** Blokir kreator ini dan Simpan sampul sekarang berada di lingkaran abu-abu yang sama dengan tombol TikTok sendiri di lembar bagikan, dengan ikon seukuran dan sewarna tombol itu di mode terang dan gelap. Keduanya juga mendapat ikon di panel yang terbuka saat kamu menahan video feed, yang sebelumnya tidak ada.
+
+* **TikTok:** Ketuk dua kali punya pilihan baru, Percepat video ini, ketuk dua kali lagi untuk membatalkan. Video di layar diputar pada Kecepatan saat video ditahan (2x kecuali kamu memilih yang lain), ketuk dua kali berikutnya mengembalikan kecepatan sebelumnya, dan video berikutnya diputar dengan kecepatan biasanya (#136).
+
+* **TikTok:** Unduhan punya sakelar baru, Tombol Simpan sampul di menu bagikan. Saat aktif, menu bagikan video menampilkan Simpan sampul tepat setelah Unduh, jadi kamu menyimpan sampul hanya saat kamu mau, dan Unduh hanya menyimpan videonya. Saat nonaktif, Simpan sampulnya juga bekerja seperti sebelumnya (#146).
+
+* **TikTok:** Cari aktivitas yang dimuat juga mengalah saat mengalami masalah ketika TikTok memuat lanjutan daftar: pencarian ditutup dan permintaan TikTok tetap berjalan, bukan aplikasinya yang tertutup.
+
+* **TikTok:** AMOLED dark theme sekarang juga membuat hitam panel yang terbuka saat kamu menekan lama video di feed, serta halaman Aktivitas dan Pengikut baru di Kotak masuk. Sebelumnya semuanya tetap abu-abu gelap bawaan TikTok. Kartu di dalam panel tetap abu-abu agar tetap terlihat jelas.
+
+* **TikTok:** Network proxy sekarang menyebutkan koneksi mana yang tidak lewat proxy. Unduhan Hushfeed dan pencarian tautan pendek di balik Salin tautan terhubung langsung setelah pemeriksaan alamatnya sendiri, dan laporan diagnostik yang diekspor mencantumkan setiap rute di bawah Network routes.
+
+* **TikTok:** Di Android 6 sampai 8.1, pembaca layar sekarang membacakan judul halaman, judul bagian, dan judul layar pemulihan di pengaturan Hushfeed sebagai judul, sama seperti di Android yang lebih baru.
+
+* **TikTok:** Penerbitan rilis sekarang berjalan di Windows PowerShell 5.1 maupun PowerShell 7. Pemeriksaan tag ganda di 5.1 sekarang membaca setiap rilis di satu halaman, padahal sebelumnya menganggap seluruh halaman sebagai satu rilis, dan pemeriksaan penerbitan serta skrip lolos di kedua shell.
+
+* **TikTok:** Jeda video saat komentar terbuka sekarang menjeda video begitu komentar dibuka, termasuk pertama kali setelah TikTok dibuka dan pada video tanpa komentar. Sebelumnya, pembukaan pertama itu tetap memutar video sampai komentarnya selesai dimuat. Sekarang juga berfungsi jika Block author button tidak ikut dipilih saat patch.
+
+* **TikTok:** Geser untuk kecerahan dan volume tidak lagi mengganggu lembar komentar: menggeser di dekat tepi saat komentar terbuka akan menggulir komentar dan tidak mengubah kecerahan atau volume.
+
+* **TikTok:** Show commenter handle and region memakai negara yang ditampilkan feed untuk akun pemberi komentar jika komentarnya sendiri tidak membawa negara, yang sering dihilangkan TikTok. Salah satu videonya perlu sudah lewat di feed kamu.
+
+* **TikTok:** Jika Cari aktivitas yang dimuat mengalami masalah di salah satu pembaruan daftar TikTok, pencarian ditutup dan daftar milik TikTok tetap tampil, bukan aplikasinya yang tertutup.
+
+* **TikTok:** Penerbitan rilis sekarang mengunggah dan mengunduh aset melalui rilis yang sudah diperiksanya, bukan mencari rilis lagi berdasarkan tag, dan berhenti jika dua rilis memakai tag yang sama. Membangun ulang tag yang sudah terbit ditolak, dan langkah indeks membandingkan tanda terima dengan checksum salinan yang dihosting sebelum menyalinnya.
+
 * **TikTok:** Patch baru Show commenter handle and region: komentar bisa menampilkan @namapengguna pengomentar sebagai ganti nama tampilannya, dan negara yang diatur di akunnya setelah waktu komentar. Masing-masing punya tombol sendiri di Pengaturan Hushfeed > Komentar, dan keduanya mati di awal. Diadaptasi dari patch onlynazril milik na-x-ril.
 
 * **TikTok:** Gunakan font sistem kini juga bisa menampilkan teks TikTok dengan file .ttf atau .otf yang kamu impor. Nyalakan Gunakan font yang diimpor di Aplikasi, pilih filenya, lalu mulai ulang TikTok. Jika file dihapus atau tidak bisa dibaca, teks kembali seperti yang ditampilkan Gunakan font sistem. Diadaptasi dari patch onlynazril milik na-x-ril.

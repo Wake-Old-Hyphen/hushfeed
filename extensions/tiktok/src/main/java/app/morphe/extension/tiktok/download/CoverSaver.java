@@ -43,9 +43,20 @@ public final class CoverSaver {
     private CoverSaver() {
     }
 
-    /** Whether a Download saves the cover too. */
+    /** Whether a Download saves the cover too. Not while the share sheet has its own Save cover (#146). */
     static boolean besideEnabled() {
-        return SettingsStatus.advancedDownloadsEnabled && Settings.DOWNLOAD_COVER.get();
+        return SettingsStatus.advancedDownloadsEnabled && Settings.DOWNLOAD_COVER.get()
+                && !Settings.SAVE_COVER_BUTTON.get();
+    }
+
+    /** Whether the share sheet shows Save cover beside Download (#146). */
+    public static boolean buttonEnabled() {
+        return SettingsStatus.advancedDownloadsEnabled && Settings.SAVE_COVER_BUTTON.get();
+    }
+
+    /** Whether this post has a still cover to save, so a Save cover button has something to do. */
+    public static boolean hasCover(Object aweme) {
+        return !coverUrls(aweme).isEmpty();
     }
 
     /** The addresses of the largest still cover, best mirror first, or empty when there's none. */

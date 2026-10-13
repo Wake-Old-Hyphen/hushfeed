@@ -58,7 +58,7 @@
     },
     {
       "name": "Advanced downloads",
-      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, and save a story from its share sheet. Starts off. Turn it on in Hushfeed settings > Downloads.",
+      "description": "Adds more ways to save: pick the video quality, save full-size photos, the sound on its own or a photo post as one video, hold a profile picture or story to save it, and save a story or a video's cover from the share sheet. Starts off. Turn it on in Hushfeed settings > Downloads.",
       "category": "Downloads",
       "use": true,
       "dependencies": [
@@ -1297,7 +1297,7 @@
     },
     {
       "name": "Double-tap controls",
-      "description": "Lets a double tap on a video do nothing, open its comments, copy the link, save the sound or the frame on screen, or set a sleep timer instead of liking it, so you don't like videos by accident. Starts off. Pick an action in Hushfeed settings > Feed screen.",
+      "description": "Lets a double tap on a video do nothing, open its comments, copy the link, save the sound or the frame on screen, speed the video up, or set a sleep timer instead of liking it, so you don't like videos by accident. Starts off. Pick an action in Hushfeed settings > Feed screen.",
       "category": "Interaction",
       "use": true,
       "dependencies": [
@@ -3061,7 +3061,7 @@
     },
     {
       "name": "Long-press controls",
-      "description": "Lets a long press on a video like it, open the comments, copy the link, save the sound or the frame on screen, or set a sleep timer. Starts off. Pick an action in Hushfeed settings > Feed screen.",
+      "description": "Lets a long press on a video like it, open the comments, copy the link, save the sound or the frame on screen, or set a sleep timer, and can give a creator's videos For You's full long-press menu. Starts off. Pick an action in Hushfeed settings > Feed screen.",
       "category": "Interaction",
       "use": true,
       "dependencies": [
@@ -3180,7 +3180,7 @@
     },
     {
       "name": "Network proxy",
-      "description": "Sends TikTok's feed, search and comments through a proxy server you set up. Videos and LIVEs still load directly, and other apps aren't affected. Starts off. Turn it on in Hushfeed settings > Region, then restart TikTok.",
+      "description": "Sends TikTok's feed, search and comments through a proxy server you set up. Videos and LIVEs still load directly, and so do Hushfeed's own saves and short-link lookups. Other apps aren't affected. Starts off. Turn it on in Hushfeed settings > Region, then restart TikTok.",
       "category": "Settings",
       "use": true,
       "dependencies": [
@@ -4161,7 +4161,7 @@
     },
     {
       "name": "Share sheet tools",
-      "description": "Lets you hide people, apps and buttons you don't use from the share sheet, and add apps you do use. Starts off. Turn it on in Hushfeed settings > Share sheet.",
+      "description": "Lets you hide people, apps and buttons you don't use from the share sheet, add apps you do use, and copy a video's link with one press on Share. Starts off. Turn it on in Hushfeed settings > Share sheet.",
       "category": "Interaction",
       "use": true,
       "dependencies": [

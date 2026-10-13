@@ -57,6 +57,7 @@ public class SavedVideoArchiveTest {
     private static final byte[] VIDEO = new byte[]{0, 0, 0, 16, 'f', 't', 'y', 'p', 'i', 's', 'o', 'm', 0, 0, 0, 0};
     private final AtomicInteger requests = new AtomicInteger();
     private final AtomicInteger coverRequests = new AtomicInteger();
+    private final List<String> fetched = new java.util.concurrent.CopyOnWriteArrayList<>();
     private Hashtable<String, URLStreamHandler> handlers;
     private URLStreamHandler oldHttps;
     private ActivityController<PageActivity> owner;
@@ -93,6 +94,7 @@ public class SavedVideoArchiveTest {
             @Override protected URLConnection openConnection(URL url, java.net.Proxy proxy) throws java.io.IOException { return openConnection(url); }
             @Override protected URLConnection openConnection(URL url) {
                 requests.incrementAndGet();
+                fetched.add(url.getPath());
                 if (url.getPath().startsWith("/cover")) coverRequests.incrementAndGet();
                 return new FakeHttpsConnection(url) {
                     @Override public int getResponseCode() {
@@ -680,6 +682,139 @@ public class SavedVideoArchiveTest {
         assertFalse("progress alone refused a save TikTok could still make",
                 VideoDownloads.start(new BarePost(), owner.get()));
         assertEquals(0, requests.get());
+    }
+
+    /**
+     * Ask for the quality on each save, from Download: nothing is fetched before the pick, the
+     * pick is the file fetched, Cancel fetches nothing, Automatic is TikTok's own file, and the
+     * quality set in settings is untouched and taken again once the switch is off.
+     */
+    @Test public void thePickedQualityIsTheFileSaved() throws Exception {
+        boolean advanced = app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+        Settings.DOWNLOAD_VIDEO_QUALITY.save("highest");
+        Settings.DOWNLOAD_ASK_QUALITY.save(true);
+        QualityChoice.resetForTests();
+        try {
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            AlertDialog choice = (AlertDialog) ShadowDialog.getLatestDialog();
+            assertTrue(choice.isShowing());
+            assertEquals("fetched before the pick", 0, requests.get());
+            // Automatic, 1080p, 720p.
+            choice.getListView().performItemClick(null, 2, 2);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            awaitJobs();
+            assertEquals(List.of("/720.mp4"), fetched);
+            assertArrayEquals(VIDEO, Files.readAllBytes(new File(root, "alice/127.mp4").toPath()));
+
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            AlertDialog second = (AlertDialog) ShadowDialog.getLatestDialog();
+            assertNotSame(choice, second);
+            second.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("Cancel fetched something", 1, requests.get());
+
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            ((AlertDialog) ShadowDialog.getLatestDialog()).getListView().performItemClick(null, 0, 0);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            awaitJobs();
+            assertEquals(List.of("/720.mp4", "/clean.mp4"), fetched);
+
+            Settings.DOWNLOAD_ASK_QUALITY.save(false);
+            assertEquals("highest", Settings.DOWNLOAD_VIDEO_QUALITY.get());
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            awaitJobs();
+            assertEquals(List.of("/720.mp4", "/clean.mp4", "/1080.mp4"), fetched);
+        } finally {
+            app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = advanced;
+            Settings.DOWNLOAD_ASK_QUALITY.resetToDefault();
+            QualityChoice.resetForTests();
+        }
+    }
+
+    /**
+     * A second Download while a picked save runs is told so. On Automatic with nothing else on,
+     * the usual path would have handed that press to TikTok and made a second copy.
+     */
+    @Test public void aSecondPressWhileAPickedSaveRunsStartsNothingElse() throws Exception {
+        boolean advanced = app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_DETAILS.save(false); Settings.CHECK_SAVED_VIDEOS.save(false);
+        Settings.DOWNLOAD_ASK_QUALITY.save(true);
+        QualityChoice.resetForTests();
+        reachedEnd = new java.util.concurrent.CountDownLatch(1);
+        releaseCopy = new java.util.concurrent.CountDownLatch(1);
+        try {
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            ((AlertDialog) ShadowDialog.getLatestDialog()).getListView().performItemClick(null, 2, 2);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the picked save never reached its fetch", reachedEnd.await(5, TimeUnit.SECONDS));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            ShadowToast.reset();
+
+            assertTrue("the press went on to TikTok's own save", OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(ShadowToast.showedToast(MediaJobScheduler.busyMessage("video 127")));
+            releaseCopy.countDown();
+            awaitJobs();
+            assertEquals(List.of("/720.mp4"), fetched);
+        } finally {
+            app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = advanced;
+            Settings.DOWNLOAD_ASK_QUALITY.resetToDefault();
+            QualityChoice.resetForTests();
+        }
+    }
+
+    /** A picked save still meets the already-saved choice, and Save again fetches the pick. */
+    @Test public void aPickedSaveOfASavedVideoAsksBeforeSavingAgain() throws Exception {
+        boolean advanced = app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_DETAILS.save(false);
+        Settings.DOWNLOAD_ASK_QUALITY.save(true);
+        QualityChoice.resetForTests();
+        try {
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            ((AlertDialog) ShadowDialog.getLatestDialog()).getListView().performItemClick(null, 2, 2);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            awaitJobs();
+            assertEquals("127.mp4", SavedVideoArchive.find(owner.get(), "127").name);
+
+            assertTrue(OriginalPhotos.start(new QualityPost(), owner.get()));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            ((AlertDialog) ShadowDialog.getLatestDialog()).getListView().performItemClick(null, 1, 1);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            awaitJobs();
+            AlertDialog saved = (AlertDialog) ShadowDialog.getLatestDialog();
+            assertEquals("Save again", saved.getButton(AlertDialog.BUTTON_POSITIVE).getText().toString());
+            assertEquals("fetched before the already-saved choice", List.of("/720.mp4"), fetched);
+            saved.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            awaitJobs();
+            assertEquals(List.of("/720.mp4", "/1080.mp4"), fetched);
+            assertEquals("127_2.mp4", SavedVideoArchive.find(owner.get(), "127").name);
+        } finally {
+            app.morphe.extension.tiktok.settings.SettingsStatus.advancedDownloadsEnabled = advanced;
+            Settings.DOWNLOAD_ASK_QUALITY.resetToDefault();
+            QualityChoice.resetForTests();
+        }
+    }
+
+    /** A video with two renditions beside TikTok's own clean file. */
+    public static final class QualityPost extends DownloadDetailsTest.Post {
+        public final AdvancedDownloadsTest.VideoData video = new AdvancedDownloadsTest.VideoData(List.of(
+                new AdvancedDownloadsTest.Gear("normal_1080_0", 400, "https://8.8.8.8/1080.mp4"),
+                new AdvancedDownloadsTest.Gear("normal_720_0", 200, "https://8.8.8.8/720.mp4")));
+        QualityPost() {
+            super("alice", "127");
+            video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://8.8.8.8/clean.mp4", 5000);
+        }
+        public AdvancedDownloadsTest.VideoData getVideo() { return video; }
     }
 
     /** A post whose video model offers no address Hushfeed can fetch. */

@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Download ha un nuovo interruttore sotto Qualità di download dei video: Chiedi la qualità a ogni salvataggio. Se è attivo, Scarica elenca le qualità in cui è disponibile il video, con la dimensione che TikTok indica per ciascuna, e salva quella che scegli. Automatico, cioè il file di TikTok, è sempre il primo. La qualità impostata resta invariata per il salvataggio successivo.
+
+* **TikTok:** Un nuovo interruttore accanto a Pressione prolungata, Menu completo con pressione prolungata sui video di un creator, fa sì che una pressione prolungata su un video aperto dal profilo di qualcuno apra lo stesso menu completo di Per te invece del menu di condivisione ridotto (#120).
+
+* **TikTok:** Un nuovo interruttore nella pagina Menu di condivisione, Copia il link con un tocco su Condividi, fa sì che un tocco su Condividi sotto un video ne copi il link, ripulito come un link condiviso. Un secondo tocco subito dopo apre il menu di condivisione come sempre.
+
+* **TikTok:** Silenzia il feed quando i commenti sono aperti ora si chiama Metti in pausa il video quando i commenti sono aperti, che è quello che fa.
+
+* **TikTok:** Con Vista pulita automatica senza ritardo, un video che apri dalla ricerca, da un profilo, da un hashtag o da un suono ora parte con i controlli già nascosti, anche dopo che li hai fatti tornare nel feed per arrivare alla ricerca. Prima i suoi pulsanti e la barra di ricerca in alto restavano visibili per circa mezzo secondo (#84).
+
+* **TikTok:** Blocca questo creator e Salva copertina ora stanno nello stesso cerchio grigio dei pulsanti di TikTok nel menu di condivisione, con un'icona delle loro dimensioni e del loro colore in modalità chiara e scura. Hanno la loro icona anche nel pannello che si apre tenendo premuto un video del feed, dove mancava.
+
+* **TikTok:** Doppio tocco ha una nuova scelta, Accelera questo video, doppio tocco di nuovo per annullare. Il video sullo schermo va alla tua Velocità mentre tieni premuto il video (2x se non ne hai scelta un'altra), un secondo doppio tocco rimette la velocità che aveva e il video successivo va alla sua velocità solita (#136).
+
+* **TikTok:** Download ha un nuovo interruttore, Pulsante Salva copertina nel menu di condivisione. Quando è attivo, il menu di condivisione di un video mostra Salva copertina subito dopo Scarica, così salvi la copertina solo quando vuoi, e Scarica salva solo il video. Quando è spento, Salva anche la copertina funziona come prima (#146).
+
+* **TikTok:** Cerca nelle attività caricate si fa da parte anche quando incontra un problema mentre TikTok carica altro dell'elenco: la ricerca si chiude e la richiesta di TikTok prosegue invece di far chiudere l'app.
+
+* **TikTok:** AMOLED dark theme ora rende nero anche il pannello che si apre tenendo premuto un video del feed, e le pagine Attività e Nuovi follower della Posta. Erano rimasti del grigio scuro di TikTok. Le schede nel pannello restano grigie per continuare a distinguersi.
+
+* **TikTok:** Network proxy ora dice quali connessioni non passano dal proxy. I salvataggi di Hushfeed e la risoluzione dei link brevi di Copia link si collegano direttamente, dopo i loro controlli sull'indirizzo, e il report diagnostico esportato elenca ogni percorso sotto Network routes.
+
+* **TikTok:** Su Android da 6 a 8.1 i lettori di schermo ora annunciano come intestazioni i titoli delle pagine, delle sezioni e della schermata di ripristino nelle impostazioni di Hushfeed, come sulle versioni di Android più recenti.
+
+* **TikTok:** La pubblicazione delle release funziona con Windows PowerShell 5.1 oltre che con PowerShell 7. Il controllo dei tag duplicati ora legge ogni release di una pagina anche in 5.1, dove prima prendeva l'intera pagina per una sola release, e i controlli di pubblicazione e degli script passano in entrambe le shell.
+
+* **TikTok:** Metti in pausa il video quando i commenti sono aperti ora mette in pausa il video appena si aprono i commenti, anche la prima volta dopo l'avvio di TikTok e su un video senza commenti. Prima, quella prima apertura continuava a riprodurre finché i commenti non erano caricati. Ora funziona anche se Block author button non è tra le patch selezionate.
+
+* **TikTok:** Scorri per luminosità e volume lascia stare i commenti: trascinare vicino al bordo con i commenti aperti li fa scorrere e non cambia luminosità o volume.
+
+* **TikTok:** Show commenter handle and region usa il paese che il feed ha mostrato per l'account di chi commenta quando il commento non ne porta uno, cosa che TikTok omette spesso. Serve che uno dei suoi video sia già passato nel tuo feed.
+
+* **TikTok:** Se Cerca nelle attività caricate incontra un problema durante un aggiornamento della lista di TikTok, la ricerca si chiude e la lista di TikTok resta sullo schermo invece di far chiudere l'app.
+
+* **TikTok:** La pubblicazione delle release ora carica e scarica i file tramite la release esatta che ha verificato, invece di cercarla di nuovo per tag, e si ferma quando due release condividono lo stesso tag. Ricompilare un tag già pubblicato viene rifiutato, e il passaggio dell'indice confronta la ricevuta con il checksum della copia pubblicata prima di copiarla.
+
 * **TikTok:** Nuova patch Show commenter handle and region: i commenti possono mostrare il @nomeutente di chi commenta al posto del nome visualizzato, e il paese impostato nel suo account dopo l'ora del commento. Ognuna ha il suo interruttore in Impostazioni di Hushfeed > Commenti, ed entrambe partono disattivate. Ripresa dalle patch onlynazril di na-x-ril.
 
 * **TikTok:** Usa il carattere di sistema ora può mostrare il testo di TikTok anche con un file .ttf o .otf che importi. Attiva Usa un carattere importato in App, scegli il file e riavvia TikTok. Se il file viene rimosso o non si può leggere, il testo torna a ciò che mostra Usa il carattere di sistema. Ripresa dalle patch onlynazril di na-x-ril.

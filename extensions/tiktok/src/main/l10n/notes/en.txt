@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Downloads has a new switch under Video download quality, Ask for the quality on each save. With it on, Download lists the qualities the video comes in, with the size TikTok gives for each, and saves the one you pick. Automatic, TikTok's own file, is always first. The quality you set stays as it is for the next save.
+
+* **TikTok:** A new switch next to Long press, Full long-press menu on a creator's videos, makes a long press on a video you opened from someone's profile open the same full menu as on For You instead of the small share sheet (#120).
+
+* **TikTok:** A new switch on the Share sheet page, Copy the link with one press on Share, makes a press on Share under a video copy that video's link, cleaned the way a shared link is. A second press right after opens the share sheet as usual.
+
+* **TikTok:** Silence the feed while comments are open is now called Pause the video while comments are open, which says what it does.
+
+* **TikTok:** With Automatic Clear display set to no delay, a video you open from search, a profile, a hashtag or a sound now starts with its controls already hidden, also after you brought them back on the feed to get to search. Before, its buttons and the search bar at the top showed for about half a second (#84).
+
+* **TikTok:** Block this creator and Save cover now sit in the same gray circle as TikTok's own buttons in the share sheet, with an icon the size and color of theirs in light and dark mode. They also get their icon in the panel that opens when you press and hold a feed video, where it was missing.
+
+* **TikTok:** Double tap has a new choice, Speed up this video, double tap again to undo. The video on screen plays at your Speed while you hold the video (2x unless you picked another), a second double tap puts back the speed it had, and the next video plays at its usual speed (#136).
+
+* **TikTok:** Downloads has a new switch, Save cover button in the share sheet. With it on, a video's share sheet shows Save cover right after Download, so you save the cover only when you want it, and Download saves just the video. While it's off, Save the cover as well works as before (#146).
+
+* **TikTok:** Search loaded activity also steps aside when it runs into a problem while TikTok loads more of the list: the search closes and TikTok's request goes ahead instead of the app closing.
+
+* **TikTok:** AMOLED dark theme now also turns black the panel that opens when you press and hold a feed video, and Inbox's Activity and New followers pages. They had kept TikTok's dark gray. The cards inside the panel stay gray so they still stand out.
+
+* **TikTok:** Network proxy now says which connections skip it. Hushfeed's saves and the short-link lookup behind Copy link connect directly, after their own address checks, and the exported diagnostic report lists every route under Network routes.
+
+* **TikTok:** On Android 6 through 8.1, screen readers now announce the page titles, section titles and recovery screen titles in Hushfeed settings as headings, the same as on newer Android.
+
+* **TikTok:** Release publishing works under Windows PowerShell 5.1 as well as PowerShell 7. The duplicate-tag check now reads each release on a page under 5.1, where it used to take the whole page for one release, and the publication and script checks pass in both shells.
+
+* **TikTok:** Pause the video while comments are open now pauses the video as the comments open, also the first time after TikTok starts and on a video with no comments. Before, that first sheet kept playing until its comments had loaded. It also works now with Block author button left out of the patch selection.
+
+* **TikTok:** Swipe for brightness and volume leaves the comment sheet alone: a drag near the edge while the comments are open scrolls them and doesn't change the brightness or volume.
+
+* **TikTok:** Show commenter handle and region falls back to the country the feed showed for a commenter's account when the comment itself doesn't carry one, which TikTok often leaves out. It needs one of their videos to have passed through your feed.
+
+* **TikTok:** If Search loaded activity runs into a problem inside one of TikTok's list updates, the search closes and TikTok's own list stays on screen instead of the app closing.
+
+* **TikTok:** Release publishing now uploads and downloads assets through the exact release it checked instead of looking the release up by tag again, and stops when two releases share a tag. Rebuilding a tag that's already published is refused, and the index step compares the receipt with the hosted copy's checksum before copying it in.
+
 * **TikTok:** New Show commenter handle and region patch: comments can show each commenter's @username instead of their display name, and the country their account is set to after the comment's time. Each has its own switch in Hushfeed settings > Comments, and both start off. Ported from na-x-ril's onlynazril patches.
 
 * **TikTok:** Use system font can also show TikTok's text in a .ttf or .otf file you import. Turn on Use an imported font in App, pick the file and restart TikTok. If the file is removed or can't be read, the text goes back to what Use system font shows. Ported from na-x-ril's onlynazril patches.

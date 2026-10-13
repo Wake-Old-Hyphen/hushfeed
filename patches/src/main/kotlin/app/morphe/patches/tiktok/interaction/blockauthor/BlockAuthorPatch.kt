@@ -55,6 +55,19 @@ internal val sessionPlaybackBridgePatch = bytecodePatch {
         // change with every build, so they are read off TikTok's own pauseVideo and the For You
         // feed's space-key toggle and written into the hold's three bridge methods.
         installNativePlayback(resolveNativePlayback())
+
+        // The activity, so the pause switches can follow the app going away and coming back, and
+        // its saved state, which tells a screen Android built again from a first start. p0 is the
+        // activity and p1 onCreate's Bundle, and /range because a parameter register is usually
+        // above v15. Here rather than in Block author button: Comment tools' "pause behind the
+        // comments" needs it too, and with only Comment tools picked the row was there and the
+        // video played on.
+        MainActivityOnCreateFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p1 }, " +
+                "Lapp/morphe/extension/tiktok/playback/PausePlayback;->" +
+                "install(Landroid/app/Activity;Landroid/os/Bundle;)V",
+        )
     }
 }
 
@@ -77,16 +90,8 @@ val blockAuthorPatch = bytecodePatch(
                 "Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableBlockAuthor()V",
         )
 
-        // The activity, so the pause switches can follow the app going away and coming back, and
-        // its saved state, which tells a screen Android built again from a first start. p0 is the
-        // activity and p1 onCreate's Bundle, and /range because a parameter register is usually
-        // above v15.
-        MainActivityOnCreateFingerprint.method.addInstruction(
-            0,
-            "invoke-static/range { p0 .. p1 }, " +
-                "Lapp/morphe/extension/tiktok/playback/PausePlayback;->" +
-                "install(Landroid/app/Activity;Landroid/os/Bundle;)V",
-        )
+        // PausePlayback.install, which the pause switches follow the app with, comes from
+        // sessionPlaybackBridgePatch.
 
         // TikTok's daily screen-time reminder coming up over the feed, for the switch that
         // leaves the app instead. After the invoke-super: the method opens with a null-context

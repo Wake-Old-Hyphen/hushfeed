@@ -2429,7 +2429,7 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             Activity activity = owner.get();
             Utils.setContext(activity);
             android.preference.PreferenceScreen screen = attachSection(activity, "PLAYBACK").getPreferenceScreen();
-            for (String title : new String[]{"Silence the feed while comments are open", "Stay on the video in full screen"}) {
+            for (String title : new String[]{"Pause the video while comments are open", "Stay on the video in full screen"}) {
                 String heading = null;
                 for (int index = 0; index < screen.getPreferenceCount(); index++) {
                     Preference row = screen.getPreference(index);

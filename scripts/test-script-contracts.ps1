@@ -53,7 +53,10 @@ $phoneParserCommand = "PHONE_SERIAL=TESTPHONE01 HUSHFEED_DEVICE_SERIAL=TESTPHONE
 function Invoke-PhoneTopParser {
     param([Parameter(Mandatory)][string]$Fixture, [switch]$Popup)
     $parserCommand = if ($Popup) { $phoneParserCommand -replace ' parse_top$', ' parse_popup_top' } else { $phoneParserCommand }
-    $output = @($Fixture | & $bashHost @bashArguments $parserCommand 2> $null)
+    # Windows PowerShell 5.1 prefixes piped native stdin with a UTF-8 byte-order mark, so the fixture
+    # travels inside the command as base64 and reaches the parser byte for byte in both shells.
+    $encoded = [Convert]::ToBase64String([Text.UTF8Encoding]::new($false).GetBytes($Fixture.Replace("`r`n", "`n").TrimEnd("`n") + "`n"))
+    $output = @(& $bashHost @bashArguments "printf %s $encoded | base64 -d | $parserCommand" 2> $null)
     return [pscustomobject]@{
         ExitCode = $LASTEXITCODE
         Output   = ($output -join "`n").Trim()
@@ -1382,6 +1385,9 @@ try {
     $bugFormRelative = '.github/ISSUE_TEMPLATE/bug_report.yml'
     New-Item -ItemType Directory -Path (Join-Path $factsRoot '.github/ISSUE_TEMPLATE') -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $Root $bugFormRelative) -Destination (Join-Path $factsRoot $bugFormRelative)
+    $guideRelative = 'concepts/patch-development.md'
+    New-Item -ItemType Directory -Path (Join-Path $factsRoot 'concepts') -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $Root $guideRelative) -Destination (Join-Path $factsRoot $guideRelative)
 
     function Invoke-Facts {
         param([switch]$WithUrls)
@@ -1447,15 +1453,33 @@ try {
         }
     }
 
+    # The development guide quotes the source version and counts, and the published bundle the
+    # index names. The copy is written up to the fixture's catalog and its synced index, the way
+    # the index is, so each case below moves one fact of the guide against a tree that agrees.
+    function Sync-FixtureGuide {
+        $fixtureVersion = ((Get-Content -LiteralPath (Join-Path $factsRoot 'gradle.properties')) `
+            -match '^version\s*=' | Select-Object -First 1) -replace '^version\s*=\s*', ''
+        $count = @((Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json).patches).Count
+        $index = Get-Content -LiteralPath (Join-Path $factsRoot 'patches-bundle.json') -Raw | ConvertFrom-Json
+        $indexCount = [regex]::Match([string]$index.description, '(\d+) patches').Groups[1].Value
+        Set-FactsFile $guideRelative {
+            param($text)
+            $text = $text -replace '(?m)^Source snapshot: version \S+, \d+ patch entries\.', "Source snapshot: version ${fixtureVersion}, $count patch entries."
+            $text -replace '(?m)^Published bundle: version \S+, \d+ patches\.', "Published bundle: version $($index.version), $indexCount patches."
+        }
+    }
+
     function Reset-FactsFile {
         param([string]$Name)
         Copy-Item -LiteralPath (Join-Path $Root $Name) -Destination (Join-Path $factsRoot $Name) -Force
         if ($Name -eq 'patches-bundle.json') { Sync-FixtureIndex }
         if ($Name -eq $bugFormRelative) { Sync-FixtureBugForm }
+        if ($Name -eq $guideRelative) { Sync-FixtureGuide }
     }
 
     Sync-FixtureIndex
     Sync-FixtureBugForm
+    Sync-FixtureGuide
 
     # The control. Everything below is this same tree with one fact moved, so a failure there is
     # the moved fact talking and not the fixture being wrong.
@@ -1481,6 +1505,9 @@ try {
     Set-FactsFile $bugFormRelative {
         param($text) $text -replace ('Version ' + [regex]::Escape($catalogVersion) + ' for TikTok \d+(?:\.\d+)+'), "Version $catalogVersion for TikTok 47.0.3"
     }
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace '(?m)^Published bundle: version (\S+), \d+ patches\.', 'Published bundle: version $1, 90 patches.'
+    }
     $lagging = @{ Root = $factsRoot; SkipDescriptionTestCount = $true; SkipUrlCheck = $true; AllowPublishedIndexLag = $true }
     & $factsScript @lagging -DescriptionText "Hushfeed v$($catalogVersion): TikTok with less noise. 90 patches for TikTok 47.0.3." 6> $null
     Assert-True ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) `
@@ -1490,6 +1517,7 @@ try {
         '*does not say 90 patches*' 'While the index lags, the description was held to the catalog instead of the published index.'
     Reset-FactsFile 'patches-bundle.json'
     Reset-FactsFile $bugFormRelative
+    Reset-FactsFile $guideRelative
 
     # Manager decodes created_at as kotlinx.datetime.LocalDateTime, not Instant.
     # A trailing Z produces its generic "remote metadata file is unavailable" error,
@@ -1531,6 +1559,44 @@ try {
     }
     Assert-Throws { Invoke-Facts } '*' 'An index counting patches the catalog does not have was accepted.'
     Reset-FactsFile 'patches-bundle.json'
+
+    # The development guide states the current source version and counts in prose. It sat on
+    # 0.70.0 and 131 entries over a 0.71.x checkout, and a published bundle two releases back,
+    # with nothing reading it. Each fact moves alone, against a copy that agrees with the catalog.
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace '(?m)^Source snapshot: version \S+,', 'Source snapshot: version 0.0.1,'
+    }
+    Assert-Throws { Invoke-Facts } '*concepts/patch-development.md says source 0.0.1*' `
+        'A development guide naming another source version was accepted.'
+    Reset-FactsFile $guideRelative
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace '(?m)^(Source snapshot: version \S+,) \d+ patch entries\.', '$1 3 patch entries.'
+    }
+    Assert-Throws { Invoke-Facts } '*concepts/patch-development.md says source*3 patch entries*' `
+        'A development guide counting source patch entries the catalog does not have was accepted.'
+    Reset-FactsFile $guideRelative
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace '(?m)^Published bundle: version \S+,', 'Published bundle: version 0.0.1,'
+    }
+    Assert-Throws { Invoke-Facts } '*concepts/patch-development.md says the published bundle is 0.0.1*' `
+        'A development guide naming another published bundle was accepted.'
+    Reset-FactsFile $guideRelative
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace '(?m)^\| Feed \| \d+ \|', '| Feed | 3 |'
+    }
+    Assert-Throws { Invoke-Facts } '*stale category table*Feed is 3 there*' `
+        'A development guide with a stale category count was accepted.'
+    Reset-FactsFile $guideRelative
+    Set-FactsFile $guideRelative {
+        param($text) $text -replace "catalog's \d+ patches are grouped", "catalog's 3 patches are grouped"
+    }
+    Assert-Throws { Invoke-Facts } '*concepts/patch-development.md groups 3 patches*' `
+        'A development guide grouping a patch total the catalog does not have was accepted.'
+    Reset-FactsFile $guideRelative
+    Remove-Item -LiteralPath (Join-Path $factsRoot $guideRelative)
+    Assert-Throws { Invoke-Facts } '*concepts/patch-development.md is missing*' `
+        'A checkout with no development guide was accepted.'
+    Reset-FactsFile $guideRelative
 
     # The same number in the README, which is the other half of the same promise.
     Set-FactsFile 'README.md' {

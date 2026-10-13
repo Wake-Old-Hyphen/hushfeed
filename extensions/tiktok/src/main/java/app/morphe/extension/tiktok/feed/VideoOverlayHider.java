@@ -395,6 +395,7 @@ public final class VideoOverlayHider {
         if (activity == null) {
             return;
         }
+        if (FeedVisibility.isDetailPager(activity)) RememberClearDisplayPatch.onPageOpened(activity);
         FRONT.add(activity);
         Utils.runOnMainThread(() -> {
             if (FRONT.mayTake(activity)) installNow(activity);
@@ -437,7 +438,10 @@ public final class VideoOverlayHider {
             @Override public void onActivityResumed(Activity resumed) { }
             @Override public void onActivityCreated(Activity created, Bundle state) { }
             @Override public void onActivityStarted(Activity started) { }
-            @Override public void onActivityPaused(Activity paused) { EdgeSwipeLevels.onPaused(paused); }
+            @Override public void onActivityPaused(Activity paused) {
+                EdgeSwipeLevels.onPaused(paused);
+                RememberClearDisplayPatch.onPageLeft(paused);
+            }
             @Override public void onActivityStopped(Activity stopped) { }
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle state) { }
             @Override public void onActivityDestroyed(Activity destroyed) { }

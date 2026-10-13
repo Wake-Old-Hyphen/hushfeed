@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Downloads hat unter Qualität für Video-Downloads einen neuen Schalter: Bei jedem Speichern nach der Qualität fragen. Ist er an, listet Herunterladen die Qualitäten des Videos mit der Größe auf, die TikTok für jede angibt, und speichert die gewählte. Automatisch, also TikToks eigene Datei, steht immer oben. Die eingestellte Qualität bleibt für das nächste Speichern, wie sie ist.
+
+* **TikTok:** Ein neuer Schalter neben Langes Drücken, „Volles Menü bei langem Drücken auf Videos eines Creators“, sorgt dafür, dass langes Drücken auf ein Video, das du aus einem Profil geöffnet hast, dasselbe volle Menü wie bei Für dich öffnet statt des kleinen Teilen-Menüs (#120).
+
+* **TikTok:** Ein neuer Schalter auf der Seite Teilen-Menü, „Link mit einem Tippen auf Teilen kopieren“, lässt ein Tippen auf Teilen unter einem Video dessen Link kopieren, bereinigt wie ein geteilter Link. Ein zweites Tippen direkt danach öffnet das Teilen-Menü wie gewohnt.
+
+* **TikTok:** „Feed stummschalten, solange Kommentare offen sind“ heißt jetzt „Video anhalten, solange Kommentare offen sind“, denn genau das tut der Schalter.
+
+* **TikTok:** Ist Automatische freie Ansicht ohne Verzögerung eingestellt, startet ein Video, das du aus der Suche, einem Profil, einem Hashtag oder einem Sound öffnest, jetzt schon mit ausgeblendeten Bedienelementen, auch wenn du sie im Feed zurückgeholt hast, um zur Suche zu kommen. Vorher waren seine Schaltflächen und die Suchleiste oben etwa eine halbe Sekunde zu sehen (#84).
+
+* **TikTok:** Diesen Ersteller blockieren und Titelbild speichern sitzen im Teilen-Menü jetzt im selben grauen Kreis wie TikToks eigene Schaltflächen, mit einem Symbol in deren Größe und Farbe im hellen und im dunklen Modus. Auch im Menü, das sich beim Gedrückthalten eines Feed-Videos öffnet, haben sie jetzt ihr Symbol, das dort fehlte.
+
+* **TikTok:** Doppeltippen hat eine neue Auswahl, Dieses Video beschleunigen, erneut doppeltippen zum Zurücksetzen. Das Video auf dem Bildschirm läuft mit deiner Geschwindigkeit, solange du das Video gedrückt hältst (2x, außer du hast etwas anderes gewählt), ein zweites Doppeltippen stellt die vorherige Geschwindigkeit wieder her, und das nächste Video läuft mit seiner üblichen Geschwindigkeit (#136).
+
+* **TikTok:** Downloads hat einen neuen Schalter, „Titelbild speichern“ im Teilen-Menü. Ist er an, zeigt das Teilen-Menü eines Videos direkt nach Herunterladen „Titelbild speichern“, damit du das Titelbild nur speicherst, wenn du es willst, und Herunterladen speichert nur das Video. Solange er aus ist, funktioniert Titelbild ebenfalls speichern wie bisher (#146).
+
+* **TikTok:** „Geladene Aktivitäten durchsuchen“ tritt auch zur Seite, wenn es auf ein Problem stößt, während TikTok mehr von der Liste lädt: Die Suche schließt sich und TikToks Anfrage läuft weiter, statt dass die App beendet wird.
+
+* **TikTok:** AMOLED dark theme färbt jetzt auch das Feld schwarz, das sich öffnet, wenn du ein Video im Feed gedrückt hältst, dazu im Posteingang die Seiten Aktivität und Neue Follower. Sie waren in TikToks Dunkelgrau geblieben. Die Karten im Feld bleiben grau, damit sie sich weiter abheben.
+
+* **TikTok:** Network proxy sagt jetzt, welche Verbindungen nicht über ihn laufen. Hushfeeds Downloads und das Auflösen kurzer Links hinter „Link kopieren“ verbinden sich nach ihren eigenen Adressprüfungen direkt, und der exportierte Diagnosebericht listet jede Route unter Network routes auf.
+
+* **TikTok:** Unter Android 6 bis 8.1 sagen Screenreader die Seiten-, Abschnitts- und Wiederherstellungstitel in den Hushfeed-Einstellungen jetzt als Überschriften an, genau wie unter neueren Android-Versionen.
+
+* **TikTok:** Die Release-Veröffentlichung läuft jetzt unter Windows PowerShell 5.1 genauso wie unter PowerShell 7. Die Prüfung auf doppelte Tags liest unter 5.1 jedes Release einer Seite einzeln, statt die ganze Seite für ein Release zu halten, und die Veröffentlichungs- und Skriptprüfungen bestehen in beiden Shells.
+
+* **TikTok:** „Video anhalten, solange Kommentare offen sind“ pausiert das Video jetzt, sobald sich die Kommentare öffnen, auch beim ersten Mal nach dem Start von TikTok und bei einem Video ohne Kommentare. Vorher lief es beim ersten Öffnen weiter, bis die Kommentare geladen waren. Es funktioniert jetzt auch, wenn Block author button nicht mitgepatcht ist.
+
+* **TikTok:** „Wischen für Helligkeit und Lautstärke“ lässt die Kommentare in Ruhe: Ein Wisch am Rand, während die Kommentare offen sind, scrollt sie und ändert weder Helligkeit noch Lautstärke.
+
+* **TikTok:** Show commenter handle and region nimmt das Land, das der Feed für das Konto der kommentierenden Person gezeigt hat, wenn der Kommentar selbst keins mitbringt, was bei TikTok oft fehlt. Dafür muss eines ihrer Videos schon in deinem Feed gewesen sein.
+
+* **TikTok:** Wenn „Geladene Aktivitäten durchsuchen“ bei einer von TikToks Listenaktualisierungen auf ein Problem stößt, schließt sich die Suche und TikToks eigene Liste bleibt sichtbar, statt dass die App beendet wird.
+
+* **TikTok:** Die Release-Veröffentlichung lädt Dateien jetzt über genau das Release hoch und herunter, das sie geprüft hat, statt es noch einmal über das Tag zu suchen, und bricht ab, wenn zwei Releases dasselbe Tag haben. Ein schon veröffentlichtes Tag wird nicht neu gebaut, und der Index-Schritt vergleicht den Beleg mit der Prüfsumme der gehosteten Kopie, bevor er ihn übernimmt.
+
 * **TikTok:** Neuer Patch Show commenter handle and region: Kommentare können statt des Anzeigenamens den @Benutzernamen der kommentierenden Person zeigen und nach der Zeitangabe das Land, auf das ihr Konto eingestellt ist. Beides hat einen eigenen Schalter unter Hushfeed-Einstellungen > Kommentare und ist anfangs aus. Übernommen aus den onlynazril-Patches von na-x-ril.
 
 * **TikTok:** Systemschrift verwenden kann TikToks Text jetzt auch in einer importierten .ttf- oder .otf-Datei zeigen. Schalte in App „Importierte Schrift verwenden“ ein, wähle die Datei und starte TikTok neu. Wird die Datei entfernt oder ist sie nicht lesbar, zeigt der Text wieder, was Systemschrift verwenden zeigt. Übernommen aus den onlynazril-Patches von na-x-ril.

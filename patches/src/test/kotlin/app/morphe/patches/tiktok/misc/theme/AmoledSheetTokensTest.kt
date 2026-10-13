@@ -3,6 +3,7 @@ package app.morphe.patches.tiktok.misc.theme
 import app.morphe.Fixtures
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -48,7 +49,53 @@ class AmoledSheetTokensTest {
             val light = table.styleValues("axi")
             assertTrue("aia is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
             assertTrue("axi is light wherever it is set: $light", light.isNotEmpty() && light.none(::isDarkOpaqueLiteral))
-            assertTrue("the patch rewrites aia", "aia" in SHEET_STYLE_ITEMS)
+            assertTrue("the patch rewrites aia", "aia" in SURFACE_STYLE_ITEMS)
+        }
+    }
+
+    /**
+     * The feed's long-press panel and Inbox > Activity stayed gray under AMOLED (Facebook report,
+     * 2026-10-12; #1E1E1E and #121212 on the S22). LongPressAwemeFragment fills with
+     * UISheetGrouped1 (a2_), which the dark themes send to aig and the light ones to axo, and its
+     * cards are UISheetGrouped2 (a2b, aii), which keep their gray. The notification page's
+     * container and its rows fill with BGPrimary (bx), a literal of its own in every theme.
+     */
+    @Test
+    fun `the long-press panel and the Activity page fill with tokens the patch rewrites`() {
+        Fixtures.forEachDeclared { apk ->
+            val table = FixtureResourceTable(apk)
+            val idOf = { name: String -> table.attrNames.entries.single { it.value == name }.key }
+
+            assertTrue(
+                "LongPressAwemeFragment fills with UISheetGrouped1",
+                loadsConstant(apk, "Lcom/ss/android/ugc/profile/business/ur/longpress/LongPressAwemeFragment;", "onCreateView", idOf("a2_")),
+            )
+            assertEquals("what the themes point a2_ at", setOf("?attr/aig", "?attr/axo"), table.styleValues("a2_").toSet())
+            val grouped = table.styleValues("aig")
+            assertTrue("aig is a dark opaque literal wherever it is set: $grouped", grouped.isNotEmpty() && grouped.all(::isDarkOpaqueLiteral))
+            assertTrue("axo stays light", table.styleValues("axo").none(::isDarkOpaqueLiteral))
+            assertEquals("the panel's cards", setOf("?attr/aii", "?attr/axq"), table.styleValues("a2b").toSet())
+            assertTrue("the cards keep their gray", "aii" !in SURFACE_STYLE_ITEMS)
+
+            assertTrue(
+                "the notification page's container fills with BGPrimary",
+                loadsConstant(apk, "Lcom/by/andInflater/awemenotice_fragment_navigation_container;", "LIZ", idOf("bx")),
+            )
+            val primary = table.styleValues("bx")
+            assertTrue("bx is a literal in every theme: $primary", primary.none { it.startsWith("?") })
+            assertTrue("bx is dark in a dark theme: $primary", primary.any(::isDarkOpaqueLiteral))
+            assertTrue("bx is light in a light theme: $primary", !primary.all(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites aig and bx", SURFACE_STYLE_ITEMS.containsAll(setOf("aig", "bx")))
+        }
+    }
+
+    private fun loadsConstant(apk: File, type: String, method: String, value: Int): Boolean {
+        val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+        val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->
+            container.getEntry(entry)!!.dexFile.classes.firstOrNull { it.type == type }
+        }.first()
+        return classDef.methods.filter { it.name == method }.any { candidate ->
+            candidate.implementation?.instructions?.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == value } == true
         }
     }
 

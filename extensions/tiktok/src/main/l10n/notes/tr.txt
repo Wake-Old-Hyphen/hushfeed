@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** İndirilenler'de Video indirme kalitesi'nin altında yeni bir anahtar var: Her kaydetmede kaliteyi sor. Açıkken İndir, videonun sunulduğu kaliteleri TikTok'un her biri için verdiği boyutla listeler ve seçtiğinizi kaydeder. Otomatik, yani TikTok'un kendi dosyası, her zaman ilk sıradadır. Ayarladığınız kalite bir sonraki kayıt için olduğu gibi kalır.
+
+* **TikTok:** Uzun basma'nın yanındaki yeni Bir içerik üreticinin videolarında tam uzun basma menüsü anahtarı açıkken, birinin profilinden açtığın bir videoya uzun basmak küçük paylaşım menüsü yerine Senin İçin'deki tam menünün aynısını açar (#120).
+
+* **TikTok:** Paylaşım menüsü sayfasındaki yeni Paylaş'a tek basışla bağlantıyı kopyala anahtarı açıkken, bir videonun altındaki Paylaş'a basmak o videonun bağlantısını paylaşılan bir bağlantı gibi temizlenmiş olarak kopyalar. Hemen ardından ikinci bir basış paylaşım menüsünü her zamanki gibi açar.
+
+* **TikTok:** Yorumlar açıkken akışın sesini kapat artık Yorumlar açıkken videoyu duraklat adını taşıyor, çünkü yaptığı tam olarak bu.
+
+* **TikTok:** Otomatik temiz ekran gecikmesiz ayarlıysa, aramadan, bir profilden, bir hashtag'den veya bir sesten açtığın video artık kontrolleri zaten gizli olarak başlıyor, aramaya gitmek için onları akışta geri getirdikten sonra da. Önceden düğmeleri ve üstteki arama çubuğu yaklaşık yarım saniye görünüyordu (#84).
+
+* **TikTok:** Bu içerik üreticisini engelle ve Kapağı kaydet artık paylaşım menüsünde TikTok'un kendi düğmeleriyle aynı gri dairede duruyor, açık ve koyu modda onların boyutunda ve renginde bir simgeyle. Akıştaki bir videoya basılı tutunca açılan panelde de artık simgeleri var, önceden orada yoktu.
+
+* **TikTok:** Çift dokunmada yeni bir seçenek var: Bu videoyu hızlandır, geri almak için tekrar çift dokun. Ekrandaki video Videoyu basılı tutarken hız ayarınla oynar (başka bir şey seçmediysen 2x), ikinci çift dokunma önceki hızı geri getirir ve sonraki video her zamanki hızında oynar (#136).
+
+* **TikTok:** İndirilenler'de yeni bir anahtar var: Paylaşım menüsünde Kapağı kaydet düğmesi. Açıkken bir videonun paylaşım menüsünde İndir'in hemen ardından Kapağı kaydet görünür, böylece kapağı yalnızca istediğinde kaydedersin ve İndir yalnızca videoyu kaydeder. Kapalıyken Kapağı da kaydet eskisi gibi çalışır (#146).
+
+* **TikTok:** Yüklenmiş etkinlikte ara, TikTok listenin devamını yüklerken bir sorunla karşılaşırsa da kenara çekiliyor: uygulama kapanmak yerine arama kapanıyor ve TikTok'un isteği devam ediyor.
+
+* **TikTok:** AMOLED dark theme artık akıştaki bir videoya basılı tuttuğunuzda açılan paneli ve Gelen Kutusu'ndaki Etkinlik ile Yeni takipçiler sayfalarını da siyah yapıyor. Bunlar TikTok'un koyu grisinde kalıyordu. Paneldeki kartlar öne çıkmaya devam etsin diye gri kalıyor.
+
+* **TikTok:** Network proxy artık hangi bağlantıların onu atladığını söylüyor. Hushfeed'in kaydetmeleri ve Bağlantıyı kopyala'nın kısa bağlantı çözümlemesi kendi adres kontrollerinden sonra doğrudan bağlanıyor, dışa aktarılan tanılama raporu da her yolu Network routes altında listeliyor.
+
+* **TikTok:** Android 6 ile 8.1 arasında ekran okuyucular artık Hushfeed ayarlarındaki sayfa, bölüm ve kurtarma ekranı başlıklarını daha yeni Android sürümlerinde olduğu gibi başlık olarak okuyor.
+
+* **TikTok:** Sürüm yayımlama artık PowerShell 7'nin yanı sıra Windows PowerShell 5.1'de de çalışıyor. Yinelenen etiket denetimi 5.1'de artık bir sayfadaki her sürümü ayrı okuyor, eskiden tüm sayfayı tek sürüm sayıyordu, ve yayımlama ile betik denetimleri iki kabukta da geçiyor.
+
+* **TikTok:** Yorumlar açıkken videoyu duraklat artık yorumlar açılır açılmaz videoyu duraklatıyor; TikTok açıldıktan sonraki ilk seferde ve yorumu olmayan bir videoda da. Önceden bu ilk açılışta video, yorumlar yüklenene kadar oynamaya devam ediyordu. Block author button yama seçiminde olmasa da artık çalışıyor.
+
+* **TikTok:** Parlaklık ve ses için kaydır artık yorumlara karışmıyor: yorumlar açıkken kenara yakın bir kaydırma yorumları kaydırıyor, parlaklığı veya sesi değiştirmiyor.
+
+* **TikTok:** Show commenter handle and region, yorumun kendisinde ülke yoksa (TikTok bunu sık sık göndermiyor) akışın o hesap için gösterdiği ülkeyi kullanıyor. Bunun için o kişinin videolarından birinin akışınızdan geçmiş olması gerekiyor.
+
+* **TikTok:** Yüklenmiş etkinlikte ara, TikTok'un liste güncellemelerinden birinde bir sorunla karşılaşırsa uygulama kapanmak yerine arama kapanıyor ve TikTok'un kendi listesi ekranda kalıyor.
+
+* **TikTok:** Sürüm yayımlama artık dosyaları etiketle yeniden aramak yerine doğruladığı sürümün kendisi üzerinden yüklüyor ve indiriyor, iki sürüm aynı etiketi paylaştığında da duruyor. Zaten yayımlanmış bir etiketi yeniden derlemek reddediliyor ve dizin adımı makbuzu içeri kopyalamadan önce yayımlanan kopyanın sağlama toplamıyla karşılaştırıyor.
+
 * **TikTok:** Yeni Show commenter handle and region yaması: yorumlar, yorum yazanın görünen adı yerine @kullanıcıadını ve yorumun zamanından sonra hesabında ayarlı ülkeyi gösterebilir. Her birinin Hushfeed ayarları > Yorumlar bölümünde kendi anahtarı var ve ikisi de başta kapalı. na-x-ril'in onlynazril yamalarından alındı.
 
 * **TikTok:** Sistem yazı tipini kullan artık TikTok metnini içe aktardığınız bir .ttf veya .otf dosyasıyla da gösterebilir. Uygulama bölümünde İçe aktarılan yazı tipini kullan'ı açın, dosyayı seçin ve TikTok'u yeniden başlatın. Dosya silinir veya okunamazsa metin, Sistem yazı tipini kullan'ın gösterdiğine döner. na-x-ril'in onlynazril yamalarından alındı.

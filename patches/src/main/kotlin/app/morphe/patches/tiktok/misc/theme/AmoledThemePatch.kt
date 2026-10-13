@@ -72,22 +72,20 @@ val amoledThemePatch = resourcePatch(
                 }
             }
         }
-        // The comments sheet and the share sheet never touch colors.xml. Both fill with
-        // attr/a24 (traced on 47.0.3: the comment page's af4/af9 shapes, and the Tux sheet's
-        // background attribute b79), which the dark themes send to attr/aia, and every value aia
-        // has is a literal inside a <style>. 46.x reached the same sheets through agk (comments)
-        // and c3 (share), which 47.x keeps as dark surface tokens of their own. Only a dark
-        // literal is rewritten, so a light style's white stays white.
+        // The sheets, the long-press panel and the Inbox Activity page never touch colors.xml.
+        // They fill with theme attributes whose dark values are literals inside a <style>
+        // (SURFACE_STYLE_ITEMS). Only a dark literal is rewritten, so a light style's white
+        // stays white.
         valuesDirectories.map { it.resolve("styles.xml") }.filter { it.exists() }.forEach { file ->
             document(file.relativeTo(get(".")).invariantSeparatorsPath).use { xml ->
-                styleItemsFound += rewriteDarkStyleItems(xml, SHEET_STYLE_ITEMS, color)
+                styleItemsFound += rewriteDarkStyleItems(xml, SURFACE_STYLE_ITEMS, color)
             }
         }
         if (found != backgrounds) throw PatchException("Dark background palette is incomplete: $found")
         // The palette check above refuses every build whose names weren't read, so this is a
-        // build whose sheet names are known, and one missing means an identity is wrong.
-        if (styleItemsFound != SHEET_STYLE_ITEMS) {
-            throw PatchException("Dark sheet style items are incomplete: $styleItemsFound")
+        // build whose surface names are known, and one missing means an identity is wrong.
+        if (styleItemsFound != SURFACE_STYLE_ITEMS) {
+            throw PatchException("Dark surface style items are incomplete: $styleItemsFound")
         }
         BuildDetails.amoled(get(BUILD_DETAILS_ASSET), color)
     }
@@ -175,14 +173,21 @@ internal fun declaredVersions(): Set<String> =
     AppCompatibilities.tiktok().flatMap { it.targets }.mapNotNull { it.version }.toSet()
 
 /**
- * The dark tokens behind TikTok's sheets. agk and c3 were the comments and share sheets' own
- * through 46.x and are dark surfaces of their own on 47.x. aia is the dark value for
- * UISheetFlat1 (attr/a24), which the comment panel, the share sheet and TikTok's other sheets,
- * panels and modals fill with (AmoledSheetTokensTest). 47.1.4 keeps every attr where 47.0.3 had
- * it (TuxSheet's background attribute is 0x7f0609fb), so the three names hold there. On 46.x
- * aia was another surface tier, which is why only a build whose palette was read is patched.
+ * The dark style literals behind TikTok's sheets and pages, named by TikTok's own token table
+ * (AmoledSheetTokensTest):
+ * - aia is UISheetFlat1's dark value (attr/a24), the fill of the comment panel, the share sheet
+ *   and TikTok's other sheets, panels and modals.
+ * - aig is UISheetGrouped1's (attr/a2_), the fill of the feed's long-press panel and the other
+ *   sheets that group their rows into cards. The cards are UISheetGrouped2 and keep their gray.
+ * - bx is BGPrimary, a literal of its own in the dark themes, which the Inbox Activity page, its
+ *   rows and New followers fill with.
+ * - agk and c3 were the comments and share sheets' own through 46.x and are dark surfaces of
+ *   their own on 47.x.
+ * 47.1.4 keeps every attr where 47.0.3 had it (TuxSheet's background attribute is 0x7f0609fb).
+ * On 46.x aia was another surface tier, which is why only a build whose palette was read is
+ * patched.
  */
-internal val SHEET_STYLE_ITEMS = setOf("agk", "c3", "aia")
+internal val SURFACE_STYLE_ITEMS = setOf("agk", "c3", "aia", "aig", "bx")
 
 /**
  * Sets every `<item name="...">` in the named set whose value is a dark opaque colour literal

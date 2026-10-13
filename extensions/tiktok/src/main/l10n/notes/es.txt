@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Descargas tiene un interruptor nuevo debajo de Calidad de descarga del vídeo: Preguntar la calidad en cada descarga. Si está activado, Descargar muestra las calidades en las que está el vídeo, con el tamaño que TikTok indica para cada una, y guarda la que elijas. Automático, el archivo de TikTok, siempre aparece primero. La calidad que tengas puesta se mantiene para la próxima descarga.
+
+* **TikTok:** Un nuevo interruptor junto a Pulsación larga, Menú completo de pulsación larga en los videos de un creador, hace que una pulsación larga en un video que abriste desde el perfil de alguien abra el mismo menú completo que en Para ti en lugar del panel de compartir pequeño (#120).
+
+* **TikTok:** Un nuevo interruptor en la página Panel de compartir, Copiar el enlace con un toque en Compartir, hace que un toque en Compartir debajo de un vídeo copie su enlace, limpio como un enlace compartido. Un segundo toque justo después abre el panel de compartir como siempre.
+
+* **TikTok:** Silenciar el feed mientras los comentarios están abiertos ahora se llama Pausar el video mientras los comentarios están abiertos, que es lo que hace.
+
+* **TikTok:** Con Ocultar controles automáticamente sin retraso, un vídeo que abres desde la búsqueda, un perfil, un hashtag o un sonido ahora empieza con los controles ya ocultos, también después de haberlos recuperado en el feed para llegar a la búsqueda. Antes, sus botones y la barra de búsqueda de arriba se veían durante medio segundo más o menos (#84).
+
+* **TikTok:** Bloquear a este creador y Guardar portada ahora aparecen en el mismo círculo gris que los botones de TikTok en el menú de compartir, con un icono del tamaño y el color de los suyos en modo claro y oscuro. También tienen su icono en el panel que se abre al mantener pulsado un vídeo del feed, donde faltaba.
+
+* **TikTok:** Doble toque tiene una opción nueva, Acelerar este vídeo, doble toque otra vez para deshacerlo. El vídeo en pantalla se reproduce a tu Velocidad mientras mantienes pulsado el vídeo (2x salvo que elijas otra), un segundo doble toque devuelve la velocidad que tenía y el siguiente vídeo se reproduce a su velocidad habitual (#136).
+
+* **TikTok:** Descargas tiene un interruptor nuevo, Botón Guardar portada en el panel de compartir. Con él activado, el panel de compartir de un vídeo muestra Guardar portada justo después de Descargar, para que guardes la portada solo cuando la quieras, y Descargar guarda solo el vídeo. Mientras está desactivado, Guardar también la portada funciona como antes (#146).
+
+* **TikTok:** Buscar en la actividad cargada también se aparta cuando encuentra un problema mientras TikTok carga más de la lista: la búsqueda se cierra y la solicitud de TikTok sigue adelante en lugar de cerrarse la app.
+
+* **TikTok:** AMOLED dark theme ahora también pone en negro el panel que se abre al mantener pulsado un video del feed, y las páginas Actividad y Nuevos seguidores de la Bandeja de entrada. Seguían con el gris oscuro de TikTok. Las tarjetas del panel siguen grises para que se distingan.
+
+* **TikTok:** Network proxy ahora indica qué conexiones no pasan por él. Las descargas de Hushfeed y la consulta de enlaces cortos de Copiar enlace se conectan directamente, después de sus propias comprobaciones de dirección, y el informe de diagnóstico exportado muestra cada ruta en Network routes.
+
+* **TikTok:** En Android 6 a 8.1, los lectores de pantalla ahora anuncian como encabezados los títulos de página, de sección y de la pantalla de recuperación en los ajustes de Hushfeed, igual que en Android más reciente.
+
+* **TikTok:** La publicación de versiones funciona en Windows PowerShell 5.1 además de PowerShell 7. La comprobación de etiquetas duplicadas ahora lee cada versión de una página en 5.1, donde antes tomaba toda la página como una sola versión, y las comprobaciones de publicación y de scripts pasan en ambos shells.
+
+* **TikTok:** Pausar el video mientras los comentarios están abiertos ahora pausa el video en cuanto se abren los comentarios, también la primera vez después de abrir TikTok y en un video sin comentarios. Antes, esa primera vez seguía reproduciéndose hasta que cargaban los comentarios. Ahora también funciona si Block author button no está en la selección de parches.
+
+* **TikTok:** Deslizar para el brillo y el volumen deja en paz los comentarios: arrastrar cerca del borde con los comentarios abiertos los desplaza y no cambia el brillo ni el volumen.
+
+* **TikTok:** Show commenter handle and region usa el país que el feed mostró para la cuenta de quien comenta cuando el comentario no trae uno, algo que TikTok suele omitir. Hace falta que uno de sus videos haya pasado por tu feed.
+
+* **TikTok:** Si Buscar en la actividad cargada falla dentro de una de las actualizaciones de lista de TikTok, la búsqueda se cierra y la lista de TikTok sigue en pantalla en lugar de cerrarse la app.
+
+* **TikTok:** La publicación de versiones ahora sube y descarga los archivos a través de la misma versión que comprobó, en lugar de volver a buscarla por etiqueta, y se detiene cuando dos versiones comparten etiqueta. Se rechaza volver a compilar una etiqueta ya publicada, y el paso del índice compara el recibo con la suma de comprobación de la copia publicada antes de copiarlo.
+
 * **TikTok:** Nuevo parche Show commenter handle and region: los comentarios pueden mostrar el @usuario de quien comenta en vez de su nombre visible, y el país configurado en su cuenta después de la hora del comentario. Cada opción tiene su propio interruptor en Ajustes de Hushfeed > Comentarios y ambas empiezan desactivadas. Adaptado de los parches onlynazril de na-x-ril.
 
 * **TikTok:** Usar la fuente del sistema ahora también puede mostrar el texto de TikTok con un archivo .ttf u .otf que importes. Activa Usar una fuente importada en Aplicación, elige el archivo y reinicia TikTok. Si el archivo se borra o no se puede leer, el texto vuelve a lo que muestra Usar la fuente del sistema. Adaptado de los parches onlynazril de na-x-ril.

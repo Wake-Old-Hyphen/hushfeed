@@ -117,6 +117,8 @@ public class SessionPlaybackHoldTest {
 
     @Before public void setUp() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
+        // A suite whose activities stopped last leaves the overlay believing the app is away.
+        SessionLockOverlay.resetForTests();
         installNativeControls();
         SessionBudget.awaitWritesForTests();
         resetSettings();

@@ -1,4 +1,5 @@
 %1$s isn't a language code. Use two letters, like en, es or de.	%1$s dil kodu deyil. İki hərf yazın, məsələn en, es və ya de.
+Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.	Videonu paylaşanda Endir düyməsinin yanına Örtüyü saxla əlavə edir, beləliklə örtüyü yalnız istədiyiniz zaman saxlayırsınız. Bu açıq olduqca, Örtüyü də saxla açıq olsa belə, Endir yalnız videonu saxlayır.
 Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Səsi də saxla və uzun basmada Orijinal səsi saxlayın üçün keçərlidir. Opus daha kiçik fayl yaradır, amma səs TikTok-un nüsxəsindən yenidən kodlanır.
 As TikTok sent it (M4A or MP3)	TikTok-un göndərdiyi kimi (M4A və ya MP3)
 Burn-in guard	Ekran yanmasından qoruma
@@ -11,14 +12,19 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 %1$d settings in that file can't be restored here and were skipped	Bu fayldakı %1$d ayar burada bərpa edilə bilmir və ötürüldü
 Import watch history	İzləmə tarixçəsini idxal et
 Keep the language picked in TikTok	TikTok-da seçilən dili saxla
+Nothing is playing to speed up	Sürətləndirmək üçün oxunan heç nə yoxdur
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Bir dil kodu, məsələn en və ya es. TikTok-un tərcümə etdiyi şərhlər və başlıqlar tətbiqin dili əvəzinə bu dildə çıxır. TikTok-un seçimini saxlamaq üçün boş buraxın.
 Opus (.ogg), a smaller file	Opus (.ogg), daha kiçik fayl
 Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus bu telefonda işləmədi. Səs əvəzinə TikTok-un göndərdiyi kimi saxlanılır.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus üçün Android 10 və ya daha yeni versiya lazımdır, ona görə səslər TikTok-un göndərdiyi kimi saxlanılır.
+Playing at %1$sx	%1$sx sürətlə oxunur
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Hekayənin Paylaş düyməsinin açdığı vərəqə saxla düyməsi əlavə edir. O, baxdığınız hekayəni saxlayır, hekayəni basıb saxlamaq isə yenə onu dayandırır.
 Save a story from its share sheet	Hekayəni paylaşma vərəqindən saxlayın
+Save cover	Örtüyü saxla
+Save cover button in the share sheet	Paylaşma vərəqində Örtüyü saxla düyməsi
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	Saxlanan videolarda sol alt küncdə @istifadəçi adı və açıqlamanın ilk sətri görünür. Bunun üçün telefon bütün videonu yenidən kodlayır, ona görə saxlamaq daha uzun çəkir. Hushfeed-in etdiyi saxlamalara aiddir.
 Sound format	Səs formatı
+Speed up this video, double tap again to undo	Bu videonu sürətləndir, geri qaytarmaq üçün yenə iki dəfə toxun
 TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	TikTok-da bu hekayənin yalnız su nişanlı nüsxəsi var idi, ona görə həmin nüsxə %1$s yerinə saxlanıldı
 Translate button in comments	Şərhlərdə tərcümə düyməsi
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	TikTok-un tərcümə düyməsini şərh sayının yanına əlavə edir. Bir toxunuş bütün şərhləri tərcümə edir, növbəti toxunuş isə orijinalları yenidən göstərir.
@@ -1068,7 +1074,7 @@ Show each commenter's @username instead of the display name they chose. A reply 
 Show where commenters are from	Şərh yazanların haradan olduğunu göstərin
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.	Şərhin vaxtından sonra şərh yazanın hesabında qurulmuş ölkəni göstərin. TikTok-un ölkə göndərmədiyi hesablardan gələn şərhlər olduğu kimi qalır.
 Showing %1$s again	%1$s yenidən göstərilir
-Silence the feed while comments are open	Şərhlər açıq olanda lenti səssiz edin
+Pause the video while comments are open	Şərhlər açıq olanda videonu dayandırın
 Hide videos with blocked sounds	Bloklanmış səsləri olan videoları gizlədin
 Skip content warnings	Məzmun xəbərdarlıqlarını keçin
 Hide feed videos with place badges, even when they aren't paid ads. To keep the video and hide only its badge, use Hide location labels in Feed screen.	Ödənişli reklam olmasalar belə, məkan nişanları olan lent videolarını gizlədin. Videonu saxlayıb yalnız nişanı gizlətmək üçün Lent ekranında Məkan etiketlərini gizlədin seçimini istifadə edin.
@@ -1754,7 +1760,7 @@ Don't start the first video	İlk videonu başlatmayın
 When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.	TikTok-u ikonundan açanda lentdəki ilk video oynamazdan əvvəl bir toxunuş gözləyir. Keçid, bildiriş və ya qısayol həmişəki kimi açılır.
 Network proxy	Şəbəkə proksisi
 Send TikTok through a proxy	TikTok-u proksi ilə göndərin
-Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Other apps aren't affected.	TikTok-un lentini, axtarışını, şərhlərini və digər tətbiq trafikini aşağıdakı proksi vasitəsilə göndərir. Videolar və LIVE yayımlar yenə də birbaşa qoşulur. Digər tətbiqlərə təsir etmir.
+Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Saves and short-link lookups from Hushfeed also connect directly, after their own address checks. Other apps aren't affected.	TikTok-un lentini, axtarışını, şərhlərini və digər tətbiq trafikini aşağıdakı proksi vasitəsilə göndərir. Videolar və LIVE yayımlar yenə də birbaşa qoşulur. Hushfeed-in saxlamaları və qısa link yoxlamaları da öz ünvan yoxlamalarından sonra birbaşa qoşulur. Digər tətbiqlərə təsir etmir.
 Proxy type	Proksi növü
 HTTP	HTTP
 SOCKS5	SOCKS5
@@ -1894,7 +1900,7 @@ Liked videos	Bəyənilən videolar
 Public	Hamıya açıq
 Copy	Kopyala
 Copy the full link for short links	Qısa linklər üçün tam linki kopyalayın
-When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit. Links you send to another app go out as they were.	Link kopyala qısa vt.tiktok.com və ya vm.tiktok.com linki verəndə, Hushfeed onu arxa planda bir dəfə açıb tam video linkini tapır və onu kopyalayır. TikTok bu ziyarəti görür. Başqa tətbiqə göndərdiyiniz linklər olduğu kimi gedir.
+When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.	Link kopyala qısa vt.tiktok.com və ya vm.tiktok.com linki verəndə, Hushfeed onu arxa planda bir dəfə açıb tam video linkini tapır və onu kopyalayır. TikTok bu ziyarəti görür və proksi aktiv olsa belə birbaşa qoşulur. Başqa tətbiqə göndərdiyiniz linklər olduğu kimi gedir.
 Full link copied	Tam link kopyalandı
 Mark saved videos	Saxlanılmış videoları işarələyin
 Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.	Hushfeed ilə saxladığınız videoların yanına profil şəbəkələrində və lentdə vaxtın yanında ✓ qoyur. Yalnız “Artıq saxlanılmış videoları yoxlayın” açıq olduqda işləyir. Foto yazılar işarələnmir.
@@ -2046,3 +2052,15 @@ That file is larger than %1$s MB. Choose a smaller font file.	Bu fayl %1$s MB-da
 That file isn't a font Android can use. Choose a .ttf or .otf file.	Bu fayl Android-in istifadə edə biləcəyi şrift deyil. .ttf və ya .otf faylı seçin.
 Profile background	Profil fonu
 Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	TikTok-un öz profil fonu redaktorunu Profili redaktə et bölməsində açır və digər profillərin qoyduğu fonları göstərir. TikTok bu funksiyanı hesabınıza hələ təklif etməyibsə, TikTok serverləri onu saxlamaqdan yenə də imtina edə bilər. Bunu açdıqdan sonra Profili redaktə et bölməsini yenidən açın.
+Copy the link with one press on Share	Paylaşmaya bir basışla keçidi kopyalayın
+A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.	Videonun altındakı Paylaşmaya basmaq paylaşma vərəqini açmaq əvəzinə onun keçidini kopyalayır. Vərəqi açmaq üçün dərhal sonra Paylaşmaya yenidən basın.
+Full long-press menu on a creator's videos	Yaradıcının videolarında tam uzun basma menyusu
+A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default.	Kiminsə profilindən açdığınız videoya uzun basmaq kiçik paylaşma vərəqini deyil, Sənin üçün bölməsindəki eyni menyunu açır. Bunun üçün Uzun basma TikTok defoltunda olmalıdır.
+Ask for the quality on each save	Hər saxlamada keyfiyyəti soruşun
+Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.	Endirmə bu videonun hansı keyfiyyətlərdə olduğunu, TikTok-un hər biri üçün verdiyi ölçü ilə göstərir və seçdiyinizi saxlayır. Yuxarıdakı keyfiyyət növbəti saxlama üçün olduğu kimi qalır.
+Save in which quality?	Hansı keyfiyyətdə saxlansın?
+Automatic (TikTok's file)	Avtomatik (TikTok-un faylı)
+%1$s, about %2$s	%1$s, təxminən %2$s
+%1$s, size unknown	%1$s, ölçü bilinmir
+The quality choice is still open	Keyfiyyət seçimi hələ də açıqdır
+Unknown resolution	Ayırdetmə bilinmir

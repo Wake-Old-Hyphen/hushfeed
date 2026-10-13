@@ -73,10 +73,14 @@ public final class ReceivedDmTranslationPreview {
         }
     }
 
-    /** Called after a successful native received-row bind, including while the setting is off. */
+    /**
+     * Called after a successful native received-row bind. While the setting is off it only lets
+     * go of the row: reading one costs dozens of reflective calls on the main thread, every bind of
+     * every chat. A row bound before the switch went on gets the action at its next bind.
+     */
     public static void bound(Object assem, Object model) {
         unbound(assem);
-        if (assem == null || model == null || Looper.myLooper() != Looper.getMainLooper()) return;
+        if (assem == null || model == null || Looper.myLooper() != Looper.getMainLooper() || !enabled()) return;
         try {
             long epoch = ACCOUNT_EPOCH.get();
             String account = SignedInUser.id();

@@ -30,6 +30,7 @@ import app.morphe.extension.tiktok.share.ShareUrlSanitizer;
 import app.morphe.extension.tiktok.feedfilter.SoundIdentity;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.speed.PlaybackSpeedPatch;
 import app.morphe.extension.tiktok.wellbeing.SleepTimer;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -272,17 +273,7 @@ public final class GestureActions {
             return true;
         }
         if ("copy_link".equals(action)) {
-            String link = ExternalDownloader.shareUrl(onScreenAweme());
-            // The same treatment a shared link gets: TikTok's own link carries the parameters
-            // that say who sent it, and the clipboard is somewhere else that goes.
-            String clean = link == null ? null : ShareUrlSanitizer.rewriteShareUrl(link);
-            if (copyToClipboard("TikTok link", clean)) {
-                if (android.os.Build.VERSION.SDK_INT < 33) {
-                    Utils.showToastShort(L10n.t("Link copied"));
-                }
-            } else {
-                Utils.showToastShort(L10n.t("This video has no link to copy"));
-            }
+            copyVideoLink(onScreenAweme());
             return true;
         }
         if ("copy_sound_link".equals(action)) {
@@ -328,6 +319,13 @@ public final class GestureActions {
             CoverSaver.save(Utils.getActivity(), onScreenAweme());
             return true;
         }
+        if ("speed_toggle".equals(action)) {
+            // This video's speed alone, through the player on screen, so the next one plays as usual (#136).
+            float speed = PlaybackSpeedPatch.toggleBoost();
+            Utils.showToastShort(Float.isNaN(speed) ? L10n.t("Nothing is playing to speed up")
+                    : L10n.f("Playing at %1$sx", PlaybackSpeedPatch.speedLabel(speed)));
+            return true;
+        }
         if (!"comments".equals(action)) return false;
         openOnScreenComments();
         return true;
@@ -347,6 +345,24 @@ public final class GestureActions {
         if (id == null || id.isEmpty()) return null;
         // The slug in front of the id is decoration; the id is what the page is looked up by.
         return "https://www.tiktok.com/music/x-" + id;
+    }
+
+    /**
+     * Copies {@code aweme}'s link and says so, for a gesture and for a press on Share alike.
+     * Android 13 and newer show their own note for every copy, so the toast is for older ones.
+     */
+    public static void copyVideoLink(Object aweme) {
+        String link = ExternalDownloader.shareUrl(aweme);
+        // The same treatment a shared link gets: TikTok's own link carries the parameters
+        // that say who sent it, and the clipboard is somewhere else that goes.
+        String clean = link == null ? null : ShareUrlSanitizer.rewriteShareUrl(link);
+        if (copyToClipboard("TikTok link", clean)) {
+            if (android.os.Build.VERSION.SDK_INT < 33) {
+                Utils.showToastShort(L10n.t("Link copied"));
+            }
+        } else {
+            Utils.showToastShort(L10n.t("This video has no link to copy"));
+        }
     }
 
     /**

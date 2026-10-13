@@ -57,7 +57,10 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * <p>Videos and LIVE streams don't go through either: TikTok's media loader and player are
- * native code that open their own sockets. Chromium can't sign in to a proxy for TTNet, so a
+ * native code that open their own sockets. Hushfeed's own saves and short-link lookups skip the
+ * selector on purpose too: they open with {@code Proxy.NO_PROXY} so a proxy can't pick the peer
+ * after the address was checked (see {@code PinnedMediaConnection}). {@link NetworkRoutes} lists
+ * all four routes in the exported report. Chromium can't sign in to a proxy for TTNet, so a
  * user name and password only reach the Java side, through {@link Authenticator}.
  *
  * <p>The Java side keeps this phone and its local network direct. TTNet's rule has no room for

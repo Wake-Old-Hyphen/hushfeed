@@ -315,7 +315,7 @@ public final class SettingsUi {
             title.setSingleLine(false);
             title.setMaxLines(Integer.MAX_VALUE);
             title.setEllipsize(null);
-            if (Build.VERSION.SDK_INT >= 28) title.setAccessibilityHeading(true);
+            markHeading(title);
         }
         TextView summary = row.findViewById(android.R.id.summary);
         if (summary != null) {
@@ -908,9 +908,7 @@ public final class SettingsUi {
         title.setTextColor(accent());
         title.setTextSize(TEXT_LABEL);
         title.setTypeface(title.getTypeface(), Typeface.BOLD);
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
-            title.setAccessibilityHeading(true);
-        }
+        markHeading(title);
         return title;
     }
 
@@ -934,13 +932,21 @@ public final class SettingsUi {
 
     /** Marks a title in a hand-built dialog as a heading for accessibility services. */
     public static void markDialogHeading(TextView title) {
+        markHeading(title);
+    }
+
+    /**
+     * Marks an app-owned page, section, recovery or dialog title as a heading for accessibility
+     * services on every supported API level. Body rows stay ordinary controls.
+     */
+    public static void markHeading(TextView title) {
         if (Build.VERSION.SDK_INT >= 28) {
             title.setAccessibilityHeading(true);
             return;
         }
         // Before API 28, accessibility services recognize the heading bit carried by a
-        // CollectionItemInfo. These titles are newly created for hand-built dialogs and have no
-        // delegate to preserve.
+        // CollectionItemInfo. These titles are views this app creates, or the host's plain preference
+        // title, and none carries a delegate to preserve; the delegate only adds the heading bit.
         title.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override
             public void onInitializeAccessibilityNodeInfo(

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import app.morphe.extension.tiktok.captions.CaptionStyle;
@@ -603,14 +604,21 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     Settings.SWIPE_LEVELS_STRIP_PERCENT, "%1$s%%"));
         }
         if (SettingsStatus.doubleTapEnabled) {
-            // Long press's actions, which GestureActions runs the same way for both gestures.
+            // Long press's actions, which GestureActions runs the same way for both gestures. The
+            // speed toggle changes the playing video's speed, so it needs the Playback speed patch's
+            // player bridge (#136).
+            List<String> tapLabels = new ArrayList<>(Arrays.asList("TikTok default", "Do nothing", "Open comments",
+                    "Save the original sound", "Copy the video link", "Copy the sound link",
+                    "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
+                    "Save the frame on screen as a photo", "Save the video's cover"));
+            List<String> tapValues = new ArrayList<>(Arrays.asList("default", "nothing", "comments", "original_sound",
+                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"));
+            if (SettingsStatus.liveSpeedEnabled) {
+                tapLabels.add("Speed up this video, double tap again to undo");
+                tapValues.add("speed_toggle");
+            }
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
-                    new String[]{"TikTok default", "Do nothing", "Open comments",
-                            "Save the original sound", "Copy the video link", "Copy the sound link",
-                            "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
-                            "Save the frame on screen as a photo", "Save the video's cover"},
-                    new String[]{"default", "nothing", "comments", "original_sound", "copy_link",
-                            "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
+                    tapLabels.toArray(new String[0]), tapValues.toArray(new String[0])));
         }
         if (SettingsStatus.swipeLeftEnabled) {
             addPreference(new ChoicePreference(context, "Swipe left", Settings.SWIPE_LEFT_ACTION,
@@ -627,6 +635,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             "Save the video's cover"},
                     new String[]{"default", "nothing", "like", "comments", "original_sound", "copy_link",
                             "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
+            addPreference(new TogglePreference(context, "Full long-press menu on a creator's videos",
+                    "A long press on a video you opened from someone's profile opens the same menu as on For You, "
+                            + "not the small share sheet. It needs Long press on TikTok default.",
+                    Settings.LONG_PRESS_FULL_MENU_ON_PROFILES));
             addPreference(new TogglePreference(context, "Seek from the edges",
                     "Press and hold the left or right third of the screen to jump back or forward. "
                             + "The middle third keeps the Long press action.", Settings.EDGE_SEEK));

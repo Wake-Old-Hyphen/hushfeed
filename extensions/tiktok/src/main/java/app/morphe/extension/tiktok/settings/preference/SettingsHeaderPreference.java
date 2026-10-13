@@ -210,7 +210,7 @@ public final class SettingsHeaderPreference extends Preference {
                 SettingsUi.textPrimary(), 1);
         heading.setTag("hushfeed_page_title");
         heading.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_NONE);
-        if (android.os.Build.VERSION.SDK_INT >= 28) heading.setAccessibilityHeading(true);
+        SettingsUi.markHeading(heading);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(-1, -2);
         titleParams.topMargin = SettingsUi.dp(context, compact ? 12 : 24);
         titleParams.setMarginStart(SettingsUi.dp(context, compact ? 0 : 8));

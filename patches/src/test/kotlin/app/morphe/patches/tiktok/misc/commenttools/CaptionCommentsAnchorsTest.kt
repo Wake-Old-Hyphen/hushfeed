@@ -63,7 +63,9 @@ class CaptionCommentsAnchorsTest {
         val source = File(root, "app/morphe/patches/tiktok/misc/commenttools/CommentToolsPatch.kt").readText()
         assertTrue("the caption's expand is not handed over", source.contains("CaptionExpandFingerprint.method.resolveCaptionOpensComments()"))
         assertTrue("the caption row is not answered", source.contains("{ CaptionRowFingerprint.method.resolveCaptionRow() }"))
-        assertTrue("the comment press comes from Double-tap controls", source.contains("dependsOn(settingsPatch, sharedExtensionPatch, doubleTapPatch)"))
+        val dependencies = Regex("""dependsOn\(([^)]*)\)""").find(source)?.groupValues?.get(1).orEmpty()
+            .split(',').map { it.trim() }
+        assertTrue("the comment press comes from Double-tap controls: $dependencies", "doubleTapPatch" in dependencies)
     }
 
     /** Registers the method's parameters take, its receiver included. */

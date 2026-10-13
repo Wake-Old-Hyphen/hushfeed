@@ -139,6 +139,9 @@ public final class SessionLockOverlay {
 
     static void resetForTests() {
         ticking = false;
+        // PausePlayback's lifecycle callbacks report the app gone when a suite's activities stop,
+        // and a stale false stops the countdown, and the sync it runs, for every later suite.
+        foreground = true;
     }
 
     /**

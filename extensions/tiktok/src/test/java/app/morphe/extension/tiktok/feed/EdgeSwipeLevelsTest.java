@@ -14,10 +14,12 @@ import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -654,5 +656,59 @@ public class EdgeSwipeLevelsTest {
         activity.getWindow().setAttributes(params);
         EdgeSwipeLevels.onPaused(activity);
         assertEquals("a brightness TikTok set stays", 0.7f, brightness(), 0.0001f);
+    }
+
+    // ---- the comment sheet -----------------------------------------------------------------
+
+    /** Puts TikTok's comment sheet (47.1.4 ids) into a window that is really on screen. */
+    private Activity activityWithCommentSheet(FrameLayout[] sheetOut) {
+        Activity shown = Robolectric.buildActivity(Activity.class).setup().visible().get();
+        FrameLayout content = shown.findViewById(android.R.id.content);
+        FrameLayout sheet = new FrameLayout(shown);
+        sheet.setId(0x7f0a1001);
+        TextView title = new TextView(shown);
+        title.setId(0x7f0a1002);
+        sheet.addView(title, new FrameLayout.LayoutParams(200, 80));
+        content.addView(sheet, new FrameLayout.LayoutParams(500, 700));
+        FeedVisibility.resolveForTests(shown.getPackageName(), "47.1.4:pyf", sheet.getId());
+        FeedVisibility.resolveForTests(shown.getPackageName(), "47.1.4:wny", title.getId());
+        sheetOut[0] = sheet;
+        return shown;
+    }
+
+    @Test
+    public void anEdgeDragWhileTheCommentSheetIsUpPassesThroughAndChangesNothing() {
+        FrameLayout[] sheet = new FrameLayout[1];
+        Activity shown = activityWithCommentSheet(sheet);
+        float y = shown.getResources().getDisplayMetrics().heightPixels * 0.8f;
+        EdgeSwipeLevels.Gesture gesture = new EdgeSwipeLevels.Gesture(shown);
+        Below below = new Below();
+        send(gesture, below, MotionEvent.ACTION_DOWN, 5f, y);
+        send(gesture, below, MotionEvent.ACTION_MOVE, 5f, y - 40f);
+        send(gesture, below, MotionEvent.ACTION_MOVE, 5f, y - 200f);
+        send(gesture, below, MotionEvent.ACTION_UP, 5f, y - 200f);
+        assertFalse(gesture.taken());
+        assertEquals("TikTok got every event, so the comments scroll", 4, below.actions.size());
+        assertFalse(EdgeSwipeLevels.holdsBrightness(shown.getWindow()));
+        assertEquals(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE,
+                shown.getWindow().getAttributes().screenBrightness, 0f);
+    }
+
+    @Test
+    public void withTheCommentSheetClosedEdgeSwipesStillWorkAndTheSheetIsOnlyAskedAtThePress() {
+        FrameLayout[] sheet = new FrameLayout[1];
+        Activity shown = activityWithCommentSheet(sheet);
+        sheet[0].setVisibility(android.view.View.GONE);
+        float y = shown.getResources().getDisplayMetrics().heightPixels * 0.8f;
+        EdgeSwipeLevels.Gesture gesture = new EdgeSwipeLevels.Gesture(shown);
+        Below below = new Below();
+        send(gesture, below, MotionEvent.ACTION_DOWN, 5f, y);
+        // The sheet opening mid-drag does not hand a taken gesture back halfway.
+        sheet[0].setVisibility(android.view.View.VISIBLE);
+        send(gesture, below, MotionEvent.ACTION_MOVE, 5f, y - 40f);
+        send(gesture, below, MotionEvent.ACTION_MOVE, 5f, y - 200f);
+        assertTrue(gesture.taken());
+        send(gesture, below, MotionEvent.ACTION_UP, 5f, y - 200f);
+        assertTrue(EdgeSwipeLevels.holdsBrightness(shown.getWindow()));
     }
 }

@@ -27,8 +27,10 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -449,7 +451,74 @@ public final class AuthorRegion {
 
         regionValue = regionCode(Reflect.string(aweme, "getRegion", "region"));
         regionAweme = new WeakReference<>(aweme);
+        rememberSeen(handle(aweme), regionValue);
         return regionValue;
+    }
+
+    /** How many creators' countries are kept for the comment list to fall back on. */
+    private static final int MAX_SEEN = 256;
+
+    /**
+     * The country of every creator whose video was bound in the feed lately, by handle. Some
+     * payloads leave the country off a comment's account (S22, 47.1.4), while the video it sits
+     * under, or an earlier one by the same creator, did carry it. Access ordered and bounded, so
+     * it keeps the creators the reader met last; the bind runs on the main thread but the
+     * comment cell may ask from another, so every touch is under the map's lock.
+     */
+    private static final Map<String, String> SEEN_AT_BIND = new LinkedHashMap<String, String>(64, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+            return size() > MAX_SEEN;
+        }
+    };
+
+    /**
+     * One spelling of a handle for both sides of the cache: the at sign and spaces off, lower
+     * case, because handles are not case sensitive. Null for no handle.
+     */
+    static String handleKey(String handle) {
+        if (handle == null) {
+            return null;
+        }
+        String key = handle.trim();
+        if (key.startsWith("@")) {
+            key = key.substring(1).trim();
+        }
+        return key.isEmpty() ? null : key.toLowerCase(Locale.ROOT);
+    }
+
+    public static void rememberSeen(String handle, String region) {
+        String key = handleKey(handle);
+        String code = regionCode(region);
+        if (key == null || code == null) {
+            return;
+        }
+        synchronized (SEEN_AT_BIND) {
+            SEEN_AT_BIND.put(key, code);
+        }
+    }
+
+    /**
+     * The country a creator's video last showed in the feed, or null when none was bound with
+     * one. The exact handle is the key, so a different commenter never gets someone else's.
+     */
+    public static String seenRegion(String handle) {
+        String key = handleKey(handle);
+        if (key == null) {
+            return null;
+        }
+        synchronized (SEEN_AT_BIND) {
+            return SEEN_AT_BIND.get(key);
+        }
+    }
+
+    /** Lets a test start from no remembered creators. */
+    public static void forgetSeenRegions() {
+        synchronized (SEEN_AT_BIND) {
+            SEEN_AT_BIND.clear();
+        }
+        regionAweme = new WeakReference<>(null);
+        regionValue = null;
     }
 
     /**
@@ -471,7 +540,12 @@ public final class AuthorRegion {
     static String[] decoration(Object aweme) {
         boolean names = SettingsStatus.authorRegionEnabled;
         String handle = names && Settings.SHOW_AUTHOR_HANDLE.get() ? handle(aweme) : null;
-        String region = names && Settings.SHOW_AUTHOR_REGION.get() ? region(aweme) : null;
+        boolean showRegion = names && Settings.SHOW_AUTHOR_REGION.get();
+        // Reading the country is also what feeds the comment list's fallback, so it is read
+        // when the commenter switch wants it even if the feed's own row does not show it.
+        boolean wantSeen = names && SettingsStatus.commenterDetailsEnabled && Settings.SHOW_COMMENTER_REGION.get();
+        String read = showRegion || wantSeen ? region(aweme) : null;
+        String region = showRegion ? read : null;
         String rate = EngagementRate.forVideo(aweme);
         String tail = region == null ? rate : rate == null ? region : region + SEPARATOR + rate;
         return handle == null && tail == null ? null : new String[]{handle, tail};

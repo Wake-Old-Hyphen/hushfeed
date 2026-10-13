@@ -1,5 +1,41 @@
 ## Unreleased
 
+* **TikTok:** Endirmələrdə Video endirmə keyfiyyəti altında yeni açar var: Hər saxlamada keyfiyyəti soruşun. Açıq olanda Endirmə videonun hansı keyfiyyətlərdə olduğunu TikTok-un hər biri üçün verdiyi ölçü ilə göstərir və seçdiyinizi saxlayır. Avtomatik, yəni TikTok-un öz faylı, həmişə birinci gəlir. Qurduğunuz keyfiyyət növbəti saxlama üçün olduğu kimi qalır.
+
+* **TikTok:** Uzun basma sətrinin yanındakı yeni Yaradıcının videolarında tam uzun basma menyusu açarı ilə kiminsə profilindən açdığınız videoya uzun basmaq kiçik paylaşma vərəqi əvəzinə Sənin üçün bölməsindəki eyni tam menyunu açır (#120).
+
+* **TikTok:** Paylaşma vərəqi səhifəsindəki yeni Paylaşmaya bir basışla keçidi kopyalayın açarı ilə videonun altındakı Paylaşmaya basmaq həmin videonun keçidini paylaşılan keçid kimi təmizlənmiş halda kopyalayır. Dərhal sonra ikinci basış paylaşma vərəqini həmişəki kimi açır.
+
+* **TikTok:** Şərhlər açıq olanda lenti səssiz edin indi Şərhlər açıq olanda videonu dayandırın adlanır, çünkü etdiyi elə budur.
+
+* **TikTok:** Avtomatik təmiz ekran gecikməsiz qurulubsa, axtarışdan, profildən, heşteqdən və ya səsdən açdığınız video indi idarəetmə elementləri artıq gizli halda başlayır, axtarışa keçmək üçün onları lentdə geri qaytardıqdan sonra da. Əvvəl onun düymələri və yuxarıdakı axtarış sətri təxminən yarım saniyə görünürdü (#84).
+
+* **TikTok:** Bu yaradıcını bloklayın və Örtüyü saxla indi paylaşım panelində TikTok-un öz düymələri kimi eyni boz dairənin içindədir, işıqlı və qaranlıq rejimdə onların ölçüsündə və rəngində ikonla. Lent videosunu basıb saxlayanda açılan paneldə də artıq ikonları var, əvvəl orada yox idi.
+
+* **TikTok:** İki dəfə toxunmada yeni seçim var: Bu videonu sürətləndir, geri qaytarmaq üçün yenə iki dəfə toxun. Ekrandakı video Videonu basıb saxlayarkən sürət ilə oxunur (başqasını seçməmisinizsə 2x), ikinci iki dəfə toxunma əvvəlki sürəti qaytarır, növbəti video isə adi sürəti ilə oxunur (#136).
+
+* **TikTok:** Endirmələrdə yeni açar var: Paylaşma vərəqində Örtüyü saxla düyməsi. Açıq olanda videonun paylaşma vərəqində Endir düyməsindən dərhal sonra Örtüyü saxla görünür, beləliklə örtüyü yalnız istədiyiniz zaman saxlayırsınız, Endir isə yalnız videonu saxlayır. Bağlı olanda Örtüyü də saxla əvvəlki kimi işləyir (#146).
+
+* **TikTok:** Yüklənmiş fəaliyyətdə axtarış TikTok siyahının davamını yükləyərkən problemlə qarşılaşsa da kənara çəkilir: tətbiq bağlanmaq əvəzinə axtarış bağlanır və TikTok-un sorğusu davam edir.
+
+* **TikTok:** AMOLED dark theme indi lentdəki videonu basıb saxlayanda açılan paneli, həmçinin Gələnlər qutusundakı Fəaliyyət və Yeni izləyicilər səhifələrini də qara edir. Onlar TikTok-un tünd boz rəngində qalırdı. Paneldəki kartlar seçilsin deyə boz qalır.
+
+* **TikTok:** Network proxy indi hansı bağlantıların ondan keçmədiyini deyir. Hushfeed-in yükləmələri və Linki kopyala arxasındakı qısa link yoxlaması öz ünvan yoxlamalarından sonra birbaşa qoşulur, ixrac olunan diaqnostika hesabatı isə bütün marşrutları Network routes altında göstərir.
+
+* **TikTok:** Android 6-dan 8.1-ə qədər ekran oxuyucuları indi Hushfeed ayarlarındakı səhifə, bölmə və bərpa ekranı başlıqlarını daha yeni Android-dəki kimi başlıq kimi oxuyur.
+
+* **TikTok:** Buraxılışın dərci indi PowerShell 7 ilə yanaşı Windows PowerShell 5.1-də də işləyir. Təkrarlanan teq yoxlaması 5.1-də artıq səhifədəki hər buraxılışı ayrıca oxuyur, əvvəllər isə bütün səhifəni bir buraxılış sayırdı. Dərc və skript yoxlamaları hər iki mühitdə keçir.
+
+* **TikTok:** Şərhlər açıq olanda videonu dayandırın indi şərhlər açılan kimi videonu dayandırır, TikTok başladıqdan sonra ilk dəfə və şərhi olmayan videoda da. Əvvəl həmin ilk pəncərə şərhlər yüklənənə qədər oynamağa davam edirdi. Block author button patç seçimində olmasa da indi işləyir.
+
+* **TikTok:** Parlaqlıq və səs üçün sürüşdür şərhlər pəncərəsinə toxunmur: şərhlər açıq olanda kənara yaxın sürüşdürmə onları sürüşdürür, parlaqlığı və ya səsi dəyişmir.
+
+* **TikTok:** Show commenter handle and region şərhin özündə ölkə olmayanda (TikTok bunu tez-tez buraxır) lentin həmin hesab üçün göstərdiyi ölkəni istifadə edir. Bunun üçün onların videolarından biri lentinizdən keçmiş olmalıdır.
+
+* **TikTok:** Yüklənmiş fəaliyyətdə axtarış TikTok-un siyahı yeniləmələrindən birində problemlə qarşılaşsa, tətbiq bağlanmaq əvəzinə axtarış bağlanır və TikTok-un öz siyahısı ekranda qalır.
+
+* **TikTok:** Buraxılışın dərci indi faylları teqə görə yenidən axtarmaq əvəzinə yoxladığı buraxılışın özü ilə yükləyir və endirir, iki buraxılış eyni teqi paylaşanda isə dayanır. Artıq dərc olunmuş teqi yenidən yığmaq qəbul edilmir, indeks addımı isə qəbzi içəri köçürməzdən əvvəl onu serverdəki nüsxənin yoxlama cəmi ilə müqayisə edir.
+
 * **TikTok:** Yeni Show commenter handle and region yaması: şərhlər şərh yazanın görünən adı əvəzinə @istifadəçi adını, şərhin vaxtından sonra isə hesabında qurulmuş ölkəni göstərə bilər. Hər birinin Hushfeed ayarları > Şərhlər bölməsində öz açarı var və hər ikisi əvvəlcə söndürülüdür. na-x-ril-in onlynazril yamalarından götürülüb.
 
 * **TikTok:** Sistem şriftindən istifadə edin indi TikTok mətnini idxal etdiyiniz .ttf və ya .otf faylı ilə də göstərə bilər. Tətbiq bölməsində İdxal edilmiş şriftdən istifadə edin seçimini açın, faylı seçin və TikTok-u yenidən başladın. Fayl silinərsə və ya oxuna bilməzsə, mətn Sistem şriftindən istifadə edin seçiminin göstərdiyinə qayıdır. na-x-ril-in onlynazril yamalarından götürülüb.

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.feed.AuthorRegion;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -260,5 +261,50 @@ public class CommenterDetailsTest {
         CommenterDetails.onCommentTime(by("1", "a", "FR"), time);
 
         assertEquals("FR", time.getText().toString());
+    }
+
+    @Test
+    public void aCommenterWithNoRegionGetsTheCountryTheFeedSawForTheirHandle() {
+        Settings.SHOW_COMMENTER_REGION.save(true);
+        AuthorRegion.rememberSeen("River.Otter", "us");
+        TimeView time = timeSaying("2d ago");
+
+        CommenterDetails.onCommentTime(by("1", "@river.otter", null), time);
+
+        assertEquals("2d ago · US", time.getText().toString());
+    }
+
+    @Test
+    public void theAccountsOwnRegionBeatsTheFeedsAndARecycledCellNeverShowsAnothersCountry() {
+        Settings.SHOW_COMMENTER_REGION.save(true);
+        AuthorRegion.rememberSeen("river.otter", "US");
+        TimeView time = timeSaying("2d ago");
+        CommenterDetails.onCommentTime(by("1", "river.otter", "GB"), time);
+        assertEquals("2d ago · GB", time.getText().toString());
+
+        // The cell is rebound to a commenter the feed never showed, then to one with no handle.
+        time.tikTokWrites("5h ago");
+        CommenterDetails.onCommentTime(by("2", "someone.else", null), time);
+        assertEquals("5h ago", time.getText().toString());
+        time.tikTokWrites("1w ago");
+        CommenterDetails.onCommentTime(by("3", null, null), time);
+        assertEquals("1w ago", time.getText().toString());
+
+        // And back to the one the feed did show.
+        time.tikTokWrites("1d ago");
+        CommenterDetails.onCommentTime(by("4", "river.otter", null), time);
+        assertEquals("1d ago · US", time.getText().toString());
+    }
+
+    @Test
+    public void theFeedCacheKeepsOnlyTheLast256CreatorsAndTheMostRecentlyUsedSurvive() {
+        AuthorRegion.rememberSeen("keeper", "FR");
+        for (int i = 0; i < 300; i++) {
+            AuthorRegion.rememberSeen("creator" + i, "US");
+            if (i % 50 == 0) assertEquals("FR", AuthorRegion.seenRegion("keeper"));
+        }
+        assertEquals("FR", AuthorRegion.seenRegion("keeper"));
+        assertEquals(null, AuthorRegion.seenRegion("creator0"));
+        assertEquals("US", AuthorRegion.seenRegion("creator299"));
     }
 }

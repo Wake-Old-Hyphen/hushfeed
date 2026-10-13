@@ -175,7 +175,26 @@ function Get-PublicationRelease {
         $release.assets -isnot [array]) {
         throw "GitHub returned incomplete or mismatched release metadata for $Tag."
     }
+    Assert-SingleTagRelease -Repository $Repository -Tag $Tag -ReleaseId ([string]$release.id)
     return $release
+}
+
+function Assert-SingleTagRelease {
+    param([string]$Repository, [string]$Tag, [string]$ReleaseId)
+    # GitHub doesn't keep draft tags unique. Asset calls below go by database ID, but a stray
+    # second release on this tag means the lookup above may not be the one that was meant.
+    $same = @()
+    for ($page = 1; $page -le 10; $page++) {
+        # Windows PowerShell 5.1's ConvertFrom-Json hands a JSON array on as one object, so @()
+        # alone would hold the whole page as a single release. ForEach-Object unrolls it there.
+        $batch = @(Get-PublicationApi "repos/$Repository/releases?per_page=100&page=$page" | ForEach-Object { $_ })
+        $same += @($batch | Where-Object { $_.tag_name -ceq $Tag })
+        if ($batch.Count -lt 100) { break }
+        if ($page -eq 10) { throw "Too many releases to check $Tag for duplicates." }
+    }
+    if ($same.Count -ne 1 -or [string]$same[0].id -cne $ReleaseId) {
+        throw "More than one release has the tag $Tag ($(@($same | ForEach-Object { $_.id }) -join ', ')). Delete the stray draft, then rerun."
+    }
 }
 
 function Get-PublishedReleaseDate {
@@ -263,13 +282,35 @@ function Assert-PublicationRelease {
     return (($fingerprints | Sort-Object) -join "`n")
 }
 
+function Save-PublicationAsset {
+    param([string]$Repository, [object]$Asset, [string]$Path)
+    # Windows PowerShell 5.1 re-encodes a redirected native stream as text, so copy the bytes.
+    $gh = (Get-Command gh -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
+    $info = [Diagnostics.ProcessStartInfo]::new($gh, "api -H `"Accept: application/octet-stream`" repos/$Repository/releases/assets/$($Asset.id)")
+    $info.UseShellExecute = $false
+    $info.CreateNoWindow = $true
+    $info.RedirectStandardOutput = $true
+    $info.RedirectStandardError = $true
+    $process = [Diagnostics.Process]::Start($info)
+    try {
+        $errors = $process.StandardError.ReadToEndAsync()
+        $stream = [IO.File]::Create($Path)
+        try { $process.StandardOutput.BaseStream.CopyTo($stream) } finally { $stream.Dispose() }
+        $process.WaitForExit()
+        if ($process.ExitCode -ne 0) { throw "gh api asset $($Asset.id) failed (exit $($process.ExitCode)): $($errors.Result)" }
+    } finally { $process.Dispose() }
+}
+
 function Assert-PublicationDownloads {
     param([object]$Release, [string]$Repository, [string]$Tag, [hashtable]$Hashes, [string]$Work)
     $check = Resolve-WithinRoot -Root $Work -Path (Join-Path $Work ([guid]::NewGuid().ToString('N')))
     $null = New-Item -ItemType Directory -Path $check
-    $arguments = @('release', 'download', $Tag, '-R', $Repository, '--dir', $check)
-    foreach ($asset in $Release.assets) { $arguments += @('--pattern', $asset.name) }
-    Invoke-PublicationCommand gh $arguments | Out-Null
+    # By asset ID from the verified release. `gh release download <tag>` reselects by tag.
+    foreach ($asset in $Release.assets) {
+        $name = [string]$asset.name
+        if ([IO.Path]::GetFileName($name) -cne $name) { throw "$Tag has an unsafe asset name: $name" }
+        Save-PublicationAsset -Repository $Repository -Asset $asset -Path (Join-Path $check $name)
+    }
     $downloaded = @(Get-ChildItem -LiteralPath $check -Force)
     if ($downloaded.Count -ne $Release.assets.Count -or @($downloaded | Where-Object { $_.PSIsContainer -or $_.Name -cnotin @($Release.assets.name) }).Count) {
         throw "$Tag download is missing assets or contains unexpected files."
@@ -343,8 +384,12 @@ function Invoke-ReleasePublication {
         if (-not $alreadyPublished) {
             $missing = @($names | Where-Object { $_ -cnotin @($release.assets.name) })
             if ($missing.Count) {
-                $paths = @($missing | ForEach-Object { $files[$_].FullName })
-                Invoke-PublicationCommand gh (@('release', 'upload', $tag, '-R', $Repository) + $paths) | Out-Null
+                # To the verified release ID, one asset per call. `gh release upload <tag>` reselects by tag.
+                foreach ($name in $missing) {
+                    $url = "https://uploads.github.com/repos/$Repository/releases/$($identity.ReleaseId)/assets?name=$([Uri]::EscapeDataString($name))"
+                    Invoke-PublicationCommand gh @('api', $url, '--method', 'POST', '-H', 'Content-Type: application/octet-stream',
+                        '--input', $files[$name].FullName) | Out-Null
+                }
                 $release = Get-PublicationRelease -Repository $Repository -Tag $tag
                 $fingerprint = Assert-PublicationRelease -Release $release @identity -Complete
                 Assert-PublicationDownloads -Release $release -Repository $Repository -Tag $tag -Hashes $hashes -Work $work
@@ -436,6 +481,9 @@ switch ($Stage) {
     'build' {
         $head = Assert-PushedHead
         if ((Get-SourceVersion) -ne $Version) { throw "gradle.properties says $(Get-SourceVersion), not $Version." }
+        # A rebuild overwrites the local assets that -Stage index later copies from.
+        $existing = Get-PublicationRelease -Repository $Repository -Tag $tag -AllowMissing
+        if ($null -ne $existing -and -not $existing.draft) { throw "$tag is already published. Its assets are final, so a rebuild would only diverge from them." }
         Step "bundle from $head"
         Invoke-Gradle @(':patches:buildAndroid')
         $bundle = Join-Path $root "patches/build/release/$bundleName"
@@ -501,6 +549,13 @@ switch ($Stage) {
         # written over the live description.
         $description = [string](gh repo view $Repository --json description --jq .description)
         if ($LASTEXITCODE -ne 0) { throw "Couldn't read the $Repository description (exit $LASTEXITCODE), so nothing was indexed." }
+        # The receipt is copied into the repo below, so it has to be the one that was published.
+        $hostedReceipt = @($published.assets | Where-Object { $_.name -ceq $receiptName })
+        $localReceipt = (Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $assets $receiptName)).Hash.ToLowerInvariant()
+        if ($hostedReceipt.Count -ne 1 -or -not $hostedReceipt[0].digest) { throw "$tag has no single hosted $receiptName with a digest to compare." }
+        if ($hostedReceipt[0].digest -ine "sha256:$localReceipt") {
+            throw "The local $receiptName ($localReceipt) differs from the hosted one ($($hostedReceipt[0].digest)). Don't index a rebuilt receipt."
+        }
         if ($RequireImmutableRelease) {
             foreach ($name in $bundleName, $receiptName, 'SHA256SUMS.txt') {
                 Test-ReleaseAttestation -Repository $Repository -Tag $tag -ArtifactPath (Join-Path $assets $name) `

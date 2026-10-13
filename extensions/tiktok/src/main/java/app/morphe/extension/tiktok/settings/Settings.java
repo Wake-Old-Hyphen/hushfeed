@@ -122,6 +122,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PLAY_SDR = new BooleanSetting("play_sdr", FALSE);
     public static final BooleanSetting PREFER_H264 = new BooleanSetting("prefer_h264", FALSE);
     public static final StringSetting DOWNLOAD_VIDEO_QUALITY = new StringSetting("download_video_quality", "auto");
+    /** Download lists the video's renditions and saves the one picked, for that save alone. */
+    public static final BooleanSetting DOWNLOAD_ASK_QUALITY = new BooleanSetting("download_ask_quality", FALSE);
     public static final BooleanSetting DOWNLOAD_ORIGINAL_PHOTOS = new BooleanSetting("download_original_photos", FALSE);
     public static final BooleanSetting DOWNLOAD_PHOTOS_AS_VIDEO = new BooleanSetting("download_photos_as_video", FALSE);
     public static final IntegerSetting PHOTO_VIDEO_SECONDS = new IntegerSetting("photo_video_seconds", 3, false,
@@ -137,6 +139,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting DOWNLOAD_WATERMARK_FALLBACK = new BooleanSetting("download_watermark_fallback", FALSE);
     /** The video's cover, at the largest size it comes in, saved with each Download. */
     public static final BooleanSetting DOWNLOAD_COVER = new BooleanSetting("download_cover", FALSE);
+    /** A Save cover button beside Download in a video's share sheet; Download then saves only the video (#146). */
+    public static final BooleanSetting SAVE_COVER_BUTTON = new BooleanSetting("save_cover_button", FALSE);
     public static final BooleanSetting DOWNLOAD_WITHOUT_SOUND =
             new BooleanSetting("download_without_sound", FALSE);
     public static final BooleanSetting DOWNLOAD_PROGRESS = new BooleanSetting("download_progress", false);
@@ -199,6 +203,15 @@ public class Settings extends BaseSettings {
     /** A long press on Favorites plays at the hold speed instead of offering a new collection. */
     public static final BooleanSetting RAIL_HOLD_FAVORITES =
             new BooleanSetting("rail_hold_favorites", FALSE, RAIL_HOLD_POSSIBLE);
+    /** A long press on a video from someone's profile opens For You's full menu (#120). */
+    public static final BooleanSetting LONG_PRESS_FULL_MENU_ON_PROFILES =
+            new BooleanSetting("long_press_full_menu_on_profiles", FALSE, new Setting.Availability() {
+                // Only a long press left to TikTok opens its menu at all.
+                @Override
+                public boolean isAvailable() {
+                    return !GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
+                }
+            });
     /** What a left swipe on a feed video does: TikTok's creator profile, nothing, or the comments. */
     public static final StringSetting SWIPE_LEFT_ACTION = new StringSetting("swipe_left_action", "default");
     public static final BooleanSetting EDGE_SEEK = new BooleanSetting("edge_seek", FALSE);
@@ -999,6 +1012,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_SORT_CONTROLS = new BooleanSetting("comment_sort_controls", FALSE);
     // Share sheet tools.
     public static final BooleanSetting HIDE_SHARE_CONTACTS = new BooleanSetting("hide_share_contacts", FALSE);
+    public static final BooleanSetting SHARE_TAP_COPIES_LINK = new BooleanSetting("share_tap_copies_link", FALSE);
     public static final StringSetting SHARE_HIDDEN_ITEMS = new StringSetting("share_hidden_items", "");
     // The profile and LIVE sheets keep lists of their own. Until one is saved it holds this
     // marker and follows SHARE_HIDDEN_ITEMS, so a list chosen before the split keeps working on

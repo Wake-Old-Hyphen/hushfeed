@@ -252,7 +252,8 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     "Copy the full link for short links",
                     "When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed "
                             + "opens it once in the background to find the full video link and "
-                            + "copies that instead. TikTok sees that visit. Links you send to "
+                            + "copies that instead. TikTok sees that visit, and it connects directly "
+                            + "even when a proxy is on. Links you send to "
                             + "another app go out as they were.",
                     Settings.EXPAND_SHORT_SHARE_LINKS
             ));

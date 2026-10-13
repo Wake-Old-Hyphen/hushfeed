@@ -275,6 +275,56 @@ if ($indexLagsSource) {
 }
 $descriptionTargetText = Format-VersionList -Versions $descriptionTargetVersions
 
+# concepts/patch-development.md states the current version and patch counts in prose, and it went
+# a release stale (0.70.0 and 131 entries over a 0.71.x checkout) with nothing reading it. The
+# source line is held to gradle.properties and patches-list.json. The published line is held to
+# the index, which may lag the source, and to the release it names. The category table has to add
+# up to the catalog it describes.
+$guidePath = Join-Path $rootPath 'concepts/patch-development.md'
+if (-not (Test-Path -LiteralPath $guidePath -PathType Leaf)) {
+    throw 'concepts/patch-development.md is missing, so its version and patch counts cannot be checked.'
+}
+$guide = Get-Content -LiteralPath $guidePath -Raw
+$guideSource = [regex]::Match($guide, '(?m)^Source snapshot: version (\d+\.\d+\.\d+), (\d+) patch entries\.')
+if (-not $guideSource.Success) {
+    throw 'concepts/patch-development.md has no "Source snapshot: version X.Y.Z, N patch entries." line.'
+}
+if ($guideSource.Groups[1].Value -ne $releaseVersion -or [int]$guideSource.Groups[2].Value -ne $patchCount) {
+    throw ("concepts/patch-development.md says source $($guideSource.Groups[1].Value) with " +
+        "$($guideSource.Groups[2].Value) patch entries, but gradle.properties and patches-list.json say " +
+        "$releaseVersion with $patchCount. Update its Source snapshot line.")
+}
+$guidePublished = [regex]::Match($guide, '(?m)^Published bundle: version (\d+\.\d+\.\d+), (\d+) patches\.')
+if (-not $guidePublished.Success) {
+    throw 'concepts/patch-development.md has no "Published bundle: version X.Y.Z, N patches." line.'
+}
+if ($guidePublished.Groups[1].Value -ne $publishedVersion -or [int]$guidePublished.Groups[2].Value -ne $descriptionPatchCount) {
+    throw ("concepts/patch-development.md says the published bundle is $($guidePublished.Groups[1].Value) with " +
+        "$($guidePublished.Groups[2].Value) patches, but patches-bundle.json says $publishedVersion with " +
+        "$descriptionPatchCount. Update its Published bundle line.")
+}
+$guideCatalog = [regex]::Match($guide,
+    '(?s)catalog''s (\d+) patches are grouped as follows:\s*\r?\n\s*\r?\n\| Manager category[^\r\n]*\r?\n[^\r\n]*\r?\n((?:\|[^\r\n]*(?:\r?\n|$))+)')
+if (-not $guideCatalog.Success) {
+    throw 'concepts/patch-development.md has no "catalog''s N patches are grouped as follows" category table.'
+}
+if ([int]$guideCatalog.Groups[1].Value -ne $patchCount) {
+    throw ("concepts/patch-development.md groups $($guideCatalog.Groups[1].Value) patches, " +
+        "but patches-list.json has $patchCount.")
+}
+$guideCategories = @{}
+foreach ($row in [regex]::Matches($guideCatalog.Groups[2].Value, '(?m)^\|\s*([^|]+?)\s*\|\s*(\d+)\s*\|')) {
+    $guideCategories[$row.Groups[1].Value] = [int]$row.Groups[2].Value
+}
+$catalogCategories = @{}
+foreach ($patch in $patches) { $catalogCategories[[string]$patch.category] = 1 + [int]$catalogCategories[[string]$patch.category] }
+$categoryDrift = @(($guideCategories.Keys + $catalogCategories.Keys) | Sort-Object -Unique | Where-Object {
+    [int]$guideCategories[$_] -ne [int]$catalogCategories[$_]
+} | ForEach-Object { "$_ is $([int]$guideCategories[$_]) there and $([int]$catalogCategories[$_]) in patches-list.json" })
+if ($categoryDrift.Count -gt 0) {
+    throw ('concepts/patch-development.md has a stale category table: ' + ($categoryDrift -join '; ') + '.')
+}
+
 # The one line GitHub shows above the README, which is also what search results, the awesome
 # lists and the Manager's community button repeat. Nothing here read it until now, and it had
 # gone two releases and two patches stale before anyone noticed. The repository it reads is the

@@ -176,9 +176,21 @@ public final class CommenterDetails {
             return null;
         }
         String region = AuthorRegion.regionCode(Reflect.string(user, "getRegion", "region"));
-        return region != null
-                ? region
-                : AuthorRegion.regionCode(Reflect.string(user, "getAccountRegion", "accountRegion"));
+        if (region == null) {
+            region = AuthorRegion.regionCode(Reflect.string(user, "getAccountRegion", "accountRegion"));
+        }
+        boolean carried = region != null;
+        // Some comment payloads leave the country off the account. The feed already read it
+        // for this creator's video, so look it up by this commenter's own handle. Only the
+        // exact handle matches, so a recycled cell never gets another commenter's country.
+        if (region == null) {
+            region = AuthorRegion.seenRegion(handleOf(user));
+        }
+        String shown = region;
+        Logger.printDebug(() -> "Commenter region: the comment's account "
+                + (carried ? "carried one" : "carried none") + ", showing "
+                + (shown == null ? "nothing" : shown + (carried ? "" : " from the feed")));
+        return region;
     }
 
     private static void remember(String uid, String handle) {
@@ -196,5 +208,6 @@ public final class CommenterDetails {
             HANDLE_BY_UID.clear();
         }
         STAMPED.clear();
+        AuthorRegion.forgetSeenRegions();
     }
 }

@@ -77,7 +77,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new SectionHeadingPreference(context, "Staying on a video"));
         }
         if (SettingsStatus.commentToolsEnabled) {
-            addPreference(new TogglePreference(context, "Silence the feed while comments are open",
+            addPreference(new TogglePreference(context, "Pause the video while comments are open",
                     "Pauses the video behind the comment sheet while you read. "
                             + "It plays on from the same spot when the sheet closes.",
                     Settings.PAUSE_ON_COMMENTS));

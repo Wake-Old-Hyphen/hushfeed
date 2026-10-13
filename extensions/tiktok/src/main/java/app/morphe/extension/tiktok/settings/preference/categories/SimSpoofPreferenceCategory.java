@@ -57,8 +57,9 @@ public class SimSpoofPreferenceCategory extends ConditionalPreferenceCategory {
                 context,
                 "Send TikTok through a proxy",
                 "Sends TikTok's feed, search, comments and other app traffic through the proxy "
-                        + "below. Videos and LIVE streams still connect directly. Other apps "
-                        + "aren't affected.",
+                        + "below. Videos and LIVE streams still connect directly. Saves and "
+                        + "short-link lookups from Hushfeed also connect directly, after their own "
+                        + "address checks. Other apps aren't affected.",
                 Settings.NETWORK_PROXY
         ));
         addPreference(new ChoicePreference(context, "Proxy type", Settings.NETWORK_PROXY_TYPE,

@@ -16,6 +16,7 @@ import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.playback.KeepPaused;
 import app.morphe.extension.tiktok.playback.PausePlayback;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.time.Duration;
 
@@ -43,6 +44,9 @@ public class KeepPausedTest {
 
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
+        // The switches this suite drives have their rows with Comment tools and Block author.
+        SettingsStatus.commentToolsEnabled = true;
+        SettingsStatus.blockAuthorEnabled = true;
         SessionPlaybackHoldTest.installNativeControls();
         ReflectionHelpers.callStaticMethod(CurrentVideoAuthor.class, "resetForTests");
         ReflectionHelpers.callStaticMethod(KeepPaused.class, "resetForTests");
@@ -56,6 +60,8 @@ public class KeepPausedTest {
     }
 
     @After public void tearDown() {
+        SettingsStatus.commentToolsEnabled = false;
+        SettingsStatus.blockAuthorEnabled = false;
         Settings.KEEP_PAUSED_ON_RETURN.resetToDefault();
         ReflectionHelpers.callStaticMethod(KeepPaused.class, "resetForTests");
         ReflectionHelpers.setStaticField(SessionPlaybackHold.class, "current", null);

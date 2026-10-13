@@ -205,7 +205,10 @@ public final class PlaybackSpeedPatch {
      */
     public static float liveStartSpeed() {
         Live live = liveTarget();
-        if (live == null) return Float.NaN;
+        return live == null ? Float.NaN : liveStartSpeed(live);
+    }
+
+    private static float liveStartSpeed(Live live) {
         String id = live.aweme.getAid();
         synchronized (PlaybackSpeedPatch.class) {
             float dragged = liveSpeedFor(id == null ? "" : id);
@@ -230,10 +233,14 @@ public final class PlaybackSpeedPatch {
      * @return whether the video's own player took it
      */
     public static boolean setLiveSpeed(float speed) {
+        if (!isValidSpeed(snapLiveSpeed(speed))) return false;
+        Live live = liveTarget();
+        return live != null && setLiveSpeed(live, speed);
+    }
+
+    private static boolean setLiveSpeed(Live live, float speed) {
         float snapped = snapLiveSpeed(speed);
         if (!isValidSpeed(snapped)) return false;
-        Live live = liveTarget();
-        if (live == null) return false;
         try {
             // The player first: a player that refuses leaves nothing recorded as this video's speed.
             setSpeedOn(live.controller, snapped);
@@ -248,6 +255,92 @@ public final class PlaybackSpeedPatch {
             Logger.printException(() -> "Could not change the speed of the video on screen", ex);
             return false;
         }
+    }
+
+    /**
+     * Double tap's speed toggle (#136): the video it sped up, the speed it set, and the speed and
+     * selection state it found, so a second toggle puts back exactly that and not a snapped step.
+     */
+    private static String boostedVideoId = "";
+    private static float boostedTo = Float.NaN;
+    private static float boostedFrom = Float.NaN;
+    private static float manualBeforeBoost = Float.NaN;
+    private static String liveIdBeforeBoost = "";
+    private static float liveBeforeBoost = Float.NaN;
+
+    /** The speed the toggle plays at: the hold speed picked under Speed, or TikTok's own 2x. */
+    static float boostSpeed() {
+        float chosen = chosenHoldSpeed();
+        return snapLiveSpeed(Float.isNaN(chosen) ? TIKTOK_HOLD_SPEED : chosen);
+    }
+
+    /**
+     * Speeds the video on screen up to {@link #boostSpeed()}, or back to what it played at before
+     * when this video was the one last sped up and nothing has moved its speed since. A video
+     * already at the boost speed goes to 1x instead. Another video starts untoggled, and like
+     * {@link #setLiveSpeed} nothing is saved, so the next video plays at its usual speed.
+     *
+     * @return the speed the video plays at now, or NaN when no player took the change
+     */
+    public static float toggleBoost() {
+        // One read of the player on screen for the whole toggle, so a swipe that lands mid-toggle
+        // can't speed up one video while the boost is recorded against another.
+        Live live = liveTarget();
+        if (live == null) return Float.NaN;
+        String id = live.aweme.getAid();
+        if (id == null || id.isEmpty()) return Float.NaN;
+        boolean restore;
+        float from;
+        synchronized (PlaybackSpeedPatch.class) {
+            restore = id.equals(boostedVideoId) && Float.compare(liveSpeedFor(id), boostedTo) == 0;
+            from = boostedFrom;
+        }
+        if (restore) {
+            try {
+                setSpeedOn(live.controller, from);
+            } catch (Throwable ex) {
+                Logger.printException(() -> "Could not put the video's speed back", ex);
+                return Float.NaN;
+            }
+            synchronized (PlaybackSpeedPatch.class) {
+                if (id.equals(currentVideoId)) manualSpeed = manualBeforeBoost;
+                liveVideoId = liveIdBeforeBoost;
+                liveSpeed = liveBeforeBoost;
+                forgetBoost();
+            }
+            return from;
+        }
+        from = liveStartSpeed(live);
+        if (!isValidSpeed(from)) return Float.NaN;
+        float boost = boostSpeed();
+        float target = Float.compare(snapLiveSpeed(from), boost) == 0 ? 1f : boost;
+        float manual;
+        String liveId;
+        float liveBefore;
+        synchronized (PlaybackSpeedPatch.class) {
+            manual = id.equals(currentVideoId) ? manualSpeed : Float.NaN;
+            liveId = liveVideoId;
+            liveBefore = liveSpeed;
+        }
+        if (!setLiveSpeed(live, target)) return Float.NaN;
+        synchronized (PlaybackSpeedPatch.class) {
+            boostedVideoId = id;
+            boostedTo = target;
+            boostedFrom = from;
+            manualBeforeBoost = manual;
+            liveIdBeforeBoost = liveId;
+            liveBeforeBoost = liveBefore;
+        }
+        return target;
+    }
+
+    private static void forgetBoost() {
+        boostedVideoId = "";
+        boostedTo = Float.NaN;
+        boostedFrom = Float.NaN;
+        manualBeforeBoost = Float.NaN;
+        liveIdBeforeBoost = "";
+        liveBeforeBoost = Float.NaN;
     }
 
     public static List<Float> parseMenuSpeeds(String text) {

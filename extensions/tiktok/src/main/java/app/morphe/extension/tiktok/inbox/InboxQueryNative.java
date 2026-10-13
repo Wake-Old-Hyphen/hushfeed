@@ -98,18 +98,49 @@ final class InboxQueryNative {
             Logger.printException(() -> "Loaded Inbox search threw and is off until TikTok restarts", failure);
         } finally {
             List<InboxQueryOwners.Owner> owners = InboxQueryOwners.snapshot();
-            if (!owners.contains(owner)) owners.add(owner);
-            for (InboxQueryOwners.Owner open : owners) {
-                try { open.close(); }
-                catch (Throwable cleanup) { Logger.printException(() -> "Could not hand the Inbox list back to TikTok", cleanup); }
-            }
+            if (owner != null && !owners.contains(owner)) owners.add(owner);
+            // A delegate can throw on one of TikTok's list threads, and closing hands the list
+            // and the bar's views back, which only the main thread may touch. threw is already
+            // set, so every delegate passes TikTok's own values through until the close lands.
+            app.morphe.extension.shared.Utils.runOnMainThreadNowOrLater(() -> closeAll(owners));
         }
     }
 
-    static void resetForTests() { threw = false; }
+    private static void closeAll(List<InboxQueryOwners.Owner> owners) {
+        for (InboxQueryOwners.Owner open : owners) {
+            try { open.close(); }
+            catch (Throwable cleanup) { Logger.printException(() -> "Could not hand the Inbox list back to TikTok", cleanup); }
+        }
+    }
+
+    static void resetForTests() { threw = false; fault = null; }
+
+    /** A seam for tests: lets one throw come from Hushfeed's own part of a native delegate. */
+    interface Fault { void at(String hook); }
+    static volatile Fault fault;
+
+    /**
+     * Ends the search after Hushfeed's own code threw inside a delegate TikTok's frames call. The
+     * owner is not needed: every open list is handed back to TikTok. Reporting must never throw
+     * into the native frame either, or the guard would only move the crash.
+     */
+    static void contain(String hook, Throwable failure) {
+        try { failed(null, hook, failure); }
+        catch (Throwable ignored) { /* the native frame must get its default back */ }
+    }
+
+    static void probe(String hook) {
+        Fault current = fault;
+        if (current != null) current.at(hook);
+    }
 
     /** Called at ListState.LIZ entry. The other five arguments pass through untouched. */
     static List<?> publication(Object state, List<?> models, boolean first, boolean second, Runnable completion, int mask) {
+        try { probe("loaded publication"); return publicationBody(state, models, first, second, completion, mask); }
+        catch (Throwable failure) { contain("loaded publication", failure); return models; }
+    }
+
+    private static List<?> publicationBody(Object state, List<?> models, boolean first, boolean second, Runnable completion, int mask) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forState(state);
         if (owner == null) return models;
         Surface surface = SURFACES.get(owner);
@@ -145,6 +176,11 @@ final class InboxQueryNative {
 
     /** The native wrapper and its newly constructed metadata are observed, never rewritten. */
     static void stubPublication(Object stub, Object wrapper, Object metadata) {
+        try { probe("loaded stub"); stubPublicationBody(stub, wrapper, metadata); }
+        catch (Throwable failure) { contain("loaded stub", failure); }
+    }
+
+    private static void stubPublicationBody(Object stub, Object wrapper, Object metadata) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forStub(stub);
         Surface surface = owner == null ? null : SURFACES.get(owner);
         if (surface == null) return;
@@ -157,6 +193,11 @@ final class InboxQueryNative {
 
     /** Runs after native generation allocation, with the native aggregate passed to the differ. */
     static void submitted(Object diff, List<?> oldFiltered, List<?> old, List<?> aggregate, Object metadata) {
+        try { probe("loaded diff"); submittedBody(diff, aggregate, metadata); }
+        catch (Throwable failure) { contain("loaded diff", failure); }
+    }
+
+    private static void submittedBody(Object diff, List<?> aggregate, Object metadata) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forDiff(diff);
         Surface surface = owner == null ? null : SURFACES.get(owner);
         if (surface == null) return;
@@ -172,6 +213,11 @@ final class InboxQueryNative {
 
     /** Runs after genuine dispatchUpdatesTo and listeners, before the original Runnable loop. */
     static void accepted(Object diff, Object metadata) {
+        try { probe("loaded diff accepted"); acceptedBody(diff, metadata); }
+        catch (Throwable failure) { contain("loaded diff accepted", failure); }
+    }
+
+    private static void acceptedBody(Object diff, Object metadata) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forDiff(diff);
         Surface surface = owner == null ? null : SURFACES.get(owner);
         if (surface == null) return;
@@ -203,39 +249,59 @@ final class InboxQueryNative {
         }
     }
 
-    /** Both the list and native visible pair belong to the accepted aggregate, not a queued diff. */
+    /**
+     * Both the list and native visible pair belong to the accepted aggregate, not a queued diff.
+     * Hushfeed decides inside the guard what the native helper should receive; the helper call
+     * itself runs outside it, so a throw from TikTok's own replaced call keeps its identity.
+     */
     static void indexed(Object closure, Object helper, List<?> original, Object pair) {
+        List<?> models;
+        try { probe("loaded indices"); models = indexedModels(closure, helper, original, pair); }
+        catch (Throwable failure) { contain("loaded indices", failure); models = original; }
+        if (models != null) call(helper, "LJFF", models, pair);
+    }
+
+    /** The list to hand TikTok's helper now, or null when the callback is withheld or posted. */
+    private static List<?> indexedModels(Object closure, Object helper, List<?> original, Object pair) {
         Object fragment = Reflect.readField(closure, "l0");
         InboxQueryOwners.Owner owner = InboxQueryOwners.forFragment(fragment);
         Surface surface = owner == null ? null : SURFACES.get(owner);
         // This bridge is reached only after the original invoke$21 enable gate and ZX call.
         // Remember that actual helper instead of initializing one for a synthetic query diff.
         if (surface != null && helper != null) surface.indices = new WeakReference<>(helper);
-        if (owner == null || owner.query.phase() == LoadedInboxQuery.Phase.IDLE) {
-            call(helper, "LJFF", original, pair);
-            return;
-        }
+        if (owner == null || owner.query.phase() == LoadedInboxQuery.Phase.IDLE) return original;
         if (!owner.query.settled()) {
             if (surface != null) surface.needsIndices = true;
-            return;
+            return null;
         }
         Object first = Reflect.invoke(pair, "getFirst"), last = Reflect.invoke(pair, "getSecond");
         if (first instanceof Integer && last instanceof Integer) {
             LoadedInboxQuery.Alignment alignment = owner.query.callback(owner.query.committedGeneration(), (Integer) first, (Integer) last);
-            if (alignment != null) { call(helper, "LJFF", alignment.models, pair); return; }
+            if (alignment != null) return alignment.models;
         }
         // A layout pass can temporarily have no valid visible range. Deliver the real callback
         // after layout with fresh native positions; don't send mismatched list/index data.
         postIndices(owner, owner.query.committedGeneration());
+        return null;
     }
 
     static List<?> indexedList(Object fragment, List<?> original) {
+        try { probe("loaded list"); return indexedListBody(fragment, original); }
+        catch (Throwable failure) { contain("loaded list", failure); return original; }
+    }
+
+    private static List<?> indexedListBody(Object fragment, List<?> original) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forFragment(fragment);
         return owner != null && owner.query.phase() != LoadedInboxQuery.Phase.IDLE
                 && owner.query.committedGeneration() != 0 ? owner.query.rendered() : original;
     }
 
     static boolean click(Object holder) {
+        try { probe("loaded click"); return clickBody(holder); }
+        catch (Throwable failure) { contain("loaded click", failure); return true; }
+    }
+
+    private static boolean clickBody(Object holder) {
         Object attached = Reflect.invoke(holder, "getAttachView$powerlist_release");
         InboxQueryOwners.Owner owner = attached instanceof View ? InboxQueryOwners.forList((View) attached) : null;
         if (owner == null || !owner.current() || owner.query.phase() == LoadedInboxQuery.Phase.IDLE) return true;
@@ -243,6 +309,11 @@ final class InboxQueryNative {
     }
 
     static boolean visibleIndices(Object fragment, boolean loadingRow) {
+        try { probe("loaded visible indices"); return visibleIndicesBody(fragment, loadingRow); }
+        catch (Throwable failure) { contain("loaded visible indices", failure); return true; }
+    }
+
+    private static boolean visibleIndicesBody(Object fragment, boolean loadingRow) {
         InboxQueryOwners.Owner owner = InboxQueryOwners.forFragment(fragment);
         if (owner == null || owner.query.phase() == LoadedInboxQuery.Phase.IDLE || !loadingRow) return true;
         Object layout = Reflect.invoke(owner.list.get(), "getLayoutManager");
@@ -252,6 +323,11 @@ final class InboxQueryNative {
 
     static boolean refresh(Object spring, boolean starting) {
         if (!starting) return true; // Native completion/settling must always be able to stop it.
+        try { probe("loaded refresh"); return refreshBody(spring); }
+        catch (Throwable failure) { contain("loaded refresh", failure); return true; }
+    }
+
+    private static boolean refreshBody(Object spring) {
         synchronized (InboxNativeRequests.LOCK) {
             for (InboxQueryOwners.Owner owner : InboxQueryOwners.snapshot()) {
                 View list = owner.list.get();

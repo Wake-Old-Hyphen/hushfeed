@@ -33,6 +33,7 @@ public class CoverSaverTest {
 
     @After public void reset() {
         Settings.DOWNLOAD_COVER.resetToDefault();
+        Settings.SAVE_COVER_BUTTON.resetToDefault();
         SettingsStatus.advancedDownloadsEnabled = false;
         PausedProcess.set(false);
     }
@@ -111,6 +112,26 @@ public class CoverSaverTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertNull(ShadowToast.getTextOfLatestToast());
         }
+    }
+
+    /** The share sheet's Save cover takes the cover over, so Download saves only the video (#146). */
+    @Test public void withTheShareSheetButtonOnADownloadLeavesTheCoverAlone() {
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_COVER.save(true);
+        assertTrue(CoverSaver.besideEnabled());
+        assertFalse(CoverSaver.buttonEnabled());
+        Settings.SAVE_COVER_BUTTON.save(true);
+        assertFalse(CoverSaver.besideEnabled());
+        assertTrue(CoverSaver.buttonEnabled());
+        Settings.DOWNLOAD_COVER.save(false);
+        assertTrue("the button doesn't need the old switch", CoverSaver.buttonEnabled());
+        SettingsStatus.advancedDownloadsEnabled = false;
+        assertFalse(CoverSaver.buttonEnabled());
+
+        Post post = new Post("7350000000000000008");
+        assertFalse(CoverSaver.hasCover(post));
+        post.video.cover = new UrlModel(720, 720, "https://p16.example/cover.jpeg");
+        assertTrue(CoverSaver.hasCover(post));
     }
 
     /** With the already-saved check on the video's save makes the cover, so Open adds no second one. */

@@ -23,15 +23,22 @@ class AmoledStyleItemsTest {
               <style name="z6"><item name="dy">#1effffff</item><item name="agk">?attr/aut</item></style>
               <style name="a_0"><item name="agk">#1d2026</item></style>
               <style name="zf"><item name="aia">#ff1e1e1e</item><item name="axi">#ffffffff</item></style>
+              <style name="zl"><item name="aig">#ff1e1e1e</item><item name="aii">#ff2c2c2c</item></style>
+              <style name="zd"><item name="bx">#ff121212</item></style>
+              <style name="zo"><item name="bx">#ffffffff</item><item name="axo">#fff5f5f5</item></style>
             </resources>
             """.trimIndent(),
         )
 
-        val changed = rewriteDarkStyleItems(styles, SHEET_STYLE_ITEMS, "#000000")
+        val changed = rewriteDarkStyleItems(styles, SURFACE_STYLE_ITEMS, "#000000")
 
-        assertEquals(setOf("agk", "c3", "aia"), changed)
+        assertEquals(setOf("agk", "c3", "aia", "aig", "bx"), changed)
         assertEquals(
-            listOf("#000000", "#000000", "#000000", "#ffffffff", "#1effffff", "?attr/aut", "#000000", "#000000", "#ffffffff"),
+            listOf(
+                "#000000", "#000000", "#000000", "#ffffffff", "#1effffff", "?attr/aut", "#000000", "#000000", "#ffffffff",
+                // The long-press panel's fill goes black and its cards (aii) keep their gray.
+                "#000000", "#ff2c2c2c", "#000000", "#ffffffff", "#fff5f5f5",
+            ),
             values(styles),
         )
     }
@@ -39,7 +46,7 @@ class AmoledStyleItemsTest {
     @Test
     fun `nothing dark to rewrite is reported as nothing changed`() {
         val styles = parse("""<resources><style name="zb"><item name="c3">#ffffffff</item></style></resources>""")
-        assertTrue(rewriteDarkStyleItems(styles, SHEET_STYLE_ITEMS, "#000000").isEmpty())
+        assertTrue(rewriteDarkStyleItems(styles, SURFACE_STYLE_ITEMS, "#000000").isEmpty())
     }
 
     /**

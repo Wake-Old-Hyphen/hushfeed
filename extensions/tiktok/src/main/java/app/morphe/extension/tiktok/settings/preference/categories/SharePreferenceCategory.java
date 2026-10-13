@@ -43,6 +43,13 @@ public final class SharePreferenceCategory extends ConditionalPreferenceCategory
             addPreference(new TogglePreference(context, "Block this creator", null, Settings.SHARE_BLOCK_AUTHOR));
             addPreference(new TogglePreference(
                     context,
+                    "Copy the link with one press on Share",
+                    "A press on Share under a video copies its link instead of opening the share sheet. "
+                            + "Press Share again right after to open the sheet.",
+                    Settings.SHARE_TAP_COPIES_LINK
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Hide the Send to row",
                     "Hide the row of friends at the top of the share sheet.",
                     Settings.HIDE_SHARE_CONTACTS

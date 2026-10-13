@@ -25,6 +25,7 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.navigation.StartPage;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.SessionBudget;
 import app.morphe.extension.tiktok.wellbeing.SessionLockOverlay;
 import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold;
@@ -72,7 +73,7 @@ public final class PausePlayback {
     private static final int PANEL_CHECKS_AFTER_A_BIND = 6;
     private static final Runnable PANEL_CHECK = PausePlayback::checkPanel;
     private static final android.view.ViewTreeObserver.OnGlobalLayoutListener PANEL_LAYOUT =
-            PausePlayback::syncPanel;
+            PausePlayback::onPanelLayout;
     private static WeakReference<View> catcherReference = new WeakReference<>(null);
     /** Watches the feed go away under the catcher, so the catcher goes with it. */
     private static android.view.ViewTreeObserver.OnGlobalLayoutListener feedWatcher;
@@ -110,8 +111,22 @@ public final class PausePlayback {
      * waits a post, which is the same thing the block-author takeover in the same callback does.
      */
     public static void onCommentCellBound(View cell) {
-        if (cell == null || !Settings.PAUSE_ON_COMMENTS.get()) return;
+        if (cell == null || !commentPauseWanted()) return;
         cell.post(() -> holdForSheet(cell));
+    }
+
+    /**
+     * The comment switch's row comes with Comment tools. This class is installed by every patch
+     * that carries the playback bridge, so a value saved under a bundle that had the row, read in
+     * one that hasn't, would pause the feed with no switch left to say why.
+     */
+    private static boolean commentPauseWanted() {
+        return SettingsStatus.commentToolsEnabled && Settings.PAUSE_ON_COMMENTS.get();
+    }
+
+    /** The Screen time page and its switches come with Block author, for the same reason. */
+    private static boolean screenTimeAvailable() {
+        return SettingsStatus.blockAuthorEnabled;
     }
 
     private static void holdForSheet(View cell) {
@@ -195,22 +210,32 @@ public final class PausePlayback {
         if (activity == null || activity.getWindow() == null) return;
         View decor = activity.getWindow().getDecorView();
         if (cell.getRootView() != decor) return;
-        panelActivityReference = new WeakReference<>(activity);
-        View watched = panelWatchedReference.get();
-        if (watched != decor) {
-            if (watched != null) watched.getViewTreeObserver().removeOnGlobalLayoutListener(PANEL_LAYOUT);
-            decor.getViewTreeObserver().addOnGlobalLayoutListener(PANEL_LAYOUT);
-            panelWatchedReference = new WeakReference<>(decor);
-        }
+        watchPanel(activity, decor);
         if (!panelHeld) panelChecksLeft = PANEL_CHECKS_AFTER_A_BIND;
         syncPanel();
         checkPanelSoon();
     }
 
+    /**
+     * Watches the activity's layout passes for the sheet. Started from the feed's resume as well
+     * as from a bind: waiting for a bind left the first sheet of each start playing until its
+     * comments had loaded, which on a slow connection is seconds, and a video with no comments
+     * binds nothing at all. Opening the sheet lays it out, so the pass is there either way. With
+     * the switch off each pass costs a setting read.
+     */
+    private static void watchPanel(Activity activity, View decor) {
+        panelActivityReference = new WeakReference<>(activity);
+        View watched = panelWatchedReference.get();
+        if (watched == decor) return;
+        if (watched != null) watched.getViewTreeObserver().removeOnGlobalLayoutListener(PANEL_LAYOUT);
+        decor.getViewTreeObserver().addOnGlobalLayoutListener(PANEL_LAYOUT);
+        panelWatchedReference = new WeakReference<>(decor);
+    }
+
     /** Holds the feed while the sheet covers it, and hands it back once it has gone. */
     private static void syncPanel() {
         Activity activity = panelActivityReference.get();
-        boolean wanted = Settings.PAUSE_ON_COMMENTS.get();
+        boolean wanted = commentPauseWanted();
         boolean open = activity != null && wanted && panelOpen(activity);
         if (open && !panelHeld && !SessionBudget.isLocked()) {
             panelHeld = true;
@@ -224,6 +249,21 @@ public final class PausePlayback {
             if (!wanted) handBack(false);
             else unquieten();
         }
+    }
+
+    /**
+     * A layout pass in the feed's window. Opening the sheet lays it out, but that pass can come
+     * while the sheet still sits below the screen, and the slide up after it makes no pass of its
+     * own. So a pass that finds the sheet parked looks again a few times a second for a moment,
+     * as a bind does. Before the sheet exists, or with the switch off, it's only the sync.
+     */
+    private static void onPanelLayout() {
+        syncPanel();
+        if (panelHeld || panelChecksLeft > 0 || !commentPauseWanted()) return;
+        Activity activity = panelActivityReference.get();
+        if (activity == null || !FeedVisibility.hasCommentSheet(activity)) return;
+        panelChecksLeft = PANEL_CHECKS_AFTER_A_BIND;
+        checkPanelSoon();
     }
 
     private static boolean panelOpen(Activity activity) {
@@ -292,11 +332,11 @@ public final class PausePlayback {
                         // older have no such callback: there the observers run before any the
                         // application gets, so Keep paused has nothing true to read and stays out.
                         @Override public void onActivityPrePaused(Activity paused) {
-                            if (paused.getClass() == feed) KeepPaused.onLeaving(paused);
+                            if (paused.getClass() == feed && screenTimeAvailable()) KeepPaused.onLeaving(paused);
                         }
 
                         @Override public void onActivityPreResumed(Activity resumed) {
-                            if (resumed.getClass() == feed) KeepPaused.onReturning();
+                            if (resumed.getClass() == feed && screenTimeAvailable()) KeepPaused.onReturning();
                         }
 
                         @Override public void onActivityResumed(Activity resumed) {
@@ -349,14 +389,17 @@ public final class PausePlayback {
     static void onBackground() {
         wasAway = true;
         letGo();
+        if (!screenTimeAvailable()) return;
         app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.onBackground();
         // How long the app stays away decides whether a shared video still plays alone.
         app.morphe.extension.tiktok.wellbeing.FeedLock.onAppLeft();
     }
 
     static void onForeground(Activity activity) {
-        app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.onForeground();
-        app.morphe.extension.tiktok.wellbeing.FeedLock.onAppBack();
+        if (screenTimeAvailable()) {
+            app.morphe.extension.tiktok.wellbeing.SessionLockOverlay.onForeground();
+            app.morphe.extension.tiktok.wellbeing.FeedLock.onAppBack();
+        }
         try {
             // The sheet the reader left open is the sheet they are looking at again, but only
             // if this is the screen it belongs to. These callbacks are registered for every
@@ -365,16 +408,23 @@ public final class PausePlayback {
             View sheet = sheetReference.get();
             if (sheet != null && sheet.getWindowToken() != null
                     && activityOf(sheet) == activity
-                    && Settings.PAUSE_ON_COMMENTS.get() && !SessionBudget.isLocked()) {
+                    && commentPauseWanted() && !SessionBudget.isLocked()) {
                 quieten();
             }
-            // The same for a sheet drawn into the activity, let go as the app went away.
+            // The same for a sheet drawn into the activity, let go as the app went away. The
+            // feed's own resume is where watching for that sheet starts: onCreate is too early to
+            // ask for the window's decor, which TikTok may still be configuring then. A bundle
+            // without Comment tools has no switch for it, so nothing is watched there.
+            if (SettingsStatus.commentToolsEnabled && activity != null && activity.getClass() == feedClass
+                    && activity.getWindow() != null && activity.getWindow().peekDecorView() != null) {
+                watchPanel(activity, activity.getWindow().getDecorView());
+            }
             if (activity != null && panelActivityReference.get() == activity) syncPanel();
             if (firstStartPending && activity != null && activity.getClass() == feedClass) {
                 firstStartPending = false;
                 // At the first resume the tab bar isn't drawn yet and the feed reads as showing.
                 // If the app opens on another tab, the catcher's watch takes it down at once.
-                if (Settings.PAUSE_FIRST_VIDEO.get() && !SessionBudget.isLocked()
+                if (screenTimeAvailable() && Settings.PAUSE_FIRST_VIDEO.get() && !SessionBudget.isLocked()
                         && FeedVisibility.isOnFeed(activity)) {
                     quieten();
                     waitForATap(activity);
@@ -383,7 +433,7 @@ public final class PausePlayback {
             }
             if (!wasAway) return;
             wasAway = false;
-            if (!Settings.NO_RESUME_ON_FOREGROUND.get()) return;
+            if (!screenTimeAvailable() || !Settings.NO_RESUME_ON_FOREGROUND.get()) return;
             // A hold is already covering the feed and already has the sound.
             if (SessionBudget.isLocked()) return;
             if (activity == null || !FeedVisibility.isOnFeed(activity)) return;

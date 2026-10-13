@@ -116,6 +116,9 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new ChoicePreference(context, "Video download quality", Settings.DOWNLOAD_VIDEO_QUALITY,
                     new String[]{"Automatic", "Highest", "Lowest", "1080p", "720p", "540p", "480p", "360p"},
                     new String[]{"auto", "highest", "lowest", "1080", "720", "540", "480", "360"}));
+            addPreference(new TogglePreference(context, "Ask for the quality on each save",
+                    "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.",
+                    Settings.DOWNLOAD_ASK_QUALITY));
             addPreference(new TogglePreference(context, "Fall back to the watermarked copy",
                     "When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.",
                     Settings.DOWNLOAD_WATERMARK_FALLBACK));
@@ -133,6 +136,9 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
             addPreference(new TogglePreference(context, "Save the cover as well",
                     "Save the video's cover picture at the largest size TikTok has, each time you tap Download. It goes to your photo folder, named after the video.",
                     Settings.DOWNLOAD_COVER));
+            addPreference(new TogglePreference(context, "Save cover button in the share sheet",
+                    "Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.",
+                    Settings.SAVE_COVER_BUTTON));
             addPreference(new TogglePreference(context, "Show download progress",
                     "Show a progress bar while a video saves.", Settings.DOWNLOAD_PROGRESS));
             addPreference(new TogglePreference(context, "Save details beside the video",

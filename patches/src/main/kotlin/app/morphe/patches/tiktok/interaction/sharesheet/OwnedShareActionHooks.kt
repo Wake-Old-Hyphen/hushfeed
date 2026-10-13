@@ -7,13 +7,16 @@ package app.morphe.patches.tiktok.interaction.sharesheet
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.interaction.downloads.addShareActionToSnapshot
 import app.morphe.patches.tiktok.interaction.downloads.snapshotActionFields
+import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructions
 import app.morphe.util.classesCalling
 import app.morphe.util.cloneMutable
+import app.morphe.util.extendsClass
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -27,8 +30,10 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
+internal const val OWNED_SHARE_ACTIONS = "Lapp/morphe/extension/tiktok/share/OwnedShareActions;"
 internal const val SHARE_BLOCK_AUTHOR = "Lapp/morphe/extension/tiktok/share/ShareBlockAuthor;"
-private const val BLOCK = "Share sheet tools (block author)"
+internal const val SHARE_SAVE_COVER = "Lapp/morphe/extension/tiktok/share/ShareSaveCover;"
+private const val BLOCK = "Owned share actions"
 private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val BASE_PACKAGE = "Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
 private const val CONTEXT = "Landroid/content/Context;"
@@ -111,38 +116,45 @@ internal object NativeReportActionFingerprint : Fingerprint(
 )
 
 /** Preserve the original body for every native Report instance the extension doesn't own. */
-internal fun MutableMethod.answerShareBlockObject(member: String, resultType: String) {
+internal fun MutableMethod.answerOwnedShareObject(member: String, resultType: String) {
     guardAtEntry(
         BLOCK,
-        "invoke-static/range { p0 .. p0 }, $SHARE_BLOCK_AUTHOR->owns($OBJECT)Z",
+        "invoke-static/range { p0 .. p0 }, $OWNED_SHARE_ACTIONS->owns($OBJECT)Z",
         """
-            invoke-static/range { p0 .. p0 }, $SHARE_BLOCK_AUTHOR->$member($OBJECT)$resultType
+            invoke-static/range { p0 .. p0 }, $OWNED_SHARE_ACTIONS->$member($OBJECT)$resultType
             move-result-object v0
             return-object v0
         """,
     )
 }
 
-internal fun MutableMethod.takeShareBlockClick() {
+internal fun MutableMethod.takeOwnedShareClick() {
     guardAtEntry(
         BLOCK,
-        "invoke-static/range { p0 .. p2 }, $SHARE_BLOCK_AUTHOR->click($OBJECT$CONTEXT$OBJECT)Z",
+        "invoke-static/range { p0 .. p2 }, $OWNED_SHARE_ACTIONS->click($OBJECT$CONTEXT$OBJECT)Z",
         "return-void",
     )
 }
 
-internal data class ShareBlockIconBind(val index: Int, val actionRegister: Int, val imageRegister: Int)
+internal data class OwnedShareIconBind(val index: Int, val actionRegister: Int, val imageRegister: Int)
 
-/** The common icon store follows the same action's package callback, after all drawable branches. */
-internal fun Method.shareBlockIconBind(action: ClassDef): ShareBlockIconBind? {
+/**
+ * The common icon store follows the same action's package callback, after all drawable branches.
+ * The share grid stores into an ImageView and the long-press panel's list into a TuxIconView, so
+ * [isImageView] answers for ImageView subclasses too.
+ */
+internal fun Method.ownedShareIconBind(
+    action: ClassDef,
+    isImageView: (String) -> Boolean = { it == IMAGE },
+): OwnedShareIconBind? {
     if (name != "onBindViewHolder" || returnType != "V" ||
         parameterTypes.map(CharSequence::toString) != listOf("Landroidx/recyclerview/widget/RecyclerView\$ViewHolder;", "I")) return null
     val code = implementation?.instructions?.toList() ?: return null
     val stores = code.indices.filter { index ->
         val called = code[index].getReference<MethodReference>()
-        code[index].opcode == Opcode.INVOKE_VIRTUAL && called?.definingClass == IMAGE &&
-            called.name == "setImageDrawable" && called.parameterTypes.map(CharSequence::toString) ==
-            listOf("Landroid/graphics/drawable/Drawable;")
+        code[index].opcode == Opcode.INVOKE_VIRTUAL && called != null && called.name == "setImageDrawable" &&
+            called.parameterTypes.map(CharSequence::toString) == listOf("Landroid/graphics/drawable/Drawable;") &&
+            isImageView(called.definingClass)
     }
     if (stores.size != 1) return null
     val index = stores.single()
@@ -152,19 +164,62 @@ internal fun Method.shareBlockIconBind(action: ClassDef): ShareBlockIconBind? {
     val field = code[index - 1].getReference<FieldReference>() ?: return null
     val callback = code[index - 2].getReference<MethodReference>() ?: return null
     val invocation = code[index - 2] as? FiveRegisterInstruction ?: return null
-    if (code[index - 1].opcode != Opcode.IGET_OBJECT || field.type != IMAGE || image.registerA != store.registerC ||
+    if (code[index - 1].opcode != Opcode.IGET_OBJECT || !isImageView(field.type) || image.registerA != store.registerC ||
         code[index - 2].opcode != Opcode.INVOKE_INTERFACE || callback.definingClass !in action.interfaces ||
         callback.returnType != "V" || callback.parameterTypes.map(CharSequence::toString) != listOf(BASE_PACKAGE) ||
         invocation.registerC == store.registerC) return null
-    return ShareBlockIconBind(index, invocation.registerC, store.registerC)
+    return OwnedShareIconBind(index, invocation.registerC, store.registerC)
 }
 
-internal fun MutableMethod.bindShareBlockIcon(bind: ShareBlockIconBind) {
+internal fun MutableMethod.bindOwnedShareIcon(bind: OwnedShareIconBind) {
     addInstructions(bind.index + 1,
-        "invoke-static { v${bind.actionRegister}, v${bind.imageRegister} }, $SHARE_BLOCK_AUTHOR->bindIcon($OBJECT$IMAGE)V")
+        "invoke-static { v${bind.actionRegister}, v${bind.imageRegister} }, $OWNED_SHARE_ACTIONS->bindIcon($OBJECT$IMAGE)V")
 }
 
-internal fun Method.withShareBlockBody(action: ClassDef): MutableMethod {
+/** [keyIndex] is the move-result-object that takes the action's key for the framed-key test. */
+internal data class OwnedShareFrameCheck(val keyIndex: Int, val actionRegister: Int, val keyRegister: Int)
+
+/**
+ * A binder draws TikTok's icon frame (its themed circle under a TuxIconDrawable) only for an action
+ * whose key is on its framed-key list, and a bare resource drawable for any other, so an owned
+ * carrier's own key left it no frame to put its glyph in (S22, 2026-10-12). The list is read as
+ * `sget-object` of a static String[], the key, and an index-of whose result overwrites the key's
+ * register at once, so the key read there feeds that one test and nothing else.
+ */
+internal fun Method.ownedShareFrameCheck(action: ClassDef): OwnedShareFrameCheck? {
+    val code = implementation?.instructions?.toList() ?: return null
+    val checks = (0 until code.size - 4).mapNotNull { at ->
+        val list = code[at].takeIf { it.opcode == Opcode.SGET_OBJECT && it.getReference<FieldReference>()?.type == "[$STRING" }
+            as? OneRegisterInstruction ?: return@mapNotNull null
+        val read = code[at + 1] as? FiveRegisterInstruction ?: return@mapNotNull null
+        val key = code[at + 1].getReference<MethodReference>()
+        if (code[at + 1].opcode != Opcode.INVOKE_INTERFACE || key?.name != "key" || key.returnType != STRING ||
+            key.parameterTypes.isNotEmpty() || key.definingClass !in action.interfaces) return@mapNotNull null
+        val result = code[at + 2].takeIf { it.opcode == Opcode.MOVE_RESULT_OBJECT } as? OneRegisterInstruction
+            ?: return@mapNotNull null
+        val test = code[at + 3] as? FiveRegisterInstruction ?: return@mapNotNull null
+        val call = code[at + 3].getReference<MethodReference>()
+        if (code[at + 3].opcode != Opcode.INVOKE_STATIC || call?.returnType != "I" ||
+            call.parameterTypes.map(CharSequence::toString) != listOf(OBJECT, "[$OBJECT") ||
+            test.registerCount != 2 || test.registerC != result.registerA || test.registerD != list.registerA) return@mapNotNull null
+        val found = code[at + 4].takeIf { it.opcode == Opcode.MOVE_RESULT } as? OneRegisterInstruction
+            ?: return@mapNotNull null
+        // A key that lands in the action's own register leaves nothing to ask the carrier with.
+        if (found.registerA != result.registerA || read.registerC == result.registerA ||
+            read.registerC > 15 || result.registerA > 15) return@mapNotNull null
+        OwnedShareFrameCheck(at + 2, read.registerC, result.registerA)
+    }
+    return checks.singleOrNull()
+}
+
+internal fun MutableMethod.frameOwnedShareIcon(check: OwnedShareFrameCheck) {
+    addInstructions(check.keyIndex + 1, """
+        invoke-static { v${check.actionRegister}, v${check.keyRegister} }, $OWNED_SHARE_ACTIONS->framedKey($OBJECT$STRING)$STRING
+        move-result-object v${check.keyRegister}
+    """)
+}
+
+internal fun Method.withOwnedShareBody(action: ClassDef): MutableMethod {
     val constructor = action.methods.single { it.isReportActionConstructor() }
     check(AccessFlags.STATIC.isSet(accessFlags) && returnType == OBJECT &&
         parameterTypes.map(CharSequence::toString) == listOf(ACTIVITY, OBJECT)) { "$BLOCK: invalid native factory" }
@@ -187,7 +242,7 @@ internal fun Method.withShareBlockBody(action: ClassDef): MutableMethod {
     }
 }
 
-internal fun BytecodePatchContext.hookShareBlockAuthor() {
+internal fun BytecodePatchContext.hookOwnedShareActions() {
     val action = NativeReportActionFingerprint.classDef
     val helperReference = action.reportLabelHelper()
     val helper = mutableClassDefBy(helperReference.definingClass).methods.single {
@@ -196,26 +251,52 @@ internal fun BytecodePatchContext.hookShareBlockAuthor() {
     }
     val label = action.reportLabel(helper) as MutableMethod
     val callers = classesCalling(action.interfaces)
-    val iconBinders = mutableListOf<Pair<Method, ShareBlockIconBind>>()
+    val imageViews = mutableMapOf<String, Boolean>()
+    val isImageView = { type: String -> imageViews.getOrPut(type) { extendsClass(type, IMAGE) } }
+    val iconBinders = mutableListOf<Pair<Method, OwnedShareIconBind>>()
     classDefForEach { classDef ->
         if (classDef.type in callers) classDef.methods.forEach { method ->
-            method.shareBlockIconBind(action)?.let { bind -> iconBinders += method to bind }
+            method.ownedShareIconBind(action, isImageView)?.let { bind -> iconBinders += method to bind }
         }
     }
-    val (iconBinder, iconBind) = iconBinders.singleOrNull()
-        ?: throw PatchException("$BLOCK: found ${iconBinders.size} native action icon binders")
-    (action.reportKey() as MutableMethod).answerShareBlockObject("key", STRING)
-    label.answerShareBlockObject("label", STRING)
-    (action.reportClick() as MutableMethod).takeShareBlockClick()
-    mutableClassDefBy(iconBinder.definingClass).findMutableMethodOf(iconBinder).bindShareBlockIcon(iconBind)
+    // The share grid's binder at least; the feed's long-press panel lists actions through a second one.
+    if (iconBinders.isEmpty()) throw PatchException("$BLOCK: found no native action icon binder")
+    (action.reportKey() as MutableMethod).answerOwnedShareObject("key", STRING)
+    label.answerOwnedShareObject("label", STRING)
+    (action.reportClick() as MutableMethod).takeOwnedShareClick()
+    iconBinders.forEach { (binder, bind) ->
+        val frame = binder.ownedShareFrameCheck(action)
+        mutableClassDefBy(binder.definingClass).findMutableMethodOf(binder).apply {
+            // The icon store comes after the key test, so its index still holds once it's in.
+            bindOwnedShareIcon(bind)
+            // Without the test the glyph keeps its bare fallback, which is how it looked before.
+            if (frame != null && frame.keyIndex < bind.index) frameOwnedShareIcon(frame)
+        }
+    }
 
-    val bridges = mutableClassDefBy(SHARE_BLOCK_AUTHOR)
+    val bridges = mutableClassDefBy(OWNED_SHARE_ACTIONS)
     val original = bridges.methods.singleOrNull { it.name == "newAction" && it.parameterTypes.size == 2 }
         ?: throw PatchException("$BLOCK: no single native action factory")
-    val bridge = original.withShareBlockBody(action)
+    val bridge = original.withOwnedShareBody(action)
     bridges.methods.remove(original)
     bridges.methods.add(bridge)
+}
 
+/** Adds [extension]'s actions to every finished share sheet row; its carriers answer through the shared hooks. */
+internal fun BytecodePatchContext.addOwnedShareAction(extension: String) {
     val snapshot = ShareSnapshotFingerprint.method
-    snapshot.addShareActionToSnapshot(snapshot.snapshotActionFields(ShareSnapshotFingerprint.classDef), SHARE_BLOCK_AUTHOR)
+    snapshot.addShareActionToSnapshot(snapshot.snapshotActionFields(ShareSnapshotFingerprint.classDef), extension)
+}
+
+/**
+ * The native Report carrier's key, label, click and icon hooks and its constructor bridge, which
+ * Block this creator (Share sheet tools) and Save cover (Advanced downloads) share. A build with
+ * both installs them once, and each patch adds its own action to the finished row.
+ */
+internal val ownedShareActionsPatch = bytecodePatch {
+    dependsOn(sharedExtensionPatch)
+
+    execute {
+        hookOwnedShareActions()
+    }
 }

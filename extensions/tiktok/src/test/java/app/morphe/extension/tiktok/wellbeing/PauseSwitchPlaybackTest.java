@@ -18,6 +18,7 @@ import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.playback.PausePlayback;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.wellbeing.SessionPlaybackHoldTest.NativeController;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -48,8 +49,19 @@ public class PauseSwitchPlaybackTest {
 
     public static final class HostActivity extends Activity { }
 
+    /** The feed as TikTok builds it: its content set in onCreate, so the window is there by resume. */
+    public static final class FeedActivity extends Activity {
+        @Override protected void onCreate(android.os.Bundle state) {
+            super.onCreate(state);
+            setContentView(new FrameLayout(this));
+        }
+    }
+
     @Before public void setUp() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
+        // The switches this suite drives have their rows with Comment tools and Block author.
+        SettingsStatus.commentToolsEnabled = true;
+        SettingsStatus.blockAuthorEnabled = true;
         SessionPlaybackHoldTest.installNativeControls();
         SessionBudget.awaitWritesForTests();
         resetSettings();
@@ -60,6 +72,8 @@ public class PauseSwitchPlaybackTest {
     }
 
     @After public void tearDown() throws Exception {
+        SettingsStatus.commentToolsEnabled = false;
+        SettingsStatus.blockAuthorEnabled = false;
         SessionPlaybackHold.releaseForLock(false);
         ReflectionHelpers.callStaticMethod(PausePlayback.class, "resetForTests");
         Utils.setActivity(null);
@@ -370,6 +384,89 @@ public class PauseSwitchPlaybackTest {
             park(sheet);
             idleFor(300);
             assertEquals(1, player.manager.resumes);
+        }
+    }
+
+    @Test public void theFirstSheetOfAStartStopsTheVideoBeforeAnyCommentBinds() {
+        Settings.PAUSE_ON_COMMENTS.save(true);
+        // The first open of each start used to wait for a comment to bind, which comes only once
+        // the comments have loaded, and a video with none binds nothing at all.
+        try (var owner = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(owner.get());
+            owner.start().resume().visible();
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            NativeController player = playing("first");
+            // TikTok inflates the sheet as it opens the first time: a layout pass, no bind.
+            FrameLayout sheet = panelIn(activity, true);
+            idle();
+            assertEquals("a sheet that opened before any comment bound left the video playing",
+                    1, player.manager.pauses);
+
+            park(sheet);
+            idleFor(300);
+            assertEquals(1, player.manager.resumes);
+
+            // Opened again on a video with no comments: nothing binds this time either.
+            sheet.setTranslationY(0f);
+            sheet.getViewTreeObserver().dispatchOnGlobalLayout();
+            idle();
+            assertEquals("a sheet with nothing to bind left the video playing", 2, player.manager.pauses);
+        }
+    }
+
+    @Test public void watchingForTheSheetFromTheStartDoesNothingWithTheSwitchOff() {
+        try (var owner = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(owner.get());
+            owner.start().resume().visible();
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            NativeController player = playing("first");
+            panelIn(activity, true);
+            idleFor(300);
+            assertEquals("the switch is off and the comments paused the video", 0, player.manager.pauses);
+        }
+    }
+
+    @Test public void aSheetThatSlidesUpAfterItsLayoutPassStillStopsTheVideo() {
+        Settings.PAUSE_ON_COMMENTS.save(true);
+        try (var owner = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(owner.get());
+            owner.start().resume().visible();
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            NativeController player = playing("first");
+            FrameLayout sheet = panelIn(activity, true);
+            idle();
+            park(sheet);
+            idleFor(2_000);
+            assertEquals(1, player.manager.resumes);
+
+            // Opened on the next video, one with no comments: the pass that lays it out comes
+            // while it's still below the screen, and the slide up after it makes no pass at all.
+            sheet.getViewTreeObserver().dispatchOnGlobalLayout();
+            sheet.setTranslationY(0f);
+            idleFor(300);
+            assertEquals("a sheet that slid up after its layout pass left the video playing",
+                    2, player.manager.pauses);
+        }
+    }
+
+    @Test public void aSavedCommentSwitchDoesNothingInABundleWithoutCommentTools() {
+        // Saved on under a bundle with Comment tools, then patched again without it: no row
+        // says the switch is on, so the comments must leave the video alone.
+        SettingsStatus.commentToolsEnabled = false;
+        Settings.PAUSE_ON_COMMENTS.save(true);
+        try (var owner = Robolectric.buildActivity(FeedActivity.class).create()) {
+            PausePlayback.install(owner.get());
+            owner.start().resume().visible();
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            NativeController player = playing("first");
+            FrameLayout sheet = panelIn(activity, true);
+            PausePlayback.onCommentCellBound(sheet.getChildAt(1));
+            idleFor(300);
+            assertEquals("a switch with no row paused the video behind the comments", 0, player.manager.pauses);
         }
     }
 

@@ -6,7 +6,6 @@ package app.morphe.extension.tiktok.settings.preference;
 
 import app.morphe.extension.tiktok.settings.L10n;
 import android.content.Context;
-import android.os.Build;
 import android.preference.Preference;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +51,7 @@ public final class SectionHeadingPreference extends Preference {
         title.setAllCaps(homeGroup);
         title.setLetterSpacing(homeGroup ? 0.08f : 0f);
         title.setText(getTitle());
-        if (Build.VERSION.SDK_INT >= 28) {
-            title.setAccessibilityHeading(true);
-        }
+        SettingsUi.markHeading(title);
         layout.addView(title, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return layout;

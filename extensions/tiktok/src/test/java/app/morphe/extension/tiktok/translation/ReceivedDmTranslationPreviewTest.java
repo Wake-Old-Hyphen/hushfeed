@@ -153,6 +153,21 @@ public class ReceivedDmTranslationPreviewTest {
         activity.finish(); idle();
     }
 
+    /** Off, a row's bind reads nothing from TikTok's row; the first bind after it goes on does. */
+    @Test public void offABindReadsNothingAndTheNextBindAfterTurningItOnDoes() {
+        int[] reads = {0};
+        ReceivedDmTranslationPreview.RowReader original = ReceivedDmTranslationPreview.rowReader;
+        ReceivedDmTranslationPreview.rowReader = (owner, model) -> { reads[0]++; return original.read(owner, model); };
+        Settings.RECEIVED_DM_TRANSLATION_PREVIEW.save(false);
+        ReceivedDmTranslationPreview.bound(assem, assem.current);
+        assertEquals(0, reads[0]);
+        Settings.RECEIVED_DM_TRANSLATION_PREVIEW.save(true);
+        assertTrue("a row bound while off has no action yet", append(Collections.emptyList()).isEmpty());
+        ReceivedDmTranslationPreview.bound(assem, assem.current);
+        assertEquals(1, reads[0]);
+        assertNotNull(action());
+    }
+
     @Test public void defaultOffLeavesTheNativeListAndListenersUntouched() {
         assertEquals(Boolean.FALSE, Settings.RECEIVED_DM_TRANSLATION_PREVIEW.defaultValue);
         Settings.RECEIVED_DM_TRANSLATION_PREVIEW.save(false);

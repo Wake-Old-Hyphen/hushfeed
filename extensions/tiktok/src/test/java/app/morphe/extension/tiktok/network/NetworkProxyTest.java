@@ -330,6 +330,39 @@ public class NetworkProxyTest {
         assertSame(originalSelector, ProxySelector.getDefault());
     }
 
+    @Test public void theReportNamesFourRoutesAndLeavesTheProxyDetailsOut() throws Exception {
+        String joined = String.join(" | ", new NetworkRoutes().lines());
+        assertTrue("off in this process says so", joined.contains("proxy: off in this process"));
+        assertTrue(joined.contains("tiktok_api_and_java_connections: direct"));
+
+        ServerSocket server = serve(socket -> {
+            readFully(socket.getInputStream(), 3);
+            socket.getOutputStream().write(new byte[]{5, 0});
+        });
+        turnOn("socks5", "127.0.0.1", String.valueOf(server.getLocalPort()), USER, PASSWORD);
+        NetworkProxy.install(context);
+        Utils.awaitBackgroundTasksForTests();
+        shadowOf(Looper.getMainLooper()).idle();
+
+        joined = String.join(" | ", new NetworkRoutes().lines());
+        assertTrue(joined.contains("proxy: on, SOCKS5"));
+        assertTrue(joined.contains("tiktok_api_and_java_connections: through the proxy"));
+        assertTrue(joined.contains("tiktok_native_player: direct"));
+        assertTrue(joined.contains("hushfeed_saves: direct, to a checked public address"));
+        assertTrue(joined.contains("never the proxy selector"));
+        assertTrue(joined.contains("short_link_expansion: direct, same checks, switch off"));
+        assertTrue(joined.contains("proxy_sign_in: Java connections only"));
+        assertFalse(joined.contains("127.0.0.1"));
+        assertFalse(joined.contains(USER));
+        assertFalse(joined.contains(PASSWORD));
+        assertEquals(NetworkRoutes.TITLE, new NetworkRoutes().title());
+    }
+
+    @Test public void aBundleWithoutTheProxyPatchHasNoRoutesToReport() {
+        SettingsStatus.networkProxyEnabled = false;
+        assertTrue(new NetworkRoutes().lines().isEmpty());
+    }
+
     @Test public void pausedInstallLeavesTheJvmAlone() {
         turnOn("http", "proxy.example.com", "8080", "", "");
         setPaused(true);

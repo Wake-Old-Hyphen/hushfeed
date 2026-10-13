@@ -501,7 +501,9 @@ try {
         # was renamed away by a post-release commit that no gate read.
         $_ -eq 'CHANGELOG.md' -or $_ -eq 'cosign.pub' -or
         # Its version placeholders are held to the target and the published index.
-        $_ -eq '.github/ISSUE_TEMPLATE/bug_report.yml'
+        $_ -eq '.github/ISSUE_TEMPLATE/bug_report.yml' -or
+        # Its current version and patch counts are held to the catalog and the index.
+        $_ -eq 'concepts/patch-development.md'
     }).Count -gt 0
 
     # Every gate below checks each pushed commit, and checks it in place only when it is HEAD and

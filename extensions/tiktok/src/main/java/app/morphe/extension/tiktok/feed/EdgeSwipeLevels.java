@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -252,6 +253,14 @@ public final class EdgeSwipeLevels {
                     side = Side.NONE;
                     if (enabled()) {
                         side = sideAt(event.getX(), windowWidth(), Settings.SWIPE_LEVELS_STRIP_PERCENT.get());
+                        // On 47.1.4 the comment sheet is drawn into this same window, so a drag
+                        // along its edge reaches here too. Asked once, at the press and only for
+                        // a press inside a strip, so the cost is one lookup per edge touch and a
+                        // gesture never changes its mind midway. A covered feed hands the whole
+                        // drag to TikTok, which scrolls the comments.
+                        if (side != Side.NONE && FeedVisibility.isCommentSheetVisible(activity)) {
+                            side = Side.NONE;
+                        }
                         if (side != Side.NONE) {
                             state = State.WATCHING;
                             downX = event.getX();

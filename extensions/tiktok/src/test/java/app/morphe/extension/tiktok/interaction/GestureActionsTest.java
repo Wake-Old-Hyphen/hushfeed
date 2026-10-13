@@ -151,6 +151,39 @@ public class GestureActionsTest {
         }
     }
 
+    /** #136: the speed toggle is offered where Playback speed reaches the player, and a tap is always its own. */
+    @Test public void theSpeedToggleNeedsThePlayerBridgeAndNeverFallsThroughToALike() throws Exception {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            boolean bridge = SettingsStatus.liveSpeedEnabled;
+            try {
+                SettingsStatus.liveSpeedEnabled = true;
+                PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+                new InterfacePreferenceCategory(activity, screen);
+                ChoicePreference choice = (ChoicePreference) screen.findPreference("double_tap_action");
+                CharSequence[] values = choice.getEntryValues();
+                assertEquals("speed_toggle", String.valueOf(values[values.length - 1]));
+                assertEquals(values.length, choice.getEntries().length);
+                assertEquals(L10n.t("Speed up this video, double tap again to undo"),
+                        String.valueOf(choice.getEntries()[values.length - 1]));
+            } finally {
+                SettingsStatus.liveSpeedEnabled = bridge;
+            }
+
+            Settings.DOUBLE_TAP_ACTION.save("speed_toggle");
+            try {
+                ShadowToast.reset();
+                assertTrue(GestureActions.onDoubleTap());
+                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                assertEquals(L10n.t("Nothing is playing to speed up"), ShadowToast.getTextOfLatestToast());
+            } finally {
+                Settings.DOUBLE_TAP_ACTION.save("default");
+            }
+        }
+    }
+
     /**
      * The two rows offer the same actions, each under its own TikTok default, but for the like:
      * TikTok's own double tap already likes.

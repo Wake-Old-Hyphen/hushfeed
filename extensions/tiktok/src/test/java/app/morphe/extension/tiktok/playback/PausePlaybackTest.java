@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +46,9 @@ public class PausePlaybackTest {
 
     @Before public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
+        // The switches this suite drives have their rows with Comment tools and Block author.
+        SettingsStatus.commentToolsEnabled = true;
+        SettingsStatus.blockAuthorEnabled = true;
         Settings.PAUSE_ON_COMMENTS.resetToDefault();
         Settings.NO_RESUME_ON_FOREGROUND.resetToDefault();
         Settings.PAUSE_FIRST_VIDEO.resetToDefault();
@@ -61,6 +65,8 @@ public class PausePlaybackTest {
     }
 
     @After public void tearDown() {
+        SettingsStatus.commentToolsEnabled = false;
+        SettingsStatus.blockAuthorEnabled = false;
         PausePlayback.resetForTests();
         Settings.PAUSE_ON_COMMENTS.resetToDefault();
         Settings.NO_RESUME_ON_FOREGROUND.resetToDefault();
@@ -450,6 +456,24 @@ public class PausePlaybackTest {
             PausePlayback.onForeground(activity);
             assertFalse(PausePlayback.quietenedForTests());
             assertNull(PausePlayback.catcherForTests());
+        }
+    }
+
+    /**
+     * Comment tools, App lock and Picture-in-picture install this class too. Their bundles can
+     * leave Block author out, and with it the Screen time page, so a return hold saved on under a
+     * fuller bundle would gate the feed with no row left to turn it off.
+     */
+    @Test public void aSavedReturnHoldDoesNothingInABundleWithoutScreenTime() {
+        SettingsStatus.blockAuthorEnabled = false;
+        Settings.NO_RESUME_ON_FOREGROUND.save(true);
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            PausePlayback.setWasAwayForTests(true);
+            PausePlayback.onForeground(activity);
+            assertFalse("a switch with no row held the feed", PausePlayback.quietenedForTests());
+            assertNull("a switch with no row put the catcher up", PausePlayback.catcherForTests());
         }
     }
 

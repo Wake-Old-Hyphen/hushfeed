@@ -1,4 +1,5 @@
 %1$s isn't a language code. Use two letters, like en, es or de.	%1$s non è un codice lingua. Usa due lettere, come en, es o de.
+Adds Save cover next to Download when you share a video, so you save the cover only when you want it. While this is on, Download saves just the video, even with Save the cover as well on.	Aggiunge Salva copertina accanto a Scarica quando condividi un video, così salvi la copertina solo quando vuoi. Finché è attivo, Scarica salva solo il video, anche con Salva anche la copertina attivo.
 Applies to Save the sound as well and to Save the original sound on a long press. Opus makes a smaller file, but the sound is encoded again from TikTok's copy.	Vale per Salva anche l'audio e per Salva l'audio originale con la pressione prolungata. Opus crea un file più piccolo, ma l'audio viene ricodificato dalla copia di TikTok.
 As TikTok sent it (M4A or MP3)	Come lo invia TikTok (M4A o MP3)
 Burn-in guard	Protezione dal burn-in
@@ -11,14 +12,19 @@ Importing new history ended Undo for the earlier clear. You can clear the import
 %1$d settings in that file can't be restored here and were skipped	%1$d impostazioni del file non possono essere ripristinate qui e sono state saltate
 Import watch history	Importa cronologia di visualizzazione
 Keep the language picked in TikTok	Mantieni la lingua scelta in TikTok
+Nothing is playing to speed up	Nessun video in riproduzione da accelerare
 One language code, like en or es. Comments and captions TikTok translates come out in this language instead of the app's. Leave it empty to keep TikTok's choice.	Un codice lingua, come en o es. I commenti e le didascalie che TikTok traduce escono in questa lingua invece che in quella dell'app. Lascialo vuoto per tenere la scelta di TikTok.
 Opus (.ogg), a smaller file	Opus (.ogg), file più piccolo
 Opus didn't work on this phone. Saving the sound as TikTok sent it instead.	Opus non ha funzionato su questo telefono. Salvo l'audio come l'ha inviato TikTok.
 Opus needs Android 10 or later, so sounds save as TikTok sent them.	Opus richiede Android 10 o successivo, quindi l'audio viene salvato come lo invia TikTok.
+Playing at %1$sx	In riproduzione a %1$sx
 Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.	Aggiunge un pulsante di salvataggio al menu che si apre dal pulsante Condividi di una storia. Salva la storia che stai guardando, e tenere premuta una storia la mette ancora in pausa.
 Save a story from its share sheet	Salva una storia dal menu di condivisione
+Save cover	Salva copertina
+Save cover button in the share sheet	Pulsante Salva copertina nel menu di condivisione
 Saved videos show the @username and the first line of the caption in the bottom left corner. The phone encodes the whole video again to do it, so saving takes longer. Applies to saves made by Hushfeed.	I video salvati mostrano il @nome utente e la prima riga della descrizione nell'angolo in basso a sinistra. Per farlo il telefono ricodifica tutto il video, quindi il salvataggio richiede più tempo. Vale per i salvataggi fatti da Hushfeed.
 Sound format	Formato audio
+Speed up this video, double tap again to undo	Accelera questo video, doppio tocco di nuovo per annullare
 TikTok only had its watermarked copy of this story, so that copy was saved to %1$s	TikTok aveva solo la copia con filigrana di questa storia, quindi è stata salvata quella copia in %1$s
 Translate button in comments	Pulsante Traduci nei commenti
 Adds TikTok's translate button next to the comment count. One tap translates every comment, and another shows the originals again.	Aggiunge il pulsante Traduci di TikTok accanto al numero di commenti. Un tocco traduce tutti i commenti, un altro mostra di nuovo gli originali.
@@ -859,7 +865,7 @@ Putting the settings back to their defaults	Ripristino delle impostazioni predef
 Quality	Qualità
 Quality, files, subtitles and hand-off	Qualità, file, sottotitoli e trasferimento
 Quality, speed and auto-advance	Qualità, velocità e avanzamento automatico
-Silence the feed while comments are open	Silenzia il feed quando i commenti sono aperti
+Pause the video while comments are open	Metti in pausa il video quando i commenti sono aperti
 Reading	Lettura
 Recorded gate reads (%1$d)	Accessi ai gate registrati (%1$d)
 Recording gate reads. Use a feature, then return here to stop.	Registrazione degli accessi ai gate in corso. Usa una funzione, poi torna qui per fermarla.
@@ -1754,7 +1760,7 @@ Don't start the first video	Non avviare il primo video
 When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.	Quando apri TikTok dalla sua icona, il primo video del feed aspetta un tocco prima di partire. Un link, una notifica o una scorciatoia si aprono come sempre.
 Network proxy	Proxy di rete
 Send TikTok through a proxy	Invia TikTok tramite un proxy
-Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Other apps aren't affected.	Invia feed, ricerca, commenti e il resto del traffico di TikTok attraverso il proxy qui sotto. Video e dirette LIVE si collegano comunque in modo diretto. Le altre app non sono interessate.
+Sends TikTok's feed, search, comments and other app traffic through the proxy below. Videos and LIVE streams still connect directly. Saves and short-link lookups from Hushfeed also connect directly, after their own address checks. Other apps aren't affected.	Invia feed, ricerca, commenti e il resto del traffico di TikTok attraverso il proxy qui sotto. Video e dirette LIVE si collegano comunque in modo diretto. Anche i salvataggi e la risoluzione dei link brevi di Hushfeed si collegano direttamente, dopo i loro controlli sull'indirizzo. Le altre app non sono interessate.
 Proxy type	Tipo di proxy
 HTTP	HTTP
 SOCKS5	SOCKS5
@@ -1894,7 +1900,7 @@ Liked videos	Video con Mi piace
 Public	Pubblici
 Copy	Copia
 Copy the full link for short links	Copia il link completo per i link brevi
-When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit. Links you send to another app go out as they were.	Quando Copia link dà un link breve vt.tiktok.com o vm.tiktok.com, Hushfeed lo apre una volta in background per trovare il link completo del video e copia quello. TikTok vede quella visita. I link che invii a un'altra app partono com'erano.
+When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.	Quando Copia link dà un link breve vt.tiktok.com o vm.tiktok.com, Hushfeed lo apre una volta in background per trovare il link completo del video e copia quello. TikTok vede quella visita, e si collega direttamente anche con un proxy attivo. I link che invii a un'altra app partono com'erano.
 Full link copied	Link completo copiato
 Mark saved videos	Segna i video salvati
 Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.	Mette un ✓ sui video che hai salvato con Hushfeed, nelle griglie dei profili e accanto all'ora nel feed. Funziona solo finché Controlla i video già salvati è attivo. I post con foto non vengono contrassegnati.
@@ -2046,3 +2052,15 @@ That file is larger than %1$s MB. Choose a smaller font file.	Il file supera i %
 That file isn't a font Android can use. Choose a .ttf or .otf file.	Il file non è un carattere che Android può usare. Scegli un file .ttf o .otf.
 Profile background	Sfondo del profilo
 Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	Apre l'editor dello sfondo del profilo di TikTok in Modifica profilo e mostra gli sfondi impostati dagli altri profili. I server di TikTok potrebbero comunque rifiutarsi di salvarlo per un account a cui TikTok non ha ancora offerto la funzione. Riapri Modifica profilo dopo averlo attivato.
+Copy the link with one press on Share	Copia il link con un tocco su Condividi
+A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.	Un tocco su Condividi sotto un video ne copia il link invece di aprire il menu di condivisione. Tocca di nuovo Condividi subito dopo per aprire il menu.
+Full long-press menu on a creator's videos	Menu completo con pressione prolungata sui video di un creator
+A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default.	Una pressione prolungata su un video aperto dal profilo di qualcuno apre lo stesso menu di Per te, non il menu di condivisione ridotto. Richiede che Pressione prolungata sia su Predefinito di TikTok.
+Ask for the quality on each save	Chiedi la qualità a ogni salvataggio
+Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.	Scarica elenca le qualità in cui è disponibile il video, con la dimensione che TikTok indica per ciascuna, e salva quella che scegli. La qualità qui sopra resta invariata per il salvataggio successivo.
+Save in which quality?	In che qualità salvare?
+Automatic (TikTok's file)	Automatico (il file di TikTok)
+%1$s, about %2$s	%1$s, circa %2$s
+%1$s, size unknown	%1$s, dimensione sconosciuta
+The quality choice is still open	La scelta della qualità è ancora aperta
+Unknown resolution	Risoluzione sconosciuta

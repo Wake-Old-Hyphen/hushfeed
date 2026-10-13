@@ -17,6 +17,9 @@ import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
+import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_COVER
+import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
+import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -268,13 +271,14 @@ val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
         "sound on its own or a photo post as one video, hold a profile picture or story to save " +
-        "it, and save a story from its share sheet. Starts off. Turn it on in Hushfeed settings > " +
-        "Downloads.",
+        "it, and save a story or a video's cover from the share sheet. Starts off. Turn it on in " +
+        "Hushfeed settings > Downloads.",
 ) {
     category("Downloads")
     compatibleWith(*AppCompatibilities.tiktok())
-    // The grid cell's count, for the check mark on videos saved here.
-    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch)
+    // The grid cell's count, for the check mark on videos saved here. The native Report carrier,
+    // for the share sheet's Save cover (#146).
+    dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch, ownedShareActionsPatch)
     execute {
         listOf(DownloadAddressFingerprint, CleanDownloadAddressFingerprint).forEach { fingerprint ->
             fingerprint.method.apply {
@@ -358,6 +362,7 @@ val advancedDownloadsPatch = bytecodePatch(
 
         resolveStoryLongPressTimer().interceptStoryLongPress()
         hookStoryShareSave()
+        addOwnedShareAction(SHARE_SAVE_COVER)
 
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAdvancedDownloads()V")

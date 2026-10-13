@@ -605,6 +605,140 @@ public class InboxQueryNativeTest {
         assertEquals(1, helper.calls);
     }
 
+    /** Starts a query so a guarded failure has a filtered list to hand back, then throws at the hook. */
+    private Surface searchingThenFaultAt(String hook) {
+        HookStatus.clear();
+        Surface surface = new Surface(false);
+        assertTrue(InboxQueryNative.query(surface.owner(), "alpha", MATCH));
+        surface.diff.accept(0);
+        assertIdentity(surface.state.published, surface.alpha);
+        InboxQueryNative.fault = at -> { if (at.equals(hook)) throw new IllegalStateException("a drifted " + hook); };
+        return surface;
+    }
+
+    private void assertSearchEnded(Surface surface, String hook) {
+        InboxQueryNative.fault = null;
+        assertNull(InboxQueryOwners.ownerForTests(surface.list));
+        assertIdentity(surface.state.published, surface.alpha, surface.beta);
+        assertTrue(HookStatus.missing(InboxQueryOwners.FAMILY).toString(), HookStatus.missing(InboxQueryOwners.FAMILY)
+                .contains("a working '" + hook + "' hook (it threw java.lang.IllegalStateException)"));
+        HookStatus.clear();
+    }
+
+    @Test public void aThrowInThePublicationDelegateReturnsTheNativeModelsAndHandsTheListBack() {
+        Surface surface = searchingThenFaultAt("loaded publication");
+        List<Object> models = new ArrayList<>(Arrays.asList(surface.alpha, surface.beta));
+        assertSame(models, InboxFilter.onLoadedPublication(surface.state, models, false, false, null, 14));
+        assertSearchEnded(surface, "loaded publication");
+    }
+
+    /** TikTok publishes from its list threads, and handing the list back touches the bar's views. */
+    @Test public void aThrowOnTikToksListThreadHandsTheListBackOnTheMainThread() throws Exception {
+        Surface surface = searchingThenFaultAt("loaded publication");
+        List<Object> models = new ArrayList<>(Arrays.asList(surface.alpha, surface.beta));
+        List<Object> returned = new ArrayList<>();
+        Thread listThread = new Thread(() -> returned.add(
+                InboxFilter.onLoadedPublication(surface.state, models, false, false, null, 14)));
+        listThread.start();
+        listThread.join(5_000);
+        assertEquals("the delegate did not return", 1, returned.size());
+        assertSame("the native models did not come back", models, returned.get(0));
+        assertNotNull("the list was handed back off the main thread", InboxQueryOwners.ownerForTests(surface.list));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertSearchEnded(surface, "loaded publication");
+    }
+
+    @Test public void aThrowInTheStubAndDiffDelegatesReturnsNormallyAndHandsTheListBack() {
+        for (String hook : new String[] {"loaded stub", "loaded diff", "loaded diff accepted"}) {
+            Surface surface = searchingThenFaultAt(hook);
+            Object metadata = new Object();
+            if (hook.equals("loaded stub")) InboxFilter.onLoadedStubPublication(surface.stub, new Wrapper(surface.state.LJ), metadata);
+            else if (hook.equals("loaded diff")) InboxFilter.onLoadedDiffSubmitted(surface.diff, Collections.emptyList(),
+                    surface.diff.LJIIJJI, surface.aggregate(surface.state.LJ), metadata);
+            else InboxFilter.onLoadedDiffAccepted(surface.diff, metadata);
+            assertSearchEnded(surface, hook);
+            InboxQueryOwners.resetForTests();
+        }
+    }
+
+    @Test public void aThrowInTheIndexedCallbackStillMakesTheOriginalNativeCall() {
+        Surface surface = searchingThenFaultAt("loaded indices");
+        List<?> original = surface.state.LJ;
+        InboxFilter.onLoadedIndexedCallback(new Closure(surface.fragment), surface.fragment.helper, original, new Pair<>(0, 1));
+        assertEquals(1, surface.fragment.helper.calls);
+        assertSame(original, surface.fragment.helper.models);
+        assertSearchEnded(surface, "loaded indices");
+    }
+
+    @Test public void aThrowInTheIndexedListGateReturnsTheOriginalList() {
+        Surface surface = searchingThenFaultAt("loaded list");
+        List<?> original = surface.state.LJ;
+        assertSame(original, InboxFilter.onLoadedIndexedList(surface.fragment, original));
+        assertSearchEnded(surface, "loaded list");
+    }
+
+    @Test public void aThrowInTheVisibleIndicesGateAllowsTheNativeCall() {
+        Surface surface = searchingThenFaultAt("loaded visible indices");
+        assertTrue(InboxFilter.allowLoadedVisibleIndices(surface.fragment, true));
+        assertSearchEnded(surface, "loaded visible indices");
+    }
+
+    @Test public void aThrowInTheClickGateAllowsTheNativeClick() {
+        Surface surface = searchingThenFaultAt("loaded click");
+        assertTrue(InboxFilter.allowLoadedNotificationClick(surface.holder));
+        assertSearchEnded(surface, "loaded click");
+    }
+
+    @Test public void aThrowInTheRefreshGateAllowsTheNativeRefresh() {
+        Surface surface = searchingThenFaultAt("loaded refresh");
+        assertTrue(InboxFilter.allowLoadedRefresh(surface.spring, true));
+        assertSearchEnded(surface, "loaded refresh");
+    }
+
+    @Test public void aThrowInARequestGateLetsTikToksRequestGoAhead() {
+        Surface allowed = searchingThenFaultAt("loaded request");
+        assertTrue("a paused list's request goes ahead once the search ends", InboxFilter.allowLoadedRequest(allowed.vm));
+        assertSearchEnded(allowed, "loaded request");
+        InboxQueryOwners.resetForTests();
+        for (boolean viaClosure : new boolean[] {false, true}) {
+            Surface started = searchingThenFaultAt("loaded request start");
+            assertTrue(viaClosure ? InboxFilter.beginLoadedClosureRequest(new Closure(started.vm))
+                    : InboxFilter.beginLoadedRequest(started.vm));
+            assertSearchEnded(started, "loaded request start");
+            InboxQueryOwners.resetForTests();
+        }
+    }
+
+    @Test public void aThrowWhileARequestReturnsOrLaunchesItsJobReturnsNormallyAndHandsTheListBack() {
+        for (String hook : new String[] {"loaded request return", "loaded request job"}) {
+            for (boolean viaClosure : new boolean[] {false, true}) {
+                Surface surface = searchingThenFaultAt(hook);
+                Object job = new InboxNativeRequestsTest.NativeJob();
+                if (hook.equals("loaded request return")) {
+                    if (viaClosure) InboxFilter.returnedLoadedClosureRequest(new Closure(surface.vm));
+                    else InboxFilter.returnedLoadedRequest(surface.vm);
+                } else if (viaClosure) InboxFilter.onLoadedClosureRequestJob(new Closure(surface.vm), job);
+                else InboxFilter.onLoadedRequestJob(surface.vm, job);
+                assertSearchEnded(surface, hook);
+                InboxQueryOwners.resetForTests();
+            }
+        }
+    }
+
+    @Test public void aNativeIndexedFailureDoesNotEndTheSearch() {
+        HookStatus.clear();
+        Surface surface = new Surface(false);
+        surface.fragment.helper.failure = new IllegalStateException("native callback failed");
+        try {
+            InboxFilter.onLoadedIndexedCallback(new Closure(surface.fragment), surface.fragment.helper,
+                    surface.state.LJ, new Pair<>(0, 1));
+            fail("the native failure must propagate");
+        } catch (IllegalStateException expected) { assertSame(surface.fragment.helper.failure, expected); }
+        assertNotNull("TikTok's own failure is not a Hushfeed fault", InboxQueryOwners.ownerForTests(surface.list));
+        assertTrue(HookStatus.missing(InboxQueryOwners.FAMILY).isEmpty());
+        HookStatus.clear();
+    }
+
     private final class Surface {
         final FrameLayout root = new FrameLayout(activity);
         final FrameLayout outer = new FrameLayout(activity);

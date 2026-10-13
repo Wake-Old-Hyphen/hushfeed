@@ -13,7 +13,7 @@ $ast = [Management.Automation.Language.Parser]::ParseFile($ReleaseScript, [ref]$
 if ($parseErrors.Count) { throw ($parseErrors -join "`n") }
 foreach ($name in @('Step', 'Invoke-PublicationCommand', 'Get-PublicationApi', 'Get-PublicationRelease',
         'Assert-PublicationTag', 'Assert-PublicationRelease', 'Get-PublishedReleaseDate', 'Assert-ImmutablePublicationEnabled',
-        'Assert-PublicationDownloads', 'Invoke-ReleasePublication')) {
+        'Assert-PublicationDownloads', 'Assert-SingleTagRelease', 'Invoke-ReleasePublication')) {
     $definition = $ast.Find({ param($node)
         $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
     }, $false)
@@ -63,7 +63,7 @@ function Reset-Case {
         ImmutableEnabled = $false; ImmutableSettingMissing = $false; UploadFailureAfter = 0; DownloadFailure = $false; PublishFailure = $false
         OmitDownload = ''; CorruptDownload = ''; ExtraDownload = $false; MetadataMutation = $null
         MetadataReads = 0; ApiFailure = 0; InvalidApiJson = $false; GraphQLFailure = $false; GitFailure = ''; NextAssetId = 100
-        RemoteTagObject = ''; SkipUpload = ''; BeforePublish = $null
+        RemoteTagObject = ''; SkipUpload = ''; BeforePublish = $null; ExtraReleases = @(); SecondPageReleases = @(); Uploaded = 0
         Calls = (New-Object 'System.Collections.Generic.List[object]')
         DownloadDirectories = (New-Object 'System.Collections.Generic.List[string]')
         RemoteBytes = @{}; LastDownload = @(); AttestationFailure = ''
@@ -193,6 +193,29 @@ function gh {
                 Write-ApiResponse $script:state.Release $include
                 return
             }
+            { $_ -match '^repos/example/project/releases\?per_page=100&page=[1-9][0-9]*$' } {
+                $items = @()
+                if ($script:state.Release -and $endpoint -match 'page=1$') { $items += $script:state.Release }
+                if ($endpoint -match 'page=1$') { $items += @($script:state.ExtraReleases) }
+                if ($endpoint -match 'page=2$') { $items += @($script:state.SecondPageReleases) }
+                if ($include) { "HTTP/2.0 200`nContent-Type: application/json`n`n" }
+                ConvertTo-Json -InputObject $items -Depth 12 -Compress
+                return
+            }
+            { $_ -match '^https://uploads\.github\.com/' } {
+                $target = [regex]::Match($endpoint, '^https://uploads\.github\.com/repos/example/project/releases/([1-9][0-9]*)/assets\?name=([^&]+)$')
+                Assert-True $target.Success 'Upload must go to the repository''s uploads host by release ID and asset name.'
+                $name = [Uri]::UnescapeDataString($target.Groups[2].Value)
+                Assert-True ((Get-Option $a '--method') -ceq 'POST' -and (Get-Option $a '-H') -ceq 'Content-Type: application/octet-stream') 'Upload lost its method or content type.'
+                $path = Get-Option $a '--input'
+                Assert-True ($script:state.Release -and $script:state.Release.draft -and $target.Groups[1].Value -ceq [string]$script:state.Release.id) 'An upload did not target the verified draft ID.'
+                Assert-True ($name -cin $names -and (Split-Path -Leaf $path) -ceq $name -and -not $script:state.RemoteBytes.ContainsKey($name)) 'Upload would duplicate or replace an asset.'
+                if ($name -ceq $script:state.SkipUpload) { return }
+                Add-RemoteAsset $name ([IO.File]::ReadAllBytes($path))
+                $script:state.Uploaded++
+                if ($script:state.UploadFailureAfter -eq $script:state.Uploaded) { $global:LASTEXITCODE = 23 }
+                return
+            }
             'repos/example/project/immutable-releases' {
                 if ($script:state.ImmutableSettingMissing) { Write-ApiResponse @{ message = 'Not Found' } $include 404 }
                 else { Write-ApiResponse @{ enabled = [bool]$script:state.ImmutableEnabled; enforced_by_owner = $false } $include }
@@ -230,35 +253,6 @@ function gh {
             Assert-True ((Get-Option $a '--notes-file') -ceq $script:invoke.NotesPath -and $a.Count -eq 13) 'Create must not upload or publish implicitly.'
             $script:state.Release = New-Release
         }
-        'upload' {
-            Assert-True ($script:state.Release.draft) 'An upload reached a published release.'
-            $uploaded = 0
-            foreach ($path in $a[5..($a.Count - 1)]) {
-                $name = Split-Path -Leaf $path
-                Assert-True ($name -cin $names -and -not $script:state.RemoteBytes.ContainsKey($name)) 'Upload would duplicate or replace an asset.'
-                if ($name -ceq $script:state.SkipUpload) { continue }
-                Add-RemoteAsset $name ([IO.File]::ReadAllBytes($path))
-                $uploaded++
-                if ($script:state.UploadFailureAfter -eq $uploaded) { $global:LASTEXITCODE = 23; return }
-            }
-        }
-        'download' {
-            $directory = Get-Option $a '--dir'
-            $script:state.DownloadDirectories.Add($directory)
-            $script:state.LastDownload = @()
-            if ($script:state.DownloadFailure) { $global:LASTEXITCODE = 23; return }
-            for ($i = 7; $i -lt $a.Count; $i += 2) {
-                Assert-True ($a[$i] -ceq '--pattern' -and $a[$i + 1] -cin $names) 'Download must request explicit allowed asset names.'
-                $name = $a[$i + 1]
-                if ($name -ceq $script:state.OmitDownload) { continue }
-                $bytes = $script:state.RemoteBytes[$name]
-                if ($name -ceq $script:state.CorruptDownload) { $bytes = [Text.Encoding]::UTF8.GetBytes('corrupt download') }
-                $path = Join-Path $directory $name
-                [IO.File]::WriteAllBytes($path, $bytes)
-                $script:state.LastDownload += $path
-            }
-            if ($script:state.ExtraDownload) { [IO.File]::WriteAllText((Join-Path $directory 'unexpected.txt'), 'unexpected') }
-        }
         'edit' {
             # Reproduce the old CLI boundary, which reselected a draft by tag before PATCH.
             if ($script:state.BeforePublish) { & $script:state.BeforePublish }
@@ -267,6 +261,24 @@ function gh {
         }
         default { throw "Unexpected GitHub release command: $($a[1])" }
     }
+}
+function Save-PublicationAsset {
+    param([string]$Repository, [object]$Asset, [string]$Path)
+    $script:state.Calls.Add([pscustomobject]@{ File = 'gh'; Arguments = @('api', "repos/$Repository/releases/assets/$($Asset.id)", '-H', 'Accept: application/octet-stream') })
+    Assert-True ($Repository -ceq 'example/project' -and $Asset.id -cin @($script:state.Release.assets.id)) 'Download did not go by an asset ID on the verified release.'
+    $directory = Split-Path -Parent $Path
+    if (-not $script:state.DownloadDirectories.Contains($directory)) {
+        $script:state.DownloadDirectories.Add($directory)
+        $script:state.LastDownload = @()
+    }
+    if ($script:state.DownloadFailure) { throw "gh api asset $($Asset.id) failed (exit 23): " }
+    $name = [string]$Asset.name
+    if ($name -ceq $script:state.OmitDownload) { return }
+    $bytes = $script:state.RemoteBytes[$name]
+    if ($name -ceq $script:state.CorruptDownload) { $bytes = [Text.Encoding]::UTF8.GetBytes('corrupt download') }
+    [IO.File]::WriteAllBytes($Path, $bytes)
+    $script:state.LastDownload += $Path
+    if ($script:state.ExtraDownload) { [IO.File]::WriteAllText((Join-Path $directory 'unexpected.txt'), 'unexpected') }
 }
 function Complete-MockPublication {
     Assert-True $script:state.Release.draft 'Publication reached an already public release.'
@@ -283,7 +295,11 @@ function Complete-MockPublication {
 function Get-ReleaseWrites {
     return @($script:state.Calls | Where-Object { $_.File -ceq 'gh' -and (
         ($_.Arguments[0] -ceq 'release' -and $_.Arguments[1] -in @('create', 'upload', 'edit')) -or
-        ($_.Arguments[0] -ceq 'api' -and $_.Arguments -contains 'PATCH')) })
+        ($_.Arguments[0] -ceq 'api' -and ($_.Arguments -contains 'PATCH' -or $_.Arguments -contains 'POST'))) })
+}
+function Get-WriteKind([object]$Call) {
+    if ($Call.Arguments[0] -ceq 'api') { if ($Call.Arguments -contains 'PATCH') { return 'publish' } else { return 'upload' } }
+    return $Call.Arguments[1]
 }
 function Assert-NoPublish {
     Assert-True (@(Get-ReleaseWrites | Where-Object { $_.Arguments[1] -ceq 'edit' -or $_.Arguments -contains 'PATCH' }).Count -eq 0) 'A failed check reached publication.'
@@ -330,7 +346,7 @@ try {
     Test-Case 'New release downloads and verifies its draft before publication' {
         $result = Invoke-ReleasePublication @script:invoke
         Assert-True (-not $script:state.Release.draft -and -not $result.AlreadyPublished -and $result.VerifiedAssets -eq 3) 'New release was not verified and published.'
-        Assert-True (((Get-ReleaseWrites | ForEach-Object { if ($_.Arguments -contains 'PATCH') { 'publish' } else { $_.Arguments[1] } }) -join '|') -ceq 'create|upload|publish') 'Publication writes changed order.'
+        Assert-True (((Get-ReleaseWrites | ForEach-Object { Get-WriteKind $_ }) -join '|') -ceq 'create|upload|upload|upload|publish') 'Publication writes changed order.'
     }
     foreach ($name in $names) {
         Test-Case "Missing local $name prevents remote writes" {
@@ -383,13 +399,13 @@ try {
             $result = Invoke-ReleasePublication @script:invoke
             Assert-True (-not $result.AlreadyPublished -and $script:state.Release.assets.Count -eq 3) 'Resumed draft did not publish all three assets.'
             $writes = @(Get-ReleaseWrites)
-            Assert-True (@($writes | Where-Object { $_.Arguments[1] -ceq 'create' }).Count -eq 0) 'An existing draft was recreated.'
-            $uploads = @($writes | Where-Object { $_.Arguments[1] -ceq 'upload' })
+            Assert-True (@($writes | Where-Object { (Get-WriteKind $_) -ceq 'create' }).Count -eq 0) 'An existing draft was recreated.'
+            $uploads = @($writes | Where-Object { (Get-WriteKind $_) -ceq 'upload' })
             if ($count -eq 3) { Assert-True ($uploads.Count -eq 0) 'A complete draft was uploaded again.' }
             else {
-                Assert-True ($uploads.Count -eq 1 -and $uploads[0].Arguments.Count -eq (5 + 3 - $count)) 'Resume did not upload only missing assets.'
-                foreach ($path in $uploads[0].Arguments[5..($uploads[0].Arguments.Count - 1)]) {
-                    Assert-True ((Split-Path -Leaf $path) -cnotin $present) 'An existing draft asset was replaced.'
+                Assert-True ($uploads.Count -eq (3 - $count)) 'Resume did not upload only missing assets.'
+                foreach ($upload in $uploads) {
+                    Assert-True ((Split-Path -Leaf (Get-Option $upload.Arguments '--input')) -cnotin $present) 'An existing draft asset was replaced.'
                 }
             }
         }
@@ -410,8 +426,8 @@ try {
         $script:state.UploadFailureAfter = 0
         Invoke-ReleasePublication @script:invoke
         $writes = @(Get-ReleaseWrites)
-        Assert-True (@($writes | Where-Object { $_.Arguments[1] -ceq 'create' }).Count -eq 1) 'Retry recreated the draft.'
-        Assert-True (@($writes | Where-Object { $_.Arguments[1] -ceq 'upload' }).Count -eq 2) 'Retry did not resume the upload.'
+        Assert-True (@($writes | Where-Object { (Get-WriteKind $_) -ceq 'create' }).Count -eq 1) 'Retry recreated the draft.'
+        Assert-True (@($writes | Where-Object { (Get-WriteKind $_) -ceq 'upload' }).Count -eq 3) 'Retry did not resume the upload (one failed call, then the two missing assets).'
         Assert-True ($script:state.Release.assets.Count -eq 3 -and -not $script:state.Release.draft) 'Retry failed to publish the complete draft.'
     }
     Test-Case 'Unexpected existing asset stops without deleting or uploading' {
@@ -526,7 +542,7 @@ try {
         Assert-True ($script:state.Release.draft -and $script:state.Release.assets.Count -eq 3) 'Failed publication lost the verified draft.'
         $script:state.PublishFailure = $false
         Invoke-ReleasePublication @script:invoke
-        Assert-True (@(Get-ReleaseWrites | Where-Object { $_.Arguments[1] -ceq 'upload' }).Count -eq 1) 'Publication retry uploaded assets again.'
+        Assert-True (@(Get-ReleaseWrites | Where-Object { (Get-WriteKind $_) -ceq 'upload' }).Count -eq 3) 'Publication retry uploaded assets again.'
     }
     Test-Case 'Existing published release is verified without mutations' {
         Seed-Release -Published
@@ -612,6 +628,128 @@ try {
         $result = Invoke-ReleasePublication @script:invoke -RequireImmutableRelease
         Assert-True ($result.AlreadyPublished -and $result.Immutable -and (Get-ReleaseWrites).Count -eq 0) 'Attestation retry changed the release.'
     }
+    function Add-StrayDraft([int]$Id = 77) {
+        $stray = New-Release
+        $stray.id = $Id
+        $script:state.ExtraReleases += $stray
+    }
+    function Assert-NoAssetTransfer {
+        $transfers = @($script:state.Calls | Where-Object { $_.File -ceq 'gh' -and ($_.Arguments -contains 'POST' -or
+            $_.Arguments[1] -match '^repos/example/project/releases/assets/') })
+        Assert-True ($transfers.Count -eq 0) 'Assets moved although the tag has two releases.'
+    }
+    Test-Case 'A stray second draft on the tag stops a resume before any download or upload' {
+        Seed-Release -AssetNames @($names[0])
+        Add-StrayDraft
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'More than one release has the tag v1.2.3 \(.*77'
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'A duplicate draft still received writes.'
+        Assert-NoAssetTransfer
+        Assert-NoPublish
+    }
+    Test-Case 'A stray draft beside a published release stops verification' {
+        Seed-Release -Published
+        Add-StrayDraft
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'More than one release has the tag'
+        Assert-NoAssetTransfer
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'A duplicate beside a published release caused a write.'
+    }
+    Test-Case 'A second draft appearing after the downloads blocks publication' {
+        Seed-Release
+        $script:state.MetadataMutation = { if ($script:state.MetadataReads -eq 2) { Add-StrayDraft } }
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'More than one release has the tag'
+        Assert-NoPublish
+    }
+    function New-OtherRelease([int]$Id) {
+        $other = New-Release -Draft $false
+        $other.id = $Id
+        $other.tag_name = "v0.0.$Id"
+        $other.name = $other.tag_name
+        return $other
+    }
+    # Windows PowerShell 5.1 hands the parsed release list on as one object; read as one release,
+    # every other tag in it looked like a duplicate of this one.
+    Test-Case 'Releases under other tags leave the duplicate check alone' {
+        $script:state.ExtraReleases = @((New-OtherRelease 41), (New-OtherRelease 40))
+        Invoke-ReleasePublication @script:invoke
+        Assert-True (@(Get-ReleaseWrites | Where-Object { (Get-WriteKind $_) -ceq 'publish' }).Count -eq 1) 'Other tags in the list stopped publication.'
+    }
+    Test-Case 'A stray draft on the second page of releases still stops publication' {
+        Seed-Release -AssetNames @($names[0])
+        $script:state.ExtraReleases = @(1..99 | ForEach-Object { New-OtherRelease $_ })
+        $stray = New-Release
+        $stray.id = 177
+        $script:state.SecondPageReleases = @($stray)
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'More than one release has the tag v1.2.3 \(.*177'
+        Assert-NoAssetTransfer
+        Assert-NoPublish
+    }
+    Test-Case 'Uploads and downloads go to the verified release and asset IDs, never the tag' {
+        Invoke-ReleasePublication @script:invoke
+        $byTag = @($script:state.Calls | Where-Object { $_.File -ceq 'gh' -and $_.Arguments[0] -ceq 'release' -and $_.Arguments[1] -in @('upload', 'download') })
+        Assert-True ($byTag.Count -eq 0) 'A release upload or download reselected the release by tag.'
+        $uploads = @(Get-ReleaseWrites | Where-Object { (Get-WriteKind $_) -ceq 'upload' })
+        Assert-True ($uploads.Count -eq 3 -and @($uploads | Where-Object { $_.Arguments[1] -notmatch '/releases/42/assets\?name=' }).Count -eq 0) 'An upload missed the verified release ID.'
+        $downloads = @($script:state.Calls | Where-Object { $_.File -ceq 'gh' -and $_.Arguments[1] -match '^repos/example/project/releases/assets/[1-9][0-9]*$' })
+        Assert-True ($downloads.Count -ge 3) 'Hosted assets were not downloaded by asset ID.'
+    }
+    function Get-StageAction([string]$Stage) {
+        $switch = $ast.Find({ param($node)
+            $node -is [Management.Automation.Language.SwitchStatementAst] -and $node.Condition.Extent.Text -ceq '$Stage'
+        }, $false)
+        $clause = @($switch.Clauses | Where-Object { $_.Item1.Extent.Text -ceq "'$Stage'" })[0]
+        $body = $clause.Item2.Extent.Text
+        return [scriptblock]::Create($body.Substring(1, $body.Length - 2))
+    }
+    foreach ($case in @(
+        @{ Name = 'a published tag'; Seed = { Seed-Release -Published }; Refuses = $true },
+        @{ Name = 'an unpublished draft'; Seed = { Seed-Release }; Refuses = $false },
+        @{ Name = 'no release yet'; Seed = { }; Refuses = $false }
+    )) {
+        Test-Case "Actual build stage vs $($case.Name)" {
+            & $case.Seed
+            $Repository = 'example/project'
+            $tag = 'v1.2.3'
+            $Version = '1.2.3'
+            function Assert-PushedHead { return $commit }
+            function Get-SourceVersion { return '1.2.3' }
+            function Invoke-Gradle { throw 'REACHED-GRADLE' }
+            $buildAction = Get-StageAction 'build'
+            if ($case.Refuses) { Assert-Throws { & $buildAction } 'already published' }
+            else { Assert-Throws { & $buildAction } 'REACHED-GRADLE' }
+            Assert-True ((Get-ReleaseWrites).Count -eq 0) 'The build stage wrote to the release.'
+        }
+    }
+    function Initialize-IndexCase {
+        $script:Repository = 'example/project'
+        $script:tag = 'v1.2.3'
+        $script:Version = '1.2.3'
+        $script:ReadmeSummary = 'summary.txt'
+        $script:BundleSummary = 'summary.txt'
+        $script:root = $script:invoke.Root
+        $script:assets = $script:invoke.Assets
+        $script:receiptName = $names[1]
+        [IO.File]::WriteAllText((Join-Path $script:root 'patches-list.json'), '{"patches":[{},{}]}')
+    }
+    Test-Case 'A rebuilt receipt stops the index before it is copied into the repo' {
+        Seed-Release -Published
+        Initialize-IndexCase
+        [IO.File]::WriteAllText((Join-Path $assets $names[1]), (@{ source = @{ commit = $commit }; rebuilt = $true } | ConvertTo-Json -Depth 3))
+        function Assert-PushedHead { return $commit }
+        function Get-TestCount { return 1 }
+        function Invoke-Native { throw 'A rebuilt receipt reached an index mutation.' }
+        Assert-Throws { & (Get-StageAction 'index') } 'differs from the hosted one'
+        Assert-True (-not (Test-Path -LiteralPath (Join-Path $root $names[1]))) 'A rebuilt receipt was copied into the repo.'
+    }
+    Test-Case 'A hosted receipt without a digest cannot be compared, so the index stops' {
+        Seed-Release -Published
+        Initialize-IndexCase
+        $script:state.Release.assets | Where-Object { $_.name -ceq $names[1] } | ForEach-Object { $_.digest = $null }
+        function Assert-PushedHead { return $commit }
+        function Get-TestCount { return 1 }
+        function Invoke-Native { throw 'An uncomparable receipt reached an index mutation.' }
+        Assert-Throws { & (Get-StageAction 'index') } 'no single hosted'
+        Assert-True (-not (Test-Path -LiteralPath (Join-Path $root $names[1]))) 'An uncomparable receipt was copied into the repo.'
+    }
     Test-Case 'Index rejects a draft even when it has a published timestamp' {
         $release = New-Release
         $release.published_at = '2026-10-12T12:00:00Z'
@@ -619,10 +757,15 @@ try {
         $release.draft = $false
         Assert-True ((Get-PublishedReleaseDate -Release $release -Tag 'v1.2.3') -ceq '2026-10-12T12:00:00') 'Published index date changed.'
     }
-    Test-Case 'Index date stays in UTC when GitHub''s JSON arrives as a date' {
-        $release = '{"tag_name":"v1.2.3","draft":false,"published_at":"2026-10-12T12:00:00Z"}' | ConvertFrom-Json
-        Assert-True ($release.published_at -is [DateTime]) 'ConvertFrom-Json no longer returns a date here, so this contract tests nothing.'
-        Assert-True ((Get-PublishedReleaseDate -Release $release -Tag 'v1.2.3') -ceq '2026-10-12T12:00:00') 'Index date moved by the local UTC offset.'
+    Test-Case 'Index date stays in UTC whether the JSON reader returns a date or a string' {
+        # PowerShell 7 turns published_at into a DateTime and 5.1 leaves a string, so cover both shapes
+        # explicitly instead of depending on which shell is running.
+        $parsed = '{"tag_name":"v1.2.3","draft":false,"published_at":"2026-10-12T12:00:00Z"}' | ConvertFrom-Json
+        $instant = [DateTime]::new(2026, 10, 12, 12, 0, 0, [DateTimeKind]::Utc)
+        foreach ($value in @($parsed.published_at, '2026-10-12T12:00:00Z', $instant, $instant.ToLocalTime())) {
+            $release = [pscustomobject]@{ tag_name = 'v1.2.3'; draft = $false; published_at = $value }
+            Assert-True ((Get-PublishedReleaseDate -Release $release -Tag 'v1.2.3') -ceq '2026-10-12T12:00:00') "Index date moved for a $($value.GetType().Name) published_at."
+        }
     }
     function Get-IndexAction {
         $switch = $ast.Find({ param($node)

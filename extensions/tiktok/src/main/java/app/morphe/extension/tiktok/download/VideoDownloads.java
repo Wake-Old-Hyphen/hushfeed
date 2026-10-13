@@ -57,6 +57,9 @@ final class VideoDownloads {
         return Settings.CHECK_SAVED_VIDEOS.get();
     }
 
+    /** The pick that is TikTok's own file, for {@link #startPicked}. */
+    static final Object AUTOMATIC = new Object();
+
     static boolean start(Object aweme, Context context) {
         return start(aweme, context, true);
     }
@@ -66,14 +69,54 @@ final class VideoDownloads {
      * made a cover.
      */
     static boolean start(Object aweme, Context context, boolean withCover) {
+        return start(aweme, context, withCover, null);
+    }
+
+    /**
+     * The save at a rendition picked for it ({@link QualityChoice}), or {@link #AUTOMATIC}.
+     * TikTok's own save has already stood aside for the choice, so this one never hands back to
+     * it: true unless it couldn't start at all.
+     */
+    static boolean startPicked(Object aweme, Context context, Object pick) {
+        return start(aweme, context, true, pick);
+    }
+
+    /** Whether a save of this video holds it, from its wait in line to its end. */
+    static boolean saving(String id) {
+        return ACTIVE.contains(id);
+    }
+
+    /** What a press on a video whose save holds it is told. */
+    static String busyMessage(String id) {
+        return ASKING.contains(id) ? L10n.t("The saved-video choice is still open")
+                : MediaJobScheduler.busyMessage("video " + id);
+    }
+
+    /** The subtitle tracks a save of this video writes beside it. */
+    private static List<SubtitleDownloads.Track> captions(Object video) {
+        return SettingsStatus.subtitleToolsEnabled && Settings.DOWNLOAD_SUBTITLES.get()
+                ? SubtitleDownloads.tracks(video, Settings.SUBTITLE_LANGUAGE.get(), Locale.getDefault())
+                : Collections.emptyList();
+    }
+
+    /**
+     * The address an Automatic save of this video fetches: the highest rendition when captions
+     * need a file of our own, otherwise TikTok's file.
+     */
+    static Object automaticSource(Object video) {
+        Object gear = selectedGear(video, "auto", !captions(video).isEmpty());
+        return gear != null ? Reflect.property(gear, "getPlayAddr", "playAddr") : automaticAddress(video);
+    }
+
+    private static boolean start(Object aweme, Context context, boolean withCover, Object pick) {
         if (context == null) return false;
         if (android.os.Build.VERSION.SDK_INT < 29
                 && context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) return false;
         Object video = Reflect.property(aweme, "getVideo", "video");
-        List<SubtitleDownloads.Track> captions = SettingsStatus.subtitleToolsEnabled && Settings.DOWNLOAD_SUBTITLES.get()
-                ? SubtitleDownloads.tracks(video, Settings.SUBTITLE_LANGUAGE.get(), Locale.getDefault()) : Collections.emptyList();
-        String quality = Settings.DOWNLOAD_VIDEO_QUALITY.get();
+        List<SubtitleDownloads.Track> captions = captions(video);
+        // A pick is the rendition itself, or TikTok's file the way Automatic takes it.
+        String quality = pick == null ? Settings.DOWNLOAD_VIDEO_QUALITY.get() : "auto";
         boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
         boolean withDetails = Settings.DOWNLOAD_DETAILS.get();
         boolean detailsAsJson = Settings.DOWNLOAD_DETAILS_JSON.get();
@@ -85,8 +128,9 @@ final class VideoDownloads {
         boolean showProgress = Settings.DOWNLOAD_PROGRESS.get();
         boolean stampedFallback = stampedFallbackWanted();
         // TikTok's own save has no second try, so a fallback to the stamped copy needs the save
-        // here. So does a caption written in, which needs a file of our own to write it into.
-        boolean extras = withDetails || withTags || checkSaved || showProgress || stampedFallback || burnCaption;
+        // here. So does a caption written in, which needs a file of our own to write it into, and
+        // a pick, which TikTok's save has already stood aside for.
+        boolean extras = pick != null || withDetails || withTags || checkSaved || showProgress || stampedFallback || burnCaption;
         // Writing the caption in encodes the whole video again, the slow part of such a save, so
         // it gets the progress row and its Cancel whether or not the row was asked for.
         boolean showRow = showProgress || burnCaption;
@@ -99,7 +143,7 @@ final class VideoDownloads {
         // to fetch a different file: on Automatic the source stays the one TikTok would have
         // used and only the sound is left out of it.
         if (captions.isEmpty() && automatic && !muted && !extras) return false;
-        Object selected = selectedGear(video, quality, !captions.isEmpty());
+        Object selected = pick == null || pick == AUTOMATIC ? selectedGear(video, quality, !captions.isEmpty()) : pick;
         if (selected == null && captions.isEmpty() && !muted && !extras) return false;
         List<String> selectedUrls = urls(Reflect.property(selected, "getPlayAddr", "playAddr"));
         if (selected == null) {
@@ -112,8 +156,9 @@ final class VideoDownloads {
         boolean unavailable = videoUrls.isEmpty() || (dash && !muted && audioUrls.isEmpty());
         if (unavailable && !checkSaved) {
             // A details file can't come from TikTok's own save, so that save is refused here. A
-            // progress row alone is no reason to refuse one TikTok could still have made.
-            if (withDetails) {
+            // progress row alone is no reason to refuse one TikTok could still have made. After a
+            // pick there's no TikTok save left to run.
+            if (withDetails || pick != null) {
                 Utils.showToastLong(L10n.t("This video isn't available as a complete file. Try again later."));
                 return true;
             }
@@ -153,8 +198,7 @@ final class VideoDownloads {
         String key = "video " + id;
         if (!ACTIVE.add(id)) {
             // Said rather than swallowed, so a second tap doesn't read as a broken button.
-            Utils.showToastShort(ASKING.contains(id) ? L10n.t("The saved-video choice is still open")
-                    : MediaJobScheduler.busyMessage(key));
+            Utils.showToastShort(busyMessage(id));
             return true;
         }
         // Everything from here is one save of this video until it lets go of the id: its wait in
@@ -404,9 +448,16 @@ final class VideoDownloads {
      * clean one whatever that switch said.
      */
     static List<String> automaticUrls(Object video) {
-        if (DownloadsPatch.shouldRemoveWatermark()) return sourceUrls(video);
-        List<String> stamped = urls(Reflect.property(video, "getDownloadAddr", "downloadAddr"));
-        return stamped.isEmpty() ? sourceUrls(video) : stamped;
+        return urls(automaticAddress(video));
+    }
+
+    /** The address {@link #automaticUrls} reads, or null when none has a usable URL. */
+    static Object automaticAddress(Object video) {
+        if (!DownloadsPatch.shouldRemoveWatermark()) {
+            Object stamped = Reflect.property(video, "getDownloadAddr", "downloadAddr");
+            if (!urls(stamped).isEmpty()) return stamped;
+        }
+        return sourceAddress(video);
     }
 
     /**
@@ -431,10 +482,17 @@ final class VideoDownloads {
     }
 
     static List<String> sourceUrls(Object video) {
-        List<String> found = urls(Reflect.property(video, "getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"));
-        if (found.isEmpty()) found = urls(Reflect.property(video, "getDownloadAddr", "downloadAddr"));
-        if (found.isEmpty()) found = urls(Reflect.property(video, "getPlayAddr", "playAddr"));
-        return found;
+        return urls(sourceAddress(video));
+    }
+
+    /** The clean download address, then the stamped one, then the play address: the first with a usable URL. */
+    private static Object sourceAddress(Object video) {
+        for (String[] field : new String[][]{{"getDownloadNoWatermarkAddr", "downloadNoWatermarkAddr"},
+                {"getDownloadAddr", "downloadAddr"}, {"getPlayAddr", "playAddr"}}) {
+            Object address = Reflect.property(video, field[0], field[1]);
+            if (!urls(address).isEmpty()) return address;
+        }
+        return null;
     }
 
     static List<String> audioUrls(Object video, Object gear) {

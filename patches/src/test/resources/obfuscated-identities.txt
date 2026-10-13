@@ -224,7 +224,6 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/translation/Received
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LIZIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LJ
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LJIIL
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LJIIZILJ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LLFFF
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LLILL
@@ -236,9 +235,6 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslation
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/02tY;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/02tk;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/03j6;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0BTU;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0BTp;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0BWZ;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0CJ0;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0F1w;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/0XUR;
@@ -265,9 +261,7 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTra
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/04QO;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/05ui;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/08pU;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0BTU;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0BVS;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0BWZ;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0CJ0;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0CY7;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/0CYj;
@@ -319,3 +313,26 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearance
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|Ns
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationHooks.kt|LX/
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/
+
+# 47.1.4 account lists and owner accessors read by Account management (fe4de469f) and the account hooks behind the DM translation previews (c0b85c4db). Both were merged on 2026-10-12 with these names unrecorded; they are 47.1.4 reflection and patch anchors with no stable name to anchor on yet.
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZIZ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tk
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tX
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.0E1o
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r0
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r1
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVZ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJIIZILJ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJJIIJ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LLLLZI
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|X.03IM
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LIZ
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LJI
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LJII
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LJIIIZ
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LX/
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LX/03Fg;
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LX/03Sh;

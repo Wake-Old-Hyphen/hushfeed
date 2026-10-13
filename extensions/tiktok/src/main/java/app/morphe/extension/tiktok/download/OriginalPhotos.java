@@ -26,6 +26,9 @@ public final class OriginalPhotos {
     public static boolean start(Object aweme, Context context) {
         // Handing the link to another app replaces the save, so it comes before all of it.
         if (ExternalDownloader.handOff(aweme, context)) return true;
+        // With Ask for the quality on each save on, the choice comes before any of the save, the
+        // cover included, so Cancel leaves nothing behind.
+        if (QualityChoice.offer(aweme, context)) return true;
         // Its own small save, beside whichever save the video gets. A photo post has none. With
         // the already-saved check on, the video's save makes it once it knows the video is new
         // or the choice says Save again, so Open doesn't leave a second cover behind.

@@ -1,12 +1,16 @@
 # App and patch development map
 
-This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. It was checked against Hushfeed source 0.70.0 on 2026-10-09. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
+This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-12, and `scripts/validate-release-facts.ps1` fails when they drift. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
 
 ## What Hushfeed ships
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-The source snapshot in this checkout says version 0.70.0 and contains 131 patch entries, one more than the published 0.70.0 bundle that patches-bundle.json names. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
+Source snapshot: version 0.71.3, 134 patch entries. Those come from gradle.properties and patches-list.json.
+
+Published bundle: version 0.71.2, 132 patches. Those come from patches-bundle.json and the release it names.
+
+The source runs ahead of the published bundle until the next release ships. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
 
 ## Target app and version boundary
 
@@ -84,21 +88,21 @@ The Morphe Gradle plugin and the default extension namespace are configured in s
 
 The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, telemetry, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
 
-The current catalog's 131 patches are grouped as follows:
+The current catalog's 134 patches are grouped as follows:
 
 | Manager category | Patches |
 | --- | ---: |
-| Comments | 11 |
+| Comments | 12 |
 | Downloads | 5 |
 | Feed | 20 |
 | Inbox | 7 |
-| Interaction | 17 |
+| Interaction | 18 |
 | Interface | 7 |
 | Performance | 10 |
 | Playback | 20 |
 | Privacy | 16 |
 | Search | 4 |
-| Settings | 14 |
+| Settings | 15 |
 
 The [patch catalog](../patches-list.json) has the complete names and plain-English descriptions. Keep the prose in that generated catalog aligned with the README's patch table and the in-app setting title. The build's documentation checks compare those sources.
 
@@ -112,7 +116,7 @@ Settings.java declares runtime setting keys, types, defaults, and availability r
 
 An install-time Morphe patch option is different from an in-app setting. For example, AMOLED dark theme has a color option applied while building the patched APK. Advanced downloads depends on the Settings patch and exposes runtime switches in TikTok's Hushfeed settings. The generated catalog lists those dependencies and patch options.
 
-The detailed in-app settings pages are separate from Morphe Manager's patch categories. Quiet Index groups these pages on the home screen in source version 0.70.0; their category classes and persisted setting keys remain the same:
+The detailed in-app settings pages are separate from Morphe Manager's patch categories. Quiet Index groups these pages on the home screen since 0.70.0; their category classes and persisted setting keys remain the same:
 
 | Settings page | Category class |
 | --- | --- |
@@ -134,13 +138,13 @@ Translations live in extensions/tiktok/src/main/l10n/. The generator scripts/gen
 
 ## Settings design concepts
 
-Design study v0.1.0, October 9, 2026. Quiet Index was selected and is implemented in source version 0.70.0. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys. The published bundle remains 0.69.0, so the source redesign awaits publication.
+Design study v0.1.0, October 9, 2026. Quiet Index was selected and has shipped since 0.70.0. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys.
 
 The previous home repeated Feed filter, Privacy and Screen time as shortcuts above their full rows. Quiet Index replaces that stack with a compact status beside the Hushfeed title, search and seven groups. About Hushfeed sits separately below the groups. Detailed controls remain on their existing pages.
 
 | Concept | Preview | Navigation tradeoff |
 | --- | --- | --- |
-| Quiet Index | [Open mockup](assets/settings-design-2026-10-09/quiet-index.png) | Selected and implemented in source 0.70.0. Seven grouped destinations keep the home compact. Related pages move one level deeper. |
+| Quiet Index | [Open mockup](assets/settings-design-2026-10-09/quiet-index.png) | Selected and shipped in 0.70.0. Seven grouped destinations keep the home compact. Related pages move one level deeper. |
 | Three-domain Workspace | [Open mockup](assets/settings-design-2026-10-09/three-domain-workspace.png) | Experience, Privacy and Tools divide the library. Less scrolling, but users need to learn which tab owns a setting. |
 | Focused Controls | [Open mockup](assets/settings-design-2026-10-09/focused-controls.png) | Expandable groups expose common controls in place. Faster adjustments, but expansion state and accidental changes need attention. |
 

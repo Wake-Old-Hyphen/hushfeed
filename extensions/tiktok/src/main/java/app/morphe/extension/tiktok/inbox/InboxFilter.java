@@ -150,7 +150,10 @@ public final class InboxFilter {
         InboxQueryOwners.observedVm(widget, vm);
     }
 
-    public static void onLoadedFragmentBound(Object fragment) { InboxQueryOwners.fragmentBound(fragment); }
+    public static void onLoadedFragmentBound(Object fragment) {
+        try { InboxQueryOwners.fragmentBound(fragment); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded fragment", failure); }
+    }
 
     public static java.util.List<?> onLoadedPublication(Object state, java.util.List<?> models,
             boolean first, boolean second, Runnable completion, int mask) {
@@ -183,18 +186,39 @@ public final class InboxFilter {
     public static boolean allowLoadedNotificationClick(Object holder) { return InboxQueryNative.click(holder); }
     public static boolean allowLoadedRefresh(Object spring, boolean starting) { return InboxQueryNative.refresh(spring, starting); }
     public static boolean allowLoadedManualRefresh(Object spring) { return InboxQueryNative.refresh(spring, true); }
-    public static boolean allowLoadedRequest(Object target) { return InboxNativeRequests.allowed(target); }
-    public static boolean beginLoadedRequest(Object target) { return InboxNativeRequests.begin(target); }
-    public static void returnedLoadedRequest(Object target) { InboxNativeRequests.returned(target); }
-    public static void onLoadedRequestJob(Object target, Object job) { InboxNativeRequests.launched(target, job); }
+    // TikTok's paging frames call these around its own requests. A throw in Hushfeed's part ends
+    // the search and lets the request go ahead as it would without Hushfeed.
+    public static boolean allowLoadedRequest(Object target) {
+        try { InboxQueryNative.probe("loaded request"); return InboxNativeRequests.allowed(target); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request", failure); return true; }
+    }
+    public static boolean beginLoadedRequest(Object target) {
+        try { InboxQueryNative.probe("loaded request start"); return InboxNativeRequests.begin(target); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request start", failure); return true; }
+    }
+    public static void returnedLoadedRequest(Object target) {
+        try { InboxQueryNative.probe("loaded request return"); InboxNativeRequests.returned(target); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request return", failure); }
+    }
+    public static void onLoadedRequestJob(Object target, Object job) {
+        try { InboxQueryNative.probe("loaded request job"); InboxNativeRequests.launched(target, job); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request job", failure); }
+    }
     public static boolean beginLoadedClosureRequest(Object closure) {
-        return InboxNativeRequests.begin(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"));
+        try { InboxQueryNative.probe("loaded request start"); return InboxNativeRequests.begin(closureTarget(closure)); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request start", failure); return true; }
     }
     public static void returnedLoadedClosureRequest(Object closure) {
-        InboxNativeRequests.returned(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"));
+        try { InboxQueryNative.probe("loaded request return"); InboxNativeRequests.returned(closureTarget(closure)); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request return", failure); }
     }
     public static void onLoadedClosureRequestJob(Object closure, Object job) {
-        InboxNativeRequests.launched(app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0"), job);
+        try { InboxQueryNative.probe("loaded request job"); InboxNativeRequests.launched(closureTarget(closure), job); }
+        catch (Throwable failure) { InboxQueryNative.contain("loaded request job", failure); }
+    }
+
+    private static Object closureTarget(Object closure) {
+        return app.morphe.extension.tiktok.blockauthor.Reflect.readField(closure, "l0");
     }
 
     private static WeakReference<Activity> activityReference = new WeakReference<>(null);

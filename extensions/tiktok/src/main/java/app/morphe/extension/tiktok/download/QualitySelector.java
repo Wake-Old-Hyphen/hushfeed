@@ -167,8 +167,13 @@ public final class QualitySelector {
         return (int) (width > 0 && height > 0 ? Math.min(width, height) : Math.max(width, height));
     }
 
-    private static long size(Object gear) {
-        return number(Reflect.property(gear, "getPlayAddr", "playAddr"), "getSize", "size");
+    static long size(Object gear) {
+        return addressSize(Reflect.property(gear, "getPlayAddr", "playAddr"));
+    }
+
+    /** The size TikTok lists for an address, or 0. */
+    static long addressSize(Object address) {
+        return number(address, "getSize", "size");
     }
 
     private static long number(Object value, String getter, String field) {

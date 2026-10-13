@@ -1013,4 +1013,20 @@ public class AuthorRegionTest {
             reset.invoke(null);
         }
     }
+
+    @Test
+    public void aBoundVideoRemembersItsCreatorsCountryForTheCommentList() {
+        AuthorRegion.forgetSeenRegions();
+        Settings.SHOW_AUTHOR_HANDLE.save(false);
+        Settings.SHOW_AUTHOR_REGION.save(false);
+        Settings.SHOW_COMMENTER_REGION.save(false);
+        AuthorRegion.decoration(playing("a", "SamSmith", "Sam", "gb"));
+        assertNull("nothing asks for the country, so nothing is read", AuthorRegion.seenRegion("samsmith"));
+
+        Settings.SHOW_AUTHOR_REGION.save(true);
+        AuthorRegion.decoration(playing("b", "SamSmith", "Sam", "gb"));
+        assertEquals("GB", AuthorRegion.seenRegion("@samsmith"));
+        assertNull(AuthorRegion.seenRegion("someone.else"));
+        AuthorRegion.forgetSeenRegions();
+    }
 }
