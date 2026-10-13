@@ -314,7 +314,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p build bundles
+          mkdir -p build bundles nai64-meta
           CLI_URL=$(curl -s https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest | jq -r '.assets[] | select(.name | endswith("-all.jar")) | .browser_download_url')
           curl -L -o build/cli.jar "$CLI_URL"
           curl -L -o bundles/hushfeed.mpp "https://github.com/${{ github.repository }}/releases/download/v${{ needs.build-mpp.outputs.VERSION }}/patches-${{ needs.build-mpp.outputs.VERSION }}.mpp"
