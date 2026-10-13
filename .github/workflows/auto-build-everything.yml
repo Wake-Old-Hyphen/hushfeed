@@ -10,9 +10,6 @@ permissions:
   packages: read
 
 jobs:
-  # ==========================================
-  # JOB 1: Sync upstream, inject AMOLED, build .mpp
-  # ==========================================
   build-mpp:
     runs-on: ubuntu-latest
     outputs:
@@ -118,9 +115,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 1
 
-  # ==========================================
-  # JOB 2: Patch all TikTok versions in parallel
-  # ==========================================
   build-apk:
     needs: build-mpp
     if: needs.build-mpp.outputs.UPSTREAM_CHANGED == 'true'
@@ -201,17 +195,31 @@ jobs:
           mkdir -p bundles nai64-meta
           curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
           NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
-          
           if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
-            echo "❌ Could not find Nai64 download URL"
+            echo "Could not find Nai64 download URL"
             exit 1
           fi
-          
           curl -L -o bundles/nai64.mpp "$NAI64_URL"
-          echo "✅ Nai64 bundle downloaded: $(du -h bundles/nai64.mpp | cut -f1)"
+          echo "Nai64 bundle downloaded: $(du -h bundles/nai64.mpp | cut -f1)"
+
+      - name: Download kveld9 bundle and hosts blocklist
+        run: |
+          mkdir -p bundles
+          KVELD9_URL=$(curl -sL "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-bundle.json" | jq -r '.download_url')
+          if [ -z "$KVELD9_URL" ] || [ "$KVELD9_URL" == "null" ]; then
+            echo "Could not find kveld9 download URL"
+            exit 1
+          fi
+          curl -L -o bundles/kveld9.mpp "$KVELD9_URL"
+          curl -sL -o build/hosts-blocklist.txt "https://hagezi-mirror.dnsbunker.org/hosts/native.tiktok.extended.txt"
+          if [ ! -s build/hosts-blocklist.txt ]; then
+            echo "Hosts blocklist download failed or is empty"
+            exit 1
+          fi
+          echo "kveld9 bundle ready; hosts blocklist: $(wc -l < build/hosts-blocklist.txt) rules"
 
       - name: Generate options
-        run: java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -o build/options.json
+        run: java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -p bundles/kveld9.mpp -o build/options.json
 
       - name: Configure options
         run: python3 configure_options.py
@@ -219,7 +227,7 @@ jobs:
       - name: Patch TikTok
         run: |
           java -jar build/cli.jar patch \
-            -p bundles/hushfeed.mpp -p bundles/nai64.mpp \
+            -p bundles/hushfeed.mpp -p bundles/nai64.mpp -p bundles/kveld9.mpp \
             --options-file build/options.json --force \
             --keystore signing/keystore.bks \
             --keystore-password "${{ secrets.KEYSTORE_PASSWORD }}" \
@@ -260,9 +268,6 @@ jobs:
           path: build/permissions-${{ matrix.version }}.json
           retention-days: 1
 
-  # ==========================================
-  # JOB 3: One release, all APKs, full notes
-  # ==========================================
   publish:
     needs: [build-mpp, build-apk]
     if: always() && needs.build-mpp.outputs.UPSTREAM_CHANGED == 'true'
@@ -309,7 +314,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p build bundles nai64-meta
+          mkdir -p build bundles
           CLI_URL=$(curl -s https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest | jq -r '.assets[] | select(.name | endswith("-all.jar")) | .browser_download_url')
           curl -L -o build/cli.jar "$CLI_URL"
           curl -L -o bundles/hushfeed.mpp "https://github.com/${{ github.repository }}/releases/download/v${{ needs.build-mpp.outputs.VERSION }}/patches-${{ needs.build-mpp.outputs.VERSION }}.mpp"
@@ -317,10 +322,13 @@ jobs:
           curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
           NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
           curl -L -o bundles/nai64.mpp "$NAI64_URL"
+          
+          KVELD9_URL=$(curl -sL "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-bundle.json" | jq -r '.download_url')
+          curl -L -o bundles/kveld9.mpp "$KVELD9_URL"
 
       - name: Regenerate options for notes
         run: |
-          java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -o build/options.json
+          java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -p bundles/kveld9.mpp -o build/options.json
           python3 configure_options.py
 
       - name: Generate release notes
