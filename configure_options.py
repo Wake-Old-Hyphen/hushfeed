@@ -4,7 +4,7 @@ Applies Nai64ExtraPatches_Options.yaml to build/options.json.
 
 Features:
 - Disables specified Hushfeed patches to prevent double-hooking.
-- Applies custom options to Hushfeed and Nai64 patches.
+- Applies custom options to Hushfeed, Nai64, and kveld9 patches.
 - Safe key matching: falls back to the single available option if the exact key is missing.
 - Auto-wraps scalar values into lists if the target option expects a list.
 """
@@ -17,7 +17,6 @@ from typing import Any, Dict, List
 
 import yaml
 
-# Configure logging for CI/CD environments
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -28,9 +27,7 @@ def normalize_key(key: str) -> str:
 
 
 def apply_option_value(existing_options: Dict[str, Any], key: str, new_value: Any) -> None:
-    """
-    Safely apply a new value to an existing option, respecting its original data structure.
-    """
+    """Safely apply a new value to an existing option, respecting its original data structure."""
     current = existing_options[key]
     if isinstance(current, dict) and "value" in current:
         inner = current["value"]
@@ -46,13 +43,11 @@ def apply_requested_options(patch_name: str, patch_data: Dict[str, Any], request
     existing = patch_data.get("options") or {}
     
     for key, new_value in (requested.get("options") or {}).items():
-        # 1. Exact match
         if key in existing:
             apply_option_value(existing, key, new_value)
             logger.info(f"  -> {patch_name}: {key} = {new_value!r}")
             continue
         
-        # 2. Normalized match
         norm_key = normalize_key(key)
         match = next((ek for ek in existing if normalize_key(ek) == norm_key), None)
         if match:
@@ -60,7 +55,6 @@ def apply_requested_options(patch_name: str, patch_data: Dict[str, Any], request
             logger.info(f"  -> {patch_name}: {match} (matched '{key}') = {new_value!r}")
             continue
         
-        # 3. Fallback: If the patch has exactly one option, apply it there and warn
         if len(existing) == 1:
             only_key = next(iter(existing))
             apply_option_value(existing, only_key, new_value)
@@ -85,10 +79,10 @@ def main() -> int:
         return 1
 
     requested_nai64 = {p["name"].lower(): p for p in cfg.get("patches", [])}
+    requested_kveld9 = {p["name"].lower(): p for p in cfg.get("kveld9_patches", [])}
     disabled_hushfeed = {normalize_key(x) for x in cfg.get("hushfeed_disabled", [])}
     hushfeed_options = {normalize_key(x.get("name", "")): x for x in cfg.get("hushfeed_options", [])}
 
-    # Environment overrides for variant testing
     extra_hushfeed_disabled = {normalize_key(x) for x in os.environ.get("FORCE_DISABLE_HUSHFEED", "").split(",") if x.strip()}
     extra_nai64_disabled = {normalize_key(x) for x in os.environ.get("FORCE_DISABLE_NAI64", "").split(",") if x.strip()}
     
@@ -130,11 +124,24 @@ def main() -> int:
                 data["enabled"] = True
                 apply_requested_options(name, data, req)
 
-            # Validate requested patches exist in the bundle
             found_patches = {n.lower() for n in patches_dict}
             for req_name in requested_nai64:
                 if req_name not in found_patches:
                     logger.warning(f"Requested Nai64 patch not present in bundle: '{req_name}'")
+
+        elif i == 2:  # kveld9: allowlist semantics — universals only
+            for name, data in patches_dict.items():
+                data["enabled"] = False
+                req = requested_kveld9.get(name.lower())
+                if not (req and req.get("enabled", False)):
+                    continue
+                data["enabled"] = True
+                apply_requested_options(name, data, req)
+
+            found_patches = {n.lower() for n in patches_dict}
+            for req_name in requested_kveld9:
+                if req_name not in found_patches:
+                    logger.warning(f"Requested kveld9 patch not present in bundle: '{req_name}'")
 
     try:
         with open("build/options.json", "w", encoding="utf-8") as f:
