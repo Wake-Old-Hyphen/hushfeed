@@ -43,7 +43,8 @@ param(
     [string]$ProbePackage,
     # A folder that keeps a passing run's report and patched APK, with a stamp naming the bundle,
     # APK, patch list and CLI that made them, so the release receipt can read this run instead of
-    # patching the same fixture again. Emptied first; a failed run leaves it empty.
+    # patching the same fixture again. Emptied first, and only when it's missing, empty or a folder
+    # an earlier run kept; a failed run leaves just the ownership marker.
     [string]$KeepIn
 )
 
@@ -101,7 +102,11 @@ if ($verificationTarget.Probe) {
     Write-Host "[verify] $($stock.package) $($stock.versionName) is a declared target, so nothing is forced"
 }
 
-if ($KeepIn -and (Test-Path -LiteralPath $KeepIn)) { Remove-Item -LiteralPath $KeepIn -Recurse -Force }
+if ($KeepIn) {
+    # Checked before anything is deleted or patched: a mistyped -KeepIn used to be emptied whole.
+    $KeepIn = Initialize-KeptRunDirectory -Path $KeepIn -RepositoryRoot $root `
+        -Inputs @($Apk, $Bundle, $PatchList, $DesktopJar, $WorkDir)
+}
 New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
 $workRoot = (Resolve-Path -LiteralPath $WorkDir).Path
 $runId = [guid]::NewGuid().ToString('N')

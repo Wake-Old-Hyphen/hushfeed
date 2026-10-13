@@ -1,5 +1,17 @@
 ## Unreleased
 
+* **TikTok:** Setiap halaman pengaturan kini ada langsung di halaman utama pengaturan, di bawah judul singkat, cukup satu ketukan. Jeda Hushfeed dan status lengkap ada di dekat akhir, di bawah Hushfeed.
+
+* **TikTok:** Sakelar baru di Pop-up, Sembunyikan peringatan Periksa sumbermu, menghapus spanduk Periksa sumbermu di bagian atas beberapa video dan peringatan yang ditampilkan TikTok saat kamu membagikannya.
+
+* **TikTok:** Pencarian pengaturan kini memungkinkanmu menyalakan atau mematikan sakelar langsung di hasil. Sakelar yang melakukan lebih dari itu tetap membuka halamannya.
+
+* **TikTok:** Pengaturan cepat ada di bawah kolom pencarian. Tenang, Privasi, dan Kembalikan default cukup sekali ketuk, memberi tahu berapa pengaturan yang berubah, dan menawarkan Urungkan.
+
+* **TikTok:** Halaman utama pengaturan kini diakhiri Laporkan masalah, yang membuka laporan GitHub dengan versi dan sakelarmu sudah terisi, dan Dukung Hushfeed, yang membuka Ko-fi.
+
+* **TikTok:** Memulai ulang TikTok dari baris mulai ulang atau banner kini membawamu kembali ke halaman pengaturan Hushfeed tempatmu tadi.
+
 * **TikTok:** Pengaturan Hushfeed punya tampilan baru, dengan menu halaman utama dalam satu kelompok dan ikon merah muda. Panel membulat dan sakelar berbentuk pil juga hadir di Feature Gate Lab dan editor daftar kreator tersembunyi. Teks besar dan mode terang tetap mudah dibaca.
 
 * **TikTok:** Pemeriksaan cakupan menu profil, kasus uji register tinggi, dan proyek uji penandatanganan sudah diperbaiki. Uji penandatanganan juga menerima opsi D8 dalam urutan apa pun.
@@ -125,6 +137,26 @@
 * **TikTok:** Mematikan Sembunyikan akun yang disarankan memulihkan jarak sel semula, termasuk margin negatif.
 
 * **TikTok:** Pelapor awal mengonfirmasi bahwa tanggal postingan mengikuti Ukuran teks kreator (#66).
+
+* **TikTok:** Cadangan yang dipulihkan dengan pola nama file atau folder unduhan yang sangat panjang tidak lagi membuat halaman pengaturan macet.
+
+* **TikTok:** Panah Kembali di halaman pengaturan yang dibuka dari "Tampilkan sakelarnya" sekarang keluar dari pengaturan, tidak lagi diam saja.
+
+* **TikTok:** "Sembunyikan koneksi VPN" sekarang menyebut TikTok tetap bisa melihat alamat IP VPN, dan "Blokir ID iklan" menyebut menghapus, bukan mereset.
+
+* **TikTok:** "Lupakan video tersimpan" dan "Tambahkan aplikasi ke Bagikan via" tidak lagi macet saat TikTok sedang sibuk. Keduanya memberi tahu, dan kamu bisa mencoba lagi.
+
+* **TikTok:** Pemeriksa patch kini memeriksa folder simpanannya sebelum mengosongkannya, dan menolak folder yang tidak dibuatnya.
+
+* **TikTok:** Saat TalkBack aktif, Untuk Kamu menyediakan tindakan Buka pengaturan Hushfeed, jadi pintasan tekan lama juga berfungsi dengan pembaca layar.
+
+* **TikTok:** Jika menyimpan font baru yang diimpor gagal atau TikTok tertutup di tengah jalan, font yang sebelumnya kamu pakai tetap ada dan tidak hilang.
+
+* **TikTok:** Berganti akun saat video diputar tidak lagi menyembunyikan video itu di akun tujuan. Video hanya dihitung sudah ditonton untuk akun yang menontonnya.
+
+* **TikTok:** Memutar ponsel atau mengganti mode gelap saat editor daftar terbuka kini mempertahankan pilihan dan ketikanmu, tidak mulai dari awal. Batal tetap tidak mengubah apa pun.
+
+* **TikTok:** Gambar ikon kini juga memeriksa data piksel PNG, jadi file yang rusak di dalamnya menghentikan patching dengan aman alih-alih masuk ke aplikasi.
 
 ## 0.71.3 (2026-10-11)
 

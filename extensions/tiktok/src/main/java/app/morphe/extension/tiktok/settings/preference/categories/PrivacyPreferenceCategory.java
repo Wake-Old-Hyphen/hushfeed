@@ -178,16 +178,16 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
             addPreference(new TogglePreference(
                     context,
                     "Hide a VPN connection",
-                    "TikTok can't tell you're using a VPN. Your other connections show as they "
-                            + "really are. Leave this off if you need a feature that checks for "
-                            + "a VPN.",
+                    "Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out "
+                            + "of the network list. TikTok can still see the VPN's IP address. "
+                            + "Leave this off if you need a feature that checks for a VPN.",
                     Settings.HIDE_VPN
             ));
             addPreference(new TogglePreference(
                     context,
                     "Block the advertising ID",
                     "TikTok gets a blank advertising ID, like the one Android gives after you "
-                            + "reset yours. Apps can't use it to recognize your phone.",
+                            + "delete yours. Apps can't use it to recognize your phone.",
                     Settings.BLOCK_ADVERTISING_ID
             ));
             addPreference(new TogglePreference(

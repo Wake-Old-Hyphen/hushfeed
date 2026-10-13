@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -72,10 +73,12 @@ public class ImportedFontTest {
     @Before public void setUp() {
         context = RuntimeEnvironment.getApplication();
         HookStatus.clear();
+        ImportedFont.moves = ImportedFont.FILES;
         ImportedFont.remove(context);
     }
 
     @After public void tearDown() {
+        ImportedFont.moves = ImportedFont.FILES;
         Utils.setContext(RuntimeEnvironment.getApplication());
         ImportedFont.remove(RuntimeEnvironment.getApplication());
         Settings.IMPORTED_FONT.resetToDefault();
@@ -166,6 +169,196 @@ public class ImportedFontTest {
         ImportedFont.receive(context, new ByteArrayInputStream(OPENTYPE), "Other.otf").discard();
         assertEquals("Inter.ttf", ImportedFont.name(context));
         assertEquals(1, stored().length);
+    }
+
+    /** A process killed in the middle of a file move. */
+    private static final class Died extends RuntimeException {
+    }
+
+    /**
+     * The real file moves, except move {@code at} (from 0), which fails or kills the process, and
+     * move {@code also}, which fails too when set.
+     */
+    private static final class FaultyMoves implements ImportedFont.Moves {
+        private final int at;
+        private final int also;
+        private final boolean dies;
+        int made;
+
+        FaultyMoves(int at, boolean dies) {
+            this.at = at;
+            this.also = -1;
+            this.dies = dies;
+        }
+
+        /** Two moves that fail: the second fault lands while the first is being undone. */
+        FaultyMoves(int at, int also) {
+            this.at = at;
+            this.also = also;
+            this.dies = false;
+        }
+
+        @Override public boolean rename(File from, File to) {
+            return go() && from.renameTo(to);
+        }
+
+        @Override public boolean delete(File file) {
+            return go() && file.delete();
+        }
+
+        private boolean go() {
+            int move = made++;
+            if (move == also) return false;
+            if (move != at) return true;
+            if (dies) throw new Died();
+            return false;
+        }
+
+        boolean struck() {
+            return made > at;
+        }
+    }
+
+    /** A second TrueType file under the same name as {@link #TRUETYPE}'s, told apart by its bytes. */
+    private static final byte[] TRUETYPE_AGAIN = {0, 1, 0, 0, 0, 13, 0, (byte) 0x90};
+
+    private byte[] bytesOf(String name) throws IOException {
+        return java.nio.file.Files.readAllBytes(new File(new File(context.getFilesDir(), ImportedFont.DIRECTORY), name).toPath());
+    }
+
+    /** The folder holds one whole font, the old or the new, and the face and name say which. */
+    private void assertOneWholeFont(String oldName, byte[] oldBytes, String newName, byte[] newBytes, String when)
+            throws IOException {
+        ImportedFont.moves = ImportedFont.FILES;
+        ImportedFont.forget();
+        String kept = ImportedFont.name(context);
+        assertNotNull(when + ": both fonts were lost", kept);
+        byte[] bytes = bytesOf(kept);
+        assertTrue(when + ": " + kept + " isn't the whole old font or the whole new one",
+                kept.equals(oldName) && Arrays.equals(oldBytes, bytes) || kept.equals(newName) && Arrays.equals(newBytes, bytes));
+        assertEquals(when + ": the face isn't the font kept", kept, familyOf(ImportedFont.typeface()));
+        for (File file : stored()) {
+            assertFalse(when + ": a set-aside font was left behind", file.getName().startsWith(ImportedFont.PREVIOUS));
+        }
+        long fonts = Arrays.stream(stored()).filter(file -> !file.getName().startsWith(".")).count();
+        assertEquals(when + ": more than one font is kept", 1, fonts);
+    }
+
+    /**
+     * A move that fails anywhere in a replacement leaves the earlier font whole and in use, or,
+     * past the point the new one is in place, the new one. Same name and a new name both.
+     */
+    @Test public void aReplacementThatFailsAtAnyMoveKeepsOneWholeFont() throws IOException {
+        String[][] cases = {{"Inter.ttf", "Inter.ttf"}, {"Inter.ttf", "Display.otf"}};
+        byte[][] news = {TRUETYPE_AGAIN, OPENTYPE};
+        for (int c = 0; c < cases.length; c++) {
+            int at = 0;
+            for (; ; at++) {
+                ImportedFont.moves = ImportedFont.FILES;
+                ImportedFont.remove(context);
+                importFont(TRUETYPE, cases[c][0]);
+                ImportedFont.Incoming incoming = ImportedFont.receive(context, new ByteArrayInputStream(news[c]), cases[c][1]);
+                FaultyMoves faulty = new FaultyMoves(at, false);
+                ImportedFont.moves = faulty;
+                boolean saved;
+                try {
+                    incoming.install();
+                    saved = true;
+                } catch (IOException failure) {
+                    saved = false;
+                    incoming.discard();
+                }
+                if (!faulty.struck()) break;
+                String when = cases[c][1] + ", move " + at + " failed";
+                assertOneWholeFont(cases[c][0], TRUETYPE, cases[c][1], news[c], when);
+                if (!saved) {
+                    assertEquals(when + ": a failed replacement didn't keep the earlier font",
+                            cases[c][0], ImportedFont.name(context));
+                    assertTrue(when, Arrays.equals(TRUETYPE, bytesOf(cases[c][0])));
+                }
+            }
+            assertTrue("the replacement made fewer moves than setting aside, moving in and deleting", at >= 3);
+        }
+    }
+
+    /** A process killed at any move of a replacement leaves one whole font for the next start. */
+    @Test public void aReplacementCutShortAtAnyMoveLeavesOneWholeFont() throws IOException {
+        String[][] cases = {{"Inter.ttf", "Inter.ttf"}, {"Inter.ttf", "Display.otf"}};
+        byte[][] news = {TRUETYPE_AGAIN, OPENTYPE};
+        for (int c = 0; c < cases.length; c++) {
+            int at = 0;
+            for (; ; at++) {
+                ImportedFont.moves = ImportedFont.FILES;
+                ImportedFont.remove(context);
+                importFont(TRUETYPE, cases[c][0]);
+                ImportedFont.Incoming incoming = ImportedFont.receive(context, new ByteArrayInputStream(news[c]), cases[c][1]);
+                FaultyMoves faulty = new FaultyMoves(at, true);
+                ImportedFont.moves = faulty;
+                try {
+                    incoming.install();
+                } catch (Died killed) {
+                    // The process is gone: nothing more runs until the next start.
+                }
+                if (!faulty.struck()) break;
+                assertOneWholeFont(cases[c][0], TRUETYPE, cases[c][1], news[c], cases[c][1] + ", killed at move " + at);
+            }
+            assertTrue(at >= 3);
+        }
+    }
+
+    /** A font set aside by a replacement that was cut short doesn't come back after Remove. */
+    @Test public void removeAfterACutShortReplacementLeavesNoFont() throws IOException {
+        importFont(TRUETYPE, "Inter.ttf");
+        ImportedFont.Incoming incoming = ImportedFont.receive(context, new ByteArrayInputStream(OPENTYPE), "Display.otf");
+        ImportedFont.moves = new FaultyMoves(1, true);
+        try {
+            incoming.install();
+            fail("the move that kills the process never came");
+        } catch (Died killed) {
+            // Set aside, and the new font not moved in yet.
+        }
+        ImportedFont.moves = ImportedFont.FILES;
+        assertTrue(ImportedFont.remove(context));
+        ImportedFont.forget();
+        assertNull("the removed font came back", ImportedFont.name(context));
+        assertNull(ImportedFont.typeface());
+    }
+
+    /**
+     * Remove fails as a whole when a set-aside font won't go: deleting the font in use anyway
+     * would let the next look put the set-aside one back in its place.
+     */
+    @Test public void removeKeepsTheFontInUseWhenASetAsideCopyWontGo() throws IOException {
+        importFont(TRUETYPE, "Inter.ttf");
+        ImportedFont.Incoming incoming = ImportedFont.receive(context, new ByteArrayInputStream(OPENTYPE), "Display.otf");
+        ImportedFont.moves = new FaultyMoves(2, true);
+        try {
+            incoming.install();
+            fail("the move that kills the process never came");
+        } catch (Died killed) {
+            // The new font is in place and the old one is still set aside.
+        }
+        ImportedFont.moves = new FaultyMoves(0, false);
+        assertFalse("Remove said it worked with a set-aside font left", ImportedFont.remove(context));
+        assertOneWholeFont("Inter.ttf", TRUETYPE, "Display.otf", OPENTYPE, "after a Remove that failed");
+        assertEquals("a failed Remove swapped the font in use for the set-aside one",
+                "Display.otf", ImportedFont.name(context));
+    }
+
+    /** A failed move whose putting back fails too is settled the next time the font is looked for. */
+    @Test public void aFailedMoveWhosePutBackAlsoFailsIsSettledOnTheNextLook() throws IOException {
+        importFont(TRUETYPE, "Inter.ttf");
+        ImportedFont.Incoming incoming = ImportedFont.receive(context, new ByteArrayInputStream(OPENTYPE), "Display.otf");
+        // Move 0 sets Inter.ttf aside, move 1 fails to move the new font in, move 2 fails to put Inter.ttf back.
+        ImportedFont.moves = new FaultyMoves(1, 2);
+        try {
+            incoming.install();
+            fail("a replacement whose new font never moved in said it worked");
+        } catch (IOException failure) {
+            incoming.discard();
+        }
+        assertOneWholeFont("Inter.ttf", TRUETYPE, "Display.otf", OPENTYPE, "after a double fault");
+        assertEquals("Inter.ttf", ImportedFont.name(context));
     }
 
     @Test public void theNameAFileAppGivesIsMadeSafe() {

@@ -14,6 +14,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -197,6 +198,78 @@ public class ForYouTabSettingsShortcutTest {
 
         assertEquals("TikTok's own long press didn't run", 1, own.get());
         assertNull("the long press was taken from TikTok", nextStarted());
+        assertNull("TalkBack was offered a second long press beside TikTok's",
+                openAction(tab.createAccessibilityNodeInfo()));
+    }
+
+    /**
+     * TalkBack can't time a press, so For You names the long press as an action TalkBack lists.
+     * The tab keeps its click, the action doesn't tap the tab, and a view that shows another tab
+     * now neither offers nor runs it.
+     */
+    @Test public void talkBackGetsANamedActionThatOpensTheSettings() {
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        AccessibilityNodeInfo info = tab.createAccessibilityNodeInfo();
+        AccessibilityNodeInfo.AccessibilityAction action = openAction(info);
+        assertNotNull("For You offers TalkBack no way to the settings", action);
+        assertTrue("TikTok's tap went missing from the actions",
+                info.getActionList().contains(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK));
+        assertTrue(tab.performAccessibilityAction(action.getId(), null));
+        assertOpenedSettings();
+        assertEquals("the action tapped the tab as well", 0, tab.taps);
+
+        ForYouTabSettingsShortcut.onTopTab(tab, FOLLOWING);
+        assertNull("Following offers the For You action", openAction(tab.createAccessibilityNodeInfo()));
+        assertFalse(tab.performAccessibilityAction(action.getId(), null));
+        assertNull("the action opened the settings from Following", nextStarted());
+    }
+
+    /** A delegate TikTok gave the tab still answers for it under the action. */
+    @Test public void tikToksOwnAccessibilityDelegateStillAnswers() {
+        TopTab tab = tab();
+        tab.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription("For You, selected");
+            }
+        });
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        AccessibilityNodeInfo info = tab.createAccessibilityNodeInfo();
+        assertEquals("TikTok's own description was lost", "For You, selected", String.valueOf(info.getContentDescription()));
+        assertNotNull(openAction(info));
+    }
+
+    /** TikTok can set a delegate after the first bind. The next bind wraps it, once. */
+    @Test public void aDelegateTikTokSetsLaterIsWrappedOnTheNextBind() {
+        TopTab tab = tab();
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+        tab.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription("For You, selected");
+            }
+        });
+        assertNull(openAction(tab.createAccessibilityNodeInfo()));
+
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+        ForYouTabSettingsShortcut.onTopTab(tab, FOR_YOU);
+
+        AccessibilityNodeInfo info = tab.createAccessibilityNodeInfo();
+        assertNotNull("the bind after TikTok's delegate didn't bring the action back", openAction(info));
+        assertEquals("TikTok's later delegate was lost", "For You, selected", String.valueOf(info.getContentDescription()));
+        long offered = info.getActionList().stream()
+                .filter(action -> "Open Hushfeed settings".equals(String.valueOf(action.getLabel()))).count();
+        assertEquals("binding again stacked the action", 1, offered);
+    }
+
+    private static AccessibilityNodeInfo.AccessibilityAction openAction(AccessibilityNodeInfo info) {
+        for (AccessibilityNodeInfo.AccessibilityAction action : info.getActionList()) {
+            if ("Open Hushfeed settings".equals(String.valueOf(action.getLabel()))) return action;
+        }
+        return null;
     }
 
     @Test public void slidingOffTheTabLetsGo() {

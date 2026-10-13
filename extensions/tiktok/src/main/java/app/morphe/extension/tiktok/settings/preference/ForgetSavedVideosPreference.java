@@ -59,7 +59,7 @@ public final class ForgetSavedVideosPreference extends Preference
         working = "Forgetting saved videos";
         refreshRows();
         Context app = context.getApplicationContext();
-        Utils.runOnBackgroundThread(() -> {
+        boolean accepted = Utils.runOnBackgroundThread(() -> {
             long[] generation = new long[1];
             SavedVideoArchive.ForgetResult result = SavedVideoArchive.forget(app, generation);
             Utils.runOnMainThread(() -> {
@@ -89,13 +89,14 @@ public final class ForgetSavedVideosPreference extends Preference
                 refreshRows();
             });
         });
+        if (!accepted) refused(context, "Couldn't forget the saved videos. Try again.");
     }
 
     private static void undo(Context context, long generation) {
         working = "Putting the saved videos back";
         refreshRows();
         Context app = context.getApplicationContext();
-        Utils.runOnBackgroundThread(() -> {
+        boolean accepted = Utils.runOnBackgroundThread(() -> {
             SavedVideoArchive.UndoResult result = SavedVideoArchive.undo(app, generation);
             Utils.runOnMainThread(() -> {
                 working = null;
@@ -113,6 +114,17 @@ public final class ForgetSavedVideosPreference extends Preference
                 refreshRows();
             });
         });
+        if (!accepted) refused(context, "Couldn't put the saved videos back. Try again.");
+    }
+
+    /**
+     * The background queue was full, so the task never started and nothing was changed. The row
+     * comes back to life, and an Undo on offer stays on offer.
+     */
+    private static void refused(Context context, String message) {
+        working = null;
+        SettingsActionBanner.showNotice(context, L10n.t(context, message));
+        refreshRows();
     }
 
     private static void expire(long generation) {

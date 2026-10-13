@@ -61,6 +61,99 @@ function Remove-GeneratedPath {
     }
 }
 
+$script:KeptRunMarker = '.hushfeed-kept-run'
+$script:KeptRunFiles = @('.hushfeed-kept-run', 'patched.apk', 'result.json', 'stamp.json')
+
+function Test-KeptRunDirectory {
+    <#
+    .SYNOPSIS
+        The folder a passing verify-all-patches.ps1 run is kept in, resolved, or a throw. Reads
+        only; nothing is deleted here.
+    .DESCRIPTION
+        -KeepIn gets emptied, so a mistyped value used to take whatever it named with a recursive
+        delete: a fixture folder, the repository, a drive root. A folder qualifies when it's
+        missing, empty, or one this claimed before (its marker names it) holding nothing but a
+        kept run. Roots, the profile, a repository, a folder holding any input, and any path
+        through a junction or symbolic link are refused. A relative path resolves from the
+        current location.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [string[]]$Inputs = @(),
+        [string]$RepositoryRoot
+    )
+    $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    $absolute = [IO.Path]::GetFullPath($resolved).TrimEnd('\')
+    if ($absolute.StartsWith('\\?\') -or $absolute.StartsWith('\\.\')) {
+        throw "Refusing to keep runs in ${Path}: it's a device path."
+    }
+    $protected = @([IO.Path]::GetPathRoot($absolute), [Environment]::GetFolderPath('UserProfile'), $RepositoryRoot) + $Inputs
+    foreach ($entry in $protected) {
+        if (-not $entry) { continue }
+        $full = [IO.Path]::GetFullPath($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($entry)).TrimEnd('\')
+        if ([string]::Equals($full, $absolute, [StringComparison]::OrdinalIgnoreCase) -or
+                $full.StartsWith($absolute + '\', [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Refusing to keep runs in ${absolute}: emptying it would delete $full."
+        }
+    }
+    if (Test-Path -LiteralPath (Join-Path $absolute '.git')) {
+        throw "Refusing to keep runs in ${absolute}: it's a repository."
+    }
+    # GetFullPath is lexical, so every existing ancestor is checked for a link before it's trusted.
+    $cursor = $absolute
+    while ($cursor) {
+        if (Test-Path -LiteralPath $cursor) {
+            if ((Get-Item -LiteralPath $cursor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw "Refusing to keep runs in ${absolute}: $cursor is a link."
+            }
+        }
+        $cursor = Split-Path -Parent $cursor
+    }
+    if (-not (Test-Path -LiteralPath $absolute)) { return $absolute }
+    if (-not (Test-Path -LiteralPath $absolute -PathType Container)) {
+        throw "Refusing to keep runs in ${absolute}: it's a file."
+    }
+    $children = @(Get-ChildItem -LiteralPath $absolute -Force)
+    if ($children.Count -eq 0) { return $absolute }
+    $marker = Join-Path $absolute $script:KeptRunMarker
+    $owned = (Test-Path -LiteralPath $marker -PathType Leaf) -and
+        [string]::Equals([IO.File]::ReadAllText($marker), "hushfeed-kept-run-v1`n$absolute", [StringComparison]::OrdinalIgnoreCase)
+    if (-not $owned) {
+        throw "Refusing to keep runs in ${absolute}: it holds files this script didn't put there. Choose an empty folder."
+    }
+    foreach ($child in $children) {
+        if (($child.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $child.PSIsContainer -or
+                -not ($script:KeptRunFiles -contains $child.Name)) {
+            throw "Refusing to keep runs in ${absolute}: $($child.Name) isn't part of a kept run."
+        }
+    }
+    return $absolute
+}
+
+function Initialize-KeptRunDirectory {
+    <#
+    .SYNOPSIS
+        Empty the kept-run folder Test-KeptRunDirectory accepted and claim it with a marker.
+        Returns its absolute path.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$Path,
+        [string[]]$Inputs = @(),
+        [string]$RepositoryRoot
+    )
+    $absolute = Test-KeptRunDirectory -Path $Path -Inputs $Inputs -RepositoryRoot $RepositoryRoot
+    if (Test-Path -LiteralPath $absolute) {
+        # Only the files a kept run holds are here, checked one level deep with no links.
+        foreach ($child in @(Get-ChildItem -LiteralPath $absolute -Force)) {
+            Remove-Item -LiteralPath $child.FullName -Force
+        }
+    } else {
+        New-Item -ItemType Directory -Path $absolute | Out-Null
+    }
+    [IO.File]::WriteAllText((Join-Path $absolute $script:KeptRunMarker), "hushfeed-kept-run-v1`n$absolute")
+    return $absolute
+}
+
 function Get-BundleVersion {
     <#
     .SYNOPSIS

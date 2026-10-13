@@ -14,11 +14,16 @@ import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
+import android.text.style.SuggestionSpan;
+import android.text.style.UnderlineSpan;
+import android.text.style.URLSpan;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
@@ -616,6 +621,49 @@ public class DmTranslationPreviewTest {
         assertFalse(DmTranslationPreview.plain(styled));
         assertFalse(DmTranslationPreview.plain(null));
         assertFalse(DmTranslationPreview.plain(new String(new char[DmTranslationPreview.MAX_TEXT + 1]).replace('\0', 'x')));
+        assertTrue(calls.isEmpty());
+    }
+
+    @Test public void composingTextCanBePreviewedAndUsedWithoutSending() {
+        editor.requestFocus();
+        InputConnection connection = editor.onCreateInputConnection(new EditorInfo());
+        assertNotNull(connection);
+        editor.selectAll();
+        SpannableString composing = new SpannableString("draft original");
+        composing.setSpan(new UnderlineSpan(), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        assertTrue(connection.setComposingText(composing, 1));
+        assertEquals("draft original", editor.getText().toString());
+        AlertDialog dialog = start();
+        calls.get(0).finish("translated draft");
+        idleFor(150);
+        assertTrue(dialog.isShowing());
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        assertEquals("translated draft", editor.getText().toString());
+        assertEquals(0, input.sends + vm.sends);
+    }
+
+    @Test public void spellingAnnotationsDoNotRetireAnUnchangedPreview() throws ReflectiveOperationException {
+        AlertDialog dialog = start();
+        editor.getText().setSpan(new SuggestionSpan(activity, new String[]{"draft"}, SuggestionSpan.FLAG_MISSPELLED),
+                0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        Object checking = Class.forName("android.text.style.SpellCheckSpan").getConstructor().newInstance();
+        editor.getText().setSpan(checking, 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        calls.get(0).finish("translated draft");
+        idleFor(150);
+        assertTrue(dialog.isShowing());
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        assertEquals("translated draft", editor.getText().toString());
+        assertEquals(0, input.sends + vm.sends);
+    }
+
+    @Test public void composingFlagsCannotMakeLinksOrNativeMetadataPlain() {
+        for (Object metadata : new Object[]{new URLSpan("https://example.org"), new Object()}) {
+            SpannableString rich = new SpannableString("draft original");
+            rich.setSpan(metadata, 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE | Spanned.SPAN_COMPOSING);
+            assertFalse(DmTranslationPreview.plain(rich));
+            editor.setText(rich);
+            assertNoAction();
+        }
         assertTrue(calls.isEmpty());
     }
 

@@ -79,7 +79,6 @@ That watch-history file is damaged. Nothing was imported.	Il file della cronolog
 %1$s (will be returned when requested)	%1$s (verrà restituito quando richiesto)
 %1$s and above	Da %1$s in su
 %1$s appears more than once in this file.	%1$s compare più di una volta in questo file.
-%1$s changed	%1$s modificato
 %1$s is already hidden	%1$s è già nascosto
 %1$s destinations must start with %2$s	Le destinazioni %1$s devono iniziare con %2$s
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s è troppo lungo per un backup delle impostazioni. Accorcialo, poi salva di nuovo il backup.
@@ -244,9 +243,9 @@ Backup and restore	Backup e ripristino
 Black	Nero
 Block clipboard reads	Blocca le letture degli appunti
 Hide a VPN connection	Nascondi una connessione VPN
-TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.	TikTok non può capire che usi una VPN. Le altre connessioni risultano come sono davvero. Lascialo disattivato se ti serve una funzione che controlla la presenza di una VPN.
+Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.	Android smette di dire a TikTok che una VPN è attiva, e il tunnel della VPN non compare nell'elenco delle reti. TikTok vede comunque l'indirizzo IP della VPN. Lascialo disattivato se ti serve una funzione che controlla la presenza di una VPN.
 Block the advertising ID	Blocca l'ID pubblicitario
-TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone.	TikTok riceve un ID pubblicitario vuoto, come quello che Android assegna dopo averlo reimpostato. Le app non possono usarlo per riconoscere il tuo telefono.
+TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.	TikTok riceve un ID pubblicitario vuoto, come quello che Android assegna dopo averlo eliminato. Le app non possono usarlo per riconoscere il tuo telefono.
 Block contact list access	Blocca l'accesso alla lista contatti
 Block installed app scanning	Blocca la scansione delle app installate
 Block location	Blocca la posizione
@@ -1534,6 +1533,7 @@ Add apps to Share via	Aggiungi app a "Condividi con"
 Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.	Scegli le app da aggiungere alla riga "Condividi con", prima di Altro. Ognuna riceve lo stesso link delle altre app.
 Search apps	Cerca app
 Looking for apps	Ricerca delle app in corso
+Couldn't list your apps. Tap here to try again.	Impossibile elencare le tue app. Tocca qui per riprovare.
 No other app takes shared text	Nessun'altra app accetta testo condiviso
 Install one, then come back here.	Installane una, poi torna qui.
 No apps match this search	Nessuna app corrisponde a questa ricerca
@@ -1929,26 +1929,18 @@ Skip TikTok's setup screens	Salta le schermate di configurazione di TikTok
 Leave out the interest picker, the language and gender questions, the creators to follow, the swipe up tutorial and TikTok's notification page when TikTok runs its setup. Consent, age and sign-in screens still show.	Tralascia la scelta degli interessi, le domande su lingua e genere, i creator da seguire, il tutorial dello scorrimento verso l'alto e la pagina delle notifiche di TikTok quando TikTok esegue la configurazione. Le schermate di consenso, età e accesso vengono comunque mostrate.
 Hide unverified content notices	Nascondi gli avvisi sui contenuti non verificati
 Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.	Nascondi il banner Controlla le fonti che TikTok mette sui video che segnala come non verificati e gli avvisi che mostra quando ne condividi uno.
+Hide Check your sources warnings	Nascondi gli avvisi Controlla le tue fonti
+Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	Nascondi il banner Controlla le tue fonti che TikTok mette in cima ad alcuni video e l'avviso che mostra quando ne condividi uno.
 Keep offline videos until you delete them	Tieni i video offline finché non li elimini
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok rimuove i video salvati per la visione offline dopo un certo tempo, a volte solo due giorni, visti o no. Con questo attivo restano finché non li elimini nelle impostazioni Video offline di TikTok. TikTok può comunque cancellare quelli già visti quando il telefono ha poco spazio.
 Hide Thoughts on profiles	Nascondi Thoughts sui profili
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	Nascondi la nuvoletta Thoughts che TikTok mostra sopra l'immagine di un profilo e, sul tuo profilo, l'invito a condividerne uno. Riavvia TikTok per applicare la modifica.
 
-# context: Quiet Index settings categories and compact runtime status.
-Feed & layout	Feed e aspetto
-Filters, tabs and on-screen controls	Filtri, schede e controlli sullo schermo
-Comments & inbox	Commenti e posta in arrivo
-Filters, translation and inbox controls	Filtri, traduzione e controlli della posta
-Downloads & sharing	Download e condivisione
-Files, subtitles and share sheet	File, sottotitoli e menu di condivisione
-App & advanced	App e opzioni avanzate
-Region, backups and diagnostics	Regione, backup e diagnostica
 About Hushfeed	Informazioni su Hushfeed
 Version, changes and licenses	Versione, modifiche e licenze
 Active	Attivo
 Paused	In pausa
 Budgets and reminders	Limiti e promemoria
-%1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Non tradurre automaticamente queste lingue
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Separa i codici lingua con virgole, come es, de. Quando TikTok traduce per te, le didascalie e i commenti in queste lingue restano come sono stati scritti. Vedi traduzione funziona ancora quando lo tocchi. L'elenco Non tradurre di TikTok resta com'è.
 Performance	Prestazioni
@@ -2065,10 +2057,30 @@ The quality choice is still open	La scelta della qualità è ancora aperta
 Unknown resolution	Risoluzione sconosciuta
 Make it yours.	Fallo tuo.
 Your feed. Your rules.	Il tuo feed. Le tue regole.
-Your experience	La tua esperienza
-Shape your feed	Personalizza il feed
 Conversations	Conversazioni
-Save and send	Salva e invia
-App controls	Controlli dell’app
 About	Informazioni
 Your settings	Le tue impostazioni
+Report a problem	Segnala un problema
+Opens a GitHub report with your versions and settings filled in. Add what happened.	Apre una segnalazione su GitHub con versioni e impostazioni già compilate. Aggiungi cosa è successo.
+Support Hushfeed	Sostieni Hushfeed
+Buy me a coffee on Ko-fi	Offrimi un caffè su Ko-fi
+No app on this phone opens web links	Nessuna app su questo telefono apre i link web
+Quick setups	Configurazioni rapide
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	Tranquillo nasconde annunci, Shop e LIVE. Privacy nasconde le tue visualizzazioni e quando scrivi e ferma il tracciamento. Ripristina predefiniti riporta ogni interruttore com'era all'inizio.
+Quiet	Tranquillo
+Back to defaults	Ripristina predefiniti
+Changed 1 setting	1 impostazione modificata
+Changed %1$d settings	%1$d impostazioni modificate
+Your settings already match	Le tue impostazioni corrispondono già
+That setup couldn't be applied. Nothing was changed.	Impossibile applicare questa configurazione. Non è stato modificato nulla.
+Quick setups couldn't start. Try again in a moment.	Impossibile avviare le configurazioni rapide. Riprova tra un momento.
+Your earlier settings are back	Le impostazioni precedenti sono tornate
+# context: a heading on the settings home page, over Feed filter, Feed tabs, Feed screen, Playback and Screen time
+Your feed	Il tuo feed
+# context: a heading on the settings home page, over Downloads and Share sheet
+Saving and sharing	Salvataggio e condivisione
+# context: a heading on the settings home page, over Privacy, App, Region, Backup and restore and Feature Gate Lab
+Privacy and app	Privacy e app
+# context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
+Hushfeed	Hushfeed
+Open Hushfeed settings	Apri le impostazioni di Hushfeed

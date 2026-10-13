@@ -88,7 +88,7 @@ public class PreviewControlsCaptureTest {
             assertTrue(InboxPreferenceCategory.isAvailable());
             try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
                 Activity activity = owner.get(); configure(activity, true);
-                TikTokPreferenceFragment page = section(activity, "comments_inbox", "inbox");
+                TikTokPreferenceFragment page = section(activity, "inbox");
                 assertEquals(outgoing, page.findPreference(Settings.DM_TRANSLATION_PREVIEW.key) != null);
                 assertEquals(!outgoing, page.findPreference(Settings.RECEIVED_DM_TRANSLATION_PREVIEW.key) != null);
             }
@@ -100,7 +100,7 @@ public class PreviewControlsCaptureTest {
         SettingsStatus.systemFontEnabled = true;
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get(); configure(activity, true);
-            TikTokPreferenceFragment page = section(activity, "app_advanced", "behavior");
+            TikTokPreferenceFragment page = section(activity, "behavior");
             assertNull(page.findPreference(Settings.LOCAL_PROFILE_VERIFIED_BADGE.key));
             assertNull(page.findPreference(Settings.HIDE_OWN_PROFILE_RESTRICTION_NOTICE.key));
         }
@@ -108,7 +108,7 @@ public class PreviewControlsCaptureTest {
         assertTrue(ExtensionPreferenceCategory.isAvailable());
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get(); configure(activity, true);
-            TikTokPreferenceFragment page = section(activity, "app_advanced", "behavior");
+            TikTokPreferenceFragment page = section(activity, "behavior");
             assertNotNull(page.findPreference(Settings.LOCAL_PROFILE_VERIFIED_BADGE.key));
             assertNotNull(page.findPreference(Settings.HIDE_OWN_PROFILE_RESTRICTION_NOTICE.key));
         }
@@ -120,7 +120,7 @@ public class PreviewControlsCaptureTest {
         SettingsStatus.receivedDmTranslationPreviewEnabled = true;
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get(); configure(activity, dark);
-            TikTokPreferenceFragment page = section(activity, "comments_inbox", "inbox");
+            TikTokPreferenceFragment page = section(activity, "inbox");
             SwitchPreference received = toggle(page, Settings.RECEIVED_DM_TRANSLATION_PREVIEW, "Received message translation");
             SwitchPreference outgoing = toggle(page, Settings.DM_TRANSLATION_PREVIEW, "DM translation preview");
             assertEquals("Preview a translation from a received text message's menu. The original message stays unchanged.", received.getSummary().toString());
@@ -136,7 +136,7 @@ public class PreviewControlsCaptureTest {
         SettingsStatus.followStatusEnabled = true;
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get(); configure(activity, dark);
-            TikTokPreferenceFragment page = section(activity, "app_advanced", "behavior");
+            TikTokPreferenceFragment page = section(activity, "behavior");
             SwitchPreference badge = toggle(page, Settings.LOCAL_PROFILE_VERIFIED_BADGE, "Local verified badge");
             SwitchPreference notice = toggle(page, Settings.HIDE_OWN_PROFILE_RESTRICTION_NOTICE, "Hide your account warning");
             assertTrue(badge.getSummary().toString().contains("Other people see your real status."));
@@ -153,11 +153,10 @@ public class PreviewControlsCaptureTest {
     private static void configure(Activity activity, boolean dark) {
         Utils.setContext(activity); SettingsUi.syncDarkMode(activity); assertEquals(dark, SettingsUi.isDarkMode());
     }
-    private static TikTokPreferenceFragment section(Activity activity, String hub, String section) {
+    private static TikTokPreferenceFragment section(Activity activity, String section) {
         TikTokPreferenceFragment home = new TikTokPreferenceFragment();
         activity.getFragmentManager().beginTransaction().replace(android.R.id.content, home).commit(); settle(activity);
-        TikTokPreferenceFragment parent = open(activity, home, "hub_" + hub);
-        TikTokPreferenceFragment page = open(activity, parent, "section_" + section);
+        TikTokPreferenceFragment page = open(activity, home, "section_" + section);
         assertEquals(section.toUpperCase(java.util.Locale.ROOT), page.getArguments().getString("morphe_settings_section"));
         return page;
     }

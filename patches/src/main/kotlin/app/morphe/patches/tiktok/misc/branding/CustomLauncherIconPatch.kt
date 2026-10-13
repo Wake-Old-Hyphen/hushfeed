@@ -14,8 +14,11 @@ import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import app.morphe.patches.tiktok.misc.theme.decodedPackageRoots
 import app.morphe.patches.tiktok.misc.theme.decodedResourceDirectories
 import app.morphe.patches.tiktok.misc.theme.renamedPathCollisions
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.zip.CRC32
+import java.util.zip.DataFormatException
+import java.util.zip.Inflater
 import javax.xml.parsers.DocumentBuilderFactory
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -171,17 +174,23 @@ internal fun launcherPicture(raw: String?): LauncherPicture? {
 /**
  * The width and height in a whole, well-formed PNG, or null. Every chunk has to fit the file and
  * match its checksum, the header has to come first with a bit depth, color type and method the
- * PNG spec allows, a palette image needs its palette before the image data, and the file needs
- * image data and an end chunk, so a cut-short or malformed file is caught here and not by the
- * launcher.
+ * PNG spec allows, a palette has to be one the spec allows and come before the image data, which
+ * a palette image needs, and the file needs image data in one run and an end chunk. The image data
+ * also has to inflate to exactly the scanlines the header calls for ([scanlinesValid]). A file
+ * the resource packager would copy as it is but Android couldn't draw is caught here, not on the
+ * home screen.
  */
 internal fun pngSize(bytes: ByteArray): Pair<Int, Int>? {
     if (bytes.size < PNG_SIGNATURE.size || !bytes.copyOfRange(0, PNG_SIGNATURE.size).contentEquals(PNG_SIGNATURE)) return null
     var offset = PNG_SIGNATURE.size
     var size: Pair<Int, Int>? = null
-    var paletted = false
+    var depth = 0
+    var color = 0
+    var interlaced = false
     var palette = false
+    val data = ByteArrayOutputStream()
     var images = 0
+    var dataEnded = false
     while (offset + 12 <= bytes.size) {
         val length = bytes.bigEndianInt(offset)
         if (length < 0 || length > bytes.size - offset - 12) return null
@@ -191,18 +200,106 @@ internal fun pngSize(bytes: ByteArray): Pair<Int, Int>? {
         if (size == null) {
             if (type != "IHDR" || length != 13 || !pngHeaderValid(bytes, offset + 8)) return null
             size = bytes.bigEndianInt(offset + 8) to bytes.bigEndianInt(offset + 12)
-            paletted = bytes[offset + 17].toInt() == 3
+            depth = bytes[offset + 16].toInt()
+            color = bytes[offset + 17].toInt()
+            interlaced = bytes[offset + 20].toInt() == 1
         } else {
+            if (images > 0 && type != "IDAT") dataEnded = true
             when (type) {
                 "IHDR" -> return null
-                "PLTE" -> palette = true
-                "IDAT" -> if (paletted && !palette) return null else images++
-                "IEND" -> return size.takeIf { images > 0 && it.first > 0 && it.second > 0 }
+                "PLTE" -> {
+                    // Grayscale has no palette; one is a multiple of three bytes, at most 256
+                    // colors, and no more than a palette image's bit depth can index.
+                    val colors = length / 3
+                    if (palette || images > 0 || color == 0 || color == 4 || length == 0 || length % 3 != 0 ||
+                        colors > 256 || (color == 3 && colors > 1 shl depth)
+                    ) return null
+                    palette = true
+                }
+                "IDAT" -> {
+                    if ((color == 3 && !palette) || dataEnded) return null
+                    data.write(bytes, offset + 8, length)
+                    images++
+                }
+                "IEND" -> return size.takeIf {
+                    images > 0 && it.first > 0 && it.second > 0 &&
+                        scanlinesValid(data.toByteArray(), it.first, it.second, depth, color, interlaced)
+                }
             }
         }
         offset += 12 + length
     }
     return null
+}
+
+/** Adam7's passes: the first column and row each one reads, and its steps across and down. */
+private val ADAM7 = listOf(
+    intArrayOf(0, 0, 8, 8), intArrayOf(4, 0, 8, 8), intArrayOf(0, 4, 4, 8), intArrayOf(2, 0, 4, 4),
+    intArrayOf(0, 2, 2, 4), intArrayOf(1, 0, 2, 2), intArrayOf(0, 1, 1, 2),
+)
+
+/**
+ * Whether [compressed] inflates to exactly the scanlines a [width] by [height] image of this bit
+ * depth and color type has, pass by pass when [interlaced], each row starting with a filter type
+ * the spec has (0 to 4). It inflates in pieces and stops at the first byte past the last row, so
+ * a header that claims a huge image costs no more than the data that's there. A zlib stream that
+ * is damaged, cut short, needs a preset dictionary or has bytes after its end fails too.
+ */
+private fun scanlinesValid(compressed: ByteArray, width: Int, height: Int, depth: Int, color: Int, interlaced: Boolean): Boolean {
+    val channels = when (color) {
+        0, 3 -> 1
+        4 -> 2
+        2 -> 3
+        else -> 4
+    }
+    val bitsPerPixel = channels.toLong() * depth
+    val passes = if (interlaced) ADAM7 else listOf(intArrayOf(0, 0, 1, 1))
+    var pass = -1
+    var rowsLeft = 0L
+    var rowLength = 0L
+    var left = 0L
+    // Moves to the next row of the image, false when there is none. A pass with no columns has
+    // no rows in the data at all, not even their filter bytes.
+    fun nextRow(): Boolean {
+        while (rowsLeft == 0L) {
+            if (++pass >= passes.size) return false
+            val (x0, y0, dx, dy) = passes[pass]
+            val columns = if (width > x0) (width - x0 + dx - 1L) / dx else 0L
+            val rows = if (height > y0) (height - y0 + dy - 1L) / dy else 0L
+            if (columns == 0L) continue
+            rowsLeft = rows
+            rowLength = 1 + (columns * bitsPerPixel + 7) / 8
+        }
+        rowsLeft--
+        return true
+    }
+
+    val inflater = Inflater()
+    try {
+        inflater.setInput(compressed)
+        val buffer = ByteArray(64 * 1024)
+        while (!inflater.finished()) {
+            val count = inflater.inflate(buffer)
+            var at = 0
+            while (at < count) {
+                if (left == 0L) {
+                    if (!nextRow() || buffer[at] !in 0..4) return false
+                    left = rowLength - 1
+                    at++
+                } else {
+                    val skip = minOf(left, (count - at).toLong()).toInt()
+                    left -= skip
+                    at += skip
+                }
+            }
+            if (count == 0 && !inflater.finished()) return false
+        }
+        return inflater.remaining == 0 && left == 0L && !nextRow()
+    } catch (damaged: DataFormatException) {
+        return false
+    } finally {
+        inflater.end()
+    }
 }
 
 /** Whether the IHDR body at [at] names a bit depth and color type pair, compression, filter and interlace method the PNG spec allows. */

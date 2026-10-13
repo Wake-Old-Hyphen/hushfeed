@@ -6,16 +6,25 @@ package app.morphe.extension.tiktok.translation;
 
 import static org.junit.Assert.*;
 
+import android.os.Looper;
+
+import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.SignedInUser;
+
 import com.ss.android.ugc.aweme.translation.model.MultiTranslationResultDM;
 import com.ss.android.ugc.aweme.translation.model.TranslationResultDM;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, sdk = 28)
@@ -73,6 +82,31 @@ public class NativeDmTranslationTest {
         rejected(response, "original draft");
         result.translatedText = result.translatedText.substring(1);
         assertEquals(DmTranslationPreview.MAX_TEXT, NativeDmTranslation.readResponse(response, "original draft").length());
+    }
+
+    @Test @LooperMode(LooperMode.Mode.PAUSED)
+    public void anUnavailableAccountCompletesTheRequestInsteadOfLeavingItsPreviewWaiting() throws Exception {
+        String previous = SignedInUser.idForTests;
+        AtomicInteger completed = new AtomicInteger();
+        AtomicReference<String> answer = new AtomicReference<>("waiting");
+        try {
+            SignedInUser.idForTests = "";
+            DmTranslationPreview.Request request = new NativeDmTranslation().translate(getClass().getClassLoader(),
+                    "account-a", "draft original", () -> true, result -> {
+                        answer.set(result);
+                        completed.incrementAndGet();
+                    });
+            Utils.awaitBackgroundTasksForTests();
+            SignedInUser.idForTests = "account-a";
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(1, completed.get());
+            assertNull(answer.get());
+            request.cancel();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertEquals(1, completed.get());
+        } finally {
+            SignedInUser.idForTests = previous;
+        }
     }
 
     private static MultiTranslationResultDM response() {

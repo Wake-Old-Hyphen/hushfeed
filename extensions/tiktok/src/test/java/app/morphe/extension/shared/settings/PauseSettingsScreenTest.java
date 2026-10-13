@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
@@ -57,6 +58,7 @@ public class PauseSettingsScreenTest {
         HookStatus.clear();
     }
 
+    /** The home page, where the status card and Pause Hushfeed sit in the Hushfeed group. */
     private static TikTokPreferenceFragment openHome(Activity activity) {
         Utils.setContext(activity);
         TikTokPreferenceFragment home = new TikTokPreferenceFragment();
@@ -64,16 +66,8 @@ public class PauseSettingsScreenTest {
                 .replace(android.R.id.content, home).commit();
         activity.getFragmentManager().executePendingTransactions();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        assertNull("the pause switch should not occupy the root menu", home.findPreference(BaseSettings.PAUSED.key));
-        Preference advanced = home.findPreference("hub_app_advanced");
-        assertNotNull("App & advanced is missing", advanced);
-        assertTrue(advanced.getOnPreferenceClickListener().onPreferenceClick(advanced));
-        activity.getFragmentManager().executePendingTransactions();
-        Shadows.shadowOf(Looper.getMainLooper()).idle();
-        TikTokPreferenceFragment page = (TikTokPreferenceFragment) activity.getFragmentManager()
-                .findFragmentById(android.R.id.content);
-        assertEquals("APP_ADVANCED", page.getArguments().getString("morphe_settings_hub"));
-        return page;
+        assertNull("App & advanced came back as a menu of menus", home.findPreference("hub_app_advanced"));
+        return home;
     }
 
     @Test public void aStartPausedByACrashLoopSaysSoAndOffersTheWayBack() {
@@ -242,11 +236,11 @@ public class PauseSettingsScreenTest {
         }
     }
 
-    @Test public void thePauseSwitchIsReachableThroughAppAndAdvanced() {
+    @Test public void thePauseSwitchIsOnTheHomePage() {
         try (var owner = Robolectric.buildActivity(SettingsPagesTest.PageActivity.class).setup().visible()) {
             TikTokPreferenceFragment home = openHome(owner.get());
             Preference row = home.getPreferenceScreen().findPreference(BaseSettings.PAUSED.key);
-            assertTrue("no Pause Hushfeed switch on App & advanced", row instanceof TogglePreference);
+            assertTrue("no Pause Hushfeed switch on the home page", row instanceof TogglePreference);
             assertEquals("Pause Hushfeed", String.valueOf(row.getTitle()));
             assertTrue(String.valueOf(row.getSummary()).contains(
                     "Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay."));
@@ -268,26 +262,25 @@ public class PauseSettingsScreenTest {
             TextView status = home.getView().findViewWithTag("hushfeed_compact_status");
             assertNotNull(status);
             assertEquals("Active", status.getText().toString());
-            assertEquals("Hushfeed is active, App & advanced", String.valueOf(status.getContentDescription()));
+            assertEquals("Hushfeed is active", String.valueOf(status.getContentDescription()));
 
             BaseSettings.PAUSED.save(true);
             HushfeedPause.pauseForTests(HushfeedPause.Reason.SWITCH);
             AbstractPreferenceFragment.restartPending.clear();
             home.onResume();
             assertEquals("Paused", status.getText().toString());
-            assertEquals("Hushfeed is paused, App & advanced", String.valueOf(status.getContentDescription()));
+            assertEquals("Hushfeed is paused", String.valueOf(status.getContentDescription()));
 
             AbstractPreferenceFragment.restartPending.add(BaseSettings.PAUSED.key);
             home.onResume();
             assertEquals("Restart pending", status.getText().toString());
-            assertEquals("Restart pending, App & advanced", String.valueOf(status.getContentDescription()));
+            assertEquals("Restart pending", String.valueOf(status.getContentDescription()));
 
+            // The press scrolls down to the status card on this same page.
             assertTrue(status.performClick());
             activity.getFragmentManager().executePendingTransactions();
-            TikTokPreferenceFragment advanced = (TikTokPreferenceFragment) activity.getFragmentManager()
-                    .findFragmentById(android.R.id.content);
-            assertEquals("APP_ADVANCED", advanced.getArguments().getString("morphe_settings_hub"));
-            assertNotNull(advanced.findPreference(SettingsStatusPreference.KEY));
+            assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+            assertNotNull(home.findPreference(SettingsStatusPreference.KEY));
         }
     }
 

@@ -67,6 +67,18 @@ public final class SensitiveWarnings {
     }
 
     /**
+     * True while TikTok's Know the facts warnings should stay down. Asked in front of the gate the
+     * top caution banner ("Check your sources before sharing") and its trigger both call, where a
+     * false is what every video without that warning gets, and in front of the prompt TikTok
+     * raises when one is shared, where a false lets the share go ahead. This is its own model
+     * (KtfInfo on the upload struct), not the risk model the unverified notices switch empties.
+     * Paused, the switch answers off.
+     */
+    public static boolean hideCheckYourSources() {
+        return SettingsStatus.checkYourSourcesEnabled && Settings.HIDE_CHECK_YOUR_SOURCES.get();
+    }
+
+    /**
      * Called as TikTok binds a feed item.
      *
      * @param videoItemParams a {@code com.ss.android.ugc.aweme.feed.model.VideoItemParams}

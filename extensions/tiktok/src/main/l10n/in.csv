@@ -74,7 +74,6 @@ That file has more than %1$s watch-history entries.,Berkas berisi lebih dari %1$
 %1$s (will be returned when requested),%1$s (akan dikembalikan saat diminta)
 %1$s and above,%1$s ke atas
 %1$s appears more than once in this file.,%1$s muncul lebih dari sekali dalam file ini.
-%1$s changed,%1$s diubah
 %1$s is already hidden,%1$s sudah disembunyikan
 %1$s destinations must start with %2$s,Tujuan %1$s harus diawali %2$s
 "%1$s is too long for a settings backup. Shorten it, then save the backup again.","%1$s terlalu panjang untuk cadangan pengaturan. Persingkat, lalu simpan cadangan lagi."
@@ -237,9 +236,9 @@ Backup and restore,Cadangkan dan pulihkan
 Black,Hitam
 Block clipboard reads,Blokir pembacaan papan klip
 Hide a VPN connection,Sembunyikan koneksi VPN
-TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.,TikTok tidak bisa tahu kamu memakai VPN. Koneksimu yang lain tampak seperti aslinya. Biarkan mati jika kamu butuh fitur yang memeriksa VPN.
+"Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.","Android tidak lagi memberi tahu TikTok bahwa VPN menyala, dan terowongan VPN tidak muncul di daftar jaringan. TikTok tetap bisa melihat alamat IP VPN. Biarkan mati jika kamu butuh fitur yang memeriksa VPN."
 Block the advertising ID,Blokir ID iklan
-"TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone.","TikTok mendapat ID iklan kosong, seperti yang diberikan Android setelah kamu meresetnya. Aplikasi tidak bisa memakainya untuk mengenali ponselmu."
+"TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.","TikTok mendapat ID iklan kosong, seperti yang diberikan Android setelah kamu menghapusnya. Aplikasi tidak bisa memakainya untuk mengenali ponselmu."
 Block contact list access,Blokir akses ke daftar kontak
 Block installed app scanning,Blokir pemindaian aplikasi terpasang
 Block location,Blokir lokasi
@@ -1527,6 +1526,7 @@ Add apps to Share via,Tambahkan aplikasi ke Bagikan via
 "Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.","Pilih aplikasi untuk ditambahkan ke baris Bagikan via, sebelum Lainnya. Masing-masing mendapat tautan yang sama dengan aplikasi lain."
 Search apps,Cari aplikasi
 Looking for apps,Mencari aplikasi
+Couldn't list your apps. Tap here to try again.,Tidak bisa menampilkan daftar aplikasimu. Ketuk di sini untuk mencoba lagi.
 No other app takes shared text,Tidak ada aplikasi lain yang menerima teks yang dibagikan
 "Install one, then come back here.","Pasang satu, lalu kembali ke sini."
 No apps match this search,Tidak ada aplikasi yang cocok dengan pencarian ini
@@ -1919,24 +1919,17 @@ Skip TikTok's setup screens,Lewati layar penyiapan TikTok
 "Leave out the interest picker, the language and gender questions, the creators to follow, the swipe up tutorial and TikTok's notification page when TikTok runs its setup. Consent, age and sign-in screens still show.","Lewati pemilih minat, pertanyaan bahasa dan gender, kreator yang disarankan untuk diikuti, tutorial geser ke atas, dan halaman notifikasi TikTok saat TikTok menjalankan penyiapannya. Layar persetujuan, usia, dan masuk tetap ditampilkan."
 Hide unverified content notices,Sembunyikan pemberitahuan konten yang belum diverifikasi
 "Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.","Sembunyikan spanduk Periksa sumber yang dipasang TikTok pada video yang ditandai belum diverifikasi, dan peringatan yang muncul saat kamu membagikannya."
+Hide Check your sources warnings,Sembunyikan peringatan Periksa sumbermu
+"Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.","Sembunyikan spanduk Periksa sumbermu yang dipasang TikTok di bagian atas beberapa video, dan peringatan yang muncul saat kamu membagikannya."
 Keep offline videos until you delete them,Simpan video offline sampai kamu menghapusnya
 "TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.","TikTok menghapus video yang disimpan untuk ditonton offline setelah waktu tertentu, kadang hanya dua hari, sudah ditonton atau belum. Saat ini menyala, video tetap ada sampai kamu menghapusnya di pengaturan Video offline TikTok. TikTok masih bisa menghapus yang sudah ditonton saat ruang ponselmu menipis."
 Hide Thoughts on profiles,Sembunyikan Thoughts di profil
 "Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.","Sembunyikan gelembung Thoughts yang TikTok tampilkan di atas foto profil, dan ajakan untuk membagikannya di profilmu sendiri. Mulai ulang TikTok agar berlaku."
-Feed & layout,Feed & tata letak
-"Filters, tabs and on-screen controls","Filter, tab, dan kontrol di layar"
-Comments & inbox,Komentar & kotak masuk
-"Filters, translation and inbox controls","Filter, terjemahan, dan kontrol kotak masuk"
-Downloads & sharing,Unduhan & berbagi
-"Files, subtitles and share sheet","Berkas, subtitel, dan menu berbagi"
-App & advanced,Aplikasi & pengaturan lanjutan
-"Region, backups and diagnostics","Wilayah, cadangan, dan diagnostik"
 About Hushfeed,Tentang Hushfeed
 "Version, changes and licenses","Versi, perubahan, dan lisensi"
 Active,Aktif
 Paused,Dijeda
 Budgets and reminders,Batas dan pengingat
-"%1$s, %2$s","%1$s, %2$s"
 Don't auto translate these languages,Jangan terjemahkan otomatis bahasa ini
 "Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.","Pisahkan kode bahasa dengan koma, misalnya es, de. Saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa ini tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya. Daftar Jangan terjemahkan milik TikTok sendiri tetap seperti semula."
 Performance,Performa
@@ -2051,10 +2044,26 @@ The quality choice is still open,Pilihan kualitas masih terbuka
 Unknown resolution,Resolusi tidak diketahui
 "Make it yours.","Sesuaikan gayamu."
 "Your feed. Your rules.","Feed kamu. Aturan kamu."
-"Your experience","Pengalamanmu"
-"Shape your feed","Atur feed kamu"
 "Conversations","Percakapan"
-"Save and send","Simpan dan kirim"
-"App controls","Kontrol aplikasi"
 "About","Tentang"
 Your settings,Pengaturanmu
+Report a problem,Laporkan masalah
+Opens a GitHub report with your versions and settings filled in. Add what happened.,Membuka laporan GitHub dengan versi dan pengaturanmu yang sudah terisi. Tambahkan apa yang terjadi.
+Support Hushfeed,Dukung Hushfeed
+Buy me a coffee on Ko-fi,Traktir aku kopi di Ko-fi
+No app on this phone opens web links,Tidak ada aplikasi di ponsel ini yang membuka tautan web
+Quick setups,Pengaturan cepat
+"Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.","Tenang menyembunyikan iklan, Toko, dan LIVE. Privasi menyembunyikan tontonan dan ketikanmu serta menghentikan pelacakan. Kembalikan default mengatur ulang setiap sakelar."
+Quiet,Tenang
+Back to defaults,Kembalikan default
+Changed 1 setting,1 pengaturan diubah
+Changed %1$d settings,%1$d pengaturan diubah
+Your settings already match,Pengaturanmu sudah sesuai
+That setup couldn't be applied. Nothing was changed.,Pengaturan itu tidak dapat diterapkan. Tidak ada yang diubah.
+Quick setups couldn't start. Try again in a moment.,Pengaturan cepat tidak dapat dimulai. Coba lagi sebentar lagi.
+Your earlier settings are back,Pengaturan sebelumnya sudah kembali
+"Your feed","Feed kamu"
+"Saving and sharing","Menyimpan dan berbagi"
+"Privacy and app","Privasi dan aplikasi"
+"Hushfeed","Hushfeed"
+"Open Hushfeed settings","Buka pengaturan Hushfeed"

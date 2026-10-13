@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.text.Editable;
 import android.text.InputType;
@@ -37,6 +38,10 @@ public class RangeValuePreference extends DialogPreference {
     private EditText minField;
     private EditText maxField;
     private EditText offending;
+    /** The unsaved minimum and maximum a recreated screen hands back, while it reopens the dialog. */
+    private Bundle restoring;
+    private static final String TYPED_MIN = "min";
+    private static final String TYPED_MAX = "max";
 
     private String mValue;
 
@@ -267,6 +272,11 @@ public class RangeValuePreference extends DialogPreference {
     @Override
     protected void showDialog(Bundle state) {
         super.showDialog(state);
+        Bundle draft = restoring;
+        if (draft != null) {
+            minField.setText(draft.getString(TYPED_MIN, ""));
+            maxField.setText(draft.getString(TYPED_MAX, ""));
+        }
         SettingsUi.styleFramedDialog(getDialog());
         minField.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_NEXT);
         SettingsUi.submitOnDone(maxField, getDialog());
@@ -300,6 +310,31 @@ public class RangeValuePreference extends DialogPreference {
                 return true;
             }
         });
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        if (!DialogDraft.open(getDialog()) || minField == null) return superState;
+        Bundle draft = new Bundle();
+        draft.putString(TYPED_MIN, minField.getText().toString());
+        draft.putString(TYPED_MAX, maxField.getText().toString());
+        return new DialogDraft(superState, draft);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof DialogDraft)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        // DialogPreference reopens the dialog from inside this call; showDialog puts the draft back.
+        restoring = ((DialogDraft) state).values;
+        try {
+            super.onRestoreInstanceState(((DialogDraft) state).getSuperState());
+        } finally {
+            restoring = null;
+        }
     }
 
     @Override

@@ -25,7 +25,6 @@ source,target
 %1$s (will be returned when requested),%1$s (will be returned when requested)
 %1$s and above,%1$s and above
 %1$s appears more than once in this file.,%1$s appears more than once in this file.
-%1$s changed,%1$s changed
 %1$s day,%1$s day
 %1$s days,%1$s days
 %1$s destinations must start with %2$s,%1$s destinations must start with %2$s
@@ -90,7 +89,6 @@ source,target
 %1$s · declared by TikTok,%1$s · declared by TikTok
 "%1$s · declared by TikTok, with a current value","%1$s · declared by TikTok, with a current value"
 %1$s%%,%1$s%%
-"%1$s, %2$s","%1$s, %2$s"
 "%1$s, %2$s or %3$s","%1$s, %2$s or %3$s"
 "%1$s, %2$s, %3$s or %4$s","%1$s, %2$s, %3$s or %4$s"
 "%1$s, %2$s, %3$s, %4$s, %5$s","%1$s, %2$s, %3$s, %4$s, %5$s"
@@ -225,12 +223,11 @@ Amazon Appstore,Amazon Appstore
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.,An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.
 And %1$s more saves,And %1$s more saves
 And one more save,And one more save
+"Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.","Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN."
 Animated sticker format,Animated sticker format
 "Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load.","Animated stickers and GIFs decode each frame as it's shown instead of a few ahead, so they use a little less memory. Applies to the next ones that load."
 App,App
-App & advanced,App & advanced
 App AB,App AB
-App controls,App controls
 App lock,App lock
 AppGallery,AppGallery
 Appearance,Appearance
@@ -262,6 +259,7 @@ Automatic (TikTok's file),Automatic (TikTok's file)
 Automatic Clear display,Automatic Clear display
 Avatar and follow button,Avatar and follow button
 Back,Back
+Back to defaults,Back to defaults
 Back up settings,Back up settings
 Backup and restore,Backup and restore
 Bigger progress bar handle,Bigger progress bar handle
@@ -302,6 +300,7 @@ Build details,Build details
 Build details copied to the clipboard,Build details copied to the clipboard
 Burn-in guard,Burn-in guard
 Buttons on videos,Buttons on videos
+Buy me a coffee on Ko-fi,Buy me a coffee on Ko-fi
 Calm feed,Calm feed
 Calm feed couldn't be applied. Nothing was changed.,Calm feed couldn't be applied. Nothing was changed.
 Calm feed couldn't start. Try again in a moment.,Calm feed couldn't start. Try again in a moment.
@@ -320,6 +319,8 @@ Captions,Captions
 Capture crash reports locally,Capture crash reports locally
 Capture the feed,Capture the feed
 Changed,Changed
+Changed %1$d settings,Changed %1$d settings
+Changed 1 setting,Changed 1 setting
 Changes in Hushfeed %1$s,Changes in Hushfeed %1$s
 Changes to %1$s at %2$s,Changes to %1$s at %2$s
 Check for already-saved videos,Check for already-saved videos
@@ -359,7 +360,6 @@ Comment media filename,Comment media filename
 Comment sort and dislike styles,Comment sort and dislike styles
 "Comment with live photos, the camera or audio","Comment with live photos, the camera or audio"
 Comments,Comments
-Comments & inbox,Comments & inbox
 Comments aren't available for this video,Comments aren't available for this video
 Comments beside the video,Comments beside the video
 Comments range,Comments range
@@ -402,6 +402,7 @@ Couldn't copy the build details. Use Save build details instead.,Couldn't copy t
 Couldn't copy the report. Use Save report instead.,Couldn't copy the report. Use Save report instead.
 Couldn't forget the saved videos. Try again.,Couldn't forget the saved videos. Try again.
 Couldn't import watch history. Your saved history is unchanged.,Couldn't import watch history. Your saved history is unchanged.
+Couldn't list your apps. Tap here to try again.,Couldn't list your apps. Tap here to try again.
 Couldn't open settings search. Reopen settings and try again.,Couldn't open settings search. Reopen settings and try again.
 Couldn't open that settings section. Reopen settings and try again.,Couldn't open that settings section. Reopen settings and try again.
 Couldn't open the file picker to export. Try again.,Couldn't open the file picker to export. Try again.
@@ -503,7 +504,6 @@ Double tap,Double tap
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.","Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save."
 Download original photos,Download original photos
 Downloads,Downloads
-Downloads & sharing,Downloads & sharing
 "Drag to move, release to place","Drag to move, release to place"
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.
 Drama and Series,Drama and Series
@@ -550,7 +550,6 @@ Feature Gate Lab,Feature Gate Lab
 Feature gate override reset,Feature gate override reset
 Feature gate override saved,Feature gate override saved
 Feature gate report copied,Feature gate report copied
-Feed & layout,Feed & layout
 Feed and navigation,Feed and navigation
 Feed button size,Feed button size
 Feed capture saved to %1$s. Read it before you share it.,Feed capture saved to %1$s. Read it before you share it.
@@ -563,7 +562,6 @@ Feed tabs to keep,Feed tabs to keep
 Field edits were discarded,Field edits were discarded
 Field edits weren't saved,Field edits weren't saved
 Files,Files
-"Files, subtitles and share sheet","Files, subtitles and share sheet"
 Fill the screen with the video,Fill the screen with the video
 Filter TikTok's offline videos,Filter TikTok's offline videos
 Filter bottom tabs,Filter bottom tabs
@@ -574,9 +572,7 @@ Filter settings,Filter settings
 Filter the LIVE feed,Filter the LIVE feed
 Filter the list,Filter the list
 Filter: %1$s,Filter: %1$s
-"Filters, tabs and on-screen controls","Filters, tabs and on-screen controls"
 "Filters, translation and copy options","Filters, translation and copy options"
-"Filters, translation and inbox controls","Filters, translation and inbox controls"
 Find the sound on YouTube Music,Find the sound on YouTube Music
 First caller,First caller
 First rejection:,First rejection:
@@ -637,6 +633,7 @@ Hide,Hide
 Hide AI-generated videos,Hide AI-generated videos
 Hide Bulletin board,Hide Bulletin board
 Hide CAPTCHA popups,Hide CAPTCHA popups
+Hide Check your sources warnings,Hide Check your sources warnings
 Hide Footnotes,Hide Footnotes
 Hide LIVE replays,Hide LIVE replays
 Hide LIVE videos,Hide LIVE videos
@@ -718,6 +715,7 @@ Hide surveys,Hide surveys
 Hide tabs TikTok adds later unless you allow them.,Hide tabs TikTok adds later unless you allow them.
 "Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings.","Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings."
 "Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.","Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one."
+"Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.","Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one."
 Hide the Clear display controls,Hide the Clear display controls
 Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.,Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.
 Hide the Full screen button,Hide the Full screen button
@@ -821,6 +819,7 @@ How far each edge press moves the video.,How far each edge press moves the video
 How long each photo stays on screen in a video made from a photo post.,How long each photo stays on screen in a video made from a photo post.
 How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.,How much of a video you watch before it's hidden next time. Zero counts it after a few seconds.
 "How wide each edge strip is, as a percent of the screen width.","How wide each edge strip is, as a percent of the screen width."
+Hushfeed,Hushfeed
 Hushfeed blocked TikTok's reports here. It hasn't confirmed that you stay off viewer lists.,Hushfeed blocked TikTok's reports here. It hasn't confirmed that you stay off viewer lists.
 Hushfeed can't read the creator pattern %1$s,Hushfeed can't read the creator pattern %1$s
 Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.,Hushfeed hid a TikTok CAPTCHA. Turn off Hide CAPTCHA popups if something stops working.
@@ -1009,6 +1008,7 @@ Next message: today at %1$s.,Next message: today at %1$s.
 Next message: tomorrow at %1$s.,Next message: tomorrow at %1$s.
 No,No
 No app on this phone opens that file,No app on this phone opens that file
+No app on this phone opens web links,No app on this phone opens web links
 No apps match this search,No apps match this search
 "No chat with @%1$s turned up on this account. Open your chat with them once, then try again.","No chat with @%1$s turned up on this account. Open your chat with them once, then try again."
 No cleared videos fit the current history limits.,No cleared videos fit the current history limits.
@@ -1101,6 +1101,7 @@ Only tabs TikTok has loaded on this device are shown here. This doesn't force un
 Only the first %1$s characters of the sample were checked.,Only the first %1$s characters of the sample were checked.
 Only these caption languages,Only these caption languages
 Open,Open
+Open Hushfeed settings,Open Hushfeed settings
 Open TikTok on,Open TikTok on
 "Open a share sheet once, then return here to choose its actions.","Open a share sheet once, then return here to choose its actions."
 Open and close TikTok's screens without their slide. Swipes inside a screen still follow your finger.,Open and close TikTok's screens without their slide. Swipes inside a screen still follow your finger.
@@ -1118,6 +1119,7 @@ Open the profile again and try once more,Open the profile again and try once mor
 Open the story again and try once more,Open the story again and try once more
 "Open your profile once, then return here to choose its shortcuts.","Open your profile once, then return here to choose its shortcuts."
 "Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.","Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on."
+Opens a GitHub report with your versions and settings filled in. Add what happened.,Opens a GitHub report with your versions and settings filled in. Add what happened.
 Opens github.com in your browser,Opens github.com in your browser
 Operator code,Operator code
 Operator name,Operator name
@@ -1197,6 +1199,7 @@ Preview shortened. Save report keeps the full report.,Preview shortened. Save re
 Preview translation,Preview translation
 Preview with a made-up post:,Preview with a made-up post:
 Privacy,Privacy
+Privacy and app,Privacy and app
 Private account,Private account
 Problem detected.,Problem detected.
 Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.,Problem detected. Story views may still be reported. Check Ghost mode diagnostics. The warning stays until TikTok restarts.
@@ -1230,6 +1233,10 @@ Quality,Quality
 "Quality, files, subtitles and hand-off","Quality, files, subtitles and hand-off"
 "Quality, speed and auto-advance","Quality, speed and auto-advance"
 Quick setup,Quick setup
+Quick setups,Quick setups
+Quick setups couldn't start. Try again in a moment.,Quick setups couldn't start. Try again in a moment.
+Quiet,Quiet
+"Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.","Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch."
 Read-only list. Accounts won't be opened or unblocked.,Read-only list. Accounts won't be opened or unblocked.
 Reading,Reading
 Reading the font file,Reading the font file
@@ -1244,7 +1251,6 @@ Recovered an interrupted settings change. Restart TikTok to apply this.,Recovere
 Refresh values,Refresh values
 Refreshing TikTok's current values…,Refreshing TikTok's current values…
 Region,Region
-"Region, backups and diagnostics","Region, backups and diagnostics"
 Remember the last speed,Remember the last speed
 "Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy.","Remembers up to %1$s videos you saved here. If the file is still there, you get Open or Save again instead of a second copy."
 Remind me every,Remind me every
@@ -1262,6 +1268,7 @@ Removed %1$s,Removed %1$s
 Replace values when TikTok asks for them,Replace values when TikTok asks for them
 Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.,Replay a story from the start when it ends instead of moving to the next one. Tap or swipe to move on.
 Replay in the background,Replay in the background
+Report a problem,Report a problem
 Report saved to %1$s,Report saved to %1$s
 Repost with a comment,Repost with a comment
 Required,Required
@@ -1313,7 +1320,6 @@ Save a profile picture on a long press,Save a profile picture on a long press
 Save a story from its share sheet,Save a story from its share sheet
 Save a story on a long press,Save a story on a long press
 Save again,Save again
-Save and send,Save and send
 Save as video,Save as video
 Save build details,Save build details
 Save cancelled. Nothing was saved.,Save cancelled. Nothing was saved.
@@ -1376,6 +1382,7 @@ Saving %1$s of %2$s,Saving %1$s of %2$s
 Saving %1$s of %2$s: %3$s,Saving %1$s of %2$s: %3$s
 Saving %1$s original photos,Saving %1$s original photos
 Saving a frame from this video needs Android 7 or newer,Saving a frame from this video needs Android 7 or newer
+Saving and sharing,Saving and sharing
 Saving one original photo,Saving one original photo
 Saving seen history,Saving seen history
 Saving settings backup,Saving settings backup
@@ -1452,7 +1459,6 @@ Settings couldn't open,Settings couldn't open
 Settings couldn't refresh completely. Reopen settings and try again.,Settings couldn't refresh completely. Reopen settings and try again.
 Settings restored. Restart TikTok to apply all changes.,Settings restored. Restart TikTok to apply all changes.
 Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.,Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.
-Shape your feed,Shape your feed
 Share,Share
 Share sheet,Share sheet
 Shares range,Shares range
@@ -1627,6 +1633,7 @@ Structured value observed,Structured value observed
 Subtitle language,Subtitle language
 Subtitles,Subtitles
 Subtitles: %1$s,Subtitles: %1$s
+Support Hushfeed,Support Hushfeed
 Swap the website in shared links,Swap the website in shared links
 Swipe for brightness and volume,Swipe for brightness and volume
 Swipe left,Swipe left
@@ -1690,6 +1697,7 @@ That settings backup holds more Feature Gate Lab rules than the Lab takes. Nothi
 That settings backup is damaged or only partly downloaded. Nothing was altered.,That settings backup is damaged or only partly downloaded. Nothing was altered.
 "That settings backup is incomplete, so it may have been cut short. Nothing was altered.","That settings backup is incomplete, so it may have been cut short. Nothing was altered."
 That settings change didn't go through. Nothing was altered.,That settings change didn't go through. Nothing was altered.
+That setup couldn't be applied. Nothing was changed.,That setup couldn't be applied. Nothing was changed.
 That sticker is in a format Hushfeed can't read,That sticker is in a format Hushfeed can't read
 That watch-history file is damaged. Nothing was imported.,That watch-history file is damaged. Nothing was imported.
 The Activity row of likes and comments on your posts leaves the Inbox. Notifications about them still arrive.,The Activity row of likes and comments on your posts leaves the Inbox. Notifications about them still arrive.
@@ -1817,7 +1825,6 @@ This video isn't available as a complete file. Try again later.,This video isn't
 This video's sound has no title to look for,This video's sound has no title to look for
 Thumbs down blocks the commenter,Thumbs down blocks the commenter
 TikTok account facts,TikTok account facts
-TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.,TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.
 "TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks.","TikTok checks how it was signed and installed. This answers those checks the way the Play Store version would. Try it if follows or likes undo themselves after a refresh. It may not help, since TikTok has other checks."
 TikTok closed during these saves,TikTok closed during these saves
 "TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are.","TikTok closed three times within a minute of starting, so Hushfeed paused itself. Your settings stay as they are."
@@ -1828,7 +1835,7 @@ TikTok default (open the creator's profile),TikTok default (open the creator's p
 TikTok didn't accept the feedback. Try again later.,TikTok didn't accept the feedback. Try again later.
 TikTok didn't block %1$s. Try again in a moment.,TikTok didn't block %1$s. Try again in a moment.
 TikTok didn't unblock %1$s. Try again in a moment.,TikTok didn't unblock %1$s. Try again in a moment.
-"TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone.","TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone."
+"TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.","TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone."
 TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.,TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.","TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back."
 TikTok is locked,TikTok is locked
@@ -2036,7 +2043,8 @@ Your TikTok account changed. Choose the file again for this account.,Your TikTok
 Your account changed. Close this list and open it again.,Your account changed. Close this list and open it again.
 Your account changed. Open the count editor again.,Your account changed. Open the count editor again.
 Your current settings already match Calm feed.,Your current settings already match Calm feed.
-Your experience,Your experience
+Your earlier settings are back,Your earlier settings are back
+Your feed,Your feed
 Your feed. Your rules.,Your feed. Your rules.
 Your filters hid everything TikTok just sent. Most were %1$s.,Your filters hid everything TikTok just sent. Most were %1$s.
 "Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.","Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s."
@@ -2048,6 +2056,7 @@ Your previous feed setup is back.,Your previous feed setup is back.
 Your previous feed setup is back. Restart TikTok to apply all changes.,Your previous feed setup is back. Restart TikTok to apply all changes.
 Your seen history changed before the import finished. Choose the file again.,Your seen history changed before the import finished. Choose the file again.
 Your settings,Your settings
+Your settings already match,Your settings already match
 "Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.","Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number."
 "Zero means the way out of the hold is always there. Any other number is how many times a day it works. Once they're used up, the hold stays until the day starts over. Ignored while the budget is locked, which removes the way out.","Zero means the way out of the hold is always there. Any other number is how many times a day it works. Once they're used up, the hold stays until the day starts over. Ignored while the budget is locked, which removes the way out."
 "Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.","Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away."

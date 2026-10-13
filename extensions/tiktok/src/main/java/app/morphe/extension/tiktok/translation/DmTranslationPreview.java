@@ -17,6 +17,10 @@ import android.text.Selection;
 import android.text.Spanned;
 import android.text.SpanWatcher;
 import android.text.TextWatcher;
+import android.text.style.CharacterStyle;
+import android.text.style.ReplacementSpan;
+import android.text.style.SuggestionSpan;
+import android.text.style.URLSpan;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -406,8 +410,16 @@ public final class DmTranslationPreview {
     static boolean plain(CharSequence value) {
         if (value == null || value.length() == 0 || value.length() > MAX_TEXT || value.toString().trim().isEmpty()) return false;
         if (value instanceof Spanned) for (Object span : ((Spanned) value).getSpans(0, value.length(), Object.class)) {
-            if (span != Selection.SELECTION_START && span != Selection.SELECTION_END
-                    && !(span instanceof TextWatcher) && !(span instanceof SpanWatcher)) return false;
+            if (span == Selection.SELECTION_START || span == Selection.SELECTION_END
+                    || span instanceof TextWatcher || span instanceof SpanWatcher || span instanceof SuggestionSpan) continue;
+            String type = span.getClass().getName();
+            // SpellCheckSpan and the input connection's composing marker are hidden framework types.
+            if (type.equals("android.text.style.SpellCheckSpan")) continue;
+            if ((((Spanned) value).getSpanFlags(span) & Spanned.SPAN_COMPOSING) != 0
+                    && (type.equals("android.view.inputmethod.ComposingText")
+                    || span instanceof CharacterStyle && type.startsWith("android.text.style.")
+                    && !(span instanceof ReplacementSpan) && !(span instanceof URLSpan))) continue;
+            return false;
         }
         return true;
     }

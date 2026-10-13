@@ -3172,6 +3172,91 @@ try {
 
 Write-Host '[scripts] shared helper contracts passed'
 
+# --- kept-run folder (verify-all-patches.ps1 -KeepIn) -----------------------------------------
+#
+# The folder is emptied before a run, so a mistyped -KeepIn used to take whatever it named with a
+# recursive delete. Each unsafe case below is refused before anything moves, and every sentinel
+# file is still there, byte for byte, afterwards. Roots and the profile only go through
+# Test-KeptRunDirectory, which deletes nothing, so a broken check can't take a drive with it.
+$keptRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('hushfeed-kept-' + [guid]::NewGuid().ToString('N'))
+$keptLink = Join-Path $keptRoot 'link'
+$savedLocation = Get-Location
+try {
+    $keptRepo = Join-Path $keptRoot 'repo'
+    $keptFixtures = Join-Path $keptRoot 'fixtures'
+    $keptElsewhere = Join-Path $keptRoot 'elsewhere'
+    foreach ($directory in @((Join-Path $keptRepo '.git'), (Join-Path $keptRepo 'patches\build'),
+            $keptFixtures, $keptElsewhere)) {
+        New-Item -ItemType Directory -Path $directory -Force | Out-Null
+    }
+    $keptApk = Join-Path $keptFixtures 'stock.apk'
+    $keptBundle = Join-Path $keptRepo 'patches\build\bundle.mpp'
+    $keptSentinels = @{}
+    foreach ($file in @($keptApk, $keptBundle, (Join-Path $keptRepo 'README.md'), (Join-Path $keptElsewhere 'keep.txt'))) {
+        [System.IO.File]::WriteAllBytes($file, [byte[]](1..64))
+        $keptSentinels[$file] = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
+    }
+    $keptInputs = @($keptApk, $keptBundle)
+
+    $unsafe = [ordered]@{
+        'the repository' = $keptRepo
+        'the folder holding the fixture APK' = $keptFixtures
+        'a folder above the bundle' = (Join-Path $keptRepo 'patches')
+        'the folder above every input' = $keptRoot
+        'an unowned folder with a file in it' = $keptElsewhere
+    }
+    foreach ($case in $unsafe.GetEnumerator()) {
+        Assert-Throws { Initialize-KeptRunDirectory -Path $case.Value -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+            '*Refusing to keep runs*' "-KeepIn on $($case.Key) was accepted."
+    }
+    foreach ($protected in @([System.IO.Path]::GetPathRoot($keptRoot), [Environment]::GetFolderPath('UserProfile'))) {
+        Assert-Throws { Test-KeptRunDirectory -Path $protected -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+            '*Refusing to keep runs*' "-KeepIn at $protected was accepted."
+    }
+    # A relative path resolves from PowerShell's location, not the process's working directory.
+    Set-Location -LiteralPath (Join-Path $keptRepo 'patches\build')
+    Assert-Throws { Test-KeptRunDirectory -Path '..\..\..\fixtures' -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+        '*Refusing to keep runs*' 'A relative -KeepIn naming the fixture folder was accepted.'
+    Assert-Throws { Initialize-KeptRunDirectory -Path '..\..' -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+        '*Refusing to keep runs*' 'A relative -KeepIn naming the repository was accepted.'
+    Set-Location -LiteralPath $savedLocation
+
+    New-Item -ItemType Junction -Path $keptLink -Target $keptElsewhere | Out-Null
+    Assert-Throws { Initialize-KeptRunDirectory -Path (Join-Path $keptLink 'kept') -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+        '*is a link*' 'A -KeepIn through a junction was accepted.'
+    Assert-Throws { Initialize-KeptRunDirectory -Path $keptLink -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+        '*Refusing to keep runs*' 'A -KeepIn that is a junction was accepted.'
+
+    # The pre-push gate's own folder: created, filled by a passing run, refreshed by the next.
+    $kept = Join-Path $keptRoot 'kept\47.1.4'
+    $claimed = Initialize-KeptRunDirectory -Path $kept -Inputs $keptInputs -RepositoryRoot $keptRepo
+    Assert-True ($claimed -eq [System.IO.Path]::GetFullPath($kept)) "A fresh kept folder resolved to $claimed."
+    foreach ($name in @('patched.apk', 'result.json', 'stamp.json')) {
+        Set-Content -LiteralPath (Join-Path $kept $name) -Value $name -Encoding ASCII
+    }
+    Initialize-KeptRunDirectory -Path $kept -Inputs $keptInputs -RepositoryRoot $keptRepo | Out-Null
+    $left = @(Get-ChildItem -LiteralPath $kept -Force | ForEach-Object { $_.Name })
+    Assert-True ($left.Count -eq 1 -and $left[0] -eq '.hushfeed-kept-run') `
+        "A kept folder wasn't refreshed for the next run: $($left -join ', ')"
+    Set-Content -LiteralPath (Join-Path $kept 'notes.txt') -Value 'mine' -Encoding ASCII
+    Assert-Throws { Initialize-KeptRunDirectory -Path $kept -Inputs $keptInputs -RepositoryRoot $keptRepo } `
+        "*notes.txt isn't part of a kept run*" 'A kept folder holding someone else''s file was emptied.'
+    Assert-True (Test-Path -LiteralPath (Join-Path $kept 'notes.txt')) 'A refused kept folder lost a file.'
+
+    foreach ($entry in $keptSentinels.GetEnumerator()) {
+        Assert-True ((Test-Path -LiteralPath $entry.Key) -and
+            (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -eq $entry.Value) `
+            "A refused -KeepIn changed $($entry.Key)."
+    }
+} finally {
+    Set-Location -LiteralPath $savedLocation
+    # The junction goes on its own first: a recursive delete through it would reach its target.
+    if (Test-Path -LiteralPath $keptLink) { [System.IO.Directory]::Delete($keptLink, $false) }
+    Remove-Item -LiteralPath $keptRoot -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+Write-Host '[scripts] kept-run folder contracts passed'
+
 # --- release bundle path ---------------------------------------------------------------------
 #
 # Every release step reads the bundle from patches/build/release. The plugin's buildAndroid

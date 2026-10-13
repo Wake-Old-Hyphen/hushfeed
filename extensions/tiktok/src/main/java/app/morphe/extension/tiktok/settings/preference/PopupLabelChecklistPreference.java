@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ public final class PopupLabelChecklistPreference extends DialogPreference {
     private LinearLayout rows;
     private String originalPicks = "";
     private boolean selectionSaved;
+    /** The unsaved picks a recreated screen hands back, while it reopens the dialog. */
+    private Bundle restoring;
 
     public PopupLabelChecklistPreference(Context context) {
         super(context);
@@ -154,6 +157,12 @@ public final class PopupLabelChecklistPreference extends DialogPreference {
     protected void showDialog(Bundle state) {
         selectionSaved = false;
         super.showDialog(state);
+        Bundle draft = restoring;
+        if (draft != null) {
+            selected.clear();
+            selected.addAll(DialogDraft.picks(draft));
+            renderRows();
+        }
         SettingsUi.styleFramedDialog(getDialog());
         AlertDialog dialog = (AlertDialog) getDialog();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
@@ -183,6 +192,28 @@ public final class PopupLabelChecklistPreference extends DialogPreference {
                 reportSaveFailure();
             }
         });
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        if (!DialogDraft.open(getDialog()) || rows == null) return superState;
+        return new DialogDraft(superState, DialogDraft.ofPicks(selected, null));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof DialogDraft)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        // DialogPreference reopens the dialog from inside this call; showDialog puts the draft back.
+        restoring = ((DialogDraft) state).values;
+        try {
+            super.onRestoreInstanceState(((DialogDraft) state).getSuperState());
+        } finally {
+            restoring = null;
+        }
     }
 
     private void setChoicesEnabled(AlertDialog dialog, boolean enabled) {

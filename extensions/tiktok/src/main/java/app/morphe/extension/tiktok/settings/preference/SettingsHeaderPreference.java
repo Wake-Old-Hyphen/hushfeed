@@ -154,9 +154,8 @@ public final class SettingsHeaderPreference extends Preference {
         statusView.setCompoundDrawablePadding(SettingsUi.dp(getContext(), 6));
         String description = pending ? label
                 : L10n.t(getContext(), paused ? "Hushfeed is paused" : "Hushfeed is active");
-        statusView.setContentDescription(statusAction == null ? description
-                : L10n.f(getContext(), "%1$s, %2$s", description,
-                        L10n.t(getContext(), "App & advanced")));
+        // The press scrolls this page down to the status card, so there's no other page to name.
+        statusView.setContentDescription(description);
     }
 
     @Override

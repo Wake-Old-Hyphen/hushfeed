@@ -16,6 +16,7 @@ import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsReturn;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
 
@@ -76,6 +77,10 @@ public final class HomeTabSettingsShortcut {
      * the decor before the host asks for its window features. Views wait for the first resume.
      */
     public static void install(Context context) {
+        // Every bundle passes through here on each start, the Home tab's switch or not, so this is
+        // where a restart pressed in the settings lands back on its page. It posts the opening and
+        // touches no window itself.
+        if (context instanceof Activity) SettingsReturn.onMainActivityCreated();
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;
             FRONT.add((Activity) context);

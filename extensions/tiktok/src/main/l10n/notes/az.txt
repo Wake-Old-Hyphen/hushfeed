@@ -1,5 +1,17 @@
 ## Unreleased
 
+* **TikTok:** Hər ayar səhifəsi indi əsas ayarlar səhifəsində qısa başlıq altındadır, bir toxunuş uzaqlığında. Hushfeed-i durdurun və ətraflı status sona yaxın, Hushfeed başlığı altındadır.
+
+* **TikTok:** Pop-uplar altındakı yeni Mənbələrini yoxla xəbərdarlıqlarını gizlət açarı bəzi videoların üst hissəsindəki Mənbələrini yoxla bannerini və belə videonu paylaşanda TikTok-un göstərdiyi xəbərdarlığı götürür.
+
+* **TikTok:** Ayar axtarışında açarı birbaşa nəticələrdə yandırıb söndürə bilərsiniz. Daha çox iş görən açarlar yenə öz səhifəsini açır.
+
+* **TikTok:** Axtarış sahəsinin altında Sürətli quruluşlar var. Sakit, Məxfilik və Defolta qaytarın bir toxunuşla tətbiq olunur, neçə ayarın dəyişdiyini bildirir və geri qaytarmağı təklif edir.
+
+* **TikTok:** Əsas ayarlar səhifəsi indi Problem barədə bildirin və Hushfeed-i dəstəkləyin sətirləri ilə bitir. Birincisi versiyalarınız və açarlarınız doldurulmuş GitHub hesabatını, ikincisi Ko-fi-ni açır.
+
+* **TikTok:** TikTok-u yenidən başlatma sətrindən və ya bannerdən yenidən başlatmaq sizi olduğunuz Hushfeed ayarlar səhifəsinə qaytarır.
+
 * **TikTok:** Hushfeed ayarlarının görünüşü yeniləndi. Ana səhifədəki keçidlər bir qrupda toplandı və çəhrayı ikonlar əlavə olundu. Küncləri yuvarlaq panellər və oval açarlar Feature Gate Lab və gizlədilmiş yaradıcıların siyahısında da var. Böyük mətn və işıqlı tema oxunaqlı qalır.
 
 * **TikTok:** Profil menyusunun əhatə yoxlaması, yüksək nömrəli registrlərlə sınaq və imzalama sınaq layihəsi düzəldildi. İmzalama sınağı D8 seçimlərini istənilən ardıcıllıqla qəbul edir.
@@ -125,6 +137,26 @@
 * **TikTok:** Təklif olunan hesabları gizlət söndürüləndə hüceyrənin ilkin məsafələri, mənfi kənar boşluqlar da daxil, bərpa olunur.
 
 * **TikTok:** İlk bildirən şəxs paylaşım tarixinin Müəllif mətni ölçüsünə uyğunlaşdığını təsdiqləyib (#66).
+
+* **TikTok:** Çox uzun fayl adı şablonu və ya endirmə qovluğu olan bərpa edilmiş ehtiyat nüsxə artıq ayarlar səhifəsini dondurmur.
+
+* **TikTok:** "Açarı göstərin" ilə açılan ayarlar səhifəsindəki Geri oxu artıq heç nə etməmək əvəzinə ayarlardan çıxır.
+
+* **TikTok:** "VPN bağlantısını gizlə" indi TikTok-un VPN-in IP ünvanını yenə də gördüyünü deyir, "Reklam ID-sini blokla" isə sıfırlama yox, silmə deyir.
+
+* **TikTok:** "Saxlanılmış videoları unudun" və "Share via bölməsinə tətbiqlər əlavə edin" artıq TikTok məşğul olanda ilişib qalmır. Sizə bildirirlər və yenidən cəhd edə bilərsiniz.
+
+* **TikTok:** Yamaq yoxlayıcısı indi saxlama qovluğunu boşaltmazdan əvvəl yoxlayır və özünün yaratmadığı qovluğu rədd edir.
+
+* **TikTok:** TalkBack açıq olanda Sənin üçün Hushfeed ayarlarını açın əməliyyatını təklif edir. Belə ki, uzun basma qısayolu ekran oxuyucusu ilə də işləyir.
+
+* **TikTok:** Yeni idxal edilmiş şrifti saxlamaq alınmasa və ya TikTok yarıda bağlansa, əvvəlki şrift itmək əvəzinə yerində qalır.
+
+* **TikTok:** Video oynayarkən hesabı dəyişmək artıq həmin videonu keçdiyiniz hesabda gizlətmir. Video yalnız ona baxan hesab üçün baxılmış sayılır.
+
+* **TikTok:** Siyahı redaktoru açıq olanda telefonu çevirmək və ya qaranlıq rejimi dəyişmək artıq seçdiklərinizi və ya yazdıqlarınızı sıfırlamır. Ləğv edin yenə heç nəyi dəyişmir.
+
+* **TikTok:** İkon şəkli indi PNG-nin piksel məlumatını da yoxlayır, belə ki, içi zədələnmiş fayl tətbiqə düşmək əvəzinə yamaqlamanı təhlükəsiz dayandırır.
 
 ## 0.71.3 (2026-10-11)
 

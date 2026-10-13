@@ -769,7 +769,7 @@ public class SettingsUiTest {
                         assertEquals(1f, matrix[Matrix.MSCALE_Y], 0.0001f);
                         assertEquals(size, drawable.getBounds().width());
                         assertEquals(size, drawable.getBounds().height());
-                        if (icon == SettingsMenuPreference.Icon.APP) {
+                        if (icon == SettingsMenuPreference.Icon.BEHAVIOR) {
                             UiCapture.save(image, "audit/menu-icon-" + densityDpi + "dpi.png", size, size);
                         }
                     } finally {

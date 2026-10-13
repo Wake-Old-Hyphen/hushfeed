@@ -47,7 +47,6 @@ strings only.
 Run from the repository root: python scripts/gen-l10n.py
 """
 import csv
-import io
 import os
 import re
 import sys
@@ -106,12 +105,11 @@ def add(entries, english, translated, path, number):
     english = english.replace("\\n", "\n")
     translated = translated.replace("\\n", "\n")
     if not english.strip():
-        sys.exit("%s:%d: no source text" % (path, number))
+        sys.exit(f"{path}:{number}: no source text")
     if english.startswith(COMMENT):
-        sys.exit("%s:%d: a key cannot begin with %s: it cannot be told from a comment"
-                 % (path, number, COMMENT))
+        sys.exit(f"{path}:{number}: a key cannot begin with {COMMENT}: it cannot be told from a comment")
     if english in entries:
-        sys.exit("%s:%d: duplicate entry: %s" % (path, number, english))
+        sys.exit(f"{path}:{number}: duplicate entry: {english}")
     # A dropped, added, renumbered or retyped placeholder, in one comparison. The runtime hands
     # the same arguments to whichever table is loaded, so a translation that asks for different
     # ones formats the wrong value or throws on the phone.
@@ -122,13 +120,12 @@ def add(entries, english, translated, path, number):
     wanted = PLACEHOLDER.findall(plural_base(english))
     given = PLACEHOLDER.findall(translated)
     all_numbered = all("$" in p for p in wanted) if wanted else False
+    shown = english.replace("\n", "\\n")
     if all_numbered:
         if sorted(wanted) != sorted(given):
-            sys.exit("%s:%d: numbered placeholders %s became %s in: %s"
-                     % (path, number, wanted, given, english.replace("\n", "\\n")))
+            sys.exit(f"{path}:{number}: numbered placeholders {wanted} became {given} in: {shown}")
     elif wanted != given:
-        sys.exit("%s:%d: placeholders %s became %s in: %s"
-                 % (path, number, wanted, given, english.replace("\n", "\\n")))
+        sys.exit(f"{path}:{number}: placeholders {wanted} became {given} in: {shown}")
     entries[english] = translated
 
 
@@ -136,7 +133,7 @@ def read_tsv(path):
     entries = {}
     # utf-8-sig, not utf-8: Excel writes a byte order mark on any round trip, and it would
     # otherwise become part of the first key.
-    with io.open(path, encoding="utf-8-sig") as handle:
+    with open(path, encoding="utf-8-sig") as handle:
         for number, line in enumerate(handle, 1):
             line = line.rstrip("\r\n")
             if not line:
@@ -146,7 +143,7 @@ def read_tsv(path):
             if line.startswith(COMMENT) and "\t" not in line:
                 continue
             if "\t" not in line:
-                sys.exit("%s:%d: no tab" % (path, number))
+                sys.exit(f"{path}:{number}: no tab")
             english, translated = line.split("\t", 1)
             add(entries, english, translated, path, number)
     return entries
@@ -159,21 +156,20 @@ def read_csv(path):
     auto-detection unreliable, so the file says what it is rather than leaving it to be guessed.
     """
     entries = {}
-    with io.open(path, encoding="utf-8-sig", newline="") as handle:
+    with open(path, encoding="utf-8-sig", newline="") as handle:
         rows = csv.reader(handle)
         header = next(rows, None)
         if header is None:
-            sys.exit("%s: no header" % path)
+            sys.exit(f"{path}: no header")
         if [column.strip().lower() for column in header[:2]] != CSV_HEADER:
-            sys.exit("%s:1: the header has to start source,target, not %s"
-                     % (path, ",".join(header)))
+            sys.exit(f"{path}:1: the header has to start source,target, not {','.join(header)}")
         for number, row in enumerate(rows, 2):
             # A blank line between entries is nothing. A row with columns but no source text is
             # a row that lost its key, which add() reports rather than skipping.
             if not row:
                 continue
             if len(row) < 2:
-                sys.exit("%s:%d: no target column" % (path, number))
+                sys.exit(f"{path}:{number}: no target column")
             add(entries, row[0], row[1], path, number)
     return entries
 
@@ -188,7 +184,7 @@ def write_english_base(tables, path):
     for entries in tables.values():
         # A |category row is a language's extra plural form of a key the base already lists.
         keys.update(english for english in entries if not PLURAL_VARIANT.match(english))
-    with io.open(path, "w", encoding="utf-8", newline="") as handle:
+    with open(path, "w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(CSV_HEADER)
         for english in sorted(keys):
@@ -200,7 +196,7 @@ def write_english_base(tables, path):
 def literal(text):
     out = text.replace("\\", "\\\\").replace('"', '\\"')
     out = out.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
-    return '"%s"' % out
+    return f'"{out}"'
 
 
 def java_name(lang):
@@ -239,31 +235,31 @@ def language_class(lang, entries):
         "import java.util.HashMap;",
         "import java.util.Map;",
         "",
-        "/** The %s table of {@link L10nTranslations}, generated by scripts/gen-l10n.py. Do not edit by hand. */" % lang,
-        "final class %s {" % name,
-        "    private %s() {" % name,
+        f"/** The {lang} table of {{@link L10nTranslations}}, generated by scripts/gen-l10n.py. Do not edit by hand. */",
+        f"final class {name} {{",
+        f"    private {name}() {{",
         "    }",
         "",
         "    static Map<String, String> build() {",
-        "        Map<String, String> table = new HashMap<>(%d);" % (len(pairs) * 2),
+        f"        Map<String, String> table = new HashMap<>({len(pairs) * 2});",
     ]
     for index in range(len(chunks)):
-        lines.append("        fill%d(table);" % index)
+        lines.append(f"        fill{index}(table);")
     lines.append("        return table;")
     lines.append("    }")
     for index, chunk in enumerate(chunks):
         lines.append("")
-        lines.append("    private static void fill%d(Map<String, String> table) {" % index)
+        lines.append(f"    private static void fill{index}(Map<String, String> table) {{")
         for english, translated in chunk:
-            lines.append("        table.put(%s," % literal(english))
-            lines.append("                %s);" % literal(translated))
+            lines.append(f"        table.put({literal(english)},")
+            lines.append(f"                {literal(translated)});")
         lines.append("    }")
     lines.append("}")
     return lines
 
 
 def write_java(path, lines):
-    with io.open(path, "w", encoding="utf-8", newline="\n") as handle:
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write("\n".join(lines) + "\n")
 
 
@@ -278,8 +274,7 @@ def main():
         if lang == ENGLISH_BASE:
             continue
         if lang in seen:
-            sys.exit("%s is in both %s and %s: keep one form per language"
-                     % (lang, seen[lang], name))
+            sys.exit(f"{lang} is in both {seen[lang]} and {name}: keep one form per language")
         seen[lang] = name
         tables[lang] = read(os.path.join(L10N, name))
     if not tables:
@@ -307,8 +302,8 @@ def main():
 
     languages = sorted(tables)
     lines.append("    /** The language tags with a table, lower case, in the order they are tried. */")
-    lines.append("    static final String[] LANGUAGES = {%s};"
-                 % ", ".join(literal(lang.lower()) for lang in languages))
+    tags = ", ".join(literal(lang.lower()) for lang in languages)
+    lines.append(f"    static final String[] LANGUAGES = {{{tags}}};")
     lines.append("")
     lines.append("    /**")
     lines.append("     * The table for one language tag, or null when nothing was translated into it.")
@@ -327,8 +322,8 @@ def main():
         if alias and alias + dash + tail not in known:
             labels.append(alias + dash + tail)
         for label in labels:
-            lines.append("            case %s:" % literal(label))
-        lines.append("                return %s.build();" % class_name(lang))
+            lines.append(f"            case {literal(label)}:")
+        lines.append(f"                return {class_name(lang)}.build();")
     lines.append("            default:")
     lines.append("                return null;")
     lines.append("        }")
@@ -352,8 +347,7 @@ def main():
         if name.startswith(stem) and name.endswith(".java") and name not in written:
             os.remove(os.path.join(folder, name))
     base = write_english_base(tables, os.path.join(L10N, ENGLISH_BASE + ".csv"))
-    print("wrote %d translations for %s, and %d source strings to %s.csv"
-          % (total, ", ".join(languages), base, ENGLISH_BASE))
+    print(f"wrote {total} translations for {', '.join(languages)}, and {base} source strings to {ENGLISH_BASE}.csv")
 
 
 if __name__ == "__main__":

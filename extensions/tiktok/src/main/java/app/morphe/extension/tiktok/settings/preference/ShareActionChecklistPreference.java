@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public final class ShareActionChecklistPreference extends DialogPreference {
     private TextView resultCount;
     private String originalHidden = "";
     private boolean selectionSaved;
+    /** The unsaved picks and search a recreated screen hands back, while it reopens the dialog. */
+    private Bundle restoring;
 
     public ShareActionChecklistPreference(Context context) {
         this(context, ShareSurface.VIDEO);
@@ -226,6 +229,13 @@ public final class ShareActionChecklistPreference extends DialogPreference {
     protected void showDialog(Bundle state) {
         selectionSaved = false;
         super.showDialog(state);
+        Bundle draft = restoring;
+        if (draft != null) {
+            selected.clear();
+            selected.addAll(DialogDraft.picks(draft));
+            search.setText(DialogDraft.query(draft));
+            renderRows(DialogDraft.query(draft));
+        }
         SettingsUi.styleFramedDialog(getDialog());
         AlertDialog dialog = (AlertDialog) getDialog();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
@@ -255,6 +265,28 @@ public final class ShareActionChecklistPreference extends DialogPreference {
                 reportSaveFailure();
             }
         });
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        if (!DialogDraft.open(getDialog()) || search == null) return superState;
+        return new DialogDraft(superState, DialogDraft.ofPicks(selected, search.getText()));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof DialogDraft)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+        // DialogPreference reopens the dialog from inside this call; showDialog puts the draft back.
+        restoring = ((DialogDraft) state).values;
+        try {
+            super.onRestoreInstanceState(((DialogDraft) state).getSuperState());
+        } finally {
+            restoring = null;
+        }
     }
 
     private void setChoicesEnabled(AlertDialog dialog, boolean enabled) {

@@ -1,5 +1,17 @@
 ## Unreleased
 
+* **TikTok:** Jede Einstellungsseite steht jetzt direkt auf der Hauptseite der Einstellungen unter einer kurzen Überschrift, nur einen Tipp entfernt. Hushfeed pausieren und der ausführliche Status stehen weiter unten unter Hushfeed.
+
+* **TikTok:** Ein neuer Schalter unter Pop-ups, Warnungen „Prüfe deine Quellen“ ausblenden, entfernt das Banner „Prüfe deine Quellen“ oben über manchen Videos und den Hinweis, den TikTok beim Teilen eines solchen Videos zeigt.
+
+* **TikTok:** In der Einstellungssuche kannst du Schalter direkt in den Ergebnissen umlegen. Schalter, die mehr tun als ein- und ausschalten, öffnen weiter ihre Seite.
+
+* **TikTok:** Unter dem Suchfeld gibt es jetzt Schnelleinstellungen. Ruhig, Datenschutz und Standard wiederherstellen brauchen je einen Tipp, sagen, wie viele Einstellungen sich geändert haben, und bieten Rückgängig an.
+
+* **TikTok:** Die Hauptseite der Einstellungen endet mit Problem melden, das einen GitHub-Bericht mit deinen Versionen und Schaltern öffnet, und Hushfeed unterstützen, das Ko-fi öffnet.
+
+* **TikTok:** Ein Neustart von TikTok über die Neustart-Zeile oder das Banner bringt dich zurück auf die Hushfeed-Einstellungsseite, auf der du warst.
+
 * **TikTok:** Die Hushfeed-Einstellungen haben ein neues Aussehen, mit einer gruppierten Startseite und rosa Symbolen. Abgerundete Bereiche und ovale Schalter gibt es auch im Feature Gate Lab und im Editor für ausgeblendete Creator. Große Schrift und der helle Modus bleiben gut lesbar.
 
 * **TikTok:** Die Prüffälle für das Profilmenü und hohe Register sowie das Testprojekt für die Signierung funktionieren wieder. Die Signierungsprüfung akzeptiert D8-Optionen jetzt in beliebiger Reihenfolge.
@@ -125,6 +137,26 @@
 * **TikTok:** Das Ausschalten von Vorgeschlagene Konten ausblenden stellt die ursprünglichen Zellabstände wieder her, einschließlich negativer Ränder.
 
 * **TikTok:** Die Person, die das Problem ursprünglich gemeldet hat, hat bestätigt, dass Beitragsdaten der Textgröße des Creatornamens folgen (#66).
+
+* **TikTok:** Eine wiederhergestellte Sicherung mit einem sehr langen Dateinamenmuster oder Download-Ordner friert die Einstellungsseite nicht mehr ein.
+
+* **TikTok:** Der Zurück-Pfeil auf einer Einstellungsseite, die über „Schalter anzeigen“ geöffnet wurde, verlässt jetzt die Einstellungen, statt nichts zu tun.
+
+* **TikTok:** „VPN-Verbindung verbergen“ sagt jetzt, dass TikTok die IP-Adresse des VPN weiterhin sieht, und „Werbe-ID blockieren“ spricht von Löschen statt Zurücksetzen.
+
+* **TikTok:** „Gespeicherte Videos vergessen“ und „Apps zu Teilen über hinzufügen“ bleiben nicht mehr hängen, wenn TikTok viel zu tun hat. Sie sagen Bescheid, und du kannst es noch einmal versuchen.
+
+* **TikTok:** Die Patch-Prüfung prüft ihren Aufbewahrungsordner jetzt, bevor sie ihn leert, und lehnt einen Ordner ab, den sie nicht selbst angelegt hat.
+
+* **TikTok:** Mit TalkBack bietet Für dich die Aktion Hushfeed-Einstellungen öffnen an. So klappt die Abkürzung per Gedrückthalten auch mit einem Screenreader.
+
+* **TikTok:** Scheitert das Speichern einer neu importierten Schrift oder schließt sich TikTok mittendrin, bleibt deine bisherige Schrift erhalten, statt zu verschwinden.
+
+* **TikTok:** Wechselst du mitten im Video das Konto, wird das Video für das neue Konto nicht mehr ausgeblendet. Es zählt nur für das Konto als gesehen, das es angeschaut hat.
+
+* **TikTok:** Drehst du das Handy oder wechselst den Dunkelmodus, während ein Listen-Editor offen ist, bleibt erhalten, was du ausgewählt oder eingetippt hast. Abbrechen ändert weiterhin nichts.
+
+* **TikTok:** Symbolbild prüft jetzt auch die Pixeldaten des PNG. Eine innen beschädigte Datei stoppt das Patchen sicher, statt in die App zu gelangen.
 
 ## 0.71.3 (2026-10-11)
 

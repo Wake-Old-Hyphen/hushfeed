@@ -63,6 +63,33 @@ public class DownloadNamePreviewTest {
         Settings.DOWNLOAD_SUBTITLES.resetToDefault();
     }
 
+    private static String run(char c, int length) {
+        char[] chars = new char[length];
+        Arrays.fill(chars, c);
+        return new String(chars);
+    }
+
+    /**
+     * A restored backup can hold a pattern of a million dots, and the preview names it on the main
+     * thread. Stripping them one substring at a time copied the rest of the text per dot, over a
+     * minute of work at this length; one cut takes milliseconds and names the file as before.
+     */
+    @Test public void aPatternOfStrayDotsIsTrimmedInOnePass() {
+        String dots = run('.', 1_000_000);
+        long started = System.nanoTime();
+        assertEquals("video.mp4", DownloadFilenameFormatter.formatSourceName(
+                dots, "creator", "1", NOW, 1, "mp4", false));
+        assertEquals("a.mp4", DownloadFilenameFormatter.formatSourceName(
+                dots + "a" + dots + " . .", "creator", "1", NOW, 1, "mp4", false));
+        long elapsed = (System.nanoTime() - started) / 1_000_000L;
+        assertTrue("trimming the dots took " + elapsed + " ms", elapsed < 5_000L);
+        // Ordinary names come out the same as before.
+        assertEquals("name.mp4", DownloadFilenameFormatter.formatSourceName(
+                "..name. . ", "creator", "1", NOW, 1, "mp4", false));
+        assertEquals("名前 v1.0.mp4", DownloadFilenameFormatter.formatSourceName(
+                "名前 v1.0...", "creator", "1", NOW, 1, "mp4", false));
+    }
+
     private static String line(String preview, String label) {
         for (String line : preview.split("\n")) {
             if (line.startsWith(label)) return line.substring(label.length());

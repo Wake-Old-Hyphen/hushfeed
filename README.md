@@ -65,21 +65,19 @@ The patches that take files out of TikTok do it while patching, so Pause and a s
 
 Besides the row at the top of TikTok's **Settings and privacy**, two shortcuts skip Profile and work while you're signed out: press and hold **For You** at the top of the feed, or long-press **Home** on the bottom bar. A quick tap on either still does what it always did. The Home shortcut needs **Feed tab navigation** selected along with **Settings** when you patch, and it's the one to use if you've hidden the tab names at the top of the feed.
 
-The home page has a search box, which finds any row by its title or description, and seven groups:
+The home page has a search box, which finds any row by its title or description and flips a plain switch right in the results. Under it, Quick setups turns on Quiet or Privacy, or puts every switch back to its default, in one tap with Undo. Every settings page sits right on the home page under a small heading, so nothing is more than one tap away:
 
-| Group | Pages and controls |
+| Heading | Pages |
 | --- | --- |
-| Feed & layout | Feed filter, Feed tabs and Feed screen |
-| Playback | Speed, quality and playback behavior |
-| Privacy | Tracking, device access and links |
-| Comments & inbox | Comments and Inbox |
-| Downloads & sharing | Downloads and Share sheet |
-| Screen time | Daily budgets, reminders and the hold |
-| App & advanced | App, Region, Backup and restore, Diagnostics, Feature Gate Lab and Pause Hushfeed |
+| Your feed | Feed filter, Feed tabs, Feed screen, Playback and Screen time |
+| Conversations | Comments and Inbox |
+| Saving and sharing | Downloads and Share sheet |
+| Privacy and app | Privacy, App, Region, Backup and restore, and Feature Gate Lab when it's installed |
+| Hushfeed | Status, Pause Hushfeed, Diagnostics, About Hushfeed, Report a problem and Support Hushfeed |
 
-About Hushfeed, at the bottom, has the build details and the license notices. A few pages you'll want to know about:
+The status chip next to the Hushfeed title scrolls down to the full status card. About Hushfeed has the build details and the license notices. **Report a problem** opens a GitHub bug report with your versions and the switches you have on filled in, and **Support Hushfeed** opens Ko-fi. A few pages you'll want to know about:
 
-- **Pause Hushfeed**, under App & advanced, turns the runtime features off from the next start and keeps every choice you made. [Is it Hushfeed?](#is-it-hushfeed-pause-it-and-see) lists what it can't reach.
+- **Pause Hushfeed**, under the Hushfeed heading, turns the runtime features off from the next start and keeps every choice you made. [Is it Hushfeed?](#is-it-hushfeed-pause-it-and-see) lists what it can't reach.
 - **Backup and restore** saves your settings and Feature Gate Lab rules to a JSON file. A backup from an older Hushfeed restores what it has and leaves the rest as you set it. Restore and reset keep one undo copy inside TikTok, but clearing TikTok's data takes that copy too, so back up to a file first.
 - **Import watch history**, under Feed filter > Seen videos, reads the JSON file from [your TikTok data download](https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data) so Hide already seen videos knows what you've watched. The file's dates don't name a time zone, so they're read in your phone's zone when you pick the file. It takes up to 2 MB and 10,000 entries.
 - **Diagnostics** exports a report you can attach to a bug, and the report stays on your phone until you share it. Its **Hook status** row says whether the hooks found what they need in your TikTok build. It hears from comments, comment translation, the inbox, the share sheet, the feed overlay, the bottom navigation and the story viewer, feed models, playback quality, sensitive warnings, CAPTCHA account state, the external browser, sticker saves and story saves. A switch can read on while its hook found nothing, and this row is how you'd know.
@@ -245,7 +243,7 @@ Simple mode in Morphe Manager selects 117 of these patches. Each row says what t
 | `Show the progress bar` | Shows the progress bar on videos where TikTok hides it, so you can see how long a video is and skip around. On by default. Turn it off in Hushfeed settings > Playback, where you can also show the time beside the bar or give it a bigger handle. A seek bar for video stories is there too. |
 | `Show the progress bar thumbnail` | Shows a small preview picture while you drag the progress bar, so you can find the part you want. On by default. Turn it off in Hushfeed settings > Playback. |
 | `SIM spoof` | Makes TikTok see the SIM country and carrier you choose. It may not change your region, since TikTok also goes by your internet connection and account. Starts off. Turn it on in Hushfeed settings > Region. |
-| `Skip content warnings` | Plays videos without the warning screen you'd have to tap through first, and can hide the Check sources banner on unverified videos. Starts off. Turn it on in Hushfeed settings > Feed screen. |
+| `Skip content warnings` | Plays videos without the warning screen you'd have to tap through first, and can hide the Check sources and Check your sources banners. Starts off. Turn it on in Hushfeed settings > Feed screen. |
 | `Skip first-launch setup` | Skips TikTok's setup screens on a fresh install, like the interest picker and the swipe tutorial. Sign-in and age screens still show. Its switch is on once picked, since setup runs before you can reach settings. Turn it off in Hushfeed settings > App. |
 | `Skip passkey sign-in` | Lets you sign in another way, like your password or a code by email or text, when TikTok wants a passkey. Password managers won't hand a passkey to a patched app, so that step can't finish here. With the switch on, TikTok treats your phone as one without passkeys. Starts off. Turn it on in Hushfeed settings > App. |
 | `Skip the splash ad` | Lets you stop the full-screen ad TikTok can show while it starts up. Starts off. Turn it on in Hushfeed settings > App. |
@@ -293,7 +291,7 @@ Select Morphe's Clone app patch, with its Update permissions and Update provider
 
 ### Is it Hushfeed? Pause it and see
 
-**Hushfeed settings > App & advanced > Pause Hushfeed** turns off the runtime features from the next start. Your settings stay as they were, and turning Pause off brings them back after a restart. A diagnostic export made while paused says so at the top. If a problem stays while paused, compare with an official TikTok build before you blame any patch.
+**Hushfeed settings > Pause Hushfeed** (under the Hushfeed heading) turns off the runtime features from the next start. Your settings stay as they were, and turning Pause off brings them back after a restart. A diagnostic export made while paused says so at the top. If a problem stays while paused, compare with an official TikTok build before you blame any patch.
 
 Pausing turns off the screen-time budget as well, so with Wait a day to loosen the budget on, Pause is refused until the day starts over. App lock stays on, so pausing can't be used to get past it.
 
@@ -391,7 +389,7 @@ Hushfeed has no server of its own and collects nothing. Everything it adds runs 
 
 It goes online by itself for one job. When you save a video, a photo, a sound, subtitles, a sticker or a profile picture, it downloads that file over HTTPS from the address TikTok's own data holds for it. It won't fetch from an address on your own network, and those downloads connect directly even when Network proxy is on. Copy the full link for short links, which is off unless you turn it on, uses the same path to see where a vt.tiktok.com or vm.tiktok.com link leads. Network proxy, once you turn it on, also checks that your proxy answers when TikTok starts and when it comes back to the screen. Anything else, like translating a comment or blocking a creator, goes through TikTok's own code to TikTok's servers.
 
-The only web addresses written into Hushfeed's code are github.com for this project, gitlab.com and gnu.org for licence texts, tiktok.com for the share links TikTok itself uses, and music.youtube.com for the Find the sound on YouTube Music gesture. A test fails the build if another one turns up.
+The only web addresses written into Hushfeed's code are github.com for this project, ko-fi.com for the Support Hushfeed row, which opens in your browser only when you tap it, gitlab.com and gnu.org for licence texts, tiktok.com for the share links TikTok itself uses, and music.youtube.com for the Find the sound on YouTube Music gesture. A test fails the build if another one turns up.
 
 The diagnostic report and a feed capture stay on your phone until you copy or save them. They leave out web addresses, login tokens and cookies, device ids, the ids of videos, comments and messages, and creator names and handles. Read one through before you share it anyway.
 

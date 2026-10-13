@@ -17,6 +17,7 @@ import android.widget.TextView;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.preference.AbstractPreferenceFragment;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.SettingsReturn;
 
 /**
  * The row pinned to the top of every settings page while a restart is owed.
@@ -99,7 +100,15 @@ public final class RestartPendingPreference extends Preference {
         restarter = replacement == null ? Utils::restartApp : replacement;
     }
 
+    /**
+     * Notes the page open now and how far down it was, so the next start lands back there, then
+     * relaunches. The row and the banner's Restart both come through here, and both are pressed on
+     * a settings page.
+     */
     static void restart(Context context) {
+        TikTokPreferenceFragment open = TikTokPreferenceFragment.active();
+        SettingsReturn.rememberBeforeRestart(open == null
+                ? TikTokPreferenceFragment.PAGE_HOME : open.returnMarker());
         restarter.restart(context);
     }
 }

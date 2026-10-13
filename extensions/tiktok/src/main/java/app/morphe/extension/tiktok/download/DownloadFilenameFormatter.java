@@ -510,9 +510,13 @@ public final class DownloadFilenameFormatter {
     private static String sanitizeBaseName(String value) {
         String cleaned = value.replace('/', '_').replace('\\', '_');
         cleaned = cleaned.replaceAll("[\\p{Cntrl}]", "_").replaceAll("\\s+", " ").trim();
-        while (cleaned.startsWith(".")) cleaned = cleaned.substring(1);
-        while (cleaned.endsWith(".") || cleaned.endsWith(" ")) cleaned = cleaned.substring(0, cleaned.length() - 1);
-        return cleaned;
+        // Indices, then one cut: a substring per stripped character copied the rest each time,
+        // and a restored template of a few thousand dots stalled the preview on the main thread.
+        int start = 0;
+        int end = cleaned.length();
+        while (start < end && cleaned.charAt(start) == '.') start++;
+        while (end > start && (cleaned.charAt(end - 1) == '.' || cleaned.charAt(end - 1) == ' ')) end--;
+        return cleaned.substring(start, end);
     }
 
     private static String sanitizeExtension(String extension) {

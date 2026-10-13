@@ -97,15 +97,12 @@ public final class DownloadDestination {
         if (normalized.startsWith(storagePrefix)) {
             normalized = normalized.substring(storagePrefix.length());
         }
-        while (normalized.startsWith("/")) {
-            normalized = normalized.substring(1);
-        }
-        while (normalized.endsWith("/")) {
-            normalized = normalized.substring(0, normalized.length() - 1);
-        }
-        while (normalized.contains("//")) {
-            normalized = normalized.replace("//", "/");
-        }
+        // One pass for each step: trimming a slash at a time copied the rest of the path per
+        // slash, which a restored folder of slashes turned into seconds on the main thread.
+        normalized = normalized.replaceAll("/{2,}", "/");
+        int start = normalized.startsWith("/") ? 1 : 0;
+        int end = normalized.endsWith("/") ? normalized.length() - 1 : normalized.length();
+        normalized = start < end ? normalized.substring(start, end) : "";
         if (normalized.isEmpty()) {
             return DEFAULT_PATH;
         }

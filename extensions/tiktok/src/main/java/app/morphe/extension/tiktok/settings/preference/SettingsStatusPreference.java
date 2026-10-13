@@ -57,8 +57,8 @@ public final class SettingsStatusPreference extends Preference {
         setKey(KEY);
         setPersistent(false);
         setSelectable(false);
-        // The restart debt, when present, remains immediately under the page header at -950.
-        setOrder(-940);
+        // No fixed order: the home page lists the card where it adds it, under the Hushfeed
+        // heading, while the restart row keeps its -950 just under the page header.
         if (HushfeedPause.isPaused()) {
             setTitle(L10n.t(context, "Hushfeed is paused"));
             showPause(context);

@@ -1,5 +1,17 @@
 ## Unreleased
 
+* **TikTok:** Every settings page now sits on the main settings page under a short heading, one tap away. Pause Hushfeed and the full status are near the end, under Hushfeed.
+
+* **TikTok:** A new switch under Popups, Hide Check your sources warnings, takes away the Check your sources banner across the top of some videos and the prompt TikTok shows when you share one.
+
+* **TikTok:** Settings search lets you flip a switch right in the results. Switches that do more than turn on or off still open their page.
+
+* **TikTok:** Quick setups sits under the search field. Quiet, Privacy and Back to defaults each take one tap, say how many settings changed and offer Undo.
+
+* **TikTok:** The main settings page ends with Report a problem, which opens a GitHub report with your versions and switches filled in, and Support Hushfeed, which opens Ko-fi.
+
+* **TikTok:** Restarting TikTok from the Restart row or the banner brings you back to the Hushfeed settings page you were on.
+
 * **TikTok:** Hushfeed settings has a new look, with a grouped home page and pink icons. Rounded panels and pill switches carry through to Feature Gate Lab and the creator editor. Large text and light mode stay readable.
 
 * **TikTok:** Restored the profile-menu coverage check, the high-register hook fixture and the signing test project. The signing fixture also accepts D8 options in any order.
@@ -125,6 +137,26 @@
 * **TikTok:** Turning off Hide suggested accounts restores original cell spacing, including negative margins.
 
 * **TikTok:** The original reporter confirmed that post dates follow Author text size (#66).
+
+* **TikTok:** A restored backup with a very long filename pattern or download folder no longer freezes the settings page.
+
+* **TikTok:** The Back arrow on a settings page opened from Show the switch now leaves settings instead of doing nothing.
+
+* **TikTok:** Hide a VPN connection now says TikTok can still see the VPN's IP address, and Block the advertising ID says delete instead of reset.
+
+* **TikTok:** Forget saved videos and Add apps to Share via no longer get stuck when TikTok is busy. They tell you, and you can try again.
+
+* **TikTok:** The patch checker now checks its keep folder before emptying it, and refuses a folder it didn't create.
+
+* **TikTok:** With TalkBack on, For You lists an Open Hushfeed settings action, so the press-and-hold shortcut works with a screen reader too.
+
+* **TikTok:** If saving a newly imported font fails or TikTok closes partway, the font you had stays instead of disappearing.
+
+* **TikTok:** Switching accounts mid-video no longer hides that video for the account you switched to. It counts as seen only for the account that watched it.
+
+* **TikTok:** Rotating the phone or switching dark mode while a list editor is open keeps what you picked or typed instead of starting over. Cancel still changes nothing.
+
+* **TikTok:** Icon picture now checks a PNG's pixel data too, so a file that's damaged inside stops patching safely instead of going into the app.
 
 ## 0.71.3 (2026-10-11)
 

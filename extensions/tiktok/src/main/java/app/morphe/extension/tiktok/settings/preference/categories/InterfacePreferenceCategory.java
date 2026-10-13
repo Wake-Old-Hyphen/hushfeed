@@ -498,6 +498,16 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                         Settings.HIDE_UNVERIFIED_NOTICES
                 ));
             }
+            // Left out with its hooks on a build where the Know the facts gate or prompt wasn't found.
+            if (SettingsStatus.checkYourSourcesEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide Check your sources warnings",
+                        "Hide the Check your sources banner TikTok puts across the top of some videos, "
+                                + "and the prompt it shows when you share one.",
+                        Settings.HIDE_CHECK_YOUR_SOURCES
+                ));
+            }
         }
         if (SettingsStatus.videoOverlaysEnabled) {
             addPreference(new TogglePreference(

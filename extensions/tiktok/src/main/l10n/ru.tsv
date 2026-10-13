@@ -106,7 +106,6 @@ That watch-history file is damaged. Nothing was imported.	Файл истори�
 %1$s (will be returned when requested)	%1$s (будет возвращено по запросу)
 %1$s and above	%1$s и выше
 %1$s appears more than once in this file.	%1$s встречается в этом файле больше одного раза.
-%1$s changed	%1$s изменено
 %1$s is already hidden	%1$s уже скрыт
 %1$s destinations must start with %2$s	Места назначения %1$s должны начинаться с %2$s
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s слишком длинный для резервной копии настроек. Сократите его и сохраните копию снова.
@@ -289,9 +288,9 @@ Backup and restore	Резервное копирование и восстано
 Black	Чёрный
 Block clipboard reads	Блокировать чтение буфера обмена
 Hide a VPN connection	Скрывать VPN-подключение
-TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.	TikTok не может определить, что вы используете VPN. Остальные подключения выглядят как есть. Оставьте выключенным, если нужна функция, проверяющая наличие VPN.
+Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.	Android больше не сообщает TikTok, что включён VPN, а туннель VPN не попадает в список сетей. IP-адрес VPN TikTok по-прежнему видит. Оставьте выключенным, если нужна функция, проверяющая наличие VPN.
 Block the advertising ID	Блокировать рекламный ID
-TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone.	TikTok получает пустой рекламный ID, такой же, какой Android выдаёт после сброса вашего. Приложения не смогут по нему узнавать ваш телефон.
+TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.	TikTok получает пустой рекламный ID, такой же, какой Android выдаёт после удаления вашего. Приложения не смогут по нему узнавать ваш телефон.
 Block contact list access	Блокировать доступ к списку контактов
 Block installed app scanning	Блокировать сканирование установленных приложений
 Block location	Блокировать местоположение
@@ -1672,6 +1671,7 @@ Add apps to Share via	Добавить приложения в «Поделит�
 Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.	Выберите приложения, которые нужно добавить в строку «Поделиться через» перед «Ещё». Каждое получает ту же ссылку, что и остальные приложения.
 Search apps	Поиск приложений
 Looking for apps	Поиск приложений
+Couldn't list your apps. Tap here to try again.	Не удалось получить список приложений. Нажмите здесь, чтобы повторить.
 No other app takes shared text	Ни одно другое приложение не принимает отправленный текст
 Install one, then come back here.	Установите одно и возвращайтесь сюда.
 No apps match this search	Нет приложений, соответствующих этому запросу
@@ -2097,26 +2097,18 @@ Skip TikTok's setup screens	Пропускать экраны настройки
 Leave out the interest picker, the language and gender questions, the creators to follow, the swipe up tutorial and TikTok's notification page when TikTok runs its setup. Consent, age and sign-in screens still show.	Не показывать выбор интересов, вопросы о языке и поле, авторов для подписки, подсказку о свайпе вверх и страницу уведомлений TikTok, когда TikTok запускает настройку. Экраны согласия, возраста и входа по-прежнему показываются.
 Hide unverified content notices	Скрывать пометки о непроверенном контенте
 Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.	Скрывать баннер «Проверьте источники», который TikTok ставит на видео с пометкой о непроверенном контенте, и предупреждения при попытке поделиться таким видео.
+Hide Check your sources warnings	Скрывать предупреждения «Проверьте свои источники»
+Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	Скрывать баннер «Проверьте свои источники», который TikTok показывает поверх некоторых видео, и предупреждение при попытке поделиться таким видео.
 Keep offline videos until you delete them	Хранить офлайн-видео, пока вы их не удалите
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok удаляет видео, сохранённые для просмотра офлайн, через определённое время, иногда всего через два дня, просмотрены они или нет. Когда это включено, они остаются, пока вы сами не удалите их в настройках офлайн-видео TikTok. TikTok всё же может удалить просмотренные, если на телефоне мало места.
 Hide Thoughts on profiles	Скрывать Thoughts в профилях
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	Скрывать облачко Thoughts, которое TikTok показывает над фото профиля, а в вашем профиле и предложение поделиться им. Перезапустите TikTok, чтобы это применить.
 
-# context: Quiet Index settings categories and compact runtime status.
-Feed & layout	Лента и оформление
-Filters, tabs and on-screen controls	Фильтры, вкладки и элементы на экране
-Comments & inbox	Комментарии и входящие
-Filters, translation and inbox controls	Фильтры, перевод и настройки входящих
-Downloads & sharing	Загрузки и отправка
-Files, subtitles and share sheet	Файлы, субтитры и меню «Поделиться»
-App & advanced	Приложение и дополнительные настройки
-Region, backups and diagnostics	Регион, резервные копии и диагностика
 About Hushfeed	О Hushfeed
 Version, changes and licenses	Версия, изменения и лицензии
 Active	Активен
 Paused	На паузе
 Budgets and reminders	Лимиты и напоминания
-%1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Не переводить эти языки автоматически
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Разделяйте коды языков запятыми, например es, de. Когда TikTok переводит за вас, описания и комментарии на этих языках остаются как написаны. «Посмотреть перевод» по-прежнему работает, если нажать. Собственный список TikTok «Не переводить» остаётся как есть.
 Performance	Производительность
@@ -2233,10 +2225,33 @@ The quality choice is still open	Выбор качества всё ещё от�
 Unknown resolution	Разрешение неизвестно
 Make it yours.	Настрой под себя.
 Your feed. Your rules.	Твоя лента. Твои правила.
-Your experience	Твои настройки
-Shape your feed	Настрой ленту
 Conversations	Общение
-Save and send	Сохранение и отправка
-App controls	Настройки приложения
 About	О приложении
 Your settings	Твои настройки
+Report a problem	Сообщить о проблеме
+Opens a GitHub report with your versions and settings filled in. Add what happened.	Открывает отчёт на GitHub, где уже указаны ваши версии и настройки. Добавьте, что произошло.
+Support Hushfeed	Поддержать Hushfeed
+Buy me a coffee on Ko-fi	Угостите меня кофе на Ko-fi
+No app on this phone opens web links	На этом телефоне нет приложения для веб-ссылок
+Quick setups	Быстрые настройки
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	«Тишина» скрывает рекламу, Shop и LIVE. «Конфиденциальность» скрывает ваши просмотры и набор текста и останавливает отслеживание. «По умолчанию» возвращает каждый переключатель в исходное положение.
+Quiet	Тишина
+Back to defaults	По умолчанию
+Changed 1 setting	Изменена 1 настройка
+Changed %1$d settings	Изменено настроек: %1$d
+Changed %1$d settings|one	Изменена %1$d настройка
+Changed %1$d settings|few	Изменены %1$d настройки
+Changed %1$d settings|many	Изменено %1$d настроек
+Your settings already match	Ваши настройки уже совпадают
+That setup couldn't be applied. Nothing was changed.	Не удалось применить эту настройку. Ничего не изменено.
+Quick setups couldn't start. Try again in a moment.	Быстрые настройки не удалось запустить. Повторите попытку через момент.
+Your earlier settings are back	Ваши прежние настройки вернулись
+# context: a heading on the settings home page, over Feed filter, Feed tabs, Feed screen, Playback and Screen time
+Your feed	Твоя лента
+# context: a heading on the settings home page, over Downloads and Share sheet
+Saving and sharing	Сохранение и отправка
+# context: a heading on the settings home page, over Privacy, App, Region, Backup and restore and Feature Gate Lab
+Privacy and app	Конфиденциальность и приложение
+# context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
+Hushfeed	Hushfeed
+Open Hushfeed settings	Открыть настройки Hushfeed

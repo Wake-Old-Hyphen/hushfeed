@@ -47,7 +47,7 @@ internal object AwemeRiskModelFingerprint : Fingerprint(
 val hideSensitiveWarningsPatch = bytecodePatch(
     name = "Skip content warnings",
     description = "Plays videos without the warning screen you'd have to tap through first, " +
-        "and can hide the Check sources banner on unverified videos. Starts off. Turn it on in " +
+        "and can hide the Check sources and Check your sources banners. Starts off. Turn it on in " +
         "Hushfeed settings > Feed screen.",
 ) {
     category("Feed")
@@ -82,6 +82,28 @@ val hideSensitiveWarningsPatch = bytecodePatch(
             )
         } else {
             println("[Skip content warnings] Left out the unverified notices switch on ${packageMetadata.versionName}: no getAwemeRiskModel().")
+        }
+
+        // Check your sources is a model of its own (KtfInfo), so it gets its own switch. The banner
+        // gate and the share prompt are both needed: one without the other would leave a switch
+        // that hides half of what it says. KnowTheFactsAnchorsTest holds both on declared builds.
+        val ktfGate = KnowTheFactsBannerGateFingerprint.methodOrNull
+        val ktfPrompt = KnowTheFactsSharePromptFingerprint.methodOrNull
+        if ((ktfGate == null || ktfPrompt == null) && packageMetadata.versionName in declaredVersions()) {
+            throw PatchException(
+                "Skip content warnings: the Know the facts " +
+                    (if (ktfGate == null) "banner gate" else "share prompt") + " wasn't found.",
+            )
+        }
+        if (ktfGate != null && ktfPrompt != null) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableCheckYourSources()V",
+            )
+            ktfGate.hideKnowTheFacts("Skip content warnings")
+            ktfPrompt.hideKnowTheFacts("Skip content warnings")
+        } else {
+            println("[Skip content warnings] Left out the Check your sources switch on ${packageMetadata.versionName}: no Know the facts gate or share prompt.")
         }
 
         // /range: a parameter register on a method this size sits well above v15.

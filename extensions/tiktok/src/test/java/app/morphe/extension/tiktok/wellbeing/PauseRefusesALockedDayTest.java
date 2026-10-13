@@ -66,10 +66,8 @@ public class PauseRefusesALockedDayTest {
 
     private static Preference pauseRow(android.app.Activity activity) {
         Utils.setContext(activity);
+        // Pause Hushfeed is on the home page, in the Hushfeed group.
         TikTokPreferenceFragment home = new TikTokPreferenceFragment();
-        android.os.Bundle arguments = new android.os.Bundle();
-        arguments.putString("morphe_settings_hub", "APP_ADVANCED");
-        home.setArguments(arguments);
         activity.getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, home).commit();
         activity.getFragmentManager().executePendingTransactions();

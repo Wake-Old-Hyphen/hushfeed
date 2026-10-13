@@ -244,6 +244,11 @@ public final class BudgetChanges {
             return heldBack;
         }
 
+        /** Whether the change to {@code setting} waits for the next day instead of applying now. */
+        public boolean waits(Setting<?> setting) {
+            return waiting.containsKey(setting.key);
+        }
+
         /** Includes the delayed record in the same transaction as the restored settings. */
         public Map<Setting<?>, Object> withWaiting() {
             Map<Setting<?>, Object> updates = new LinkedHashMap<>(apply);

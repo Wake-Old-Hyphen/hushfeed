@@ -4,7 +4,21 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **TikTok:** Hushfeed settings has a new look throughout. The home page brings all eight destinations into one group, with pink icons and a clearer search field. Pages share rounded panels, quieter section headings and pill switches. Feature Gate Lab and the creator editor follow the same style, with large text and light mode kept readable.
+* **TikTok:** Translate draft stays available while the keyboard is composing a word or checking its spelling. A translation request that loses access to the signed-in account now ends without leaving the preview waiting for its timeout.
+
+* **TikTok:** Every Hushfeed settings page now sits right on the main settings page, under short headings: Your feed, Conversations, Saving and sharing, Privacy and app, and Hushfeed. Nothing is tucked inside another menu any more, so any page is one tap away. The "changed" counts the group pages showed went with them. Pause Hushfeed, the full status card and Diagnostics are near the end under the Hushfeed heading, and tapping the status next to the title scrolls you there.
+
+* **TikTok:** Skip content warnings has a new switch under Feed screen > Popups, Hide Check your sources warnings, off until you turn it on. It takes away the "Check your sources before sharing" banner TikTok lays across the top of some videos, and the prompt TikTok shows when you go to share one, so the share just goes through. It's its own switch because TikTok drives this banner from different data than the Check sources banner that Hide unverified content notices covers.
+
+* **TikTok:** Settings search now lets you flip a switch right in the results, so you don't have to open its page first. Switches that do more than turn on or off, like Ghost mode or the screen time ones, still take you to their page.
+
+* **TikTok:** Quick setups sits right under the search field on the main settings page. Quiet turns on the Calm feed switches (ads, Shop, LIVE and the rest), Privacy turns on Ghost mode and the tracking blocks that cost you nothing, and Back to defaults puts every switch back the way Hushfeed ships. Each one tells you how many settings it changed and offers Undo, and the Restart row shows up when a change needs it. Your screen time rules still apply: on a locked day Back to defaults leaves the budget switches alone, and with Wait a day to loosen on, turning them off waits until the day starts over. Undo takes that back too.
+
+* **TikTok:** The main Hushfeed settings page ends with two new rows. Report a problem opens a GitHub bug report with your Hushfeed and TikTok versions, your phone and the switches you have on already filled in, so you only add what happened. With a long list of switches on, the report lists as many as GitHub takes in one link and says how many more there are. Support Hushfeed opens the Ko-fi page if you'd like to buy me a coffee.
+
+* **TikTok:** Restarting TikTok from the Restart row or the banner now brings you back to the Hushfeed settings page you were on, scrolled to where you were, so you can keep going where you left off. Back still takes you to the main settings page.
+
+* **TikTok:** Hushfeed settings has a new look throughout. The home page has pink icons and a clearer search field. Pages share rounded panels, quieter section headings and pill switches. Feature Gate Lab and the creator editor follow the same style, with large text and light mode kept readable.
 
 * **Development:** Restored the profile-menu coverage check, the high-register hook fixture and the signing test project. The signing fixture also accepts D8 options in any order.
 
@@ -129,6 +143,26 @@ Every Hushfeed release, newest first.
 * **TikTok:** Turning off Hide suggested accounts restores a suggestion cell's original spacing, including negative margins.
 
 * **TikTok:** The original reporter confirmed that the post date follows Author text size (#66).
+
+* **TikTok:** A restored backup with a filename pattern full of dots, or a download folder full of slashes, no longer stalls the settings page. Trimming them took longer the longer the text got, and at a million characters that meant over a minute of a frozen screen.
+
+* **TikTok:** The Back arrow on a settings page opened from a feed filter notice's Show the switch now leaves settings. It used to do nothing there, so only the phone's own Back got you out.
+
+* **TikTok:** Hide a VPN connection now says what it really does. Android stops reporting the VPN to TikTok and its tunnel is left off the network list, but TikTok can still see the VPN's IP address, so the old "TikTok can't tell" promised too much. Block the advertising ID now compares the blank ID to deleting yours, which is what Android does, not resetting it.
+
+* **TikTok:** Forget saved videos, its Undo and Add apps to Share via no longer get stuck when TikTok's background queue is full. The row stayed greyed out, or the app list kept saying Looking for apps, until TikTok restarted. Now they tell you and you can try again. The app list also says when it couldn't look, instead of saying no app takes shared text.
+
+* **Development:** verify-all-patches.ps1 checks the -KeepIn folder before it empties it. A mistyped path used to be deleted whole, whatever it named. Now it refuses a drive root, your profile, the repository, any folder that holds an input, a path through a junction, and a folder with files an earlier run didn't leave there.
+
+* **TikTok:** TalkBack can reach Hushfeed settings from For You now. TalkBack turns a press into a tap the shortcut never sees, so For You lists an Open Hushfeed settings action in TalkBack's actions instead. TikTok's own tap and what TalkBack reads for the tab are unchanged.
+
+* **TikTok:** Importing a new font no longer loses the one you had when the save fails or TikTok closes halfway through. The earlier font waits under another name until the new one is in place, and comes back if it never gets there.
+
+* **TikTok:** With Hide seen videos on, switching accounts while a video plays can no longer hide that video for the account you switched to. The watch stays with the account that watched it, and the next account still marks the same video when it plays it.
+
+* **TikTok:** Rotating the phone, resizing the window or switching dark mode while an editor is open no longer throws away what you picked or typed in it. The share action lists, Add apps to Share via, Hide profile shortcuts, the popup list, Locally hidden creators and the count ranges keep your unsaved choices, and Cancel still changes nothing.
+
+* **TikTok:** Icon picture now checks the picture's pixel data too, not just its header and checksums. A PNG whose image data is cut short or damaged, or whose palette breaks the PNG rules, stops patching with the reason before anything in TikTok changes, instead of being copied into the app as it is.
 
 ## 0.71.3 (2026-10-11)
 

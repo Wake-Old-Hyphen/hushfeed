@@ -68,12 +68,9 @@ public class SettingsL10nTest {
     private static final Map<String, String> INDONESIAN = L10nTranslations.of("in");
 
     private static final String[] QUIET_INDEX_COPY = {
-            "Make it yours.", "Your feed. Your rules.", "Your experience",
-            "Shape your feed", "Conversations", "Save and send", "App controls", "About", "Your settings",
-            "Feed & layout", "Comments & inbox", "Downloads & sharing",
-            "App & advanced", "About Hushfeed", "Filters, tabs and on-screen controls",
-            "Filters, translation and inbox controls", "Files, subtitles and share sheet",
-            "Region, backups and diagnostics", "Version, changes and licenses",
+            "Make it yours.", "Your feed. Your rules.",
+            "Your feed", "Conversations", "Saving and sharing", "Privacy and app", "Hushfeed",
+            "About", "Your settings", "About Hushfeed", "Version, changes and licenses",
             "Budgets and reminders",
             "Active", "Paused", "Restart pending", "Hushfeed is active", "Hushfeed is paused",
             "Pause Hushfeed's switches after TikTok restarts. Your settings stay saved. Changes made when you patched, like the app's name or icon, stay.",

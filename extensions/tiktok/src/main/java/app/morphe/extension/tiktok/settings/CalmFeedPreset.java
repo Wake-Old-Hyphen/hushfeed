@@ -67,6 +67,11 @@ public final class CalmFeedPreset {
         return applied ? State.ACTIVE : State.ADJUSTED;
     }
 
+    /** The six switches the preset turns on, which Quick setups' Quiet turns on as well. */
+    static BooleanSetting[] settings() {
+        return SETTINGS.clone();
+    }
+
     public static boolean hasSnapshot(Context context) {
         return preferences(context).getBoolean(HAS_SNAPSHOT, false);
     }

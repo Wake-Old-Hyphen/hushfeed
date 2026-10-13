@@ -55,7 +55,7 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
 
         void start() {
             try {
-                if (!allowed()) { cancel(); return; }
+                if (!allowed()) { finish(null); return; }
                 Class<?> service = type(loader, "X.0CJ0");
                 Object nativeService = service.getField("LIZIZ").get(null);
                 if (!Boolean.TRUE.equals(service.getMethod("LJIIZILJ").invoke(nativeService))) {
@@ -77,7 +77,7 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
                 Object nativeApi = type(loader, "X.1Q1i").getMethod("LIZ").invoke(null);
                 Object observable = api.getMethod("LJ", String.class, String.class, String.class)
                         .invoke(nativeApi, payload, target, dnt);
-                if (observable == null || !allowed()) { cancel(); return; }
+                if (observable == null || !allowed()) { finish(null); return; }
                 Class<?> observerType = type(loader, "X.02tY");
                 Object observer = Proxy.newProxyInstance(loader, new Class<?>[]{observerType}, (proxy, method, args) -> {
                     switch (method.getName()) {
@@ -91,7 +91,7 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
                         default: throw new IllegalStateException("Unexpected DM observer method");
                     }
                 });
-                if (!allowed()) { cancel(); return; }
+                if (!allowed()) { finish(null); return; }
                 type(loader, "X.02tX").getMethod("LIZ", observerType).invoke(observable, observer);
             } catch (InterruptedException interrupted) {
                 Thread.currentThread().interrupt();
@@ -129,9 +129,9 @@ final class NativeDmTranslation implements DmTranslationPreview.Transport {
             if (!accepted) { dispose(value); return; }
             // Both native HTTP adapters call onSubscribe before execute/enqueue. Cancel the
             // actual call here too if the editor retired while subscription was being made.
-            try { if (!allowed()) cancel(); }
-            catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); cancel(); }
-            catch (RuntimeException stale) { cancel(); }
+            try { if (!allowed()) finish(null); }
+            catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); finish(null); }
+            catch (RuntimeException stale) { finish(null); }
         }
 
         void next(Object value) {

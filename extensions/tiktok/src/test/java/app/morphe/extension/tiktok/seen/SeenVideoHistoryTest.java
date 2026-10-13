@@ -55,6 +55,7 @@ public class SeenVideoHistoryTest {
     }
 
     @After public void tearDown() {
+        SeenVideoHistory.watchClock = SeenVideoHistory.SYSTEM_CLOCK;
         SignedInUser.idForTests = null;
         SignedInUser.handleForTests = null;
     }
@@ -697,6 +698,64 @@ public class SeenVideoHistoryTest {
         SeenVideoHistory.size();
         drain();
         assertTrue(SeenVideoHistory.shouldHide("a1"));
+    }
+
+    /**
+     * A progress callback reads the account, then a switch wins the race before it marks. The
+     * watch stays the first account's on disk, the second account's record doesn't take it in,
+     * and the second account playing the same video still marks it for itself.
+     */
+    @Test public void aWatchThatLosesTheRaceToAnAccountSwitchStaysWithTheAccountThatWatched() throws Exception {
+        SignedInUser.idForTests = "111";
+        SeenVideoHistory.size();
+        drain();
+        CountDownLatch readAccount = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        Thread player = new Thread(() -> SeenVideoHistory.onPlayProgressChange("a1", 5000, 10000), "player");
+        SeenVideoHistory.watchClock = () -> {
+            if (Thread.currentThread() == player) {
+                readAccount.countDown();
+                try { release.await(5, TimeUnit.SECONDS); }
+                catch (InterruptedException error) { Thread.currentThread().interrupt(); }
+            }
+            return System.currentTimeMillis();
+        };
+        try {
+            player.start();
+            assertTrue(readAccount.await(5, TimeUnit.SECONDS));
+            SignedInUser.idForTests = "222";
+            SeenVideoHistory.size();
+            drain();
+        } finally {
+            release.countDown();
+        }
+        player.join(5000);
+        assertFalse(player.isAlive());
+        SeenVideoHistory.watchClock = SeenVideoHistory.SYSTEM_CLOCK;
+        drain();
+
+        assertFalse("the first account's watch reached the second account's feed", SeenVideoHistory.shouldHide("a1"));
+        assertEquals(0, SeenVideoHistory.size());
+        assertEquals("the watch left the account that watched it", Set.of("111|a1"), rows());
+
+        SeenVideoHistory.onPlayProgressChange("a1", 5000, 10000);
+        drain();
+        assertEquals("the first account's mark kept the second from recording the same video",
+                Set.of("111|a1", "222|a1"), rows());
+        assertTrue(SeenVideoHistory.shouldHide("a1"));
+
+        // The second account's clear and Undo only ever hold its own row.
+        SeenVideoHistory.clear();
+        drain();
+        assertEquals(1, SeenVideoHistory.undoSize());
+        assertTrue(SeenVideoHistory.undoClear());
+        drain();
+        assertEquals(Set.of("111|a1", "222|a1"), rows());
+
+        SignedInUser.idForTests = "111";
+        SeenVideoHistory.size();
+        drain();
+        assertTrue("the first account lost its watch", SeenVideoHistory.shouldHide("a1"));
     }
 
     /**

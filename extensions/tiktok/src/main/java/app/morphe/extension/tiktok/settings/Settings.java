@@ -771,6 +771,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_SENSITIVE_WARNINGS = new BooleanSetting("hide_sensitive_warnings", FALSE);
     /** The Check sources banner on a video TikTok flags as unverified, and the share warnings that read it. */
     public static final BooleanSetting HIDE_UNVERIFIED_NOTICES = new BooleanSetting("hide_unverified_notices", FALSE);
+    /** The Check your sources banner across the top of a video (TikTok's Know the facts), and the prompt it raises when you share one. */
+    public static final BooleanSetting HIDE_CHECK_YOUR_SOURCES = new BooleanSetting("hide_check_your_sources", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_REGION = new BooleanSetting("show_author_region", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_HANDLE = new BooleanSetting("show_author_handle", FALSE);
     public static final BooleanSetting SHOW_ENGAGEMENT_RATE = new BooleanSetting("show_engagement_rate", FALSE);

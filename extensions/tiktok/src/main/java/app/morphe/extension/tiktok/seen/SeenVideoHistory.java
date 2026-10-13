@@ -163,6 +163,11 @@ public final class SeenVideoHistory {
         long insert(SQLiteDatabase database, ContentValues values);
     }
 
+    /** The time a watch is marked with. */
+    interface WatchClock {
+        long nowMs();
+    }
+
     private static final String DATABASE_NAME = "seen_videos.db";
     private static final int DATABASE_VERSION = 2;
     private static final String TABLE = "seen_videos";
@@ -207,6 +212,9 @@ public final class SeenVideoHistory {
             (writable, values) -> writable.insertWithOnConflict(
                     TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     static volatile RowWriter rowWriter = DEFAULT_ROW_WRITER;
+    static final WatchClock SYSTEM_CLOCK = System::currentTimeMillis;
+    /** {@link #SYSTEM_CLOCK}, except in tests that hold a progress callback just after it read the account. */
+    static volatile WatchClock watchClock = SYSTEM_CLOCK;
     /**
      * The history as it was before the last clear, read from the database rather than from
      * memory: memory may never have been loaded, and a clear deletes every row either way.
@@ -222,6 +230,8 @@ public final class SeenVideoHistory {
     private static volatile boolean clearPending;
     private static volatile boolean undoPending;
     private static volatile String callbackAid;
+    /** The account {@link #callbackAid} was playing for, so a mark left by one account isn't another's. */
+    private static volatile String callbackAccount;
     private static volatile boolean callbackAidMarked;
     /**
      * The video on screen when the feed activity was built again for a new window width, kept
@@ -280,9 +290,13 @@ public final class SeenVideoHistory {
             return;
         }
         String account = account();
+        long nowMs = watchClock.nowMs();
 
-        if (!normalizedAid.equals(callbackAid)) {
+        // A callback that read the account just before a switch leaves its video marked for the
+        // account it read. The next account playing the same video starts over.
+        if (!normalizedAid.equals(callbackAid) || !account.equals(callbackAccount)) {
             callbackAid = normalizedAid;
+            callbackAccount = account;
             callbackAidMarked = false;
             // Playback moved on, so the video kept through a rebuild is an ordinary seen one.
             if (!normalizedAid.equals(keptAid)) keptAid = null;
@@ -296,7 +310,7 @@ public final class SeenVideoHistory {
         }
 
         callbackAidMarked = true;
-        markSeen(account, normalizedAid, System.currentTimeMillis());
+        markSeen(account, normalizedAid, nowMs);
     }
 
     public static boolean shouldHide(String aid) {
@@ -924,9 +938,13 @@ public final class SeenVideoHistory {
 
     private static void markSeen(String account, String aid, long nowMs) {
         synchronized (HISTORY_LOCK) {
-            ensureLoaded();
-            SEEN.put(aid, nowMs);
-            trimMemory(SEEN);
+            // A progress callback can read the account, then lose the race to a switch. Its
+            // watch is still that account's on disk, but memory holds the next account's record.
+            if (account.equals(partition)) {
+                ensureLoaded();
+                SEEN.put(aid, nowMs);
+                trimMemory(SEEN);
+            }
             IO.execute(() -> {
                 try {
                     // Undo can commit a newer sighting before this older queued write runs.

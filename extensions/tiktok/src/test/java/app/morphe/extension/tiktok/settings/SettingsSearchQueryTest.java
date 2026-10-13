@@ -94,7 +94,7 @@ public class SettingsSearchQueryTest {
             key.setAccessible(true);
             section.setAccessible(true);
             String route = String.valueOf(key.get(result));
-            assertFalse("a group became a search result: " + route, route.startsWith("hub_"));
+            assertFalse("a page row became a search result: " + route, route.startsWith("hub_"));
             assertFalse("a section route became a duplicate search result: " + route,
                     route.startsWith("section_"));
             if (section.get(result) != null) sections.add(section.get(result).toString());
@@ -280,7 +280,8 @@ public class SettingsSearchQueryTest {
         assertTrue("Build details is not indexed", search(search, "build details").contains("Build details"));
         assertEquals("About Hushfeed", category(search, "Build details"));
         assertEquals("About Hushfeed", category(search, "Hushfeed"));
-        assertEquals("App & advanced", category(search, "Pause Hushfeed"));
+        // Pause sits on the home page, so its line names the heading it's under there.
+        assertEquals("Hushfeed", category(search, "Pause Hushfeed"));
     }
 
     /**

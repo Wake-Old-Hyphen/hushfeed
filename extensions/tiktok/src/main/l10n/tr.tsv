@@ -76,7 +76,6 @@ That watch-history file is damaged. Nothing was imported.	İzleme geçmişi dosy
 %1$s (will be returned when requested)	%1$s (istendiğinde döndürülecek)
 %1$s and above	%1$s ve üzeri
 %1$s appears more than once in this file.	%1$s bu dosyada birden fazla kez geçiyor.
-%1$s changed	%1$s değişti
 %1$s destinations must start with %2$s	%1$s hedefleri %2$s ile başlamalı
 %1$s is too long for a settings backup. Shorten it, then save the backup again.	%1$s bir ayar yedeği için çok uzun. Kısaltın, ardından yedeği yeniden kaydedin.
 %1$s isn't a language code, so no video would ever match it. Use two letters, like en, es or de.	%1$s bir dil kodu değil, bu yüzden hiçbir video eşleşmez. en, es veya de gibi iki harf kullan.
@@ -239,9 +238,9 @@ Backup and restore	Yedekleme ve geri yükleme
 Black	Siyah
 Block clipboard reads	Pano okumalarını engelle
 Hide a VPN connection	VPN bağlantısını gizle
-TikTok can't tell you're using a VPN. Your other connections show as they really are. Leave this off if you need a feature that checks for a VPN.	TikTok VPN kullandığını anlayamaz. Diğer bağlantıların gerçekte olduğu gibi görünür. VPN kontrolü yapan bir özelliğe ihtiyacın varsa kapalı bırak.
+Android stops telling TikTok a VPN is on, and the VPN's tunnel is left out of the network list. TikTok can still see the VPN's IP address. Leave this off if you need a feature that checks for a VPN.	Android artık TikTok'a VPN'in açık olduğunu söylemez ve VPN tüneli ağ listesinde görünmez. TikTok VPN'in IP adresini yine de görür. VPN kontrolü yapan bir özelliğe ihtiyacın varsa kapalı bırak.
 Block the advertising ID	Reklam kimliğini engelle
-TikTok gets a blank advertising ID, like the one Android gives after you reset yours. Apps can't use it to recognize your phone.	TikTok boş bir reklam kimliği alır, Android'in seninkini sıfırladıktan sonra verdiği gibi. Uygulamalar bununla telefonunu tanıyamaz.
+TikTok gets a blank advertising ID, like the one Android gives after you delete yours. Apps can't use it to recognize your phone.	TikTok boş bir reklam kimliği alır, Android'in seninkini sildikten sonra verdiği gibi. Uygulamalar bununla telefonunu tanıyamaz.
 Block contact list access	Kişi listesine erişimi engelle
 Block installed app scanning	Yüklü uygulama taramasını engelle
 Block location	Konumu engelle
@@ -1534,6 +1533,7 @@ Add apps to Share via	Şununla paylaş'a uygulama ekle
 Pick apps to add to the Share via row, before More. Each gets the same link the other apps get.	Şununla paylaş satırına, Daha fazla'dan önce eklenecek uygulamaları seç. Her biri diğer uygulamalarla aynı bağlantıyı alır.
 Search apps	Uygulama ara
 Looking for apps	Uygulamalar aranıyor
+Couldn't list your apps. Tap here to try again.	Uygulamaların listelenemedi. Tekrar denemek için buraya dokun.
 No other app takes shared text	Paylaşılan metni alan başka uygulama yok
 Install one, then come back here.	Bir tane yükle, sonra buraya dön.
 No apps match this search	Bu aramayla eşleşen uygulama yok
@@ -1929,26 +1929,18 @@ Skip TikTok's setup screens	TikTok'un kurulum ekranlarını atla
 Leave out the interest picker, the language and gender questions, the creators to follow, the swipe up tutorial and TikTok's notification page when TikTok runs its setup. Consent, age and sign-in screens still show.	TikTok kurulumunu çalıştırdığında ilgi alanı seçimini, dil ve cinsiyet sorularını, takip edilecek içerik üreticilerini, yukarı kaydırma eğitimini ve TikTok'un bildirim sayfasını atla. Onay, yaş ve giriş ekranları yine gösterilir.
 Hide unverified content notices	Doğrulanmamış içerik uyarılarını gizle
 Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.	TikTok'un doğrulanmamış olarak işaretlediği videolardaki Kaynakları kontrol et bandını ve böyle bir videoyu paylaşırken gösterdiği uyarıları gizle.
+Hide Check your sources warnings	Kaynaklarını kontrol et uyarılarını gizle
+Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.	TikTok'un bazı videoların üst kısmına koyduğu Kaynaklarını kontrol et bandını ve böyle bir videoyu paylaşırken gösterdiği uyarıyı gizle.
 Keep offline videos until you delete them	Çevrimdışı videoları sen silene kadar tut
 TikTok removes videos saved for offline viewing after a set time, sometimes only two days, watched or not. With this on they stay until you delete them in TikTok's Offline videos settings. TikTok can still clear watched ones when your phone is low on space.	TikTok, çevrimdışı izlemek için kaydedilen videoları belirli bir süre sonra, bazen yalnızca iki gün sonra, izlenmiş olsun olmasın kaldırır. Bu açıkken videolar, TikTok'un Çevrimdışı videolar ayarlarında sen silene kadar kalır. Telefonunda yer azaldığında TikTok izlenmiş olanları yine de temizleyebilir.
 Hide Thoughts on profiles	Profillerde Thoughts'u gizle
 Hide the Thoughts bubble TikTok shows above a profile picture, and the prompt to share one on your own profile. Restart TikTok to apply this.	TikTok'un bir profil fotoğrafının üstünde gösterdiği Thoughts balonunu ve kendi profilinde bir tane paylaşma önerisini gizle. Bunu uygulamak için TikTok'u yeniden başlat.
 
-# context: Quiet Index settings categories and compact runtime status.
-Feed & layout	Akış ve düzen
-Filters, tabs and on-screen controls	Filtreler, sekmeler ve ekran kontrolleri
-Comments & inbox	Yorumlar ve gelen kutusu
-Filters, translation and inbox controls	Filtreler, çeviri ve gelen kutusu kontrolleri
-Downloads & sharing	İndirmeler ve paylaşım
-Files, subtitles and share sheet	Dosyalar, altyazılar ve paylaşım menüsü
-App & advanced	Uygulama ve gelişmiş ayarlar
-Region, backups and diagnostics	Bölge, yedekler ve tanılama
 About Hushfeed	Hushfeed hakkında
 Version, changes and licenses	Sürüm, değişiklikler ve lisanslar
 Active	Etkin
 Paused	Duraklatıldı
 Budgets and reminders	Sınırlar ve hatırlatmalar
-%1$s, %2$s	%1$s, %2$s
 Don't auto translate these languages	Bu dilleri otomatik çevirme
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Dil kodlarını virgülle ayır, örneğin es, de. TikTok senin için çevirdiğinde bu dillerdeki açıklamalar ve yorumlar yazıldığı gibi kalır. Çeviriyi gör'e dokunduğunda yine çalışır. TikTok'un kendi Çevirme listesi olduğu gibi kalır.
 Performance	Performans
@@ -2065,10 +2057,30 @@ The quality choice is still open	Kalite seçimi hâlâ açık
 Unknown resolution	Bilinmeyen çözünürlük
 Make it yours.	Kendine göre ayarla.
 Your feed. Your rules.	Senin akışın. Senin kuralların.
-Your experience	Deneyimin
-Shape your feed	Akışını düzenle
 Conversations	Sohbetler
-Save and send	Kaydet ve gönder
-App controls	Uygulama kontrolleri
 About	Hakkında
 Your settings	Ayarların
+Report a problem	Sorun bildir
+Opens a GitHub report with your versions and settings filled in. Add what happened.	Sürümlerin ve ayarların önceden doldurulmuş bir GitHub raporu açar. Ne olduğunu ekle.
+Support Hushfeed	Hushfeed'i destekle
+Buy me a coffee on Ko-fi	Ko-fi'de bana bir kahve ısmarla
+No app on this phone opens web links	Bu telefonda web bağlantılarını açan uygulama yok
+Quick setups	Hızlı kurulumlar
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	Sakin; reklamları, Mağaza'yı ve LIVE'ı gizler. Gizlilik; görüntülemelerini ve yazdığını gizler, izlemeyi durdurur. Varsayılana dön her anahtarı sıfırlar.
+Quiet	Sakin
+Back to defaults	Varsayılana dön
+Changed 1 setting	1 ayar değişti
+Changed %1$d settings	%1$d ayar değişti
+Your settings already match	Ayarların zaten böyle
+That setup couldn't be applied. Nothing was changed.	Bu kurulum uygulanamadı. Hiçbir şey değişmedi.
+Quick setups couldn't start. Try again in a moment.	Hızlı kurulumlar başlatılamadı. Birazdan tekrar dene.
+Your earlier settings are back	Önceki ayarların geri geldi
+# context: a heading on the settings home page, over Feed filter, Feed tabs, Feed screen, Playback and Screen time
+Your feed	Akışın
+# context: a heading on the settings home page, over Downloads and Share sheet
+Saving and sharing	Kaydetme ve paylaşım
+# context: a heading on the settings home page, over Privacy, App, Region, Backup and restore and Feature Gate Lab
+Privacy and app	Gizlilik ve uygulama
+# context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
+Hushfeed	Hushfeed
+Open Hushfeed settings	Hushfeed ayarlarını aç

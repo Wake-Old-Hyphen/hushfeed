@@ -97,6 +97,8 @@ public class SettingsStatus {
     public static boolean sensitiveWarningsEnabled = false;
     /** Skip content warnings found Aweme's risk model getter, so the unverified notices switch works. */
     public static boolean unverifiedNoticesEnabled = false;
+    /** Skip content warnings found the Know the facts banner gate and share prompt, so the Check your sources switch works. */
+    public static boolean checkYourSourcesEnabled = false;
     public static boolean notInterestedEnabled = false;
 
     public static void enableNotInterested() {
@@ -422,6 +424,10 @@ public class SettingsStatus {
 
     public static void enableUnverifiedNotices() {
         unverifiedNoticesEnabled = true;
+    }
+
+    public static void enableCheckYourSources() {
+        checkYourSourcesEnabled = true;
     }
 
     public static void enableAuthorRegion() {

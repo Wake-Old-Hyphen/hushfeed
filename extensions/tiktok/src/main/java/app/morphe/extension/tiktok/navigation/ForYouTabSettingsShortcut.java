@@ -4,17 +4,26 @@
  */
 package app.morphe.extension.tiktok.navigation;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityNodeProvider;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.TikTokActivityHook;
 
 /**
@@ -30,6 +39,9 @@ import app.morphe.extension.tiktok.settings.TikTokActivityHook;
  * and a press held for the phone's long-press time opens the settings with the long-press
  * vibration. The rest of that touch is kept from the tab, so letting go doesn't also reload the
  * feed.
+ *
+ * <p>TalkBack can't time a press, so For You also carries a named action, Open Hushfeed settings,
+ * in the actions TalkBack lists for it ({@link OpenAction}).
  *
  * <p>No switch reads this, so Pause leaves it working: it's a way back to the switch that resumes
  * Hushfeed. The other top tabs are left alone, and a tab TikTok makes long-clickable keeps its own
@@ -61,6 +73,7 @@ public final class ForYouTabSettingsShortcut {
                     Logger.printInfo(() -> "A long press on For You opens Hushfeed settings");
                 }
                 press.forYou = forYou;
+                if (forYou) offerToTalkBack(tab, press);
             }
         } catch (Throwable error) {
             Logger.printException(() -> "Could not watch the For You tab", error);
@@ -157,6 +170,119 @@ public final class ForYouTabSettingsShortcut {
             } catch (Throwable error) {
                 Logger.printException(() -> "The long press on For You failed", error);
             }
+        }
+    }
+
+    /**
+     * Puts the TalkBack action on a tab showing For You. A delegate TikTok set since the last bind
+     * is wrapped too, so it keeps answering. One that can't be read is left alone, without the
+     * action, rather than replaced.
+     */
+    private static void offerToTalkBack(View tab, Press press) {
+        View.AccessibilityDelegate current;
+        try {
+            current = delegateOf(tab);
+        } catch (Exception unreadable) {
+            Logger.printInfo(() -> "Could not read the For You tab's accessibility delegate, so TalkBack keeps TikTok's", unreadable);
+            return;
+        }
+        if (current instanceof OpenAction) return;
+        tab.setAccessibilityDelegate(new OpenAction(current, press));
+    }
+
+    /** The delegate TikTok gave the tab, or null if it gave none. Android only reads it back from 10 on. */
+    private static View.AccessibilityDelegate delegateOf(View tab) throws ReflectiveOperationException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) return tab.getAccessibilityDelegate();
+        Field field = View.class.getDeclaredField("mAccessibilityDelegate");
+        field.setAccessible(true);
+        return (View.AccessibilityDelegate) field.get(tab);
+    }
+
+    /**
+     * TalkBack's way to the long press: a named action on For You that opens the settings through
+     * the same route. Everything else goes on to the delegate TikTok gave the tab, if it gave one,
+     * so its own announcements and actions stay as they were. A view showing another tab now, or
+     * one TikTok made long-clickable, doesn't offer it.
+     */
+    static final class OpenAction extends View.AccessibilityDelegate {
+        /** Outside the standard action bits and Android's own resource ids. */
+        static final int ID = 0x48534648;
+        private final View.AccessibilityDelegate tikTok;
+        private final Press press;
+
+        OpenAction(View.AccessibilityDelegate tikTok, Press press) {
+            this.tikTok = tikTok;
+            this.press = press;
+        }
+
+        private boolean offered(View host) {
+            return press.forYou && !host.isLongClickable();
+        }
+
+        @Override
+        public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+            if (tikTok != null) tikTok.onInitializeAccessibilityNodeInfo(host, info);
+            else super.onInitializeAccessibilityNodeInfo(host, info);
+            if (offered(host)) {
+                info.addAction(new AccessibilityNodeInfo.AccessibilityAction(ID,
+                        L10n.t(host.getContext(), "Open Hushfeed settings")));
+            }
+        }
+
+        @Override
+        public boolean performAccessibilityAction(View host, int action, Bundle arguments) {
+            if (action == ID) return offered(host) && open();
+            return tikTok != null ? tikTok.performAccessibilityAction(host, action, arguments)
+                    : super.performAccessibilityAction(host, action, arguments);
+        }
+
+        @Override
+        public void sendAccessibilityEvent(View host, int eventType) {
+            if (tikTok != null) tikTok.sendAccessibilityEvent(host, eventType);
+            else super.sendAccessibilityEvent(host, eventType);
+        }
+
+        @Override
+        public void sendAccessibilityEventUnchecked(View host, AccessibilityEvent event) {
+            if (tikTok != null) tikTok.sendAccessibilityEventUnchecked(host, event);
+            else super.sendAccessibilityEventUnchecked(host, event);
+        }
+
+        @Override
+        public boolean dispatchPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+            return tikTok != null ? tikTok.dispatchPopulateAccessibilityEvent(host, event)
+                    : super.dispatchPopulateAccessibilityEvent(host, event);
+        }
+
+        @Override
+        public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+            if (tikTok != null) tikTok.onPopulateAccessibilityEvent(host, event);
+            else super.onPopulateAccessibilityEvent(host, event);
+        }
+
+        @Override
+        public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
+            if (tikTok != null) tikTok.onInitializeAccessibilityEvent(host, event);
+            else super.onInitializeAccessibilityEvent(host, event);
+        }
+
+        @Override
+        public boolean onRequestSendAccessibilityEvent(ViewGroup host, View child, AccessibilityEvent event) {
+            return tikTok != null ? tikTok.onRequestSendAccessibilityEvent(host, child, event)
+                    : super.onRequestSendAccessibilityEvent(host, child, event);
+        }
+
+        @Override
+        public AccessibilityNodeProvider getAccessibilityNodeProvider(View host) {
+            return tikTok != null ? tikTok.getAccessibilityNodeProvider(host) : super.getAccessibilityNodeProvider(host);
+        }
+
+        @TargetApi(Build.VERSION_CODES.O)
+        @Override
+        public void addExtraDataToAccessibilityNodeInfo(View host, AccessibilityNodeInfo info, String extraDataKey,
+                                                        Bundle arguments) {
+            if (tikTok != null) tikTok.addExtraDataToAccessibilityNodeInfo(host, info, extraDataKey, arguments);
+            else super.addExtraDataToAccessibilityNodeInfo(host, info, extraDataKey, arguments);
         }
     }
 

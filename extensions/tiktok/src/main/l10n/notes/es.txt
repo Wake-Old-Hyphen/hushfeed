@@ -1,5 +1,17 @@
 ## Unreleased
 
+* **TikTok:** Todas las páginas de ajustes están ahora en la página principal de ajustes, bajo un título corto y a un toque. Pausar Hushfeed y el estado completo están cerca del final, bajo Hushfeed.
+
+* **TikTok:** Un interruptor nuevo en Ventanas emergentes, Ocultar avisos de Comprueba tus fuentes, quita el banner Comprueba tus fuentes de la parte superior de algunos vídeos y el aviso que TikTok muestra al compartir uno.
+
+* **TikTok:** La búsqueda de ajustes te deja activar o desactivar un interruptor directamente en los resultados. Los interruptores que hacen algo más siguen abriendo su página.
+
+* **TikTok:** Ajustes rápidos aparece bajo el campo de búsqueda. Tranquilo, Privacidad y Restablecer se aplican con un toque, dicen cuántos ajustes cambiaron y ofrecen Deshacer.
+
+* **TikTok:** La página principal de ajustes termina con Informar de un problema, que abre un informe en GitHub con tus versiones e interruptores ya rellenados, y Apoya Hushfeed, que abre Ko-fi.
+
+* **TikTok:** Reiniciar TikTok desde la fila de reinicio o el aviso te devuelve a la página de ajustes de Hushfeed en la que estabas.
+
 * **TikTok:** Los ajustes de Hushfeed tienen un nuevo aspecto, con una página de inicio agrupada e iconos rosas. Los paneles redondeados y los interruptores ovalados también llegan a Feature Gate Lab y al editor de creadores ocultos. El texto grande y el modo claro siguen siendo legibles.
 
 * **TikTok:** Vuelven a funcionar la comprobación de cobertura del menú del perfil, el caso de prueba con registros altos y el proyecto de prueba de firma. La prueba de firma también acepta las opciones de D8 en cualquier orden.
@@ -125,6 +137,26 @@
 * **TikTok:** Desactivar Ocultar las cuentas sugeridas restaura el espaciado original de las celdas, incluidos los márgenes negativos.
 
 * **TikTok:** La persona que informó del problema confirmó que las fechas de publicación siguen Tamaño del nombre del creador (#66).
+
+* **TikTok:** Una copia de seguridad restaurada con un patrón de nombre de archivo o una carpeta de descargas muy largos ya no congela la página de ajustes.
+
+* **TikTok:** La flecha Atrás en una página de ajustes abierta desde «Mostrar el ajuste» ahora sale de los ajustes en lugar de no hacer nada.
+
+* **TikTok:** «Ocultar una conexión VPN» ahora dice que TikTok sigue viendo la dirección IP de la VPN, y «Bloquear el ID de publicidad» habla de eliminar en lugar de restablecer.
+
+* **TikTok:** «Olvidar los vídeos guardados» y «Añadir apps a Compartir con» ya no se quedan atascados cuando TikTok está ocupado. Te avisan y puedes volver a intentarlo.
+
+* **TikTok:** El comprobador de parches ahora revisa su carpeta de conservación antes de vaciarla y rechaza una carpeta que no creó.
+
+* **TikTok:** Con TalkBack activado, Para ti ofrece la acción Abrir los ajustes de Hushfeed, así que el atajo de mantener pulsado también funciona con un lector de pantalla.
+
+* **TikTok:** Si falla el guardado de una fuente importada nueva o TikTok se cierra a medias, la fuente que tenías se queda en lugar de desaparecer.
+
+* **TikTok:** Cambiar de cuenta a mitad de un vídeo ya no lo oculta en la cuenta a la que cambiaste. Solo cuenta como visto para la cuenta que lo vio.
+
+* **TikTok:** Girar el teléfono o cambiar el modo oscuro con un editor de listas abierto conserva lo que marcaste o escribiste en lugar de empezar de cero. Cancelar sigue sin cambiar nada.
+
+* **TikTok:** Imagen del icono ahora también revisa los datos de píxeles del PNG, así que un archivo dañado por dentro detiene el parcheo de forma segura en vez de entrar en la app.
 
 ## 0.71.3 (2026-10-11)
 

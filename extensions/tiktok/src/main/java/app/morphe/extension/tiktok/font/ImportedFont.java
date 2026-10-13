@@ -20,6 +20,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -44,6 +47,8 @@ public final class ImportedFont {
     static final String DIRECTORY = "hushfeed_fonts";
     /** Where an import waits while it's checked. A dot name, so it's never taken for the font. */
     static final String INCOMING = ".incoming";
+    /** The prefix the earlier font waits under while its replacement moves in. A dot name too. */
+    static final String PREVIOUS = ".previous-";
     private static final int NAME_LIMIT = 80;
 
     /** Why a file was turned down. */
@@ -74,21 +79,39 @@ public final class ImportedFont {
             return name;
         }
 
-        /** Makes this the imported font, in place of any other. Returns the name it's kept under. */
+        /**
+         * Makes this the imported font, in place of any other. Returns the name it's kept under.
+         *
+         * <p>The earlier font is set aside whole before this one moves in, and deleted only once
+         * this one is in place. A move that fails puts the earlier font back, and a replacement
+         * the process died in is settled the next time the font is looked for ({@link #recover}),
+         * so the folder always holds one whole font, old or new.
+         */
         public String install() throws IOException {
             File directory = file.getParentFile();
             File target = new File(directory, name);
             synchronized (LOCK) {
-                for (File old : fontFiles(directory)) {
-                    if (!old.equals(target) && !old.delete()) {
-                        throw new IOException("Could not remove the earlier font " + old.getName());
+                recover(directory);
+                List<File> setAside = new ArrayList<>();
+                try {
+                    for (File old : fontFiles(directory)) {
+                        File aside = new File(directory, PREVIOUS + old.getName());
+                        if (!moves.rename(old, aside)) {
+                            throw new IOException("Could not set the earlier font " + old.getName() + " aside");
+                        }
+                        setAside.add(aside);
                     }
+                    if (!moves.rename(file, target)) {
+                        throw new IOException("Could not keep the font as " + target.getName());
+                    }
+                } catch (IOException failure) {
+                    putBack(setAside);
+                    throw failure;
                 }
-                if (target.exists() && !target.delete()) {
-                    throw new IOException("Could not replace " + target.getName());
-                }
-                if (!file.renameTo(target)) {
-                    throw new IOException("Could not keep the font as " + target.getName());
+                for (File aside : setAside) {
+                    if (!moves.delete(aside)) {
+                        Logger.printDebug(() -> "Could not delete the earlier font " + aside.getName() + " yet");
+                    }
                 }
                 forget();
             }
@@ -102,6 +125,25 @@ public final class ImportedFont {
             }
         }
     }
+
+    /** The file moves a replacement makes, one at a time. */
+    interface Moves {
+        boolean rename(File from, File to);
+
+        boolean delete(File file);
+    }
+
+    static final Moves FILES = new Moves() {
+        @Override public boolean rename(File from, File to) {
+            return from.renameTo(to);
+        }
+
+        @Override public boolean delete(File file) {
+            return file.delete();
+        }
+    };
+    /** {@link #FILES}, except in tests that fail or stop a replacement at a chosen move. */
+    static volatile Moves moves = FILES;
 
     private static final Object LOCK = new Object();
     /** Whether {@link #kept} holds this process's answer, a face or null. */
@@ -138,8 +180,11 @@ public final class ImportedFont {
 
     /** The imported font's file name, or null when there is none. */
     public static String name(Context context) {
-        File file = context == null ? null : storedFile(context);
-        return file == null ? null : file.getName();
+        if (context == null) return null;
+        synchronized (LOCK) {
+            File file = storedFile(context);
+            return file == null ? null : file.getName();
+        }
     }
 
     /**
@@ -174,7 +219,13 @@ public final class ImportedFont {
     public static boolean remove(Context context) {
         synchronized (LOCK) {
             boolean gone = true;
-            for (File file : fontFiles(directory(context))) gone &= file.delete();
+            File directory = directory(context);
+            // A font set aside by a cut-short replacement goes first, or the next look would put it
+            // back. One that won't go keeps the font in use where it is, so Remove fails as a whole.
+            for (File file : setAside(directory)) gone &= moves.delete(file);
+            if (gone) {
+                for (File file : fontFiles(directory)) gone &= moves.delete(file);
+            }
             forget();
             return gone;
         }
@@ -192,17 +243,50 @@ public final class ImportedFont {
         return new File(context.getFilesDir(), DIRECTORY);
     }
 
-    /** The imported font, the newest if a crash ever left two. */
+    /** The imported font, the newest if a crash ever left two. Called holding {@link #LOCK}. */
     private static File storedFile(Context context) {
+        File directory = directory(context);
+        recover(directory);
         File newest = null;
-        for (File file : fontFiles(directory(context))) {
+        for (File file : fontFiles(directory)) {
             if (newest == null || file.lastModified() > newest.lastModified()) newest = file;
         }
         return newest;
     }
 
+    /**
+     * Settles a replacement the process died in. With a font in place, the one set aside for it
+     * is deleted; with none, the set-aside font is put back. Called holding {@link #LOCK}.
+     */
+    static void recover(File directory) {
+        File[] aside = setAside(directory);
+        if (aside.length == 0) return;
+        if (fontFiles(directory).length == 0) {
+            putBack(Arrays.asList(aside));
+            return;
+        }
+        for (File file : aside) {
+            if (!moves.delete(file)) Logger.printDebug(() -> "Could not delete the earlier font " + file.getName());
+        }
+    }
+
+    /** Moves fonts set aside back under their own names. */
+    private static void putBack(List<File> aside) {
+        for (File file : aside) {
+            File back = new File(file.getParentFile(), file.getName().substring(PREVIOUS.length()));
+            if (!moves.rename(file, back)) {
+                Logger.printInfo(() -> "Could not put the earlier font " + back.getName() + " back yet");
+            }
+        }
+    }
+
     private static File[] fontFiles(File directory) {
         File[] files = directory.listFiles(file -> file.isFile() && !file.getName().startsWith("."));
+        return files == null ? new File[0] : files;
+    }
+
+    private static File[] setAside(File directory) {
+        File[] files = directory.listFiles(file -> file.isFile() && file.getName().startsWith(PREVIOUS));
         return files == null ? new File[0] : files;
     }
 
