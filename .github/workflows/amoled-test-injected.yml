@@ -100,7 +100,7 @@ jobs:
           fi
           echo "SIGNING_ALIAS=$FINAL_ALIAS" >> $GITHUB_ENV
 
-      - name: Prepare bundles (GitLab)
+      - name: Prepare bundles (GitLab + kveld9)
         run: |
           mkdir -p bundles nai64-meta
           cp patches/build/release/patches-${{ env.VERSION }}.mpp bundles/hushfeed.mpp
@@ -108,15 +108,17 @@ jobs:
           curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
           NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
           NAI64_VER=$(jq -r '.version // "unknown"' nai64-meta/bundle.json)
-          
           if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
-            echo "❌ Could not find Nai64 download URL"
+            echo "Could not find Nai64 download URL"
             exit 1
           fi
-          
           curl -L -o bundles/nai64.mpp "$NAI64_URL"
           echo "NAI64_VERSION=$NAI64_VER" >> $GITHUB_ENV
-          echo "✅ Nai64 bundle downloaded (version $NAI64_VER)"
+          
+          KVELD9_URL=$(curl -sL "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-bundle.json" | jq -r '.download_url')
+          curl -L -o bundles/kveld9.mpp "$KVELD9_URL"
+          curl -sL -o build/hosts-blocklist.txt "https://hagezi-mirror.dnsbunker.org/hosts/native.tiktok.extended.txt"
+          echo "kveld9 bundle ready; hosts blocklist: $(wc -l < build/hosts-blocklist.txt) rules"
 
       - name: Download base APK
         env:
@@ -129,13 +131,13 @@ jobs:
 
       - name: Generate and configure options
         run: |
-          java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -o build/options.json
+          java -jar build/cli.jar options-create -p bundles/hushfeed.mpp -p bundles/nai64.mpp -p bundles/kveld9.mpp -o build/options.json
           python3 configure_options.py
 
       - name: Patch TikTok
         run: |
           java -jar build/cli.jar patch \
-            -p bundles/hushfeed.mpp -p bundles/nai64.mpp \
+            -p bundles/hushfeed.mpp -p bundles/nai64.mpp -p bundles/kveld9.mpp \
             --options-file build/options.json --force \
             --keystore signing/keystore.bks \
             --keystore-password "${{ secrets.KEYSTORE_PASSWORD }}" \
