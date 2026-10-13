@@ -9,8 +9,7 @@
 # We disable these Hushfeed patches so Nai64 can cleanly apply the 
 # Netherlands profile without double-hooking the same Android methods.
 hushfeed_disabled:
-  - "SIM spoof"
-  - "Region spoof"
+  
 
 # ==========================================
 # HUSHFEED OPTIONS
@@ -75,7 +74,7 @@ patches:
   - name: "Spoof Locale"
     enabled: true
     options:
-      spoofLocaleTag: "en-NL"
+      spoofLocaleTag: "en-US"
 
   - name: "Spoof SIM Country"
     enabled: true
@@ -116,11 +115,6 @@ patches:
       networkOperatorName: "KPN"
 
   # --- Device Privacy (No Hardware Spoofing to avoid bans) ---
-  - name: "Spoof Android ID"
-    enabled: true
-    options:
-      spoofAndroidIdValue: "a1b2c3d4e5f67890"
-
   - name: "Hide Personal Data"
     enabled: true
     options:
