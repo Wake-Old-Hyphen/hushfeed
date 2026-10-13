@@ -3,20 +3,44 @@
 # is disabled below so Hushfeed owns that surface.
 # Anything not listed here is disabled by default anyway.
 
+# ==========================================
+# HUSHFEED CONFLICT RESOLUTION
+# ==========================================
+# We disable these Hushfeed patches so Nai64 can cleanly apply the 
+# Netherlands profile without double-hooking the same Android methods.
+hushfeed_disabled:
+  - "SIM spoof"
+  - "Region spoof"
+
+# ==========================================
+# HUSHFEED OPTIONS
+# ==========================================
+hushfeed_options:
+  - name: "Remove unused language packs"
+    options:
+      languagesToKeep: "en"
+
+# ==========================================
+# NAI64 PATCHES
+# ==========================================
 patches:
-  # ============ ENABLED: surfaces Hushfeed does NOT cover ============
+  # --- Core Privacy & Anti-Tracking ---
   - name: "Disable Root Checks"
     enabled: true
 
-  - name: "Spoof SIM Serial Number"
+  - name: "Disable Telemetry"
     enabled: true
-    options:
-      simSerial: "8931084206518391742"
+
+  - name: "Disable Firebase Auto-Init"
+    enabled: true
+
+  - name: "Disable Firebase Performance"
+    enabled: true
+
+  - name: "Disable Remote Config Fetch"
+    enabled: true
 
   - name: "Limit Ad Tracking"
-    enabled: true
-
-  - name: "Spoof Tracking IDs"
     enabled: true
 
   - name: "Disable Crash Reporters"
@@ -31,10 +55,52 @@ patches:
   - name: "Spoof Play Store Install Source"
     enabled: true
 
+  - name: "Bypass VPN Detection"
+    enabled: true
+
+  - name: "Hide Roaming Status"
+    enabled: true
+
+  # --- Netherlands Geographic & Network Profile ---
+  - name: "Fake Auto Time Zone"
+    enabled: true
+    options:
+      autoTimeZone: true
+
+  - name: "Spoof Time Zone"
+    enabled: true
+    options:
+      timeZoneId: "Europe/Amsterdam"
+
+  - name: "Spoof Locale"
+    enabled: true
+    options:
+      spoofLocaleTag: "en-NL"
+
+  - name: "Spoof SIM Country"
+    enabled: true
+    options:
+      spoofSimCountryIso: "nl"
+
+  - name: "Spoof SIM Operator"
+    enabled: true
+    options:
+      spoofSimOperatorMccMnc: "20408"
+
+  - name: "Spoof SIM Operator Name"
+    enabled: true
+    options:
+      spoofSimOperatorName: "KPN"
+
+  - name: "Spoof SIM Serial Number"
+    enabled: true
+    options:
+      simSerial: "8931081234567890123"
+
   - name: "Spoof Subscriber ID"
     enabled: true
     options:
-      subscriberId: "204081234567890"
+      subscriberId: "20408123456790"
 
   - name: "Spoof Phone Number"
     enabled: true
@@ -44,34 +110,45 @@ patches:
   - name: "Spoof Voice Mail"
     enabled: true
 
-  - name: "Hide Roaming Status"
-    enabled: true
-
-  # --- NEW: Time Zone Patches ---
-  - name: "Fake Auto Time Zone"
+  - name: "Spoof Network Operator Name"
     enabled: true
     options:
-      Enable auto time zone: true
+      networkOperatorName: "KPN"
 
-  - name: "Spoof Time Zone"
+  # --- Device Privacy (No Hardware Spoofing to avoid bans) ---
+  - name: "Spoof Android ID"
     enabled: true
     options:
-      Time zone ID: "Europe/Amsterdam"
-  # --------------------------------
+      spoofAndroidIdValue: "a1b2c3d4e5f67890"
 
-  - name: "Disable Firebase Auto-Init"
+  - name: "Hide Personal Data"
+    enabled: true
+    options:
+      hideContactsData: true
+      hideCallLogData: true
+      hideSmsData: true
+      hideCalendarData: true
+      hidePhotosData: true
+
+  - name: "Hide Running Processes"
     enabled: true
 
-  - name: "Disable Firebase Performance"
+  - name: "Hide Storage Volumes"
     enabled: true
 
-  - name: "Disable Remote Config Fetch"
+  - name: "Hide USB Devices"
     enabled: true
 
-  - name: "Bypass VPN Detection"
+  - name: "Hide Input Devices"
     enabled: true
 
-  # ============ DISABLED: Hushfeed owns these surfaces ============
+  - name: "Hide Wallpaper"
+    enabled: true
+
+  - name: "Hide Hardware Address"
+    enabled: true
+
+  # --- Explicitly Disabled (Handled by Hushfeed or High Risk) ---
   - name: "Empty Clipboard Report"
     enabled: false
     note: "Hushfeed Device privacy guard owns clipboard"
@@ -81,24 +158,100 @@ patches:
   - name: "Hide Clipboard Description"
     enabled: false
     note: "Hushfeed Device privacy guard owns clipboard"
-  - name: "Spoof SIM Country"
-    enabled: false
-    note: "Hushfeed SIM spoof owns telephony identity"
-  - name: "Spoof SIM Operator"
-    enabled: false
-    note: "Hushfeed SIM spoof owns telephony identity"
-  - name: "Spoof SIM Operator Name"
-    enabled: false
-    note: "Hushfeed SIM spoof owns telephony identity"
-  # "Spoof Time Zone" removed from disabled list since you enabled it above.
-  # Note: If Hushfeed's "Region spoof" conflicts with this, the patch step log 
-  # will tell us, and we can disable it again.
-  - name: "Spoof Locale"
-    enabled: false
-    note: "Hushfeed Region spoof owns locale/timezone"
   - name: "Spoof Last Known Location"
     enabled: false
     note: "Hushfeed Location access governor owns location"
-  - name: "Disable Telemetry"
+  - name: "Spoof Fixed Location"
     enabled: false
-    note: "Hushfeed Disable telemetry owns AppLog/AppsFlyer/Firebase screens"
+    note: "Hushfeed Location access governor owns location"
+  - name: "Spoof CPU Architecture"
+    enabled: false
+    note: "High risk: breaks native video decoding libraries"
+  - name: "Spoof Device Model"
+    enabled: false
+    note: "High risk: hardware spoofing triggers anti-fraud"
+  - name: "Spoof Build Fingerprint"
+    enabled: false
+    note: "High risk: hardware spoofing triggers anti-fraud"
+
+# ==========================================
+# KVELD9 UNIVERSAL PATCHES (allowlist: only these run;
+# ALL kveld9 TikTok-specific patches stay disabled)
+# ==========================================
+kveld9_patches:
+  - name: "APK Junk Cleaner"
+    enabled: true
+
+  - name: "Background Sync & JobScheduler Purge"
+    enabled: true
+    options:
+      stripBootPermission: true
+      disableBootReceivers: true
+      disableWorkManager: false     # ← FIXED: kept true to prevent DataTransport crash
+      stripWakeLock: false          # keeps playback wakelocks alive
+
+  - name: "DPI Resource Slimmer"
+    enabled: true
+    options:
+      dpis: "xxhdpi"
+      stripSmartwatch: true
+      stripTelevision: true
+      stripOtherFormFactors: true
+
+  - name: "Locale Resource Slimmer"
+    enabled: true
+    options:
+      locales: "en"
+
+  - name: "PNG Asset Optimizer"
+    enabled: true
+
+  - name: "Universal Hosts Blocker"
+    enabled: true
+    options:
+      hostsFile: "build/hosts-blocklist.txt"   # fetched by the workflow at build time
+      sinkIp: "0.0.0.0"
+      matchSubdomains: true
+
+  - name: "Universal Native Binary Trimmer"
+    enabled: true
+    options:
+      trimCrashReporters: true
+      trimDebugProfilers: true
+
+  - name: "Universal Privacy Permissions Stripper"
+    enabled: true
+    options:
+      stripNotifications: true
+      stripCamera: true
+      stripMicrophone: true
+      stripMediaAndStorage: false   # keeps save-to-gallery working
+      stripLocation: true
+      stripContacts: true
+      stripCalendar: true
+      stripNearbyDevices: true
+      stripSensors: true
+
+  - name: "Universal Telemetry Neutralizer"
+    enabled: true
+    options:
+      revokePermissions: true
+      disableProviders: true
+      disableServices: true
+      disableReceivers: true
+      injectOptOutFlags: true
+      disableFirebaseInit: false        # Nai64 owns Firebase auto-init
+      disablePushServices: false        # keeps notifications working
+      disableGoogleAnalytics: true
+      disableMetaAnalytics: true
+      disableCrashDetectors: true
+      disableDeviceIdProviders: false   # login-safety: off
+      disableMlKit: false               # scanner-safety: off
+      disableAdStartupInitializers: false
+
+  - name: "Universal WebP Asset Optimizer"
+    enabled: true
+    options:
+      stripExif: true
+      stripXmp: true
+      stripIcc: false               # preserves color fidelity
