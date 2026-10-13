@@ -250,8 +250,8 @@ private fun BytecodePatchContext.settingsIconResourceId(): Int {
 val settingsPatch = bytecodePatch(
     name = "Settings",
     description = "Adds the Hushfeed settings page to TikTok, at the top of Settings and " +
-        "privacy. That's where you turn Hushfeed's features on and off. Works as soon as you " +
-        "patch it in, with no switch.",
+        "privacy. Pressing and holding For You at the top of the feed opens it too. That's where " +
+        "you turn Hushfeed's features on and off. Works as soon as you patch it in, with no switch.",
     default = true,
 ) {
     category("Settings")
@@ -632,6 +632,9 @@ val settingsPatch = bytecodePatch(
         }
 
         resolveOpenDebugFunction2Method().openMorpheSettingsAtStart("0")
+        // A long press on For You, TikTok's nearest thing to a logo on the feed, opens the page
+        // too. A build where it can't be found keeps everything above and leaves For You alone.
+        hookForYouLongPress()
         registerForBuildDetails("enableSettings")
     }
 }

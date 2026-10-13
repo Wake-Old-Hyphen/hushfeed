@@ -214,6 +214,8 @@ public class FeedScreenCoverageTest {
         put("double_tap_action", YES, UNCHECKED, NONE);
         put("swipe_left_action", YES, YES, NONE);
         put("long_press_action", YES, YES, NONE);
+        // Only the profile-opened video's compact menu changes; For You already has the full menu.
+        put("long_press_full_menu_on_profiles", NONE, YES, NONE);
         put("edge_seek", YES, YES, NONE);
         put("edge_seek_seconds", YES, YES, NONE);
         put("rail_hold_comment", YES, YES, NONE);

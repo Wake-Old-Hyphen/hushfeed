@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed ayarlarının görünüşü yeniləndi. Ana səhifədəki keçidlər bir qrupda toplandı və çəhrayı ikonlar əlavə olundu. Küncləri yuvarlaq panellər və oval açarlar Feature Gate Lab və gizlədilmiş yaradıcıların siyahısında da var. Böyük mətn və işıqlı tema oxunaqlı qalır.
+
+* **TikTok:** Profil menyusunun əhatə yoxlaması, yüksək nömrəli registrlərlə sınaq və imzalama sınaq layihəsi düzəldildi. İmzalama sınağı D8 seçimlərini istənilən ardıcıllıqla qəbul edir.
+
+* **TikTok:** Lentin yuxarısındakı Sənin üçün yazısına uzun basmaq Hushfeed ayarlarını açır. Qısa toxunuş əvvəlki kimi işləyir və qısayol Hushfeed durdurulanda da işləyir.
+
 * **TikTok:** Endirmələrdə Video endirmə keyfiyyəti altında yeni açar var: Hər saxlamada keyfiyyəti soruşun. Açıq olanda Endirmə videonun hansı keyfiyyətlərdə olduğunu TikTok-un hər biri üçün verdiyi ölçü ilə göstərir və seçdiyinizi saxlayır. Avtomatik, yəni TikTok-un öz faylı, həmişə birinci gəlir. Qurduğunuz keyfiyyət növbəti saxlama üçün olduğu kimi qalır.
 
 * **TikTok:** Uzun basma sətrinin yanındakı yeni Yaradıcının videolarında tam uzun basma menyusu açarı ilə kiminsə profilindən açdığınız videoya uzun basmaq kiçik paylaşma vərəqi əvəzinə Sənin üçün bölməsindəki eyni tam menyunu açır (#120).

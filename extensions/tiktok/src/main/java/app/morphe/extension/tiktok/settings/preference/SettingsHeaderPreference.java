@@ -48,7 +48,7 @@ public final class SettingsHeaderPreference extends Preference {
         SettingsHeaderPreference preference = new SettingsHeaderPreference(
                 context,
                 Kind.MASTER,
-                "Settings",
+                "Make it yours.",
                 null,
                 backAction
         );
@@ -110,19 +110,29 @@ public final class SettingsHeaderPreference extends Preference {
                             SettingsUi.background())));
             statusView.setOnClickListener(view -> statusAction.run());
         }
-        if (context.getResources().getConfiguration().fontScale > 1.3f) {
+        if (context.getResources().getConfiguration().fontScale >= 1.3f) {
             // Keep the product name whole when large text makes a single toolbar too narrow.
             View brand = toolbar.getChildAt(1);
             toolbar.removeView(brand);
             LinearLayout state = new LinearLayout(context);
             state.setOrientation(LinearLayout.VERTICAL);
-            state.setGravity(Gravity.END);
+            state.setGravity(Gravity.START);
             state.addView(brand, new LinearLayout.LayoutParams(-1, -2));
-            state.addView(statusView, new LinearLayout.LayoutParams(-2, -2));
-            toolbar.addView(state, new LinearLayout.LayoutParams(0, -2, 1));
+            LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(-2, -2);
+            statusParams.gravity = Gravity.END;
+            state.addView(statusView, statusParams);
+            LinearLayout.LayoutParams stateParams = new LinearLayout.LayoutParams(0, -2, 1);
+            stateParams.setMarginStart(SettingsUi.dp(context, 8));
+            toolbar.addView(state, stateParams);
         } else {
             toolbar.addView(statusView, new LinearLayout.LayoutParams(-2, -2));
         }
+        TextView subtitle = SettingsUi.text(context, L10n.t(context, "Your feed. Your rules."),
+                SettingsUi.TEXT_BODY, SettingsUi.textSecondary(), 0);
+        subtitle.setTag("hushfeed_home_subtitle");
+        LinearLayout.LayoutParams subtitleParams = new LinearLayout.LayoutParams(-1, -2);
+        subtitleParams.topMargin = SettingsUi.dp(context, 6);
+        header.addView(subtitle, subtitleParams);
         refreshStatus();
         return header;
     }
@@ -162,12 +172,8 @@ public final class SettingsHeaderPreference extends Preference {
 
     /**
      * Shared app-owned heading used by settings and the Lab. Parent supplies the 16 dp gutter.
-     *
-     * <p>The back control sits flush with the header's start edge, and everything else keeps an
-     * 8 dp inset of its own. That puts the arrow where the 8 dp gutter wants it and still leaves the
-     * whole 48 dp control inside the header. It used to get there with a negative 8 dp margin
-     * inside the inset, which the toolbar clipped: the S25's accessibility tree read the control
-     * as 40 by 48 dp, and the clipped strip took no touches.
+     * The extra 8 dp inset keeps the heading and navigation aligned while the whole 48 dp Back
+     * control remains inside its parent, without the negative margin that once clipped it.
      */
     public static LinearLayout createHeader(Context context, String title, Runnable onBack) {
         return createHeader(context, title, onBack, false);
@@ -177,8 +183,8 @@ public final class SettingsHeaderPreference extends Preference {
         LinearLayout header = new LinearLayout(context);
         header.setTag("hushfeed_page_header");
         header.setOrientation(LinearLayout.VERTICAL);
-        header.setPaddingRelative(0, SettingsUi.dp(context, compact ? 24 : 8), SettingsUi.dp(context, compact ? 0 : 8),
-                SettingsUi.dp(context, compact ? 16 : 0));
+        header.setPaddingRelative(SettingsUi.dp(context, 8), SettingsUi.dp(context, 8),
+                SettingsUi.dp(context, 8), SettingsUi.dp(context, compact ? 12 : 0));
         header.setBackgroundColor(SettingsUi.background());
         LinearLayout toolbar = new LinearLayout(context);
         toolbar.setTag("hushfeed_toolbar");
@@ -193,14 +199,14 @@ public final class SettingsHeaderPreference extends Preference {
         // The same accent-at-15%-alpha the grouped rows use. divider() is 1.3:1 against the
         // dark surface, which is no press feedback at all. The ring under it is what a reader
         // moving by keyboard or d-pad sees: the ripple's own focus tint is fainter still.
-        back.setBackground(new android.graphics.drawable.RippleDrawable(
-                android.content.res.ColorStateList.valueOf(SettingsUi.rippleTint()),
-                SettingsUi.focusRing(context, SettingsUi.RADIUS_CONTROL),
-                SettingsUi.roundedSurface(context, SettingsUi.RADIUS_CONTROL, false)));
+        android.graphics.drawable.LayerDrawable backSurface = new android.graphics.drawable.LayerDrawable(
+                new Drawable[]{SettingsUi.borderedSurface(context, SettingsUi.RADIUS_PILL, false),
+                        SettingsUi.focusRing(context, SettingsUi.RADIUS_PILL)});
+        back.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL, backSurface));
         toolbar.addView(back, new LinearLayout.LayoutParams(SettingsUi.dp(context, 48), SettingsUi.dp(context, 48)));
         TextView brand = SettingsUi.text(context, BRAND_MARK, SettingsUi.TEXT_CAPTION, SettingsUi.accent(), 1);
         brand.setLetterSpacing(0.12f);
-        if (compact) brand.setGravity(Gravity.END);
+        brand.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams brandParams = new LinearLayout.LayoutParams(0, -2, 1);
         brandParams.setMarginStart(SettingsUi.dp(context, 8));
         toolbar.addView(brand, brandParams);
@@ -212,8 +218,7 @@ public final class SettingsHeaderPreference extends Preference {
         heading.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_NONE);
         SettingsUi.markHeading(heading);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(-1, -2);
-        titleParams.topMargin = SettingsUi.dp(context, compact ? 12 : 24);
-        titleParams.setMarginStart(SettingsUi.dp(context, compact ? 0 : 8));
+        titleParams.topMargin = SettingsUi.dp(context, 12);
         header.addView(heading, titleParams);
         return header;
     }
@@ -222,8 +227,8 @@ public final class SettingsHeaderPreference extends Preference {
         Context context = getContext();
         TextView caption = SettingsUi.text(context, detail, SettingsUi.TEXT_BODY, SettingsUi.textSecondary(), 0);
         caption.setLineSpacing(SettingsUi.dp(context, 3), 1f);
-        caption.setPadding(SettingsUi.dp(context, 8), SettingsUi.dp(context, 12),
-                SettingsUi.dp(context, 8), SettingsUi.dp(context, 32));
+        caption.setPadding(SettingsUi.dp(context, 8), SettingsUi.dp(context, 6),
+                SettingsUi.dp(context, 8), SettingsUi.dp(context, 24));
         caption.setBackgroundColor(SettingsUi.background());
         return caption;
     }
@@ -231,15 +236,13 @@ public final class SettingsHeaderPreference extends Preference {
     /**
      * How large the page title may be at the reader's text scale.
      *
-     * <p>40sp against a 2x scale is 80sp of page title: "Kommentare und Uebersetzung" took five
-     * lines and 85% of the screen, with the first card of the page below the fold. The title is
-     * allowed to grow to about a third again of its own size and no further, so an ordinary
-     * scale is unchanged and a large one still leaves the page underneath it.
+     * <p>The 34sp display title grows through the first large-text preset, then adapts to keep
+     * the page below it within reach. The 20sp floor keeps it readable at larger text scales.
      */
     public static int headingSizeSp(Context context) {
         float scale = context.getResources().getConfiguration().fontScale;
-        if (scale <= 1.3f) return 40;
-        return Math.max(24, Math.round(40 * 1.3f / scale));
+        if (scale <= 1.3f) return 34;
+        return Math.max(20, Math.round(34 * 1.3f / scale));
     }
 
     /**

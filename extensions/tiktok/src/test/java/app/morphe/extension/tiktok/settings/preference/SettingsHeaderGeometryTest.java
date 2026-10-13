@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config;
  *
  * <p>It used to sit 8 dp outside the toolbar on a negative margin, which the toolbar clipped, so
  * the S25's accessibility tree read it as 40 by 48 dp and the clipped strip took no touches. The
- * arrow and the title stay where they were: flush with the header's start edge and 8 dp in.
+ * arrow and title share an 8 dp inset, with no part of the target outside its parent.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34, qualifiers = "w360dp-h800dp-mdpi")
@@ -80,7 +80,7 @@ public class SettingsHeaderGeometryTest {
             Activity activity = owner.get();
             Utils.setContext(activity);
             FrameLayout page = new FrameLayout(activity);
-            int gutter = SettingsUi.dp(activity, 24);
+            int gutter = SettingsUi.dp(activity, 16);
             page.setPadding(gutter, 0, gutter, 0);
             boolean[] opened = {false};
             View header = SettingsHeaderPreference.master(activity, () -> { }, () -> opened[0] = true)
@@ -148,7 +148,7 @@ public class SettingsHeaderGeometryTest {
             Activity activity = owner.get();
             Utils.setContext(activity);
             FrameLayout page = new FrameLayout(activity);
-            int gutter = SettingsUi.dp(activity, 24);
+            int gutter = SettingsUi.dp(activity, 16);
             page.setPadding(gutter, 0, gutter, 0);
             boolean[] opened = {false};
             View header = SettingsHeaderPreference.master(activity, () -> { }, () -> opened[0] = true)
@@ -162,13 +162,16 @@ public class SettingsHeaderGeometryTest {
             root.layout(0, 0, root.getMeasuredWidth(), root.getMeasuredHeight());
 
             TextView title = header.findViewWithTag("hushfeed_page_title");
-            assertEquals("Settings", title.getText().toString());
+            assertEquals("Make it yours.", title.getText().toString());
             assertEquals("the compact title wraps on a standard phone", 1, title.getLineCount());
-            float expectedSp = activity.getResources().getConfiguration().fontScale > 1.3f ? 26f : 40f;
+            float expectedSp = activity.getResources().getConfiguration().fontScale > 1.3f ? 22f : 34f;
             assertEquals("the home title lost its display size or large-text cap",
                     android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP,
                             expectedSp, activity.getResources().getDisplayMetrics()),
                     title.getTextSize(), 0.01f);
+            TextView subtitle = header.findViewWithTag("hushfeed_home_subtitle");
+            assertNotNull("the home introduction is missing", subtitle);
+            assertEquals("Your feed. Your rules.", subtitle.getText().toString());
             ViewGroup toolbar = header.findViewWithTag("hushfeed_toolbar");
             View status = header.findViewWithTag("hushfeed_compact_status");
             int target = SettingsUi.dp(activity, 48);
@@ -235,16 +238,16 @@ public class SettingsHeaderGeometryTest {
                             + bounds.height() + " px, under " + target,
                     bounds.width() >= target && bounds.height() >= target);
 
-            // Where the arrow and the title were: the control flush with the header's start
-            // edge, the title 8 dp in from it.
+            // The circular Back control and display title share the same inset.
             View title = header.findViewWithTag("hushfeed_page_title");
             int inset = SettingsUi.dp(activity, 8);
             if (direction == View.LAYOUT_DIRECTION_RTL) {
                 assertEquals("the Back control left the header's start edge",
-                        header.getWidth(), toolbar.getLeft() + back.getRight());
+                        header.getWidth() - inset, toolbar.getLeft() + back.getRight());
                 assertEquals("the title moved", header.getWidth() - inset, title.getRight());
             } else {
-                assertEquals("the Back control left the header's start edge", 0, toolbar.getLeft() + back.getLeft());
+                assertEquals("the Back control left the header's start edge", inset,
+                        toolbar.getLeft() + back.getLeft());
                 assertEquals("the title moved", inset, title.getLeft());
             }
         }

@@ -69,15 +69,17 @@ public class OverlayChipTest {
     }
 
     /**
-     * No radius outside the scale, and no pill.
+     * The shared overlay scale has no pill.
      *
-     * <p>Read off the constants rather than written out again here, so adding a step to the scale
-     * is one edit and removing one cannot leave this passing against a value nothing uses.
+     * <p>Native settings panels and tabs use their own larger radii. Read the original shared
+     * steps by name so those separate settings tokens do not change the video overlay contract.
      */
     @Test public void everyRadiusOnTheScaleIsAStepAndNoneOfThemIsAPill() throws Exception {
         List<Integer> scale = new ArrayList<>();
-        for (Field field : SettingsUi.class.getDeclaredFields()) {
-            if (!field.getName().startsWith("RADIUS_")) continue;
+        String[] overlaySteps = {"RADIUS_SQUARE", "RADIUS_BADGE", "RADIUS_CONTROL",
+                "RADIUS_FIELD", "RADIUS_CARD", "RADIUS_OVERLAY"};
+        for (String step : overlaySteps) {
+            Field field = SettingsUi.class.getDeclaredField(step);
             assertTrue(field.getName() + " is not a constant", Modifier.isStatic(field.getModifiers()));
             field.setAccessible(true);
             scale.add(field.getInt(null));
@@ -86,8 +88,8 @@ public class OverlayChipTest {
         assertEquals("the radius scale lost a step", 6, scale.size());
         for (int radius : scale) {
             assertTrue("a radius on the scale is negative: " + radius, radius >= 0);
-            // 16dp is already larger than half of the 48dp control these sit behind, so anything
-            // at or above it rounds a control into a pill or a disc.
+            // The shared overlay scale deliberately stays below 16dp. The larger settings
+            // panel and pill radii belong to controls outside the video overlay.
             assertTrue("a radius on the scale is large enough to make a pill: " + radius,
                     radius < 16);
         }

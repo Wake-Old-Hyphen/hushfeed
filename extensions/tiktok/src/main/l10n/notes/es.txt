@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Los ajustes de Hushfeed tienen un nuevo aspecto, con una página de inicio agrupada e iconos rosas. Los paneles redondeados y los interruptores ovalados también llegan a Feature Gate Lab y al editor de creadores ocultos. El texto grande y el modo claro siguen siendo legibles.
+
+* **TikTok:** Vuelven a funcionar la comprobación de cobertura del menú del perfil, el caso de prueba con registros altos y el proyecto de prueba de firma. La prueba de firma también acepta las opciones de D8 en cualquier orden.
+
+* **TikTok:** Mantén pulsado Para ti en la parte superior del feed para abrir los ajustes de Hushfeed. Un toque rápido sigue funcionando como siempre, y el atajo funciona aunque Hushfeed esté en pausa.
+
 * **TikTok:** Descargas tiene un interruptor nuevo debajo de Calidad de descarga del vídeo: Preguntar la calidad en cada descarga. Si está activado, Descargar muestra las calidades en las que está el vídeo, con el tamaño que TikTok indica para cada una, y guarda la que elijas. Automático, el archivo de TikTok, siempre aparece primero. La calidad que tengas puesta se mantiene para la próxima descarga.
 
 * **TikTok:** Un nuevo interruptor junto a Pulsación larga, Menú completo de pulsación larga en los videos de un creador, hace que una pulsación larga en un video que abriste desde el perfil de alguien abra el mismo menú completo que en Para ti en lugar del panel de compartir pequeño (#120).

@@ -4,6 +4,12 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Hushfeed settings has a new look throughout. The home page brings all eight destinations into one group, with pink icons and a clearer search field. Pages share rounded panels, quieter section headings and pill switches. Feature Gate Lab and the creator editor follow the same style, with large text and light mode kept readable.
+
+* **Development:** Restored the profile-menu coverage check, the high-register hook fixture and the signing test project. The signing fixture also accepts D8 options in any order.
+
+* **TikTok:** Press and hold For You at the top of the feed to open Hushfeed settings. TikTok's feed has no logo to hold, so For You is the shortcut. A quick tap on For You still does what it always did, and the long press works while Hushfeed is paused.
+
 * **TikTok:** Downloads has a new switch under Video download quality, Ask for the quality on each save. With it on, Download lists the qualities the video comes in, with the size TikTok gives for each, and saves the one you pick. Automatic, TikTok's own file, is always first. The quality you set stays as it is for the next save.
 
 * **TikTok:** A new switch next to Long press, Full long-press menu on a creator's videos, makes a long press on a video you opened from someone's profile open the same full menu as on For You instead of the small share sheet (#120).

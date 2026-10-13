@@ -1,8 +1,8 @@
 /**
  * Which capture each tracked picture in assets/settings comes from.
  *
- * <p>The suite writes about ninety images under the capture directory; forty-four of them are
- * published, under assets/settings and at the top of assets/ both. The names do not line up
+ * <p>The suite writes settings and overlay images under the capture directory. The selected
+ * captures are published under assets/settings and at the top of assets/. The names do not line up
  * on their own: the light twins are a `-light` suffix here
  * and a `pages/light` directory there, the dialogs are their own tree, Feed navigation publishes
  * the scrolled-to-the-end capture, and the gate recorder is at the top level with a hyphen where
@@ -64,6 +64,17 @@ val trackedScreenshots = mapOf(
     "settings/search.png" to "pages/dark/search.png",
     "settings/settings-error.png" to "settings-initialization-error.png",
     "settings/session-reminder.png" to "session-reminder.png",
+    "settings/hub-feed_layout.png" to "pages/dark/hub-feed_layout.png",
+    "settings/hub-feed_layout-light.png" to "pages/light/hub-feed_layout.png",
+    "settings/hub-comments_inbox.png" to "pages/dark/hub-comments_inbox.png",
+    "settings/hub-comments_inbox-light.png" to "pages/light/hub-comments_inbox.png",
+    "settings/hub-downloads_sharing.png" to "pages/dark/hub-downloads_sharing.png",
+    "settings/hub-downloads_sharing-light.png" to "pages/light/hub-downloads_sharing.png",
+    "settings/hub-app_advanced.png" to "pages/dark/hub-app_advanced.png",
+    "settings/hub-app_advanced-light.png" to "pages/light/hub-app_advanced.png",
+    "settings/hub-about.png" to "pages/dark/hub-about.png",
+    "settings/hub-about-light.png" to "pages/light/hub-about.png",
+    "settings/settings-light.png" to "pages/light/settings-quiet-index.png",
     "settings/settings.png" to "pages/dark/settings.png",
     "settings/share.png" to "pages/dark/share.png",
     "settings/two-times-text-light.png" to "pages/light/two-times-text.png",

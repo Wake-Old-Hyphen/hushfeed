@@ -113,14 +113,14 @@ public final class SettingsStatusPreference extends Preference {
         card.setTag(ROW_TAG);
         card.setOrientation(stack ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
         card.setGravity(stack ? Gravity.NO_GRAVITY : Gravity.CENTER_VERTICAL);
-        card.setMinimumHeight(SettingsUi.dp(context, 84));
+        card.setMinimumHeight(SettingsUi.dp(context, 76));
         card.setPadding(
                 SettingsUi.dp(context, 16),
-                SettingsUi.dp(context, 14),
                 SettingsUi.dp(context, 12),
-                SettingsUi.dp(context, 14));
+                SettingsUi.dp(context, 12),
+                SettingsUi.dp(context, 12));
         GradientDrawable cardBackground = SettingsUi.borderedSurface(
-                context, SettingsUi.RADIUS_CARD, true);
+                context, SettingsUi.RADIUS_SETTINGS_CARD, true);
         if (!HushfeedPause.isPaused() && SettingsUi.isDarkMode()) {
             cardBackground.setColor(SettingsUi.DARK_STATUS_SURFACE);
             cardBackground.setStroke(SettingsUi.dp(context, 1), SettingsUi.DARK_STATUS_BORDER);
@@ -135,7 +135,7 @@ public final class SettingsStatusPreference extends Preference {
         mark.setImageDrawable(HushfeedPause.isPaused() ? new PausedDrawable(context) : new ActiveDrawable(context));
         mark.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         information.addView(mark, new LinearLayout.LayoutParams(
-                SettingsUi.dp(context, 48), SettingsUi.dp(context, 48)));
+                SettingsUi.dp(context, 44), SettingsUi.dp(context, 44)));
 
         LinearLayout labels = new LinearLayout(context);
         labels.setOrientation(LinearLayout.VERTICAL);
@@ -150,8 +150,9 @@ public final class SettingsStatusPreference extends Preference {
         }
 
         TextView title = SettingsUi.text(
-                context, String.valueOf(getTitle()), SettingsUi.TEXT_HEADLINE_SMALL, SettingsUi.textPrimary(),
-                android.graphics.Typeface.BOLD);
+                context, String.valueOf(getTitle()), SettingsUi.TEXT_TITLE, SettingsUi.textPrimary(),
+                android.graphics.Typeface.NORMAL);
+        title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         title.setTag(TITLE_TAG);
         title.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         labels.addView(title, new LinearLayout.LayoutParams(-1, -2));
@@ -164,7 +165,7 @@ public final class SettingsStatusPreference extends Preference {
         labels.addView(summary, new LinearLayout.LayoutParams(-1, -2));
 
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, -2, 1);
-        labelParams.setMarginStart(SettingsUi.dp(context, 14));
+        labelParams.setMarginStart(SettingsUi.dp(context, 12));
         labelParams.setMarginEnd(SettingsUi.dp(context, 8));
         information.addView(labels, labelParams);
 
@@ -186,13 +187,13 @@ public final class SettingsStatusPreference extends Preference {
             action.setPadding(SettingsUi.dp(context, 10), 0, SettingsUi.dp(context, 10), 0);
             SettingsUi.styleTextAction(action, true);
             GradientDrawable actionBackground = SettingsUi.borderedSurface(
-                    context, SettingsUi.RADIUS_CONTROL, false);
+                    context, SettingsUi.RADIUS_SETTINGS_FIELD, false);
             if (!HushfeedPause.isPaused() && SettingsUi.isDarkMode()) {
                 actionBackground.setColor(SettingsUi.DARK_STATUS_SURFACE);
                 actionBackground.setStroke(SettingsUi.dp(context, 1), SettingsUi.accent());
             }
             action.setBackground(SettingsUi.pressAndFocusOver(
-                    context, SettingsUi.RADIUS_CONTROL, actionBackground));
+                    context, SettingsUi.RADIUS_SETTINGS_FIELD, actionBackground));
             action.setOnClickListener(view -> cardAction.run());
             LinearLayout.LayoutParams actionParams = new LinearLayout.LayoutParams(
                     stack ? -1 : -2,
@@ -237,12 +238,12 @@ public final class SettingsStatusPreference extends Preference {
         }
     }
 
-    /** The same disc with two bars: Hushfeed is paused. */
+    /** The same tile with two bars: Hushfeed is paused. */
     private static final class PausedDrawable extends Drawable {
         private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint bar = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        /** The mark's corner, the card radius: the owner's scale has no circles for a backdrop. */
+        /** The status mark keeps tighter corners inside the larger card. */
         private final float corner;
 
         PausedDrawable(Context context) {
@@ -279,7 +280,7 @@ public final class SettingsStatusPreference extends Preference {
         @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
     }
 
-    /** Accent status disc with a high-contrast check. */
+    /** Accent status tile with a high-contrast check. */
     private static final class ActiveDrawable extends Drawable {
         private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint check = new Paint(Paint.ANTI_ALIAS_FLAG);

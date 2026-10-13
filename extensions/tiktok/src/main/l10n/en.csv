@@ -151,6 +151,7 @@ A video you paused stays paused when you come back to the app instead of startin
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.
 AI Self,AI Self
 AI-generated posts,AI-generated posts
+About,About
 About %1$s of storage at this limit,About %1$s of storage at this limit
 About Hushfeed,About Hushfeed
 About overrides,About overrides
@@ -229,6 +230,7 @@ Animated sticker format,Animated sticker format
 App,App
 App & advanced,App & advanced
 App AB,App AB
+App controls,App controls
 App lock,App lock
 AppGallery,AppGallery
 Appearance,Appearance
@@ -373,6 +375,7 @@ Confirm before liking a comment,Confirm before liking a comment
 Confirm before liking a story,Confirm before liking a story
 Continue supported videos from where you stopped when you scroll back to them.,Continue supported videos from where you stopped when you scroll back to them.
 Controls,Controls
+Conversations,Conversations
 Copy,Copy
 Copy a quick report or save the full report as a file.,Copy a quick report or save the full report as a file.
 Copy bio and IDs,Copy bio and IDs
@@ -456,7 +459,6 @@ Current: %1$s,Current: %1$s
 Custom SIM details,Custom SIM details
 Custom value,Custom value
 Custom value…,Custom value…
-Customize,Customize
 Cuts the tracking bits out of links you share.,Cuts the tracking bits out of links you share.
 DM translation preview,DM translation preview
 Daily budget,Daily budget
@@ -958,6 +960,7 @@ Long-press menu on every post,Long-press menu on every post
 Looking for apps,Looking for apps
 Loop a story,Loop a story
 Lowest,Lowest
+Make it yours.,Make it yours.
 "Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country and carrier you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change.","Makes TikTok see the country you pick as your SIM. Your IP address, account history and language don't change, and any one of them can make TikTok keep your current region. Restart TikTok to see the change."
 "Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space.","Makes the heart easier to tap by using the empty space around it. The icon and spacing look the same, and Reply and other buttons keep their own space."
@@ -1310,6 +1313,7 @@ Save a profile picture on a long press,Save a profile picture on a long press
 Save a story from its share sheet,Save a story from its share sheet
 Save a story on a long press,Save a story on a long press
 Save again,Save again
+Save and send,Save and send
 Save as video,Save as video
 Save build details,Save build details
 Save cancelled. Nothing was saved.,Save cancelled. Nothing was saved.
@@ -1448,6 +1452,7 @@ Settings couldn't open,Settings couldn't open
 Settings couldn't refresh completely. Reopen settings and try again.,Settings couldn't refresh completely. Reopen settings and try again.
 Settings restored. Restart TikTok to apply all changes.,Settings restored. Restart TikTok to apply all changes.
 Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.,Settings restored. The Feature Gate Lab rules were for another TikTok version and were left out. Restart TikTok to apply all changes.
+Shape your feed,Shape your feed
 Share,Share
 Share sheet,Share sheet
 Shares range,Shares range
@@ -2031,6 +2036,8 @@ Your TikTok account changed. Choose the file again for this account.,Your TikTok
 Your account changed. Close this list and open it again.,Your account changed. Close this list and open it again.
 Your account changed. Open the count editor again.,Your account changed. Open the count editor again.
 Your current settings already match Calm feed.,Your current settings already match Calm feed.
+Your experience,Your experience
+Your feed. Your rules.,Your feed. Your rules.
 Your filters hid everything TikTok just sent. Most were %1$s.,Your filters hid everything TikTok just sent. Most were %1$s.
 "Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s.","Your filters hid everything TikTok sent, %1$d times in a row. Most were %2$s."
 "Your network proxy was kept, since a backup can't change it","Your network proxy was kept, since a backup can't change it"
@@ -2040,6 +2047,7 @@ Your previous feed setup couldn't be restored. Nothing was changed.,Your previou
 Your previous feed setup is back.,Your previous feed setup is back.
 Your previous feed setup is back. Restart TikTok to apply all changes.,Your previous feed setup is back. Restart TikTok to apply all changes.
 Your seen history changed before the import finished. Choose the file again.,Your seen history changed before the import finished. Choose the file again.
+Your settings,Your settings
 "Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.","Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number."
 "Zero means the way out of the hold is always there. Any other number is how many times a day it works. Once they're used up, the hold stays until the day starts over. Ignored while the budget is locked, which removes the way out.","Zero means the way out of the hold is always there. Any other number is how many times a day it works. Once they're used up, the hold stays until the day starts over. Ignored while the budget is locked, which removes the way out."
 "Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.","Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away."

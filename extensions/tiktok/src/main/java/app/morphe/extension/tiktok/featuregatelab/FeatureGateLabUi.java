@@ -61,13 +61,24 @@ final class FeatureGateLabUi {
         ((TextView) header.findViewWithTag("hushfeed_page_title")).setTextSize(
                 app.morphe.extension.tiktok.settings.preference.SettingsHeaderPreference.headingSizeSp(context));
         if (onMenu != null) {
-            // The list page needs one toolbar, not a brand row plus a display-sized title.
+            // Keep the Lab's brand and title inside one toolbar so the gate list keeps its room.
             TextView heading = header.findViewWithTag("hushfeed_page_title");
             LinearLayout toolbar = header.findViewWithTag("hushfeed_toolbar");
+            TextView brand = (TextView) toolbar.getChildAt(1);
             header.removeView(heading);
-            toolbar.removeViewAt(1);
-            heading.setTextSize(20);
-            toolbar.addView(heading, new LinearLayout.LayoutParams(0, -2, 1f));
+            toolbar.removeView(brand);
+            LinearLayout titles = new LinearLayout(context);
+            titles.setOrientation(LinearLayout.VERTICAL);
+            titles.setGravity(Gravity.CENTER_VERTICAL);
+            if (context.getResources().getConfiguration().fontScale <= 1.3f) {
+                brand.setTextSize(SettingsUi.TEXT_CAPTION);
+                titles.addView(brand, matchWrap());
+            }
+            heading.setTextSize(SettingsUi.TEXT_HEADLINE);
+            titles.addView(heading, matchWrap());
+            LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(0, -2, 1f);
+            titleParams.setMarginStart(dp(context, 12));
+            toolbar.addView(titles, titleParams);
             frame.setPadding(dp(context, 16), 0, dp(context, 16), dp(context, 8));
             View menu = iconButton(context, "icon_ellipsis_horizontal", android.R.drawable.ic_menu_more,
                     L10n.t(context, "More options"), onMenu);
@@ -125,7 +136,7 @@ final class FeatureGateLabUi {
         // The settings pages' press and focus, on the control radius. The platform's borderless
         // ripple drew a circle and had no focus state, so a d-pad or keyboard could land on an
         // icon button and leave nothing on screen to say so.
-        icon.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CONTROL,
+        icon.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
                 new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)));
         icon.setContentDescription(description);
         icon.setFocusable(true);
@@ -175,15 +186,20 @@ final class FeatureGateLabUi {
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setMinimumHeight(dp(context, 56));
         row.setPadding(dp(context, 16), dp(context, 14), dp(context, 16), dp(context, 14));
         // The row answers the tap and takes focus, so it wears the settings press and focus over
         // its card. A plain card showed nothing for either.
-        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CARD,
-                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CARD, false)));
+        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_CARD,
+                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, false)));
         LinearLayout labels = new LinearLayout(context);
         labels.setOrientation(LinearLayout.VERTICAL);
         labels.addView(body(context, title), matchWrap());
-        if (summary != null && !summary.isEmpty()) labels.addView(label(context, summary), matchWrap());
+        if (summary != null && !summary.isEmpty()) {
+            TextView detail = label(context, summary);
+            detail.setPadding(0, dp(context, 4), 0, 0);
+            labels.addView(detail, matchWrap());
+        }
         row.addView(labels, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         // The control draws the state and nothing else: the row answers the tap and the reader.
         control.setClickable(false);
@@ -213,11 +229,34 @@ final class FeatureGateLabUi {
     }
 
     static TextView label(Context context, String text) {
-        return FeatureGateLabUi.text(context, text, 14, SettingsUi.textSecondary(), Typeface.NORMAL);
+        return FeatureGateLabUi.text(context, text, SettingsUi.TEXT_LABEL,
+                SettingsUi.textSecondary(), Typeface.NORMAL);
     }
 
     static TextView body(Context context, String text) {
-        return FeatureGateLabUi.text(context, text, 16, SettingsUi.textPrimary(), Typeface.NORMAL);
+        return FeatureGateLabUi.text(context, text, SettingsUi.TEXT_TITLE,
+                SettingsUi.textPrimary(), Typeface.NORMAL);
+    }
+
+    static void styleTab(View tab, boolean selected) {
+        Context context = tab.getContext();
+        android.graphics.drawable.GradientDrawable surface = SettingsUi.roundedSurface(
+                context, SettingsUi.RADIUS_PILL, selected);
+        surface.setStroke(Math.max(1, dp(context, 1)),
+                selected ? SettingsUi.accent() : SettingsUi.border());
+        tab.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL, surface));
+    }
+
+    static View notice(Context context, String text, int toneColor) {
+        LinearLayout notice = SettingsUi.inlineNotice(context, text, toneColor);
+        notice.setBaselineAligned(false);
+        android.graphics.drawable.GradientDrawable surface = SettingsUi.borderedSurface(
+                context, SettingsUi.RADIUS_SETTINGS_CARD, false);
+        surface.setStroke(Math.max(1, dp(context, 1)), toneColor);
+        notice.setBackground(surface);
+        ((TextView) notice.getChildAt(0)).setTextSize(SettingsUi.TEXT_HEADLINE);
+        ((TextView) notice.getChildAt(1)).setTextSize(SettingsUi.TEXT_LABEL);
+        return notice;
     }
 
     static LinearLayout.LayoutParams matchWrap() {

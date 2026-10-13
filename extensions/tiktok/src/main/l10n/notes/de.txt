@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Die Hushfeed-Einstellungen haben ein neues Aussehen, mit einer gruppierten Startseite und rosa Symbolen. Abgerundete Bereiche und ovale Schalter gibt es auch im Feature Gate Lab und im Editor für ausgeblendete Creator. Große Schrift und der helle Modus bleiben gut lesbar.
+
+* **TikTok:** Die Prüffälle für das Profilmenü und hohe Register sowie das Testprojekt für die Signierung funktionieren wieder. Die Signierungsprüfung akzeptiert D8-Optionen jetzt in beliebiger Reihenfolge.
+
+* **TikTok:** Halte oben im Feed Für dich gedrückt, um die Hushfeed-Einstellungen zu öffnen. Kurzes Tippen darauf funktioniert wie bisher, und das geht auch, wenn Hushfeed pausiert ist.
+
 * **TikTok:** Downloads hat unter Qualität für Video-Downloads einen neuen Schalter: Bei jedem Speichern nach der Qualität fragen. Ist er an, listet Herunterladen die Qualitäten des Videos mit der Größe auf, die TikTok für jede angibt, und speichert die gewählte. Automatisch, also TikToks eigene Datei, steht immer oben. Die eingestellte Qualität bleibt für das nächste Speichern, wie sie ist.
 
 * **TikTok:** Ein neuer Schalter neben Langes Drücken, „Volles Menü bei langem Drücken auf Videos eines Creators“, sorgt dafür, dass langes Drücken auf ein Video, das du aus einem Profil geöffnet hast, dasselbe volle Menü wie bei Für dich öffnet statt des kleinen Teilen-Menüs (#120).

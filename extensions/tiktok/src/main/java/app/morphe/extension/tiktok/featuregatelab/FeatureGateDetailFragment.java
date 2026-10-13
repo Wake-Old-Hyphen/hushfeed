@@ -190,12 +190,14 @@ public final class FeatureGateDetailFragment extends Fragment {
 
         TextView rawKey = FeatureGateLabUi.label(context, entry.key);
         rawKey.setTextIsSelectable(true);
+        rawKey.setTypeface(Typeface.MONOSPACE);
         LinearLayout.LayoutParams keyParams = FeatureGateLabUi.matchWrap();
-        keyParams.setMargins(0, FeatureGateLabUi.dp(context, 3), 0, 0);
+        keyParams.setMargins(0, FeatureGateLabUi.dp(context, 6), 0, 0);
         content.addView(rawKey, keyParams);
 
         if (!entry.description.isEmpty()) {
-            TextView description = FeatureGateLabUi.body(context, entry.description);
+            TextView description = FeatureGateLabUi.label(context, entry.description);
+            description.setLineSpacing(FeatureGateLabUi.dp(context, 2), 1f);
             LinearLayout.LayoutParams params = FeatureGateLabUi.matchWrap();
             params.setMargins(0, FeatureGateLabUi.dp(context, 12), 0, 0);
             content.addView(description, params);
@@ -205,7 +207,7 @@ public final class FeatureGateDetailFragment extends Fragment {
         LinearLayout currentState = new LinearLayout(context);
         currentState.setOrientation(LinearLayout.VERTICAL);
         currentState.setPadding(FeatureGateLabUi.dp(context, 16), 0, FeatureGateLabUi.dp(context, 16), 0);
-        currentState.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CARD, false));
+        currentState.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, false));
         content.addView(currentState, FeatureGateLabUi.matchWrap());
         addInfo(currentState, L10n.t(context, "Seen this session"),
                 L10n.t(context, entry.loaded ? "Yes" : "No"));
@@ -227,7 +229,7 @@ public final class FeatureGateDetailFragment extends Fragment {
         content.addView(cacheNote, cacheNoteParams);
 
         if (isSensitiveKey(entry.key)) {
-            View sensitive = SettingsUi.inlineNotice(context,
+            View sensitive = FeatureGateLabUi.notice(context,
                     L10n.t(context, "This key touches account safety. Forcing it can change login, region, payment or security checks."),
                     SettingsUi.attentionColor());
             LinearLayout.LayoutParams params = FeatureGateLabUi.matchWrap();
@@ -236,7 +238,7 @@ public final class FeatureGateDetailFragment extends Fragment {
             content.addView(sensitive, params);
         }
         if (BackgroundPlay.decidesGate(entry.key)) {
-            View decided = SettingsUi.inlineNotice(context,
+            View decided = FeatureGateLabUi.notice(context,
                     L10n.t(context, "Keep playing in the background is on in Hushfeed's Playback settings, so TikTok gets 2 for this key and an override here has no effect until that switch is off."),
                     SettingsUi.attentionColor());
             LinearLayout.LayoutParams params = FeatureGateLabUi.matchWrap();
@@ -268,7 +270,11 @@ public final class FeatureGateDetailFragment extends Fragment {
             content.addView(disabledNote, FeatureGateLabUi.matchWrap());
         }
         status = FeatureGateLabUi.text(context, "", 13, SettingsUi.textSecondary(), Typeface.BOLD);
-        content.addView(status, FeatureGateLabUi.matchWrap());
+        status.setAllCaps(true);
+        status.setLetterSpacing(0.08f);
+        LinearLayout.LayoutParams statusParams = FeatureGateLabUi.matchWrap();
+        statusParams.topMargin = FeatureGateLabUi.dp(context, 12);
+        content.addView(status, statusParams);
 
         // Under the status, and only there when something refused the override. The status
         // could say it had not been applied and nothing more; the reason was in logcat.
@@ -626,7 +632,7 @@ public final class FeatureGateDetailFragment extends Fragment {
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setPadding(FeatureGateLabUi.dp(context, 16), FeatureGateLabUi.dp(context, 16),
                 FeatureGateLabUi.dp(context, 16), FeatureGateLabUi.dp(context, 16));
-        row.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CARD, false));
+        row.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, false));
         LinearLayout labels = new LinearLayout(context);
         labels.setOrientation(LinearLayout.VERTICAL);
         labels.addView(FeatureGateLabUi.body(context, title), FeatureGateLabUi.matchWrap());
@@ -1034,12 +1040,17 @@ public final class FeatureGateDetailFragment extends Fragment {
             Object value = values.opt(fieldName);
             LinearLayout fieldRoot = new LinearLayout(root.getContext());
             fieldRoot.setOrientation(LinearLayout.VERTICAL);
+            int fieldPadding = FeatureGateLabUi.dp(root.getContext(), 16);
+            fieldRoot.setPadding(fieldPadding, fieldPadding, fieldPadding, fieldPadding);
+            fieldRoot.setBackground(SettingsUi.borderedSurface(
+                    root.getContext(), SettingsUi.RADIUS_SETTINGS_CARD, false));
             LinearLayout.LayoutParams fieldParams = FeatureGateLabUi.matchWrap();
             fieldParams.setMargins(0, FeatureGateLabUi.dp(root.getContext(), 12), 0, 0);
 
             TextView title = FeatureGateLabUi.body(root.getContext(), titleForField(fieldName));
             fieldRoot.addView(title, FeatureGateLabUi.matchWrap());
             TextView rawName = FeatureGateLabUi.label(root.getContext(), fieldName + " / " + kind.toLowerCase(Locale.ROOT));
+            rawName.setPadding(0, FeatureGateLabUi.dp(root.getContext(), 4), 0, 0);
             fieldRoot.addView(rawName, FeatureGateLabUi.matchWrap());
 
             if ("BOOLEAN".equals(kind)) {
@@ -1102,7 +1113,9 @@ public final class FeatureGateDetailFragment extends Fragment {
                         title.getText() + " (" + rawName.getText() + ")"
                 );
                 rawName.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-                fieldRoot.addView(input, FeatureGateLabUi.matchWrap());
+                LinearLayout.LayoutParams inputParams = FeatureGateLabUi.matchWrap();
+                inputParams.topMargin = FeatureGateLabUi.dp(root.getContext(), 8);
+                fieldRoot.addView(input, inputParams);
                 objectEditors.add(ObjectFieldEditor.input(fieldName, kind, input, value));
             }
             root.addView(fieldRoot, fieldParams);
@@ -1253,7 +1266,11 @@ public final class FeatureGateDetailFragment extends Fragment {
         LinearLayout heading = new LinearLayout(context);
         heading.setOrientation(LinearLayout.HORIZONTAL);
         heading.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title = FeatureGateLabUi.text(context, L10n.t(context, "Technical details"), 15, SettingsUi.textPrimary(), Typeface.BOLD);
+        TextView title = SettingsUi.sectionTitle(context, L10n.t(context, "Technical details"));
+        title.setAllCaps(true);
+        title.setLetterSpacing(0.1f);
+        title.setTextColor(SettingsUi.textSecondary());
+        title.setGravity(Gravity.CENTER_VERTICAL);
         heading.addView(title, new LinearLayout.LayoutParams(0, FeatureGateLabUi.dp(context, 48), 1f));
         technicalToggle = FeatureGateLabUi.text(context, L10n.t(context, "Show"), 14,
                 SettingsUi.accent(), Typeface.BOLD);
@@ -1290,6 +1307,10 @@ public final class FeatureGateDetailFragment extends Fragment {
         technicalDetails = new LinearLayout(context);
         technicalDetails.setOrientation(LinearLayout.VERTICAL);
         technicalDetails.setVisibility(View.GONE);
+        technicalDetails.setPadding(FeatureGateLabUi.dp(context, 16), 0,
+                FeatureGateLabUi.dp(context, 16), 0);
+        technicalDetails.setBackground(SettingsUi.borderedSurface(
+                context, SettingsUi.RADIUS_SETTINGS_CARD, false));
         addInfo(technicalDetails, L10n.t(context, "Manager"), entry.manager);
         addInfo(technicalDetails, L10n.t(context, "Type"), entry.type);
         addInfo(technicalDetails, L10n.t(context, "Source"),
@@ -1331,8 +1352,13 @@ public final class FeatureGateDetailFragment extends Fragment {
 
     private void addSectionTitle(LinearLayout root, String text) {
         TextView title = SettingsUi.sectionTitle(root.getContext(), text);
+        title.setAllCaps(true);
+        title.setLetterSpacing(0.1f);
+        title.setTextColor(SettingsUi.textSecondary());
         LinearLayout.LayoutParams params = FeatureGateLabUi.matchWrap();
-        params.setMargins(0, FeatureGateLabUi.dp(root.getContext(), 18), 0, FeatureGateLabUi.dp(root.getContext(), 12));
+        params.setMargins(FeatureGateLabUi.dp(root.getContext(), 8),
+                FeatureGateLabUi.dp(root.getContext(), 20), FeatureGateLabUi.dp(root.getContext(), 8),
+                FeatureGateLabUi.dp(root.getContext(), 8));
         root.addView(title, params);
     }
 

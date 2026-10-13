@@ -225,8 +225,12 @@ public class CreatorListPreference extends DialogPreference {
         editor.setInputType(InputType.TYPE_CLASS_TEXT);
         editor.setSingleLine(true);
         editor.setHint(hint);
-        editor.setMinHeight(SettingsUi.dp(context, 48));
         SettingsUi.styleEditText(editor);
+        editor.setBackgroundTintList(null);
+        editor.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false));
+        editor.setPaddingRelative(SettingsUi.dp(context, 12), SettingsUi.dp(context, 10),
+                SettingsUi.dp(context, 12), SettingsUi.dp(context, 10));
+        editor.setMinHeight(SettingsUi.dp(context, 48));
         return editor;
     }
 
@@ -307,7 +311,7 @@ public class CreatorListPreference extends DialogPreference {
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setPaddingRelative(SettingsUi.dp(context, 12), SettingsUi.dp(context, 4),
                 SettingsUi.dp(context, 4), SettingsUi.dp(context, 4));
-        row.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_FIELD, true));
+        row.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, true));
         TextView label = SettingsUi.text(context, entry, SettingsUi.TEXT_BODY, SettingsUi.textPrimary(), Typeface.NORMAL);
         label.setTextIsSelectable(true);
         label.setContentDescription(entry);

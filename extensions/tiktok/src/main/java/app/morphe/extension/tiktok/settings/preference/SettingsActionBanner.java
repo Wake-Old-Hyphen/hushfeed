@@ -117,7 +117,7 @@ public final class SettingsActionBanner {
                 int horizontal = SettingsUi.dp(activity, 16);
                 banner.setPadding(horizontal, vertical, SettingsUi.dp(activity, 8), vertical);
                 banner.setBackground(SettingsUi.borderedSurface(
-                        activity, SettingsUi.RADIUS_CARD, true));
+                        activity, SettingsUi.RADIUS_SETTINGS_CARD, true));
                 banner.setElevation(SettingsUi.dp(activity, 8));
                 banner.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
                 // The banner sits over the bottom rows for up to half a minute. It wasn't
@@ -173,6 +173,8 @@ public final class SettingsActionBanner {
         button.setPadding(SettingsUi.dp(activity, 12), 0,
                 SettingsUi.dp(activity, 12), 0);
         SettingsUi.styleTextAction(button, true);
+        button.setBackground(SettingsUi.pressAndFocusOver(activity, SettingsUi.RADIUS_SETTINGS_FIELD,
+                SettingsUi.borderedSurface(activity, SettingsUi.RADIUS_SETTINGS_FIELD, false)));
 
         final boolean[] used = {false};
         button.setOnClickListener(view -> {

@@ -80,11 +80,11 @@ public final class SettingsMenuPreference extends Preference {
         return new MenuIconDrawable(context, icon, true);
     }
 
-    /** The home index uses flat rows; section menus keep their existing grouped presentation. */
+    /** Home keeps denser grouped rows and omits the changed-setting badges. */
     public void setCompact(boolean compact) {
         if (this.compact == compact) return;
         this.compact = compact;
-        setIcon(new MenuIconDrawable(getContext(), menuIcon, compact));
+        setIcon(new MenuIconDrawable(getContext(), menuIcon));
         notifyChanged();
     }
 
@@ -121,39 +121,40 @@ public final class SettingsMenuPreference extends Preference {
         LinearLayout row = new LinearLayout(context);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setMinimumHeight(SettingsUi.dp(context, 68));
+        row.setMinimumHeight(SettingsUi.dp(context, compact ? 72 : 80));
         row.setPadding(
-                SettingsUi.dp(context, compact ? 0 : 20),
-                SettingsUi.dp(context, 8),
-                SettingsUi.dp(context, compact ? 0 : 20),
-                SettingsUi.dp(context, 8)
+                SettingsUi.dp(context, compact ? 14 : 16),
+                SettingsUi.dp(context, 12),
+                SettingsUi.dp(context, compact ? 14 : 16),
+                SettingsUi.dp(context, 12)
         );
 
         FrameLayout iconFrame = new FrameLayout(context);
         iconFrame.setId(android.R.id.icon_frame);
         ImageView icon = new ImageView(context);
         icon.setId(android.R.id.icon);
+        icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         iconFrame.addView(icon, new FrameLayout.LayoutParams(
-                SettingsUi.dp(context, compact ? 24 : 52),
-                SettingsUi.dp(context, compact ? 24 : 52),
+                SettingsUi.dp(context, 40),
+                SettingsUi.dp(context, 40),
                 Gravity.CENTER
         ));
         row.addView(iconFrame, new LinearLayout.LayoutParams(
-                SettingsUi.dp(context, compact ? 24 : 52),
-                SettingsUi.dp(context, compact ? 24 : 52)
+                SettingsUi.dp(context, 40),
+                SettingsUi.dp(context, 40)
         ));
 
         LinearLayout labels = new LinearLayout(context);
         labels.setGravity(Gravity.CENTER_VERTICAL);
         labels.setOrientation(LinearLayout.VERTICAL);
 
-        TextView title = SettingsUi.text(context, "", SettingsUi.TEXT_TITLE, SettingsUi.textPrimary(), 1);
+        TextView title = SettingsUi.text(context, "", 16, SettingsUi.textPrimary(), 1);
         title.setId(android.R.id.title);
         title.setSingleLine(false);
         title.setEllipsize(null);
         labels.addView(title, new LinearLayout.LayoutParams(-1, -2));
 
-        TextView summary = SettingsUi.text(context, "", SettingsUi.TEXT_BODY_SMALL, SettingsUi.textSecondary(), 0);
+        TextView summary = SettingsUi.text(context, "", 13, SettingsUi.textSecondary(), 0);
         summary.setId(android.R.id.summary);
         summary.setSingleLine(false);
         summary.setEllipsize(null);
@@ -162,7 +163,7 @@ public final class SettingsMenuPreference extends Preference {
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, -2, 1);
         // Start and end rather than left and right: in an RTL layout the icon is on the right
         // and this gap belongs between the icon and the text, not stranded on the far side.
-        labelParams.setMarginStart(SettingsUi.dp(context, compact ? 16 : 14));
+        labelParams.setMarginStart(SettingsUi.dp(context, 16));
         labelParams.setMarginEnd(SettingsUi.dp(context, 10));
         row.addView(labels, labelParams);
 
@@ -177,7 +178,7 @@ public final class SettingsMenuPreference extends Preference {
     protected void onBindView(View view) {
         super.onBindView(view);
         SettingsUi.styleTitleAndSummary(view);
-        view.setMinimumHeight(SettingsUi.dp(getContext(), 68));
+        view.setMinimumHeight(SettingsUi.dp(getContext(), compact ? 72 : 80));
         styleText(view);
         styleIcon(view);
         addAccessory(view);
@@ -191,7 +192,7 @@ public final class SettingsMenuPreference extends Preference {
     private void styleText(View view) {
         TextView title = view.findViewById(android.R.id.title);
         if (title != null) {
-            title.setTypeface(Typeface.create(compact ? "sans-serif" : "sans-serif-medium", Typeface.NORMAL));
+            title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setSingleLine(false);
             title.setEllipsize(null);
         }
@@ -208,7 +209,7 @@ public final class SettingsMenuPreference extends Preference {
         if (icon == null) {
             return;
         }
-        int size = SettingsUi.dp(getContext(), compact ? 24 : 52);
+        int size = SettingsUi.dp(getContext(), 40);
         View iconFrame = view.findViewById(android.R.id.icon_frame);
         if (iconFrame != null) {
             ViewGroup.LayoutParams frameParams = iconFrame.getLayoutParams();
@@ -633,12 +634,12 @@ public final class SettingsMenuPreference extends Preference {
 
         @Override
         public int getIntrinsicWidth() {
-            return compact ? Math.round(24 * density) : 40;
+            return Math.round((compact ? 24 : 40) * density);
         }
 
         @Override
         public int getIntrinsicHeight() {
-            return compact ? Math.round(24 * density) : 40;
+            return Math.round((compact ? 24 : 40) * density);
         }
     }
 

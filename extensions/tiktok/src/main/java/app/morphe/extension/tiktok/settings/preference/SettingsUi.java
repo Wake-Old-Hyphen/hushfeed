@@ -95,8 +95,8 @@ public final class SettingsUi {
      * while sitting on the same video.
      */
     /**
-     * The type scale, in sp. Every text size Hushfeed draws is one of these. The home group
-     * labels sit at TEXT_CAPTION and the section headings at TEXT_LABEL on purpose.
+     * The type scale, in sp. Settings section labels use TEXT_CAPTION and row titles use
+     * TEXT_TITLE, with compact descriptions at TEXT_LABEL.
      */
     public static final float TEXT_CAPTION = 12;
     public static final float TEXT_LABEL = 13;
@@ -114,6 +114,11 @@ public final class SettingsUi {
     public static final int RADIUS_CONTROL = 6;
     public static final int RADIUS_FIELD = 8;
     public static final int RADIUS_CARD = 10;
+
+    /** Settings geometry stays independent of the controls drawn over a playing video. */
+    public static final int RADIUS_SETTINGS_CARD = 18;
+    public static final int RADIUS_SETTINGS_FIELD = 16;
+    public static final int RADIUS_PILL = 24;
 
     /** The focus ring's stroke, thick enough to read at arm's length on a phone. */
     private static final int FOCUS_RING_DP = 2;
@@ -338,14 +343,14 @@ public final class SettingsUi {
 
     public static void stylePreferenceRow(View view) {
         Context context = view.getContext();
-        view.setPaddingRelative(dp(context, 18), dp(context, 18), dp(context, 18), dp(context, 18));
-        view.setMinimumHeight(dp(context, 84));
+        view.setPaddingRelative(dp(context, 16), dp(context, 16), dp(context, 16), dp(context, 16));
+        view.setMinimumHeight(dp(context, 76));
         TextView title = view.findViewById(android.R.id.title);
         if (title != null) {
             if (title.getParent() instanceof View && title.getParent() != view) {
                 ((View) title.getParent()).setPadding(0, 0, 0, 0);
             }
-            title.setTextSize(TEXT_TITLE_LARGE);
+            title.setTextSize(TEXT_TITLE);
             title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
             title.setTextColor(title.isEnabled() ? textPrimary() : textDisabled());
             title.setSingleLine(false);
@@ -354,69 +359,39 @@ public final class SettingsUi {
         }
         TextView summary = view.findViewById(android.R.id.summary);
         if (summary != null) {
-            summary.setTextSize(TEXT_BODY_SMALL);
+            summary.setTextSize(TEXT_LABEL);
             summary.setTextColor(summary.isEnabled() ? textSecondary() : textDisabled());
             summary.setSingleLine(false);
             summary.setMaxLines(Integer.MAX_VALUE);
             summary.setEllipsize(null);
             summary.setLineSpacing(dp(context, 2), 1f);
-            summary.setPadding(0, dp(context, 5), 0, 0);
+            summary.setPadding(0, dp(context, 4), 0, 0);
         }
         styleSwitches(view);
     }
 
-    /** Flat navigation rows belong to the home index, whose list supplies the outer gutter. */
+    /** Home navigation uses the same grouped surface with a denser rhythm. */
     public static void styleCompactMenuRow(View row, boolean last) {
         styleCompactMenuRow(row, last, false);
     }
 
     static void styleCompactMenuRow(View row, boolean last, boolean footer) {
         Context context = row.getContext();
-        row.setPaddingRelative(0, dp(context, footer ? 26 : 14), 0, dp(context, 14));
-        row.setMinimumHeight(dp(context, footer ? 80 : 68));
+        row.setPaddingRelative(dp(context, 14), dp(context, 12), dp(context, 14), dp(context, 12));
+        row.setMinimumHeight(dp(context, 72));
         TextView title = row.findViewById(android.R.id.title);
         if (title != null) {
             title.setTextSize(TEXT_TITLE);
             title.setTextColor(enabledTextColors(textPrimary()));
-            title.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+            title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         }
         TextView summary = row.findViewById(android.R.id.summary);
         if (summary != null) {
-            summary.setTextSize(TEXT_BODY_SMALL);
+            summary.setTextSize(TEXT_LABEL);
             summary.setTextColor(enabledTextColors(textSecondary()));
             summary.setLineSpacing(0, 1f);
-            summary.setPadding(0, dp(context, 2), 0, 0);
+            summary.setPadding(0, dp(context, 3), 0, 0);
         }
-        boolean dark = isDarkMode();
-        Object painted = row.getTag(TAG_ROW_PAINT);
-        if (painted instanceof RowPaint && row.getBackground() != null) {
-            RowPaint paint = (RowPaint) painted;
-            if (paint.flat && paint.last == last && paint.dark == dark) return;
-        }
-        row.setBackground(pressAndFocusOver(context, RADIUS_SQUARE, new FlatRowDrawable(last)));
-        row.setTag(TAG_ROW_PAINT, new RowPaint(false, last, dark, true));
-    }
-
-    private static final class FlatRowDrawable extends Drawable {
-        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final boolean last;
-
-        FlatRowDrawable(boolean last) { this.last = last; }
-
-        @Override public void draw(Canvas canvas) {
-            paint.setColor(background());
-            canvas.drawRect(getBounds(), paint);
-            if (!last) {
-                paint.setColor(divider());
-                paint.setStrokeWidth(1);
-                canvas.drawLine(getBounds().left, getBounds().bottom - 0.5f,
-                        getBounds().right, getBounds().bottom - 0.5f, paint);
-            }
-        }
-
-        @Override public void setAlpha(int alpha) { paint.setAlpha(alpha); }
-        @Override public void setColorFilter(ColorFilter filter) { paint.setColorFilter(filter); }
-        @Override public int getOpacity() { return PixelFormat.OPAQUE; }
     }
 
     public static void styleSwitches(View view) {
@@ -435,10 +410,9 @@ public final class SettingsUi {
 
     /** What a row was last painted as, kept on the row so a rebind of the same view costs nothing. */
     private static final class RowPaint {
-        final boolean first, last, dark, flat;
-        RowPaint(boolean first, boolean last, boolean dark) { this(first, last, dark, false); }
-        RowPaint(boolean first, boolean last, boolean dark, boolean flat) {
-            this.first = first; this.last = last; this.dark = dark; this.flat = flat;
+        final boolean first, last, dark;
+        RowPaint(boolean first, boolean last, boolean dark) {
+            this.first = first; this.last = last; this.dark = dark;
         }
     }
 
@@ -453,7 +427,7 @@ public final class SettingsUi {
         Object painted = row.getTag(TAG_ROW_PAINT);
         if (painted instanceof RowPaint && row.getBackground() != null) {
             RowPaint paint = (RowPaint) painted;
-            if (!paint.flat && paint.first == first && paint.last == last && paint.dark == dark) return;
+            if (paint.first == first && paint.last == last && paint.dark == dark) return;
         }
         row.setBackground(groupedRow(row.getContext(), first, last));
         row.setTag(TAG_ROW_PAINT, new RowPaint(first, last, dark));
@@ -538,17 +512,17 @@ public final class SettingsUi {
         // greyed switch looks the same on as off: a reader cannot see what state it will come
         // back in when the parent is turned on again.
         track.addState(new int[]{-android.R.attr.state_enabled, android.R.attr.state_checked},
-                switchShape(context, (accent() & 0x00ffffff) | 0x66000000, 44, 26, RADIUS_CONTROL));
+                switchShape(context, (accent() & 0x00ffffff) | 0x66000000, 44, 26, 13));
         track.addState(new int[]{-android.R.attr.state_enabled},
-                switchShape(context, border(), 44, 26, RADIUS_CONTROL));
+                switchShape(context, border(), 44, 26, 13));
         track.addState(new int[]{android.R.attr.state_checked},
-                switchShape(context, accent(), 44, 26, RADIUS_CONTROL));
+                switchShape(context, accent(), 44, 26, 13));
         track.addState(new int[]{}, switchShape(context,
-                isDarkMode() ? DARK_SWITCH_TRACK_OFF : LIGHT_SWITCH_TRACK_OFF, 44, 26, RADIUS_CONTROL));
+                isDarkMode() ? DARK_SWITCH_TRACK_OFF : LIGHT_SWITCH_TRACK_OFF, 44, 26, 13));
         control.setTrackTintList(null);
         control.setThumbTintList(null);
         control.setTrackDrawable(track);
-        GradientDrawable thumb = switchShape(context, SWITCH_THUMB, 20, 22, RADIUS_BADGE);
+        GradientDrawable thumb = switchShape(context, SWITCH_THUMB, 22, 22, 11);
         thumb.setStroke(dp(context, 1), isDarkMode() ? DARK_SWITCH_THUMB_STROKE : LIGHT_SWITCH_THUMB_STROKE);
         control.setThumbDrawable(thumb);
         control.setSwitchMinWidth(dp(context, 44));
@@ -581,7 +555,7 @@ public final class SettingsUi {
      * the others, where the row meets its neighbour.
      */
     public static Drawable groupRowMask(Context context, boolean first, boolean last) {
-        float radius = dp(context, 10);
+        float radius = dp(context, RADIUS_SETTINGS_CARD);
         float top = first ? radius : 0f;
         float bottom = last ? radius : 0f;
         GradientDrawable mask = new GradientDrawable();
@@ -699,8 +673,8 @@ public final class SettingsUi {
             this.context = context;
             this.first = first;
             this.last = last;
-            radius = dp(context, RADIUS_CARD);
-            inset = dp(context, 18);
+            radius = dp(context, RADIUS_SETTINGS_CARD);
+            inset = dp(context, 16);
         }
         @Override public void draw(Canvas canvas) {
             Rect bounds = getBounds();
@@ -896,8 +870,10 @@ public final class SettingsUi {
     public static void styleCategory(View view) {
         TextView title = view.findViewById(android.R.id.title);
         if (title != null) {
-            title.setTextColor(accent());
-            title.setTextSize(TEXT_LABEL);
+            title.setTextColor(textSecondary());
+            title.setTextSize(TEXT_CAPTION);
+            title.setAllCaps(true);
+            title.setLetterSpacing(0.08f);
             title.setTypeface(title.getTypeface(), Typeface.BOLD);
         }
     }
@@ -1180,7 +1156,7 @@ public final class SettingsUi {
     public static void styleFramedDialog(Dialog dialog) {
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setBackgroundDrawable(borderedSurface(dialog.getContext(), RADIUS_CARD, true));
+            window.setBackgroundDrawable(borderedSurface(dialog.getContext(), RADIUS_SETTINGS_CARD, true));
             constrainDialogWindow(dialog, window);
         }
 
@@ -1367,6 +1343,10 @@ public final class SettingsUi {
         button.setTextColor(enabledTextColors(primary ? accent() : textSecondary()));
         button.setAllCaps(false);
         button.setTypeface(button.getTypeface(), primary ? Typeface.BOLD : Typeface.NORMAL);
+        button.setMinimumHeight(dp(button.getContext(), 48));
+        button.setMinimumWidth(dp(button.getContext(), 48));
+        button.setBackground(pressAndFocus(button.getContext(), RADIUS_SETTINGS_FIELD,
+                new ColorDrawable(Color.TRANSPARENT)));
     }
 
     /**

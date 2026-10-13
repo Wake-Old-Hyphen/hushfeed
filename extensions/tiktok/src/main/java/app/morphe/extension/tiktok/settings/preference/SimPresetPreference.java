@@ -317,7 +317,7 @@ public class SimPresetPreference extends Preference {
     }
 
     private GradientDrawable createListBackground() {
-        return SettingsUi.borderedSurface(getContext(), SettingsUi.RADIUS_BADGE, false);
+        return SettingsUi.borderedSurface(getContext(), SettingsUi.RADIUS_SETTINGS_FIELD, false);
     }
 
     private static int getDialogBackgroundColor() {

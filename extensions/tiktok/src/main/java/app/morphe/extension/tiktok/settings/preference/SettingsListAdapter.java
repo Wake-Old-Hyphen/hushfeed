@@ -83,6 +83,7 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
         if (preference instanceof SettingsMenuPreference && ((SettingsMenuPreference) preference).isCompact()) {
             SettingsUi.styleCompactMenuRow(row, isBoundary(position + 1),
                     ((SettingsMenuPreference) preference).isAbout());
+            SettingsUi.applyGroupedRow(row, isBoundary(position - 1), isBoundary(position + 1));
             return row;
         }
         SettingsUi.stylePreferenceRow(row);
@@ -97,16 +98,19 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                     AbstractPreferenceFragment.INITIALIZATION_RETRY_KEY.equals(key));
         }
         if (preference instanceof SettingsMenuPreference) {
-            row.setPaddingRelative(SettingsUi.dp(row.getContext(), 18), SettingsUi.dp(row.getContext(), 14),
-                    SettingsUi.dp(row.getContext(), 18), SettingsUi.dp(row.getContext(), 14));
-            ((TextView) row.findViewById(android.R.id.title)).setTextSize(SettingsUi.TEXT_HEADLINE_SMALL);
+            row.setPaddingRelative(SettingsUi.dp(row.getContext(), 16), SettingsUi.dp(row.getContext(), 14),
+                    SettingsUi.dp(row.getContext(), 16), SettingsUi.dp(row.getContext(), 14));
+            ((TextView) row.findViewById(android.R.id.title)).setTextSize(SettingsUi.TEXT_TITLE);
             return row;
         }
 
         View icon = row.findViewById(android.R.id.icon_frame);
         if (icon != null) icon.setVisibility(View.GONE);
         TextView summary = row.findViewById(android.R.id.summary);
-        if (summary != null && preference instanceof ListPreference) summary.setTextColor(preference.isEnabled() ? SettingsUi.accent() : SettingsUi.textDisabled());
+        if (summary != null && (preference instanceof ListPreference
+                || preference instanceof DownloadPathPreference)) {
+            summary.setTextColor(preference.isEnabled() ? SettingsUi.accent() : SettingsUi.textDisabled());
+        }
         ViewGroup widget = row.findViewById(android.R.id.widget_frame);
         // A row that acts on the tap gets no chevron. Reset, Undo, Start today over and the two
         // clear rows all wore the one that means "opens a page", which is the wrong promise to

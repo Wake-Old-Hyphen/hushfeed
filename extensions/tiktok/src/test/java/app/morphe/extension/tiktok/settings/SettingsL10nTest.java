@@ -68,7 +68,9 @@ public class SettingsL10nTest {
     private static final Map<String, String> INDONESIAN = L10nTranslations.of("in");
 
     private static final String[] QUIET_INDEX_COPY = {
-            "Customize", "Feed & layout", "Comments & inbox", "Downloads & sharing",
+            "Make it yours.", "Your feed. Your rules.", "Your experience",
+            "Shape your feed", "Conversations", "Save and send", "App controls", "About", "Your settings",
+            "Feed & layout", "Comments & inbox", "Downloads & sharing",
             "App & advanced", "About Hushfeed", "Filters, tabs and on-screen controls",
             "Filters, translation and inbox controls", "Files, subtitles and share sheet",
             "Region, backups and diagnostics", "Version, changes and licenses",

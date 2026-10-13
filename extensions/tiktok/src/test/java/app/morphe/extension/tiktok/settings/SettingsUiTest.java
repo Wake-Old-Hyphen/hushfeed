@@ -10,6 +10,11 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.preference.Preference;
@@ -20,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +33,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.UiCapture;
+import app.morphe.extension.tiktok.settings.preference.SettingsMenuPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import app.morphe.extension.tiktok.settings.preference.categories.DebugPreferenceCategory;
 
@@ -727,5 +734,49 @@ public class SettingsUiTest {
         SettingsUi.styleSwitch(control);
         assertSame("the switch track was rebuilt on a rebind", track, control.getTrackDrawable());
         assertSame("the switch thumb was rebuilt on a rebind", thumb, control.getThumbDrawable());
+    }
+
+    @Test @Config(qualifiers = "w360dp-h800dp-night-450dpi")
+    public void menuTilesKeepTheirNativeScaleInsideAnImageViewAtPhoneDensity() throws Exception {
+        try (var owner = Robolectric.buildActivity(DialogActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            for (int densityDpi : new int[]{160, 450}) {
+                Configuration configuration = new Configuration(activity.getResources().getConfiguration());
+                configuration.densityDpi = densityDpi;
+                Context context = activity.createConfigurationContext(configuration);
+                assertEquals("the fixture lost its requested density", densityDpi / 160f,
+                        context.getResources().getDisplayMetrics().density, 0.0001f);
+                int size = SettingsUi.dp(context, 40);
+                for (SettingsMenuPreference.Icon icon : SettingsMenuPreference.Icon.values()) {
+                    ImageView image = new ImageView(context);
+                    image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    Drawable drawable = SettingsMenuPreference.iconDrawable(context, icon);
+                    image.setImageDrawable(drawable);
+                    image.measure(View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY),
+                            View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY));
+                    image.layout(0, 0, size, size);
+                    Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+                    try {
+                        image.draw(new Canvas(bitmap));
+                        assertTrue(icon + " did not render", bitmap.getPixel(size / 2, size / 2) != 0);
+                        // The paints already carry pixel-scaled strokes. FIT_CENTER must not
+                        // scale the drawing a second time on a dense phone.
+                        float[] matrix = new float[9];
+                        image.getImageMatrix().getValues(matrix);
+                        assertEquals(icon + " scales its already scaled stroke at " + densityDpi + "dpi",
+                                1f, matrix[Matrix.MSCALE_X], 0.0001f);
+                        assertEquals(1f, matrix[Matrix.MSCALE_Y], 0.0001f);
+                        assertEquals(size, drawable.getBounds().width());
+                        assertEquals(size, drawable.getBounds().height());
+                        if (icon == SettingsMenuPreference.Icon.APP) {
+                            UiCapture.save(image, "audit/menu-icon-" + densityDpi + "dpi.png", size, size);
+                        }
+                    } finally {
+                        bitmap.recycle();
+                    }
+                }
+            }
+        }
     }
 }

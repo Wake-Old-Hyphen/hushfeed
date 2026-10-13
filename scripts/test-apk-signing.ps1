@@ -105,8 +105,15 @@ try {
     [IO.File]::WriteAllText((Join-Path $fixtureTools 'd8.bat'), @'
 @echo off
 if defined HUSHFEED_FIXTURE_DEX_FAIL exit /b 1
-echo fixture dex>"%~6\classes.dex"
-exit /b 0
+:find_output
+if "%~1"=="" exit /b 2
+if "%~1"=="--output" goto write_output
+shift
+goto find_output
+:write_output
+if "%~2"=="" exit /b 2
+echo fixture dex>"%~2\classes.dex"
+exit /b %errorlevel%
 '@)
     $manifest = Join-Path $fixture 'AndroidManifest.xml'
     [IO.File]::WriteAllText($manifest, '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.zhiliaoapp.musically" android:versionCode="1" android:versionName="1.0.0"><uses-sdk android:minSdkVersion="23" android:targetSdkVersion="36"/><application android:hasCode="false"/></manifest>')
@@ -121,7 +128,8 @@ exit /b 0
     } finally { $zip.Dispose() }
 
     $fixtureProject = Join-Path $fixture 'project'
-    foreach ($directory in @('scripts', 'gradle', 'patches/build/release', 'tools/verification-probe/src')) {
+    foreach ($directory in @('scripts', 'gradle', 'patches/build/release', 'tools/verification-probe/src',
+            'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox')) {
         New-Item -ItemType Directory -Path (Join-Path $fixtureProject $directory) -Force | Out-Null
     }
     foreach ($leaf in @('patch-for-device.ps1', 'apk-signing.ps1', 'SigningCertificateCheck.java', 'common.ps1', 'Resolve-Java.ps1', 'patch-target.ps1', 'patch-report.ps1', 'device-install.ps1')) {
@@ -133,6 +141,8 @@ exit /b 0
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/build.ps1') -Destination (Join-Path $fixtureProject 'tools/verification-probe/build.ps1')
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/AndroidManifest.xml') -Destination (Join-Path $fixtureProject 'tools/verification-probe/AndroidManifest.xml')
     Copy-Item -LiteralPath (Join-Path $Root 'tools/verification-probe/src') -Destination (Join-Path $fixtureProject 'tools/verification-probe') -Recurse -Force
+    Copy-Item -LiteralPath (Join-Path $Root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java') `
+        -Destination (Join-Path $fixtureProject 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java')
     [IO.File]::WriteAllText((Join-Path $fixtureProject 'gradle.properties'), 'version=0.0.1')
     [IO.File]::WriteAllText((Join-Path $fixtureProject 'patches/build/release/patches-0.0.1.mpp'), 'fixture bundle')
     [IO.File]::WriteAllText((Join-Path $fixtureProject 'patches-list.json'), '{"patches":[{"name":"fixture","compatiblePackages":{"com.zhiliaoapp.musically":["1.0.0"]}}]}')

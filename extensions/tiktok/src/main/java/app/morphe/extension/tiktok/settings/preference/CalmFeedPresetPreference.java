@@ -59,7 +59,7 @@ public final class CalmFeedPresetPreference extends Preference implements Immedi
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(SettingsUi.dp(context, 16), SettingsUi.dp(context, 15),
                 SettingsUi.dp(context, 16), SettingsUi.dp(context, 14));
-        card.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CARD, true));
+        card.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, true));
 
         boolean stack = context.getResources().getConfiguration().fontScale > 1.3f
                 || context.getResources().getConfiguration().screenWidthDp < 360;
@@ -82,7 +82,7 @@ public final class CalmFeedPresetPreference extends Preference implements Immedi
                 SettingsUi.dp(context, 10), SettingsUi.dp(context, 5));
         GradientDrawable statusBackground = new GradientDrawable();
         statusBackground.setColor(SettingsUi.badgeFill());
-        statusBackground.setCornerRadius(SettingsUi.dp(context, SettingsUi.RADIUS_BADGE));
+        statusBackground.setCornerRadius(SettingsUi.dp(context, SettingsUi.RADIUS_PILL));
         status.setBackground(statusBackground);
         status.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(-2, -2);
@@ -108,8 +108,8 @@ public final class CalmFeedPresetPreference extends Preference implements Immedi
         action.setFocusable(true);
         action.setClickable(true);
         SettingsUi.markAsButton(action);
-        action.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CONTROL,
-                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CONTROL, false)));
+        action.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD,
+                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false)));
         action.setOnClickListener(view -> runAction());
         LinearLayout.LayoutParams actionParams = new LinearLayout.LayoutParams(-1, -2);
         actionParams.topMargin = SettingsUi.dp(context, 12);

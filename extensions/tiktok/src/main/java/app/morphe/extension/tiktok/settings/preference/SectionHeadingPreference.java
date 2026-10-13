@@ -39,17 +39,17 @@ public final class SectionHeadingPreference extends Preference {
         Context context = getContext();
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        int side = compact ? 0 : SettingsUi.dp(context, 18);
-        layout.setPadding(side, SettingsUi.dp(context, compact ? 24 : 16),
-                side, SettingsUi.dp(context, compact ? 8 : 4));
+        int side = SettingsUi.dp(context, 8);
+        layout.setPadding(side, SettingsUi.dp(context, compact ? 20 : 16),
+                side, SettingsUi.dp(context, 8));
 
         TextView title = new TextView(context);
         title.setId(android.R.id.title);
-        title.setTextColor(homeGroup ? SettingsUi.textSecondary() : SettingsUi.accent());
-        title.setTextSize(homeGroup ? 12 : 13);
-        title.setTypeface(title.getTypeface(), android.graphics.Typeface.BOLD);
-        title.setAllCaps(homeGroup);
-        title.setLetterSpacing(homeGroup ? 0.08f : 0f);
+        title.setTextColor(SettingsUi.textSecondary());
+        title.setTextSize(12);
+        title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+        title.setAllCaps(true);
+        title.setLetterSpacing(homeGroup ? 0.08f : 0.1f);
         title.setText(getTitle());
         SettingsUi.markHeading(title);
         layout.addView(title, new LinearLayout.LayoutParams(
@@ -63,7 +63,7 @@ public final class SectionHeadingPreference extends Preference {
         TextView title = view.findViewById(android.R.id.title);
         if (title != null) {
             title.setText(getTitle());
-            title.setTextColor(homeGroup ? SettingsUi.textSecondary() : SettingsUi.accent());
+            title.setTextColor(SettingsUi.textSecondary());
         }
     }
 }

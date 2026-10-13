@@ -65,16 +65,16 @@ public final class SettingsSearchInputPreference extends Preference {
                 SettingsUi.dp(context, 8), SettingsUi.dp(context, 8));
         row.setAddStatesFromChildren(true);
         GradientDrawable focused = SettingsUi.borderedSurface(
-                context, SettingsUi.RADIUS_CARD, false);
+                context, SettingsUi.RADIUS_SETTINGS_FIELD, false);
         focused.setStroke(SettingsUi.dp(context, 1), SettingsUi.accent());
         StateListDrawable background = new StateListDrawable();
         background.addState(new int[]{android.R.attr.state_focused}, focused);
         background.addState(new int[]{}, SettingsUi.borderedSurface(
-                context, SettingsUi.RADIUS_CARD, false));
+                context, SettingsUi.RADIUS_SETTINGS_FIELD, false));
         row.setBackground(background);
 
         ImageView search = new ImageView(context);
-        search.setImageResource(android.R.drawable.ic_menu_search);
+        search.setImageDrawable(SettingsMenuPreference.lineIconDrawable(context, SettingsMenuPreference.Icon.SEARCH));
         search.setColorFilter(SettingsUi.textSecondary());
         search.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(
@@ -85,7 +85,7 @@ public final class SettingsSearchInputPreference extends Preference {
         editText = new EditText(context);
         editText.setTag("settings_search_input");
         editText.setSingleLine(true);
-        editText.setTextSize(SettingsUi.TEXT_HEADLINE_SMALL);
+        editText.setTextSize(SettingsUi.TEXT_TITLE);
         editText.setHint(L10n.t(context, "Search settings"));
         // No content description on a search box. On an editable view it replaces what was
         // typed in the announcement, so "cats" came back as the label. The hint names it.
@@ -132,8 +132,8 @@ public final class SettingsSearchInputPreference extends Preference {
         clear.setTag("settings_search_clear");
         clear.setImageDrawable(new ClearDrawable(context));
         clear.setScaleType(ImageView.ScaleType.CENTER);
-        clear.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CONTROL,
-                SettingsUi.roundedSurface(context, SettingsUi.RADIUS_CONTROL, false)));
+        clear.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_PILL,
+                SettingsUi.roundedSurface(context, SettingsUi.RADIUS_PILL, false)));
         clear.setContentDescription(L10n.t(context, "Clear search"));
         SettingsUi.markAsButton(clear);
         clear.setFocusable(true);

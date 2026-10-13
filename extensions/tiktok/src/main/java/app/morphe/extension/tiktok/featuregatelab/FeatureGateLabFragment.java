@@ -67,6 +67,7 @@ import app.morphe.extension.tiktok.settings.SettingsOperationJournal;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.settings.preference.SettingsMenuPreference;
 
 @SuppressWarnings({"deprecation", "SetTextI18n"})
 public final class FeatureGateLabFragment extends Fragment {
@@ -271,8 +272,8 @@ public final class FeatureGateLabFragment extends Fragment {
         // both read "Apply overrides", and only the 44dp switch answered a tap.
         LinearLayout masterRow = FeatureGateLabUi.switchRow(context,
                 L10n.t(context, "Apply overrides"), null, master);
-        masterRow.setPadding(FeatureGateLabUi.dp(context, 12), FeatureGateLabUi.dp(context, 8),
-                FeatureGateLabUi.dp(context, 12), FeatureGateLabUi.dp(context, 8));
+        masterRow.setPadding(FeatureGateLabUi.dp(context, 16), FeatureGateLabUi.dp(context, 4),
+                FeatureGateLabUi.dp(context, 16), FeatureGateLabUi.dp(context, 4));
         LinearLayout masterControls = new LinearLayout(context);
         masterControls.setGravity(Gravity.CENTER_VERTICAL);
         masterControls.addView(masterRow, new LinearLayout.LayoutParams(0, -2, 1f));
@@ -301,7 +302,7 @@ public final class FeatureGateLabFragment extends Fragment {
         searchRow.setGravity(Gravity.CENTER_VERTICAL);
         searchRow.setPaddingRelative(FeatureGateLabUi.dp(context, 8), 0, 0, 0);
         searchRow.setTag("feature_gate_search_row");
-        searchRow.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_CONTROL, false));
+        searchRow.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false));
         // The focus lands on the field inside, never on the row, and a group only carries its
         // children's states when told to. Without this the accent border above never showed.
         searchRow.setAddStatesFromChildren(true);
@@ -311,6 +312,12 @@ public final class FeatureGateLabFragment extends Fragment {
         // No content description on a search box. On an editable view it replaces what was
         // typed in the announcement, so "cats" came back as the label. The hint names it.
         search.setHint(L10n.t(context, "Search by name or gate key"));
+        android.graphics.drawable.Drawable searchIcon = SettingsMenuPreference.lineIconDrawable(
+                context, SettingsMenuPreference.Icon.SEARCH);
+        int searchIconSize = FeatureGateLabUi.dp(context, 24);
+        searchIcon.setBounds(0, 0, searchIconSize, searchIconSize);
+        search.setCompoundDrawablesRelative(searchIcon, null, null, null);
+        search.setCompoundDrawablePadding(FeatureGateLabUi.dp(context, 12));
         search.setBackgroundColor(Color.TRANSPARENT);
         search.setTextColor(SettingsUi.textPrimary());
         search.setHintTextColor(SettingsUi.textSecondary());
@@ -343,7 +350,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 FeatureGateLabUi.dp(context, 48)
         ));
         LinearLayout.LayoutParams searchParams = FeatureGateLabUi.matchWrap();
-        searchParams.setMargins(0, 0, 0, FeatureGateLabUi.dp(context, 10));
+        searchParams.setMargins(0, 0, 0, FeatureGateLabUi.dp(context, 8));
         controls.addView(searchRow, searchParams);
 
         HorizontalScrollView sourceScroller = new HorizontalScrollView(context);
@@ -361,9 +368,7 @@ public final class FeatureGateLabFragment extends Fragment {
             tabContainer.setContentDescription(L10n.t(context, SOURCE_LABELS[i]));
             // The whole tab is the target, so the press and the focus belong on the container
             // rather than on the label inside it. It had neither.
-            tabContainer.setBackground(SettingsUi.pressAndFocusOver(
-                    context, SettingsUi.RADIUS_CONTROL,
-                    new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT)));
+            FeatureGateLabUi.styleTab(tabContainer, false);
             SettingsUi.markAsButton(tabContainer);
             tabContainer.setOnClickListener(view -> onSourceSelected(position));
 
@@ -377,7 +382,7 @@ public final class FeatureGateLabFragment extends Fragment {
             tab.setGravity(Gravity.CENTER);
             tab.setSingleLine(true);
             tab.setMinWidth(FeatureGateLabUi.dp(context, 72));
-            tab.setMinHeight(FeatureGateLabUi.dp(context, 46));
+            tab.setMinHeight(FeatureGateLabUi.dp(context, 48));
             tab.setPadding(
                     FeatureGateLabUi.dp(context, 14),
                     0,
@@ -385,6 +390,7 @@ public final class FeatureGateLabFragment extends Fragment {
                     0
             );
             View indicator = new View(context);
+            indicator.setVisibility(View.GONE);
             sourceTabContainers[i] = tabContainer;
             sourceTabLabels[i] = tab;
             sourceTabIndicators[i] = indicator;
@@ -393,17 +399,19 @@ public final class FeatureGateLabFragment extends Fragment {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     FeatureGateLabUi.dp(context, 2)
             ));
-            sourceTabs.addView(tabContainer, new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams tabParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
+            );
+            if (i + 1 < SOURCE_LABELS.length) tabParams.setMarginEnd(FeatureGateLabUi.dp(context, 6));
+            sourceTabs.addView(tabContainer, tabParams);
         }
         sourceScroller.addView(sourceTabs, new HorizontalScrollView.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         ));
         LinearLayout.LayoutParams sourceParams = FeatureGateLabUi.matchWrap();
-        sourceParams.setMargins(0, 0, 0, FeatureGateLabUi.dp(context, 8));
+        sourceParams.setMargins(0, 0, 0, FeatureGateLabUi.dp(context, 6));
         controls.addView(sourceScroller, sourceParams);
 
         viewTabs = new LinearLayout(context);
@@ -416,21 +424,20 @@ public final class FeatureGateLabFragment extends Fragment {
             tabContainer.setFocusable(true);
             tabContainer.setTag("feature_gate_view_" + i);
             tabContainer.setContentDescription(L10n.t(context, VIEW_LABELS[i]));
-            tabContainer.setBackground(SettingsUi.pressAndFocusOver(
-                    context, SettingsUi.RADIUS_CONTROL,
-                    new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT)));
+            FeatureGateLabUi.styleTab(tabContainer, false);
             SettingsUi.markAsButton(tabContainer);
             tabContainer.setOnClickListener(view -> onViewSelected(position));
             TextView tab = FeatureGateLabUi.text(context, L10n.t(context, VIEW_LABELS[i]), 14,
                     SettingsUi.textSecondary(), Typeface.BOLD);
             tab.setGravity(Gravity.CENTER);
             tab.setSingleLine(true);
-            tab.setMinHeight(FeatureGateLabUi.dp(context, 46));
+            tab.setMinHeight(FeatureGateLabUi.dp(context, 48));
             tab.setMinWidth(FeatureGateLabUi.dp(context, 72));
             tab.setPadding(
                     FeatureGateLabUi.dp(context, 14), 0,
                     FeatureGateLabUi.dp(context, 14), 0);
             View indicator = new View(context);
+            indicator.setVisibility(View.GONE);
             viewTabLabels[i] = tab;
             viewTabContainers[i] = tabContainer;
             viewTabIndicators[i] = indicator;
@@ -438,8 +445,10 @@ public final class FeatureGateLabFragment extends Fragment {
             tabContainer.addView(indicator, new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     FeatureGateLabUi.dp(context, 2)));
-            viewTabs.addView(tabContainer, new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams tabParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            if (i + 1 < VIEW_LABELS.length) tabParams.setMarginEnd(FeatureGateLabUi.dp(context, 6));
+            viewTabs.addView(tabContainer, tabParams);
         }
         HorizontalScrollView viewScroller = new HorizontalScrollView(context);
         viewScroller.setFillViewport(false);
@@ -466,7 +475,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 FeatureGateLabUi.dp(context, 12),
                 0
         );
-        filterButton.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_CONTROL, false));
+        filterButton.setBackground(SettingsUi.focusableSurface(context, SettingsUi.RADIUS_PILL, false));
         filterButton.setFocusable(true);
         filterButton.setOnClickListener(view -> showFilterPicker());
         resultRow.addView(filterButton, new LinearLayout.LayoutParams(
@@ -977,6 +986,7 @@ public final class FeatureGateLabFragment extends Fragment {
             if (container == null || tab == null || indicator == null) continue;
             boolean selected = i == selectedView;
             container.setSelected(selected);
+            FeatureGateLabUi.styleTab(container, selected);
             tab.setTextColor(selected ? SettingsUi.accent() : SettingsUi.textSecondary());
             tab.setTypeface(Typeface.DEFAULT, selected ? Typeface.BOLD : Typeface.NORMAL);
             indicator.setBackgroundColor(selected ? SettingsUi.accent() : Color.TRANSPARENT);
@@ -988,6 +998,7 @@ public final class FeatureGateLabFragment extends Fragment {
             if (container == null || tab == null || indicator == null) continue;
             boolean selected = i == selectedSource;
             container.setSelected(selected);
+            FeatureGateLabUi.styleTab(container, selected);
             tab.setTextColor(selected ? SettingsUi.accent() : SettingsUi.textSecondary());
             tab.setTypeface(Typeface.DEFAULT, selected ? Typeface.BOLD : Typeface.NORMAL);
             indicator.setBackgroundColor(selected ? SettingsUi.accent() : Color.TRANSPARENT);
@@ -1070,7 +1081,7 @@ public final class FeatureGateLabFragment extends Fragment {
         int padding = FeatureGateLabUi.dp(context, 16);
         selectionBar.setPadding(padding, FeatureGateLabUi.dp(context, 12), padding,
                 FeatureGateLabUi.dp(context, 12));
-        selectionBar.setBackground(SettingsUi.roundedSurface(context, SettingsUi.RADIUS_SQUARE, false));
+        selectionBar.setBackground(SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_CARD, true));
 
         selectionCount = FeatureGateLabUi.label(context, "");
         selectionCount.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
@@ -2198,11 +2209,11 @@ public final class FeatureGateLabFragment extends Fragment {
                 TextView title = FeatureGateLabUi.text(context, "", 16, SettingsUi.textPrimary(), Typeface.BOLD);
                 title.setMaxLines(2);
                 TextView key = FeatureGateLabUi.label(context, "");
-                key.setTextSize(SettingsUi.TEXT_CAPTION);
                 key.setTypeface(Typeface.MONOSPACE);
                 key.setPadding(0, FeatureGateLabUi.dp(context, 6), 0, 0);
-                key.setSingleLine(true);
-                key.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+                key.setSingleLine(!stacked);
+                key.setMaxLines(stacked ? 2 : 1);
+                key.setEllipsize(stacked ? null : TextUtils.TruncateAt.MIDDLE);
                 textColumn.addView(title, FeatureGateLabUi.matchWrap());
                 textColumn.addView(key, FeatureGateLabUi.matchWrap());
                 row.addView(textColumn, stacked
@@ -2216,11 +2227,11 @@ public final class FeatureGateLabFragment extends Fragment {
                 LinearLayout stateColumn = new LinearLayout(context);
                 stateColumn.setOrientation(LinearLayout.VERTICAL);
                 stateColumn.setGravity(sideGravity | Gravity.CENTER_VERTICAL);
-                TextView type = FeatureGateLabUi.text(context, "", 12, SettingsUi.textSecondary(), Typeface.BOLD);
+                TextView type = FeatureGateLabUi.text(context, "", SettingsUi.TEXT_LABEL, SettingsUi.textSecondary(), Typeface.BOLD);
                 type.setGravity(sideGravity);
-                TextView state = FeatureGateLabUi.text(context, "", 12, SettingsUi.textSecondary(), Typeface.NORMAL);
+                TextView state = FeatureGateLabUi.text(context, "", SettingsUi.TEXT_LABEL, SettingsUi.textSecondary(), Typeface.NORMAL);
                 state.setGravity(sideGravity);
-                TextView value = FeatureGateLabUi.text(context, "", 12, SettingsUi.textPrimary(), Typeface.NORMAL);
+                TextView value = FeatureGateLabUi.text(context, "", SettingsUi.TEXT_LABEL, SettingsUi.textPrimary(), Typeface.NORMAL);
                 value.setGravity(sideGravity);
                 // The value is the reason the row is worth reading. Given the width it wraps
                 // rather than shortening; only past three lines is there nothing else to do.

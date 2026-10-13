@@ -138,9 +138,20 @@ Translations live in extensions/tiktok/src/main/l10n/. The generator scripts/gen
 
 ## Settings design concepts
 
-Design study v0.1.0, October 9, 2026. Quiet Index was selected and has shipped since 0.70.0. The images below remain design mockups. The native implementation uses the existing preference pages and setting keys.
+The October 12 refresh keeps Quiet Index’s navigation and gives every native page the same rounded panels, compact heading and pink controls. The boards below cover the home page, five hubs, all fourteen detailed pages, search, Feature Gate Lab and its details, plus the creator editor. They are design targets, not screenshots of the running app.
 
-The previous home repeated Feed filter, Privacy and Screen time as shortcuts above their full rows. Quiet Index replaces that stack with a compact status beside the Hushfeed title, search and seven groups. About Hushfeed sits separately below the groups. Detailed controls remain on their existing pages.
+| Pages | Design target | Native captures |
+| --- | --- | --- |
+| Home, Feed & layout, Feed screen, Backup and restore | [Open board](assets/settings-design-2026-10-12/01-home-feed-backup.png) | [Home](../assets/settings/settings.png), [Feed & layout](../assets/settings/hub-feed_layout.png), [Feed screen](../assets/settings/interface.png), [Backup](../assets/settings/backup.png) |
+| Comments & inbox, Downloads & sharing, App & advanced, About | [Open board](assets/settings-design-2026-10-12/02-hubs.png) | [Comments & inbox](../assets/settings/hub-comments_inbox.png), [Downloads & sharing](../assets/settings/hub-downloads_sharing.png), [App & advanced](../assets/settings/hub-app_advanced.png), [About](../assets/settings/hub-about.png) |
+| Feed filter, Feed tabs, Playback, Screen time | [Open board](assets/settings-design-2026-10-12/03-feed-playback-time.png) | [Feed filter](../assets/settings/feed_filter.png), [Feed tabs](../assets/settings/feed_navigation.png), [Playback](../assets/settings/playback.png), [Screen time](../assets/settings/screen_time.png) |
+| Comments, Inbox, Downloads, Share sheet | [Open board](assets/settings-design-2026-10-12/04-conversations-sharing.png) | [Comments](../assets/settings/comments.png), [Inbox](../assets/settings/inbox.png), [Downloads](../assets/settings/downloads.png), [Share sheet](../assets/settings/share.png) |
+| Privacy, App, Region, Diagnostics | [Open board](assets/settings-design-2026-10-12/05-privacy-app-region-diagnostics.png) | [Privacy](../assets/settings/privacy.png), [App](../assets/settings/behavior.png), [Region](../assets/settings/region.png), [Diagnostics](../assets/settings/diagnostics.png) |
+| Feature Gate Lab, Gate details, Search, Creator editor | [Open board](assets/settings-design-2026-10-12/06-lab-search-editor.png) | [Lab](../assets/settings/lab.png), [Gate details](../assets/settings/gate_details.png), [Search](../assets/settings/search.png), [Creator editor](../assets/settings/creator-list.png) |
+
+The earlier navigation studies remain below as background.
+
+The previous home repeated Feed filter, Privacy and Screen time as shortcuts above their full rows. Quiet Index replaces that stack with a compact status beside the Hushfeed title, search and seven groups. About Hushfeed is the last destination in the home group. Detailed controls remain on their existing pages.
 
 | Concept | Preview | Navigation tradeoff |
 | --- | --- | --- |
@@ -169,11 +180,15 @@ TikTokPreferenceFragment owns the new group routes through its Hub enum. Existin
 
 Search still indexes individual controls and checklist members, including retained aliases for renamed settings. A result opens the existing page and scrolls to the matching row. Pause results open App & advanced. Group visibility follows the available pages from the installed patches. This is a navigation change. It leaves persisted setting keys, defaults, dependency explanations, backup and undo behavior in their existing owners.
 
-The home uses a black base with small outline icons, quiet separators and restrained accents. Compact rows replace the large icon tiles and repeated shortcuts. Detailed pages retain their grouped controls. The mockup uses a 390 by 844 logical frame. Android layout must still be checked at the supported font scales, translated label lengths and light theme.
+The home uses a black base, 40 dp pink icon tiles and one grouped list. Settings panels use 18 dp corners, fields use 16 dp corners, and switches have pill tracks. Page titles use 34 sp with the existing large-text and word-fitting rules. The home still fits all eight routes at 390 by 844. Shared overlay geometry stays independent of settings geometry.
+
+The mockups use a 480 by 960 logical frame. The native pages keep a slightly denser rhythm, and the Lab uses a compact toolbar so search and filters leave room for the gate list. Action rows retain their actual behavior: Reset and Undo do not gain navigation chevrons. The creator dialog wraps its content on a device; the offscreen capture uses a full-height host.
 
 The compact status has Active, Paused and Restart pending text states. Tapping it opens App & advanced, which holds the detailed status, recovery actions and Pause. The Pause description and paused summary say that Hushfeed's switches pause while saved settings and the changes made when patching, like the app's name or icon, stay. They no longer describe Pause as an unpatched app. Mockup switch positions are examples, not captured device settings. No protection score or battery-saving claim is part of the design.
 
-The mockups establish hierarchy and category coverage. They are not evidence of native layout or device acceptance. Use the implementation's rendered screenshots and recorded checks for font scaling, accessibility, interaction and localization. Final build and supported-device acceptance were still in progress when this source note was updated.
+The mockups establish hierarchy and category coverage. They are not evidence of native layout or device acceptance. Use the implementation's rendered screenshots and recorded checks for font scaling, accessibility, interaction and localization. Rendered checks cover both themes, navigation, translated text, twice the text size and right-to-left layout.
+
+The final signed build was exercised on a Galaxy S22 running Android 16 and TikTok 47.1.4 at 450dpi, in light mode with the default text size. The walkthrough visited all 24 surfaces above, including search and the creator editor. The final home and five hubs were recaptured after correcting icon scaling at phone density. Existing app data and settings were preserved. Dark mode and enlarged text were checked through the rendered suite. TalkBack interaction was not rerun for this refresh.
 
 ## Adding or changing a patch
 

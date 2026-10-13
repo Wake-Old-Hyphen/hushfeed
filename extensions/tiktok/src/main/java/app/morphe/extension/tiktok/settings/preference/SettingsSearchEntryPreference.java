@@ -39,17 +39,19 @@ public final class SettingsSearchEntryPreference extends Preference {
         row.setTag(ROW_TAG);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(SettingsUi.dp(context, 48));
-        row.setPaddingRelative(SettingsUi.dp(context, 14), SettingsUi.dp(context, 8),
-                SettingsUi.dp(context, 14), SettingsUi.dp(context, 8));
-        row.setBackground(SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_CARD,
-                SettingsUi.borderedSurface(context, SettingsUi.RADIUS_CARD, false)));
+        row.setBackground(new android.graphics.drawable.InsetDrawable(
+                SettingsUi.pressAndFocusOver(context, SettingsUi.RADIUS_SETTINGS_FIELD,
+                        SettingsUi.borderedSurface(context, SettingsUi.RADIUS_SETTINGS_FIELD, false)),
+                SettingsUi.dp(context, 8), 0, SettingsUi.dp(context, 8), 0));
+        row.setPaddingRelative(SettingsUi.dp(context, 22), SettingsUi.dp(context, 8),
+                SettingsUi.dp(context, 22), SettingsUi.dp(context, 8));
         SettingsUi.markAsButton(row);
 
         ImageView icon = new ImageView(context);
         icon.setImageDrawable(SettingsMenuPreference.lineIconDrawable(context, SettingsMenuPreference.Icon.SEARCH));
         icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         row.addView(icon, new LinearLayout.LayoutParams(SettingsUi.dp(context, 24), SettingsUi.dp(context, 24)));
-        TextView title = SettingsUi.text(context, getTitle().toString(), SettingsUi.TEXT_TITLE,
+        TextView title = SettingsUi.text(context, getTitle().toString(), 15,
                 SettingsUi.textSecondary(), 0);
         title.setId(android.R.id.title);
         LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, -2, 1);

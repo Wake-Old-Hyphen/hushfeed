@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** As configurações do Hushfeed estão de cara nova, com os atalhos da página inicial no mesmo grupo e ícones rosa. Os painéis arredondados e os botões de ativação em formato de pílula também chegam ao Feature Gate Lab e ao editor de criadores ocultos. O texto grande e o modo claro continuam legíveis.
+
+* **TikTok:** Voltaram a funcionar a verificação de cobertura do menu do perfil, o caso de teste com registradores altos e o projeto de teste de assinatura. O teste de assinatura também aceita as opções do D8 em qualquer ordem.
+
+* **TikTok:** Toque e segure Para você no topo do feed para abrir as configurações do Hushfeed. Um toque rápido continua funcionando como antes, e o atalho funciona mesmo com o Hushfeed pausado.
+
 * **TikTok:** Downloads tem um novo botão abaixo de Qualidade de download do vídeo: Perguntar a qualidade a cada download. Com ele ligado, Baixar lista as qualidades em que o vídeo está disponível, com o tamanho que o TikTok informa para cada uma, e salva a que você escolher. Automático, o arquivo do próprio TikTok, vem sempre primeiro. A qualidade que você definiu continua igual para o próximo download.
 
 * **TikTok:** Uma nova chave ao lado de Toque longo, Menu completo de toque longo nos vídeos de um criador, faz um toque longo em um vídeo que você abriu pelo perfil de alguém abrir o mesmo menu completo de Para você em vez da folha de compartilhamento pequena (#120).

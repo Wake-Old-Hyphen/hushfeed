@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Pengaturan Hushfeed punya tampilan baru, dengan menu halaman utama dalam satu kelompok dan ikon merah muda. Panel membulat dan sakelar berbentuk pil juga hadir di Feature Gate Lab dan editor daftar kreator tersembunyi. Teks besar dan mode terang tetap mudah dibaca.
+
+* **TikTok:** Pemeriksaan cakupan menu profil, kasus uji register tinggi, dan proyek uji penandatanganan sudah diperbaiki. Uji penandatanganan juga menerima opsi D8 dalam urutan apa pun.
+
+* **TikTok:** Tekan lama Untuk Kamu di bagian atas feed untuk membuka pengaturan Hushfeed. Ketukan singkat tetap berfungsi seperti biasa, dan pintasan ini tetap berfungsi saat Hushfeed dijeda.
+
 * **TikTok:** Unduhan punya sakelar baru di bawah Kualitas unduhan video: Tanyakan kualitas setiap kali menyimpan. Jika aktif, Unduh menampilkan kualitas yang tersedia untuk video, dengan ukuran yang diberikan TikTok untuk masing-masing, lalu menyimpan yang Anda pilih. Otomatis, yaitu file TikTok sendiri, selalu ada di urutan pertama. Kualitas yang Anda atur tetap sama untuk penyimpanan berikutnya.
 
 * **TikTok:** Sakelar baru di samping Tekan lama, Menu tekan lama lengkap di video kreator, membuat tekan lama pada video yang kamu buka dari profil seseorang membuka menu lengkap yang sama seperti di Untuk Kamu, bukan menu bagikan yang kecil (#120).

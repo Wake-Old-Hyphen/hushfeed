@@ -659,8 +659,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             list.setCacheColorHint(SettingsUi.background());
             list.setDivider(null);
             list.setDividerHeight(0);
-            int side = getRequestedSection() == null && getRequestedHub() == null
-                    && !isSearchRequested() ? 24 : 16;
+            int side = 16;
             list.setPadding(SettingsUi.dp(getActivity(), side), 0,
                     SettingsUi.dp(getActivity(), side), SettingsUi.dp(getActivity(), 24));
             list.setClipToPadding(false);
@@ -1249,7 +1248,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         search.setKey("action_search_settings");
         search.setOrder(-900);
         screen.addPreference(search);
-        screen.addPreference(SectionHeadingPreference.compact(context, "Customize"));
+        screen.addPreference(SectionHeadingPreference.compact(context, "Your experience"));
 
         if (FeedFilterPreferenceCategory.isAvailable()
                 || FeedNavigationPreferenceCategory.isAvailable()
@@ -1292,6 +1291,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         screen.addPreference(SettingsHeaderPreference.caption(context, hub.description));
         switch (hub) {
             case FEED_LAYOUT:
+                screen.addPreference(new SectionHeadingPreference(context, "Shape your feed"));
                 if (FeedFilterPreferenceCategory.isAvailable()) {
                     addMenu(screen, Section.FEED_FILTER, SettingsMenuPreference.Icon.FILTER);
                 }
@@ -1303,6 +1303,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 }
                 break;
             case COMMENTS_INBOX:
+                screen.addPreference(new SectionHeadingPreference(context, "Conversations"));
                 if (CommentsPreferenceCategory.isAvailable()) {
                     addMenu(screen, Section.COMMENTS, SettingsMenuPreference.Icon.COMMENTS);
                 }
@@ -1311,6 +1312,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 }
                 break;
             case DOWNLOADS_SHARING:
+                screen.addPreference(new SectionHeadingPreference(context, "Save and send"));
                 if (DownloadsPreferenceCategory.isAvailable()) {
                     addMenu(screen, Section.DOWNLOADS, SettingsMenuPreference.Icon.DOWNLOADS);
                 }
@@ -1323,8 +1325,10 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 // home header carries a compact state label that opens this page.
                 SettingsStatusPreference status = new SettingsStatusPreference(context,
                         DebugPreferenceCategory.isAvailable() ? () -> openSection(Section.DIAGNOSTICS) : null);
+                status.setOrder(-850);
                 status.setTurnBackOnAction(this::turnHushfeedBackOn);
                 screen.addPreference(status);
+                screen.addPreference(new SectionHeadingPreference(context, "App controls"));
                 if (ExtensionPreferenceCategory.isAvailable()) {
                     addMenu(screen, Section.BEHAVIOR, SettingsMenuPreference.Icon.BEHAVIOR);
                 }
@@ -1339,6 +1343,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
                 screen.addPreference(pauseRow(context));
                 break;
             case ABOUT:
+                screen.addPreference(new SectionHeadingPreference(context, "About"));
                 screen.addPreference(new BuildDetailsPreference(context));
                 addReleaseNotes(context, screen);
                 screen.addPreference(new MorpheTikTokAboutPreference(context));
@@ -1483,7 +1488,10 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
 
         PreferenceCategory category = createCategory(context, screen, section);
         flattenCategory(screen, category);
-        if (section == Section.BACKUP) SettingsBackupPreference.addTo(this, screen);
+        if (section == Section.BACKUP) {
+            screen.addPreference(new SectionHeadingPreference(context, "Your settings"));
+            SettingsBackupPreference.addTo(this, screen);
+        }
     }
 
     void refreshBackupSettings() { updateUIToSettingValues(); }
