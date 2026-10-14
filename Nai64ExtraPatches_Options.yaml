@@ -174,14 +174,6 @@ kveld9_patches:
   - name: "APK Junk Cleaner"
     enabled: true
 
-  - name: "Background Sync & JobScheduler Purge"
-    enabled: true
-    options:
-      stripBootPermission: true
-      disableBootReceivers: true
-      disableWorkManager: false     # ← MUST be false to prevent DataTransport crash
-      stripWakeLock: false
-
   - name: "DPI Resource Slimmer"
     enabled: true
     options:
@@ -232,8 +224,8 @@ kveld9_patches:
       disableServices: true
       disableReceivers: true
       injectOptOutFlags: true
-      disableFirebaseInit: false
-      disablePushServices: false
+      disableFirebaseInit: true
+      disablePushServices: true
       disableGoogleAnalytics: true
       disableMetaAnalytics: true
       disableCrashDetectors: true
