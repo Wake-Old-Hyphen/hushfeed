@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Profil fonu açıq olanda saxlanılan profil fonu TikTok yenidən başlayandan sonra da qalır. Açar indi yenidən başlatmağı təklif edir (#80).
+
+* **TikTok:** Lent filtri maksimumun yanında Minimum video uzunluğu da var (#154).
+
+* **TikTok:** Avtomatik keyfiyyətdə hekayə saxlayanda daha kiçik axın yerinə onun ən hündür oynadıla bilən versiyası götürülür (#155).
+
 * **TikTok:** Şərhlər bölməsində şərh yazanların adlarını və ya ölkələrini dəyişən açar artıq əvvəlcədən açdığınız videonun şərhlərinə də yenidən başlatmadan təsir edir.
 
 * **TikTok:** Şərhlər bölməsində yeni Şərh yazanların adlarını rənglə açarı: hər şərh yazanın adı öz rəngini alır, hər dəfə eyni rəngi.

@@ -744,6 +744,7 @@ Maximum post age	Maksimum gönderi yaşı
 Maximum video length	Maksimum video süresi
 Maximum views per comment	Yorum başına maksimum görüntülenme
 Maximum views per like	Beğeni başına maksimum görüntülenme
+Minimum video length	Minimum video süresi
 Media	Medya
 Media config (VE)	Medya yapılandırması (VE)
 Messages, profiles and search still work.	Mesajlar, profiller ve arama çalışmaya devam eder.
@@ -1002,6 +1003,7 @@ Search these comments	Bu yorumlarda ara
 Search translated titles and descriptions, then open the original setting.	Çevrilmiş başlık ve açıklamalarda ara, sonra asıl ayarı aç.
 Search within comments	Yorumların içinde ara
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Saniye. Sıfır, her uzunluğu tutar. Akışın az önce gönderdiği her şey filtrelenecekse akış boş kalmasın diye sınırına en yakın video tutulur.
+Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.	Saniye. Sıfır, her uzunluğu tutar. Fotoğraf gönderileri ve uzunluğu bilinmeyen videolar kalır. Akışın az önce gönderdiği her şey filtrelenecekse sınırına en yakın video tutulur.
 Seek by	Sarma miktarı
 Seek from the edges	Kenarlardan sar
 Seen	Görüldü
@@ -2046,7 +2048,7 @@ Couldn't save the font in TikTok's storage. Free up some space and try again.	Ya
 That file is larger than %1$s MB. Choose a smaller font file.	Dosya %1$s MB'tan büyük. Daha küçük bir yazı tipi dosyası seçin.
 That file isn't a font Android can use. Choose a .ttf or .otf file.	Bu dosya, Android'in kullanabileceği bir yazı tipi değil. Bir .ttf veya .otf dosyası seçin.
 Profile background	Profil arka planı
-Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	TikTok'un kendi profil arka planı düzenleyicisini Profili düzenle bölümünde açar ve diğer profillerin ayarladığı arka planları gösterir. TikTok bu özelliği hesabınıza henüz sunmadıysa TikTok sunucuları kaydetmeyi yine de reddedebilir. Bunu açtıktan sonra Profili düzenle sayfasını yeniden açın.
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.	TikTok'un kendi profil arka planı düzenleyicisini Profili düzenle bölümünde açar ve diğer profillerin ayarladığı arka planları gösterir. TikTok bu özelliği hesabınıza henüz sunmadıysa TikTok sunucuları kaydetmeyi yine de reddedebilir.
 Copy the link with one press on Share	Paylaş'a tek basışla bağlantıyı kopyala
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.	Bir videonun altındaki Paylaş'a basmak, paylaşım menüsünü açmak yerine videonun bağlantısını kopyalar. Menüyü açmak için hemen ardından Paylaş'a tekrar bas.
 Full long-press menu on a creator's videos	Bir içerik üreticinin videolarında tam uzun basma menüsü

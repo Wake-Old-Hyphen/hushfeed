@@ -999,6 +999,7 @@ Message,Message
 Microphone in use,Microphone in use
 Mini dramas,Mini dramas
 Minimum,Minimum
+Minimum video length,Minimum video length
 More hashtags per post,More hashtags per post
 More items are available.,More items are available.
 More opens the comments,More opens the comments
@@ -1136,7 +1137,7 @@ Open the feed once so Hushfeed can see which tabs TikTok loaded.,Open the feed o
 Open the profile again and try once more,Open the profile again and try once more
 Open the story again and try once more,Open the story again and try once more
 "Open your profile once, then return here to choose its shortcuts.","Open your profile once, then return here to choose its shortcuts."
-"Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.","Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on."
+"Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.","Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet."
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Opens a GitHub report with your versions and settings filled in. Add what happened.
 Opens github.com in your browser,Opens github.com in your browser
 Operator code,Operator code
@@ -1450,6 +1451,7 @@ Search these comments,Search these comments
 Search within comments,Search within comments
 Seconds per photo,Seconds per photo
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty."
+"Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.","Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept."
 See-through bottom bar,See-through bottom bar
 Seek bar on video stories,Seek bar on video stories
 Seek by,Seek by

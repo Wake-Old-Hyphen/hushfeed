@@ -661,19 +661,25 @@ public final class AdvancedFeedRules {
     /** Last content rule, so fallback candidates have passed every hard block. */
     public static final class QualityFilter implements IFilter {
         public boolean getEnabled() {
-            return Settings.MAX_VIDEO_SECONDS.get() > 0 || Settings.MAX_VIEWS_PER_LIKE.get() > 0
-                    || Settings.MAX_VIEWS_PER_COMMENT.get() > 0;
+            return Settings.MAX_VIDEO_SECONDS.get() > 0 || Settings.MIN_VIDEO_SECONDS.get() > 0
+                    || Settings.MAX_VIEWS_PER_LIKE.get() > 0 || Settings.MAX_VIEWS_PER_COMMENT.get() > 0;
         }
         public boolean getFiltered(Aweme item) { return distance(item) > 0; }
 
         static double distance(Aweme item) {
             double distance = 0;
             int seconds = Settings.MAX_VIDEO_SECONDS.get();
-            if (seconds > 0) {
+            int least = Settings.MIN_VIDEO_SECONDS.get();
+            if (seconds > 0 || least > 0) {
                 Object video = Reflect.property(item, "getVideo", "video");
                 long ms = positive(Reflect.property(video, "getDuration", "videoLength"));
                 if (ms <= 0) ms = positive(Reflect.property(video, "getPilotLength", "pilotLength"));
-                if (ms > 0) distance = Math.max(0, ms / (seconds * 1000.0) - 1);
+                if (ms > 0 && seconds > 0) distance = Math.max(0, ms / (seconds * 1000.0) - 1);
+                // A photo post's length is its sound's, and an unknown length is no reason to hide
+                // a video: neither is held to the minimum (#154).
+                if (ms > 0 && least > 0 && !ImageVideoFilter.isPhotoPost(item)) {
+                    distance = Math.max(distance, least * 1000.0 / ms - 1);
+                }
             }
             int maxPerLike = Settings.MAX_VIEWS_PER_LIKE.get();
             int maxPerComment = Settings.MAX_VIEWS_PER_COMMENT.get();

@@ -21,6 +21,12 @@ import app.morphe.extension.tiktok.settings.Settings;
  * the server's call: saving goes to TikTok's own commit endpoint, which may refuse an account
  * outside the rollout. With the switch off, and while Hushfeed is paused, the gate runs as TikTok
  * ships it.
+ *
+ * <p>The gate alone wasn't enough: TikTok's own profile and other profiles are fetched with the
+ * account's allow-list value, snapshotted once per account and process, and the server leaves the
+ * background out of a profile fetched with 0. So a saved background was there until the next
+ * start (0.72.0). The switch answers that read with 1 as well, the value the server sets for an
+ * account in the rollout and the one Feature Gate Lab's Profile banner preset forces.
  */
 @SuppressWarnings("unused")
 public final class ProfileBackground {
@@ -39,5 +45,11 @@ public final class ProfileBackground {
         // A profile can't be built before the application context exists, but loading Settings
         // without one throws inside TikTok, so this never assumes it.
         return Utils.getContext() != null && Settings.PROFILE_BACKGROUND.get();
+    }
+
+    /** The allow-list value TikTok read for the signed-in account, as the profile requests send it. */
+    public static int allowList(int original) {
+        HookStatus.bound(HOOK_FAMILY, "allow list");
+        return original != 1 && Utils.getContext() != null && Settings.PROFILE_BACKGROUND.get() ? 1 : original;
     }
 }

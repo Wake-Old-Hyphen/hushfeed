@@ -25,6 +25,7 @@ import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.shared.settings.HushfeedPause;
 import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
@@ -669,6 +670,7 @@ public final class VideoOverlayHider {
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
                             touchScale != 1f, detailPager);
                     settleStripColumns(strips);
+                    if (detailPager && detailCommentBar) noteColumnChildren(strips);
                     alignBarRows(found, TRAVERSAL.selected, hidden, cellId);
                     fadeFullscreenEntries();
                     int photoExit = TRAVERSAL.selected[CLEAR_PHOTO_EXIT_TARGET];
@@ -937,8 +939,8 @@ public final class VideoOverlayHider {
         return at;
     }
 
-    /** When each column was last laid out again here, so a column that won't settle isn't looped. */
-    private static final Map<View, Long> COLUMNS_SETTLED = new WeakHashMap<>();
+    /** When a column last failed to settle here, so a column that won't settle isn't looped. */
+    private static final Map<View, Long> COLUMNS_UNSETTLED = new WeakHashMap<>();
 
     /**
      * Gives the pager back the room of a strip this class hid. Swiping through an opened grid on
@@ -946,22 +948,90 @@ public final class VideoOverlayHider {
      * yet the column was never measured again, so its pager kept the height it had beside the
      * strip. TikTok's ScreenAdaptionComponent shows the strip and writes its height on each page
      * change, and the layout that GONE asks for went missing on the way. A column whose shown
-     * children no longer fill it is measured and laid out again at its own size on the next turn,
-     * which doesn't depend on that request; at most once every half second per column.
+     * children no longer fill it is measured and laid out again at its own size, which doesn't
+     * depend on that request.
+     *
+     * <p>It happens right here in the pass, which runs after the layout and before the frame is
+     * drawn. On photo posts TikTok shows the strip again about twice a second (S22, 2026-10-14),
+     * and a relayout posted at most once every half second left the band up most of the time. Only
+     * a column that didn't settle waits half a second before it's tried again.
      */
-    private static void settleStripColumns(List<View> strips) {
+    static void settleStripColumns(List<View> strips) {
         for (View strip : strips) {
             if (strip.getVisibility() != View.GONE || !HIDDEN_HERE.containsKey(strip)) continue;
             android.view.ViewParent parent = strip.getParent();
             if (!(parent instanceof android.widget.LinearLayout)) continue;
             android.widget.LinearLayout column = (android.widget.LinearLayout) parent;
             if (!leavesRoom(column)) continue;
-            long now = SystemClock.uptimeMillis();
-            Long last = COLUMNS_SETTLED.get(column);
-            if (last != null && now - last < 500L) continue;
-            COLUMNS_SETTLED.put(column, now);
-            column.post(() -> relayoutColumn(column));
+            Long failed = COLUMNS_UNSETTLED.get(column);
+            if (failed != null && SystemClock.uptimeMillis() - failed < 500L) continue;
+            if (column.isInLayout()) {
+                column.post(() -> relayoutColumn(column));
+            } else {
+                relayoutColumn(column);
+            }
         }
+    }
+
+    /** The last arrangement {@link #noteColumnChildren} logged, so only a new one is logged. */
+    private static volatile String lastColumnNote;
+
+    /**
+     * With debug logging on, names what an opened video's column shows beside the comment strip,
+     * once for each new arrangement. A mutual friend's video shows a "Message..." bar that Hide
+     * the comment bar on opened videos leaves (#153), and no account here has a mutual friend, so
+     * a reporter's diagnostic export is what can name it.
+     */
+    static void noteColumnChildren(List<View> strips) {
+        if (!BaseSettings.DEBUG.get()) return;
+        for (View strip : strips) {
+            if (!(strip.getParent() instanceof ViewGroup)) continue;
+            String note = columnNote((ViewGroup) strip.getParent(), strip);
+            if (note.equals(lastColumnNote)) continue;
+            lastColumnNote = note;
+            Logger.printDebug(() -> "Opened video column shows: " + note);
+        }
+    }
+
+    /** The column's shown children, the strip's own shown children in brackets after it. */
+    static String columnNote(ViewGroup column, View strip) {
+        StringBuilder note = new StringBuilder();
+        for (int i = 0; i < column.getChildCount(); i++) {
+            View child = column.getChildAt(i);
+            if (child.getVisibility() == View.GONE) continue;
+            if (note.length() > 0) note.append(", ");
+            describe(note, child);
+        }
+        if (strip instanceof ViewGroup) {
+            ViewGroup inside = (ViewGroup) strip;
+            note.append("; strip ").append(strip.getVisibility() == View.GONE ? "hidden" : "shown").append(" [");
+            boolean first = true;
+            for (int i = 0; i < inside.getChildCount(); i++) {
+                View child = inside.getChildAt(i);
+                if (child.getVisibility() == View.GONE) continue;
+                if (!first) note.append(", ");
+                first = false;
+                describe(note, child);
+            }
+            note.append(']');
+        }
+        return note.toString();
+    }
+
+    private static void describe(StringBuilder note, View view) {
+        String name;
+        int id = view.getId();
+        if (id == View.NO_ID) {
+            name = "no id";
+        } else {
+            try {
+                name = view.getResources().getResourceEntryName(id);
+            } catch (android.content.res.Resources.NotFoundException ex) {
+                name = "0x" + Integer.toHexString(id);
+            }
+        }
+        note.append(name).append(' ').append(view.getClass().getSimpleName()).append(' ')
+                .append(view.getHeight()).append("px");
     }
 
     /** Whether a laid-out vertical column's shown children leave part of its height unclaimed. */
@@ -1003,6 +1073,11 @@ public final class VideoOverlayHider {
         column.layout(column.getLeft(), column.getTop(), column.getRight(), column.getBottom());
         column.invalidate();
         boolean settled = !leavesRoom((android.widget.LinearLayout) column);
+        if (settled) {
+            COLUMNS_UNSETTLED.remove(column);
+        } else {
+            COLUMNS_UNSETTLED.put(column, SystemClock.uptimeMillis());
+        }
         Logger.printDebug(() -> settled
                 ? "Gave the pager back the hidden comment strip's room"
                 : "Laid the pager column out again, but it still leaves the strip's room empty");

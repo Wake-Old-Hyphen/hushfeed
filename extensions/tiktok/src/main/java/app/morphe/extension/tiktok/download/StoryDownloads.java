@@ -287,9 +287,13 @@ public final class StoryDownloads {
         if (VideoDownloads.start(aweme, context, false)) return true;
 
         List<List<String>> photos = OriginalPhotos.sources(aweme);
-        VideoSource source = photos.isEmpty()
-                ? videoSource(Reflect.property(aweme, "getVideo", "video"))
-                : VideoSource.NONE;
+        Object storyVideo = Reflect.property(aweme, "getVideo", "video");
+        // On Automatic the quality download declines, and the addresses below are the copy the
+        // player streamed. The tallest rendition comes first when there is one (#155).
+        if (photos.isEmpty() && VideoDownloads.startStory(aweme, context, VideoDownloads.storyGear(storyVideo))) {
+            return true;
+        }
+        VideoSource source = photos.isEmpty() ? videoSource(storyVideo) : VideoSource.NONE;
         List<String> video = source.urls;
         if (photos.isEmpty() && video.isEmpty()) {
             Utils.showToastShort(L10n.t("This story isn't available to save"));

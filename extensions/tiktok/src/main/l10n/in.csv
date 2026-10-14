@@ -713,6 +713,7 @@ Maximum post age,Usia maksimum kiriman
 Maximum video length,Durasi video maksimum
 Maximum views per comment,Maksimum tayangan per komentar
 Maximum views per like,Tayangan maksimum per suka
+Minimum video length,Durasi video minimum
 Media,Media
 Media config (VE),Konfigurasi media (VE)
 "Messages, profiles and search still work.","Pesan, profil dan pencarian masih berfungsi."
@@ -963,6 +964,7 @@ Search these comments,Cari di komentar ini
 "Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.","Minta hasil pencarian TikTok yang tidak dipersonalisasi untuk akunmu. Ini mengubah hasil, bukan tombol atau saran pencarian."
 Search by name or gate key,Cari berdasarkan nama atau kunci gate
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Detik. Nol menyimpan semua durasi. Kalau semua yang baru dikirim feed akan tersaring habis, video yang paling dekat dengan batasmu tetap ada agar feed tidak kosong."
+"Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.","Detik. Nol menyimpan semua durasi. Postingan foto dan video yang durasinya tidak diketahui tetap ada. Kalau semua yang baru dikirim feed akan tersaring habis, video yang paling dekat dengan batasmu tetap ada."
 Seek by,Jarak lompatan
 Seek from the edges,Lompat dari tepi layar
 Seen,Terlihat
@@ -2033,7 +2035,7 @@ Couldn't save the font in TikTok's storage. Free up some space and try again.,Fo
 That file is larger than %1$s MB. Choose a smaller font file.,Berkas lebih besar dari %1$s MB. Pilih berkas font yang lebih kecil.
 That file isn't a font Android can use. Choose a .ttf or .otf file.,Berkas itu bukan font yang dapat dipakai Android. Pilih berkas .ttf atau .otf.
 Profile background,Latar profil
-"Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.","Membuka editor latar profil milik TikTok di Edit profil, dan menampilkan latar yang dipasang profil lain. Server TikTok mungkin tetap menolak menyimpannya untuk akun yang belum ditawari fitur ini oleh TikTok. Buka lagi Edit profil setelah menyalakan ini."
+"Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.","Membuka editor latar profil milik TikTok di Edit profil, dan menampilkan latar yang dipasang profil lain. Server TikTok mungkin tetap menolak menyimpannya untuk akun yang belum ditawari fitur ini oleh TikTok."
 Copy the link with one press on Share,Salin tautan dengan sekali tekan Bagikan
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.,"Menekan Bagikan di bawah video akan menyalin tautannya, bukan membuka menu bagikan. Tekan Bagikan lagi tepat setelahnya untuk membuka menu."
 Full long-press menu on a creator's videos,Menu tekan lama lengkap di video kreator

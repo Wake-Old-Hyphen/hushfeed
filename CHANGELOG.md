@@ -4,6 +4,12 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** A profile background saved with the Profile background switch on no longer disappears after TikTok restarts. TikTok asks its servers for profiles with a value that left the background out, and the switch now sends the one that brings it back, the same one Feature Gate Lab's Profile banner preset sets. Flipping the switch now offers a restart (#80).
+
+* **TikTok:** Feed filter has a Minimum video length beside the maximum, under Limits. Videos shorter than it are hidden, while photo posts and videos TikTok sent no length for stay. Like the maximum, when a whole batch would go, the video closest to your limit is kept (#154).
+
+* **TikTok:** Saving a story on Automatic quality now gets its tallest version that other players can open, not the smaller one TikTok's player happened to be streaming. A story whose own clean file is already that tall keeps it, and one with nothing better saves the way it did before (#155).
+
 * **TikTok:** Turning a commenter switch on or off under Hushfeed settings > Comments now changes the comments of a video you'd already opened. Before, reopening those comments showed the names and countries they were first drawn with until you moved to another video or restarted TikTok. A verified badge after a name stays where it is.
 
 * **TikTok:** A new Color commenter names switch under Hushfeed settings > Comments gives each commenter's name a color of its own. An account gets the same one every time it shows up, a darker shade on TikTok's light comment panel and a lighter one on its dark panel, so a long thread is easier to follow. It starts off.
@@ -40,7 +46,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** With Show where a video was posted or Show the handle instead of the name on, a creator's display name that comes back on screen is no longer left cut short beside an empty row. Putting the name back now lets the row measure it again (#127).
 
-* **TikTok:** AMOLED dark theme now turns the cards on TikTok's own settings pages black as well, on Settings and privacy and the pages under it. TikTok's dark mode already paints those pages and search black, so the cards were the gray left over. The search field, the filter chips and the profile menu's cards keep their dark gray, so you can still see where to tap (#152).
+* **TikTok:** AMOLED dark theme now turns the cards on TikTok's own settings pages black as well, on the pages under Settings and privacy, like Display. TikTok's dark mode already paints those pages and search black, so the cards were the gray left over. The search field, the filter chips and the profile menu's cards keep their dark gray, so you can still see where to tap (#152).
 
 * **TikTok:** Feature Gate Lab has two presets from TikTok's regional builds. Scrolling comments on videos turns on Korea's one-line comments that run across a video, landscape videos included. Several photos in one comment turns on Japan's photo picker that adds more than one photo to a comment. Both need the Lab's overrides switch and a TikTok restart, and Undo puts back the values you had. TikTok's servers still decide which videos carry scrolling comments and whether a comment with several photos posts (#98).
 

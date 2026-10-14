@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Latar profil yang disimpan saat Latar profil aktif tidak hilang lagi setelah TikTok dimulai ulang. Sakelarnya kini menawarkan mulai ulang (#80).
+
+* **TikTok:** Filter feed punya Durasi video minimum di samping yang maksimum (#154).
+
+* **TikTok:** Menyimpan cerita dengan kualitas Otomatis kini mengambil versi tertinggi yang bisa diputar, bukan stream yang lebih kecil (#155).
+
 * **TikTok:** Sakelar di Komentar yang mengubah nama atau negara pengomentar kini juga mengubah komentar video yang sudah kamu buka, tanpa memulai ulang.
 
 * **TikTok:** Sakelar baru Warnai nama pengomentar di Komentar: nama setiap pengomentar punya warnanya sendiri, selalu sama.

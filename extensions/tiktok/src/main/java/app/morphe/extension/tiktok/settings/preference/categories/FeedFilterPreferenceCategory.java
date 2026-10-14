@@ -171,6 +171,7 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
 
     private void addLimits(Context context) {
         addPreference(new SectionHeadingPreference(context, "Limits"));
+        addPreference(new NumberInputPreference(context, "Minimum video length", "Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.", Settings.MIN_VIDEO_SECONDS, "%1$s second", "%1$s seconds").zeroMeansOff());
         addPreference(new NumberInputPreference(context, "Maximum video length", "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.", Settings.MAX_VIDEO_SECONDS, "%1$s second", "%1$s seconds").zeroMeansOff());
         addPreference(new NumberInputPreference(context, "Maximum post age",
                 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.",

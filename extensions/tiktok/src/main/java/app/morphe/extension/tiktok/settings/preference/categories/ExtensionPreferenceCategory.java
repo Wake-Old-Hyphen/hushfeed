@@ -280,8 +280,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     "Profile background",
                     "Opens TikTok's own profile background editor in Edit profile, and shows the "
                             + "backgrounds other profiles have set. TikTok's servers may still refuse "
-                            + "to save one for an account TikTok hasn't offered it to yet. Open Edit "
-                            + "profile again after turning this on.",
+                            + "to save one for an account TikTok hasn't offered it to yet.",
                     Settings.PROFILE_BACKGROUND
             ));
         }

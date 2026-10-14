@@ -81,6 +81,31 @@ final class VideoDownloads {
         return start(aweme, context, true, pick);
     }
 
+    /**
+     * The rendition a story's Automatic save takes: the tallest other players open, or null when
+     * TikTok's clean address is as tall or the video lists none. A story has no TikTok save to
+     * defer to, and the address it fell back to is whichever rendition the player streamed, often
+     * far below the tallest (#155).
+     */
+    static Object storyGear(Object video) {
+        Object rates = QualitySelector.rawGears(video);
+        if (!(rates instanceof List<?>)) return null;
+        Object gear = QualitySelector.chooseForFile(video, (List<?>) rates, "highest");
+        return gear != null && QualitySelector.ownHeight(video) < QualitySelector.heightOf(gear) ? gear : null;
+    }
+
+    /**
+     * A story's save at {@link #storyGear}. False, with nothing said, when that rendition can't
+     * make a complete file, so the story's own save runs from its addresses instead.
+     */
+    static boolean startStory(Object aweme, Context context, Object gear) {
+        if (gear == null || urls(Reflect.property(gear, "getPlayAddr", "playAddr")).isEmpty()) return false;
+        Object video = Reflect.property(aweme, "getVideo", "video");
+        boolean dash = Boolean.TRUE.equals(Reflect.invoke(video, "hasDashBitrate"));
+        if (dash && !Settings.DOWNLOAD_WITHOUT_SOUND.get() && audioUrls(video, gear).isEmpty()) return false;
+        return start(aweme, context, false, gear);
+    }
+
     /** Whether a save of this video holds it, from its wait in line to its end. */
     static boolean saving(String id) {
         return ACTIVE.contains(id);

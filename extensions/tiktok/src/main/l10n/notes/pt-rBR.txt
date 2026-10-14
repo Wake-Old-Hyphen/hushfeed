@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Um fundo de perfil salvo com Fundo do perfil ligado não some mais quando o TikTok reinicia. A chave agora oferece reiniciar (#80).
+
+* **TikTok:** Filtro do feed tem uma Duração mínima do vídeo ao lado da máxima (#154).
+
+* **TikTok:** Salvar uma história com qualidade Automático agora pega a versão reproduzível mais alta em vez da transmissão menor (#155).
+
 * **TikTok:** Uma chave em Comentários que muda os nomes ou países de quem comenta agora também muda os comentários de um vídeo que você já tinha aberto, sem reiniciar.
 
 * **TikTok:** Nova chave Colorir os nomes de quem comenta em Comentários: o nome de cada pessoa que comenta ganha uma cor própria, sempre a mesma.

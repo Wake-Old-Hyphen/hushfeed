@@ -71,6 +71,22 @@ class ProfileBackgroundAnchorsTest {
             assertFalse("$version: an exception handler lands on the gate's first instruction",
                 body.tryBlocks.any { block -> block.exceptionHandlers.any { it.handlerCodeAddress == 0 } })
 
+            // The allow-list read the profile requests send (#80): one, an int straight into a
+            // move-result, and the snapshot it builds is what the profile requests carry.
+            val read = holder.profileBackgroundAllowListRead()
+            assertTrue("$version: no single allow-list read in ${holder.type}", read != null)
+            val reader = read!!.first
+            val requesters = sortedSetOf<String>()
+            for (classDef in classes.values) {
+                for (method in classDef.methods) {
+                    val calls = method.calls()
+                    if (calls.any { it.definingClass == holder.type && it.name == reader.name && it.returnType == reader.returnType } &&
+                        calls.any { it.name in PROFILE_REQUESTS }
+                    ) requesters += classDef.type
+                }
+            }
+            assertTrue("$version: no profile request sends the allow-list snapshot", requesters.isNotEmpty())
+
             val askers = sortedSetOf<String>()
             for (classDef in classes.values) {
                 for (method in classDef.methods) {
@@ -87,6 +103,9 @@ class ProfileBackgroundAnchorsTest {
 
     private companion object {
         const val ALLOW_LIST = "profile_bg_in_allow_list"
+
+        /** TikTok's own profile and another profile, each fetched with the allow-list value. */
+        val PROFILE_REQUESTS = setOf("getSelfUserInfo", "getOtherUserInfo")
 
         /** Edit profile, which builds the background editor, and the background on a profile. */
         val REQUIRED_ASKERS = listOf(

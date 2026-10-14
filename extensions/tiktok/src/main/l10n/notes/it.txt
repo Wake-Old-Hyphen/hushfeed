@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Uno sfondo del profilo salvato con Sfondo del profilo attivo resta dopo il riavvio di TikTok. L'interruttore ora propone un riavvio (#80).
+
+* **TikTok:** Filtro del feed ha una Durata minima del video accanto a quella massima (#154).
+
+* **TikTok:** Salvare una storia con qualità Automatico ora prende la sua versione riproducibile più alta invece dello stream più piccolo (#155).
+
 * **TikTok:** Un interruttore in Commenti che cambia i nomi o i paesi di chi commenta ora cambia anche i commenti di un video che avevi già aperto, senza riavviare.
 
 * **TikTok:** Nuovo interruttore Colora i nomi di chi commenta in Commenti: il nome di ogni persona che commenta ha un colore tutto suo, sempre lo stesso.

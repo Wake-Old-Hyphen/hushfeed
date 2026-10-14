@@ -717,6 +717,7 @@ Maximum post age	Idade máxima da publicação
 Maximum video length	Duração máxima do vídeo
 Maximum views per comment	Máximo de visualizações por comentário
 Maximum views per like	Visualizações máximas por curtida
+Minimum video length	Duração mínima do vídeo
 Media	Mídia
 Media config (VE)	Configuração de mídia (VE)
 Messages, profiles and search still work.	As mensagens, os perfis e a busca continuam funcionando.
@@ -967,6 +968,7 @@ Search translated titles and descriptions, then open the original setting.	Busca
 Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.	Peça ao TikTok resultados de pesquisa que não sejam personalizados para sua conta. Isso muda os resultados, não os botões nem as sugestões de pesquisa.
 Search by name or gate key	Buscar por nome ou chave do gate
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Segundos. Zero aceita qualquer duração. Se tudo o que o feed acabou de enviar fosse filtrado, o vídeo mais perto do seu limite fica para o feed não ficar vazio.
+Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.	Segundos. Zero aceita qualquer duração. Posts de fotos e vídeos sem duração conhecida ficam. Se tudo o que o feed acabou de enviar fosse filtrado, o vídeo mais perto do seu limite fica.
 Seek by	Avançar
 Seek from the edges	Avançar pelas bordas
 Seen	Vistos
@@ -2046,7 +2048,7 @@ Couldn't save the font in TikTok's storage. Free up some space and try again.	N�
 That file is larger than %1$s MB. Choose a smaller font file.	O arquivo tem mais de %1$s MB. Escolha um arquivo de fonte menor.
 That file isn't a font Android can use. Choose a .ttf or .otf file.	O arquivo não é uma fonte que o Android possa usar. Escolha um arquivo .ttf ou .otf.
 Profile background	Fundo do perfil
-Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	Abre o editor de fundo do perfil do próprio TikTok em Editar perfil e mostra os fundos que outros perfis definiram. Os servidores do TikTok ainda podem se recusar a salvar um fundo para uma conta à qual o TikTok ainda não ofereceu o recurso. Abra Editar perfil de novo depois de ativar.
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.	Abre o editor de fundo do perfil do próprio TikTok em Editar perfil e mostra os fundos que outros perfis definiram. Os servidores do TikTok ainda podem se recusar a salvar um fundo para uma conta à qual o TikTok ainda não ofereceu o recurso.
 Copy the link with one press on Share	Copiar o link com um toque em Compartilhar
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.	Um toque em Compartilhar embaixo de um vídeo copia o link dele em vez de abrir a folha de compartilhamento. Toque em Compartilhar de novo logo depois para abrir a folha.
 Full long-press menu on a creator's videos	Menu completo de toque longo nos vídeos de um criador

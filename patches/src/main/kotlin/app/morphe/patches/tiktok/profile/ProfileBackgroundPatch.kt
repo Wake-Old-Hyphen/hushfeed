@@ -15,12 +15,14 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
+import app.morphe.util.addInstructions
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
@@ -81,6 +83,35 @@ internal fun Method.profileBackgroundLayoutCheck(): String? =
         ?.distinct()
         ?.singleOrNull()
 
+internal const val PROFILE_BACKGROUND_ALLOW_LIST =
+    "Lapp/morphe/extension/tiktok/profile/ProfileBackground;->allowList(I)I"
+
+/**
+ * Where the gate's holder reads the account's profile_bg_in_allow_list value from TikTok's AB
+ * store (`LIZ()` on 47.1.4, which snapshots it per account): the method and the index of the
+ * move-result that takes the value, or null unless exactly one method names the key and an int
+ * read follows it straight into a move-result. TikTok's own profile and other profiles' requests
+ * (getSelfUserInfo, getOtherUserInfo) send that snapshot, and the server leaves the background out
+ * of a profile asked for with 0, so the gate alone opened the editor but lost the saved
+ * background on the next start (#80).
+ */
+internal fun ClassDef.profileBackgroundAllowListRead(): Pair<Method, Int>? {
+    val readers = methods.filter { method ->
+        method.implementation?.instructions?.any { it.getReference<StringReference>()?.string == ALLOW_LIST_KEY } == true
+    }
+    val method = readers.singleOrNull() ?: return null
+    val instructions = method.implementation!!.instructions.toList()
+    val key = instructions.indexOfFirst { it.getReference<StringReference>()?.string == ALLOW_LIST_KEY }
+    val read = (key + 1 until instructions.size).firstOrNull {
+        instructions[it].getReference<MethodReference>()?.returnType == "I"
+    } ?: return null
+    val moveResult = read + 1
+    if (instructions.getOrNull(moveResult)?.opcode != Opcode.MOVE_RESULT) return null
+    return method to moveResult
+}
+
+private const val ALLOW_LIST_KEY = "profile_bg_in_allow_list"
+
 @Suppress("unused")
 val profileBackgroundPatch = bytecodePatch(
     // A literal, not PATCH: the README and default-selection tests find patches by reading it.
@@ -117,13 +148,28 @@ val profileBackgroundPatch = bytecodePatch(
             "$PATCH: ${holder.type}->${gate.name} doesn't call exactly one static () -> boolean " +
                 "layout check, so the switch can't keep TikTok's avatar layout condition.",
         )
-        mutableClassDefBy(holder).findMutableMethodOf(gate).guardAtEntry(
+        val (reader, moveResult) = holder.profileBackgroundAllowListRead() ?: throw PatchException(
+            "$PATCH: ${holder.type} has no single method reading $ALLOW_LIST_KEY into a move-result, " +
+                "so a saved background would be left out of the profile requests.",
+        )
+        val mutableHolder = mutableClassDefBy(holder)
+        mutableHolder.findMutableMethodOf(gate).guardAtEntry(
             PATCH,
             "invoke-static/range { $argument .. $argument }, $PROFILE_BACKGROUND_SWITCH",
             """
                 invoke-static {}, $layoutCheck
                 move-result v0
                 return v0
+            """,
+        )
+        // The value the profile requests send, so the server returns a background saved on
+        // the account the switch opened the editor for.
+        val value = (reader.implementation!!.instructions.elementAt(moveResult) as OneRegisterInstruction).registerA
+        mutableHolder.findMutableMethodOf(reader).addInstructions(
+            moveResult + 1,
+            """
+                invoke-static/range { v$value .. v$value }, $PROFILE_BACKGROUND_ALLOW_LIST
+                move-result v$value
             """,
         )
 

@@ -6,6 +6,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 import com.ss.android.ugc.aweme.feed.model.AwemeStatistics;
 import com.ss.android.ugc.aweme.feed.model.FeedItemList;
+import com.ss.android.ugc.aweme.feed.model.PhotoModeImageInfo;
+import com.ss.android.ugc.aweme.feed.model.PhotoModeTextInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,11 +45,15 @@ public class AdvancedFeedRulesTest {
         final Author author = new Author();
         final Stats stats = new Stats();
         long createTime;
+        PhotoModeImageInfo photos;
         Item(String id, String handle, long ms) {
             this.id = id;
             author.handle = handle;
             video.duration = ms;
         }
+        public java.util.List getImageInfos() { return null; }
+        public PhotoModeImageInfo getPhotoModeImageInfo() { return photos; }
+        public PhotoModeTextInfo getPhotoModeTextInfo() { return null; }
         public String getAid() { return id; }
         public String getDesc() { return desc; }
         public Object getAuthor() { return author; }
@@ -63,6 +69,7 @@ public class AdvancedFeedRulesTest {
         Settings.BLOCKED_CREATORS.save("");
         Settings.LOCAL_HIDDEN_CREATORS.save("");
         Settings.MAX_VIDEO_SECONDS.save(0);
+        Settings.MIN_VIDEO_SECONDS.save(0);
         Settings.MAX_PUBLICATION_AGE_DAYS.save(0);
         Settings.MAX_VIEWS_PER_LIKE.save(0);
     }
@@ -192,6 +199,29 @@ public class AdvancedFeedRulesTest {
         assertTrue(new AdvancedFeedRules.QualityFilter().getFiltered(shortVideo));
         shortVideo.stats.likes = 20;
         assertFalse(new AdvancedFeedRules.QualityFilter().getFiltered(shortVideo));
+    }
+
+    /**
+     * A minimum beside the maximum (#154): shorter videos go, photo posts and unknown lengths
+     * stay, and a page it would empty keeps the video closest to the limit.
+     */
+    @Test public void minimumLengthHidesShortVideosAndKeepsTheClosestWhenAllWouldGo() {
+        Settings.MIN_VIDEO_SECONDS.save(10);
+        Item clip = new Item("1", "allowed", 4000);
+        Item full = new Item("2", "allowed", 10000);
+        Item unknown = new Item("3", "allowed", 0);
+        Item slideshow = new Item("4", "allowed", 3000);
+        slideshow.photos = new PhotoModeImageInfo();
+        assertTrue(new AdvancedFeedRules.QualityFilter().getEnabled());
+        assertEquals(Arrays.asList(full, unknown, slideshow), page(clip, full, unknown, slideshow).items);
+
+        Item nearer = new Item("5", "allowed", 8000);
+        assertEquals(Arrays.asList(nearer), page(clip, nearer).items);
+
+        Settings.MAX_VIDEO_SECONDS.save(20);
+        assertEquals(Arrays.asList(full), page(clip, full, new Item("6", "allowed", 30000)).items);
+        Settings.MIN_VIDEO_SECONDS.save(0);
+        assertEquals(Arrays.asList(clip, full), page(clip, full).items);
     }
 
     @Test public void publicationAgeKeepsUnknownFutureAndBoundaryTimestamps() {

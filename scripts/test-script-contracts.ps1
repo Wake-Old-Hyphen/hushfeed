@@ -1515,6 +1515,13 @@ try {
     $catalogCount = @((Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json).patches).Count
     Assert-Throws { & $factsScript @lagging -DescriptionText "Hushfeed v$($catalogVersion): $catalogCount patches for TikTok 47.0.3 and 47.1.3." 6> $null } `
         '*does not say 90 patches*' 'While the index lags, the description was held to the catalog instead of the published index.'
+    # A description can leave the release facts out (the Hush repos' descriptions dropped them on
+    # 2026-10-14); only a fact it states is held to the release.
+    & $factsScript @lagging -DescriptionText 'Hushfeed Morphe patches for TikTok.' 6> $null
+    Assert-True ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) `
+        'A description that names no version, patch count or TikTok version was refused.'
+    Assert-Throws { & $factsScript @lagging -DescriptionText 'Hushfeed v0.1.0: Morphe patches for TikTok.' 6> $null } `
+        '*does not say v*' 'A description that names an old Hushfeed version passed.'
     Reset-FactsFile 'patches-bundle.json'
     Reset-FactsFile $bugFormRelative
     Reset-FactsFile $guideRelative

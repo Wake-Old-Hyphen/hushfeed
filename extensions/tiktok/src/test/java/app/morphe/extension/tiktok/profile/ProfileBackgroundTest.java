@@ -33,8 +33,9 @@ import org.robolectric.annotation.Config;
 
 /**
  * Profile background's switch (#80). It starts off, a paused build answers off, and with it on
- * TikTok's gate answers yes for the editor and for profiles alike. The gate is asked as a profile
- * or Edit profile is built, so nothing waits for a restart.
+ * TikTok's gate answers yes for the editor and for profiles alike, and the profile requests carry
+ * the allow-list value the server returns a background for. That value is snapshotted once per
+ * process, so the switch asks for a restart.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
@@ -59,7 +60,7 @@ public class ProfileBackgroundTest {
     @Test public void theSwitchStartsOffAndOnlyItOpensTheGate() {
         assertEquals("profile_background", Settings.PROFILE_BACKGROUND.key);
         assertEquals(Boolean.FALSE, Settings.PROFILE_BACKGROUND.defaultValue);
-        assertFalse("the gate is asked as each screen builds", Settings.PROFILE_BACKGROUND.rebootApp);
+        assertTrue("the allow-list snapshot is taken once per process", Settings.PROFILE_BACKGROUND.rebootApp);
 
         assertFalse("off, TikTok decides the editor", ProfileBackground.openGate(true));
         assertFalse("off, TikTok decides profiles", ProfileBackground.openGate(false));
@@ -72,6 +73,29 @@ public class ProfileBackgroundTest {
 
         PausedProcess.set(true);
         assertFalse("paused, TikTok decides", ProfileBackground.openGate(true));
+    }
+
+    /**
+     * 0.72.0 opened the editor but sent TikTok's own allow-list value, 0 outside the rollout, with
+     * the profile requests, so the server left a saved background out after a restart (#80).
+     */
+    @Test public void theSwitchSendsTheAllowListValueTheServerWants() {
+        assertEquals("off, TikTok's value goes out", 0, ProfileBackground.allowList(0));
+        Settings.PROFILE_BACKGROUND.save(true);
+        assertEquals(1, ProfileBackground.allowList(0));
+        assertEquals("an account already in the rollout keeps its value", 1, ProfileBackground.allowList(1));
+        String report = String.join("\n", HookStatus.report());
+        assertTrue(report, report.contains("profile background: 1 found"));
+
+        PausedProcess.set(true);
+        assertEquals("paused, TikTok's value goes out", 0, ProfileBackground.allowList(0));
+        PausedProcess.set(false);
+        Utils.setContext(null);
+        try {
+            assertEquals(0, ProfileBackground.allowList(0));
+        } finally {
+            Utils.setContext(RuntimeEnvironment.getApplication());
+        }
     }
 
     @Test public void withoutAContextTheGateIsTikToks() {
@@ -100,7 +124,8 @@ public class ProfileBackgroundTest {
             assertEquals("Profile background", String.valueOf(row.getTitle()));
             String summary = String.valueOf(row.getSummary());
             assertTrue(summary, summary.contains("may still refuse to save"));
-            assertFalse("no restart note", summary.contains("Restart"));
+            assertTrue("the allow-list value counts from the next start", summary.endsWith(
+                    "hasn't offered it to yet. " + app.morphe.extension.tiktok.settings.preference.TogglePreference.RESTART_SENTENCE));
         }
     }
 

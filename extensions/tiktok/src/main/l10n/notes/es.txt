@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Un fondo de perfil guardado con Fondo del perfil activado ya no desaparece al reiniciar TikTok. El interruptor ahora ofrece reiniciar (#80).
+
+* **TikTok:** Filtro del feed tiene una Duración mínima del vídeo junto a la máxima (#154).
+
+* **TikTok:** Guardar una historia con calidad Automático ahora baja su versión reproducible más alta en lugar de la transmisión más pequeña (#155).
+
 * **TikTok:** Un interruptor de Comentarios que cambia los nombres o países de quienes comentan ahora también cambia los comentarios de un video que ya habías abierto, sin reiniciar.
 
 * **TikTok:** Nuevo interruptor Colorear los nombres de quienes comentan en Comentarios: el nombre de cada persona que comenta tiene su propio color, siempre el mismo.

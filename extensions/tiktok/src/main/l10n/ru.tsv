@@ -780,6 +780,7 @@ Maximum post age	Максимальный возраст публикации
 Maximum video length	Максимальная длительность видео
 Maximum views per comment	Максимум просмотров на комментарий
 Maximum views per like	Максимум просмотров на лайк
+Minimum video length	Минимальная длительность видео
 Media	Медиа
 Media config (VE)	Конфигурация медиа (VE)
 Messages, profiles and search still work.	Сообщения, профили и поиск по-прежнему работают.
@@ -1045,6 +1046,7 @@ Search translated titles and descriptions, then open the original setting.	Ис�
 Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.	Запрашивать у TikTok результаты поиска, не персонализированные под ваш аккаунт. Это меняет результаты, а не кнопки поиска или подсказки.
 Search by name or gate key	Поиск по названию или ключу переключателя
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Секунды. Ноль сохраняет любую длину. Если бы всё, что лента только что прислала, оказалось отфильтровано, остаётся видео, ближе всего подходящее к вашему лимиту, чтобы лента не была пустой.
+Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.	Секунды. Ноль сохраняет любую длину. Фотопосты и видео с неизвестной длительностью остаются. Если бы всё, что лента только что прислала, оказалось отфильтровано, остаётся видео, ближе всего подходящее к вашему лимиту.
 Seek by	Перемотка на
 Seek from the edges	Перематывать от краёв экрана
 Seen	Просмотрено
@@ -2214,7 +2216,7 @@ Couldn't save the font in TikTok's storage. Free up some space and try again.	Н
 That file is larger than %1$s MB. Choose a smaller font file.	Файл больше %1$s МБ. Выберите файл шрифта меньшего размера.
 That file isn't a font Android can use. Choose a .ttf or .otf file.	Этот файл не шрифт, который может использовать Android. Выберите файл .ttf или .otf.
 Profile background	Фон профиля
-Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet. Open Edit profile again after turning this on.	Открывает собственный редактор фона профиля TikTok в разделе Изменить профиль и показывает фоны, которые установили другие профили. Серверы TikTok всё равно могут отказаться сохранить фон для аккаунта, которому TikTok ещё не предложил эту функцию. Откройте Изменить профиль снова после включения.
+Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.	Открывает собственный редактор фона профиля TikTok в разделе Изменить профиль и показывает фоны, которые установили другие профили. Серверы TikTok всё равно могут отказаться сохранить фон для аккаунта, которому TikTok ещё не предложил эту функцию.
 Copy the link with one press on Share	Копировать ссылку одним нажатием на «Поделиться»
 A press on Share under a video copies its link instead of opening the share sheet. Press Share again right after to open the sheet.	Нажатие на «Поделиться» под видео копирует его ссылку вместо того, чтобы открыть меню «Поделиться». Нажмите «Поделиться» ещё раз сразу после этого, чтобы открыть меню.
 Full long-press menu on a creator's videos	Полное меню долгого нажатия на видео автора

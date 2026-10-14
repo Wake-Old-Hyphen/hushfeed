@@ -354,23 +354,31 @@ if ($SkipUrlCheck -and -not $DescriptionText) {
         $description = $description.Trim()
     }
 
+    # A description may leave the release facts out (the Hush repos' descriptions dropped them on
+    # 2026-10-14), so only a fact it states is held to the release: a version, a patch count or a
+    # TikTok version that is there has to be the current one.
+    $statesTarget = $description -match 'TikTok\s+\d+\.\d+'
     $wanted = @(
-        @{ Pattern = "\b$([regex]::Escape($descriptionVersion))\b"; Wanted = $descriptionVersion }
-        @{ Pattern = "\b$descriptionPatchCount patches\b"; Wanted = "$descriptionPatchCount patches" }
-        @{ Pattern = "TikTok\s+$([regex]::Escape($descriptionTargetVersions[0]))(?!\d|\.\d)"; Wanted = "TikTok $($descriptionTargetVersions[0])" }
+        @{ States = $description -match '\bv\d+\.\d+\.\d+\b'; Pattern = "\b$([regex]::Escape($descriptionVersion))\b"; Wanted = $descriptionVersion }
+        @{ States = $description -match '\b\d+ patches\b'; Pattern = "\b$descriptionPatchCount patches\b"; Wanted = "$descriptionPatchCount patches" }
+        @{ States = $statesTarget; Pattern = "TikTok\s+$([regex]::Escape($descriptionTargetVersions[0]))(?!\d|\.\d)"; Wanted = "TikTok $($descriptionTargetVersions[0])" }
     )
     $wanted += @($descriptionTargetVersions | Select-Object -Skip 1 | ForEach-Object {
-        @{ Pattern = "(?<![\d.])$([regex]::Escape($_))(?!\d|\.\d)"; Wanted = $_ }
+        @{ States = $statesTarget; Pattern = "(?<![\d.])$([regex]::Escape($_))(?!\d|\.\d)"; Wanted = $_ }
     })
-    $missing = @($wanted | Where-Object { $description -notmatch $_.Pattern } | ForEach-Object { $_.Wanted })
+    $missing = @($wanted | Where-Object { $_.States -and $description -notmatch $_.Pattern } | ForEach-Object { $_.Wanted })
     if ($missing.Count -gt 0) {
         throw ("The GitHub description of $slug does not say " + ($missing -join ', ') + '. It reads: ' +
             $description + [Environment]::NewLine +
             'Set it with: gh repo edit ' + $slug + ' --description "Hushfeed ' + $descriptionVersion +
             ': ... ' + $descriptionPatchCount + ' patches for TikTok ' + $descriptionTargetText + '."')
     }
-    Write-Host ("[release] the GitHub description of " + $slug + " names " + $descriptionVersion +
-        ", " + $descriptionPatchCount + " patches and TikTok " + $descriptionTargetText)
+    if (@($wanted | Where-Object { $_.States }).Count -eq 0) {
+        Write-Host ("[release] the GitHub description of " + $slug + " names no version, patch count or TikTok version, so nothing in it can go stale")
+    } else {
+        Write-Host ("[release] the GitHub description of " + $slug + " states only current facts (" + $descriptionVersion +
+            ", " + $descriptionPatchCount + " patches, TikTok " + $descriptionTargetText + ")")
+    }
 }
 
 $testRoot = Join-Path $rootPath 'extensions/tiktok/build/test-results/testDebugUnitTest'

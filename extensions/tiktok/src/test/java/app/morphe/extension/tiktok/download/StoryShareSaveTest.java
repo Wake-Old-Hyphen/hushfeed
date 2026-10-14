@@ -290,4 +290,37 @@ public class StoryShareSaveTest {
         assertTrue(StoryDownloads.videoSource(new Object()).urls.isEmpty());
         assertTrue(StoryDownloads.videoSource(null).urls.isEmpty());
     }
+
+    /**
+     * On Automatic a story took the copy the player streamed, often well below its tallest
+     * rendition, while another downloader's HD save got the full one (#155). The tallest rendition
+     * other players open comes first now, unless TikTok's own clean file is as tall, and split
+     * tracks with no sound to pair leave the story's own save to run without a word.
+     */
+    @Test public void aStoryOnAutomaticTakesItsTallestRendition() {
+        AdvancedDownloadsTest.Gear low = new AdvancedDownloadsTest.Gear("normal_540_0", 100, "https://example.com/540");
+        AdvancedDownloadsTest.Gear full = new AdvancedDownloadsTest.Gear("normal_1080_0", 400, "https://example.com/1080");
+        AdvancedDownloadsTest.Gear vc2 = new AdvancedDownloadsTest.Gear("adapt_1440_2", 600, "https://example.com/1440").codec(2);
+        QualityChoiceTest.VideoPost post = new QualityChoiceTest.VideoPost("155", low, vc2, full);
+        // Remove watermark fills the clean address from the streamed copy when TikTok sent none.
+        post.video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://example.com/play", 900).frame(576, 1024);
+        assertSame(full, VideoDownloads.storyGear(post.video));
+
+        post.video.downloadNoWatermarkAddr = new AdvancedDownloadsTest.Address("https://example.com/clean", 900).frame(1080, 1920);
+        assertNull("TikTok's own clean file was already that tall", VideoDownloads.storyGear(post.video));
+        assertNull(VideoDownloads.storyGear(new AdvancedDownloadsTest.VideoData(Collections.emptyList())));
+        assertNull(VideoDownloads.storyGear(null));
+
+        boolean muted = Settings.DOWNLOAD_WITHOUT_SOUND.get();
+        try {
+            Settings.DOWNLOAD_WITHOUT_SOUND.save(false);
+            post.video.dash = true;
+            assertFalse(VideoDownloads.startStory(post, activity, full));
+            assertFalse(VideoDownloads.startStory(post, activity, null));
+            assertNull("a declined rendition said something", ShadowToast.getTextOfLatestToast());
+            assertFalse(VideoDownloads.saving("155"));
+        } finally {
+            Settings.DOWNLOAD_WITHOUT_SOUND.save(muted);
+        }
+    }
 }
