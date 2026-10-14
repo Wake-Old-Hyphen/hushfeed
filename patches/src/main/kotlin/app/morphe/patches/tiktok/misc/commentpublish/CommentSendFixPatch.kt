@@ -86,7 +86,7 @@ val commentSendFixPatch = bytecodePatch(
     category("Comments")
     // The diagnostics number the entry's exits first, so an exit keeps its number here.
     dependsOn(sharedExtensionPatch, commentPublishDiagnosticsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val entries = mutableListOf<Pair<ClassDef, Method>>()

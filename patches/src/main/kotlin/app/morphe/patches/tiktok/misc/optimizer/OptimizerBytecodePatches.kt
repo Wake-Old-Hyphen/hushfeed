@@ -49,7 +49,7 @@ val instantLaunchSplashBlockerPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installSplashAdSwitch()
@@ -126,7 +126,7 @@ val networkTrafficGovernorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     val skipPushSetup by booleanOption(
         "skipPushSetup",
@@ -177,7 +177,7 @@ val runtimeMemoryGovernorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installAnimatedImageCacheSwitch()
@@ -241,7 +241,7 @@ val updatePromptSuppressorPatch = bytecodePatch(
 ) {
     category("Performance")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installUpdateCheckSwitch()

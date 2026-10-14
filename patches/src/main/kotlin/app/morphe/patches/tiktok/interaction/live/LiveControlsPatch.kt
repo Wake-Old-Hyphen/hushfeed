@@ -209,6 +209,65 @@ internal fun liveQualityPick(service: ClassDef, quality: Method): LiveQualityPic
     return LiveQualityPick(field, setter)
 }
 
+internal const val PUSH_STREAM_QUALITY = "Lcom/bytedance/android/live/broadcast/model/PushStreamInfo\$Quality;"
+private const val AUDIENCE_SHARE_SCREEN_DEFINITION =
+    "Lcom/bytedance/android/livesdk/dataChannel/AudienceShareScreenDefinition;"
+
+/**
+ * A pick in the older LIVE quality picker going through (#57). Share > Video quality opens
+ * LiveDefinitionSelectionDialog when the stream asks for a quality button
+ * (LiveCoreSDKData.Options.showQualityButton), and the newer picker only in rooms whose stream
+ * doesn't. Its list adapter asks the player to switch, and the switch's callback posts this with
+ * the result (X.14HP.LIZ on 47.1.4, traced as LiveDefinitionSelectionDialog's
+ * handleAudienceItemSelect). When the switch went through it copies the picked row's sdk key into
+ * a PushStreamInfo.Quality for the room's AudienceShareScreenDefinition. It never calls the pull
+ * stream service's setter the newer picker writes, so its picks were never saved: picking
+ * Original there on the S22 left the saved pick at hd.
+ */
+internal object LiveDefinitionPickAppliedFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("sdk_key"),
+    custom = { method, _ ->
+        method.references().any {
+            it is FieldReference && it.definingClass == PUSH_STREAM_QUALITY && it.name == "sdkKey"
+        } && method.references().any { it.toString() == AUDIENCE_SHARE_SCREEN_DEFINITION }
+    },
+)
+
+/**
+ * Where the older picker's pick is known: the first store of the picked sdk key, at [index], from
+ * [register]. Throws unless that store comes after the method's check of its own result flag, so
+ * only a switch that went through is saved, and before anything writes the register again.
+ */
+internal data class DefinitionPickStore(val index: Int, val register: Int)
+
+internal fun definitionPickStore(applied: Method): DefinitionPickStore {
+    val instructions = applied.implementation?.instructions?.toList().orEmpty()
+    val store = instructions.indexOfFirst {
+        it.opcode == Opcode.IPUT_OBJECT &&
+            ((it as ReferenceInstruction).reference as FieldReference).let { field ->
+                field.definingClass == PUSH_STREAM_QUALITY && field.name == "sdkKey"
+            }
+    }
+    if (store < 0) throw PatchException("LIVE controls: ${applied.definingClass}->${applied.name} stores no sdk key")
+    // The result flag: a boolean field of the runnable itself, read and branched on before the store.
+    val flag = instructions.take(store).indexOfFirst {
+        it.opcode == Opcode.IGET_BOOLEAN &&
+            ((it as ReferenceInstruction).reference as FieldReference).definingClass == applied.definingClass
+    }
+    val flagRegister = (instructions.getOrNull(flag) as? OneRegisterInstruction)?.registerA
+    val checked = flag >= 0 && instructions.subList(flag + 1, store).any {
+        it.opcode == Opcode.IF_EQZ && (it as OneRegisterInstruction).registerA == flagRegister
+    }
+    if (!checked) {
+        throw PatchException(
+            "LIVE controls: ${applied.definingClass}->${applied.name} no longer checks its result before storing the pick",
+        )
+    }
+    return DefinitionPickStore(store, (instructions[store] as TwoRegisterInstruction).registerA)
+}
+
 /** The For You LIVE preview's Service+ row ("Service+ | Ask me anything!"), real-named on 47.1.4. */
 internal const val SERVICE_PLUS_ROW =
     "Lcom/ss/android/ugc/aweme/feed/adapter/widget/serviceplus/PreviewServicePlusBottomInfoWidget;"
@@ -508,6 +567,16 @@ val liveControlsPatch = bytecodePatch(
         mutableClassDefBy(PULL_STREAM_SERVICE).findMutableMethodOf(pick.setter).addInstruction(
             0,
             "invoke-static/range {p1 .. p1}, $EXTENSION->noteLiveQualityPick(Ljava/lang/String;)V",
+        )
+        // The older picker, which Share > Video quality opens in rooms whose stream asks for a
+        // quality button, never goes through that setter. Its pick is saved where it has gone
+        // through, right after the picked key is stored (#57).
+        val applied = LiveDefinitionPickAppliedFingerprint.method
+        val stored = definitionPickStore(applied)
+        applied.addInstruction(
+            stored.index + 1,
+            "invoke-static/range {v${stored.register} .. v${stored.register}}, " +
+                "$EXTENSION->noteLiveQualityPick(Ljava/lang/String;)V",
         )
     }
 }

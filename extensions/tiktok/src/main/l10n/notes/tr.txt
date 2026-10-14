@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken müzik diski artık ilerleme çubuğunun sonunu ve yanındaki süreyi kapatmıyor (#153).
+
+* **TikTok:** AMOLED koyu tema artık Ayarlar ve gizlilik listesinin kendisindeki kartları da siyah yapıyor (#152).
+
+* **TikTok:** Yorumlar bölümünde yeni Dil ayarlarında çeviri seçeneklerini göster anahtarı: TikTok'un kendi Dil sayfası, orada yalnızca Uygulama dilini gören hesaplarda çeviri satırlarını yeniden gösterir (#143).
+
+* **TikTok:** Hushfeed artık TikTok'un dizi uygulaması PineDrama 47.1.4'ü de yamalıyor. Orada 90 yama çalışıyor ve Morphe Manager yalnızca bunları sunuyor (#156).
+
+* **TikTok:** TikTok'un Keşfet paneli odanın üstünde açılınca LIVE Kaydet düğmesi aşağı kayar, panel kapanınca yerine döner (#37).
+
+* **TikTok:** Şeffaf alt çubuk altında yeni Yüzen alt çubuk anahtarı: sekmeler videonun üzerinde yuvarlak, şeffaf koyu bir kapsülde durur (#124).
+
+* **TikTok:** Akış ekranında yeni Şeffaf durum çubuğu anahtarı: ana akıştaki video saatin altından üst kenara kadar uzanır, üstteki sekmeler yerinde kalır (#145).
+
+* **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken saatin altındaki siyah şerit artık bir oda açılırken veya sonrakine kaydırırken bir anlığına görünmüyor (#137).
+
+* **TikTok:** Profil bölümünde yeni Profil görüntülemelerini gizle ve Arkadaş ekle'yi gizle anahtarları: bu iki düğme profilinin üstünden kalkar, menü kalır (#158).
+
+* **TikTok:** TikTok bir LIVE kaydının ortasında kapanırsa (kaydırılarak kapatıldıysa ya da telefon durdurduysa), bir sonraki açılışta kaydedilen kısım kaydedilir ve size söylenir, önbellekte kalmaz (#37).
+
+* **TikTok:** Akıştaki arama düğmesini gizle altında yeni Açılan videolarda da anahtarı: açılan bir videonun üstündeki arama çubuğu da kalkar, Geri kalır (#158).
+
+* **TikTok:** Altyazılar bölümünde yeni Normal kalınlıkta altyazılar anahtarı: konuşma altyazıları TikTok'un kalın yazısı yerine normal kalınlıkta (#158).
+
+* **TikTok:** Yeni Arama sonuçlarında tam uzun basma menüsü anahtarı: aramadan açılan bir videoya uzun basmak Senin İçin menüsünü açar (#120).
+
+* **TikTok:** Yeni Ülkeyi bayrakla göster anahtarı: içerik üreticisinin adının yanındaki ve yorum saatinden sonraki ülke bayrağıyla görünür (#157).
+
+* **TikTok:** İlk videoyu başlatma artık videoyu bir iki saniye sonra değil, ilk karesinde durdurur (#83).
+
+* **TikTok:** Yeni Accent color yaması, TikTok'un düğmelerindeki ve yazılarındaki kırmızıyı mavi, yeşil, mor, turuncu, camgöbeği ya da kendi seçtiğin bir renkle değiştirir (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Profil arka planı açıkken kaydedilen profil arka planı TikTok yeniden başlayınca artık kaybolmuyor. Anahtar artık yeniden başlatmayı öneriyor (#80).

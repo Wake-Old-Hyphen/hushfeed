@@ -108,7 +108,7 @@ val playbackSpeedPatch = bytecodePatch(
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // The live speed gesture's hook and bridges are resolved before the first write below, so

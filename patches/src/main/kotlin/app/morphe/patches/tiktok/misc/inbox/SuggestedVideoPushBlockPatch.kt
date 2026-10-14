@@ -127,7 +127,7 @@ val suggestedVideoPushBlockPatch = bytecodePatch(
 ) {
     category("Inbox")
     dependsOn(settingsPatch, sharedExtensionPatch, notificationFilterPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

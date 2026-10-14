@@ -77,7 +77,7 @@ val commentPublishDiagnosticsPatch = bytecodePatch(
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val parts = mutableListOf<Pair<ClassDef, Method>>()

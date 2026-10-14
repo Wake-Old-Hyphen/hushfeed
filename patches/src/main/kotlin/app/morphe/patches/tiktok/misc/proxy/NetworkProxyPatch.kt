@@ -128,7 +128,7 @@ val networkProxyPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // Everything is found and checked before the first write: the patcher doesn't take a

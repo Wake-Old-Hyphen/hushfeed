@@ -73,7 +73,7 @@ val foldableSplitViewPatch = bytecodePatch(
         "App.",
 ) {
     category("Comments")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(sharedExtensionPatch, settingsPatch)
     execute {
         // Found before anything is written.

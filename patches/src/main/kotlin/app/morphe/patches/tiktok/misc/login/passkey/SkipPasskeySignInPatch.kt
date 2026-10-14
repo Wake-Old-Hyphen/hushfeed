@@ -88,7 +88,7 @@ val skipPasskeySignInPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installPasskeySignInSwitch()

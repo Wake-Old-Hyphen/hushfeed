@@ -31,6 +31,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
+                || SettingsStatus.languagePageTranslationsEnabled
                 || SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
@@ -51,6 +52,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.doNotAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
+                || SettingsStatus.languagePageTranslationsEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
@@ -95,6 +97,15 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     "Adds TikTok's translate button next to the comment count. One tap translates "
                             + "every comment, and another shows the originals again.",
                     Settings.COMMENT_TRANSLATE_BUTTON
+            ));
+        }
+        if (SettingsStatus.languagePageTranslationsEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Show translation options in Language settings",
+                    "Brings back the translation rows on TikTok's Language page, under Settings and privacy, "
+                            + "for accounts that only see App language there.",
+                    Settings.SHOW_TRANSLATION_SETTINGS
             ));
         }
         if (SettingsStatus.commentSortControlsEnabled) {

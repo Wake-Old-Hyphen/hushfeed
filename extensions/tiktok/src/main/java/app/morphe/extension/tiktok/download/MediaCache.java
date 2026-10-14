@@ -67,6 +67,16 @@ public final class MediaCache {
         return file;
     }
 
+    /** The folder the temporary files live in, for a start's look at what an earlier TikTok left. */
+    static File cacheDirectory(Context context) throws IOException {
+        return directory(context);
+    }
+
+    /** True while a job in this process still owns {@code file}. */
+    static boolean isActive(File file) {
+        return file != null && ACTIVE_FILES.contains(file.getAbsolutePath());
+    }
+
     /** Final cleanup: the job no longer owns this file, even if its deletion must be retried. */
     static boolean delete(File file) {
         try {
@@ -230,6 +240,7 @@ public final class MediaCache {
                 try {
                     reconcile(app);
                     UnfinishedSaves.atStart(app);
+                    LiveSpoolRecovery.atStart(app);
                 } finally {
                     RECONCILIATION_STARTED.set(false);
                 }

@@ -34,7 +34,7 @@ val playbackQualityPatch = bytecodePatch(
         "settings > Playback.",
 ) {
     category("Playback")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(settingsPatch, sharedExtensionPatch)
     execute {
         listOf("Video", "VideoUrlModel").forEach { owner ->

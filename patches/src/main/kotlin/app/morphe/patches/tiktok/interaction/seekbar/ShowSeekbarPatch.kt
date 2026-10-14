@@ -181,7 +181,7 @@ val showSeekbarThumbnailPatch = bytecodePatch(
 ) {
     category("Playback")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

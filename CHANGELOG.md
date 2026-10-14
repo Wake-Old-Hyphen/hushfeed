@@ -4,6 +4,38 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** With Hide the comment bar on opened videos on, the music disc at the bottom right no longer sits on the end of the progress bar or on the time beside it. A short caption used to leave it there. It now stays above the bar, the way it does with the comment bar showing (#153).
+
+* **TikTok:** AMOLED dark theme now reaches the cards on the Settings and privacy list itself. That list takes its colors from a palette in TikTok's code instead of its resources, so with TikTok's Display set to Dark its cards stayed gray after 0.73.0. They take the AMOLED color now. Light mode, TikTok's high contrast palette and the profile menu's cards keep their own colors (#152).
+
+* **TikTok:** A new Show translation options in Language settings switch, under Translate button in comments, brings back the translation rows (Always translate, Translate into, Don't translate) on TikTok's own Language page under Settings and privacy. TikTok hides that whole group for some accounts through two of its experiments, which is why it showed while logged out and went away after login. The switch answers those two on that page only, so the feed keeps TikTok's own translation behavior (#143).
+
+* **TikTok:** Hushfeed can patch PineDrama 47.1.4 now, TikTok's app for drama series (`com.ss.android.ttmd.video`). It's built from TikTok's own code, so 90 of the 134 patches work on it and Morphe Manager offers just those. The other 44 rely on parts PineDrama changed or doesn't have, like LIVE, the inbox rows and some of the feed buttons. Look like the store app answers with PineDrama's own signature there, not TikTok's (#156).
+
+* **TikTok:** The LIVE Record button no longer covers the avatars of the Discover panel when that opens over a room. It moves down below them and goes back once the panel closes (#37).
+
+* **TikTok:** A new Floating bottom bar switch, under See-through bottom bar, puts the tabs on a rounded, see-through dark pill that floats over the video, a little in from the sides and bottom. The tabs stay exactly where they were and work as before (#124).
+
+* **TikTok:** A new See-through status bar switch on the Feed screen page lets the main feed's video reach the top edge, with the clock and status icons over it instead of a black band. The tabs at the top stay where they are, and videos you open from a profile or search are left as they were (#145).
+
+* **TikTok:** With Show a LIVE under the status bar on, the black strip under the clock no longer flashes for a moment as a LIVE room opens or as you swipe to the next room. The same goes for Hide the status bar in LIVE (#137).
+
+* **TikTok:** Two new switches under Profile, Hide profile views and Hide Add friends, take those buttons off the top of your Profile tab. The menu button keeps its place, and another person's profile is left as it is (#158).
+
+* **TikTok:** A LIVE recording that TikTok closed on (swiped out of recents, or stopped by the phone) is saved at the next start, with the same "TikTok closed" message a recording cut short gets. It used to sit in the cache, unsaved, until the day-old cleanup threw it away (#37).
+
+* **TikTok:** A new Also on opened videos switch, under Hide the search button on the feed, hides the search bar at the top of videos you open from search, from a profile's posts, Favorites or Likes, or from your watch history. The Back button stays where it is (#158).
+
+* **TikTok:** A new Normal-weight captions switch, under Caption text size, draws TikTok's spoken captions at regular weight instead of bold. It keeps TikTok's own font and works with any caption size (#158).
+
+* **TikTok:** A new Full long-press menu in search results switch, under Full long-press menu on a creator's videos, does the same for search. A long press on a video you opened from search opens the full For You menu instead of the small share sheet. Like the creator one, it needs Long press on TikTok default (#120).
+
+* **TikTok:** A new Show the country as a flag switch, under Show where a video was posted, shows the country's flag in place of its two letters. It changes both places Hushfeed shows a country: by the creator's name, and after a commenter's time (#157).
+
+* **TikTok:** Don't start the first video stops that video at its first frame and keeps it stopped until you tap. It used to play for a second or two before the pause caught up with it, since TikTok's first report that it's playing comes that late, and on a cold start TikTok started it once more a moment after the pause (#83).
+
+* **TikTok:** A new Accent color patch swaps the red of TikTok's main buttons and red text for blue, green, purple, orange or teal, or for a color code you type. You pick it in the patch's options when you patch. TikTok's lighter and darker reds follow your color, so text stays readable in dark and light mode, and warnings stay red. Like AMOLED dark theme it's built into the app, so only patching again without it takes it back (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** A profile background saved with the Profile background switch on no longer disappears after TikTok restarts. TikTok asks its servers for profiles with a value that left the background out, and the switch now sends the one that brings it back, the same one Feature Gate Lab's Profile banner preset sets. Flipping the switch now offers a restart (#80).

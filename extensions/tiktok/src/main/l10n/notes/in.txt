@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Dengan Sembunyikan bilah komentar di video yang dibuka aktif, piringan musik tidak lagi menutupi ujung bilah progres atau waktu di sebelahnya (#153).
+
+* **TikTok:** Tema gelap AMOLED kini juga membuat kartu di daftar Pengaturan dan privasi itu sendiri menjadi hitam (#152).
+
+* **TikTok:** Sakelar baru Tampilkan opsi terjemahan di pengaturan Bahasa di Komentar: halaman Bahasa milik TikTok kembali menampilkan baris terjemahan di akun yang di sana hanya melihat Bahasa aplikasi (#143).
+
+* **TikTok:** Hushfeed kini juga bisa mem-patch PineDrama 47.1.4, aplikasi drama TikTok. 90 patch berfungsi di sana, dan Morphe Manager hanya menawarkan patch itu (#156).
+
+* **TikTok:** Tombol Rekam LIVE turun agar tidak menghalangi saat panel Jelajahi TikTok terbuka di atas ruangan, lalu kembali saat panel ditutup (#37).
+
+* **TikTok:** Sakelar baru Bilah bawah mengambang di bawah Bilah bawah transparan: tab berada di atas kapsul gelap yang membulat dan transparan di atas video (#124).
+
+* **TikTok:** Sakelar baru Bilah status transparan di Layar feed: video di feed utama menjangkau tepi atas dengan jam di atasnya, tab di atas tetap di tempatnya (#145).
+
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, pita hitam di bawah jam tidak lagi muncul sesaat ketika ruang dibuka atau saat kamu menggeser ke ruang berikutnya (#137).
+
+* **TikTok:** Sakelar baru Sembunyikan tayangan profil dan Sembunyikan Tambah teman di Profil: dua tombol itu hilang dari bagian atas profilmu, menu tetap ada (#158).
+
+* **TikTok:** Jika TikTok tertutup di tengah rekaman LIVE (diusap keluar atau dihentikan ponsel), saat dibuka lagi bagian yang terekam disimpan dan kamu diberi tahu, bukan dibiarkan di cache (#37).
+
+* **TikTok:** Sakelar baru Juga di video yang dibuka di bawah Sembunyikan tombol cari di feed: bilah pencarian di atas video yang dibuka ikut hilang, Kembali tetap ada (#158).
+
+* **TikTok:** Sakelar baru Keterangan dengan ketebalan normal di Teks: teks ucapan dengan ketebalan biasa, bukan huruf tebal TikTok (#158).
+
+* **TikTok:** Sakelar baru Menu tekan lama lengkap di hasil pencarian: tekan lama pada video dari pencarian membuka menu Untuk Kamu (#120).
+
+* **TikTok:** Sakelar baru Tampilkan negara sebagai bendera: negara di samping nama kreator dan setelah waktu komentar tampil sebagai benderanya (#157).
+
+* **TikTok:** Jangan mulai video pertama kini menghentikannya di bingkai pertama, bukan satu atau dua detik kemudian (#83).
+
+* **TikTok:** Patch baru Accent color mengganti merah pada tombol dan teks TikTok dengan biru, hijau, ungu, oranye, hijau toska, atau warna pilihanmu sendiri (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Latar profil yang disimpan saat Latar profil aktif tidak hilang lagi setelah TikTok dimulai ulang. Sakelarnya kini menawarkan mulai ulang (#80).

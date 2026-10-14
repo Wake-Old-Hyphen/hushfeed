@@ -1,0 +1,94 @@
+package app.morphe.patches.tiktok.misc.theme
+
+import app.morphe.Fixtures
+import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import java.io.File
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+/**
+ * Which colors Accent color recolors, held to each declared build's fixture (#84).
+ *
+ * <p>TikTok's TUX token table (`X.0CKW.LIZ` on 47.1.4, a chain of `"Name".equals(token)` checks
+ * that each return an attr id) names the semantic attrs its views read. UIShapePrimary to
+ * UIShapePrimary5, UITextPrimary and UITextPrimaryDisplay are the accent: the themes point each at
+ * a palette token, one for the dark themes and one for the light ones, and the palette styles set
+ * those tokens to TikTok's red at several strengths. The patch rewrites the palette literals, so
+ * every semantic attr that points at one changes with it, and only these seven may point there.
+ */
+class AccentColorPaletteTest {
+    @Test
+    fun `each declared build's accent tokens are what the token table's accent attrs point at`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val table = FixtureResourceTable(apk)
+            val named = tokenTable(apk)
+            val tokens = ACCENT_TOKENS.getValue(version)
+            val accentAttrs = mutableSetOf<String>()
+            for ((token, palette) in tokens) {
+                val attr = table.attrNames[named[token] ?: error("$version: the token table has no $token")]
+                    ?: error("$version: $token's attr isn't in the resource table")
+                accentAttrs += attr
+                // A few themes send UIShapePrimary and UITextPrimaryDisplay to e7, their own green.
+                assertEquals(
+                    "$version: what the themes point $token ($attr) at",
+                    setOf("?attr/${palette.first}", "?attr/${palette.second}"),
+                    table.styleValues(attr).toSet() - "?attr/e7",
+                )
+            }
+
+            val recolored = accentTokens(version)
+            for (name in recolored) {
+                val values = table.styleValues(name)
+                assertTrue("$version: $name has no red to recolor: $values", values.any(::isRedLiteral))
+                assertTrue(
+                    "$version: $name holds a value that is neither red nor white: $values",
+                    values.all { isRedLiteral(it) || it.equals("#ffffffff", ignoreCase = true) },
+                )
+            }
+
+            // Only the seven accent attrs point at the recolored tokens.
+            val pointing = table.styles.flatMap { style ->
+                style.items.filter { it.type == FixtureResourceTable.TYPE_ATTRIBUTE && table.attrNames[it.data] in recolored }
+                    .map { table.attrNames[it.attr] ?: Integer.toHexString(it.attr) }
+            }.toSet()
+            assertEquals("$version: attrs that point at an accent token", accentAttrs, pointing)
+
+            // Warnings keep their red, and e7 keeps its green.
+            val danger = table.attrNames.getValue(named.getValue("UIShapeDanger"))
+            val dangerTokens = table.styleValues(danger).map { it.removePrefix("?attr/") }.toSet()
+            assertTrue("$version: UIShapeDanger points at $dangerTokens", dangerTokens.isNotEmpty())
+            assertTrue("$version: a danger token is recolored", dangerTokens.none { it in recolored })
+            assertTrue("$version: e7 is recolored", "e7" !in recolored)
+        }
+    }
+
+    /** The token table's name to attr id pairs: each name's string, then the id it returns. */
+    private fun tokenTable(apk: File): Map<String, Int> {
+        val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+        val methods = container.dexEntryNames.asSequence()
+            .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+            .flatMap { it.methods.asSequence() }
+            .filter { it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;") && it.returnType == "Ljava/lang/Integer;" }
+            .filter { method ->
+                method.implementation?.instructions?.any {
+                    ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == "UIShapePrimary5"
+                } == true
+            }.toList()
+        assertEquals("the token tables: ${methods.map { "${it.definingClass}->${it.name}" }}", 1, methods.size)
+        val instructions = methods.single().implementation!!.instructions.toList()
+        val names = HashMap<String, Int>()
+        for ((index, instruction) in instructions.withIndex()) {
+            val name = ((instruction as? ReferenceInstruction)?.reference as? StringReference)?.string ?: continue
+            val id = instructions.subList(index + 1, minOf(index + 6, instructions.size))
+                .takeWhile { (it as? ReferenceInstruction)?.reference !is StringReference }
+                .firstNotNullOfOrNull { (it as? NarrowLiteralInstruction)?.narrowLiteral?.takeIf { value -> value ushr 24 == 0x7f } }
+            if (id != null) names[name] = id
+        }
+        return names
+    }
+}

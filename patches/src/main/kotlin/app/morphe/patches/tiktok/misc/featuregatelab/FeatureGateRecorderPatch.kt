@@ -22,7 +22,7 @@ val featureGateRecorderPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch, featureGateLabPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeatureGateRecorder()V")

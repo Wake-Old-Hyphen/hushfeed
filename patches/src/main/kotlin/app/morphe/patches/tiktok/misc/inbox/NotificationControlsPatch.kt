@@ -94,7 +94,7 @@ val notificationControlsPatch = bytecodePatch(
     // The notify filter carries the drawer half of Turn off push notifications.
     dependsOn(settingsPatch, sharedExtensionPatch, notificationFilterPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         PushNotifyFingerprint.method.apply {

@@ -101,7 +101,7 @@ public class FeedScreenCoverageTest {
     static final Set<String> WAITING_FOR_A_DEVICE = Set.of(
             "show_exact_counts", "hide_story_rings", "hide_live_ring", "hide_feed_search_button",
             "hide_playlist_bar", "hide_event_badge", "hide_inserted_cards", "hide_share_guide",
-            "caption_text_size", "caption_background", "keep_captions_clear_display",
+            "caption_text_size", "caption_background", "keep_captions_clear_display", "caption_regular_weight",
             "double_tap_action", "confirm_quick_repost");
 
     static final Map<String, Coverage> TABLE = new LinkedHashMap<>();
@@ -156,6 +156,8 @@ public class FeedScreenCoverageTest {
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);
+        // Only how the region label shows its code, so it reaches where the label does (#157).
+        put("region_as_flag", YES, YES, NONE);
         put("show_author_handle", YES, YES, NONE);
         put("show_engagement_rate", YES, YES, NONE);
         put("hide_feed_caption", YES, YES, NONE);
@@ -177,6 +179,8 @@ public class FeedScreenCoverageTest {
         // The bar is an opened post's: the detail pager's videos and, on 47.1.4, a photo from
         // search in the main activity. The main feed has the tabs there.
         put("hide_detail_comment_bar", NONE, YES, NONE);
+        // The search box in an opened video's top bar; the main feed has the home toolbar there (#158).
+        put("hide_opened_video_search", NONE, YES, NONE);
         put("hide_bottom_search_bar", YES, YES, NONE);
         put("hide_playlist_bar", YES, UNCHECKED, NONE);
         put("hide_event_badge", YES, UNCHECKED, NONE);
@@ -201,6 +205,8 @@ public class FeedScreenCoverageTest {
         put("caption_text_size", YES, UNCHECKED, NONE);
         put("caption_background", YES, UNCHECKED, NONE);
         put("keep_captions_clear_display", YES, UNCHECKED, NONE);
+        // The same caption layout the size reaches (#158).
+        put("caption_regular_weight", YES, UNCHECKED, NONE);
 
         // Clear display follows TikTok's own mode in either window (#84).
         put("automatic_clear_display", YES, YES, NONE);
@@ -210,6 +216,10 @@ public class FeedScreenCoverageTest {
         put("fade_in_clear_display", YES, YES, NONE);
         // The tab bar belongs to the main feed; an opened video has none (#145).
         put("see_through_bottom_bar", YES, NONE, NONE);
+        // Only the look of that same bar (#124).
+        put("floating_bottom_bar", YES, NONE, NONE);
+        // The main feed only: an opened video keeps the strip under its own top bar (#145).
+        put("see_through_status_bar", YES, NONE, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
         put("burn_in_guard", YES, YES, NONE);
 
@@ -223,6 +233,8 @@ public class FeedScreenCoverageTest {
         put("long_press_action", YES, YES, NONE);
         // Only the profile-opened video's compact menu changes; For You already has the full menu.
         put("long_press_full_menu_on_profiles", NONE, YES, NONE);
+        // The same for a video opened from search, which opens in the detail pager (#120).
+        put("long_press_full_menu_in_search", NONE, YES, NONE);
         put("edge_seek", YES, YES, NONE);
         put("edge_seek_seconds", YES, YES, NONE);
         put("rail_hold_comment", YES, YES, NONE);

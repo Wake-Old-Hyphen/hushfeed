@@ -23,7 +23,7 @@ val p2pRelayBlockerPatch = rawResourcePatch(
     default = false,
 ) {
     category("Performance")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(buildChoicePatch(BuildChoice.P2P))
 
     execute {
@@ -122,7 +122,7 @@ val languagePackPurgerPatch = rawResourcePatch(
     default = false,
 ) {
     category("Performance")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(buildChoicePatch(BuildChoice.LANGUAGES))
     val targetLocales by stringOption(
         key = "locales",

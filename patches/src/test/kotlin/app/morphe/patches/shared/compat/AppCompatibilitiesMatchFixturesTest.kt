@@ -84,6 +84,21 @@ class AppCompatibilitiesMatchFixturesTest {
         }
     }
 
+    /** PineDrama (#156) is declared at TikTok's own build, the same version and code, under its own key. */
+    @Test
+    fun `PineDrama is declared at TikTok's build under its own key`() {
+        val pineDrama = AppCompatibilities.pineDrama().single()
+        assertEquals("com.ss.android.ttmd.video", pineDrama.packageName)
+        assertEquals(setOf(AppCompatibilities.PINEDRAMA_SIGNER_SHA256), pineDrama.signatures)
+        val tiktok = AppCompatibilities.tiktok().single()
+        assertEquals(
+            "PineDrama's targets",
+            tiktok.targets.map { it.version to it.versionCodes },
+            pineDrama.targets.map { it.version to it.versionCodes },
+        )
+        assertEquals(listOf("TikTok", "PineDrama"), AppCompatibilities.tiktokAndPineDrama().map { it.name })
+    }
+
     /** Every APK a fixture holds: itself, or each split inside an .apkm, copied out to a temp file. */
     private fun apksIn(fixture: File, check: (String, File) -> Unit) {
         if (fixture.extension == "apk") return check(fixture.name, fixture)

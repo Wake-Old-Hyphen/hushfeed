@@ -57,11 +57,13 @@ feed/VideoOverlayHider.java|ANCHOR_IDS|47.1.4:bqv|app|com.by.andInflater.common_
 feed/VideoOverlayHider.java|MUSIC_COVER_IDS|videomusiccoverblock|app|com.by.andInflater.common_feed_interaction_area_feed|at:6
 feed/VideoOverlayHider.java|SEARCH_BAR_IDS|47.1.4:ll8|app|com.by.andInflater.common_feed_interaction_area_feed|at:5
 feed/VideoOverlayHider.java|STATUS_BAR_SPACER_IDS|47.1.4:dux|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#1
+feed/VideoOverlayHider.java|STATUS_BAR_SCRIM_IDS|47.1.4:wll|app|com.by.andInflater.common_feed_item_feed|on:View#6
 feed/VideoOverlayHider.java|BOTTOM_SPACER_IDS|47.1.4:duh|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_BAR_IDS|47.1.4:qqw|app|com.ss.android.ugc.aweme.comment.service.CommentDetailInputLayoutIdsImpl|at:2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_STRIP_IDS|47.1.4:cnk|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:View#2
 feed/VideoOverlayHider.java|TOP_SEARCH_BAR_IDS|47.1.4:j2g|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:ConstraintLayout#1
 feed/VideoOverlayHider.java|TOP_SEARCH_SCRIM_IDS|47.1.4:g5p|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:View#1
+feed/VideoOverlayHider.java|DETAIL_SEARCH_BOX_IDS|47.1.4:oa1|app|com.ss.android.ugc.aweme.search.entry.core.viewmodel.DetailFeedSearchHelper|at:4
 feed/VideoOverlayHider.java|CELL_ROOT_ID|view_rootview|app|com.ss.android.ugc.aweme.feed.adapter.VideoViewCell|at:3
 feed/VideoOverlayHider.java|PAGER_COLUMN_ID|viewpager_container|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:LinearLayout
 feed/VideoOverlayHider.java|WIDGET_LAYER_ID|widget_container|app|com.by.andInflater.common_feed_interaction_area_feed|on:InteractAreaRootLayout
@@ -113,3 +115,5 @@ comment/CommentTools.java|DISLIKE_ICON_IDS|47.1.4:mpe|app|class-method:setHateVi
 captions/CaptionStyle.java|TEXT_IDS|47.1.4:dmb|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.1.4:dm5|app|layout-method-string:caption_balancer|tag:ConstraintLayout
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView
+profile/ProfileTopBar.java|END_ROW_IDS|47.1.4:pw1|app|com.ss.android.ugc.profile.platform.business.navbar.assemble.sub.ProfileNavBarBaseComponent|at:2
+profile/ProfileTopBar.java|VIEWS_CAPSULE_IDS|47.1.4:tbi|app|class-method:getIvFootprintFromXml|at:1

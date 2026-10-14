@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, el disco de música ya no tapa el final de la barra de progreso ni el tiempo a su lado (#153).
+
+* **TikTok:** El tema oscuro AMOLED ahora también pone en negro las tarjetas de la propia lista de Ajustes y privacidad (#152).
+
+* **TikTok:** Nuevo interruptor Mostrar opciones de traducción en los ajustes de idioma en Comentarios: la propia página Idioma de TikTok vuelve a mostrar sus filas de traducción en las cuentas que allí solo veían Idioma de la app (#143).
+
+* **TikTok:** Hushfeed ahora también parchea PineDrama 47.1.4, la app de series de TikTok. Allí funcionan 90 parches, y Morphe Manager solo ofrece esos (#156).
+
+* **TikTok:** El botón Grabar del LIVE baja para no estorbar cuando el panel Descubrir de TikTok se abre sobre la sala, y vuelve a su sitio al cerrarse (#37).
+
+* **TikTok:** Nuevo interruptor Barra inferior flotante en Barra inferior transparente: las pestañas quedan sobre una píldora oscura, redondeada y transparente encima del vídeo (#124).
+
+* **TikTok:** Nuevo interruptor Barra de estado transparente en Pantalla del feed: el vídeo del feed principal llega hasta el borde superior con el reloj encima y las pestañas de arriba no se mueven (#145).
+
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, la franja negra bajo el reloj ya no aparece un momento al abrir una sala ni al deslizar a la siguiente (#137).
+
+* **TikTok:** Nuevos interruptores Ocultar las visualizaciones del perfil y Ocultar Añadir amigos en Perfil: esos dos botones desaparecen de la parte superior de tu perfil y el menú se queda (#158).
+
+* **TikTok:** Si TikTok se cierra en medio de una grabación de LIVE (deslizado o detenido por el teléfono), al abrirlo de nuevo se guarda lo grabado y te avisa, en vez de quedarse en la caché (#37).
+
+* **TikTok:** Nuevo interruptor También en los videos abiertos en Ocultar el botón de buscar del feed: también se va la barra de búsqueda de arriba de un video abierto y Atrás se mantiene (#158).
+
+* **TikTok:** Nuevo interruptor Subtítulos con grosor normal en Subtítulos: los subtítulos hablados con grosor normal en lugar de la negrita de TikTok (#158).
+
+* **TikTok:** Nuevo interruptor Menú completo de pulsación larga en los resultados de búsqueda: una pulsación larga en un video abierto desde la búsqueda abre el menú de Para ti (#120).
+
+* **TikTok:** Nuevo interruptor Mostrar el país como bandera: el país junto al nombre del creador y tras la hora de un comentario se muestra como su bandera (#157).
+
+* **TikTok:** No poner en marcha el primer video ahora lo detiene en su primer fotograma, no uno o dos segundos después (#83).
+
+* **TikTok:** El nuevo parche Accent color cambia el rojo de los botones y textos de TikTok por azul, verde, morado, naranja, verde azulado o un color propio (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Un fondo de perfil guardado con Fondo del perfil activado ya no desaparece al reiniciar TikTok. El interruptor ahora ofrece reiniciar (#80).

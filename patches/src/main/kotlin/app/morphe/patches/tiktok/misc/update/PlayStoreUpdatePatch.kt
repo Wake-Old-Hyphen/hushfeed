@@ -25,7 +25,7 @@ val hidePlayStoreUpdatePatch = resourcePatch(
     default = false,
 ) {
     category("Performance")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(buildChoicePatch(BuildChoice.VERSION_CODE))
 
     execute {

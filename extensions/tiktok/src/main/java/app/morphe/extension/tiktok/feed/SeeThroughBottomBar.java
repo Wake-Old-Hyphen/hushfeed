@@ -5,8 +5,11 @@
 package app.morphe.extension.tiktok.feed;
 
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.InsetDrawable;
 import android.view.View;
 
 import java.util.List;
@@ -30,6 +33,45 @@ final class SeeThroughBottomBar {
     private static final class ClearBackground extends ColorDrawable {
         ClearBackground() {
             super(Color.TRANSPARENT);
+        }
+    }
+
+    /** The floating pill's fill: dark and see-through, so the video shows behind the tabs. */
+    static final int PILL_COLOR = 0x99000000;
+    /** The pill's hairline, light enough to find the pill's edge over a dark video. */
+    static final int PILL_EDGE_COLOR = 0x40FFFFFF;
+    /** How far the pill stays in from the bar's sides and bottom, and from its top, in dp. */
+    static final int PILL_SIDE_DP = 12, PILL_BOTTOM_DP = 6, PILL_TOP_DP = 2;
+
+    /**
+     * Floating bottom bar (#124): a rounded see-through pill drawn inside the bar, in from its
+     * sides and bottom, so the tabs float over the video. Only the background changes: the bar
+     * keeps its place and size, so every tab is where TikTok put it and takes its taps.
+     */
+    static final class FloatingBackground extends InsetDrawable {
+        FloatingBackground(float density) {
+            super(pill(density), Math.round(PILL_SIDE_DP * density), Math.round(PILL_TOP_DP * density),
+                    Math.round(PILL_SIDE_DP * density), Math.round(PILL_BOTTOM_DP * density));
+        }
+
+        /**
+         * No padding: a background's padding becomes the view's, which would squeeze the tabs and
+         * outlive the pill when TikTok's background comes back. The insets only place the drawing.
+         */
+        @Override
+        public boolean getPadding(Rect padding) {
+            padding.set(0, 0, 0, 0);
+            return false;
+        }
+
+        private static GradientDrawable pill(float density) {
+            GradientDrawable pill = new GradientDrawable();
+            pill.setShape(GradientDrawable.RECTANGLE);
+            // Larger than any bar is tall, so the ends are round whatever height TikTok gives it.
+            pill.setCornerRadius(100 * density);
+            pill.setColor(PILL_COLOR);
+            pill.setStroke(Math.max(1, Math.round(density)), PILL_EDGE_COLOR);
+            return pill;
         }
     }
 
@@ -70,17 +112,30 @@ final class SeeThroughBottomBar {
      * background TikTok set since is never overwritten on the way back.
      */
     static void setBackgroundClear(View bar, boolean clear) {
+        setBackgroundClear(bar, clear, false);
+    }
+
+    /**
+     * The same, with {@code floating} drawing the floating pill (#124) in place of the clear
+     * background. A bar with no background of its own is a layout this wasn't written for, and
+     * keeps TikTok's look.
+     */
+    static void setBackgroundClear(View bar, boolean clear, boolean floating) {
         if (bar == null) return;
         Drawable current = bar.getBackground();
+        boolean ours = current instanceof ClearBackground || current instanceof FloatingBackground;
         if (clear) {
-            if (current == null || current instanceof ClearBackground) return;
-            BACKGROUNDS.put(bar, current);
-            bar.setBackground(new ClearBackground());
+            if (current == null) return;
+            if (ours && (current instanceof FloatingBackground) == floating) return;
+            if (!ours) BACKGROUNDS.put(bar, current);
+            bar.setBackground(floating
+                    ? new FloatingBackground(bar.getResources().getDisplayMetrics().density)
+                    : new ClearBackground());
             return;
         }
         if (!BACKGROUNDS.containsKey(bar)) return;
         Drawable original = BACKGROUNDS.remove(bar);
-        if (current instanceof ClearBackground) bar.setBackground(original);
+        if (ours) bar.setBackground(original);
     }
 
     /**

@@ -92,6 +92,99 @@ internal fun openDebugStateConstructor(defaultState: SmaliMethod, stateClass: St
         reference.takeIf { it.name == "<init>" && it.definingClass == stateClass }
     } ?: throw PatchException("Settings: could not resolve the OpenDebug state constructor.")
 
+/** The state class OpenDebugCellVM.defaultState() builds the row from: the first type it instantiates. */
+internal fun openDebugStateClass(defaultState: SmaliMethod): String =
+    defaultState.implementation?.instructions?.firstNotNullOfOrNull { insn ->
+        if (insn.opcode != Opcode.NEW_INSTANCE) return@firstNotNullOfOrNull null
+        ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type
+    } ?: throw PatchException("Enable Open Debug: could not resolve OpenDebug state class from defaultState().")
+
+/**
+ * The OpenDebug row's compose method: `LIZ(state, Z, Z, LX/..., I)V`, reading the state's fields and
+ * its title through Context.getString.
+ */
+internal fun isOpenDebugRowComposeMethod(method: SmaliMethod, stateClass: String): Boolean {
+    if (method.name != "LIZ" || method.returnType != "V") return false
+    val p = method.parameterTypes
+    if (p.size != 5 || p[0] != stateClass) return false
+    if (p[1] != "Z" || p[2] != "Z" || p[4] != "I") return false
+    if (!p[3].startsWith("LX/")) return false
+    val impl = method.implementation ?: return false
+    val hasGetString = impl.instructions.any { insn ->
+        insn.opcode == Opcode.INVOKE_VIRTUAL &&
+            ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.toString() == ANDROID_CONTEXT_GET_STRING
+    }
+    val readsState = impl.instructions.any { insn ->
+        if (insn.opcode != Opcode.IGET_OBJECT) return@any false
+        val ref = (insn as? ReferenceInstruction)?.reference as? FieldReference ?: return@any false
+        ref.definingClass == stateClass
+    }
+    return hasGetString && readsState
+}
+
+/** The lambda class the OpenDebug row's click goes through, and the `invoke$N` its discriminator picks. */
+internal data class OpenDebugClickWrapper(val className: String, val invokeName: String)
+
+/**
+ * The click wrapper the OpenDebug row's compose method builds: the constructor taking the row's
+ * state, a Context and the int that picks which `invoke$N` runs. It's found by those parameters
+ * alone. The wrapper's obfuscated class name is TikTok's own (`Lkotlin/jvm/internal/AwS...` in
+ * 47.1.4) and another app built from the same code, PineDrama, names it differently.
+ */
+internal fun openDebugClickWrapper(compose: SmaliMethod, stateClass: String): OpenDebugClickWrapper {
+    val instructions = compose.implementationOrPatchException("Enable Open Debug").instructions.toList()
+    val wanted = listOf(stateClass, "Landroid/content/Context;", "I")
+    return instructions.withIndex().firstNotNullOfOrNull { (index, insn) ->
+        if (insn.opcode != Opcode.INVOKE_DIRECT) return@firstNotNullOfOrNull null
+        val instruction = insn as? Instruction35c ?: return@firstNotNullOfOrNull null
+        val ref = instruction.reference as? MethodReference ?: return@firstNotNullOfOrNull null
+        if (ref.name != "<init>" || ref.parameterTypes.map(CharSequence::toString) != wanted) {
+            return@firstNotNullOfOrNull null
+        }
+
+        val discriminatorRegister = when (instruction.registerCount) {
+            4 -> instruction.registerF
+            5 -> instruction.registerG
+            else -> throw PatchException(
+                "Enable Open Debug: unexpected click wrapper constructor register count ${instruction.registerCount}.",
+            )
+        }
+        val discriminator = instructions
+            .take(index)
+            .asReversed()
+            .firstNotNullOfOrNull { previous ->
+                val register = (previous as? OneRegisterInstruction)?.registerA
+                    ?: return@firstNotNullOfOrNull null
+                if (register != discriminatorRegister) return@firstNotNullOfOrNull null
+                (previous as? NarrowLiteralInstruction)?.narrowLiteral
+            } ?: throw PatchException(
+            "Enable Open Debug: could not resolve click wrapper discriminator.",
+        )
+        OpenDebugClickWrapper(ref.definingClass, "invoke\$$discriminator")
+    } ?: throw PatchException(
+        "Enable Open Debug: could not resolve OpenDebug click wrapper class from compose method.",
+    )
+}
+
+/**
+ * The Function2 lambda defaultState() hands the OpenDebug view model to: the first constructor it
+ * calls whose first parameter is that view model. Found by that parameter alone, for the same
+ * reason as [openDebugClickWrapper].
+ */
+internal fun openDebugFunction2LambdaClass(defaultState: SmaliMethod): String {
+    val openDebugVmClass = defaultState.definingClass
+    return defaultState.implementation?.instructions?.firstNotNullOfOrNull { insn ->
+        if (insn.opcode != Opcode.INVOKE_DIRECT) return@firstNotNullOfOrNull null
+        val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
+            ?: return@firstNotNullOfOrNull null
+        if (ref.name != "<init>") return@firstNotNullOfOrNull null
+        if (ref.parameterTypes.firstOrNull()?.toString() != openDebugVmClass) return@firstNotNullOfOrNull null
+        ref.definingClass
+    } ?: throw PatchException(
+        "Enable Open Debug: could not resolve OpenDebug Function2 lambda class.",
+    )
+}
+
 /**
  * Swaps the OpenDebug row's icon for the settings gear where TikTok loads it. Through 47.1.4 the
  * state's constructor reads it from a static. On 47.1.16 defaultState() reads it and hands the one
@@ -257,7 +350,7 @@ val settingsPatch = bytecodePatch(
     category("Settings")
     dependsOn(sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // First, before any other write: TikTok's own crash recovery would delete what this
@@ -272,38 +365,13 @@ val settingsPatch = bytecodePatch(
                 "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;" +
                 ")Z"
 
-        fun isOpenDebugRowCompose(method: SmaliMethod, stateClass: String): Boolean {
-            val impl = method.implementation ?: return false
-            val hasGetString = impl.instructions.any { insn ->
-                insn.opcode == Opcode.INVOKE_VIRTUAL &&
-                    ((insn as? ReferenceInstruction)?.reference as? MethodReference)?.toString() == ANDROID_CONTEXT_GET_STRING
-            }
-            val readsState = impl.instructions.any { insn ->
-                if (insn.opcode != Opcode.IGET_OBJECT) return@any false
-                val ref = (insn as? ReferenceInstruction)?.reference as? FieldReference ?: return@any false
-                ref.definingClass == stateClass
-            }
-            return hasGetString && readsState
-        }
-
         fun resolveOpenDebugTargets(): OpenDebugTargets {
-            val defaultState = OpenDebugCellVmDefaultStateFingerprint.method
-            val stateClass = defaultState.implementation?.instructions?.firstNotNullOfOrNull { insn ->
-                if (insn.opcode != Opcode.NEW_INSTANCE) return@firstNotNullOfOrNull null
-                ((insn as? ReferenceInstruction)?.reference as? TypeReference)?.type
-            } ?: throw PatchException("Enable Open Debug: could not resolve OpenDebug state class from defaultState().")
+            val stateClass = openDebugStateClass(OpenDebugCellVmDefaultStateFingerprint.method)
 
             val composeMethods = mutableListOf<Pair<ClassDef, SmaliMethod>>()
             classDefForEach { classDef ->
                 for (method in classDef.methods) {
-                    if (method.name != "LIZ" || method.returnType != "V") continue
-                    val p = method.parameterTypes
-                    if (p.size != 5) continue
-                    if (p[0] != stateClass) continue
-                    if (p[1] != "Z" || p[2] != "Z" || p[4] != "I") continue
-                    if (!p[3].startsWith("LX/")) continue
-                    if (!isOpenDebugRowCompose(method, stateClass)) continue
-                    composeMethods += classDef to method
+                    if (isOpenDebugRowComposeMethod(method, stateClass)) composeMethods += classDef to method
                 }
             }
 
@@ -342,49 +410,15 @@ val settingsPatch = bytecodePatch(
         }
 
         fun resolveClickWrapperMethod(): MutableMethod {
-            var wrapperInvokeName: String? = null
-            val composeInstructions = composeMutable.implementationOrPatchException("Enable Open Debug")
-                .instructions.toList()
-            val wrapperClass = composeInstructions.withIndex().firstNotNullOfOrNull { (index, insn) ->
-                if (insn.opcode != Opcode.INVOKE_DIRECT) return@firstNotNullOfOrNull null
-                val instruction = insn as? Instruction35c ?: return@firstNotNullOfOrNull null
-                val ref = instruction.reference as? MethodReference
-                    ?: return@firstNotNullOfOrNull null
-                if (!ref.definingClass.startsWith("Lkotlin/jvm/internal/AwS")) return@firstNotNullOfOrNull null
-                if (ref.parameterTypes != listOf(openDebugStateClass, "Landroid/content/Context;", "I")) {
-                    return@firstNotNullOfOrNull null
-                }
-
-                val discriminatorRegister = when (instruction.registerCount) {
-                    4 -> instruction.registerF
-                    5 -> instruction.registerG
-                    else -> throw PatchException(
-                        "Enable Open Debug: unexpected click wrapper constructor register count ${instruction.registerCount}.",
-                    )
-                }
-                val discriminator = composeInstructions
-                    .take(index)
-                    .asReversed()
-                    .firstNotNullOfOrNull { previous ->
-                        val register = (previous as? OneRegisterInstruction)?.registerA
-                            ?: return@firstNotNullOfOrNull null
-                        if (register != discriminatorRegister) return@firstNotNullOfOrNull null
-                        (previous as? NarrowLiteralInstruction)?.narrowLiteral
-                    } ?: throw PatchException(
-                    "Enable Open Debug: could not resolve click wrapper discriminator.",
-                )
-                wrapperInvokeName = "invoke\$$discriminator"
-                ref.definingClass
-            } ?: throw PatchException(
-                "Enable Open Debug: could not resolve OpenDebug click wrapper class from compose method.",
-            )
+            val wrapper = openDebugClickWrapper(composeMutable, openDebugStateClass)
+            val wrapperClass = wrapper.className
 
             val matches = mutableListOf<MutableMethod>()
             classDefForEach { classDef ->
                 if (classDef.type != wrapperClass) return@classDefForEach
                 for (method in classDef.methods) {
                     if (method.parameterTypes.size != 1 || method.parameterTypes[0] != classDef.type) continue
-                    if (method.name != wrapperInvokeName) continue
+                    if (method.name != wrapper.invokeName) continue
                     val score = clickLambdaScore(method, classDef.type)
                     if (score < 70) continue
                     matches += mutableClassDefBy(classDef).findMutableMethodOf(method)
@@ -400,16 +434,7 @@ val settingsPatch = bytecodePatch(
         fun resolveOpenDebugFunction2Method(): MutableMethod {
             val defaultState = OpenDebugCellVmDefaultStateFingerprint.method
             val openDebugVmClass = defaultState.definingClass
-            val lambdaClass = defaultState.implementation?.instructions?.firstNotNullOfOrNull { insn ->
-                if (insn.opcode != Opcode.INVOKE_DIRECT) return@firstNotNullOfOrNull null
-                val ref = (insn as? ReferenceInstruction)?.reference as? MethodReference
-                    ?: return@firstNotNullOfOrNull null
-                if (!ref.definingClass.startsWith("Lkotlin/jvm/internal/AwS")) return@firstNotNullOfOrNull null
-                if (ref.parameterTypes.firstOrNull() != openDebugVmClass) return@firstNotNullOfOrNull null
-                ref.definingClass
-            } ?: throw PatchException(
-                "Enable Open Debug: could not resolve OpenDebug Function2 lambda class.",
-            )
+            val lambdaClass = openDebugFunction2LambdaClass(defaultState)
 
             val matches = mutableListOf<MutableMethod>()
             classDefForEach { classDef ->

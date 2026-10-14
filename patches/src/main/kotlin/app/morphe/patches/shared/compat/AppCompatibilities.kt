@@ -42,4 +42,33 @@ internal object AppCompatibilities {
             ),
         ),
     )
+
+    /** PineDrama's package, TikTok's drama app. */
+    const val PINEDRAMA_PACKAGE = "com.ss.android.ttmd.video"
+
+    /**
+     * SHA-256 of PineDrama's signing certificate (CN=TikTok Drama), as `apksigner verify
+     * --print-certs` prints it for the APKMirror 47.1.4 bundle.
+     */
+    const val PINEDRAMA_SIGNER_SHA256 = "e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18"
+
+    /**
+     * PineDrama 47.1.4 (#156). It's built from TikTok's 47.1.4 code with the same version code, so
+     * the patches whose anchors it keeps apply unchanged. Only those declare it: the rest anchor on
+     * TikTok's feed, LIVE, inbox or resources, which PineDrama changed or dropped.
+     */
+    fun pineDrama(): Array<Compatibility> = arrayOf(
+        Compatibility(
+            name = "PineDrama",
+            packageName = PINEDRAMA_PACKAGE,
+            appIconColor = TIKTOK_COLOR,
+            signatures = setOf(PINEDRAMA_SIGNER_SHA256),
+            targets = listOf(
+                AppTarget(version = "47.1.4", versionCode = TIKTOK_4714_VERSION_CODE),
+            ),
+        ),
+    )
+
+    /** For a patch checked on both apps: TikTok's targets and PineDrama's. */
+    fun tiktokAndPineDrama(): Array<Compatibility> = tiktok() + pineDrama()
 }

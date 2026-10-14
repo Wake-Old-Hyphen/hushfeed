@@ -35,7 +35,10 @@ public final class LiveRecordingSaver {
             throws IOException {
         Context app = context.getApplicationContext() == null ? context : context.getApplicationContext();
         boolean flv = target.transport == LiveRecorder.Transport.FLV;
-        File spool = MediaCache.createTempFile(app, "live-", flv ? ".flv" : ".ts");
+        // Named for the creator and the start, so a spool TikTok closed on can still be saved under
+        // the right name at the next start (LiveSpoolRecovery).
+        File spool = MediaCache.createTempFile(app,
+                LiveSpoolRecovery.spoolPrefix(target.creator, System.currentTimeMillis()), flv ? ".flv" : ".ts");
         LiveRecorder.Source source = flv
                 ? new LiveStreamSources.Flv(LiveStreamSources.NETWORK, target.url)
                 : new LiveStreamSources.Hls(LiveStreamSources.NETWORK, target.url);
@@ -48,22 +51,32 @@ public final class LiveRecordingSaver {
 
     private static LiveRecorder.Published finish(Context app, File spool, LiveRecorder.Target target, long startedAtMs)
             throws IOException {
-        File mp4 = MediaCache.createTempFile(app, "live-", ".mp4");
+        return publish(app, spool, target.transport == LiveRecorder.Transport.FLV, target.creator, startedAtMs);
+    }
+
+    /** Rewrites {@code spool} as an MP4 and saves it where videos go. */
+    static LiveRecorder.Published publish(Context app, File spool, boolean flv, String creator, long startedAtMs)
+            throws IOException {
+        File mp4 = MediaCache.createTempFile(app, LiveSpoolRecovery.prefixOf(spool), ".mp4");
         try {
-            if (target.transport == LiveRecorder.Transport.FLV) {
+            if (flv) {
                 LiveRemux.fromFlv(spool, new LiveRemux.MuxerWriter(mp4));
             } else {
                 LiveRemux.fromTransportStream(spool, mp4);
             }
             // The rewrite is whole; the raw copy is only in the way of the publish copy now.
             MediaCache.delete(spool);
-            MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, mp4,
-                    fileName(target.creator, startedAtMs), "video/mp4", folder(), true,
-                    MediaBudget.MAX_LIVE_RECORDING_BYTES);
-            return new LiveRecorder.Published(saved.name, saved);
+            return publishMp4(app, mp4, creator, startedAtMs);
         } finally {
             MediaCache.delete(mp4);
         }
+    }
+
+    static LiveRecorder.Published publishMp4(Context app, File mp4, String creator, long startedAtMs)
+            throws IOException {
+        MediaFileWriter.Saved saved = MediaFileWriter.publishForResult(app, mp4, fileName(creator, startedAtMs),
+                "video/mp4", folder(), true, MediaBudget.MAX_LIVE_RECORDING_BYTES);
+        return new LiveRecorder.Published(saved.name, saved);
     }
 
     /** {@code live_<handle>_<yyyyMMdd>_<HHmmss>.mp4}, with the handle cleaned for a file name. */

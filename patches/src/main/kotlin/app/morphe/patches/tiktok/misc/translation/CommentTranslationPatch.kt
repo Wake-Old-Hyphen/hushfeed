@@ -175,7 +175,7 @@ val commentTranslationPatch = bytecodePatch(
     category("Comments")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -329,6 +329,24 @@ val commentTranslationPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableCommentTranslateButton()V",
+            )
+        }
+
+        // The translation rows TikTok hides on its own Settings and privacy > Language page for
+        // some accounts (#143). Held to declared builds by LanguagePageTranslationsAnchorsTest and
+        // left out with a note on any other, the same way.
+        val languagePage = try {
+            hookLanguagePageTranslations()
+            true
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out the Language page rows on ${packageMetadata.versionName}: ${problem.message}")
+            false
+        }
+        if (languagePage) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableLanguagePageTranslations()V",
             )
         }
 

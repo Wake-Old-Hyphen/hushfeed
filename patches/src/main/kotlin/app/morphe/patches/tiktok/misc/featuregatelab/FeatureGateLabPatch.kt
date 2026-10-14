@@ -105,7 +105,7 @@ val featureGateLabPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         boundaries.forEach { boundary ->

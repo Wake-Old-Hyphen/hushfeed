@@ -39,7 +39,7 @@ val stopSearchAutoplayPatch = bytecodePatch(
 ) {
     category("Search")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val check = SearchAutoplayCheckFingerprint.method

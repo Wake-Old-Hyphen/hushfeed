@@ -2142,3 +2142,23 @@ Short date	Data curta
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Escreve a data antes do horário com segundos no formato curto do seu idioma, como 07/10/2025.
 Color commenter names	Colorir os nomes de quem comenta
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Dar ao nome de cada pessoa que comenta uma cor própria, sempre a mesma para aquela conta, para ficar mais fácil acompanhar uma conversa longa.
+Show the country as a flag	Mostrar o país como bandeira
+Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Mostra a bandeira do país no lugar das duas letras, ao lado do nome do criador e do horário de um comentário.
+Full long-press menu in search results	Menu completo de toque longo nos resultados da pesquisa
+A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Um toque longo em um vídeo que você abriu pela pesquisa abre o mesmo menu de Para você. Requer Toque longo no Padrão do TikTok.
+Normal-weight captions	Legendas com espessura normal
+Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Mostrar as legendas faladas com espessura normal em vez do negrito do TikTok. Vale a partir da próxima legenda.
+The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Não foi possível salvar a gravação de LIVE interrompida quando o TikTok fechou. O arquivo incompleto foi apagado.
+Also on opened videos	Também nos vídeos abertos
+Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Oculte a barra de pesquisa no topo dos vídeos que você abre pela pesquisa, por um perfil ou pelo seu histórico de exibição. O botão Voltar continua.
+Hide profile views	Esconder as visualizações do perfil
+Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Oculte o botão de visualizações do perfil no topo do seu perfil. A configuração do histórico de visualizações do perfil não muda.
+Hide Add friends	Esconder Adicionar amigos
+Hide the Add friends button at the top of your profile. The menu button stays where it is.	Oculte o botão Adicionar amigos no topo do seu perfil. O botão de menu fica onde está.
+See-through status bar	Barra de status transparente
+Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	No feed principal, deixe o vídeo chegar até o topo da tela, com o relógio e os ícones de status por cima. As abas do topo continuam onde estão.
+Floating bottom bar	Barra inferior flutuante
+Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Mostra as abas do feed principal sobre uma pílula escura, arredondada e transparente que flutua sobre o vídeo. Precisa de Barra inferior transparente.
+# context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
+Show translation options in Language settings	Mostrar opções de tradução nas configurações de idioma
+Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Traz de volta as linhas de tradução na página Idioma do TikTok, em Configurações e privacidade, para contas que ali só veem Idioma do app.

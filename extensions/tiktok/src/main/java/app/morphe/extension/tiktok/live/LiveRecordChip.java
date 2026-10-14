@@ -33,6 +33,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -163,10 +164,78 @@ public final class LiveRecordChip {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP | Gravity.END);
-        params.topMargin = dp(activity, 132);
+        params.topMargin = dp(activity, TOP_DP);
         params.rightMargin = dp(activity, 12);
         content.addView(view, params);
         chip = view;
+        view.post(() -> stayClear(activity));
+    }
+
+    /** Below the room's top bar, where the chip sits unless something to tap is there. */
+    private static final int TOP_DP = 132;
+    /** The gap left between the chip and a tap target it moved below. */
+    private static final int GAP_DP = 8;
+
+    /**
+     * Moves the chip below anything to tap that TikTok draws where it sits, such as the avatar row
+     * of the Discover panel when that opens over the room, and back up once it's gone. A view a
+     * quarter of the screen or bigger is the room's own surface and doesn't count.
+     */
+    private static void stayClear(Activity activity) {
+        TextView view = chip;
+        if (view == null || !(view.getParent() instanceof ViewGroup)) return;
+        ViewGroup content = (ViewGroup) view.getParent();
+        Rect area = new Rect();
+        if (!content.isShown() || !content.getGlobalVisibleRect(area)) return;
+        List<Rect> taken = new ArrayList<>();
+        tapTargets(content, view, area, (long) area.width() * area.height() / 4, taken);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        int width = view.getWidth() > 0 ? view.getWidth() : dp(activity, 96);
+        int height = view.getHeight() > 0 ? view.getHeight() : dp(activity, 48);
+        int right = area.width() - params.rightMargin;
+        int top = freeTop(dp(activity, TOP_DP), height, right - width, right, taken,
+                dp(activity, GAP_DP), area.height() * 2 / 3);
+        if (top != params.topMargin) {
+            params.topMargin = top;
+            view.setLayoutParams(params);
+        }
+    }
+
+    /** Every visible view under {@code root} that takes a tap, other than {@code skip}, in {@code area}'s coordinates. */
+    static void tapTargets(View root, View skip, Rect area, long largest, List<Rect> out) {
+        if (root == skip || root.getVisibility() != View.VISIBLE || root.getAlpha() == 0f) return;
+        Rect rect = new Rect();
+        if ((root.isClickable() || root.isLongClickable()) && root.getGlobalVisibleRect(rect)
+                && (long) rect.width() * rect.height() < largest) {
+            rect.offset(-area.left, -area.top);
+            out.add(rect);
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                tapTargets(group.getChildAt(i), skip, area, largest, out);
+            }
+        }
+    }
+
+    /**
+     * The first top, from {@code wanted} down, where a chip {@code height} tall between {@code left}
+     * and {@code right} covers none of {@code taken}. Past {@code lowest} the chip would sit among
+     * the room's own controls, so it stays at {@code wanted} then.
+     */
+    static int freeTop(int wanted, int height, int left, int right, List<Rect> taken, int gap, int lowest) {
+        int top = wanted;
+        boolean moved = true;
+        while (moved && top <= lowest) {
+            moved = false;
+            for (Rect rect : taken) {
+                if (rect.left < right && rect.right > left && rect.top < top + height && rect.bottom > top) {
+                    top = rect.bottom + gap;
+                    moved = true;
+                }
+            }
+        }
+        return top <= lowest ? top : wanted;
     }
 
     private static void removeChip() {
@@ -293,6 +362,7 @@ public final class LiveRecordChip {
                 }
                 showChip(activity);
                 refresh();
+                stayClear(activity);
             }
             // Keep watching while a recording runs or the chip is up; a new resume restarts it.
             if (recorder != null || (showing && chip != null)) scheduleTick();

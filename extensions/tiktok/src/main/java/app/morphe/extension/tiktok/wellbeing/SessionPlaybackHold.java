@@ -38,9 +38,13 @@ public final class SessionPlaybackHold {
     // The app lock's own wish for the same pause, so it and the switches each hand it back alone.
     private static volatile boolean lockWanted;
     private static final AtomicBoolean switchQueued = new AtomicBoolean();
-    // Main thread only, like held.
-    private static Target switchHeld;
-    private static WeakReference<Object> switchManager = new WeakReference<>(null);
+    // Written on the main thread only, like held. Volatile because TikTok's play and resume, which
+    // ask about them, can run on its player's own threads.
+    private static volatile Target switchHeld;
+    private static volatile WeakReference<Object> switchManager = new WeakReference<>(null);
+    // True while the hold itself is pausing or resuming, so its own resume isn't turned down as
+    // TikTok's. Main thread.
+    private static boolean ownCommand;
     // Native requests may run on an executor while focus callbacks arrive on another thread.
     // Compare listener identity, and never retain an activity's listener through static state.
     private static final List<WeakReference<Object>> nativeFocusListeners = new ArrayList<>();
@@ -206,7 +210,7 @@ public final class SessionPlaybackHold {
             if ((switchWanted || lockWanted) && switchQueued.compareAndSet(false, true)) {
                 MAIN.post(() -> {
                     switchQueued.set(false);
-                    pauseForSwitchIfPlaying();
+                    if (pauseForSwitchIfPlaying()) log("paused " + awemeId + " after a progress report");
                 });
             }
             // The feed lock puts the same panel up with no budget behind it, so each report is
@@ -226,6 +230,120 @@ public final class SessionPlaybackHold {
             syncQueued.set(false);
             SessionLockOverlay.sync();
         });
+    }
+
+    /**
+     * Called with p0 from PlayerController.onRenderFirstFrame. A start's first video plays from
+     * its first frame, and its first progress report comes a second or two later (#83), so while a
+     * pause switch or the app lock wants the feed stopped, the player is stopped here rather than
+     * after that report. Only a playing player counts: a preloaded neighbour draws its first frame
+     * without playing.
+     */
+    public static void onFirstFrame(Object controller) {
+        if (controller == null || !(switchWanted || lockWanted)) return;
+        WeakReference<Object> owner = new WeakReference<>(controller);
+        // Not inside the native callback, for the reason the progress report posts its pause.
+        MAIN.post(() -> pauseAtFirstFrame(owner.get()));
+    }
+
+    private static void pauseAtFirstFrame(Object controller) {
+        if (controller == null || !(switchWanted || lockWanted) || SessionBudget.isLocked()) return;
+        if (!Boolean.TRUE.equals(Reflect.invoke(Reflect.invoke(controller, "getPlayerManager"), "isPlaying"))) {
+            return;
+        }
+        Object aid;
+        try {
+            aid = Reflect.invoke(currentAweme(controller), "getAid");
+        } catch (RuntimeException notAController) {
+            return;
+        }
+        if (!(aid instanceof String) || ((String) aid).isEmpty()) return;
+        // The player's own video, as a progress report would name it, so the tap that ends the
+        // hold finds this player still current and hands the video back.
+        Target previous = current;
+        if (previous == null || previous.controller.get() != controller
+                || !aid.equals(previous.awemeId)) {
+            current = new Target(controller, (String) aid);
+        }
+        if (pauseForSwitchIfPlaying()) log("paused at the first frame of " + aid);
+    }
+
+    /**
+     * Asked at the start of PlayerController's play method, with p0 and the Aweme it was asked to
+     * play. On a cold start TikTok plays the first video a second time about 1.7 s after the
+     * first-frame pause (#83, S22): the feed panel's resume, a new surface, a network change and
+     * the end of a TopView ad all reach this method. While a pause switch or the app lock holds
+     * this controller's video, the play is turned down before the player starts, so the video
+     * doesn't play for the moment it took the next progress report to pause it again. The play
+     * that starts a video before the hold has paused anything goes through, since the tap that
+     * ends the hold resumes that player. Any thread.
+     *
+     * @return whether to answer the play the way TikTok answers one while casting
+     */
+    public static boolean refusePlay(Object controller, Object aweme) {
+        try {
+            Target owner = switchHeld;
+            if (owner == null || controller == null || owner.controller.get() != controller
+                    || !refusing()) return false;
+            log("blocked TikTok's play of " + Reflect.invoke(aweme, "getAid"), true);
+            return true;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "The session hold could not answer TikTok's play", failure);
+            return false;
+        }
+    }
+
+    /**
+     * Asked at the start of the player manager's own resume, which TikTok calls without the play
+     * method from its feed events and as some sheets and dialogs close. Turned down for the
+     * manager a pause switch or the app lock has paused, until the hold hands the video back.
+     * Any thread.
+     *
+     * @return whether to skip the resume
+     */
+    public static boolean refuseResume(Object manager) {
+        try {
+            if (manager == null || switchHeld == null || switchManager.get() != manager
+                    || !refusing()) return false;
+            log("blocked TikTok's resume", true);
+            return true;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "The session hold could not answer TikTok's resume", failure);
+            return false;
+        }
+    }
+
+    /** Whether a held pause is still wanted and the call isn't the hold's own. */
+    private static boolean refusing() {
+        if (!(switchWanted || lockWanted)) return false;
+        return !(ownCommand && Looper.myLooper() == Looper.getMainLooper());
+    }
+
+    /**
+     * A debug log line for the device check, with the uptime it happened at. With {@code route}
+     * it also names the first frames outside Hushfeed, read inside the message so the stack is
+     * only walked with Log diagnostics on.
+     */
+    private static void log(String what, boolean route) {
+        long at = android.os.SystemClock.uptimeMillis();
+        Logger.printDebug(() -> "Session hold at " + at + " ms: " + what + (route ? caller() : ""));
+    }
+
+    private static void log(String what) {
+        log(what, false);
+    }
+
+    /** The first few frames outside Hushfeed, so a debug log names the route a play came by. */
+    private static String caller() {
+        StringBuilder route = new StringBuilder(" from");
+        int shown = 0;
+        for (StackTraceElement frame : new Throwable().getStackTrace()) {
+            String type = frame.getClassName();
+            if (type.startsWith("app.morphe.") || type.startsWith("java.") || type.startsWith("dalvik.")) continue;
+            route.append(' ').append(type).append('.').append(frame.getMethodName());
+            if (++shown == 5) break;
+        }
+        return route.toString();
     }
 
     /** The video the player last reported, or null before any report. */
@@ -304,7 +422,7 @@ public final class SessionPlaybackHold {
      */
     public static void pauseForSwitch() {
         switchWanted = true;
-        pauseForSwitchIfPlaying();
+        if (pauseForSwitchIfPlaying()) log("paused the video for a pause switch");
     }
 
     /**
@@ -329,7 +447,7 @@ public final class SessionPlaybackHold {
      */
     public static void pauseForLock() {
         lockWanted = true;
-        pauseForSwitchIfPlaying();
+        if (pauseForSwitchIfPlaying()) log("paused the video for the app lock");
     }
 
     /** The lock lifted. With {@code resume} the video it stopped plays on. Main thread. */
@@ -352,21 +470,22 @@ public final class SessionPlaybackHold {
         // queues behind it.
         if (!Boolean.TRUE.equals(Reflect.invoke(manager, "isPlaying"))
                 && !Boolean.TRUE.equals(Reflect.invoke(manager, "isPaused"))) return;
-        control(manager, false);
+        if (control(manager, false)) log("handed " + owner.awemeId + " back");
     }
 
-    private static void pauseForSwitchIfPlaying() {
-        if (!(switchWanted || lockWanted) || SessionBudget.isLocked()) return;
+    /** Pauses the current video for a switch or the lock. Answers whether it paused one. */
+    private static boolean pauseForSwitchIfPlaying() {
+        if (!(switchWanted || lockWanted) || SessionBudget.isLocked()) return false;
         Target target = current;
-        if (target == null) return;
+        if (target == null) return false;
         Object controller = target.controller.get();
-        if (!target.isCurrentCell(controller)) return;
+        if (!target.isCurrentCell(controller)) return false;
         Object manager = Reflect.invoke(controller, "getPlayerManager");
-        if (!Boolean.TRUE.equals(Reflect.invoke(manager, "isPlaying"))) return;
-        if (control(manager, true)) {
-            switchHeld = target;
-            switchManager = new WeakReference<>(manager);
-        }
+        if (!Boolean.TRUE.equals(Reflect.invoke(manager, "isPlaying"))) return false;
+        if (!control(manager, true)) return false;
+        switchHeld = target;
+        switchManager = new WeakReference<>(manager);
+        return true;
     }
 
     private static void observeNativePlayback(Target owner, Object manager, boolean playing) {
@@ -423,6 +542,8 @@ public final class SessionPlaybackHold {
 
     private static boolean control(Object manager, boolean pause) {
         if (manager == null) return false;
+        boolean outer = ownCommand;
+        ownCommand = true;
         try {
             boolean done = pause ? pauseNative(manager) : resumeNative(manager);
             if (!done) Logger.printDebug(() -> "The session hold has no native playback control");
@@ -430,6 +551,8 @@ public final class SessionPlaybackHold {
         } catch (RuntimeException failure) {
             Logger.printException(() -> "The session hold could not change native playback", failure);
             return false;
+        } finally {
+            ownCommand = outer;
         }
     }
 }

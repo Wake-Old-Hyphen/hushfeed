@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda musiqi diski artıq irəliləmə zolağının sonunu və yanındakı vaxtı örtmür (#153).
+
+* **TikTok:** AMOLED qaranlıq mövzu indi Settings and privacy siyahısının özündəki kartları da qara edir (#152).
+
+* **TikTok:** Şərhlər altında yeni Dil ayarlarında tərcümə seçimlərini göstər açarı: TikTok-un öz Language səhifəsi orada yalnız App language görən hesablarda tərcümə sətirlərini yenidən göstərir (#143).
+
+* **TikTok:** Hushfeed artıq TikTok-un drama tətbiqi PineDrama 47.1.4-ü də yamaqlayır. Orada 90 yamaq işləyir və Morphe Manager yalnız onları təklif edir (#156).
+
+* **TikTok:** TikTok-un Kəşf et paneli otağın üstündə açılanda LIVE Yazmaq düyməsi aşağı çəkilir, panel bağlananda yerinə qayıdır (#37).
+
+* **TikTok:** Şəffaf alt panel altında yeni Üzən alt panel açarı: tablar videonun üzərində yuvarlaq, şəffaf tünd kapsulun üstündə durur (#124).
+
+* **TikTok:** Lent ekranında yeni Şəffaf status paneli açarı: əsas lentdəki video saatın altından ekranın yuxarı kənarına qədər uzanır, yuxarıdakı tablar yerində qalır (#145).
+
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda saatın altındakı qara zolaq artıq otaq açılarkən və ya növbəti otağa sürüşdürəndə bir anlıq görünmür (#137).
+
+* **TikTok:** Profil altında yeni Profil baxışlarını gizlədin və Add friends düyməsini gizlədin açarları: bu iki düymə profilinizin yuxarısından gedir, menyu qalır (#158).
+
+* **TikTok:** LIVE yazısının ortasında TikTok bağlanarsa (sürüşdürülüb bağlanıb və ya telefon dayandırıb), növbəti açılışda yazılan hissə saxlanılır və sizə bildirilir, keşdə qalmır (#37).
+
+* **TikTok:** Lentdəki axtarış düyməsini gizlədin altında yeni Açılmış videolarda da açarı: açılmış videonun yuxarısındakı axtarış çubuğu da gedir, Geri qalır (#158).
+
+* **TikTok:** Başlıqlar altında yeni Normal qalınlıqda başlıqlar açarı: danışılan başlıqlar TikTok-un qalın yazısı əvəzinə adi qalınlıqda (#158).
+
+* **TikTok:** Yeni Axtarış nəticələrində tam uzun basma menyusu açarı: axtarışdan açılan videoya uzun basmaq Sənin üçün menyusunu açır (#120).
+
+* **TikTok:** Yeni Ölkəni bayraqla göstərin açarı: yaradıcının adının yanındakı və şərhin vaxtından sonrakı ölkə bayraq kimi görünür (#157).
+
+* **TikTok:** İlk videonu başlatmayın artıq videonu bir-iki saniyə sonra deyil, ilk kadrında dayandırır (#83).
+
+* **TikTok:** Yeni Accent color patçı TikTok-un düymələrindəki və mətnindəki qırmızını mavi, yaşıl, bənövşəyi, narıncı, firuzəyi və ya öz seçdiyin rənglə əvəz edir (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Profil fonu açıq olanda saxlanılan profil fonu TikTok yenidən başlayandan sonra da qalır. Açar indi yenidən başlatmağı təklif edir (#80).

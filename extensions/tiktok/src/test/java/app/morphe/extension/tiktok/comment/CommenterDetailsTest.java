@@ -269,6 +269,22 @@ public class CommenterDetailsTest {
         assertEquals("2d ago · US", time.getText().toString());
     }
 
+    /** #157: with the flag switch on, the commenter's country shows as its flag. */
+    @Test
+    public void theRegionCanFollowTheTimeAsAFlag() {
+        Settings.SHOW_COMMENTER_REGION.save(true);
+        Settings.REGION_AS_FLAG.save(true);
+        try {
+            TimeView time = timeSaying("2d ago");
+
+            CommenterDetails.onCommentTime(by("1", "a", " ee "), time);
+
+            assertEquals("2d ago · 🇪🇪", time.getText().toString());
+        } finally {
+            Settings.REGION_AS_FLAG.resetToDefault();
+        }
+    }
+
     @Test
     public void theAccountRegionStandsInForAMissingRegion() {
         Settings.SHOW_COMMENTER_REGION.save(true);

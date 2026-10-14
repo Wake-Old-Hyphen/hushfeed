@@ -154,6 +154,10 @@ public class BuildDetailsTest {
         }
         // A build the bundle no longer declares is no target of this one.
         assertUnknown(record.replace("47.1.4", "47.1.3").replace("2024701040", "2024701030"));
+        // PineDrama 47.1.4 is declared beside TikTok (#156); another package is not.
+        String pineDrama = BuildDetails.report(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video"));
+        assertTrue(pineDrama, pineDrama.contains("target_package: com.ss.android.ttmd.video\n"));
+        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }
 
     @Test public void registeredSwitchesStayUnknownUntilReportedAndKeepOnlyCleanSortedNames() throws Exception {

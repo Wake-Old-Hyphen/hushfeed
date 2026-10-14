@@ -2142,3 +2142,23 @@ Short date	Kısa tarih
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Saniyesine kadar gösterilen saatten önceki tarihi dilinin kısa biçimiyle yazar, örneğin 7.10.2025.
 Color commenter names	Yorum yapanların adlarını renklendir
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Yorum yapan herkesin adına kendine ait bir renk ver. O hesabı her gördüğünde aynı renk olur, böylece uzun bir yorum dizisini takip etmek kolaylaşır.
+Show the country as a flag	Ülkeyi bayrakla göster
+Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Ülkenin iki harfi yerine bayrağını, içerik üreticisinin adının ve yorumun saatinin yanında gösterir.
+Full long-press menu in search results	Arama sonuçlarında tam uzun basma menüsü
+A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Aramadan açtığın bir videoya uzun basmak, Senin İçin'deki menünün aynısını açar. Uzun basma TikTok varsayılanında olmalıdır.
+Normal-weight captions	Normal kalınlıkta altyazılar
+Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Konuşma altyazılarını TikTok'un kalın yazısı yerine normal kalınlıkta göster. Bir sonraki altyazıdan itibaren geçerli olur.
+The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	TikTok kapanınca yarıda kalan LIVE kaydı kaydedilemedi. Yarım kalan dosya silindi.
+Also on opened videos	Açılan videolarda da
+Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Aramadan, bir profilden veya izleme geçmişinden açtığın videoların üstündeki arama çubuğunu gizle. Geri düğmesi kalır.
+Hide profile views	Profil görüntülemelerini gizle
+Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Profilinin üstündeki profil görüntülemeleri düğmesini gizle. Profil görüntüleme geçmişi ayarın değişmez.
+Hide Add friends	Arkadaş ekle'yi gizle
+Hide the Add friends button at the top of your profile. The menu button stays where it is.	Profilinin üstündeki Arkadaş ekle düğmesini gizle. Menü düğmesi yerinde kalır.
+See-through status bar	Şeffaf durum çubuğu
+Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Ana akışta videonun ekranın üstüne kadar uzanmasını sağlar, saat ve durum simgeleri videonun üzerinde görünür. Üstteki sekmeler yerinde kalır.
+Floating bottom bar	Yüzen alt çubuk
+Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Ana akıştaki sekmeleri videonun üzerinde yüzen yuvarlak, şeffaf koyu bir kapsülde gösterir. Şeffaf alt çubuk açık olmalıdır.
+# context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
+Show translation options in Language settings	Dil ayarlarında çeviri seçeneklerini göster
+Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	TikTok'un Ayarlar ve gizlilik altındaki Dil sayfasında yalnızca Uygulama dilini gören hesaplar için çeviri satırlarını geri getirir.

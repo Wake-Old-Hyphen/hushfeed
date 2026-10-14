@@ -328,7 +328,7 @@ val regionSpoofPatch = bytecodePatch(
     default = false,
 ) {
     category("Settings")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(settingsPatch, simSpoofPatch)
     execute {
         // Found and checked before anything is written: the patcher doesn't take a failed

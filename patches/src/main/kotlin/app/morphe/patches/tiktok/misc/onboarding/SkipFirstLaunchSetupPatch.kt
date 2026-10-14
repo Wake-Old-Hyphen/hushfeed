@@ -105,7 +105,7 @@ val skipFirstLaunchSetupPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val decision = SetupStepDecisionFingerprint.method

@@ -227,7 +227,7 @@ public final class CommenterDetails {
                 base = "";
             }
 
-            String region = regionsOn() ? regionOf(comment) : null;
+            String region = regionsOn() ? AuthorRegion.shown(regionOf(comment)) : null;
             if (region == null) {
                 STAMPED.remove(time);
                 if (base != shown) {

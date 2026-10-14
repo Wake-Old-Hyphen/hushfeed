@@ -2,6 +2,7 @@ package app.morphe.patches.tiktok.interaction.blockauthor
 
 import app.morphe.Fixtures
 import com.android.tools.smali.dexlib2.Opcodes
+import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -42,6 +43,31 @@ class NativePlaybackFixturesTest {
             assertFalse("${apk.name}: the getter is a virtual call", members.awemeGetter.throughInterface)
             assertTrue("${apk.name}: the pause goes through the manager interface", members.pause.throughInterface)
             assertTrue("${apk.name}: the resume goes through the manager interface", members.resume.throughInterface)
+
+            // #83: the guard on TikTok's own resume sits in the implementation's resume, so that
+            // class has to be the manager TikTok's interface calls land on, and its resume needs a
+            // local for the hold's answer.
+            assertEquals("${apk.name}: the manager implementation", "LX/037t;", members.implementation)
+            val implementation = classes.getValue(members.implementation)
+            assertTrue("${apk.name}: ${members.implementation} implements ${members.manager}",
+                members.manager in implementation.interfaces)
+            val resume = implementation.methods.implementationResume(members)
+            val locals = resume.implementation!!.registerCount - 1
+            assertTrue("${apk.name}: ${members.implementation}.${resume.name} has no local register", locals >= 1)
         }
+    }
+
+    @Test
+    fun `the switches' play guards ask the hold before TikTok's play and resume`() {
+        val root = File("src/main/kotlin").takeIf { it.isDirectory } ?: File("patches/src/main/kotlin")
+        val bridge = File(root, "app/morphe/patches/tiktok/interaction/blockauthor/NativePlaybackBridge.kt").readText()
+        val patch = File(root, "app/morphe/patches/tiktok/interaction/blockauthor/BlockAuthorPatch.kt").readText()
+        assertTrue("the bridge patch does not install the guards", patch.contains("installSwitchPlayGuards(nativePlayback)"))
+        assertTrue("the play is not asked about with its controller and Aweme",
+            bridge.contains("invoke-static/range { p0 .. p1 }, \$HOLD->refusePlay(Ljava/lang/Object;Ljava/lang/Object;)Z"))
+        assertTrue("a refused play is not answered as casting answers one",
+            bridge.contains("\"const-string v0, \\\"\\\"\\nreturn-object v0\""))
+        assertTrue("the manager's resume is not asked about",
+            bridge.contains("invoke-static/range { p0 .. p0 }, \$HOLD->refuseResume(Ljava/lang/Object;)Z"))
     }
 }

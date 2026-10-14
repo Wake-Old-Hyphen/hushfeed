@@ -56,7 +56,7 @@ val sdrPlaybackPatch = bytecodePatch(
     default = true,
 ) {
     category("Playback")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(settingsPatch, sharedExtensionPatch)
     execute {
         ForceHdrOffFingerprint.method.apply {

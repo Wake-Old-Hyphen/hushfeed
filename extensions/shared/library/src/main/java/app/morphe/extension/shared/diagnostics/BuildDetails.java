@@ -193,10 +193,12 @@ public final class BuildDetails {
         return names.equals(sorted);
     }
 
+    /** TikTok and PineDrama (#156), the packages the bundle declares. Both are at 47.1.4. */
     private static boolean validTarget(Map<String, String> facts) {
         String name = facts.get("target_package"), version = facts.get("target_version"), code = facts.get("target_version_code");
         if (name.equals("unknown")) return version.equals("unknown") && code.equals("unknown");
-        return name.equals("com.zhiliaoapp.musically") && version.equals("47.1.4") && code.equals("2024701040");
+        return oneOf(name, "com.zhiliaoapp.musically", "com.ss.android.ttmd.video")
+                && version.equals("47.1.4") && code.equals("2024701040");
     }
 
     private static boolean matches(String value, String pattern, int max) {

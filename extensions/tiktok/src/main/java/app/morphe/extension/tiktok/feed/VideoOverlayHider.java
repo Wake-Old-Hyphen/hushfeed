@@ -31,6 +31,7 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.navigation.FrontWindow;
 import app.morphe.extension.tiktok.navigation.NavigationTabsFilter;
+import app.morphe.extension.tiktok.profile.ProfileTopBar;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -175,6 +176,13 @@ public final class VideoOverlayHider {
      */
     private static final String[] STATUS_BAR_SPACER_IDS = {"47.1.4:dux"};
     /**
+     * The black band TikTok lays over the top of each feed cell, as tall as the status bar. It
+     * sat over the spacer, so nobody saw it until the spacer went: the video then went up under
+     * it and the strip under the clock stayed black (#145, S22). It goes with the spacer,
+     * invisible rather than gone, so nothing laid out against it moves.
+     */
+    private static final String[] STATUS_BAR_SCRIM_IDS = {"47.1.4:wll"};
+    /**
      * The blank under the video, the height of the bottom tab bar, with a background from the
      * theme. It is the cell's last child (dux first, the video area between), and the reason the
      * picture stops above the bar. See-through bottom bar collapses it (#145).
@@ -187,6 +195,14 @@ public final class VideoOverlayHider {
      */
     private static final String[] TOP_SEARCH_BAR_IDS = {"47.1.4:j2g"};
     private static final String[] TOP_SEARCH_SCRIM_IDS = {"47.1.4:g5p"};
+    /**
+     * The search box in that bar, beside the Back button (#158). It is the root of the layout
+     * TikTok's DetailFeedSearchHelper inflates into the bar on every page it serves: a video
+     * opened from search, a profile's posts, Favorites or Likes, watch history, a hashtag or a
+     * sound. Another page's layout reuses the name, so only a child of the bar counts. It goes
+     * invisible, so Back keeps its place.
+     */
+    private static final String[] DETAIL_SEARCH_BOX_IDS = {"47.1.4:oa1"};
     private static final String[] DETAIL_COMMENT_BAR_IDS = {"47.1.4:qqw"};
     private static final String[] DETAIL_COMMENT_STRIP_IDS = {"47.1.4:cnk"};
     /**
@@ -300,6 +316,8 @@ public final class VideoOverlayHider {
     private static final int TOP_SEARCH_BAR_TARGET = LOADING_LINE_TARGET + 1;
     private static final int TOP_SEARCH_SCRIM_TARGET = TOP_SEARCH_BAR_TARGET + 1;
     private static final int BOTTOM_SPACER_TARGET = TOP_SEARCH_SCRIM_TARGET + 1;
+    private static final int DETAIL_SEARCH_BOX_TARGET = BOTTOM_SPACER_TARGET + 1;
+    private static final int STATUS_BAR_SCRIM_TARGET = DETAIL_SEARCH_BOX_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -354,6 +372,8 @@ public final class VideoOverlayHider {
 
     /** Whether the current pass has See-through bottom bar on, for the main feed (#145). */
     private static boolean seeThroughBarNow;
+    /** Whether that bar floats as a rounded pill this pass (#124). */
+    private static boolean floatingBarNow;
 
     /**
      * Whether the current pass is in Clear display with the fade between 0 and 100 (#84). The
@@ -560,15 +580,23 @@ public final class VideoOverlayHider {
             // which it shows only in Clear display; see gateClearControls.
             boolean clearControls = !HushfeedPause.isPaused() && Settings.HIDE_CLEAR_DISPLAY_CONTROLS.get();
             boolean statusBar = Settings.HIDE_STATUS_BAR.get();
+            // The main feed's video goes up under a see-through status bar: the spacer TikTok keeps
+            // for the bar above each video goes, as it does with the bar hidden, which wins (#145).
+            boolean seeThroughStatusBar = Settings.SEE_THROUGH_STATUS_BAR.get() && !detailPager && !statusBar;
             // The bottom bar goes clear and the spacer under each video goes, on the main feed
             // only: the opened-post pager has no tab bar (#145).
             boolean seeThroughBar = Settings.SEE_THROUGH_BOTTOM_BAR.get() && !detailPager;
             if (!seeThroughBar) SeeThroughBottomBar.reset();
             seeThroughBarNow = seeThroughBar;
+            floatingBarNow = seeThroughBar && Settings.FLOATING_BOTTOM_BAR.get();
             // On the S22 the main feed's room for the bar is the pager column's strip, the one an
             // opened post keeps under its comment bar; the spacer in each cell is already 0 there.
             boolean stripForBar = seeThroughBar && SeeThroughBottomBar.collapseAllowed();
             boolean counts = Settings.HIDE_RAIL_COUNTS.get();
+            // The search box at the top of an opened video goes with the feed's search button,
+            // when its own row says so too (#158).
+            boolean detailSearchBox = Settings.HIDE_FEED_SEARCH_BUTTON.get()
+                    && Settings.HIDE_OPENED_VIDEO_SEARCH.get();
             boolean[] rail = TRAVERSAL.rail;
             updateRailButtonsWanted(rail);
             boolean anyRail = counts;
@@ -586,8 +614,8 @@ public final class VideoOverlayHider {
             }
             touchScale = Math.min(MAX_TOUCH_SCALE, Math.max(1f, touchScale));
             if (caption || music || actionBar || surveys || tabStrip || carry || detailCommentBar || anchor
-                    || clearControls
-                    || statusBar || seeThroughBar || SeeThroughBottomBar.holdsBackground()
+                    || clearControls || detailSearchBox
+                    || statusBar || seeThroughStatusBar || seeThroughBar || SeeThroughBottomBar.holdsBackground()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || fadeLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
                     || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || touchScale != 1f || scaledLastPass) {
@@ -623,7 +651,9 @@ public final class VideoOverlayHider {
                 // Only ever faded, never hidden.
                 wanted[TOP_SEARCH_BAR_TARGET] = false;
                 wanted[TOP_SEARCH_SCRIM_TARGET] = false;
-                wanted[STATUS_BAR_SPACER_TARGET] = statusBar;
+                wanted[DETAIL_SEARCH_BOX_TARGET] = detailSearchBox;
+                wanted[STATUS_BAR_SPACER_TARGET] = statusBar || seeThroughStatusBar;
+                wanted[STATUS_BAR_SCRIM_TARGET] = statusBar || seeThroughStatusBar;
                 wanted[BOTTOM_SPACER_TARGET] = seeThroughBar && SeeThroughBottomBar.collapseAllowed();
                 for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
                     wanted[RAIL_TARGET_START + i] = rail[i] || carryHides;
@@ -659,6 +689,7 @@ public final class VideoOverlayHider {
                     if (detailCommentBar || stripForBar) {
                         keepColumnStrips(found, identifier(activity, activity.getPackageName(), PAGER_COLUMN_ID));
                     }
+                    keepTopBarSearchBoxes(found, ids[firstCandidate(TOP_SEARCH_BAR_TARGET)]);
                     selectCurrentTargets(found, TRAVERSAL.selected);
                     pairDetailCommentBar(hidden, TRAVERSAL.selected, ids, detailPager, stripForBar);
                     List<View> strips = selectedViews(found, TRAVERSAL.selected, DETAIL_COMMENT_STRIP_TARGET);
@@ -714,8 +745,12 @@ public final class VideoOverlayHider {
                 }
             }
             ClearDisplayShownControls.apply(fadedClear, clearOn());
+            // The Profile tab is a page of the feed's window, so its top bar rides on this pass.
+            ProfileTopBar.apply(activity.findViewById(android.R.id.content));
 
             setStatusBarHidden(activity, statusBar);
+            // Only while the feed is in front: the window's other pages keep the color TikTok gives them.
+            SeeThroughStatusBar.apply(activity, seeThroughStatusBar && FeedVisibility.isOnFeed(activity));
         } catch (Throwable ex) {
             Logger.printException(() -> "Video overlay hider failed", ex);
         }
@@ -883,7 +918,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[BOTTOM_SPACER_TARGET + 1][];
+        String[][] targets = new String[STATUS_BAR_SCRIM_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -913,6 +948,8 @@ public final class VideoOverlayHider {
         targets[TOP_SEARCH_BAR_TARGET] = TOP_SEARCH_BAR_IDS;
         targets[TOP_SEARCH_SCRIM_TARGET] = TOP_SEARCH_SCRIM_IDS;
         targets[BOTTOM_SPACER_TARGET] = BOTTOM_SPACER_IDS;
+        targets[DETAIL_SEARCH_BOX_TARGET] = DETAIL_SEARCH_BOX_IDS;
+        targets[STATUS_BAR_SCRIM_TARGET] = STATUS_BAR_SCRIM_IDS;
         return targets;
     }
 
@@ -923,7 +960,7 @@ public final class VideoOverlayHider {
     private static boolean outsideCells(int target) {
         return (target >= TAB_STRIP_TARGET && target < RAIL_TARGET_START) || target == BOTTOM_TABS_TARGET
                 || target == BOTTOM_TABS_DIVIDER_TARGET || target == TOP_SEARCH_BAR_TARGET
-                || target == TOP_SEARCH_SCRIM_TARGET;
+                || target == TOP_SEARCH_SCRIM_TARGET || target == DETAIL_SEARCH_BOX_TARGET;
     }
 
     private static int candidateCount(String[][] targets) {
@@ -1098,6 +1135,20 @@ public final class VideoOverlayHider {
         }
     }
 
+    /** Keeps only the search boxes that sit directly in an opened video's top bar (#158). */
+    private static void keepTopBarSearchBoxes(List<List<View>> found, int barId) {
+        int at = firstCandidate(DETAIL_SEARCH_BOX_TARGET);
+        for (int i = 0; i < DETAIL_SEARCH_BOX_IDS.length; i++) {
+            List<View> boxes = found.get(at + i);
+            for (int j = boxes.size() - 1; j >= 0; j--) {
+                android.view.ViewParent parent = boxes.get(j).getParent();
+                if (barId == 0 || !(parent instanceof View) || ((View) parent).getId() != barId) {
+                    boxes.remove(j);
+                }
+            }
+        }
+    }
+
     /**
      * The comment bar and its strip go together or not at all. The strip alone grows the pager
      * under a bar that still shows, which then covers the caption and the music row; the bar
@@ -1142,8 +1193,9 @@ public final class VideoOverlayHider {
      * <p>The row comes down until its middle meets the frame's bottom, never past its own slot.
      * Matching the row's bottom instead left the line half a row up inside the caption, across its
      * last line (#153). When the slot runs out first, as it does where the caption reaches the
-     * bottom of the screen, the frame and the music disc beside it go up by what's left, so the
-     * caption ends on the line. On 47.1.4 TikTok holds the disc up with an offset of its own, so the
+     * bottom of the screen, the frame goes up by what's left, so the caption ends on the line, and
+     * the music disc beside it goes up to end above the row (see captionLifts). On 47.1.4 TikTok
+     * holds the disc up with an offset of its own, so the
      * disc's lift goes on top of that one (see liftDisc); before it did, the disc stayed with its
      * bottom on the line (S22, 2026-10-13: 2146 before and after, against 2013 over a line at 2038
      * with the comment bar up). Every cell's
@@ -1373,10 +1425,14 @@ public final class VideoOverlayHider {
     }
 
     /**
-     * How far each frame, and the music disc in the same cell, goes up so it ends no lower than
-     * the lowest place the row's line can reach. Measured from the top of each frame's own cell,
-     * which lines up with the cell over the slot once it's swiped in. Without a cell to measure
-     * from only the frame over the slot is lifted, from where it is now.
+     * How far each frame goes up so it ends no lower than the lowest place the row's line can
+     * reach, and how far the music disc in the same cell goes up so it ends above the row. The
+     * line runs along the caption's bottom, so a disc lifted only with its caption sat on it, and
+     * a short caption gave it no lift at all: the disc covered the end of the line and the time
+     * beside it (#153, 0.73.0). With the comment bar up TikTok keeps the disc clear of the line,
+     * and the row's top is the nearest place that clears the time too. Measured from the top of
+     * each frame's own cell, which lines up with the cell over the slot once it's swiped in.
+     * Without a cell to measure from only the frame over the slot is lifted, from where it is now.
      */
     private static Map<View, Float> captionLifts(View row, View current, List<View> frames,
                                                  List<View> discs, int cellId) {
@@ -1392,15 +1448,28 @@ public final class VideoOverlayHider {
         for (View frame : frames) {
             View cell = cellOf(frame, cellId);
             if (cell == null || frame.getHeight() == 0) continue;
-            float bottomInCell = unliftedTop(frame) + frame.getHeight() - unliftedTop(cell);
+            float cellTop = unliftedTop(cell);
+            float bottomInCell = unliftedTop(frame) + frame.getHeight() - cellTop;
             float lift = Math.round(Math.max(0f, bottomInCell - lineInCell));
-            if (lift <= 0f) continue;
-            lifts.put(frame, lift);
+            if (lift > 0f) lifts.put(frame, lift);
+            // The row comes down until its line meets the caption's bottom, never past its slot.
+            float rowTopInCell = Math.min(bottomInCell, lineInCell) - row.getHeight() / 2f;
             for (View disc : discs) {
-                if (cellOf(disc, cellId) == cell) lifts.put(disc, lift);
+                if (cellOf(disc, cellId) != cell || disc.getHeight() == 0) continue;
+                float discBottomInCell = unliftedDiscTop(disc) + disc.getHeight() - cellTop;
+                float discLift = Math.round(Math.max(lift, discBottomInCell - rowTopInCell));
+                if (discLift > 0f) lifts.put(disc, discLift);
             }
         }
         return lifts;
+    }
+
+    /** Where {@code disc} sits in its window with TikTok's own offset and without our lift. */
+    private static float unliftedDiscTop(View disc) {
+        float now = disc.getTranslationY();
+        float[] held = DISCS_LIFTED.get(disc);
+        float base = held != null && now == held[1] ? held[0] : now;
+        return topInWindow(disc) + base;
     }
 
     /** The feed cell {@code view} sits in, or null outside one or without the cell's id. */
@@ -1589,6 +1658,10 @@ public final class VideoOverlayHider {
                     } else if (target == TOP_SEARCH_BAR_TARGET || target == TOP_SEARCH_SCRIM_TARGET) {
                         // The way back out of the page: faded like the tabs, never past the floor.
                         setFaded(view, Math.max(NAVIGATION_FADE_FLOOR, fadeLevel), fadedClear);
+                    } else if (target == DETAIL_SEARCH_BOX_TARGET || target == STATUS_BAR_SCRIM_TARGET) {
+                        // Invisible, not gone: the bar keeps its shape and Back stays put, and
+                        // the cell's band keeps its place.
+                        setHidden(view, wanted, View.INVISIBLE);
                     } else if (target == DETAIL_COMMENT_BAR_TARGET) {
                         // Hidden with its strip by the switch, Clear display and a fade of 0;
                         // otherwise faded, and out of a finger's way in the faded Clear display.
@@ -1620,7 +1693,10 @@ public final class VideoOverlayHider {
                         // its hairline goes see-through, while the tabs keep their icons and the
                         // fade. Clear display still takes the bar away whole.
                         boolean clearBar = seeThroughBarNow && !wanted;
-                        if (target == BOTTOM_TABS_TARGET) SeeThroughBottomBar.setBackgroundClear(view, clearBar);
+                        // Floating bottom bar draws a rounded pill there instead (#124).
+                        if (target == BOTTOM_TABS_TARGET) {
+                            SeeThroughBottomBar.setBackgroundClear(view, clearBar, floatingBarNow);
+                        }
                         if (target == BOTTOM_TABS_DIVIDER_TARGET && clearBar) {
                             setFaded(view, 100);
                             setTransparent(view, true);
@@ -1637,8 +1713,9 @@ public final class VideoOverlayHider {
             // ordinary feed cell says nothing about whether this build still has the anchor.
             // Nor does the comment bar's from the main feed, which never has one: with its switch
             // on, every pass there called the overlay hooks broken (#153). The detail pager
-            // always has it, so a rename still shows there.
-            } else if (target != SURVEY_TARGET
+            // always has it, so a rename still shows there. The search box at the top of an
+            // opened video is there only on the pages TikTok gives a search bar.
+            } else if (target != SURVEY_TARGET && target != DETAIL_SEARCH_BOX_TARGET
                     && (detailPager || (target != DETAIL_COMMENT_BAR_TARGET
                             && target != DETAIL_COMMENT_STRIP_TARGET))
                     && (wanted || (scaling

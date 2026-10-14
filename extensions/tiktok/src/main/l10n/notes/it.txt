@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, il disco musicale non copre più la fine della barra di avanzamento né il tempo accanto (#153).
+
+* **TikTok:** Il tema scuro AMOLED ora rende nere anche le schede dell'elenco Impostazioni e privacy (#152).
+
+* **TikTok:** Nuovo interruttore Mostra le opzioni di traduzione nelle impostazioni della lingua in Commenti: la pagina Lingua di TikTok mostra di nuovo le righe di traduzione sugli account che lì vedevano solo Lingua dell'app (#143).
+
+* **TikTok:** Hushfeed ora applica le patch anche a PineDrama 47.1.4, l'app di serie di TikTok. Lì funzionano 90 patch, e Morphe Manager propone solo quelle (#156).
+
+* **TikTok:** Il pulsante Registra della LIVE si sposta in basso quando il pannello Esplora di TikTok si apre sopra la stanza, e torna al suo posto quando si chiude (#37).
+
+* **TikTok:** Nuovo interruttore Barra inferiore fluttuante sotto Barra inferiore trasparente: le schede stanno su una pillola scura, arrotondata e trasparente sopra il video (#124).
+
+* **TikTok:** Nuovo interruttore Barra di stato trasparente in Schermata del feed: il video del feed principale arriva fino al bordo in alto con l'orologio sopra, le schede in alto restano dove sono (#145).
+
+* **TikTok:** Con Mostra il LIVE sotto la barra di stato attivo, la fascia nera sotto l'orologio non compare più per un attimo quando si apre una stanza o passi alla successiva (#137).
+
+* **TikTok:** Nuovi interruttori Nascondi le visualizzazioni del profilo e Nascondi Aggiungi amici in Profilo: quei due pulsanti spariscono dalla parte alta del tuo profilo, il menu resta (#158).
+
+* **TikTok:** Se TikTok si chiude a metà di una registrazione LIVE (chiuso con uno swipe o fermato dal telefono), all'avvio successivo quello che è stato registrato viene salvato e te lo dice, invece di restare nella cache (#37).
+
+* **TikTok:** Nuovo interruttore Anche nei video aperti sotto Nascondi il pulsante di ricerca nel feed: sparisce anche la barra di ricerca in cima a un video aperto, Indietro resta (#158).
+
+* **TikTok:** Nuovo interruttore Sottotitoli con spessore normale in Sottotitoli: i sottotitoli parlati con spessore normale invece del grassetto di TikTok (#158).
+
+* **TikTok:** Nuovo interruttore Menu completo con pressione prolungata nei risultati di ricerca: una pressione prolungata su un video aperto dalla ricerca apre il menu di Per te (#120).
+
+* **TikTok:** Nuovo interruttore Mostra il paese come bandiera: il paese accanto al nome del creator e dopo l'ora di un commento appare come bandiera (#157).
+
+* **TikTok:** Non avviare il primo video ora lo ferma al primo fotogramma, non dopo un paio di secondi (#83).
+
+* **TikTok:** La nuova patch Accent color sostituisce il rosso dei pulsanti e dei testi di TikTok con blu, verde, viola, arancione, verde acqua o un colore a tua scelta (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Uno sfondo del profilo salvato con Sfondo del profilo attivo resta dopo il riavvio di TikTok. L'interruttore ora propone un riavvio (#80).

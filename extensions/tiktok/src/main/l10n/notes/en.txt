@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** With Hide the comment bar on opened videos on, the music disc no longer covers the end of the progress bar or the time beside it (#153).
+
+* **TikTok:** AMOLED dark theme now makes the cards on the Settings and privacy list black too (#152).
+
+* **TikTok:** New Show translation options in Language settings switch under Comments: TikTok's own Language page shows its translation rows again on accounts that only got App language there (#143).
+
+* **TikTok:** Hushfeed also patches PineDrama 47.1.4, TikTok's drama app. 90 of the patches work there, and Morphe Manager only offers those (#156).
+
+* **TikTok:** The LIVE Record button moves down out of the way when TikTok's Discover panel opens over the room, and goes back when it closes (#37).
+
+* **TikTok:** New Floating bottom bar switch under See-through bottom bar: the tabs sit on a rounded, see-through dark pill over the video (#124).
+
+* **TikTok:** New See-through status bar switch on Feed screen: the main feed's video reaches the top edge with the clock over it, the top tabs stay put (#145).
+
+* **TikTok:** With Show a LIVE under the status bar on, the black strip under the clock no longer flashes as a room opens or as you swipe to the next one (#137).
+
+* **TikTok:** New Hide profile views and Hide Add friends switches under Profile: those two buttons leave the top of your profile, the menu stays (#158).
+
+* **TikTok:** If TikTok closes in the middle of a LIVE recording (swiped away, or stopped by the phone), the next start saves what was recorded and tells you, instead of leaving it in the cache (#37).
+
+* **TikTok:** New Also on opened videos switch under Hide the search button on the feed: the search bar at the top of an opened video goes too, Back stays (#158).
+
+* **TikTok:** New Normal-weight captions switch under Captions: spoken captions at regular weight instead of TikTok's bold (#158).
+
+* **TikTok:** New Full long-press menu in search results switch: a long press on a video opened from search opens the For You menu (#120).
+
+* **TikTok:** New Show the country as a flag switch: the country by a creator's name and after a commenter's time shows as its flag (#157).
+
+* **TikTok:** Don't start the first video now stops it at its first frame, not a second or two in (#83).
+
+* **TikTok:** A new Accent color patch swaps the red of TikTok's buttons and text for blue, green, purple, orange, teal or a color of your own (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** A profile background saved with the Profile background switch on stays after TikTok restarts. The switch now offers a restart (#80).

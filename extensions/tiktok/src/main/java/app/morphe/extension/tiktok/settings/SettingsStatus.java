@@ -257,6 +257,13 @@ public class SettingsStatus {
         commentTranslateButtonEnabled = true;
     }
 
+    /** Translate comments hooked the two gates that hide the translation rows on TikTok's Language page. */
+    public static boolean languagePageTranslationsEnabled = false;
+
+    public static void enableLanguagePageTranslations() {
+        languagePageTranslationsEnabled = true;
+    }
+
     public static void enableHideCommentQuickReactions() {
         hideCommentQuickReactionsEnabled = true;
     }

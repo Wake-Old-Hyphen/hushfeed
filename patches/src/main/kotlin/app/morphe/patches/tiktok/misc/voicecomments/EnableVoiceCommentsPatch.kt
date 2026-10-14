@@ -29,7 +29,7 @@ val enableVoiceCommentsPatch = bytecodePatch(
 ) {
     category("Comments")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installVoiceCommentSwitch()

@@ -2,6 +2,7 @@ package app.morphe.extension.tiktok.captions;
 
 import static org.junit.Assert.*;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -43,6 +44,7 @@ public class CaptionToolsTest {
         CaptionStyle.resetLookupsForTests();
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
+        Settings.CAPTION_REGULAR_WEIGHT.save(false);
         Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(false);
         CaptionTools.onVideoChanged(null);
     }
@@ -87,6 +89,36 @@ public class CaptionToolsTest {
         assertEquals(Color.BLUE, ((ColorDrawable) background.getBackground()).getColor());
         assertSame(original, CaptionStyle.layout(original));
     }
+    /**
+     * TikTok draws spoken captions bold, and #158 asked for them at normal weight. The switch
+     * redraws the cue at 400 on its own, at TikTok's size, and TikTok's own paint keeps its bold.
+     */
+    @Test public void normalWeightCaptionsDrawAtRegularWeightAtTikToksSize() {
+        TextPaint paint = new TextPaint();
+        paint.setTextSize(16);
+        paint.setTypeface(Typeface.DEFAULT_BOLD);
+        paint.setFakeBoldText(true);
+        Layout original = new StaticLayout("I think about leaving sometimes.", paint, 600,
+                Layout.Alignment.ALIGN_CENTER, 1, 0, true);
+        assertSame(original, CaptionStyle.layout(original));
+        Settings.CAPTION_REGULAR_WEIGHT.save(true);
+        try {
+            Layout styled = CaptionStyle.layout(original);
+            assertNotSame(original, styled);
+            assertEquals(original.getText(), styled.getText());
+            assertEquals("TikTok's size changed", 16, styled.getPaint().getTextSize(), 0);
+            assertFalse(styled.getPaint().isFakeBoldText());
+            assertEquals(400, styled.getPaint().getTypeface().getWeight());
+            assertTrue(styled.getPaint().getFontVariationSettings(),
+                    styled.getPaint().getFontVariationSettings().startsWith("'wght' 400, 'opsz' "));
+            assertTrue("TikTok's own paint lost its bold", original.getPaint().isFakeBoldText());
+            assertTrue(original.getPaint().getTypeface().isBold());
+        } finally {
+            Settings.CAPTION_REGULAR_WEIGHT.save(false);
+        }
+        assertSame(original, CaptionStyle.layout(original));
+    }
+
     /**
      * A bigger size kept TikTok's measured width and split words: "conditio" over "ns." at 28 on
      * the S22. The layout grows with the text now, up to four fifths of the screen, and a line too

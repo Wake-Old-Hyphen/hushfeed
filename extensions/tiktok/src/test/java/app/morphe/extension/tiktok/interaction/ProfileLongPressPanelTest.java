@@ -31,6 +31,7 @@ public class ProfileLongPressPanelTest {
     @After public void tearDown() {
         SettingsStatus.longPressEnabled = false;
         Settings.LONG_PRESS_FULL_MENU_ON_PROFILES.resetToDefault();
+        Settings.LONG_PRESS_FULL_MENU_IN_SEARCH.resetToDefault();
         Settings.LONG_PRESS_ACTION.resetToDefault();
     }
 
@@ -52,6 +53,20 @@ public class ProfileLongPressPanelTest {
         Settings.LONG_PRESS_FULL_MENU_ON_PROFILES.save(true);
         Settings.LONG_PRESS_ACTION.save("copy_link");
         assertEquals("others_homepage", ProfileLongPressPanel.scene("others_homepage"));
+    }
+
+    @Test public void searchResultsReadAsForYouWithTheirOwnSwitch() {
+        assertFalse(Settings.LONG_PRESS_FULL_MENU_IN_SEARCH.defaultValue);
+        assertEquals("general_search", ProfileLongPressPanel.scene("general_search"));
+
+        Settings.LONG_PRESS_FULL_MENU_IN_SEARCH.save(true);
+        assertEquals("homepage_hot", ProfileLongPressPanel.scene("general_search"));
+        assertEquals("homepage_hot", ProfileLongPressPanel.scene("search_result"));
+        assertEquals("the profile switch is still its own", "others_homepage",
+                ProfileLongPressPanel.scene("others_homepage"));
+
+        Settings.LONG_PRESS_ACTION.save("copy_link");
+        assertEquals("general_search", ProfileLongPressPanel.scene("general_search"));
     }
 
     @Test public void aSavedSwitchWithoutLongPressControlsDoesNothing() {

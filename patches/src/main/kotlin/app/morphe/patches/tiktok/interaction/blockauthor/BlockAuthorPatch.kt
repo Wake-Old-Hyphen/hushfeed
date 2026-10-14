@@ -18,6 +18,7 @@ import app.morphe.patches.tiktok.misc.inbox.MainActivityOnCreateFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.interaction.resume.FeedPlayCompletedFingerprint
+import app.morphe.patches.tiktok.shared.OnRenderFirstFrameFingerprint
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.patcher.patch.PatchException
@@ -50,11 +51,22 @@ internal val sessionPlaybackBridgePatch = bytecodePatch {
         // among the bound items. p1 is that id; p0 also lets the session hold pause the
         // owning player without retaining a global player instance.
         PlayerProgressAidFingerprint.method.capturePlayingAweme()
+        // A start's first video plays from its first frame, a second or two before its first
+        // progress report, so "Don't start the first video" hears about the player here too (#83).
+        OnRenderFirstFrameFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p0 }, " +
+                "$EXTENSION_CLASS_DESCRIPTOR->onFirstFrame(Ljava/lang/Object;)V",
+        )
 
         // The hold's pause and resume, and the video it checks it is pausing. Their names
         // change with every build, so they are read off TikTok's own pauseVideo and the For You
         // feed's space-key toggle and written into the hold's three bridge methods.
-        installNativePlayback(resolveNativePlayback())
+        val nativePlayback = resolveNativePlayback()
+        installNativePlayback(nativePlayback)
+        // And TikTok's own plays of a video they paused are turned down until they hand it back,
+        // so a cold start's second play of the first video never starts it (#83).
+        installSwitchPlayGuards(nativePlayback)
 
         // The activity, so the pause switches can follow the app going away and coming back, and
         // its saved state, which tells a screen Android built again from a first start. p0 is the

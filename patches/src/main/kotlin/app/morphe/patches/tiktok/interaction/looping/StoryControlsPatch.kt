@@ -73,7 +73,7 @@ val storyControlsPatch = bytecodePatch(
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

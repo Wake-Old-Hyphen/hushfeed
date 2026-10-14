@@ -101,6 +101,7 @@ public class Settings extends BaseSettings {
             "subtitle_language", "original", false, Setting.parent(DOWNLOAD_SUBTITLES));
     public static final IntegerSetting CAPTION_TEXT_SIZE =
             new IntegerSetting("caption_text_size", 0).withRange(0, 48);
+    public static final BooleanSetting CAPTION_REGULAR_WEIGHT = new BooleanSetting("caption_regular_weight", FALSE);
     public static final StringSetting CAPTION_BACKGROUND = new StringSetting("caption_background", "default");
     public static final BooleanSetting KEEP_CAPTIONS_CLEAR_DISPLAY = new BooleanSetting("keep_captions_clear_display", FALSE);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
@@ -209,6 +210,14 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting LONG_PRESS_FULL_MENU_ON_PROFILES =
             new BooleanSetting("long_press_full_menu_on_profiles", FALSE, new Setting.Availability() {
                 // Only a long press left to TikTok opens its menu at all.
+                @Override
+                public boolean isAvailable() {
+                    return !GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
+                }
+            });
+    /** The same For You menu for a long press on a video opened from search results (#120). */
+    public static final BooleanSetting LONG_PRESS_FULL_MENU_IN_SEARCH =
+            new BooleanSetting("long_press_full_menu_in_search", FALSE, new Setting.Availability() {
                 @Override
                 public boolean isAvailable() {
                     return !GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
@@ -460,6 +469,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting COMMENT_TRANSLATE_BUTTON_TURNED_ON =
             new BooleanSetting("comment_translate_button_turned_on", FALSE, false, false);
+    /**
+     * The translation rows on TikTok's own Settings and privacy > Language page, for accounts
+     * TikTok hides them on (#143). No restart: the page asks each time it opens.
+     */
+    public static final BooleanSetting SHOW_TRANSLATION_SETTINGS = new BooleanSetting("show_translation_settings", FALSE);
     // Restart-gated: the comment keyboard builds its slot tree once per session, and the
     // trigger that adds the emoji row is asked at that moment only.
     public static final BooleanSetting HIDE_COMMENT_QUICK_REACTIONS =
@@ -534,8 +548,10 @@ public class Settings extends BaseSettings {
      * Keeps the last LIVE quality picked after TikTok closes, so the first rooms after a cold
      * start open at it when their stream has it (#57); the LIVE controls patch, under
      * {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting quality, so no restart.
-     * Has no settings row yet: on 47.1.4 a pick from the Share panel's Video quality never reached
-     * the setter that saves it.
+     * A pick is saved from either of TikTok's pickers: the newer one's setter and the older
+     * LiveDefinitionSelectionDialog's applied switch, which Share > Video quality opens in rooms
+     * whose stream asks for a quality button. Has no settings row yet: on the S22 the first room
+     * after a restart still opened at TikTok's own choice.
      */
     public static final BooleanSetting REMEMBER_LIVE_QUALITY = new BooleanSetting(
             "remember_live_quality", FALSE, false, Setting.parent(OFFER_LIVE_QUALITY));
@@ -779,6 +795,20 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SEE_THROUGH_BOTTOM_BAR = new BooleanSetting("see_through_bottom_bar", FALSE);
     /**
+     * With See-through bottom bar, draws the tabs on a rounded see-through pill inset from the
+     * bar's sides and bottom instead of nothing (#124). Only the bar's background changes, so the
+     * tabs keep their places. Read on each layout.
+     */
+    public static final BooleanSetting FLOATING_BOTTOM_BAR = new BooleanSetting(
+            "floating_bottom_bar", FALSE, false, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
+    /**
+     * Lets the main feed's video draw up under the status bar, with the clock over it (#145).
+     * VideoOverlayHider collapses the spacer TikTok keeps above each video for the bar and
+     * SeeThroughStatusBar clears the bar's color while the feed is in front; both go back when
+     * this goes off or Hushfeed is paused. Read on each layout.
+     */
+    public static final BooleanSetting SEE_THROUGH_STATUS_BAR = new BooleanSetting("see_through_status_bar", FALSE);
+    /**
      * Burn-in guard for OLED screens (BurnInGuard): "dim" draws the controls the fade covers at a
      * quarter after a few seconds without a touch, "dim_shift" also moves the window's content a
      * couple of dp every two minutes. Over the feed and an opened video only.
@@ -813,6 +843,8 @@ public class Settings extends BaseSettings {
     /** The Check your sources banner across the top of a video (TikTok's Know the facts), and the prompt it raises when you share one. */
     public static final BooleanSetting HIDE_CHECK_YOUR_SOURCES = new BooleanSetting("hide_check_your_sources", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_REGION = new BooleanSetting("show_author_region", FALSE);
+    /** The country as its flag in place of its two letters, by the creator's name and a comment's time (#157). */
+    public static final BooleanSetting REGION_AS_FLAG = new BooleanSetting("region_as_flag", FALSE);
     public static final BooleanSetting SHOW_AUTHOR_HANDLE = new BooleanSetting("show_author_handle", FALSE);
     public static final BooleanSetting SHOW_ENGAGEMENT_RATE = new BooleanSetting("show_engagement_rate", FALSE);
     public static final BooleanSetting BLOCK_AUTHOR_BUTTON =
@@ -992,6 +1024,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_FEED_TAB_STRIP = new BooleanSetting("hide_feed_tab_strip", FALSE);
     public static final BooleanSetting HIDE_FEED_SEARCH_BUTTON =
             new BooleanSetting("hide_feed_search_button", FALSE, true);
+    /** The search box at the top of an opened video, with the feed's search button (#158). Read on each layout. */
+    public static final BooleanSetting HIDE_OPENED_VIDEO_SEARCH = new BooleanSetting(
+            "hide_opened_video_search", FALSE, false, Setting.parent(HIDE_FEED_SEARCH_BUTTON));
+    /** The profile views button and Add friends at the top of your Profile tab (#158). Read on each layout. */
+    public static final BooleanSetting HIDE_PROFILE_VIEWS_BUTTON = new BooleanSetting("hide_profile_views_button", FALSE);
+    public static final BooleanSetting HIDE_PROFILE_ADD_FRIENDS = new BooleanSetting("hide_profile_add_friends", FALSE);
     public static final BooleanSetting HIDE_VISUAL_SEARCH = new BooleanSetting("hide_visual_search", FALSE);
     public static final BooleanSetting HIDE_FULLSCREEN_BUTTON = new BooleanSetting("hide_fullscreen_button", FALSE, true);
     // Read each time TikTok asks, so it doesn't need a restart.

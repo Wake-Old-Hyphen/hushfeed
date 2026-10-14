@@ -26,7 +26,7 @@ val aiProfilingGovernorPatch = bytecodePatch(
 ) {
     category("Privacy")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installAiProfilingSwitch()

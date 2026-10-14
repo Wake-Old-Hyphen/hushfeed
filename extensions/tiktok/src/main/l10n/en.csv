@@ -138,6 +138,7 @@ A forced value applies to this copy of TikTok whichever account is signed in. It
 A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Comment plays the video at the hold speed instead of opening the emoji row. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.,A long press on Favorites plays the video at the hold speed instead of offering a new collection. It needs Long press on TikTok default and Seek from the edges off.
 A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.,A long press on Share plays the video at the hold speed instead of opening the quick share row. It needs Long press on TikTok default and Seek from the edges off.
+A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.,A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.
 "A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default.","A long press on a video you opened from someone's profile opens the same menu as on For You, not the small share sheet. It needs Long press on TikTok default."
 A message is already on its way,A message is already on its way
 A name of your own under this tab's icon. Leave it empty to keep TikTok's.,A name of your own under this tab's icon. Leave it empty to keep TikTok's.
@@ -214,6 +215,7 @@ Also apply these filters to downloaded videos TikTok uses when the feed can't lo
 Also change the region TikTok reports internally. Keeps your interface language. Your IP address and your account's own rules still apply.,Also change the region TikTok reports internally. Keeps your interface language. Your IP address and your account's own rules still apply.
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.,Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.
 "Also on a block list, so still hidden: %1$s","Also on a block list, so still hidden: %1$s"
+Also on opened videos,Also on opened videos
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.,Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.
 Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.,Also turns on TikTok's own Auto scroll for videos opened from search. Restart TikTok to apply this.
 Always show publish date,Always show publish date
@@ -298,6 +300,7 @@ Blocked sounds,Blocked sounds
 Blocking,Blocking
 Bottom tabs to keep,Bottom tabs to keep
 Brightness,Brightness
+"Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.","Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there."
 Browse,Browse
 Budgets and reminders,Budgets and reminders
 Build details,Build details
@@ -514,6 +517,7 @@ Downloads,Downloads
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.
 Drama and Series,Drama and Series
 "Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are."
+Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.,Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.
 Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.,Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.
 Easier comment likes,Easier comment likes
 Edge strip width,Edge strip width
@@ -584,6 +588,7 @@ Find the sound on YouTube Music,Find the sound on YouTube Music
 First caller,First caller
 First rejection:,First rejection:
 Fit the video to the screen,Fit the video to the screen
+Floating bottom bar,Floating bottom bar
 Focus,Focus
 Follow probe,Follow probe
 Followers,Followers
@@ -616,6 +621,7 @@ Full changelog,Full changelog
 Full comment sort options,Full comment sort options
 Full license,Full license
 Full link copied,Full link copied
+Full long-press menu in search results,Full long-press menu in search results
 Full long-press menu on a creator's videos,Full long-press menu on a creator's videos
 Full report saved to %1$s,Full report saved to %1$s
 GIF,GIF
@@ -640,6 +646,7 @@ Hidden. Tap to show it again.,Hidden. Tap to show it again.
 Hidden: %1$s,Hidden: %1$s
 Hide,Hide
 Hide AI-generated videos,Hide AI-generated videos
+Hide Add friends,Hide Add friends
 Hide Bulletin board,Hide Bulletin board
 Hide CAPTCHA popups,Hide CAPTCHA popups
 Hide Check your sources warnings,Hide Check your sources warnings
@@ -701,6 +708,7 @@ Hide picture comments,Hide picture comments
 Hide playlist videos,Hide playlist videos
 Hide profile shortcuts,Hide profile shortcuts
 Hide profile shortcuts by name,Hide profile shortcuts by name
+Hide profile views,Hide profile views
 Hide promotional music,Hide promotional music
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.,Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.
 Hide recorded LIVE broadcasts from the feed.,Hide recorded LIVE broadcasts from the feed.
@@ -723,6 +731,7 @@ Hide suggestions on the search page,Hide suggestions on the search page
 Hide surveys,Hide surveys
 Hide tabs TikTok adds later unless you allow them.,Hide tabs TikTok adds later unless you allow them.
 "Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings.","Hide the ""Search this image"" prompt shown over videos. The feed search button and suggestions above comments are separate settings."
+Hide the Add friends button at the top of your profile. The menu button stays where it is.,Hide the Add friends button at the top of your profile. The menu button stays where it is.
 "Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.","Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one."
 "Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.","Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one."
 Hide the Clear display controls,Hide the Clear display controls
@@ -765,6 +774,7 @@ Hide the playlist bar,Hide the playlist bar
 Hide the playlist bar along the bottom of videos that belong to a series.,Hide the playlist bar along the bottom of videos that belong to a series.
 Hide the plus button under the creator's picture in the right column. Ticking Avatar and follow button above hides the picture with it.,Hide the plus button under the creator's picture in the right column. Ticking Avatar and follow button above hides the picture with it.
 "Hide the points banner under the search box and the coin counter floating over search results, which TikTok shows in some regions. Searching works as before.","Hide the points banner under the search box and the coin counter floating over search results, which TikTok shows in some regions. Searching works as before."
+Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.,Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.
 Hide the purple rewards button beside Add friends on your profile.,Hide the purple rewards button beside Add friends on your profile.
 Hide the question cards TikTok slides over a video near its end.,Hide the question cards TikTok slides over a video near its end.
 Hide the question cards TikTok sometimes puts in a comment list to ask what you think.,Hide the question cards TikTok sometimes puts in a comment list to ask what you think.
@@ -776,6 +786,7 @@ Hide the right column,Hide the right column
 Hide the row of friends at the top of the share sheet.,Hide the row of friends at the top of the share sheet.
 Hide the save button in the right column. Ticking Save in the list above hides it too.,Hide the save button in the right column. Ticking Save in the list above hides it too.
 Hide the save button on the feed,Hide the save button on the feed
+"Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays."
 Hide the search bar below videos,Hide the search bar below videos
 Hide the search button on the feed,Hide the search button on the feed
 Hide the share prompt after a like,Hide the share prompt after a like
@@ -927,6 +938,7 @@ Let a LIVE fill the screen up to the top edge. The status bar comes back when yo
 Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.,Let the Offline videos menu use your own limit instead of TikTok's fixed one. Restart TikTok to apply this.
 Let the last video finish,Let the last video finish
 Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.,Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.
+"Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.","Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are."
 Licenses,Licenses
 Lift text length limits,Lift text length limits
 Like,Like
@@ -1064,6 +1076,7 @@ None of these gates had an override to reset.,None of these gates had an overrid
 None of these gates takes a true or false value.,None of these gates takes a true or false value.
 None recorded,None recorded
 Normal,Normal
+Normal-weight captions,Normal-weight captions
 "Not a handle or id, so ignored: %1$s","Not a handle or id, so ignored: %1$s"
 "Not a part Hushfeed fills in, so it's kept as typed: %1$s","Not a part Hushfeed fills in, so it's kept as typed: %1$s"
 Not blocked,Not blocked
@@ -1452,6 +1465,7 @@ Seconds per photo,Seconds per photo
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty."
 "Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.","Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept."
 See-through bottom bar,See-through bottom bar
+See-through status bar,See-through status bar
 Seek bar on video stories,Seek bar on video stories
 Seek by,Seek by
 Seek from the edges,Seek from the edges
@@ -1547,10 +1561,12 @@ Show the block button on videos,Show the block button on videos
 Show the block sound button,Show the block sound button
 Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.,Show the country a commenter's account is set to after the comment's time. Comments from accounts TikTok sends no country for stay as they are.
 Show the country a video was posted from next to the creator's name.,Show the country a video was posted from next to the creator's name.
+Show the country as a flag,Show the country as a flag
 Show the current spoken caption while the other controls are hidden.,Show the current spoken caption while the other controls are hidden.
 Show the day each video was posted under its view count on profile grids.,Show the day each video was posted under its view count on profile grids.
 Show the handle instead of the name,Show the handle instead of the name
 Show the hide button on videos,Show the hide button on videos
+"Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.","Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar."
 Show the mute button on videos,Show the mute button on videos
 Show the progress bar,Show the progress bar
 Show the progress bar thumbnail,Show the progress bar thumbnail
@@ -1563,6 +1579,7 @@ Show the time zone,Show the time zone
 Show the whole Activity and New followers lists instead of stopping at a View all button.,Show the whole Activity and New followers lists instead of stopping at a View all button.
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.","Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off."
 Show translation,Show translation
+Show translation options in Language settings,Show translation options in Language settings
 Show what is left of the budget,Show what is left of the budget
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.","Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name."
 Show when the camera or microphone is in use,Show when the camera or microphone is in use
@@ -1577,6 +1594,7 @@ Shows TikTok's text in your phone's font instead of TikTok Sans. Icons and gift 
 "Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it.","Shows a small count under TikTok's top tabs of what the feed filter has removed since TikTok started. It shows only on the feed, and taps on it go through to the video under it."
 Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.,Shows every emoji in your phone's own emoji font. The newest emoji your phone doesn't have yet may show as a box or in pieces.
 Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.,Shows the Duet and Stitch options even when the creator turned them off. TikTok may still refuse to accept the result.
+"Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.","Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time."
 Sign in to TikTok before importing watch history.,Sign in to TikTok before importing watch history.
 Sign in to TikTok before saving or restoring seen history.,Sign in to TikTok before saving or restoring seen history.
 Sign in to edit your own profile counts,Sign in to edit your own profile counts
@@ -1749,6 +1767,7 @@ The Archive row leaves the Inbox. Archived chats are kept.,The Archive row leave
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.,The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.,The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.
 The LIVE ended or the connection dropped. What was recorded is saved to %1$s,The LIVE ended or the connection dropped. What was recorded is saved to %1$s
+The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.,The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.
 The Lab can't check this. TikTok gets it exactly as typed.,The Lab can't check this. TikTok gets it exactly as typed.
 The Lab couldn't open. Go back and open it again.,The Lab couldn't open. Go back and open it again.
 "The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.","The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed."

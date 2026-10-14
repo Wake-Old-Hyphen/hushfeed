@@ -296,6 +296,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Show the country as a flag",
+                    "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.",
+                    Settings.REGION_AS_FLAG
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show the handle instead of the name",
                     "Show @username beside a video instead of the display name the creator chose.",
                     Settings.SHOW_AUTHOR_HANDLE
@@ -359,6 +365,15 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Hide the magnifying glass at the top right of the feed. Search in Inbox and suggestions above comments stay unchanged.",
                     Settings.HIDE_FEED_SEARCH_BUTTON
             ));
+            // The overlay hider's layout pass takes the box away, so the row needs that patch too.
+            if (SettingsStatus.videoOverlaysEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Also on opened videos",
+                        "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.",
+                        Settings.HIDE_OPENED_VIDEO_SEARCH
+                ));
+            }
         }
         if (SettingsStatus.videoOverlaysEnabled) {
             addPreference(new TogglePreference(
@@ -542,6 +557,9 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             };
             captionSize.zeroMeans("TikTok's size");
             addPreference(captionSize);
+            addPreference(new TogglePreference(context, "Normal-weight captions",
+                    "Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.",
+                    Settings.CAPTION_REGULAR_WEIGHT));
             addPreference(new ChoicePreference(context, "Caption background", Settings.CAPTION_BACKGROUND,
                     new String[]{"TikTok default", "Transparent", "Dark", "Black"},
                     new String[]{"default", "transparent", "dark", "black"}));
@@ -590,6 +608,18 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "See-through bottom bar",
                     "Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.",
                     Settings.SEE_THROUGH_BOTTOM_BAR
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Floating bottom bar",
+                    "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.",
+                    Settings.FLOATING_BOTTOM_BAR
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "See-through status bar",
+                    "Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.",
+                    Settings.SEE_THROUGH_STATUS_BAR
             ));
             addPreference(new ChoicePreference(context, "Burn-in guard", Settings.BURN_IN_GUARD,
                     new String[]{"Off", "Dim when idle", "Dim when idle and shift"},
@@ -667,6 +697,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "A long press on a video you opened from someone's profile opens the same menu as on For You, "
                             + "not the small share sheet. It needs Long press on TikTok default.",
                     Settings.LONG_PRESS_FULL_MENU_ON_PROFILES));
+            addPreference(new TogglePreference(context, "Full long-press menu in search results",
+                    "A long press on a video you opened from search opens the same menu as on For You. "
+                            + "It needs Long press on TikTok default.",
+                    Settings.LONG_PRESS_FULL_MENU_IN_SEARCH));
             addPreference(new TogglePreference(context, "Seek from the edges",
                     "Press and hold the left or right third of the screen to jump back or forward. "
                             + "The middle third keeps the Long press action.", Settings.EDGE_SEEK));

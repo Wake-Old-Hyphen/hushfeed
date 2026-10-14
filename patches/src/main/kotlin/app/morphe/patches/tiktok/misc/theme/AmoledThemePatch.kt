@@ -38,6 +38,8 @@ val amoledThemePatch = resourcePatch(
             "OLED screens turn those pixels off completely.",
         values = mapOf("Black" to "#000000", "Mocha" to "#181825", "Dark gray" to "#121212"),
     )
+    // The cards on TikTok's Compose settings pages come from a palette in code, not resources (#152).
+    dependsOn(amoledComposeCardsPatch { background })
     execute {
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
@@ -48,10 +50,7 @@ val amoledThemePatch = resourcePatch(
             isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size))
-        val color = background ?: throw PatchException("Choose a background color")
-        if (!Regex("#[0-9a-fA-F]{6}|#[fF]{2}[0-9a-fA-F]{6}").matches(color)) {
-            throw PatchException("Background color must be opaque #RRGGBB or #FFRRGGBB")
-        }
+        val color = amoledColor(background)
         // The dark token block's background grays under this build's own names. Read before any
         // file is touched: a build whose palette was never read is refused with nothing changed.
         val backgrounds = darkBackgroundColors(packageMetadata.versionName)
@@ -91,8 +90,8 @@ val amoledThemePatch = resourcePatch(
     }
 }
 
-internal fun renamedPathsRefusal(collisions: Int) =
-    "AMOLED dark theme: this TikTok APK was merged from a split bundle in a way that moved " +
+internal fun renamedPathsRefusal(collisions: Int, patch: String = "AMOLED dark theme") =
+    "$patch: this TikTok APK was merged from a split bundle in a way that moved " +
         "its resource files into new folders, and $collisions of their paths clash with the " +
         "names the resource rebuild gives other files. The rebuild would drop files and " +
         "TikTok would crash at launch. Nothing was changed. Patch the .apkm in Morphe Manager, " +

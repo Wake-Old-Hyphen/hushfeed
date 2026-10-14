@@ -531,6 +531,26 @@ public final class AuthorRegion {
     }
 
     /**
+     * A country code the way the reader asked to see it: its flag with Show the country as a
+     * flag on (#157), made of the two regional indicator letters every flag emoji is, or else the
+     * code. Anything that isn't two letters A to Z stays as it is.
+     */
+    public static String shown(String code) {
+        if (code == null || code.length() != 2 || !Settings.REGION_AS_FLAG.get()) {
+            return code;
+        }
+        StringBuilder flag = new StringBuilder(4);
+        for (int i = 0; i < 2; i++) {
+            char letter = code.charAt(i);
+            if (letter < 'A' || letter > 'Z') {
+                return code;
+            }
+            flag.appendCodePoint(0x1F1E6 + (letter - 'A'));
+        }
+        return flag.toString();
+    }
+
+    /**
      * The handle and what follows the name for the video on screen, in that order, or null
      * when no switch asks for anything this video can supply. What follows is the country, the
      * engagement rate or both. Each switch only ever reads its own value: turning the country
@@ -545,7 +565,7 @@ public final class AuthorRegion {
         // when the commenter switch wants it even if the feed's own row does not show it.
         boolean wantSeen = names && SettingsStatus.commenterDetailsEnabled && Settings.SHOW_COMMENTER_REGION.get();
         String read = showRegion || wantSeen ? region(aweme) : null;
-        String region = showRegion ? read : null;
+        String region = showRegion ? shown(read) : null;
         String rate = EngagementRate.forVideo(aweme);
         String tail = region == null ? rate : rate == null ? region : region + SEPARATOR + rate;
         return handle == null && tail == null ? null : new String[]{handle, tail};

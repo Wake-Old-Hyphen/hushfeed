@@ -9,6 +9,7 @@ import app.morphe.patches.tiktok.misc.branding.changeAppNamePatch
 import app.morphe.patches.tiktok.misc.branding.customLauncherIconPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.optimizer.*
+import app.morphe.patches.tiktok.misc.theme.accentColorPatch
 import app.morphe.patches.tiktok.misc.theme.amoledThemePatch
 import app.morphe.patches.tiktok.misc.update.hidePlayStoreUpdatePatch
 import app.morphe.patches.tiktok.privacy.trustUserCertificatesPatch
@@ -156,12 +157,13 @@ class BuildDetailsPatchTest {
     }
 
     @Test fun `target facts match all declared builds and never capture unreviewed package names`() {
-        AppCompatibilities.tiktok().forEach { compatibility ->
+        AppCompatibilities.tiktokAndPineDrama().forEach { compatibility ->
             compatibility.targets.forEach { app ->
                 assertFalse(app.versionCodes.isNullOrEmpty())
                 app.versionCodes.orEmpty().values.distinct().forEach { code ->
-                    val output = record("target-${app.version}-$code",
+                    val output = record("target-${compatibility.packageName}-${app.version}-$code",
                         packageMetadata(checkNotNull(compatibility.packageName), checkNotNull(app.version), code.toString()))
+                    assertEquals(compatibility.packageName, output.facts()["target_package"])
                     assertEquals(app.version, output.facts()["target_version"])
                     assertEquals(code.toString(), output.facts()["target_version_code"])
                     BuildDetails.selected(output, BuildChoice.VERSION_CODE)
@@ -179,9 +181,9 @@ class BuildDetailsPatchTest {
 
     /** The extension validates targets from its own copy. This fixture ties that copy to the catalog. */
     @Test fun `runtime target fixture is exactly the declared builds`() {
-        val declared = AppCompatibilities.tiktok().flatMap { compatibility ->
+        val declared = AppCompatibilities.tiktokAndPineDrama().flatMap { compatibility ->
             compatibility.targets.flatMap { app -> app.versionCodes.orEmpty().values.distinct().map { "${app.version}=$it" } }
-        }.sorted()
+        }.distinct().sorted()
         val fixture = File("../extensions/tiktok/src/test/resources/build-details/targets.txt")
             .takeIf(File::isFile) ?: File("extensions/tiktok/src/test/resources/build-details/targets.txt")
         assertEquals(declared.joinToString("\n"), fixture.readText().replace("\r\n", "\n").trim())
@@ -228,18 +230,26 @@ class BuildDetailsPatchTest {
         listOf(BuildChoice.P2P, BuildChoice.CORE, BuildChoice.CREATION, BuildChoice.LIVE)
             .forEach { BuildDetails.stripped(output, it, StripSummary(1, 1, true)) }
         BuildDetails.raisedVersionCode(output)
-        listOf("changeAppName", "customLauncherIcon", "trustUserCertificates").forEach { BuildDetails.applied(output, it) }
+        listOf("accentColor", "changeAppName", "customLauncherIcon", "trustUserCertificates").forEach { BuildDetails.applied(output, it) }
         assertTrue("the record is ${output.length()} bytes", output.length() <= 4096)
     }
 
     @Test fun `resource choices add only raw metadata dependencies and live retains its existing bytecode`() {
-        listOf(amoledThemePatch, p2pRelayBlockerPatch, coreAssetDebloatPatch, languagePackPurgerPatch,
+        listOf(accentColorPatch, p2pRelayBlockerPatch, coreAssetDebloatPatch, languagePackPurgerPatch,
             studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
             trustUserCertificatesPatch).forEach { patch ->
             val closure = dependencies(patch)
             assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in closure)
             assertTrue("${patch.name} unexpectedly injects runtime hooks", closure.none { it is BytecodePatch })
         }
+        // AMOLED repaints one Compose palette builder in place (#152). That is bytecode, but it
+        // calls nothing of Hushfeed's, so the extension stays out of a build that only wants AMOLED.
+        val amoled = dependencies(amoledThemePatch)
+        assertTrue("AMOLED has no metadata dependency", buildDetailsPatch in amoled)
+        val amoledBytecode = amoled.filterIsInstance<BytecodePatch>()
+        assertEquals("AMOLED's bytecode is the palette repaint alone", 1, amoledBytecode.size)
+        assertEquals(null, amoledBytecode.single().name)
+        assertTrue("AMOLED unexpectedly injects runtime hooks", sharedExtensionPatch !in amoled)
         assertEquals(setOf(liveGiftEffectOptimizerPatch),
             dependencies(liveStreamSuiteOptimizerPatch).filterIsInstance<BytecodePatch>().toSet())
         assertTrue(buildDetailsPatch in dependencies(sharedExtensionPatch))

@@ -1814,8 +1814,9 @@ public class VideoOverlayHiderTest {
             assertEquals("the bar stayed above the caption's new place", 101f, row.getTranslationY(), 0.5f);
             assertEquals("the line runs across the caption", bottomOf(frame), lineOf(row), 1f);
             assertEquals("the caption didn't make room for the line", -40f, frame.getTranslationY(), 0.5f);
-            assertEquals("the disc stayed down by the time", -40f, disc.getTranslationY(), 0.5f);
-            assertEquals("the disc isn't level with the caption", bottomOf(frame), bottomOf(disc), 1f);
+            // The disc ends above the row, clear of the line and the time beside it (#153, 0.73.0).
+            assertEquals("the disc stayed on the line", -79f, disc.getTranslationY(), 0.5f);
+            assertEquals("the disc doesn't end at the row's top", drawnTop(row), bottomOf(disc), 1f);
 
             // Another layout pass changes nothing: the caption's own lift isn't measured as TikTok's.
             layOutAt(views[0]);
@@ -1892,7 +1893,7 @@ public class VideoOverlayHiderTest {
             assertEquals(-40f, views[3].getTranslationY(), 0.5f);
             assertEquals("the next caption waits to be lifted until it's on screen",
                     -40f, nextFrame.getTranslationY(), 0.5f);
-            assertEquals(-40f, nextDisc.getTranslationY(), 0.5f);
+            assertEquals(-79f, nextDisc.getTranslationY(), 0.5f);
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
@@ -1969,21 +1970,64 @@ public class VideoOverlayHiderTest {
             layOutAt(views[0]);
             VideoOverlayHider.applyTo(detail);
             assertEquals(-40f, frame.getTranslationY(), 0.5f);
-            assertEquals("the disc wasn't lifted over TikTok's offset", -65f, disc.getTranslationY(), 0.5f);
+            // TikTok's 25 px count toward ending above the row, so the disc lands where it would without them.
+            assertEquals("the disc wasn't lifted over TikTok's offset", -79f, disc.getTranslationY(), 0.5f);
 
             layOutAt(views[0]);
             VideoOverlayHider.applyTo(detail);
-            assertEquals("a second pass lifted the disc again", -65f, disc.getTranslationY(), 0.5f);
+            assertEquals("a second pass lifted the disc again", -79f, disc.getTranslationY(), 0.5f);
 
             // TikTok binds the cell again and writes its offset back.
             disc.setTranslationY(-25f);
             layOutAt(views[0]);
             VideoOverlayHider.applyTo(detail);
-            assertEquals("the disc stayed where TikTok put it back", -65f, disc.getTranslationY(), 0.5f);
+            assertEquals("the disc stayed where TikTok put it back", -79f, disc.getTranslationY(), 0.5f);
 
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.applyTo(detail);
             assertEquals("TikTok's own offset didn't come back", -25f, disc.getTranslationY(), 0f);
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+            VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
+        }
+    }
+
+    /**
+     * A short caption ends above the lowest line, so it needs no lift and the line comes down to
+     * meet it. The disc only ever took the caption's lift, so it got none and sat across the end of
+     * the line and the time beside it (#153, a video opened from search on 0.73.0). It now goes up
+     * on its own to end above the row, and the caption stays where it is.
+     */
+    @Test
+    public void theDiscClearsTheRowOverAShortCaption() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("videomusiccoverblock", DISC_ID);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, false);
+            View row = views[1];
+            View frame = views[3];
+            ((FrameLayout.LayoutParams) frame.getLayoutParams()).bottomMargin = 60;
+            View disc = discIn((FrameLayout) frame.getParent());
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+
+            assertEquals("the short caption was lifted", 0f, frame.getTranslationY(), 0f);
+            assertEquals("the line doesn't run along the caption", bottomOf(frame), lineOf(row), 1f);
+            assertTrue("the disc runs into the row: " + bottomOf(disc) + " under " + drawnTop(row),
+                    bottomOf(disc) <= drawnTop(row) + 1f);
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the disc didn't go back down", 0f, disc.getTranslationY(), 0f);
         } finally {
             Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
             VideoOverlayHider.resolveForTests("video_seek_bar", 0);
@@ -3073,6 +3117,70 @@ public class VideoOverlayHiderTest {
             app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
             VideoOverlayHider.resolveForTests("47.1.4:j2g", 0);
             VideoOverlayHider.resolveForTests("47.1.4:g5p", 0);
+        }
+    }
+
+    /**
+     * Also on opened videos (#158): with the feed's search button switch and its own row on, the
+     * search box in an opened video's top bar goes invisible and Back stays. A box of the same name
+     * outside the bar is another page's and is left alone. TikTok showing it again is answered on
+     * the next pass, and either switch off puts it back.
+     */
+    @Test
+    public void theSearchBoxAtTheTopOfAnOpenedVideoHidesAndComesBack() {
+        int barId = 0x7f0a0e12;
+        int boxId = 0x7f0a0e13;
+        VideoOverlayHider.resolveForTests("47.1.4:j2g", barId);
+        VideoOverlayHider.resolveForTests("47.1.4:oa1", boxId);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout bar = new FrameLayout(activity);
+            bar.setId(barId);
+            View back = new View(activity);
+            back.setClickable(true);
+            LinearLayout box = new LinearLayout(activity);
+            box.setId(boxId);
+            bar.addView(back);
+            bar.addView(box);
+            LinearLayout elsewhere = new LinearLayout(activity);
+            elsewhere.setId(boxId);
+            root.addView(bar);
+            root.addView(elsewhere);
+            activity.setContentView(root);
+
+            Settings.HIDE_FEED_SEARCH_BUTTON.save(true);
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the feed's switch alone leaves it", View.VISIBLE, box.getVisibility());
+
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, box.getVisibility());
+            assertEquals("Back stays", View.VISIBLE, back.getVisibility());
+            assertEquals("another page's box is left alone", View.VISIBLE, elsewhere.getVisibility());
+
+            box.setVisibility(View.VISIBLE);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("shown again by TikTok, taken again", View.INVISIBLE, box.getVisibility());
+
+            Settings.HIDE_FEED_SEARCH_BUTTON.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the row rides on the feed's switch", View.VISIBLE, box.getVisibility());
+
+            Settings.HIDE_FEED_SEARCH_BUTTON.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.INVISIBLE, box.getVisibility());
+            Settings.HIDE_OPENED_VIDEO_SEARCH.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off puts it back", View.VISIBLE, box.getVisibility());
+            assertEquals(View.VISIBLE, back.getVisibility());
+        } finally {
+            Settings.HIDE_FEED_SEARCH_BUTTON.resetToDefault();
+            Settings.HIDE_OPENED_VIDEO_SEARCH.resetToDefault();
+            VideoOverlayHider.resolveForTests("47.1.4:j2g", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:oa1", 0);
         }
     }
 

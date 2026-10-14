@@ -29,7 +29,7 @@ val changeAppNamePatch = resourcePatch(
     default = false,
 ) {
     category("Interface")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(buildDetailsPatch)
     val appName by stringOption(
         key = "appName",

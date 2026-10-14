@@ -46,7 +46,7 @@ val alwaysShowPublishDatePatch = bytecodePatch(
     // The grid cell's count comes with the grid patch, which Show engagement rate shares.
     dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

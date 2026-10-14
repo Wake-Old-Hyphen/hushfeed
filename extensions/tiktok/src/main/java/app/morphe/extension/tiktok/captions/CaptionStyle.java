@@ -70,7 +70,8 @@ public final class CaptionStyle {
 
     public static Layout layout(Layout original) {
         int size = size();
-        if (original == null || size == 0) return original;
+        boolean regular = Settings.CAPTION_REGULAR_WEIGHT.get();
+        if (original == null || size == 0 && !regular) return original;
         // On the host's render path, so nothing here may throw. The context is set long before
         // a caption is drawn, but a null answer costs one line. The window's width caps it, so
         // a split view's half of the screen isn't given the whole display's.
@@ -78,7 +79,10 @@ public final class CaptionStyle {
         if (context == null) return original;
         TextPaint paint = new TextPaint(original.getPaint());
         android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, metrics));
+        if (size > 0) paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, metrics));
+        if (regular) {
+            regularWeight(paint, paint.getTextSize() / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1, metrics));
+        }
         int cap = metrics.widthPixels
                 - Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TIKTOK_MARGINS_DP, metrics));
         int width = width(original.getWidth(), original.getPaint().getTextSize(), paint.getTextSize(), cap);
@@ -100,6 +104,27 @@ public final class CaptionStyle {
      * no wider than the screen less 100 dp stays clear of the rail on every layout.
      */
     private static final float TIKTOK_MARGINS_DP = 100;
+
+    /**
+     * TikTok Sans is a variable font. TikTok builds each tux font from its weight axis, and sets
+     * its optical size axis to the text's size in sp, so the caption keeps TikTok's shapes and
+     * only its weight drops to 400 ({@code X.05o5} and {@code X.03xz} on 47.1.4). The typeface
+     * is asked for at 400 as well, so a bold style it carried can't come back through it.
+     */
+    static void regularWeight(TextPaint paint, float sp) {
+        paint.setFakeBoldText(false);
+        android.graphics.Typeface typeface = paint.getTypeface();
+        boolean italic = typeface != null && typeface.isItalic();
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            paint.setTypeface(android.graphics.Typeface.create(typeface, 400, italic));
+        } else if (typeface != null && typeface.isBold()) {
+            paint.setTypeface(android.graphics.Typeface.create(typeface,
+                    italic ? android.graphics.Typeface.ITALIC : android.graphics.Typeface.NORMAL));
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            paint.setFontVariationSettings(String.format(java.util.Locale.ROOT, "'wght' 400, 'opsz' %.1f", sp));
+        }
+    }
 
     private static Layout build(Layout original, TextPaint paint, int width) {
         return new StaticLayout(original.getText(), paint, width,

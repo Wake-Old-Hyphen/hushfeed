@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, o disco de música não cobre mais o fim da barra de progresso nem o tempo ao lado (#153).
+
+* **TikTok:** O tema escuro AMOLED agora também deixa pretos os cartões da própria lista de Configurações e privacidade (#152).
+
+* **TikTok:** Novo botão Mostrar opções de tradução nas configurações de idioma em Comentários: a própria página Idioma do TikTok volta a mostrar as linhas de tradução nas contas que ali só viam Idioma do app (#143).
+
+* **TikTok:** O Hushfeed agora também aplica patches no PineDrama 47.1.4, o app de séries do TikTok. 90 patches funcionam nele, e o Morphe Manager só oferece esses (#156).
+
+* **TikTok:** O botão Gravar da LIVE desce para sair do caminho quando o painel Descobrir do TikTok abre sobre a sala, e volta quando ele fecha (#37).
+
+* **TikTok:** Novo botão Barra inferior flutuante em Barra inferior transparente: as abas ficam sobre uma pílula escura, arredondada e transparente por cima do vídeo (#124).
+
+* **TikTok:** Novo botão Barra de status transparente na Tela do feed: o vídeo do feed principal chega até a borda de cima com o relógio por cima, e as abas do topo não saem do lugar (#145).
+
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, a faixa preta sob o relógio não aparece mais por um instante quando uma sala abre ou quando você desliza para a próxima (#137).
+
+* **TikTok:** Novos botões Esconder as visualizações do perfil e Esconder Adicionar amigos em Perfil: esses dois botões saem do topo do seu perfil, o menu continua (#158).
+
+* **TikTok:** Se o TikTok fechar no meio de uma gravação de LIVE (arrastado para fora ou parado pelo celular), a próxima abertura salva o que foi gravado e avisa você, em vez de deixar no cache (#37).
+
+* **TikTok:** Novo botão Também nos vídeos abertos em Esconder o botão de busca do feed: a barra de pesquisa no topo de um vídeo aberto também sai, Voltar continua (#158).
+
+* **TikTok:** Novo botão Legendas com espessura normal em Legendas: legendas faladas com espessura normal em vez do negrito do TikTok (#158).
+
+* **TikTok:** Novo botão Menu completo de toque longo nos resultados da pesquisa: um toque longo em um vídeo aberto pela pesquisa abre o menu de Para você (#120).
+
+* **TikTok:** Novo botão Mostrar o país como bandeira: o país ao lado do nome do criador e depois do horário de um comentário aparece como bandeira (#157).
+
+* **TikTok:** Não iniciar o primeiro vídeo agora para o vídeo no primeiro quadro, não um ou dois segundos depois (#83).
+
+* **TikTok:** O novo patch Accent color troca o vermelho dos botões e textos do TikTok por azul, verde, roxo, laranja, verde-azulado ou uma cor sua (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Um fundo de perfil salvo com Fundo do perfil ligado não some mais quando o TikTok reinicia. A chave agora oferece reiniciar (#80).

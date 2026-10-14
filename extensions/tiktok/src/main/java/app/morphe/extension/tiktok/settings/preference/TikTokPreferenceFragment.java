@@ -412,7 +412,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         }
         if (!applySettingToPreference && (setting == Settings.SHOW_COMMENTER_HANDLE
                 || setting == Settings.SHOW_COMMENTER_REGION || setting == Settings.COLOR_COMMENTER_NAMES
-                || setting == BaseSettings.PAUSED)) {
+                || setting == Settings.REGION_AS_FLAG || setting == BaseSettings.PAUSED)) {
             app.morphe.extension.tiktok.comment.CommenterDetails.onSettingChanged();
         }
         if (!applySettingToPreference && (setting == Settings.FEED_DESCRIPTION_TEXT_SIZE

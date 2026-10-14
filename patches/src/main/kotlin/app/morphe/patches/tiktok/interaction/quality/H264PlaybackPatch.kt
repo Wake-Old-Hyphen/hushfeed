@@ -80,7 +80,7 @@ val h264PlaybackPatch = bytecodePatch(
     default = true,
 ) {
     category("Playback")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     dependsOn(settingsPatch, sharedExtensionPatch)
     execute {
         requireGearCodecField { classDefByOrNull(it) }

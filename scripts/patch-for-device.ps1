@@ -37,6 +37,9 @@ param(
     # editor's native libraries: the Create tab then dies in TENativeLibsLoader, so a camera
     # check needs a build without it.
     [string[]]$Exclude = @(),
+    # Patch option values, each '<patch name>|<key>=<value>' (for example
+    # 'Accent color|accentColor=#2D7FF9'). Each one goes to the CLI as -O right after its patch's -e.
+    [string[]]$Option = @(),
     # Patch with the release bundle even when a source file is newer than it, for replaying
     # an earlier build on purpose. Without it a stale bundle stops the run.
     [switch]$AllowStaleBundle,
@@ -113,8 +116,20 @@ if (Test-Path -LiteralPath $out) { Remove-Item -LiteralPath $out -Force }
 if (Test-Path -LiteralPath $unsigned) { Remove-Item -LiteralPath $unsigned -Force }
 
 Write-Host "[device] $($names.Count) patches from $(Split-Path -Leaf $bundle) onto $(Split-Path -Leaf $Apk)"
+$optionsByPatch = @{}
+foreach ($entry in $Option) {
+    $optionPatch, $assignment = $entry -split '\|', 2
+    if (-not $assignment -or $assignment -notmatch '^[^=]+=') { throw "Option '$entry' isn't '<patch name>|<key>=<value>'." }
+    if ($optionPatch -notin $names) { throw "No selected patch named '$optionPatch' for option '$assignment'." }
+    if (-not $optionsByPatch.ContainsKey($optionPatch)) { $optionsByPatch[$optionPatch] = @() }
+    $optionsByPatch[$optionPatch] += $assignment
+}
 $enable = @()
-foreach ($name in $names) { $enable += '-e'; $enable += $name }
+foreach ($name in $names) {
+    $enable += '-e'; $enable += $name
+    if ($optionsByPatch.ContainsKey($name)) { foreach ($assignment in $optionsByPatch[$name]) { $enable += '-O'; $enable += $assignment } }
+}
+if ($Option.Count -gt 0) { Write-Host "[device] options: $($Option -join ', ')" }
 $arguments = @('patch', '--exclusive', '--unsigned', '-p', $bundle, '-o', $unsigned, '-t', $temp, '-r', $result) + $enable + @($Apk)
 $argumentFileLines = @($arguments | ForEach-Object {
     $value = [string]$_

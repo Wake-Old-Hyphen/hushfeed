@@ -66,7 +66,7 @@ val keepFavoritesTabPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

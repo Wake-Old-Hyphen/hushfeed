@@ -20,6 +20,7 @@ function Get-PatchTarget {
 
     $targets = @{}
     $versionSets = @{}
+    $declaredBy = @{}
     foreach ($patch in $patches) {
         if ($null -eq $patch) { throw 'patches-list.json contains a null patch.' }
         $nameProperty = $patch.PSObject.Properties['name']
@@ -42,27 +43,39 @@ function Get-PatchTarget {
             if ($versions.Count -eq 0) {
                 throw "$patchName has no exact compatible version for $($property.Name)."
             }
-            if (-not $targets.ContainsKey($property.Name)) { $targets[$property.Name] = @() }
+            if (-not $targets.ContainsKey($property.Name)) {
+                $targets[$property.Name] = @()
+                $versionSets[$property.Name] = @{}
+                $declaredBy[$property.Name] = 0
+            }
             $targets[$property.Name] += $versions
+            $declaredBy[$property.Name]++
             $set = (@($versions | Sort-Object -Unique) -join ', ')
-            if (-not $versionSets.ContainsKey($set)) { $versionSets[$set] = $patchName }
+            if (-not $versionSets[$property.Name].ContainsKey($set)) { $versionSets[$property.Name][$set] = $patchName }
         }
     }
 
+    # The bundle's target is the package every patch declares. Another app built from the same code
+    # (PineDrama, #156) is declared only by the patches that apply to it, and is listed beside it.
     $packages = @($targets.Keys | Sort-Object)
-    if ($packages.Count -ne 1) {
-        throw "Expected one compatible package, found $($packages -join ', ')."
+    $everywhere = @($packages | Where-Object { $declaredBy[$_] -eq $patches.Count })
+    if ($everywhere.Count -ne 1) {
+        $found = if ($everywhere.Count -eq 0) { 'none' } else { $everywhere -join ', ' }
+        throw "Expected one package every patch declares, found $found among $($packages -join ', ')."
     }
-    $packageName = $packages[0]
-    if ($versionSets.Count -ne 1) {
-        $sets = @($versionSets.Keys | Sort-Object | ForEach-Object { "$($versionSets[$_]) declares $_" })
-        throw "Expected every patch to declare the same versions of ${packageName}: $($sets -join '; ')."
+    $packageName = $everywhere[0]
+    foreach ($package in $packages) {
+        if ($versionSets[$package].Count -ne 1) {
+            $sets = @($versionSets[$package].Keys | Sort-Object | ForEach-Object { "$($versionSets[$package][$_]) declares $_" })
+            throw "Expected every patch to declare the same versions of ${package}: $($sets -join '; ')."
+        }
     }
     $versions = @($targets[$packageName] | Sort-Object -Unique | Sort-Object { [version]$_ })
     return [pscustomobject]@{
         PackageName = $packageName
         PackageVersions = $versions
         PackageVersion = $versions[-1]
+        OtherPackages = @($packages | Where-Object { $_ -ne $packageName })
     }
 }
 

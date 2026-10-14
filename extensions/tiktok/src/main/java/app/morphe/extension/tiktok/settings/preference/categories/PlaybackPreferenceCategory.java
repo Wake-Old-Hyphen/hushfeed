@@ -112,8 +112,9 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "quality to the menu in most of the others, and the next room opens at the quality "
                             + "you picked last.",
                     Settings.OFFER_LIVE_QUALITY));
-            // REMEMBER_LIVE_QUALITY has no row until a pick from the Share panel's Video quality
-            // reaches TikTok's setter; on 47.1.4 it never did, so the switch would do nothing.
+            // REMEMBER_LIVE_QUALITY has no row until a room after a restart opens at the saved pick.
+            // On the S22 (2026-10-14) the pick saved from Share > Video quality, but the first room
+            // after a force-stop opened at AUTO and the restore never ran.
             addPreference(new TogglePreference(context, "Offer clear screen in every LIVE room",
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",

@@ -287,6 +287,26 @@ public class AuthorRegionTest {
         assertArrayEquals(new String[]{"samsmith", "GB"}, AuthorRegion.decoration(video));
     }
 
+    /** #157: the country as its flag, built from the two letters, and only from two letters. */
+    @Test
+    public void theCountryCanShowAsItsFlag() {
+        Settings.SHOW_AUTHOR_REGION.save(true);
+        Settings.REGION_AS_FLAG.save(true);
+        try {
+            assertArrayEquals(new String[]{null, "🇬🇧"},
+                    AuthorRegion.decoration(playing("flag", "samsmith", "Sam Smith", "gb")));
+            assertEquals("🇪🇪", AuthorRegion.shown("EE"));
+            assertEquals("a code that isn't two letters stays as it is", "419", AuthorRegion.shown("419"));
+            assertEquals("X1", AuthorRegion.shown("X1"));
+            assertNull(AuthorRegion.shown(null));
+
+            Settings.REGION_AS_FLAG.save(false);
+            assertEquals("GB", AuthorRegion.shown("GB"));
+        } finally {
+            Settings.REGION_AS_FLAG.resetToDefault();
+        }
+    }
+
     @Test
     public void aVideoWithNothingToShowAsksForNothing() {
         Settings.SHOW_AUTHOR_HANDLE.save(true);

@@ -57,7 +57,7 @@ val refreshRatePatch = bytecodePatch(
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         var patched = 0

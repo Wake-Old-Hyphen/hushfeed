@@ -39,7 +39,7 @@ val simSpoofPatch = bytecodePatch(
         settingsPatch,
     )
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // Checked before the first write: the SIM change task's injection writes v0 and then

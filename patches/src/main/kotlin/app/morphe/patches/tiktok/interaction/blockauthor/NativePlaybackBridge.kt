@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.blockauthor
 
 import app.morphe.util.addInstructions
+import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.util.cloneMutable
@@ -50,6 +51,8 @@ internal class NativePlaybackMembers(
     val manager: String,
     val pause: NativeCall,
     val resume: NativeCall,
+    /** The manager's implementation, whose resume logs "resumePlay aid:". */
+    val implementation: String,
 )
 
 private fun Method.calls(): List<Pair<Opcode, MethodReference>> =
@@ -118,8 +121,16 @@ internal fun resolveNativePlaybackMembers(
         manager = manager,
         pause = NativeCall(pause.second, pause.first.throughInterface()),
         resume = NativeCall(resume.second, resume.first.throughInterface()),
+        implementation = implementation,
     )
 }
+
+/** The implementation's own resume: the method the hold's check above found logging the line. */
+internal fun <M : Method> Iterable<M>.implementationResume(members: NativePlaybackMembers): M =
+    filter {
+        it.name == members.resume.reference.name && it.parameterTypes.isEmpty() && it.returnType == "V" &&
+            it.hasString(RESUME_LOG)
+    }.singleOrPatchException("Block author: ${members.implementation}'s resume")
 
 internal fun BytecodePatchContext.resolveNativePlayback(): NativePlaybackMembers {
     fun method(type: String, name: String, parameters: List<String>): Method =
@@ -130,6 +141,33 @@ internal fun BytecodePatchContext.resolveNativePlayback(): NativePlaybackMembers
         pauseVideo = method(PLAYER_CONTROLLER, "pauseVideo", emptyList()),
         keyToggle = method(FEED_RECOMMEND_FRAGMENT, "onDispatchKeyEvent", listOf(KEY_EVENT)),
     ) { classDefByOrNull(it)?.methods }
+}
+
+/**
+ * Puts the hold's question in front of TikTok's own plays of a video a pause switch or the app
+ * lock has paused (#83). On a cold start the first video starts again about 1.7 s after the
+ * first-frame pause, and pausing it after that start let it play for a moment, so the start itself
+ * is asked about: PlayerController's play method, which the feed panel's resume, a new surface, a
+ * network change and a TopView ad's end all reach, and the manager implementation's resume, which
+ * TikTok's feed events and closing sheets call without it. The hold's own resume goes through.
+ */
+internal fun BytecodePatchContext.installSwitchPlayGuards(members: NativePlaybackMembers) {
+    PlayerPlayFingerprint.method.apply {
+        // The controller and its Aweme passed as one range, so the Aweme has to come right after.
+        val aweme = awemeParameterRegister()
+        if (aweme != 1) throw PatchException("Block author: the play method's Aweme is p$aweme, not p1.")
+        // A refused play answers the way the method's own casting check does: an empty string.
+        guardAtEntry(
+            "Block author",
+            "invoke-static/range { p0 .. p1 }, $HOLD->refusePlay(Ljava/lang/Object;Ljava/lang/Object;)Z",
+            "const-string v0, \"\"\nreturn-object v0",
+        )
+    }
+    mutableClassDefBy(members.implementation).methods.implementationResume(members).guardAtEntry(
+        "Block author",
+        "invoke-static/range { p0 .. p0 }, $HOLD->refuseResume(Ljava/lang/Object;)Z",
+        "return-void",
+    )
 }
 
 /** Writes the members into the hold's three bridge methods, whose own bodies serve the tests. */

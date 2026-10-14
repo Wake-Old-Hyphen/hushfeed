@@ -1,3 +1,37 @@
+## Unreleased
+
+* **TikTok:** Mit Kommentarleiste bei geöffneten Videos ausblenden verdeckt die Musikscheibe nicht mehr das Ende des Fortschrittsbalkens oder die Zeit daneben (#153).
+
+* **TikTok:** Das AMOLED-Dunkeldesign macht jetzt auch die Karten auf der Liste Einstellungen und Datenschutz selbst schwarz (#152).
+
+* **TikTok:** Neuer Schalter Übersetzungsoptionen in den Spracheinstellungen anzeigen unter Kommentare: TikToks eigene Seite Sprache zeigt ihre Übersetzungszeilen wieder auf Konten, die dort nur App-Sprache bekamen (#143).
+
+* **TikTok:** Hushfeed patcht jetzt auch PineDrama 47.1.4, TikToks App für Serien. 90 Patches funktionieren dort, und Morphe Manager bietet nur diese an (#156).
+
+* **TikTok:** Der LIVE-Aufnahmeknopf rutscht nach unten aus dem Weg, wenn TikToks Entdecken-Leiste über dem Raum aufgeht, und kehrt zurück, wenn sie zugeht (#37).
+
+* **TikTok:** Neuer Schalter Schwebende untere Leiste unter Durchsichtige untere Leiste: Die Tabs liegen auf einer abgerundeten, durchsichtigen dunklen Pille über dem Video (#124).
+
+* **TikTok:** Neuer Schalter Durchsichtige Statusleiste unter Feed-Ansicht: Das Video im Haupt-Feed reicht bis zum oberen Rand, die Uhr liegt darüber, die Tabs oben bleiben (#145).
+
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, blitzt der schwarze Balken unter der Uhr nicht mehr kurz auf, wenn ein Raum öffnet oder du zum nächsten wischst (#137).
+
+* **TikTok:** Neue Schalter Profilaufrufe ausblenden und „Freunde hinzufügen“ ausblenden unter Profil: Diese beiden Schaltflächen verschwinden oben aus deinem Profil, das Menü bleibt (#158).
+
+* **TikTok:** Wenn TikTok mitten in einer LIVE-Aufnahme geschlossen wird (weggewischt oder vom Handy beendet), speichert der nächste Start das Aufgenommene und sagt dir Bescheid, statt es im Cache liegen zu lassen (#37).
+
+* **TikTok:** Neuer Schalter Auch bei geöffneten Videos unter Suchschaltfläche im Feed ausblenden: Auch die Suchleiste oben in einem geöffneten Video verschwindet, Zurück bleibt (#158).
+
+* **TikTok:** Neuer Schalter Untertitel in normaler Stärke unter Untertitel: gesprochene Untertitel in normaler Schriftstärke statt in TikToks Fettschrift (#158).
+
+* **TikTok:** Neuer Schalter Volles Menü bei langem Drücken in Suchergebnissen: Langes Drücken auf ein Video aus der Suche öffnet das Menü von Für dich (#120).
+
+* **TikTok:** Neuer Schalter Land als Flagge anzeigen: Das Land neben dem Namen des Creators und nach der Zeit eines Kommentars erscheint als Flagge (#157).
+
+* **TikTok:** Erstes Video nicht starten hält das Video jetzt beim ersten Bild an statt nach ein, zwei Sekunden (#83).
+
+* **TikTok:** Der neue Patch Accent color ersetzt das Rot von TikToks Schaltflächen und Text durch Blau, Grün, Lila, Orange, Türkis oder eine eigene Farbe (#84).
+
 ## 0.73.0 (2026-10-14)
 
 * **TikTok:** Ein mit eingeschaltetem Profilhintergrund gespeicherter Profilhintergrund bleibt nach einem Neustart von TikTok erhalten. Der Schalter bietet jetzt einen Neustart an (#80).

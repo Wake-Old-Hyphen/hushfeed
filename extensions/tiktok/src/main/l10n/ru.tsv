@@ -2322,3 +2322,23 @@ Short date	Короткая дата
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.
 Color commenter names	Цветные имена комментаторов
 Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Давать имени каждого автора комментария свой цвет, всегда один и тот же для этого аккаунта, чтобы за длинной веткой было легче следить.
+Show the country as a flag	Показывать страну флагом
+Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Показывает флаг страны вместо двух букв рядом с именем автора и со временем комментария.
+Full long-press menu in search results	Полное меню долгого нажатия в результатах поиска
+A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Долгое нажатие на видео, открытое из поиска, открывает то же меню, что и в «Рекомендациях». Для этого в настройке «Долгое нажатие» должно быть выбрано «Стандарт TikTok».
+Normal-weight captions	Субтитры обычной толщины
+Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Показывать субтитры речи обычным начертанием вместо жирного шрифта TikTok. Применяется к следующей строке субтитров.
+The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Не удалось сохранить запись LIVE, прерванную закрытием TikTok. Незавершённый файл удалён.
+Also on opened videos	Также в открытых видео
+Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Скрывать строку поиска вверху видео, открытых из поиска, профиля или истории просмотров. Кнопка «Назад» остаётся.
+Hide profile views	Скрывать просмотры профиля
+Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Скрывать кнопку просмотров профиля вверху вашего профиля. Настройка истории просмотров профиля не меняется.
+Hide Add friends	Скрывать «Добавить друзей»
+Hide the Add friends button at the top of your profile. The menu button stays where it is.	Скрывать кнопку «Добавить друзей» вверху вашего профиля. Кнопка меню остаётся на месте.
+See-through status bar	Прозрачная строка состояния
+Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	В основной ленте видео доходит до верхнего края экрана, а часы и значки состояния показываются поверх него. Вкладки вверху остаются на месте.
+Floating bottom bar	Плавающая нижняя панель
+Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Вкладки основной ленты показываются на скруглённой полупрозрачной тёмной плашке, которая парит над видео. Нужна «Прозрачная нижняя панель».
+# context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
+Show translation options in Language settings	Показывать параметры перевода в настройках языка
+Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Возвращает строки перевода на страницу «Язык» в TikTok (Настройки и конфиденциальность) для аккаунтов, которые видят там только «Язык приложения».

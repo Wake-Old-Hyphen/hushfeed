@@ -11,6 +11,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -85,6 +86,44 @@ class LiveQualityPickAnchorsTest {
                     call?.definingClass == LIVE_RESOLUTION_SELECTION_SETTING && call.name == "needPersistAcrossRooms"
                 },
             )
+        }
+    }
+
+    /**
+     * On the S22 a pick from Share > Video quality never reached the setter above: that room's
+     * stream asked for a quality button, so the menu offered the older picker,
+     * LiveDefinitionSelectionDialog, whose switch callback stores the picked sdk key for the room
+     * and never calls the setter. The patch saves the key right after that store, which has to sit
+     * behind the callback's own check that the switch went through.
+     */
+    @Test
+    fun `the older picker's applied pick is one store behind its result check on each declared build`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val found = classes.flatMap { cls -> cls.methods.filter { LiveDefinitionPickAppliedFingerprint.takes(it, cls) } }
+            assertEquals("${apk.name}: ${found.map { "${it.definingClass}->${it.name}" }}", 1, found.size)
+            val applied = found.single()
+            val runnable = classes.single { it.type == applied.definingClass }
+            val traced = runnable.methods.single { it.name == "run" && it.parameterTypes.isEmpty() }
+                .implementation!!.instructions.any {
+                    val text = ((it as? ReferenceInstruction)?.reference as? StringReference)?.string.orEmpty()
+                    text.startsWith("LiveDefinitionSelectionDialog\$DefinitionListAdapter") &&
+                        text.contains("handleAudienceItemSelect")
+                }
+            assertTrue("${apk.name}: ${runnable.type} is no longer the older picker's pick going through", traced)
+
+            val stored = definitionPickStore(applied)
+            val instructions = applied.implementation!!.instructions.toList()
+            val store = instructions[stored.index]
+            assertEquals(Opcode.IPUT_OBJECT, store.opcode)
+            assertEquals("${apk.name}: the store's field", "sdkKey", ((store as ReferenceInstruction).reference as FieldReference).name)
+            assertTrue("${apk.name}: the key's register v${stored.register}", stored.register < applied.implementation!!.registerCount)
+            // The picked row's key, read from the adapter's list just before the store.
+            val read = instructions[stored.index - 1]
+            assertEquals("${apk.name}: the stored key is a row's field", Opcode.IGET_OBJECT, read.opcode)
+            assertEquals("${apk.name}: the read lands in the stored register", stored.register, (read as OneRegisterInstruction).registerA)
         }
     }
 }

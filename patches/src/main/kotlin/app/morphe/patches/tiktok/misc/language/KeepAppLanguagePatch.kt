@@ -135,7 +135,7 @@ val keepAppLanguagePatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch, settingsPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         installAppLanguageSwitch()

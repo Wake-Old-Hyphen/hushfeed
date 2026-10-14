@@ -124,7 +124,7 @@ val profileBackgroundPatch = bytecodePatch(
 ) {
     category("Interaction")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         val holders = mutableListOf<ClassDef>()

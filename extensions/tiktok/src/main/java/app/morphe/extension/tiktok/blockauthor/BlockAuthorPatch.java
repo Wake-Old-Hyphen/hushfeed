@@ -54,6 +54,20 @@ public final class BlockAuthorPatch {
         setPlayingAweme(awemeId);
     }
 
+    /**
+     * Called from {@code PlayerController.onRenderFirstFrame}, so a pause switch that wants the
+     * feed stopped can stop a start's first video before its first progress report.
+     *
+     * @param controller the native PlayerController drawing its first frame
+     */
+    public static void onFirstFrame(Object controller) {
+        try {
+            app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold.onFirstFrame(controller);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not stop the first frame for the session hold", ex);
+        }
+    }
+
     /** Compatibility entry for callers that only report the current video ID. */
     public static void setPlayingAweme(String awemeId) {
         try {

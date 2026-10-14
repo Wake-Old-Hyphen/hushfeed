@@ -127,7 +127,7 @@ public class RuntimePatchListTest {
                         call.group(1).equals("        ") && source.startsWith(END_OF_EXECUTE, call.end()));
             }
         }
-        assertEquals(new TreeSet<>(Arrays.asList("changeAppName", "customLauncherIcon", "trustUserCertificates")),
+        assertEquals(new TreeSet<>(Arrays.asList("accentColor", "changeAppName", "customLauncherIcon", "trustUserCertificates")),
                 applied);
     }
 

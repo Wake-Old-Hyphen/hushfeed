@@ -59,7 +59,7 @@ val enableNonPersonalizedSearchPatch = bytecodePatch(
 ) {
     category("Search")
     dependsOn(settingsPatch, sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(
@@ -85,7 +85,7 @@ val enableLiveSearchPatch = bytecodePatch(
 ) {
     category("Search")
     dependsOn(sharedExtensionPatch)
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         SettingsStatusLoadFingerprint.method.addInstruction(

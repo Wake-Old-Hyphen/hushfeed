@@ -90,6 +90,12 @@ public final class LiveStatusBar {
      */
     private static final int MAX_RELIFTS = 6;
     private static final long FIGHT_WINDOW_MS = 1000;
+    /**
+     * Most frames in a row a room holds back so a strip it took is laid out before it's drawn. One
+     * is enough for each strip; the cap keeps a room drawing while TikTok fights for its strip,
+     * until {@link #MAX_RELIFTS} notices the fight and leaves the strip.
+     */
+    private static final int MAX_HELD_FRAMES = 3;
     /** The view holding a room's stream on 47.1.4 (read off the emulator, 2026-10-11). */
     private static final String VIDEO_CONTAINER = "video_view_container";
     /** Set by tests, where TikTok's resources aren't there to name the stream's view. */
@@ -213,7 +219,7 @@ public final class LiveStatusBar {
             // The room's views are laid out after it resumes, and its insets are only known once
             // the window is attached, so the strip is looked for on the layout passes that follow.
             decor.getViewTreeObserver().addOnGlobalLayoutListener(room);
-            decor.getViewTreeObserver().addOnPreDrawListener(room.coverWatch);
+            decor.getViewTreeObserver().addOnPreDrawListener(room.frameWatch);
             if (!hideBar) decor.getViewTreeObserver().addOnPreDrawListener(room.shadeWatch);
             HookStatus.bound(HOOK_FAMILY, hideBar ? "LIVE room status bar hidden" : "LIVE room under the status bar");
         } catch (Throwable failure) {
@@ -230,7 +236,7 @@ public final class LiveStatusBar {
             if (window == null) return;
             View decor = window.getDecorView();
             decor.getViewTreeObserver().removeOnGlobalLayoutListener(room);
-            decor.getViewTreeObserver().removeOnPreDrawListener(room.coverWatch);
+            decor.getViewTreeObserver().removeOnPreDrawListener(room.frameWatch);
             decor.getViewTreeObserver().removeOnPreDrawListener(room.shadeWatch);
             room.putBack();
             if (!room.barHidden) {
@@ -728,19 +734,22 @@ public final class LiveStatusBar {
          * page, so the band under the clock came back over the stream (#137, read off the S22).
          */
         private final WeakHashMap<View, Boolean> pageCovers = new WeakHashMap<>();
-        private boolean coverWatchFailed;
-        /** Hides a page cover TikTok showed again without a layout pass, before it's drawn. */
-        final ViewTreeObserver.OnPreDrawListener coverWatch = () -> {
-            if (this.left || coverWatchFailed) return true;
-            try {
-                return !hidePageCovers();
-            } catch (Throwable failure) {
-                coverWatchFailed = true;
-                HookStatus.threw(HOOK_FAMILY, "cover watch", failure);
-                Logger.printException(() -> "Could not keep the LIVE room's Clear display cover away", failure);
-                return true;
-            }
-        };
+        private boolean frameWatchFailed;
+        /**
+         * Set when this moved a padding or margin since the last frame. A strip taken on a layout
+         * pass only moves the stream up on the next one, so the frame drawn in between showed the
+         * strip for a moment (#137, BynchPOP on 0.73.0); that frame is held back instead.
+         */
+        private boolean relaid;
+        private int heldFrames;
+        /** The bar heights the last layout pass went by, for the strips taken before a frame. */
+        private int[] lastBars;
+        /**
+         * Runs before each frame is drawn. It takes a strip TikTok put back with no layout pass of
+         * the window, as a pager does when it binds a room to a page mid-swipe, and hides a cover
+         * TikTok showed again, then holds the frame back until what changed is laid out (#137).
+         */
+        final ViewTreeObserver.OnPreDrawListener frameWatch = this::beforeFrame;
         private long fightStart;
         private boolean fought;
         /**
@@ -791,6 +800,7 @@ public final class LiveStatusBar {
                 // closing in the room does it.
                 if (target == null || fought || lifted.current(target) != lifted.value || !mayRelift()) return;
                 lifted.set(target, 0);
+                relaid = true;
                 return;
             }
             Activity room = activity.get();
@@ -806,6 +816,7 @@ public final class LiveStatusBar {
             if (target == null) return;
             lifted = offset;
             offset.set(target, 0);
+            relaid = true;
             HookStatus.bound(HOOK_FAMILY, "LIVE room top strip taken away");
         }
 
@@ -828,7 +839,8 @@ public final class LiveStatusBar {
                 rooms = findPager(first, content, videoId);
                 pager = new WeakReference<>(rooms);
                 if (rooms == null) {
-                    liftAbove(first, content, barHeights(window));
+                    lastBars = barHeights(window);
+                    liftAbove(first, content, lastBars);
                     return;
                 }
                 ViewGroup found = rooms;
@@ -836,6 +848,7 @@ public final class LiveStatusBar {
                         + " holds " + found.getChildCount() + " pages");
             }
             int[] bars = barHeights(window);
+            lastBars = bars;
             for (int i = 0; i < rooms.getChildCount() && !fought; i++) {
                 View page = rooms.getChildAt(i);
                 View shown = page.findViewById(videoId);
@@ -858,6 +871,7 @@ public final class LiveStatusBar {
             if (strips.containsKey(target) && !mayRelift()) return;
             strips.put(target, strip);
             strip.set(target, 0);
+            relaid = true;
             stripHeight = strip.value;
             HookStatus.bound(HOOK_FAMILY, "LIVE room top strip taken away");
         }
@@ -884,6 +898,7 @@ public final class LiveStatusBar {
                 return;
             }
             page.setPadding(page.getPaddingLeft(), held[0] + held[1], page.getPaddingRight(), page.getPaddingBottom());
+            relaid = true;
         }
 
         /**
@@ -895,6 +910,7 @@ public final class LiveStatusBar {
             int[] held = loweredPages.remove(page);
             if (held == null || held[0] == 0 || page.getPaddingTop() != held[0] + held[1]) return;
             page.setPadding(page.getPaddingLeft(), held[0], page.getPaddingRight(), page.getPaddingBottom());
+            relaid = true;
         }
 
         /** Gives every page held lower its own padding back unless TikTok has set another. */
@@ -921,6 +937,73 @@ public final class LiveStatusBar {
                 Logger.printDebug(() -> "TikTok keeps putting the LIVE room's top strip back; leaving it");
                 return false;
             }
+            return true;
+        }
+
+        /** {@link #frameWatch}: false holds the frame back. */
+        private boolean beforeFrame() {
+            if (left || frameWatchFailed) return true;
+            try {
+                boolean hold = hidePageCovers();
+                hold |= hideCover();
+                if (keepStripsAwayBeforeDraw() && !barHidden) keepControlsBelowBar();
+                hold |= relaid;
+                relaid = false;
+                if (hold && heldFrames < MAX_HELD_FRAMES) {
+                    heldFrames++;
+                    return false;
+                }
+                heldFrames = 0;
+                return true;
+            } catch (Throwable failure) {
+                frameWatchFailed = true;
+                HookStatus.threw(HOOK_FAMILY, "frame watch", failure);
+                Logger.printException(() -> "Could not keep the LIVE room's top strip out of a frame", failure);
+                return true;
+            }
+        }
+
+        /**
+         * Takes, before a frame, a strip TikTok put back since the last layout pass: one this took
+         * before, and the strip of a page the room pager added or bound as it scrolled, which it
+         * lays out itself with no layout pass of the window. True when a strip was taken.
+         */
+        private boolean keepStripsAwayBeforeDraw() {
+            if (fought) return false;
+            boolean laidOutBefore = relaid;
+            relaid = false;
+            View target = lifted == null ? null : lifted.view.get();
+            if (target != null && lifted.current(target) == lifted.value && mayRelift()) {
+                lifted.set(target, 0);
+                relaid = true;
+            }
+            for (Map.Entry<View, Offset> entry : strips.entrySet()) {
+                View held = entry.getKey();
+                Offset strip = entry.getValue();
+                if (held == null || fought || strip.current(held) != strip.value || !mayRelift()) continue;
+                strip.set(held, 0);
+                relaid = true;
+            }
+            ViewGroup rooms = pager.get();
+            Activity room = activity.get();
+            int[] bars = lastBars;
+            if (!fought && rooms != null && room != null && bars != null && videoId > 0 && rooms.isAttachedToWindow()) {
+                View content = room.findViewById(android.R.id.content);
+                for (int i = 0; content != null && i < rooms.getChildCount() && !fought; i++) {
+                    View shown = rooms.getChildAt(i).findViewById(videoId);
+                    if (shown != null) liftAbove(shown, content, bars);
+                }
+            }
+            boolean took = relaid;
+            relaid |= laidOutBefore;
+            return took;
+        }
+
+        /** Hides the room's cover over the bar if TikTok showed it again; true when it did. */
+        private boolean hideCover() {
+            View known = cover.get();
+            if (known == null || known.getVisibility() != View.VISIBLE || !known.isAttachedToWindow()) return false;
+            known.setVisibility(View.INVISIBLE);
             return true;
         }
 
@@ -1030,6 +1113,7 @@ public final class LiveStatusBar {
                     }
                     loweredBy = by;
                     layer.setPadding(layer.getPaddingLeft(), own + loweredBy, layer.getPaddingRight(), layer.getPaddingBottom());
+                    relaid = true;
                 }
             }
             shadeUnderBar();
