@@ -28,7 +28,8 @@ final class LiveRemux {
 
     /** What an MP4 file is built through. */
     interface Mp4Writer {
-        int addVideoTrack(byte[] csd0, byte[] csd1, int width, int height) throws IOException;
+        /** {@code csd1} is null for HEVC, whose settings all travel in {@code csd0}. */
+        int addVideoTrack(String mime, byte[] csd0, byte[] csd1, int width, int height) throws IOException;
 
         int addAudioTrack(byte[] specific, int sampleRate, int channels) throws IOException;
 
@@ -72,10 +73,10 @@ final class LiveRemux {
             muxer = new MediaMuxer(output.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         }
 
-        @Override public int addVideoTrack(byte[] csd0, byte[] csd1, int width, int height) {
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", width, height);
+        @Override public int addVideoTrack(String mime, byte[] csd0, byte[] csd1, int width, int height) {
+            MediaFormat format = MediaFormat.createVideoFormat(mime, width, height);
             format.setByteBuffer("csd-0", ByteBuffer.wrap(csd0));
-            format.setByteBuffer("csd-1", ByteBuffer.wrap(csd1));
+            if (csd1 != null) format.setByteBuffer("csd-1", ByteBuffer.wrap(csd1));
             return muxer.addTrack(format);
         }
 
@@ -159,6 +160,7 @@ final class LiveRemux {
     private static final class FlvSink implements FlvReader.Listener {
         private final Mp4Writer writer;
         private final List<Held> held = new ArrayList<>();
+        private String mime;
         private byte[] csd0;
         private byte[] csd1;
         private int width;
@@ -179,8 +181,9 @@ final class LiveRemux {
             this.writer = writer;
         }
 
-        @Override public void onVideoConfig(byte[] csd0, byte[] csd1, int width, int height) {
+        @Override public void onVideoConfig(String mime, byte[] csd0, byte[] csd1, int width, int height) {
             if (this.csd0 != null) return;
+            this.mime = mime;
             this.csd0 = csd0;
             this.csd1 = csd1;
             this.width = width;
@@ -224,7 +227,7 @@ final class LiveRemux {
 
         private void openWriter() throws IOException {
             if (open) return;
-            videoTrack = writer.addVideoTrack(csd0, csd1, width, height);
+            videoTrack = writer.addVideoTrack(mime, csd0, csd1, width, height);
             if (audioSpecific != null) {
                 audioTrack = writer.addAudioTrack(audioSpecific, sampleRate, channels);
             }
@@ -300,7 +303,8 @@ final class LiveRemux {
                 MediaFormat format = extractor.getTrackFormat(i);
                 String mime = format.getString(MediaFormat.KEY_MIME);
                 // One video and one audio track are enough, and a second of either is skipped.
-                if ("video/avc".equals(mime) && !video) {
+                if ((FlvReader.MIME_AVC.equals(mime) || (FlvReader.MIME_HEVC.equals(mime) && LiveStreamSources.HEVC_WRITABLE))
+                        && !video) {
                     video = true;
                     isVideoTrack[i] = true;
                 } else if ("audio/mp4a-latm".equals(mime) && !audio) {

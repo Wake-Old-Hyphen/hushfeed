@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Uno sfondo del profilo salvato con Sfondo del profilo attivo resta dopo il riavvio di TikTok. L'interruttore ora propone un riavvio (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** Con Mostra il LIVE sotto la barra di stato attivo, i pannelli sopra la prima stanza del feed LIVE ora iniziano sotto l'orologio e non più dietro la barra di stato (#137).
 
 * **TikTok:** Un LIVE nel feed Per te non mostra più la riga Service+ di un LIVE che hai già superato (#94).
-
-* **TikTok:** Un nuovo interruttore mantiene la qualità LIVE che hai scelto dopo il riavvio di TikTok (#57).
 
 * **TikTok:** Un nuovo interruttore aggiunge lo schermo pulito, che lascia solo la diretta, al menu di ogni stanza LIVE (#57).
 

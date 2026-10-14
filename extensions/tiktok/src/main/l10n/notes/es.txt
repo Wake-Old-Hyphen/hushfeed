@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Un fondo de perfil guardado con Fondo del perfil activado ya no desaparece al reiniciar TikTok. El interruptor ahora ofrece reiniciar (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, los paneles que hay encima de la primera sala del feed de LIVE ahora empiezan debajo del reloj y no detrás de la barra de estado (#137).
 
 * **TikTok:** Un LIVE del feed Para ti ya no muestra la fila de Service+ de un LIVE que ya pasaste (#94).
-
-* **TikTok:** Un nuevo interruptor mantiene la calidad de LIVE que elegiste después de reiniciar TikTok (#57).
 
 * **TikTok:** Un nuevo interruptor añade la pantalla limpia, que deja solo la transmisión, al menú de cada sala LIVE (#57).
 

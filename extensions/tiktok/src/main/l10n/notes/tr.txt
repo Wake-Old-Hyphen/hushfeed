@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Profil arka planı açıkken kaydedilen profil arka planı TikTok yeniden başlayınca artık kaybolmuyor. Anahtar artık yeniden başlatmayı öneriyor (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** LIVE'ı durum çubuğunun altında göster açıkken, LIVE akışındaki ilk odanın üstündeki paneller artık durum çubuğunun arkasında kalmıyor, saatin altından başlıyor (#137).
 
 * **TikTok:** Senin İçin akışındaki bir LIVE artık geçtiğin bir LIVE'ın Service+ satırını göstermiyor (#94).
-
-* **TikTok:** Yeni bir anahtar, seçtiğin LIVE kalitesini TikTok yeniden başladıktan sonra da korur (#57).
 
 * **TikTok:** Yeni bir anahtar, yalnızca yayını bırakan temiz ekranı her LIVE odasının menüsüne ekler (#57).
 

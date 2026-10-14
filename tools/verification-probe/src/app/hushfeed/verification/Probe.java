@@ -1051,13 +1051,23 @@ public final class Probe extends Instrumentation {
                         // printed.
                         String wanted = required(intent, "text");
                         boolean click = "true".equals(intent.getStringExtra("click"));
+                        // -e index N: the Nth match in tree order, for a label that repeats (a tab
+                        // and the badges below it); every match's place is printed either way.
+                        String indexExtra = intent.getStringExtra("index");
+                        int index = indexExtra == null ? 1 : Integer.parseInt(indexExtra);
+                        int matches = 0;
+                        StringBuilder places = new StringBuilder();
                         android.view.View found = null;
                         java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
-                        while (!queue.isEmpty() && found == null) {
+                        while (!queue.isEmpty()) {
                             android.view.View view = queue.removeFirst();
                             if (view instanceof android.widget.TextView && view.isShown()
                                     && wanted.contentEquals(String.valueOf(((android.widget.TextView) view).getText()))) {
-                                found = view;
+                                matches++;
+                                int[] place = new int[2];
+                                view.getLocationOnScreen(place);
+                                places.append(" #").append(matches).append('=').append(place[0]).append(',').append(place[1]);
+                                if (matches == index) found = view;
                             }
                             if (view instanceof android.view.ViewGroup) {
                                 android.view.ViewGroup group = (android.view.ViewGroup) view;
@@ -1065,7 +1075,7 @@ public final class Probe extends Instrumentation {
                             }
                         }
                         if (found == null) {
-                            Log.i(TAG, "ok findtext none");
+                            Log.i(TAG, "ok findtext none (" + matches + " matches" + places + ")");
                             break;
                         }
                         int[] at = new int[2];
@@ -1078,7 +1088,8 @@ public final class Probe extends Instrumentation {
                             }
                             clicked = target == null ? " clicked=no clickable ancestor" : " clicked=" + target.performClick();
                         }
-                        Log.i(TAG, "ok findtext found at=" + at[0] + "," + at[1] + " size=" + found.getWidth() + "x" + found.getHeight() + clicked);
+                        Log.i(TAG, "ok findtext found at=" + at[0] + "," + at[1] + " size=" + found.getWidth() + "x" + found.getHeight() + clicked
+                                + " (" + matches + " matches" + places + ")");
                         break;
                     }
                     case "textwords": {
@@ -2200,6 +2211,179 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok liveroom " + hidden.size() + " rooms");
                         break;
                     }
+                    case "livechip": {
+                        // Each check the Record button's watcher makes on the LIVE room page it
+                        // holds (#37), so a button that never stays up shows which one says no.
+                        Class<?> owner = loader.loadClass("app.morphe.extension.tiktok.live.LiveRecordChip");
+                        StringBuilder out = new StringBuilder();
+                        Object fragment = null;
+                        android.app.Activity activity = null;
+                        for (String name : new String[]{"page", "host"}) {
+                            Field field = owner.getDeclaredField(name);
+                            field.setAccessible(true);
+                            Object held = ((java.lang.ref.Reference<?>) field.get(null)).get();
+                            if ("page".equals(name)) fragment = held; else activity = (android.app.Activity) held;
+                            out.append(' ').append(name).append('=').append(held == null ? "null" : held.getClass().getName());
+                        }
+                        if (fragment != null) {
+                            for (String name : new String[]{"isResumed", "getUserVisibleHint", "isRemoving", "isDetached",
+                                    "isHidden", "isVisible", "isAdded", "getLifecycle"}) {
+                                Object value;
+                                try {
+                                    value = fragment.getClass().getMethod(name).invoke(fragment);
+                                    if (name.equals("getLifecycle") && value != null) {
+                                        value = value.getClass().getMethod("getCurrentState").invoke(value);
+                                    }
+                                } catch (NoSuchMethodException missing) {
+                                    value = "no such method";
+                                }
+                                out.append(' ').append(name).append('=').append(value);
+                            }
+                        }
+                        if (activity != null) {
+                            android.view.View decor = activity.getWindow() == null ? null : activity.getWindow().getDecorView();
+                            out.append(" finishing=").append(activity.isFinishing())
+                                    .append(" destroyed=").append(activity.isDestroyed())
+                                    .append(" decorShown=").append(decor != null && decor.isShown());
+                            // Every room page the activity's fragment managers hold, with its
+                            // lifecycle and how much of its view is on screen: whether the pager
+                            // resumes the rooms beside the one in front.
+                            // TikTok renames FragmentManager.getFragments, so the list is found by
+                            // shape: a no-argument method of the manager that returns fragments.
+                            Class<?> fragmentType = loader.loadClass("androidx.fragment.app.Fragment");
+                            Class<?> managerType = loader.loadClass("androidx.fragment.app.FragmentManager");
+                            java.util.ArrayDeque<Object> managers = new java.util.ArrayDeque<>();
+                            managers.add(activity.getClass().getMethod("getSupportFragmentManager").invoke(activity));
+                            int seen = 0;
+                            while (!managers.isEmpty() && seen < 200) {
+                                Object manager = managers.poll();
+                                java.util.List<?> children = java.util.Collections.emptyList();
+                                for (Method method : managerType.getDeclaredMethods()) {
+                                    if (method.getParameterCount() != 0 || !java.util.List.class.isAssignableFrom(method.getReturnType())
+                                            || java.lang.reflect.Modifier.isStatic(method.getModifiers())) continue;
+                                    method.setAccessible(true);
+                                    Object list = method.invoke(manager);
+                                    if (!(list instanceof java.util.List) || ((java.util.List<?>) list).isEmpty()) continue;
+                                    boolean fragments = true;
+                                    for (Object item : (java.util.List<?>) list) fragments &= fragmentType.isInstance(item);
+                                    if (fragments) {
+                                        children = (java.util.List<?>) list;
+                                        break;
+                                    }
+                                }
+                                for (Object child : children) {
+                                    seen++;
+                                    if (child == null) continue;
+                                    if (Boolean.TRUE.equals(child.getClass().getMethod("isAdded").invoke(child))) {
+                                        // The child manager is the one that isn't the manager
+                                        // holding this fragment, whatever the method is called.
+                                        for (Method method : fragmentType.getDeclaredMethods()) {
+                                            if (method.getParameterCount() != 0 || !managerType.isAssignableFrom(method.getReturnType())
+                                                    || java.lang.reflect.Modifier.isStatic(method.getModifiers())) continue;
+                                            method.setAccessible(true);
+                                            Object other;
+                                            try {
+                                                other = method.invoke(child);
+                                            } catch (java.lang.reflect.InvocationTargetException refused) {
+                                                continue;
+                                            }
+                                            if (other != null && other != manager && !managers.contains(other)) {
+                                                managers.add(other);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (!child.getClass().getName().endsWith("LivePlayFragment")) continue;
+                                    Object lifecycle = child.getClass().getMethod("getLifecycle").invoke(child);
+                                    android.view.View view = (android.view.View) child.getClass().getMethod("getView").invoke(child);
+                                    android.graphics.Rect rect = new android.graphics.Rect();
+                                    boolean onScreen = view != null && view.getGlobalVisibleRect(rect);
+                                    out.append("\n  room page ").append(Integer.toHexString(System.identityHashCode(child)))
+                                            .append(child == fragment ? " (held)" : "")
+                                            .append(" state=").append(lifecycle.getClass().getMethod("getCurrentState").invoke(lifecycle))
+                                            .append(" hint=").append(child.getClass().getMethod("getUserVisibleHint").invoke(child))
+                                            .append(" shown=").append(view != null && view.isShown())
+                                            .append(" visibleRect=").append(onScreen ? rect.toShortString() : "none");
+                                }
+                            }
+                        }
+                        Log.i(TAG, "ok livechip" + out);
+                        break;
+                    }
+                    case "livestream": {
+                        // What the Record button would record in the room it holds (#37): each
+                        // quality TikTok offers with the video codec it names, the pick, and the
+                        // first video tag of the picked FLV stream, which is what the recorder
+                        // checks. Addresses carry tokens, so only the host is printed.
+                        Class<?> owner = loader.loadClass("app.morphe.extension.tiktok.live.LiveRecordChip");
+                        Field held = owner.getDeclaredField("page");
+                        held.setAccessible(true);
+                        Object fragment = ((java.lang.ref.Reference<?>) held.get(null)).get();
+                        if (fragment == null) throw new IllegalStateException("no room page held");
+                        Method roomOf = owner.getDeclaredMethod("roomOf", Object.class);
+                        roomOf.setAccessible(true);
+                        Object room = roomOf.invoke(null, fragment);
+                        if (room == null) throw new IllegalStateException("no room on the page");
+                        StringBuilder out = new StringBuilder();
+                        Object streamUrl = fieldValue(room, "streamUrl");
+                        Object core = streamUrl == null ? null : fieldValue(streamUrl, "liveCoreSDKData");
+                        Object pull = core == null ? null : fieldValue(core, "pullData");
+                        Object streamData = pull == null ? null : fieldValue(pull, "streamData");
+                        if (streamData instanceof String) {
+                            org.json.JSONObject data = new org.json.JSONObject((String) streamData).optJSONObject("data");
+                            java.util.Iterator<String> keys = data == null ? java.util.Collections.<String>emptyIterator() : data.keys();
+                            while (keys.hasNext()) {
+                                String quality = keys.next();
+                                org.json.JSONObject entry = data.optJSONObject(quality);
+                                org.json.JSONObject main = entry == null ? null : entry.optJSONObject("main");
+                                if (main == null) continue;
+                                String params = main.optString("sdk_params", "");
+                                org.json.JSONObject sdk = params.startsWith("{") ? new org.json.JSONObject(params) : null;
+                                out.append("\n  ").append(quality)
+                                        .append(" vcodec=").append(sdk == null ? "?" : sdk.optString("VCodec", "?"))
+                                        .append(" res=").append(sdk == null ? "?" : sdk.optString("resolution", "?"))
+                                        .append(" flv=").append(main.optString("flv", "").isEmpty() ? "none"
+                                                : android.net.Uri.parse(main.optString("flv")).getLastPathSegment())
+                                        .append(" hls=").append(!main.optString("hls", "").isEmpty())
+                                        .append(" keys=").append(main.names());
+                            }
+                        } else {
+                            out.append(" streamData=").append(streamData == null ? "null" : streamData.getClass().getName());
+                        }
+                        Object flvMap = streamUrl == null ? null : fieldValue(streamUrl, "flvPullUrl");
+                        if (flvMap instanceof java.util.Map) {
+                            for (java.util.Map.Entry<?, ?> entry : ((java.util.Map<?, ?>) flvMap).entrySet()) {
+                                if (!(entry.getValue() instanceof String)) continue;
+                                String address = (String) entry.getValue();
+                                String label = "flvPullUrl " + entry.getKey() + " file=" + android.net.Uri.parse(address).getLastPathSegment();
+                                out.append("\n  ").append(label);
+                                new Thread(() -> Log.i(TAG, "livestream map " + label + " " + streamHead(address)), "probe-livestream").start();
+                            }
+                        }
+                        Object preferred = null;
+                        try {
+                            Method last = loader.loadClass("app.morphe.extension.tiktok.live.LiveControls").getDeclaredMethod("lastQualityPick");
+                            last.setAccessible(true);
+                            preferred = last.invoke(null);
+                        } catch (NoSuchMethodException missing) {
+                            preferred = "no such method";
+                        }
+                        Object pick = loader.loadClass("app.morphe.extension.tiktok.live.LiveRoomStream")
+                                .getMethod("fromRoom", Object.class, String.class)
+                                .invoke(null, room, preferred instanceof String && !"no such method".equals(preferred) ? preferred : null);
+                        Object target = pick.getClass().getField("target").get(pick);
+                        out.append("\n  preferred=").append(preferred).append(" problem=").append(pick.getClass().getField("problem").get(pick));
+                        if (target != null) {
+                            String address = (String) target.getClass().getField("url").get(target);
+                            out.append(" transport=").append(target.getClass().getField("transport").get(target))
+                                    .append(" quality=").append(target.getClass().getField("quality").get(target))
+                                    .append(" host=").append(android.net.Uri.parse(address).getHost())
+                                    .append(" file=").append(android.net.Uri.parse(address).getLastPathSegment());
+                            new Thread(() -> Log.i(TAG, "livestream head " + streamHead(address)), "probe-livestream").start();
+                        }
+                        Log.i(TAG, "ok livestream" + out);
+                        break;
+                    }
                     case "windowviews": {
                         // Dialogs and bottom sheets can live in a separate WindowManager root.
                         // TikTok 47.0.3's comment sheet leaves MainActivity's own content view
@@ -2648,6 +2832,79 @@ public final class Probe extends Instrumentation {
                 if (depth < 2 && child instanceof android.view.ViewGroup) {
                     appendLayoutChildren((android.view.ViewGroup) child, depth + 1, out, resources);
                 }
+            }
+        }
+
+        /** A field by name anywhere up the class chain, or null. */
+        private static Object fieldValue(Object target, String name) {
+            for (Class<?> type = target.getClass(); type != null && type != Object.class; type = type.getSuperclass()) {
+                try {
+                    Field field = type.getDeclaredField(name);
+                    field.setAccessible(true);
+                    return field.get(target);
+                } catch (NoSuchFieldException next) {
+                    // keep climbing
+                } catch (IllegalAccessException refused) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * The status, content type and start of a LIVE address: the FLV header, then the first
+         * video and audio tags' leading bytes (codec 7 is H.264, 12 and the 0x80 bit are HEVC).
+         */
+        private static String streamHead(String address) {
+            java.net.HttpURLConnection connection = null;
+            try {
+                connection = (java.net.HttpURLConnection) new java.net.URL(address).openConnection();
+                connection.setConnectTimeout(10_000);
+                connection.setReadTimeout(15_000);
+                connection.setRequestProperty("Accept-Encoding", "identity");
+                StringBuilder out = new StringBuilder();
+                out.append("status=").append(connection.getResponseCode())
+                        .append(" type=").append(connection.getContentType());
+                java.io.DataInputStream in = new java.io.DataInputStream(connection.getInputStream());
+                byte[] header = new byte[9];
+                in.readFully(header);
+                if (header[0] != 'F' || header[1] != 'L' || header[2] != 'V') {
+                    out.append(" notFlv=");
+                    for (byte b : header) out.append(String.format("%02x", b));
+                    return out.toString();
+                }
+                out.append(" flvFlags=").append(header[4]);
+                in.skipBytes(Math.max(0, (((header[5] & 0xFF) << 24) | ((header[6] & 0xFF) << 16)
+                        | ((header[7] & 0xFF) << 8) | (header[8] & 0xFF)) - 9));
+                boolean video = false, audio = false;
+                for (int tags = 0; tags < 40 && !(video && audio); tags++) {
+                    byte[] tag = new byte[15];
+                    in.readFully(tag);
+                    int type = tag[4] & 0x1F;
+                    int size = ((tag[5] & 0xFF) << 16) | ((tag[6] & 0xFF) << 8) | (tag[7] & 0xFF);
+                    byte[] body = new byte[size];
+                    in.readFully(body);
+                    if (type == 9 && !video && size > 1) {
+                        video = true;
+                        int first = body[0] & 0xFF;
+                        out.append(" video0=0x").append(Integer.toHexString(first))
+                                .append(" codec=").append(first & 0x0F)
+                                .append(" enhanced=").append((first & 0x80) != 0);
+                        if ((first & 0x80) != 0 && size >= 5) {
+                            out.append(" fourcc=").append(new String(body, 1, 4, java.nio.charset.StandardCharsets.US_ASCII));
+                        }
+                    } else if (type == 8 && !audio && size > 0) {
+                        audio = true;
+                        out.append(" audioFormat=").append((body[0] & 0xFF) >> 4);
+                    } else if (type == 18) {
+                        out.append(" meta=").append(size);
+                    }
+                }
+                return out.toString();
+            } catch (Throwable failure) {
+                return "failed " + failure;
+            } finally {
+                if (connection != null) connection.disconnect();
             }
         }
 

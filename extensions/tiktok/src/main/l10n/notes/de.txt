@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Ein mit eingeschaltetem Profilhintergrund gespeicherter Profilhintergrund bleibt nach einem Neustart von TikTok erhalten. Der Schalter bietet jetzt einen Neustart an (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** Ist LIVE unter der Statusleiste zeigen an, beginnen die Bereiche über dem ersten Raum im LIVE-Feed jetzt unterhalb der Uhr und nicht mehr hinter der Statusleiste (#137).
 
 * **TikTok:** Ein LIVE im Feed Für dich zeigt nicht mehr die Service+-Zeile eines LIVE, an dem du vorbeigescrollt hast (#94).
-
-* **TikTok:** Ein neuer Schalter behält die gewählte LIVE-Qualität auch nach einem Neustart von TikTok (#57).
 
 * **TikTok:** Ein neuer Schalter fügt Bildschirm leeren, das nur den Stream zeigt, dem Menü jedes LIVE-Raums hinzu (#57).
 

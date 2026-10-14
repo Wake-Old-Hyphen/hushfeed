@@ -10,16 +10,22 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Reads an FLV stream (what a LIVE's flv address serves) and hands out its H.264 video and AAC
- * audio as the pieces an MP4 needs: the decoder settings once, then each sample with its time.
+ * Reads an FLV stream (what a LIVE's flv address serves) and hands out its H.264 or HEVC video and
+ * AAC audio as the pieces an MP4 needs: the decoder settings once, then each sample with its time.
  * Video is converted from FLV's length-prefixed NAL units to start-code form, which is what
  * MediaMuxer wants. It stops at the end of the input, and a tag cut off by the end (a recording
  * that ended mid-write) is dropped rather than reported as an error.
  */
 final class FlvReader {
+    static final String MIME_AVC = "video/avc";
+    static final String MIME_HEVC = "video/hevc";
+
     interface Listener {
-        /** The decoder settings, once. {@code csd0} is the SPS and {@code csd1} the PPS, both with start codes. */
-        void onVideoConfig(byte[] csd0, byte[] csd1, int width, int height) throws IOException;
+        /**
+         * The decoder settings, once, with start codes. For H.264 {@code csd0} is the SPS and
+         * {@code csd1} the PPS. For HEVC {@code csd0} holds the VPS, SPS and PPS and {@code csd1} is null.
+         */
+        void onVideoConfig(String mime, byte[] csd0, byte[] csd1, int width, int height) throws IOException;
 
         /** The AAC AudioSpecificConfig, once. */
         void onAudioConfig(byte[] specific, int sampleRate, int channels) throws IOException;
@@ -29,7 +35,7 @@ final class FlvReader {
         void onAudio(byte[] aac, long presentationUs) throws IOException;
     }
 
-    /** Raised for a stream this reader can't turn into an MP4, such as HEVC video. */
+    /** Raised for a stream this reader can't turn into an MP4, such as enhanced FLV video. */
     static final class UnsupportedStream extends IOException {
         UnsupportedStream(String message) {
             super(message);
@@ -39,18 +45,32 @@ final class FlvReader {
     private static final byte[] START_CODE = {0, 0, 0, 1};
     private static final int TAG_AUDIO = 8;
     private static final int TAG_VIDEO = 9;
+    private static final int CODEC_AVC = 7;
+    /**
+     * HEVC the way Chinese CDNs (TikTok's among them) put it in FLV: codec id 12, with the same
+     * packet layout as H.264. Enhanced FLV's HEVC (the 0x80 bit and a "hvc1" tag) is another layout.
+     */
+    private static final int CODEC_HEVC = 12;
     /** A tag larger than this is garbage, not a frame. */
     private static final int MAX_TAG_BYTES = 8 * 1024 * 1024;
 
+    private final boolean hevc;
+    private int codec = -1;
     private int nalLengthSize = 4;
     private long firstMillis = Long.MIN_VALUE;
 
-    private FlvReader() {
+    private FlvReader(boolean hevc) {
+        this.hevc = hevc;
     }
 
     /** Reads all of {@code input}. */
     static void read(InputStream input, Listener listener) throws IOException {
-        new FlvReader().run(new DataInputStream(input), listener);
+        read(input, listener, true);
+    }
+
+    /** Reads all of {@code input}; HEVC video is refused when {@code hevc} is false. */
+    static void read(InputStream input, Listener listener, boolean hevc) throws IOException {
+        new FlvReader(hevc).run(new DataInputStream(input), listener);
     }
 
     private void run(DataInputStream in, Listener listener) throws IOException {
@@ -88,11 +108,16 @@ final class FlvReader {
         int first = body[0] & 0xFF;
         if ((first & 0x80) != 0) throw new UnsupportedStream("This LIVE uses a video format that can't be saved");
         int frameType = first >> 4;
-        int codec = first & 0x0F;
-        if (codec != 7) throw new UnsupportedStream("This LIVE uses a video format that can't be saved");
+        int tagCodec = first & 0x0F;
+        if (tagCodec != CODEC_AVC && (tagCodec != CODEC_HEVC || !hevc)) {
+            throw new UnsupportedStream("This LIVE uses a video format that can't be saved");
+        }
+        if (codec == -1) codec = tagCodec;
+        else if (codec != tagCodec) throw new UnsupportedStream("This LIVE switched video formats midway");
         int packet = body[1] & 0xFF;
         if (packet == 0) {
-            config(body, listener);
+            if (codec == CODEC_HEVC) hevcConfig(body, listener);
+            else config(body, listener);
         } else if (packet == 1) {
             int composition = ((body[2] & 0xFF) << 16) | ((body[3] & 0xFF) << 8) | (body[4] & 0xFF);
             if ((composition & 0x800000) != 0) composition |= 0xFF000000;
@@ -133,7 +158,46 @@ final class FlvReader {
         if (sps == null || pps == null) throw new IOException("The video settings have no SPS or PPS");
         int[] size = SpsSize.of(sps);
         if (size == null) throw new IOException("Can't read the video size");
-        listener.onVideoConfig(withStartCode(sps), withStartCode(pps), size[0], size[1]);
+        listener.onVideoConfig(MIME_AVC, withStartCode(sps), withStartCode(pps), size[0], size[1]);
+    }
+
+    private void hevcConfig(byte[] body, Listener listener) throws IOException {
+        // HEVCDecoderConfigurationRecord after the 5 byte tag prefix: 22 bytes of settings, the
+        // array count, then arrays of NAL units by type. The muxer takes the VPS, SPS and PPS
+        // together as one start-coded csd-0.
+        int at = 5;
+        if (body.length < at + 23) throw new IOException("Cut-off video settings");
+        nalLengthSize = (body[at + 21] & 0x03) + 1;
+        int arrays = body[at + 22] & 0xFF;
+        at += 23;
+        java.io.ByteArrayOutputStream csd = new java.io.ByteArrayOutputStream();
+        byte[] sps = null;
+        boolean vps = false;
+        boolean pps = false;
+        for (int i = 0; i < arrays; i++) {
+            if (at + 3 > body.length) throw new IOException("Cut-off video settings");
+            int type = body[at] & 0x3F;
+            int count = ((body[at + 1] & 0xFF) << 8) | (body[at + 2] & 0xFF);
+            at += 3;
+            for (int n = 0; n < count; n++) {
+                if (at + 2 > body.length) throw new IOException("Cut-off video settings");
+                int length = ((body[at] & 0xFF) << 8) | (body[at + 1] & 0xFF);
+                at += 2;
+                if (at + length > body.length) throw new IOException("Cut-off video settings");
+                if (type == 32 || type == 33 || type == 34) {
+                    csd.write(START_CODE, 0, 4);
+                    csd.write(body, at, length);
+                    if (type == 33 && sps == null) sps = copy(body, at, length);
+                    vps |= type == 32;
+                    pps |= type == 34;
+                }
+                at += length;
+            }
+        }
+        if (!vps || sps == null || !pps) throw new IOException("The video settings have no VPS, SPS or PPS");
+        int[] size = SpsSize.ofHevc(sps);
+        if (size == null) throw new IOException("Can't read the video size");
+        listener.onVideoConfig(MIME_HEVC, csd.toByteArray(), null, size[0], size[1]);
     }
 
     private void audio(byte[] body, long timestamp, Listener listener) throws IOException {
@@ -260,6 +324,57 @@ final class FlvReader {
                 int unitY = (chroma == 1 ? 2 : 1) * (2 - frameMbsOnly);
                 int width = widthMbs * 16 - unitX * (cropLeft + cropRight);
                 int height = (2 - frameMbsOnly) * heightUnits * 16 - unitY * (cropTop + cropBottom);
+                return width > 0 && height > 0 ? new int[]{width, height} : null;
+            } catch (RuntimeException unreadable) {
+                return null;
+            }
+        }
+
+        /** {width, height} from an HEVC SPS NAL unit with its two header bytes and no start code, or null. */
+        static int[] ofHevc(byte[] nal) {
+            if (nal == null || nal.length < 6) return null;
+            try {
+                Bits bits = new Bits(unescape(nal, 2));
+                bits.bits(4);
+                int subLayers = bits.bits(3);
+                bits.bits(1);
+                // profile_tier_level: 96 bits for the general profile and level.
+                bits.bits(32);
+                bits.bits(32);
+                bits.bits(32);
+                boolean[] profilePresent = new boolean[subLayers];
+                boolean[] levelPresent = new boolean[subLayers];
+                for (int i = 0; i < subLayers; i++) {
+                    profilePresent[i] = bits.bits(1) == 1;
+                    levelPresent[i] = bits.bits(1) == 1;
+                }
+                if (subLayers > 0) {
+                    for (int i = subLayers; i < 8; i++) bits.bits(2);
+                }
+                for (int i = 0; i < subLayers; i++) {
+                    if (profilePresent[i]) {
+                        bits.bits(32);
+                        bits.bits(32);
+                        bits.bits(24);
+                    }
+                    if (levelPresent[i]) bits.bits(8);
+                }
+                bits.ue();
+                int chroma = bits.ue();
+                boolean separatePlanes = chroma == 3 && bits.bits(1) == 1;
+                int width = bits.ue();
+                int height = bits.ue();
+                int left = 0, right = 0, top = 0, bottom = 0;
+                if (bits.bits(1) == 1) {
+                    left = bits.ue();
+                    right = bits.ue();
+                    top = bits.ue();
+                    bottom = bits.ue();
+                }
+                int unitX = !separatePlanes && (chroma == 1 || chroma == 2) ? 2 : 1;
+                int unitY = !separatePlanes && chroma == 1 ? 2 : 1;
+                width -= unitX * (left + right);
+                height -= unitY * (top + bottom);
                 return width > 0 && height > 0 ? new int[]{width, height} : null;
             } catch (RuntimeException unreadable) {
                 return null;

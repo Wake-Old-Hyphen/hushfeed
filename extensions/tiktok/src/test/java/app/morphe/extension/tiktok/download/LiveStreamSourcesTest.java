@@ -219,7 +219,7 @@ public class LiveStreamSourcesTest {
         FakeHttp http = new FakeHttp().serve("https://pull.example.com/room.flv", hevc);
         try {
             new LiveStreamSources.Flv(http, "https://pull.example.com/room.flv").pump(new Spool(), new FakeControl());
-            fail("HEVC can't be saved");
+            fail("enhanced FLV can't be saved");
         } catch (FlvReader.UnsupportedStream expected) {
             // refused early
         } catch (IOException other) {

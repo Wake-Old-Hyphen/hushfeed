@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Latar profil yang disimpan saat Latar profil aktif tidak hilang lagi setelah TikTok dimulai ulang. Sakelarnya kini menawarkan mulai ulang (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, panel di atas ruang pertama feed LIVE kini dimulai di bawah jam dan tidak lagi tertutup bilah status (#137).
 
 * **TikTok:** LIVE di feed Untuk Anda tidak lagi menampilkan baris Service+ dari LIVE yang sudah kamu lewati (#94).
-
-* **TikTok:** Sakelar baru mempertahankan kualitas LIVE yang kamu pilih setelah TikTok dimulai ulang (#57).
 
 * **TikTok:** Sakelar baru menambahkan layar bersih, yang hanya menyisakan siarannya, ke menu setiap ruang LIVE (#57).
 

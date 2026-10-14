@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.73.0 (2026-10-14)
+
 * **TikTok:** A profile background saved with the Profile background switch on no longer disappears after TikTok restarts. TikTok asks its servers for profiles with a value that left the background out, and the switch now sends the one that brings it back, the same one Feature Gate Lab's Profile banner preset sets. Flipping the switch now offers a restart (#80).
 
 * **TikTok:** Feed filter has a Minimum video length beside the maximum, under Limits. Videos shorter than it are hidden, while photo posts and videos TikTok sent no length for stay. Like the maximum, when a whole batch would go, the video closest to your limit is kept (#154).
@@ -39,8 +41,6 @@ Every Hushfeed release, newest first.
 * **TikTok:** With Show a LIVE under the status bar on, the panels above the first room of the LIVE feed (the one the LIVE button at the top left opens, scrolled up past the first room) now start below the clock. Their top row sat under the status bar, where it was hard to tap. The rooms themselves still reach up under the clock (#137).
 
 * **TikTok:** A LIVE in the For You feed no longer carries over the Service+ row (the "Service+ | Ask me anything!" line under the name) from a LIVE you scrolled past. When the next LIVE has no Service+ row of its own, the leftover one is hidden. It's part of the LIVE controls patch and needs no switch (#94).
-
-* **TikTok:** LIVE controls can keep the LIVE quality you picked after TikTok restarts. TikTok forgets the pick whenever it closes, so the first rooms after a restart went back to its own choice. Turn on Keep the LIVE quality after TikTok restarts, under Offer LIVE quality in more rooms in Hushfeed settings > Playback. A room whose stream doesn't have that quality still opens at TikTok's choice (#57).
 
 * **TikTok:** LIVE controls can add clear screen to every LIVE room's menu. Clear screen hides a room's chat, gifts and buttons so only the stream shows, and TikTok offered it in only some rooms. Turn on Offer clear screen in every LIVE room in Hushfeed settings > Playback (#57).
 

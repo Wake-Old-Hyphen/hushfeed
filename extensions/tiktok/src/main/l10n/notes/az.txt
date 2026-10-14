@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Profil fonu açıq olanda saxlanılan profil fonu TikTok yenidən başlayandan sonra da qalır. Açar indi yenidən başlatmağı təklif edir (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda, LIVE lentində ilk otağın üstündəki panellər artıq status panelinin altında qalmır, saatdan aşağıda başlayır (#137).
 
 * **TikTok:** Sizin üçün lentindəki LIVE artıq keçdiyiniz LIVE-ın Service+ sətrini göstərmir (#94).
-
-* **TikTok:** Yeni açar seçdiyin LIVE keyfiyyətini TikTok yenidən başlayandan sonra da saxlayır (#57).
 
 * **TikTok:** Yeni açar yalnız yayımı saxlayan təmiz ekranı hər LIVE otağının menyusuna əlavə edir (#57).
 

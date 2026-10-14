@@ -147,8 +147,68 @@ final class FlvFixtures {
     }
 
     static byte[] avcFrameTag(long ts, boolean key, int compositionMs, byte[]... nals) {
+        return frameTag(key ? 0x17 : 0x27, ts, compositionMs, nals);
+    }
+
+    /** A frame in TikTok's HEVC flavor of FLV: codec id 12, laid out like H.264. */
+    static byte[] hevcFrameTag(long ts, boolean key, int compositionMs, byte[]... nals) {
+        return frameTag(key ? 0x1C : 0x2C, ts, compositionMs, nals);
+    }
+
+    /** An HEVC SPS NAL unit (with its two header bytes): Main profile, 4:2:0, no sub-layers. */
+    static byte[] hevcSps(int width, int height, int cropRight) {
+        BitWriter w = new BitWriter();
+        w.bits(0x42, 8).bits(0x01, 8);      // NAL header, type 33
+        w.bits(0, 4).bits(0, 3).bits(1, 1); // vps id, max_sub_layers_minus1, temporal_id_nesting
+        w.bits(0x01, 8).bits(0x60000000, 32); // Main profile and its compatibility flags
+        w.bits(0x9, 4).bits(0, 32).bits(0, 12); // progressive, frame only, reserved
+        w.bits(123, 8);                     // level 4.1
+        w.ue(0);                            // sps id
+        w.ue(1);                            // chroma_format_idc 4:2:0
+        w.ue(width).ue(height);
+        if (cropRight > 0) {
+            w.bits(1, 1).ue(0).ue(cropRight).ue(0).ue(0);
+        } else {
+            w.bits(0, 1);
+        }
+        return w.finish();
+    }
+
+    static byte[] hevcVps() {
+        return new byte[]{0x40, 0x01, 0x0C, 0x01};
+    }
+
+    static byte[] hevcPps() {
+        return new byte[]{0x44, 0x01, (byte) 0xC1, 0x72};
+    }
+
+    /** The HEVCDecoderConfigurationRecord tag, with 4 byte NAL lengths and one array per unit. */
+    static byte[] hevcConfigTag(long ts, byte[]... nals) {
         ByteArrayOutputStream body = new ByteArrayOutputStream();
-        body.write(key ? 0x17 : 0x27);
+        body.write(0x1C);
+        body.write(0);
+        body.write(0);
+        body.write(0);
+        body.write(0);
+        byte[] settings = new byte[22];
+        settings[0] = 1;
+        settings[21] = 0x0F;
+        body.write(settings, 0, settings.length);
+        body.write(nals.length);
+        for (byte[] nal : nals) {
+            body.write(0x80 | ((nal[0] >> 1) & 0x3F));
+            body.write(0);
+            body.write(1);
+            body.write(nal.length >> 8);
+            body.write(nal.length & 0xFF);
+            body.write(nal, 0, nal.length);
+        }
+        return tag(9, ts, body.toByteArray());
+    }
+
+    private static byte[] frameTag(int first, long ts, int compositionMs, byte[]... nals) {
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.write(first);
         body.write(1);
         body.write((compositionMs >> 16) & 0xFF);
         body.write((compositionMs >> 8) & 0xFF);

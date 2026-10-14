@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** Um fundo de perfil salvo com Fundo do perfil ligado não some mais quando o TikTok reinicia. A chave agora oferece reiniciar (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, os painéis acima da primeira sala do feed de LIVE agora começam abaixo do relógio, e não mais atrás da barra de status (#137).
 
 * **TikTok:** Uma LIVE no feed Para você não mostra mais a linha Service+ de uma LIVE pela qual você já passou (#94).
-
-* **TikTok:** Uma nova chave mantém a qualidade da LIVE que você escolheu depois que o TikTok reinicia (#57).
 
 * **TikTok:** Uma nova chave adiciona a tela limpa, que deixa só a transmissão, ao menu de todas as salas de LIVE (#57).
 

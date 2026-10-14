@@ -30,8 +30,12 @@ public class LiveRemuxTest {
         boolean aborted;
         int video = -1;
         int audio = -1;
+        String mime;
+        byte[] csd1;
 
-        @Override public int addVideoTrack(byte[] csd0, byte[] csd1, int width, int height) {
+        @Override public int addVideoTrack(String mime, byte[] csd0, byte[] csd1, int width, int height) {
+            this.mime = mime;
+            this.csd1 = csd1;
             calls.add("video " + width + "x" + height);
             video = 0;
             return 0;
@@ -168,11 +172,25 @@ public class LiveRemuxTest {
         try {
             LiveRemux.fromFlv(flv(FlvFixtures.stream(
                     FlvFixtures.tag(9, 0, new byte[]{(byte) 0x9C, 'h', 'v', 'c', '1', 0, 0, 0}))), writer);
-            fail("HEVC isn't written");
+            fail("enhanced FLV isn't read");
         } catch (FlvReader.UnsupportedStream expected) {
             // refused
         }
         assertTrue(writer.aborted);
+    }
+
+    @Test public void anHevcRecordingIsWrittenAsAnHevcTrack() throws IOException {
+        // #37: TikTok sends HEVC to phones that play it, as FLV codec id 12.
+        FakeWriter writer = new FakeWriter();
+        LiveRemux.fromFlv(flv(FlvFixtures.stream(
+                FlvFixtures.hevcConfigTag(0, FlvFixtures.hevcVps(), FlvFixtures.hevcSps(1088, 1920, 4), FlvFixtures.hevcPps()),
+                FlvFixtures.hevcFrameTag(0, true, 0, new byte[]{0x26, 0x01, 1}),
+                FlvFixtures.hevcFrameTag(40, false, 0, new byte[]{0x02, 0x01, 2}))), writer);
+        assertEquals("video/hevc", writer.mime);
+        assertEquals(null, writer.csd1);
+        assertEquals("video 1080x1920", writer.calls.get(0));
+        assertEquals(2, writer.samples.size());
+        assertTrue(writer.finished);
     }
 
     @Test public void aRecordingCutOffMidFrameKeepsEverythingBeforeThat() throws IOException {

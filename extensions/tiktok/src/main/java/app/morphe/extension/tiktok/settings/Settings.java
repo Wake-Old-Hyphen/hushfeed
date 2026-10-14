@@ -534,6 +534,8 @@ public class Settings extends BaseSettings {
      * Keeps the last LIVE quality picked after TikTok closes, so the first rooms after a cold
      * start open at it when their stream has it (#57); the LIVE controls patch, under
      * {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting quality, so no restart.
+     * Has no settings row yet: on 47.1.4 a pick from the Share panel's Video quality never reached
+     * the setter that saves it.
      */
     public static final BooleanSetting REMEMBER_LIVE_QUALITY = new BooleanSetting(
             "remember_live_quality", FALSE, false, Setting.parent(OFFER_LIVE_QUALITY));

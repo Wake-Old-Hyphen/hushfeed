@@ -1,4 +1,4 @@
-## Unreleased
+## 0.73.0 (2026-10-14)
 
 * **TikTok:** A profile background saved with the Profile background switch on stays after TikTok restarts. The switch now offers a restart (#80).
 
@@ -35,8 +35,6 @@
 * **TikTok:** With Show a LIVE under the status bar on, the panels above the first room of the LIVE feed now start below the clock instead of under it (#137).
 
 * **TikTok:** A LIVE in the For You feed no longer shows the Service+ row of a LIVE you scrolled past (#94).
-
-* **TikTok:** A new switch keeps the LIVE quality you picked after TikTok restarts (#57).
 
 * **TikTok:** A new switch adds clear screen, which leaves only the stream, to every LIVE room's menu (#57).
 

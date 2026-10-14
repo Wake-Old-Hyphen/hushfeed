@@ -45,6 +45,9 @@ final class LiveStreamSources {
         }
     };
 
+    /** MediaMuxer writes HEVC into an MP4 from Android 7.0 on; before that such a LIVE can't be saved. */
+    static final boolean HEVC_WRITABLE = android.os.Build.VERSION.SDK_INT >= 24;
+
     private static final int BUFFER_BYTES = 32 * 1024;
     /** How much of an FLV stream is looked at to learn early that it can't be saved. */
     private static final int HEAD_BYTES = 48 * 1024;
@@ -78,21 +81,24 @@ final class LiveStreamSources {
                         head.write(buffer, 0, Math.min(count, HEAD_BYTES - head.size()));
                         if (head.size() >= HEAD_BYTES) {
                             checked = true;
-                            checkHead(head.toByteArray());
+                            checkHead(head.toByteArray(), HEVC_WRITABLE);
                         }
                     }
                 }
-                if (!checked && head.size() > 0) checkHead(head.toByteArray());
+                if (!checked && head.size() > 0) checkHead(head.toByteArray(), HEVC_WRITABLE);
             } finally {
                 control.release(in);
                 in.close();
             }
         }
 
-        /** Throws when the start of the stream shows it can't be turned into an MP4. */
-        static void checkHead(byte[] head) throws IOException {
+        /**
+         * Throws when the start of the stream shows it can't be turned into an MP4: a video format
+         * the reader doesn't know, or HEVC on a phone whose muxer can't write it ({@code hevc} false).
+         */
+        static void checkHead(byte[] head, boolean hevc) throws IOException {
             try {
-                FlvReader.read(new ByteArrayInputStream(head), new NoOpListener());
+                FlvReader.read(new ByteArrayInputStream(head), new NoOpListener(), hevc);
             } catch (FlvReader.UnsupportedStream unsupported) {
                 throw unsupported;
             } catch (IOException cutOff) {
@@ -102,7 +108,7 @@ final class LiveStreamSources {
     }
 
     private static final class NoOpListener implements FlvReader.Listener {
-        @Override public void onVideoConfig(byte[] csd0, byte[] csd1, int width, int height) { }
+        @Override public void onVideoConfig(String mime, byte[] csd0, byte[] csd1, int width, int height) { }
 
         @Override public void onAudioConfig(byte[] specific, int sampleRate, int channels) { }
 

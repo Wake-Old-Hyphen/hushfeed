@@ -19,6 +19,7 @@ import java.util.List;
 /** #37: reading a LIVE's FLV stream into the pieces an MP4 needs. */
 public class FlvReaderTest {
     private static final class Recorded implements FlvReader.Listener {
+        String mime;
         byte[] csd0;
         byte[] csd1;
         int width;
@@ -32,7 +33,8 @@ public class FlvReaderTest {
         final List<byte[]> audio = new ArrayList<>();
         final List<Long> audioUs = new ArrayList<>();
 
-        @Override public void onVideoConfig(byte[] csd0, byte[] csd1, int width, int height) {
+        @Override public void onVideoConfig(String mime, byte[] csd0, byte[] csd1, int width, int height) {
+            this.mime = mime;
             this.csd0 = csd0;
             this.csd1 = csd1;
             this.width = width;
@@ -99,6 +101,7 @@ public class FlvReaderTest {
                 FlvFixtures.avcFrameTag(5000, true, 0, idr),
                 FlvFixtures.aacFrameTag(5010, (byte) 7, (byte) 7),
                 FlvFixtures.avcFrameTag(5040, false, 40, slice)));
+        assertEquals("video/avc", recorded.mime);
         assertEquals(320, recorded.width);
         assertEquals(240, recorded.height);
         assertArrayEquals(new byte[]{0, 0, 0, 1, 0x67}, Arrays.copyOf(recorded.csd0, 5));
@@ -150,16 +153,16 @@ public class FlvReaderTest {
         }
     }
 
-    @Test public void videoThatIsNotH264IsRefusedWithAnExplanation() throws IOException {
+    @Test public void videoItCantWriteIsRefusedWithAnExplanation() throws IOException {
         try {
             read(FlvFixtures.stream(hevcTag()));
-            fail("HEVC can't be written by this reader");
+            fail("enhanced FLV isn't read");
         } catch (FlvReader.UnsupportedStream expected) {
             assertTrue(expected.getMessage().contains("can't be saved"));
         }
         try {
             read(FlvFixtures.stream(FlvFixtures.tag(9, 0, new byte[]{0x14, 0, 0, 0, 0})));
-            fail("codec 4 is not H.264");
+            fail("codec 4 is neither H.264 nor HEVC");
         } catch (FlvReader.UnsupportedStream expected) {
             // refused
         }
@@ -167,7 +170,7 @@ public class FlvReaderTest {
 
     @Test public void theEarlyHeadCheckCatchesWhatTheRewriteWouldRefuse() throws IOException {
         try {
-            LiveStreamSources.Flv.checkHead(FlvFixtures.stream(hevcTag()));
+            LiveStreamSources.Flv.checkHead(FlvFixtures.stream(hevcTag()), true);
             fail("the first video tag is enough to know");
         } catch (FlvReader.UnsupportedStream expected) {
             // caught early
@@ -176,6 +179,50 @@ public class FlvReaderTest {
         byte[] good = FlvFixtures.stream(
                 FlvFixtures.avcConfigTag(0, FlvFixtures.baselineSps(20, 15, 0), FlvFixtures.pps()),
                 FlvFixtures.avcFrameTag(0, true, 0, new byte[]{0x65, 1, 2, 3, 4, 5, 6}));
-        LiveStreamSources.Flv.checkHead(Arrays.copyOf(good, good.length - 6));
+        LiveStreamSources.Flv.checkHead(Arrays.copyOf(good, good.length - 6), false);
+    }
+
+    @Test public void theHevcSizeComesFromItsSpsWithTheCropTakenOff() {
+        // 1088 columns with 4 crop units of 2 columns each on the right is 1080.
+        assertArrayEquals(new int[]{1080, 1920}, FlvReader.SpsSize.ofHevc(FlvFixtures.hevcSps(1088, 1920, 4)));
+        assertArrayEquals(new int[]{720, 1280}, FlvReader.SpsSize.ofHevc(FlvFixtures.hevcSps(720, 1280, 0)));
+        assertNull(FlvReader.SpsSize.ofHevc(new byte[]{0x42, 0x01}));
+    }
+
+    @Test public void tikTokHevcComesOutAsHevcWithAllItsSettingsInOnePiece() throws IOException {
+        // What TikTok's LIVE servers send a phone that plays HEVC: FLV codec id 12 (#37).
+        byte[] sps = FlvFixtures.hevcSps(1088, 1920, 4);
+        Recorded recorded = read(FlvFixtures.stream(
+                FlvFixtures.hevcConfigTag(0, FlvFixtures.hevcVps(), sps, FlvFixtures.hevcPps()),
+                FlvFixtures.aacConfigTag(0),
+                FlvFixtures.hevcFrameTag(0, true, 0, new byte[]{0x26, 0x01, 9, 9}),
+                FlvFixtures.hevcFrameTag(40, false, 0, new byte[]{0x02, 0x01, 7})));
+        assertEquals("video/hevc", recorded.mime);
+        assertEquals(1080, recorded.width);
+        assertEquals(1920, recorded.height);
+        assertNull("HEVC's settings all travel in csd-0", recorded.csd1);
+        java.io.ByteArrayOutputStream settings = new java.io.ByteArrayOutputStream();
+        for (byte[] nal : new byte[][]{FlvFixtures.hevcVps(), sps, FlvFixtures.hevcPps()}) {
+            settings.write(new byte[]{0, 0, 0, 1}, 0, 4);
+            settings.write(nal, 0, nal.length);
+        }
+        assertArrayEquals(settings.toByteArray(), recorded.csd0);
+        assertEquals(2, recorded.video.size());
+        assertArrayEquals(new byte[]{0, 0, 0, 1, 0x26, 0x01, 9, 9}, recorded.video.get(0));
+        assertTrue(recorded.keys.get(0));
+        assertFalse(recorded.keys.get(1));
+        assertEquals(44100, recorded.rate);
+    }
+
+    @Test public void hevcIsRefusedUpFrontWhereThePhoneCantWriteIt() throws IOException {
+        byte[] head = FlvFixtures.stream(
+                FlvFixtures.hevcConfigTag(0, FlvFixtures.hevcVps(), FlvFixtures.hevcSps(720, 1280, 0), FlvFixtures.hevcPps()));
+        LiveStreamSources.Flv.checkHead(head, true);
+        try {
+            LiveStreamSources.Flv.checkHead(head, false);
+            fail("before Android 7.0 the muxer can't write HEVC");
+        } catch (FlvReader.UnsupportedStream expected) {
+            // refused before anything is recorded
+        }
     }
 }
