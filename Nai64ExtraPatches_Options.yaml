@@ -164,7 +164,7 @@ patches:
   - name: "Spoof Build Fingerprint"
     enabled: false
     note: "High risk: hardware spoofing triggers anti-fraud"
-  # "Spoof Android ID" removed entirely per request (unlisted = disabled).
+  # Note: "Spoof Android ID" was removed entirely per your request.
 
 # ==========================================
 # KVELD9 UNIVERSAL PATCHES (allowlist: only these run;
@@ -179,7 +179,7 @@ kveld9_patches:
     options:
       stripBootPermission: true
       disableBootReceivers: true
-      disableWorkManager: false     # kept false to prevent DataTransport crash
+      disableWorkManager: false     # ← MUST be false to prevent DataTransport crash
       stripWakeLock: false
 
   - name: "DPI Resource Slimmer"
