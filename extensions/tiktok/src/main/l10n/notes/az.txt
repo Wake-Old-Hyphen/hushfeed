@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Şərhlər bölməsində şərh yazanların adlarını və ya ölkələrini dəyişən açar artıq əvvəlcədən açdığınız videonun şərhlərinə də yenidən başlatmadan təsir edir.
+
+* **TikTok:** Şərhlər bölməsində yeni Şərh yazanların adlarını rənglə açarı: hər şərh yazanın adı öz rəngini alır, hər dəfə eyni rəngi.
+
 * **TikTok:** Artıq izlədiyiniz videoları gizlədin indi İzlədiklərim lentində də işləyir və oynayan videonu yerindən tərpətmir.
 
 * **TikTok:** Sizin üçün və ya İzlədiklərim lentində oynayan video Maksimum paylaşım yaşını keçəndə və ya Artıq izlədiyiniz videoları gizlədin onu saydıqda artıq yox olmur.

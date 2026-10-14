@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Un interruttore in Commenti che cambia i nomi o i paesi di chi commenta ora cambia anche i commenti di un video che avevi già aperto, senza riavviare.
+
+* **TikTok:** Nuovo interruttore Colora i nomi di chi commenta in Commenti: il nome di ogni persona che commenta ha un colore tutto suo, sempre lo stesso.
+
 * **TikTok:** Nascondi i video che hai già visto ora funziona anche in Seguiti, senza spostare il video in riproduzione.
 
 * **TikTok:** Un video in riproduzione in Per te o Seguiti non sparisce più quando supera l'Età massima dei post o quando Nascondi i video che hai già visto lo conta.

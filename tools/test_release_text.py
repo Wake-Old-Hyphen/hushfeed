@@ -42,13 +42,23 @@ Its version and patch counts were last synced with the source on 2026-01-01, and
 Source snapshot: version 0.1.0, 1 patch entries. Those come from gradle.properties and patches-list.json.
 
 Published bundle: version 0.1.0, 1 patches. Those come from patches-bundle.json and the release it names.
+
+The current catalog's 4 patches are grouped as follows:
+
+| Manager category | Patches |
+| --- | ---: |
+| Feed | 1 |
+| Gone | 3 |
+
+The [patch catalog](../patches-list.json) has the complete names.
 """
 
 
 def catalog(*versions: str) -> str:
     targets = [{"version": v} for v in versions] + [{"version": "9.9.9", "experimental": True}]
-    patch = {"name": "A", "compatibility": [{"packageName": "com.zhiliaoapp.musically", "targets": targets}]}
-    return json.dumps({"version": "v0.2.0", "patches": [patch, dict(patch, name="B")]})
+    patch = {"name": "A", "category": "Feed",
+             "compatibility": [{"packageName": "com.zhiliaoapp.musically", "targets": targets}]}
+    return json.dumps({"version": "v0.2.0", "patches": [patch, dict(patch, name="B", category="Privacy")]})
 
 
 class ReleaseTextTest(unittest.TestCase):
@@ -231,11 +241,15 @@ class ReleaseTextTest(unittest.TestCase):
         self.assertIn("last synced with the source on 2026-10-09, and", guide)
         # The published line waits for the index, after the bundle is out.
         self.assertIn("\nPublished bundle: version 0.1.0, 1 patches.", guide)
+        # validate-release-facts.ps1 holds the category table to the catalog too.
+        self.assertIn("catalog's 2 patches are grouped as follows:\n\n| Manager category | Patches |\n"
+                      "| --- | ---: |\n| Feed | 1 |\n| Privacy | 1 |\n\nThe [patch catalog]", guide)
 
     def test_guide_changes_nothing_without_a_source_version_or_its_line(self):
         for name, text in (("gradle.properties", "version = 0.2\n"),
                            ("concepts/patch-development.md", GUIDE.replace("Source snapshot:", "Snapshot:")),
-                           ("concepts/patch-development.md", GUIDE.replace("last synced with", "synced with"))):
+                           ("concepts/patch-development.md", GUIDE.replace("last synced with", "synced with")),
+                           ("concepts/patch-development.md", GUIDE.replace("| Manager category", "| Category"))):
             self.write("gradle.properties", "version = 0.2.0\n")
             self.write("concepts/patch-development.md", GUIDE)
             self.write(name, text)

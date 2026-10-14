@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** A switch under Comments that changes commenter names or countries now also changes the comments of a video you'd already opened, with no restart.
+
+* **TikTok:** New Color commenter names switch under Comments: each commenter's name gets a color of its own, the same one every time.
+
 * **TikTok:** Hide videos you have already seen now works on the Following tab too, without moving the video playing.
 
 * **TikTok:** A video playing on For You or Following no longer vanishes once it passes Maximum post age or Hide videos you have already seen counts it.

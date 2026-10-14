@@ -4277,7 +4277,7 @@
     },
     {
       "name": "Show commenter handle and region",
-      "description": "Shows a commenter's @username in place of their display name, and the country their account is set to after the comment's time. Both start off. Turn them on in Hushfeed settings > Comments.",
+      "description": "Shows a commenter's @username in place of their display name and the country their account is set to after the comment's time. It can also give each commenter's name a color of its own. Each starts off. Turn them on in Hushfeed settings > Comments.",
       "category": "Comments",
       "use": true,
       "dependencies": [

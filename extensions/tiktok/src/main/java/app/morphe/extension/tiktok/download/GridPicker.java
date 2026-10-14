@@ -199,7 +199,10 @@ public final class GridPicker {
                 }
             });
             circle.setOnClickListener(view -> toggle(cell));
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(target, target, Gravity.TOP | Gravity.END);
+            // A collection folder's cell keeps TikTok's Select posts CheckBox (0x7f0a7583 on
+            // 47.1.4) in its top right corner, so there the circle takes the top left one.
+            int corner = host == cell ? Gravity.END : Gravity.START;
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(target, target, Gravity.TOP | corner);
             host.addView(circle, params);
         }
         // Last in the host, so both sit over TikTok's own views and get the tap first.

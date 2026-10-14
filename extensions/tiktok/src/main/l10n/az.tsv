@@ -2140,3 +2140,5 @@ Show the time zone	Saat qurşağını göstərin
 Puts your time zone after the time to the second, like EDT.	Saniyəsinə qədər göstərilən vaxtın ardından saat qurşağınızı yazır, məsələn EDT.
 Short date	Qısa tarix
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Saniyəsinə qədər göstərilən vaxtdan əvvəlki tarixi dilinizin qısa yazılışı ilə yazır, məsələn 07.10.25.
+Color commenter names	Şərh yazanların adlarını rənglə
+Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Hər şərh yazanın adına öz rəngini verin. O hesabı hər dəfə gördükdə eyni rəng olur, beləcə uzun müzakirəni izləmək asanlaşır.

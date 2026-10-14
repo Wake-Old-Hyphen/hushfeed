@@ -995,11 +995,17 @@ public final class VideoOverlayHider {
         }
         int width = column.getWidth();
         int height = column.getHeight();
+        // A strip hidden during the column's own layout leaves no request on the column, and a
+        // measure at the size it already has is then answered from the cache (S22, 2026-10-14).
+        column.forceLayout();
         column.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         column.layout(column.getLeft(), column.getTop(), column.getRight(), column.getBottom());
         column.invalidate();
-        Logger.printDebug(() -> "Gave the pager back the hidden comment strip's room");
+        boolean settled = !leavesRoom((android.widget.LinearLayout) column);
+        Logger.printDebug(() -> settled
+                ? "Gave the pager back the hidden comment strip's room"
+                : "Laid the pager column out again, but it still leaves the strip's room empty");
     }
 
     /** Drops every strip that isn't the pager column's own child; see {@link #PAGER_COLUMN_ID}. */
@@ -1079,8 +1085,8 @@ public final class VideoOverlayHider {
                 && selected[DETAIL_COMMENT_STRIP_TARGET] >= 0
                 && hidden[firstCandidate(DETAIL_COMMENT_BAR_TARGET)]
                 && hidden[firstCandidate(DETAIL_COMMENT_STRIP_TARGET)];
-        List<View> frames = selectedViews(found, selected, ANCHOR_TARGET);
-        List<View> discs = selectedViews(found, selected, MUSIC_COVER_TARGET);
+        List<View> frames = underShownParents(selectedViews(found, selected, ANCHOR_TARGET));
+        List<View> discs = underShownParents(selectedViews(found, selected, MUSIC_COVER_TARGET));
         // Null while the lifts are left as they are: a row on screen with no frame over its slot
         // is a cell still being bound, and putting the captions back then would make them jump.
         Map<View, Float> lifts = barGone ? null : new HashMap<>();
@@ -1230,6 +1236,22 @@ public final class VideoOverlayHider {
     private static List<View> selectedViews(List<List<View>> found, int[] selected, int target) {
         int at = selected[target];
         return at >= 0 ? found.get(at) : new ArrayList<>();
+    }
+
+    /**
+     * The views whose parents all show. A video opened from search plays in the main activity
+     * with the For You pager still in the tree behind it, gone, and that pager's caption ran to
+     * the bottom over more of the row's slot than the opened video's own, so the row came down
+     * into TikTok's search bar (S22, 2026-10-14). The view's own visibility is left out, so a
+     * disc TikTok hides in a cell on screen keeps its lift.
+     */
+    private static List<View> underShownParents(List<View> views) {
+        List<View> shown = new ArrayList<>(views.size());
+        for (View view : views) {
+            android.view.ViewParent parent = view.getParent();
+            if (!(parent instanceof View) || shownUpTheTree((View) parent)) shown.add(view);
+        }
+        return shown;
     }
 
     /**

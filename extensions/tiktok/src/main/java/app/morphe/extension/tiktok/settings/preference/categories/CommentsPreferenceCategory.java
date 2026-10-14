@@ -179,6 +179,13 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "Comments from accounts TikTok sends no country for stay as they are.",
                     Settings.SHOW_COMMENTER_REGION
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Color commenter names",
+                    "Give each commenter's name a color of its own, the same one every time you see "
+                            + "that account, so a long thread is easier to follow.",
+                    Settings.COLOR_COMMENTER_NAMES
+            ));
         }
 
         boolean hiding = SettingsStatus.hideCommentQuickReactionsEnabled

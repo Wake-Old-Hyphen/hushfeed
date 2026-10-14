@@ -382,8 +382,16 @@ public class DeepFeedFilterBoundaryTest {
         FeedItemsFilter.filterOnRead(page);
         assertEquals(List.of(playing, fresh), page.items);
 
-        // Turning a rule on is the reader's choice, so every video is judged again.
+        // Hiding LIVE changes the rules but none that drift, so the playing video stays.
         Settings.HIDE_LIVE.save(true);
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(List.of(playing, fresh), page.items);
+
+        // Turning the age rule off and on again is the reader asking for it, so it judges again.
+        Settings.MAX_PUBLICATION_AGE_DAYS.save(0);
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(List.of(playing, fresh), page.items);
+        Settings.MAX_PUBLICATION_AGE_DAYS.save(1);
         FeedItemsFilter.filterOnRead(page);
         assertEquals(List.of(fresh), page.items);
     }

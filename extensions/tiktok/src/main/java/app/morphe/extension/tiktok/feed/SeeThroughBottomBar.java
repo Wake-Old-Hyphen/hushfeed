@@ -1,3 +1,7 @@
+/*
+ * Copyright 2026 Hushfeed contributors
+ * https://github.com/SysAdminDoc/hushfeed
+ */
 package app.morphe.extension.tiktok.feed;
 
 import android.graphics.Color;

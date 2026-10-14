@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Ein Schalter unter Kommentare, der Namen oder Länder der Kommentierenden ändert, wirkt jetzt auch auf die Kommentare eines Videos, die du schon geöffnet hattest, ganz ohne Neustart.
+
+* **TikTok:** Neuer Schalter Namen von Kommentierenden einfärben unter Kommentare: Jeder Name bekommt eine eigene Farbe, jedes Mal dieselbe.
+
 * **TikTok:** Bereits gesehene Videos ausblenden wirkt jetzt auch in Gefolgt, ohne das laufende Video zu verschieben.
 
 * **TikTok:** Ein Video, das in „Für dich“ oder Gefolgt läuft, verschwindet nicht mehr, sobald es das Höchstalter von Beiträgen überschreitet oder Bereits gesehene Videos ausblenden es mitzählt.

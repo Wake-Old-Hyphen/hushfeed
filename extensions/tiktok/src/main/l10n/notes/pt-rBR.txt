@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Uma chave em Comentários que muda os nomes ou países de quem comenta agora também muda os comentários de um vídeo que você já tinha aberto, sem reiniciar.
+
+* **TikTok:** Nova chave Colorir os nomes de quem comenta em Comentários: o nome de cada pessoa que comenta ganha uma cor própria, sempre a mesma.
+
 * **TikTok:** Esconder os vídeos que você já viu agora também funciona em Seguindo, sem mover o vídeo que está tocando.
 
 * **TikTok:** Um vídeo tocando em Para você ou Seguindo não some mais quando passa da Idade máxima da publicação ou quando Esconder os vídeos que você já viu o conta.

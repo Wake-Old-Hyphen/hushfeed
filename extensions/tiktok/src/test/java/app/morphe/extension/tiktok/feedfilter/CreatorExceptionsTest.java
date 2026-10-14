@@ -557,6 +557,26 @@ public class CreatorExceptionsTest {
                 followingSurvivors(list, stranger("earlier"), stranger("next")));
     }
 
+    /**
+     * Hiding the first creator turns a rule on, but the videos already watched in the list stay
+     * where they are; only the hidden creator's goes. Undo does the same the other way.
+     */
+    @Test
+    public void hidingACreatorKeepsTheWatchedFollowingVideos() {
+        Settings.HIDE_SEEN_VIDEOS.save(true);
+        FollowFeedList list = new FollowFeedList();
+        list.mItems = new ArrayList<>();
+        assertEquals(List.of("watched", "theirs", "playing"),
+                followingSurvivors(list, stranger("watched"), new Item("theirs"), stranger("playing")));
+        SeenVideoHistory.onPlayProgressChange("watched", 9_000, 10_000);
+        SeenVideoHistory.onPlayProgressChange("playing", 9_000, 10_000);
+
+        Settings.LOCAL_HIDDEN_CREATORS.save(UID);
+        assertEquals(List.of("watched", "playing", "next"), followingSurvivors(list, stranger("next")));
+        Settings.LOCAL_HIDDEN_CREATORS.save("");
+        assertEquals(List.of("watched", "playing", "next"), followingSurvivors(list));
+    }
+
     /** Other lists read meanwhile never push out what the one being watched kept. */
     @Test
     public void theListBeingWatchedKeepsItsMemoryWhileOthersAreRead() {

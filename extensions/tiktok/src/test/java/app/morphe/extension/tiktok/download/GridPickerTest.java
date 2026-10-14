@@ -136,6 +136,8 @@ public class GridPickerTest {
         TextView circle = circle(cell);
         assertNotNull("no circle on the cell", circle);
         assertSame("the circle isn't on top", circle, cell.getChildAt(cell.getChildCount() - 1));
+        assertEquals(android.view.Gravity.TOP | android.view.Gravity.END,
+                ((FrameLayout.LayoutParams) circle.getLayoutParams()).gravity);
         assertEquals(View.GONE, cover(cell).getVisibility());
         assertFalse(circle.isSelected());
         // Bound again, the cell keeps one circle rather than gaining another.
@@ -499,6 +501,9 @@ public class GridPickerTest {
         assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, layer.getLayoutParams().width);
         assertEquals(ViewGroup.LayoutParams.MATCH_PARENT, layer.getLayoutParams().height);
         assertSame("the circle isn't in the layer", layer, circle(cell).getParent());
+        assertEquals("the circle sits on TikTok's Select posts CheckBox in the top right corner",
+                android.view.Gravity.TOP | android.view.Gravity.START,
+                ((FrameLayout.LayoutParams) circle(cell).getLayoutParams()).gravity);
         assertFalse("the layer takes the cell's taps for itself", layer.isClickable());
         GridPicker.bind(cell, new Post("1"));
         assertEquals("a second bind laid another layer", 2, cell.getChildCount());

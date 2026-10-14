@@ -165,6 +165,22 @@ public class OriginalPhotosRetryTest {
         assertFalse("signed out since a signed-in save", retry(List.of(1), now).stillUsable());
     }
 
+    @Test public void aRetryWhileThePostIsStillSavingSaysSoAndStaysUsable() throws Exception {
+        OriginalPhotos.Retry failed = retry(List.of(1), SystemClock.elapsedRealtime());
+        Set<String> active = ReflectionHelpers.getStaticField(OriginalPhotos.class, "ACTIVE");
+        ownIds.add(failed.id);
+        active.add(failed.id);
+        OriginalPhotos.retry(failed);
+        finish();
+        assertEquals("the save still running is the one that goes on", List.of(), tried);
+        assertEquals(MediaJobScheduler.busyMessage("photos " + failed.id), ShadowToast.getTextOfLatestToast());
+
+        active.remove(failed.id);
+        OriginalPhotos.retry(failed);
+        finish();
+        assertEquals("the Retry wasn't used up by the busy tap", List.of(1), tried);
+    }
+
     @Test public void cancelledPhotosAreNotFailedOnes() {
         // The first file fails, Cancel comes during the second, and the last three are never tried.
         SaveProgress progress = SaveProgress.begin(5);

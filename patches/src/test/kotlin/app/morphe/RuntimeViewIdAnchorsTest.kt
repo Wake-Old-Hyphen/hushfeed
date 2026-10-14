@@ -1008,7 +1008,7 @@ class RuntimeViewIdAnchorsTest {
 }
 
 /**
- * The `id` entries of an APK's resource table, by package name and then entry name, with every id
+ * The `id` entries (or another type's) of an APK's resource table, by package name and then entry name, with every id
  * a name has in the order of the entries. A name normally has one. TikTok 47.0.3 gives ten names
  * two or three, some because a made-up short name like `url` or `tv1` matches a real one. And the
  * file each entry of a file type such as `layout` points to. Only as much of the format as that
@@ -1026,13 +1026,13 @@ internal object ResourceIds {
     private const val COMPACT = 0x0008
     private const val TYPE_STRING = 0x03
 
-    fun read(apk: File): Map<String, Map<String, List<Int>>> = read(tableOf(apk))
+    fun read(apk: File, typeName: String = "id"): Map<String, Map<String, List<Int>>> = read(tableOf(apk), typeName)
 
-    fun read(table: ByteBuffer): Map<String, Map<String, List<Int>>> {
+    fun read(table: ByteBuffer, typeName: String = "id"): Map<String, Map<String, List<Int>>> {
         check(u16(table, 0) == TABLE) { "not a resource table" }
         val packages = linkedMapOf<String, MutableMap<String, MutableList<Int>>>()
         forEachChunk(table, u16(table, 2), table.limit()) { start, type ->
-            if (type == PACKAGE) readIds(table, PackageHeader(table, start), packages)
+            if (type == PACKAGE) readIds(table, PackageHeader(table, start), typeName, packages)
         }
         return packages
     }
@@ -1086,8 +1086,13 @@ internal object ResourceIds {
             (0 until typeNames.count).firstOrNull { typeNames[it] == typeName }?.let { it + 1 + typeIdOffset }
     }
 
-    private fun readIds(table: ByteBuffer, header: PackageHeader, into: MutableMap<String, MutableMap<String, MutableList<Int>>>) {
-        val idType = header.typeId("id") ?: return
+    private fun readIds(
+        table: ByteBuffer,
+        header: PackageHeader,
+        typeName: String,
+        into: MutableMap<String, MutableMap<String, MutableList<Int>>>,
+    ) {
+        val idType = header.typeId(typeName) ?: return
         val ids = into.getOrPut(header.name) { linkedMapOf() }
         forEachChunk(table, header.start + header.headerSize, header.end) { chunk, type ->
             if (type != TYPE || u8(table, chunk + 8) != idType) return@forEachChunk

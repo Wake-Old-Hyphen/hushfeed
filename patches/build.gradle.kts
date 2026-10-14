@@ -422,6 +422,7 @@ val extensionClasses = listOf(
     "app/morphe/patches/tiktok/misc/diagnostics/BuildDetailsPatchTest.class",
     "app/morphe/patches/tiktok/misc/featuregatelab/FeatureGateLabFramesTest.class",
     "app/morphe/patches/tiktok/misc/onboarding/FirstLaunchSkipListTest.class",
+    "app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationIconTest.class",
 )
 // The plugin copies extensions/*.mpe into the main resources. nativeTest reads this copy instead,
 // so rebuilding the extension doesn't change its classpath.

@@ -1344,7 +1344,8 @@ public final class FeedItemsFilter {
 
         // Videos an earlier read of this list kept skip the rules that drift under the player.
         // Read before the skip below, so a list read again unchanged still counts as in use.
-        Set<String> keptBefore = keptBefore(owner, filterMask);
+        String driftMask = driftMask(activeContentFilters, activeRangeFilters);
+        KeptBefore keptBefore = keptBefore(owner, driftMask);
 
         if (allowRecentSkip && shouldSkipRecentlyProcessedList(
             listId,
@@ -1367,6 +1368,8 @@ public final class FeedItemsFilter {
 
         List<IFilter> steadyContentFilters = keptBefore.isEmpty()
             ? activeContentFilters : withoutDrifting(activeContentFilters);
+        List<IFilter> watchedContentFilters = keptBefore.isEmpty()
+            ? activeContentFilters : withoutSeen(activeContentFilters);
 
         List snapshot = new ArrayList(list);
         List rangeKept = new ArrayList(snapshot.size());
@@ -1385,9 +1388,11 @@ public final class FeedItemsFilter {
             if (countDistribution) countDistribution(item);
 
             String aid = keptAid(item);
-            boolean wasKept = aid != null && keptBefore.contains(aid);
-            String contentReason = getFilterReason(wasKept ? steadyContentFilters : activeContentFilters, item);
-            String rangeReason = contentReason == null && !wasKept ? getFilterReason(activeRangeFilters, item) : null;
+            boolean steady = aid != null && keptBefore.steady.contains(aid);
+            boolean watched = steady || aid != null && keptBefore.ever.contains(aid);
+            String contentReason = getFilterReason(steady ? steadyContentFilters
+                : watched ? watchedContentFilters : activeContentFilters, item);
+            String rangeReason = contentReason == null && !steady ? getFilterReason(activeRangeFilters, item) : null;
             if ((contentReason != null || rangeReason != null) && own.owns(item)) {
                 if (capture != null) {
                     capture.spared(item, contentReason != null ? contentReason : rangeReason, OWN_POST);
@@ -1536,7 +1541,7 @@ public final class FeedItemsFilter {
         FeedFilterFeedback.onBatchResult(source, initialSize, resultList.size(), reasonCounts,
                 System.currentTimeMillis());
         rememberProcessedList(listId, ListFingerprint.from(resultList, extractor), filterMask);
-        rememberKept(owner, filterMask, resultList, extractor);
+        rememberKept(owner, driftMask, resultList, extractor);
 
         if (verbose && removed > 0 && shouldLogBatch()) {
             int removedFinal = removed;
@@ -1722,13 +1727,36 @@ public final class FeedItemsFilter {
         return steady;
     }
 
+    private static List<IFilter> withoutSeen(List<IFilter> filters) {
+        List<IFilter> unseen = new ArrayList<>(filters);
+        unseen.remove(SEEN_FILTER);
+        return unseen;
+    }
+
+    /** Which drifting rules are on: turning one of those on or off is the reader asking for them. */
+    private static String driftMask(List<IFilter> activeContentFilters, List<IFilter> activeRangeFilters) {
+        StringBuilder builder = new StringBuilder();
+        appendFilterMask(builder, driftingOnly(activeContentFilters));
+        appendFilterMask(builder, activeRangeFilters);
+        return builder.toString();
+    }
+
+    private static List<IFilter> driftingOnly(List<IFilter> filters) {
+        List<IFilter> drifting = new ArrayList<>(filters.size());
+        for (IFilter filter : filters) {
+            if (drifts(filter)) drifting.add(filter);
+        }
+        return drifting;
+    }
+
     /**
-     * What each list's owner kept when its rules last ran, by the owner's identity: FollowFeedList
-     * became a Kotlin class on 46.9.3, so its equals can't be trusted to mean the same list. A
-     * change of rules (the filter mask) judges every video again, since that one is the reader's.
-     * Kept in the order lists were last read, so the list on screen is never the one dropped.
+     * What each list's owner kept on earlier reads, by the owner's identity: FollowFeedList became
+     * a Kotlin class on 46.9.3, so its equals can't be trusted to mean the same list. Kept in the
+     * order lists were last read, so the list on screen is never the one dropped.
      */
     private static final int KEPT_BEFORE_MAX_OWNERS = 256;
+    /** Past this many ids one list starts over from what its last read kept. */
+    private static final int KEPT_BEFORE_MAX_AIDS = 4096;
     private static final Map<Integer, KeptBefore> KEPT_BEFORE =
         new LinkedHashMap<Integer, KeptBefore>(16, 0.75f, true) {
             @Override
@@ -1737,39 +1765,63 @@ public final class FeedItemsFilter {
             }
         };
 
+    /**
+     * Both sets only grow while the list lives, so a read that sees it half filled doesn't take a
+     * video's place back. {@code steady} holds what was kept while the same drifting rules were
+     * on, and skips all of them; turning one of those on or off judges the list again by it.
+     * {@code ever} holds everything kept under any rules and never meets Hide seen videos: hiding
+     * a creator or a sound changes the rules too, and must not take the watched videos with it.
+     */
     private static final class KeptBefore {
-        final WeakReference<Object> owner;
-        final String filterMask;
-        final Set<String> aids;
+        static final KeptBefore NONE = new KeptBefore(null, "", Collections.emptySet(), Collections.emptySet());
 
-        KeptBefore(Object owner, String filterMask, Set<String> aids) {
+        final WeakReference<Object> owner;
+        final String driftMask;
+        final Set<String> steady;
+        final Set<String> ever;
+
+        KeptBefore(Object owner, String driftMask, Set<String> steady, Set<String> ever) {
             this.owner = new WeakReference<>(owner);
-            this.filterMask = filterMask;
-            this.aids = aids;
+            this.driftMask = driftMask;
+            this.steady = steady;
+            this.ever = ever;
+        }
+
+        boolean isEmpty() {
+            return ever.isEmpty();
         }
     }
 
-    private static Set<String> keptBefore(Object owner, String filterMask) {
-        if (owner == null) return Collections.emptySet();
+    private static KeptBefore keptBefore(Object owner, String driftMask) {
+        if (owner == null) return KeptBefore.NONE;
         synchronized (KEPT_BEFORE) {
             KeptBefore entry = KEPT_BEFORE.get(System.identityHashCode(owner));
-            if (entry == null || entry.owner.get() != owner || !entry.filterMask.equals(filterMask)) {
-                return Collections.emptySet();
-            }
-            return entry.aids;
+            if (entry == null || entry.owner.get() != owner) return KeptBefore.NONE;
+            return entry.driftMask.equals(driftMask)
+                ? entry : new KeptBefore(owner, driftMask, Collections.emptySet(), entry.ever);
         }
     }
 
-    private static void rememberKept(Object owner, String filterMask, List kept, AwemeExtractor extractor) {
+    private static void rememberKept(Object owner, String driftMask, List kept, AwemeExtractor extractor) {
         if (owner == null) return;
-        Set<String> aids = new HashSet<>();
+        Set<String> now = new HashSet<>();
         for (Object container : new ArrayList(kept)) {
             Aweme item = extractor.extract(container);
             String aid = item == null ? null : keptAid(item);
-            if (aid != null) aids.add(aid);
+            if (aid != null) now.add(aid);
         }
+        int identity = System.identityHashCode(owner);
         synchronized (KEPT_BEFORE) {
-            KEPT_BEFORE.put(System.identityHashCode(owner), new KeptBefore(owner, filterMask, Collections.unmodifiableSet(aids)));
+            KeptBefore entry = KEPT_BEFORE.get(identity);
+            boolean same = entry != null && entry.owner.get() == owner && entry.ever.size() < KEPT_BEFORE_MAX_AIDS;
+            Set<String> steady = new HashSet<>(now);
+            Set<String> ever = new HashSet<>(now);
+            if (same) {
+                ever.addAll(entry.ever);
+                if (entry.driftMask.equals(driftMask)) steady.addAll(entry.steady);
+            }
+            KEPT_BEFORE.put(identity, new KeptBefore(owner, driftMask,
+                Collections.unmodifiableSet(steady), Collections.unmodifiableSet(ever)));
         }
     }
 

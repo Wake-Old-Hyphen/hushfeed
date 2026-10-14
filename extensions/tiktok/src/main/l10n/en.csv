@@ -358,6 +358,7 @@ Clearing suggested accounts,Clearing suggested accounts
 "Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above.","Clears the recent events, saved crash reports, a recorded screen layout and the Hook status results above."
 Close,Close
 Close TikTok after,Close TikTok after
+Color commenter names,Color commenter names
 "Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this.","Comma separated names exactly as the row under a profile's bio shows them, such as TikTok Studio or Your orders. Restart TikTok to apply this."
 Comment export failed,Comment export failed
 Comment media filename,Comment media filename
@@ -625,6 +626,7 @@ Generated defaults,Generated defaults
 Gestures,Gestures
 Ghost mode,Ghost mode
 Ghost mode diagnostics,Ghost mode diagnostics
+"Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.","Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow."
 Go to the screen now. Hushfeed records its layout in %1$d seconds.,Go to the screen now. Hushfeed records its layout in %1$d seconds.
 Got it,Got it
 "HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR.","HDR videos light the screen extra bright. This plays the standard (SDR) version instead, so the screen doesn't jump to full brightness. Videos with no standard version still play in HDR."

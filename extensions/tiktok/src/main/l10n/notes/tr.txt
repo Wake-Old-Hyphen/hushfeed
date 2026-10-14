@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Yorumlar bölümünde yorum yapanların adlarını veya ülkelerini değiştiren bir anahtar artık daha önce açtığınız bir videonun yorumlarını da yeniden başlatmadan değiştiriyor.
+
+* **TikTok:** Yorumlar bölümünde yeni Yorum yapanların adlarını renklendir anahtarı: yorum yapan herkesin adı kendine ait, her seferinde aynı olan bir renk alır.
+
 * **TikTok:** Daha önce gördüğün videoları gizle artık Takip edilenler'de de çalışıyor ve oynayan videoyu yerinden oynatmıyor.
 
 * **TikTok:** Sizin İçin veya Takip edilenler'de oynayan bir video, Maksimum gönderi yaşını geçtiğinde ya da Daha önce gördüğün videoları gizle onu saydığında artık kaybolmuyor.

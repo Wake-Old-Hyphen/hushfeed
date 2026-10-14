@@ -4,15 +4,19 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* **TikTok:** Turning a commenter switch on or off under Hushfeed settings > Comments now changes the comments of a video you'd already opened. Before, reopening those comments showed the names and countries they were first drawn with until you moved to another video or restarted TikTok. A verified badge after a name stays where it is.
+
+* **TikTok:** A new Color commenter names switch under Hushfeed settings > Comments gives each commenter's name a color of its own. An account gets the same one every time it shows up, a darker shade on TikTok's light comment panel and a lighter one on its dark panel, so a long thread is easier to follow. It starts off.
+
 * **TikTok:** Hide videos you have already seen works on the Following tab too. On TikTok 47.1.4 that tab only meets the feed rules where TikTok reads its list, and the switch was left off there. A video you watch on the tab stays put while more load under it, and one you saw earlier is taken out when it turns up.
 
-* **TikTok:** A video you're watching on For You or Following stays put when TikTok reads the list again. It used to vanish from under you once it got older than your Maximum post age, once Hide videos you have already seen counted it as watched, or when its counts moved past a range or views per like limit you set. Videos that come in after it still go through every rule, and turning a rule on checks all of them again.
+* **TikTok:** A video you're watching on For You or Following stays put when TikTok reads the list again. It used to vanish from under you once it got older than your Maximum post age, once Hide videos you have already seen counted it as watched, or when its counts moved past a range or views per like limit you set. Videos that come in after it still go through every rule. Turning a rule on or changing one checks them all again, though Hide videos you have already seen still leaves alone the ones you watched in that list.
 
 * **TikTok:** Show the time to the second has two options under it. Show the time zone (on, so the row reads as before) can drop the zone, and Short date writes the date the short way your language does, like 10/7/25. Each works without the other, the seconds always stay, and both use your language's own formats and your phone's 12 or 24 hour clock (#147).
 
-* **TikTok:** Pick videos to save from profile grids works inside a Favorites collection folder too. Its videos get the same circle, and Pick all reads the folder's list, so a whole collection saves in runs of 50 like a Liked or Favorites list (#27).
+* **TikTok:** Pick videos to save from profile grids works inside a Favorites collection folder too. Its videos get the same circle, in the top left corner there since TikTok's own Select posts box takes the top right. Pick all reads the folder's list, so a whole collection saves in runs of 50 like a Liked or Favorites list (#27).
 
-* **TikTok:** When some of the original photos you save don't come through, the result now has Retry beside Open. It tries again only the photos that failed, in the post's order and under the same file names, so the ones that landed aren't saved a second time. Photos you cancelled or didn't pick are left out, and Retry keeps showing up as long as some still fail. A Retry made under another account than the one you're on now says so instead of saving.
+* **TikTok:** When some of the original photos you save don't come through, the result now has Retry beside Open. It tries again only the photos that failed, in the post's order and under the same file names, so the ones that landed aren't saved a second time. Photos you cancelled or didn't pick are left out, and Retry keeps showing up as long as some still fail. A Retry made under another account than the one you're on now says so instead of saving. Tap Retry while that post is still saving and it says so, and it stays there to tap again once the save is done.
 
 * **TikTok:** Quick setups can be hidden from the settings home with a long press on its card, and its help line now says so. The **Quick setups on the home page** row on Backup and restore brings it back. Settings backups and the Quick setups choices leave it alone.
 
@@ -24,7 +28,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** The diagnostic report's storage section no longer shows part of your account ID as a folder name. TikTok names its offline videos folder after the account (#70).
 
-* **TikTok:** With Hide the comment bar on opened videos on, photo posts in an opened grid no longer end above a black band at the bottom. A grid that starts on photos, or runs through several, has no comment bar until a video comes along, and the room kept for it came back as that band. Swiping to the next post in the grid no longer brings the band back either (#153).
+* **TikTok:** With Hide the comment bar on opened videos on, photo posts in an opened grid no longer end above a black band at the bottom. A grid that starts on photos, or runs through several, has no comment bar until a video comes along, and the room kept for it came back as that band. Swiping to the next post in the grid no longer brings the band back either, and a video you open from search results now reaches the bottom too (#153).
 
 * **TikTok:** With Show a LIVE under the status bar on, the panels above the first room of the LIVE feed (the one the LIVE button at the top left opens, scrolled up past the first room) now start below the clock. Their top row sat under the status bar, where it was hard to tap. The rooms themselves still reach up under the clock (#137).
 

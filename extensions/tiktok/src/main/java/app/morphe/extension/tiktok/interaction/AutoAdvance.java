@@ -104,6 +104,9 @@ public final class AutoAdvance {
 
     public static void onView(Object component, View view) {
         if (Looper.myLooper() != Looper.getMainLooper() || component == null || view == null) return;
+        // Says which screens build the component at all, the open question for videos opened
+        // from a profile (DetailActivity).
+        Logger.printDebug(() -> "Auto scroll component built in " + hostOf(view));
         if (!observing) {
             Setting.preferences.preferences.registerOnSharedPreferenceChangeListener(PREFERENCES);
             observing = true;
@@ -112,6 +115,17 @@ public final class AutoAdvance {
         Control previous = CONTROLS.put(component, next);
         next.owned = previous != null && previous.owned;
         onResume(component);
+    }
+
+    /** The activity a view sits in, by class name, through any theme wrappers. */
+    private static String hostOf(View view) {
+        android.content.Context context = view.getContext();
+        while (context instanceof android.content.ContextWrapper && !(context instanceof android.app.Activity)) {
+            android.content.Context base = ((android.content.ContextWrapper) context).getBaseContext();
+            if (base == null || base == context) break;
+            context = base;
+        }
+        return context == null ? "no context" : context.getClass().getName();
     }
 
     public static void onResume(Object component) {

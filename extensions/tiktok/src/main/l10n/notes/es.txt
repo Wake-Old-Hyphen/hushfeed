@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Un interruptor de Comentarios que cambia los nombres o países de quienes comentan ahora también cambia los comentarios de un video que ya habías abierto, sin reiniciar.
+
+* **TikTok:** Nuevo interruptor Colorear los nombres de quienes comentan en Comentarios: el nombre de cada persona que comenta tiene su propio color, siempre el mismo.
+
 * **TikTok:** Ocultar los vídeos que ya has visto ahora también funciona en Siguiendo, sin mover el vídeo que se reproduce.
 
 * **TikTok:** Un vídeo que se reproduce en Para ti o Siguiendo ya no desaparece cuando supera la Antigüedad máxima de la publicación o cuando Ocultar los vídeos que ya has visto lo cuenta.

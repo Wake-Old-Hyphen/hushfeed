@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings("unused")
 public final class ReceivedDmTranslationPreview {
     static final String ITEM_KEY = "ReceivedTranslationPreview";
+    /** The menu row's icon, raw/icon_languages on 47.1.4; ReceivedDmTranslationFixturesTest holds it to that name. */
+    static final int LANGUAGES_ICON = 0x7f010835;
     private static final String CONTENT = "com.ss.android.ugc.aweme.im.sdk.chat.ui.text.content.";
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final Object LOCK = new Object();
@@ -411,7 +413,7 @@ public final class ReceivedDmTranslationPreview {
         Class<?> style = NativeDmTranslation.type(loader, "X.0qXq"), size = NativeDmTranslation.type(loader, "X.0qY3");
         return NativeDmTranslation.type(loader, "X.0qXr").getConstructor(String.class, Enum.class, icon, text, style, size, boolean.class, function)
                 .newInstance(ITEM_KEY, NativeDmTranslation.type(loader, "X.0pwh").getField("TRANSLATE").get(null),
-                        NativeDmTranslation.type(loader, "X.0qXx").getConstructor(int.class).newInstance(0x7f010835),
+                        NativeDmTranslation.type(loader, "X.0qXx").getConstructor(int.class).newInstance(LANGUAGES_ICON),
                         NativeDmTranslation.type(loader, "X.0qXt").getConstructor(String.class).newInstance(L10n.t(context, "Preview translation")),
                         style.getField("PRIMARY").get(null), size.getConstructor().newInstance(), false, callback);
     }

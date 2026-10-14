@@ -63,6 +63,8 @@ public class PauseAnswersUnpatchedTest {
             "morphe_check_environment_warnings_issued", "morphe_language", "morphe_show_menu_icons",
             "morphe_last_time_app_was_launched", "morphe_experimental_app_target_confirmed",
             "hushfeed_paused", "hushfeed_safe_mode",
+            // The Quick setups card the reader hid stays hidden; a pause would bring it back.
+            "hushfeed_hide_quick_setups",
             // A timed diagnostic capture logs while paused, like the switch it stands beside.
             "hushfeed_debug_capture",
             // Guests need their saved settings entry to resume Hushfeed after closing settings.
@@ -276,14 +278,21 @@ public class PauseAnswersUnpatchedTest {
     @Test public void aClearModeToggleWhilePausedIsNotRememberedOverTheReadersChoice() {
         Settings.CLEAR_DISPLAY.save(false);
         Setting.setPausedForProcess(true);
-        RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(true, 0));
-        assertFalse(Settings.CLEAR_DISPLAY.savedValue());
-        assertFalse("paused, the remembered clear mode is not applied", Settings.CLEAR_DISPLAY.get());
+        try {
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(true, 0));
+            assertFalse(Settings.CLEAR_DISPLAY.savedValue());
+            assertFalse("paused, the remembered clear mode is not applied", Settings.CLEAR_DISPLAY.get());
 
-        // The control: running normally, the same toggle is remembered.
-        Setting.setPausedForProcess(false);
-        RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(true, 0));
-        assertTrue(Settings.CLEAR_DISPLAY.savedValue());
+            // The control: running normally, the same toggle is remembered.
+            Setting.setPausedForProcess(false);
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(true, 0));
+            assertTrue(Settings.CLEAR_DISPLAY.savedValue());
+        } finally {
+            // The toggle leaves the process in Clear display, and the classes run after this one
+            // share it: the overlay pass then took the bottom bar away in SeeThroughBottomBarTest.
+            Setting.setPausedForProcess(false);
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new ClearEvent(false, 0));
+        }
     }
 
     /** TikTok's clear-display event, by the two field names the hook reads. */

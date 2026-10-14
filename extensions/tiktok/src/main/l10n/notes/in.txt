@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Sakelar di Komentar yang mengubah nama atau negara pengomentar kini juga mengubah komentar video yang sudah kamu buka, tanpa memulai ulang.
+
+* **TikTok:** Sakelar baru Warnai nama pengomentar di Komentar: nama setiap pengomentar punya warnanya sendiri, selalu sama.
+
 * **TikTok:** Sembunyikan video yang sudah kamu tonton kini juga bekerja di Mengikuti, tanpa menggeser video yang sedang diputar.
 
 * **TikTok:** Video yang sedang diputar di Untuk Anda atau Mengikuti tidak lagi hilang saat melewati Usia maksimum kiriman atau saat Sembunyikan video yang sudah kamu tonton menghitungnya.

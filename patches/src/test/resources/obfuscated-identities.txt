@@ -21,6 +21,7 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHid
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|cnk
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|cnq
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|d4
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|duh
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|dux
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|e_5
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|ek5

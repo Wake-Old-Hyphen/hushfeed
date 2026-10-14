@@ -34,10 +34,11 @@ pluginManagement {
 
 // app.morphe:morphe-patches-gradle-plugin 1.3.4 brings kotlin-gradle-plugin 2.4.10 as a
 // runtimeElements dependency, and 2.4.10 is inside CVE-2026-53914 (GHSA-r937-wjx7-w2jp), a
-// deserialisation flaw in the Kotlin build cache. 2.4.20 is the first release outside it.
+// deserialisation flaw in the Kotlin build cache. 2.4.20 is the first release outside it, and
+// 2.4.21 also fixes KT-88453, a scripting stream the compiler left open.
 // Nothing in this tree requests a Kotlin plugin by id, so pluginManagement's eachPlugin has
 // nothing to rewrite: the version has to be forced on the settings classpath itself. Take this
-// out when the plugin moves past 2.4.20 on its own; gradle/verification-metadata.xml is what
+// out when the plugin moves past 2.4.21 on its own; gradle/verification-metadata.xml is what
 // says which version actually resolved. It does not reach :patches:patcherProvidedClasspath,
 // where the patcher's own kotlin-stdlib and kotlin-reflect stay at 2.4.10.
 //
@@ -60,7 +61,7 @@ buildscript {
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.jetbrains.kotlin") {
-                useVersion("2.4.20")
+                useVersion("2.4.21")
             }
             if (requested.group == "org.bouncycastle") {
                 useVersion("1.86")

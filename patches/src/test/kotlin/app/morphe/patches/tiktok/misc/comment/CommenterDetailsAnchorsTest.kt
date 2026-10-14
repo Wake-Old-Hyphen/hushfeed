@@ -15,6 +15,7 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -25,7 +26,8 @@ import org.junit.Test
  * Where Show commenter handle and region hooks, held to each declared build.
  *
  * <p>Each fingerprint takes one method, and the shape checks the patch makes before writing
- * anything pass on it: the name setter hands its parameter straight to the name view, the reply
+ * anything pass on it: the name setter hands its parameter straight to the name view and falls
+ * from that write straight into its return, where the name's color goes on, the reply
  * label has one write whose text register is free after it, and the time row has the two time
  * writes the cell's layouts use. None of the three is the cell's bind, the method Comment
  * translation and Comment tools hook, so the patches edit different methods and the order they
@@ -54,6 +56,15 @@ class CommenterDetailsAnchorsTest {
                 name.implementation!!.registerCount - name.numberOfParameterRegisters >= 1)
             // Throws unless the cell has exactly one comment getter.
             cell.commentGetter()
+            // The color hook reads TikTok's color off the view the setter just wrote, so the site's
+            // view has to be the TextView the setter loaded from its own field.
+            val colorSite = name.nameColorSite()
+            val loaded = name.implementation!!.instructions.take(colorSite.writeIndex).filter { instruction ->
+                instruction.opcode == Opcode.IGET_OBJECT &&
+                    (instruction as TwoRegisterInstruction).registerA == colorSite.viewRegister
+            }
+            assertTrue("$version: the name write's view isn't one the setter read from the cell", loaded.isNotEmpty())
+            assertFalse("$version: the comment would land on the name view", colorSite.commentRegister == colorSite.viewRegister)
 
             val replies = taken(CommentReplyLabelFingerprint)
             assertEquals("$version: the reply label fingerprint takes ${replies.map(::label)}", 1, replies.size)
@@ -62,6 +73,8 @@ class CommenterDetailsAnchorsTest {
             val beforeWrite = reply.implementation!!.instructions.take(replySite.callIndex)
             assertTrue("$version: the reply label doesn't read the replied-to name before writing it",
                 beforeWrite.any { it.calls(COMMENT_MODEL, "getReplyToNickName") })
+            assertFalse("$version: the label's view and text share a register",
+                replySite.viewRegister == replySite.textRegister)
 
             val times = taken(CommentTimeWriteFingerprint)
             assertEquals("$version: the time fingerprint takes ${times.map(::label)}", 1, times.size)

@@ -57,12 +57,14 @@ feed/VideoOverlayHider.java|ANCHOR_IDS|47.1.4:bqv|app|com.by.andInflater.common_
 feed/VideoOverlayHider.java|MUSIC_COVER_IDS|videomusiccoverblock|app|com.by.andInflater.common_feed_interaction_area_feed|at:6
 feed/VideoOverlayHider.java|SEARCH_BAR_IDS|47.1.4:ll8|app|com.by.andInflater.common_feed_interaction_area_feed|at:5
 feed/VideoOverlayHider.java|STATUS_BAR_SPACER_IDS|47.1.4:dux|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#1
+feed/VideoOverlayHider.java|BOTTOM_SPACER_IDS|47.1.4:duh|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_BAR_IDS|47.1.4:qqw|app|com.ss.android.ugc.aweme.comment.service.CommentDetailInputLayoutIdsImpl|at:2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_STRIP_IDS|47.1.4:cnk|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:View#2
 feed/VideoOverlayHider.java|TOP_SEARCH_BAR_IDS|47.1.4:j2g|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:ConstraintLayout#1
 feed/VideoOverlayHider.java|TOP_SEARCH_SCRIM_IDS|47.1.4:g5p|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:View#1
 feed/VideoOverlayHider.java|CELL_ROOT_ID|view_rootview|app|com.ss.android.ugc.aweme.feed.adapter.VideoViewCell|at:3
 feed/VideoOverlayHider.java|PAGER_COLUMN_ID|viewpager_container|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:LinearLayout
+feed/VideoOverlayHider.java|WIDGET_LAYER_ID|widget_container|app|com.by.andInflater.common_feed_interaction_area_feed|on:InteractAreaRootLayout
 feed/VideoOverlayHider.java|LIKE_COUNT_ROW_IDS|47.1.4:g87|app|com.by.andInflater.common_feed_layout_video_digg|on:InteractRelativeLayout
 feed/VideoOverlayHider.java|COMMENT_COUNT_ROW_IDS|47.1.4:ek6|app|com.by.andInflater.common_feed_layout_video_comment_count|on:InteractRelativeLayout
 feed/VideoOverlayHider.java|FAVORITE_COUNT_ROW_IDS|47.1.4:i83|app|com.by.andInflater.common_feed_layout_video_favorite|on:InteractRelativeLayout

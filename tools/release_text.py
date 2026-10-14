@@ -252,9 +252,13 @@ def github_notes(args) -> None:
     print(f"[release] notes for {args.version}: {len(stripped)} of {len(items)} CHANGELOG bullets, {len(notes)} characters")
 
 
-def catalog() -> tuple[int, list[str]]:
+def catalog_patches() -> list:
     data = json.loads(read(ROOT / "patches-list.json"))
-    patches = data["patches"] if isinstance(data, dict) else data
+    return data["patches"] if isinstance(data, dict) else data
+
+
+def catalog() -> tuple[int, list[str]]:
+    patches = catalog_patches()
     versions = set()
     for patch in patches:
         for app in patch.get("compatibility") or []:
@@ -292,15 +296,23 @@ def source_version() -> str:
 
 
 def guide(args) -> None:
-    """The developer guide's Source snapshot line, held to gradle.properties and patches-list.json."""
+    """The developer guide's Source snapshot line and category table, held to gradle.properties
+    and patches-list.json, which is what validate-release-facts.ps1 compares them with."""
     version = source_version()
     count, _ = catalog()
+    categories: dict[str, int] = {}
+    for patch in catalog_patches():
+        name = str(patch.get("category") or "")
+        categories[name] = categories.get(name, 0) + 1
+    rows = "".join(f"| {name} | {categories[name]} |\n" for name in sorted(categories))
     date = args.date or datetime.datetime.now().astimezone().date().isoformat()
     path = ROOT / GUIDE
     edits = {}
     swap(edits, path, r"^Source snapshot: version \d+\.\d+\.\d+, \d+ patch entries\.",
          f"Source snapshot: version {version}, {count} patch entries.")
     swap(edits, path, r"last synced with the source on \d{4}-\d{2}-\d{2}", f"last synced with the source on {date}")
+    swap(edits, path, r"catalog's \d+ patches are grouped as follows:\n\n(\| Manager category[^\n]*\n[^\n]*\n)(?:\|[^\n]*\n)+",
+         f"catalog's {count} patches are grouped as follows:\n\n\\g<1>{rows}")
     write(path, edits[path])
     print(f"[release] {GUIDE} reads source {version} with {count} patch entries")
 

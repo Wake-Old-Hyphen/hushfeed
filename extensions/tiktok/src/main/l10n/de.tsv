@@ -2143,3 +2143,5 @@ Show the time zone	Zeitzone anzeigen
 Puts your time zone after the time to the second, like EDT.	Setzt deine Zeitzone hinter die sekundengenaue Uhrzeit, etwa MESZ.
 Short date	Kurzes Datum
 Writes the date before the time to the second the short way your language does, like 10/7/25.	Schreibt das Datum vor der sekundengenauen Uhrzeit so kurz, wie deine Sprache es tut, etwa 07.10.25.
+Color commenter names	Namen von Kommentierenden einfärben
+Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.	Gibt dem Namen jeder kommentierenden Person eine eigene Farbe, für dieses Konto jedes Mal dieselbe, damit man langen Threads leichter folgen kann.

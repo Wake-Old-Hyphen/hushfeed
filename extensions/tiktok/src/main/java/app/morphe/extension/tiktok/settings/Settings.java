@@ -1035,6 +1035,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_COMMENTER_HANDLE = new BooleanSetting("show_commenter_handle", FALSE);
     /** The country a commenter's account is set to, after the comment's time. Read on each bind. */
     public static final BooleanSetting SHOW_COMMENTER_REGION = new BooleanSetting("show_commenter_region", FALSE);
+    /** Each commenter's name in a color of its own, the same for that account every time. Read on each bind. */
+    public static final BooleanSetting COLOR_COMMENTER_NAMES = new BooleanSetting("color_commenter_names", FALSE);
     /** Tapping "more" under a video opens its comments with the caption at the top (upstream #156). */
     public static final BooleanSetting CAPTION_OPENS_COMMENTS = new BooleanSetting("caption_opens_comments", FALSE);
     /** Every video's comments open with its caption at the top. */
