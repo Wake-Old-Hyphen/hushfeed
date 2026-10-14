@@ -1079,8 +1079,19 @@ public final class BlockAuthorOverlay {
         showBanner(root, message, action, actionLabel, null);
     }
 
+    /** The action banner with a second action after the first, as a save that half landed has. */
+    public static void showActionBanner(ViewGroup root, String message, String actionLabel,
+            Runnable action, String secondLabel, Runnable second) {
+        showBanner(root, message, action, actionLabel, second, secondLabel, null);
+    }
+
     private static void showBanner(ViewGroup root, String message, Runnable action,
             String actionLabel, Runnable ranItsTime) {
+        showBanner(root, message, action, actionLabel, null, null, ranItsTime);
+    }
+
+    private static void showBanner(ViewGroup root, String message, Runnable action,
+            String actionLabel, Runnable second, String secondLabel, Runnable ranItsTime) {
         Utils.runOnMainThread(() -> {
             try {
                 if (root == null) {
@@ -1112,6 +1123,7 @@ public final class BlockAuthorOverlay {
                     addAction(activity, banner,
                             actionLabel == null ? L10n.t(activity, "Undo") : actionLabel, action);
                 }
+                if (second != null) addAction(activity, banner, secondLabel, second);
                 // Nothing announced this banner, so a reader using TalkBack never knew there
                 // was a way back at all.
                 banner.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
@@ -1134,7 +1146,7 @@ public final class BlockAuthorOverlay {
                     boolean seen = banner.isAttachedToWindow() && banner.isShown();
                     dismissUndo();
                     if (seen && ranItsTime != null) ranItsTime.run();
-                }, SettingsUi.feedbackTimeout(activity, (int) UNDO_VISIBLE_MS, action != null));
+                }, SettingsUi.feedbackTimeout(activity, (int) UNDO_VISIBLE_MS, action != null || second != null));
             } catch (Throwable ex) {
                 Logger.printException(() -> "Could not show the undo banner", ex);
                 toastInstead(message, ranItsTime);

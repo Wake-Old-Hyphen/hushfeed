@@ -124,6 +124,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private final List<Preference> searchRows = new ArrayList<>();
     private SettingsSearchInputPreference searchInput;
     private SettingsHeaderPreference masterHeader;
+    /** The home page's Quick setups card, which a long press takes off the page. Null off the home page. */
+    private QuickSetupsPreference quickSetupsRow;
 
     /**
      * Each section carries one sentence, used both as the subtitle on the home row and as the
@@ -1423,9 +1425,9 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         search.setKey("action_search_settings");
         search.setOrder(-900);
         screen.addPreference(search);
-        QuickSetupsPreference quickSetups = new QuickSetupsPreference(context, this::settingsOnPages);
-        quickSetups.setOrder(-850);
-        screen.addPreference(quickSetups);
+        quickSetupsRow = new QuickSetupsPreference(context, this::settingsOnPages, this::hideQuickSetups);
+        quickSetupsRow.setOrder(-850);
+        if (!BaseSettings.HIDE_QUICK_SETUPS.get()) screen.addPreference(quickSetupsRow);
 
         addGroup(context, screen, "Your feed", Section.FEED_FILTER, Section.FEED_NAVIGATION,
                 Section.INTERFACE, Section.PLAYBACK, Section.SCREEN_TIME);
@@ -1446,6 +1448,26 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         addAbout(screen);
         addReportProblem(screen);
         addSupport(screen);
+    }
+
+    /** The long press on the Quick setups card: it leaves the home page now, and the banner says where it comes back. */
+    private void hideQuickSetups() {
+        BaseSettings.HIDE_QUICK_SETUPS.save(true);
+        syncQuickSetupsRow();
+        Context context = getActivity();
+        if (context == null) return;
+        SettingsActionBanner.showNotice(context, L10n.f(context,
+                "Quick setups hidden. Bring it back from %1$s.", L10n.t(context, Section.BACKUP.title)));
+    }
+
+    /** Puts the home page's Quick setups card on the page or takes it off to match the saved choice. */
+    private void syncQuickSetupsRow() {
+        PreferenceScreen screen = getPreferenceScreen();
+        if (quickSetupsRow == null || screen == null) return;
+        boolean onPage = screen.findPreference(QuickSetupsPreference.KEY) != null;
+        boolean hidden = BaseSettings.HIDE_QUICK_SETUPS.get();
+        if (hidden && onPage) screen.removePreference(quickSetupsRow);
+        else if (!hidden && !onPage) screen.addPreference(quickSetupsRow);
     }
 
     /** A home heading and its pages, or nothing when the bundle left out every one of them. */
@@ -1938,6 +1960,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     public void onResume() {
         super.onResume();
         activeFragment = this;
+        // Back from Backup and restore, where the card is shown or hidden again.
+        syncQuickSetupsRow();
         refreshStatusCard();
         // Back from a section onto the master menu: whatever was changed there is owed here.
         refreshRestartPending();

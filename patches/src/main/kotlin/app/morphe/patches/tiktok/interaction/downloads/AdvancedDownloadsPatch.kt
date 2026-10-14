@@ -16,6 +16,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.engagement.ProfileGridHolderBindFingerprint
 import app.morphe.patches.tiktok.interaction.engagement.profileGridCountPatch
 import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_SAVE_COVER
 import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
@@ -271,7 +272,8 @@ val advancedDownloadsPatch = bytecodePatch(
     name = "Advanced downloads",
     description = "Adds more ways to save: pick the video quality, save full-size photos, the " +
         "sound on its own or a photo post as one video, hold a profile picture or story to save " +
-        "it, and save a story or a video's cover from the share sheet. Starts off. Turn it on in " +
+        "it, save a story or a video's cover from the share sheet, and pick videos on a profile " +
+        "grid to save in one run. Starts off. Turn it on in " +
         "Hushfeed settings > Downloads.",
 ) {
     category("Downloads")
@@ -363,6 +365,11 @@ val advancedDownloadsPatch = bytecodePatch(
         resolveStoryLongPressTimer().interceptStoryLongPress()
         hookStoryShareSave()
         addOwnedShareAction(SHARE_SAVE_COVER)
+        // The grid cell holder's bind, which the count hook above already found, for picking
+        // several posts on a profile, Liked or Favorites grid and saving them in one run (#27).
+        ProfileGridHolderBindFingerprint.method.hookGridPick { classDefByOrNull(it)?.superclass }
+        // A Favorites collection folder draws its posts with a holder of its own.
+        CollectionGridHolderBindFingerprint.method.hookGridPickFromField { classDefByOrNull(it)?.superclass }
 
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAdvancedDownloads()V")

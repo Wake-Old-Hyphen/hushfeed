@@ -590,6 +590,44 @@ public class AuthorRegionTest {
     }
 
     /**
+     * #127: putting a long display name back over a short "@handle · US" kept the short width in
+     * the weighted row, so the name read cut beside an empty row until something else laid it out.
+     */
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void aNamePutBackInAWeightedRowGetsItsWidthBack() {
+        LinearLayout row = new LinearLayout(context);
+        TextView name = new TextView(context);
+        name.setId(NAME_ID);
+        name.setSingleLine(true);
+        name.setEllipsize(TextUtils.TruncateAt.END);
+        name.setText("Abdullah Al Mamun Official");
+        row.addView(name, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        TextView postTime = new TextView(context);
+        postTime.setId(POST_TIME_ID);
+        postTime.setText(" · 13s ago");
+        row.addView(postTime);
+        FrameLayout root = new FrameLayout(context);
+        root.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        layOut(root);
+        int whole = name.getWidth();
+
+        AuthorRegion.decorate(name, "ab", "US");
+        layOut(root);
+        AuthorRegion.decorate(name, "ab", "US");
+        assertEquals("@ab · US", name.getText().toString());
+        assertTrue("the short handle didn't narrow the name", name.getWidth() < whole);
+
+        AuthorRegion.restore();
+        layOut(root);
+
+        assertEquals("Abdullah Al Mamun Official", name.getText().toString());
+        assertEquals("the name came back cut to the handle's width", 0, name.getLayout().getEllipsisCount(0));
+        assertEquals(whole, name.getWidth());
+    }
+
+    /**
      * #127 again on 0.71.2 (ottaline): a video change posted ahead of the layout pass reached the
      * row before it was measured with the country, fitted the name to the width the row had for
      * the name alone, and "Shaur… · CA" never grew back, since the name is as wide as its text.

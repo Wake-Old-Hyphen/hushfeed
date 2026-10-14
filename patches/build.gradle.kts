@@ -264,10 +264,10 @@ patches {
 }
 
 // Morphe patcher 1.12.0 asks for Bouncy Castle 1.77 and the Android build tools it brings ask
-// for 1.79, so this module's graph resolved at 1.79: 1.77 is inside all six advisories
-// (CVE-2025-8916 1.44 to 1.78, CVE-2026-5588 1.67 to 1.83, CVE-2025-14813, CVE-2026-0636
-// fixed in 1.84, CVE-2026-8763, CVE-2026-13506 fixed in 1.85) and 1.79 is inside all but
-// CVE-2025-8916. None of it reaches the
+// for 1.79, so this module's graph resolved at 1.79: 1.77 is inside all seven advisories
+// (CVE-2025-8916 1.44 to 1.78, CVE-2026-5588 1.67 to 1.83 apart from 1.80.2 and 1.81.1,
+// CVE-2025-14813, CVE-2026-0636 fixed in 1.84, CVE-2026-8763, CVE-2026-13506 fixed in 1.85,
+// CVE-2026-97873 fixed in 1.86) and 1.79 is inside all but CVE-2025-8916. None of it reaches the
 // payload, and the APK a user gets is
 // signed by their own Manager with its own patcher, so this is the build and signing classpath
 // here rather than anything shipped. The repository's rule is that a known-affected component

@@ -111,6 +111,9 @@ public final class QuickSetups {
         Map<Setting<?>, Object> targets = new LinkedHashMap<>();
         if (choice == Choice.DEFAULTS) {
             for (Setting<?> setting : onPages) {
+                // Hiding this card is about the page, not a setting, so Back to defaults on the
+                // card itself mustn't bring it back.
+                if (setting == BaseSettings.HIDE_QUICK_SETUPS) continue;
                 if (setting instanceof BooleanSetting) targets.put(setting, setting.defaultValue);
             }
             return targets;

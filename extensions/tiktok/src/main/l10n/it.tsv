@@ -1730,6 +1730,10 @@ Show exact LIVE viewer counts	Mostra il numero esatto di spettatori LIVE
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Una stanza LIVE mostra quante persone guardano con un numero arrotondato come 1,2K. Questo mostra invece il numero esatto.
 Offer LIVE quality in more rooms	Offri la qualità LIVE in più stanze
 TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.	TikTok ti fa scegliere la qualità di una LIVE solo in alcune stanze. Questo aggiunge Qualità video al menu di quasi tutte le altre, e la stanza successiva si apre con l'ultima qualità che hai scelto.
+Keep the LIVE quality after TikTok restarts	Mantieni la qualità LIVE dopo il riavvio di TikTok
+TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok dimentica la qualità LIVE che hai scelto quando si chiude. Questo fa ripartire le stanze con quella qualità dopo un riavvio. Una stanza il cui stream non ce l'ha si apre con la scelta di TikTok.
+Offer clear screen in every LIVE room	Offri lo schermo pulito in ogni stanza LIVE
+Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Lo schermo pulito nasconde chat, regali e pulsanti di una LIVE così si vede solo la diretta. TikTok lo mette nel menu solo di alcune stanze. Questo lo aggiunge alle altre.
 Keep watching in a small window	Continua a guardare in una piccola finestra
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Quando esci da TikTok mentre un video è in riproduzione, continua in una piccola finestra sopra le altre app, con un pulsante per metterlo in pausa. Funziona nel feed e nei video aperti da un profilo, dalla ricerca o da un suono. Richiede Android 8 o versioni successive.
 Play	Riproduci
@@ -2065,7 +2069,13 @@ Opens a GitHub report with your versions and settings filled in. Add what happen
 Support Hushfeed	Sostieni Hushfeed
 No app on this phone opens web links	Nessuna app su questo telefono apre i link web
 Quick setups	Configurazioni rapide
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	Tranquillo nasconde annunci, Shop e LIVE. Privacy nasconde le tue visualizzazioni e quando scrivi e ferma il tracciamento. Ripristina predefiniti riporta ogni interruttore com'era all'inizio.
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	Tranquillo nasconde annunci, Shop e LIVE. Privacy nasconde le tue visualizzazioni e quando scrivi e ferma il tracciamento. Ripristina predefiniti riporta ogni interruttore com'era all'inizio. Tieni premuto per nascondere questa riga.
+# context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
+Quick setups hidden. Bring it back from %1$s.	Configurazioni rapide nascoste. Le ritrovi in %1$s.
+# context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
+Quick setups on the home page	Configurazioni rapide nella home
+Shown. Tap to hide it.	Visibili. Tocca per nasconderle.
+Hidden. Tap to show it again.	Nascoste. Tocca per mostrarle di nuovo.
 Quiet	Tranquillo
 Back to defaults	Ripristina predefiniti
 Changed 1 setting	1 impostazione modificata
@@ -2083,3 +2093,50 @@ Privacy and app	Privacy e app
 # context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
 Hushfeed	Hushfeed
 Open Hushfeed settings	Apri le impostazioni di Hushfeed
+Several photos in one comment	Più foto in un commento
+Scrolling comments on videos	Commenti scorrevoli sui video
+See-through bottom bar	Barra inferiore trasparente
+Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.	Nel feed principale, fai arrivare il video fino in fondo allo schermo e mostra le schede sopra, senza barra dietro.
+LIVE chat auto-translate	Traduzione automatica della chat LIVE
+
+Pick videos to save from profile grids	Scegli i video da salvare dalle griglie dei profili
+Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Mette un cerchio su ogni video di una griglia del profilo, Mi piace o Preferiti. Scegline fino a %1$s, poi tocca Salva per salvarli uno dopo l'altro, con un contatore e Annulla.
+Pick for saving	Scegli da salvare
+You can pick up to %1$s at a time	Puoi sceglierne fino a %1$s alla volta
+One picked	Uno scelto
+%1$s picked	%1$s scelti
+None of the picked videos could be saved. Try again.	Non è stato possibile salvare nessuno dei video scelti. Riprova.
+Saved one video	Salvato un video
+Saved %1$s videos	Salvati %1$s video
+One was already saved	Uno era già salvato
+%1$s were already saved	%1$s erano già salvati
+Picked videos	Video scelti
+Pick all	Scegli tutti
+Picked the first %1$s. Save them, then tap Pick all again for the rest.	Scelti i primi %1$s. Salvali, poi tocca di nuovo Scegli tutti per il resto.
+Everything this list has loaded is picked or saved. Scroll down to load more.	Tutto ciò che questa lista ha caricato è già scelto o salvato. Scorri verso il basso per caricarne altri.
+
+Record LIVEs you watch	Registra i LIVE che guardi
+Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Aggiunge un pulsante Registra alle stanze LIVE. La registrazione inizia quando lo tocchi e finisce quando tocchi Interrompi o esci dalla stanza. Quello che c'era prima non viene salvato.
+Record	Registra
+Stop	Interrompi
+Stop recording this LIVE	Interrompi la registrazione di questo LIVE
+Record this LIVE from now	Registra questo LIVE da ora
+Recording this LIVE from now	Registrazione di questo LIVE da ora
+Saving the recording	Salvataggio della registrazione
+Couldn't find this LIVE's stream to record. Leave the room and open it again.	Non è stato possibile trovare lo stream di questo LIVE da registrare. Esci dalla stanza e riaprila.
+Allow storage for TikTok in Android settings to record LIVEs	Consenti l'archiviazione a TikTok nelle impostazioni di Android per registrare i LIVE
+LIVE recording saved to %1$s	Registrazione del LIVE salvata in %1$s
+The LIVE ended or the connection dropped. What was recorded is saved to %1$s	Il LIVE è finito o la connessione è caduta. Quello che è stato registrato è salvato in %1$s
+The phone is running out of room. What was recorded is saved to %1$s	Lo spazio sul telefono sta finendo. Quello che è stato registrato è salvato in %1$s
+The recording reached its size limit and was saved to %1$s	La registrazione ha raggiunto il limite di dimensioni ed è stata salvata in %1$s
+TikTok closed. What was recorded is saved to %1$s	TikTok si è chiuso. Quello che è stato registrato è salvato in %1$s
+Recording stopped early. What was recorded is saved to %1$s	La registrazione si è fermata in anticipo. Quello che è stato registrato è salvato in %1$s
+This LIVE's stream can't be saved	Lo stream di questo LIVE non può essere salvato
+There isn't enough room on the phone to record	Non c'è abbastanza spazio sul telefono per registrare
+Nothing was recorded	Non è stato registrato nulla
+The recording couldn't be saved. Try again.	Non è stato possibile salvare la registrazione. Riprova.
+Those photos can't be tried again now. Save the post again to get the rest.	Ora non si può riprovare con quelle foto. Salva di nuovo il post per avere il resto.
+Show the time zone	Mostra il fuso orario
+Puts your time zone after the time to the second, like EDT.	Mette il tuo fuso orario dopo l'ora al secondo, come EDT.
+Short date	Data breve
+Writes the date before the time to the second the short way your language does, like 10/7/25.	Scrive la data prima dell'ora al secondo nella forma breve della tua lingua, come 07/10/25.

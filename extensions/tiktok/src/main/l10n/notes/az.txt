@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Artıq izlədiyiniz videoları gizlədin indi İzlədiklərim lentində də işləyir və oynayan videonu yerindən tərpətmir.
+
+* **TikTok:** Sizin üçün və ya İzlədiklərim lentində oynayan video Maksimum paylaşım yaşını keçəndə və ya Artıq izlədiyiniz videoları gizlədin onu saydıqda artıq yox olmur.
+
+* **TikTok:** Vaxtı saniyəsinə qədər göstərin funksiyasının iki öz seçimi var: əvvəlki kimi açıq olan Saat qurşağını göstərin və Qısa tarix (#147).
+
+* **TikTok:** Profil şəbəkələrindən saxlamaq üçün videolar seçin indi Sevimlilər kolleksiyasının içində də işləyir, Hamısını seç ilə birlikdə (#27).
+
+* **TikTok:** Orijinal fotoların yadda saxlanması yalnız qismən alınanda indi Aç düyməsinin yanında Yenidən cəhd edin də çıxır. O, yalnız alınmayan fotoları yenidən sınayır.
+
+* **TikTok:** Sürətli quruluşları kartına uzun basaraq ayarların ana səhifəsindən gizlətmək olar. Ehtiyat nüsxə və bərpa bölməsindəki Ana səhifədə sürətli quruluşlar sətri onları geri qaytarır.
+
+* **TikTok:** LIVE otaqları Yaz düyməsi göstərə bilər (susmaya görə söndürülüb, Oynatma ayarlarında). O, toxunduğun andan Dayandır düyməsinə toxunana və ya otaqdan çıxana qədər baxdıqlarını saxlayır (#37).
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda, profildən və ya axtarışdan açdığın videolarda irəliləyiş zolağı artıq açıqlamanın üstündən keçmir. Açıqlama və musiqi diski zolağa yer açacaq qədər yuxarı qalxır (#153).
+
+* **TikTok:** Diaqnostika hesabatı əsas lentdə olanda şərh panelini artıq çatışmayan kimi göstərmir (#153).
+
+* **TikTok:** Diaqnostika hesabatının yaddaş bölməsi artıq hesab ID-nin bir hissəsini qovluq adı kimi göstərmir (#70).
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda, açılmış şəbəkədəki foto paylaşımları artıq aşağıda qara zolağın üstündə bitmir (#153).
+
+* **TikTok:** LIVE-ı status panelinin altında göstərin açıq olanda, LIVE lentində ilk otağın üstündəki panellər artıq status panelinin altında qalmır, saatdan aşağıda başlayır (#137).
+
+* **TikTok:** Sizin üçün lentindəki LIVE artıq keçdiyiniz LIVE-ın Service+ sətrini göstərmir (#94).
+
+* **TikTok:** Yeni açar seçdiyin LIVE keyfiyyətini TikTok yenidən başlayandan sonra da saxlayır (#57).
+
+* **TikTok:** Yeni açar yalnız yayımı saxlayan təmiz ekranı hər LIVE otağının menyusuna əlavə edir (#57).
+
+* **TikTok:** Ölkədən və ya @istifadəçi adından sonra geri qayıdan yaradıcı adı artıq yarımçıq kəsilmiş qalmır (#127).
+
+* **TikTok:** AMOLED qaranlıq mövzu indi TikTok-un öz ayar səhifələrindəki kartları da qara edir (#152).
+
+* **TikTok:** Feature Gate Lab-da iki yeni hazır ayar var: Videoların üzərində sürüşən şərhlər və Bir şərhdə bir neçə foto (#98).
+
+* **TikTok:** Feed screen səhifəsində yeni Şəffaf alt panel açarı videonun ekranın aşağısına qədər uzanmasına imkan verir və tabların arxasındakı paneli götürür. Söndürülmüş başlayır (#145).
+
+* **TikTok:** Feature Gate Lab-da yeni LIVE söhbətinin avtomatik tərcüməsi hazır ayarı var. LIVE otağında Paylaşın altındakı Şərhləri tərcümə et seçimini işə salır (#98).
+
+* **TikTok:** Hushfeed ayarları > Endirmələr bölməsində Profil şəbəkələrindən saxlamaq üçün videolar seçin açarını yandırın və profil, Bəyənilənlər və ya Sevimlilər şəbəkəsindəki hər videonun üzərində dairə görünəcək. 50-yə qədər seçin, Saxla düyməsinə toxunun, onlar sayğac və Ləğv edin ilə bir-bir saxlanılacaq (#27).
+
+* **TikTok:** Profil şəbəkələrindən saxlamaq üçün videolar seçin funksiyasında Hamısını seç düyməsi var. O, siyahının yüklədiyi paylaşımlardan 50-yə qədərini seçir, Artıq saxlanılmış videoları yoxlayın açıq olanda saxlanılmış videoları ötürür. Belə ki, bütün siyahı hər dəfə əvvəlkinin qaldığı yerdən davam edən mərhələlərlə saxlanılır (#27).
+
+* **TikTok:** Artıq izlədiyiniz videoları gizlədin açıq olanda və qeyd dolu olanda, izlədiyiniz hər video ən köhnəsini silmək üçün artıq 10 000 sətrin hamısını yoxlamır. İndi bu hər 256 videoda bir dəfə olur (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** Diaqnostik hesabatda dəyişdirilmiş ayarları göstərən yeni bölmə var. Standart dəyərində olmayan hər ayarın adını yazır, beləliklə hesabat hansı açarların açıq olduğunu göstərir. Ayara yazdığınız mətn hesabata heç vaxt daxil edilmir (#149).

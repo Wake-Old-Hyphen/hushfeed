@@ -24,6 +24,7 @@ import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.download.DownloadDestination;
 import app.morphe.extension.tiktok.download.DownloadNamePreview;
 import app.morphe.extension.tiktok.download.ExternalDownloader;
+import app.morphe.extension.tiktok.download.GridPicker;
 import app.morphe.extension.tiktok.download.SavedVideoArchive;
 import app.morphe.extension.tiktok.download.SoundFormat;
 
@@ -141,6 +142,11 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.SAVE_COVER_BUTTON));
             addPreference(new TogglePreference(context, "Show download progress",
                     "Show a progress bar while a video saves.", Settings.DOWNLOAD_PROGRESS));
+            addPreference(new TogglePreference(context, "Pick videos to save from profile grids",
+                    L10n.f(context, "Puts a circle on each video in a profile, Liked or Favorites "
+                            + "grid. Pick up to %1$s, then tap Save to save them one after another, "
+                            + "with a count and Cancel.", String.valueOf(GridPicker.MAX_PICKED)),
+                    Settings.PICK_GRID_VIDEOS));
             addPreference(new TogglePreference(context, "Save details beside the video",
                     "Saves the caption, creator, link and post date in a text file next to the "
                             + "video. On Android 10 and later, the pair goes in Download or "

@@ -79,17 +79,28 @@ final class SaveProgress {
         final int skipped;
         final int cancelled;
         final Stop stop;
+        /**
+         * The files that didn't land through no choice of the reader's, in run order: each one
+         * that failed, and with a {@link #stop} the file it stopped at and every one after it.
+         * Files left after a Cancel aren't here, so a retry never brings back what was cancelled.
+         */
+        final List<Integer> unsaved;
 
         Outcome(int total, int saved, int skipped, int cancelled) {
             this(total, saved, skipped, cancelled, Stop.NONE);
         }
 
         Outcome(int total, int saved, int skipped, int cancelled, Stop stop) {
+            this(total, saved, skipped, cancelled, stop, java.util.Collections.<Integer>emptyList());
+        }
+
+        Outcome(int total, int saved, int skipped, int cancelled, Stop stop, List<Integer> unsaved) {
             this.total = total;
             this.saved = saved;
             this.skipped = skipped;
             this.cancelled = cancelled;
             this.stop = stop;
+            this.unsaved = java.util.Collections.unmodifiableList(new ArrayList<>(unsaved));
         }
 
         boolean complete() {
@@ -305,6 +316,7 @@ final class SaveProgress {
                 deadline.cancellation = cancelled;
                 int saved = 0, skipped = 0, index = 0;
                 Stop stop = Stop.NONE;
+                List<Integer> unsaved = new ArrayList<>();
                 for (; index < total; index++) {
                     if (isCancelled()) break;
                     showCount(index + 1);
@@ -321,14 +333,16 @@ final class SaveProgress {
                             case SERVER_WAIT: stop = Stop.SERVER_WAIT; break;
                             case CANCELLED: break;
                         }
+                        if (stop != Stop.NONE) for (int rest = index; rest < total; rest++) unsaved.add(rest);
                         break;
                     } catch (IOException | RuntimeException failure) {
                         int which = index + 1;
                         Logger.printException(() -> "File " + which + " of " + total + " was not saved", failure);
                         skipped++;
+                        unsaved.add(index);
                     }
                 }
-                result[0] = new Outcome(total, saved, skipped, total - index, stop);
+                result[0] = new Outcome(total, saved, skipped, total - index, stop, unsaved);
             });
         } finally {
             dismiss();

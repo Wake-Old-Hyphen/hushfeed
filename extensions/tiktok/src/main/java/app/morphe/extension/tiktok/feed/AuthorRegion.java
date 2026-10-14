@@ -591,6 +591,10 @@ public final class AuthorRegion {
         CharSequence now = name.getText();
         if (now != null && now.toString().equals(written.toString())) {
             name.setText(previous);
+            // Putting the name back is a write like any other: in TikTok's weighted row it keeps
+            // the width of what was showing, so a display name longer than "@handle · US" came
+            // back cut beside an empty row until something else laid the row out (#127).
+            if (!hasFixedWidth(name)) name.requestLayout();
         }
     }
 }

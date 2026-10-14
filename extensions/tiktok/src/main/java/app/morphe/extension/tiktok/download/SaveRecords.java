@@ -77,7 +77,7 @@ final class SaveRecords {
     /** The labels savers give the queue. Anything else is kept as {@link #OTHER}, never as given. */
     private static final Set<String> KINDS = new HashSet<>(Arrays.asList(
             "video", "original photos", "story", "sound", "original-sound", "profile picture",
-            "sticker", "comment live photo", "photo video", "video frame"));
+            "sticker", "comment live photo", "photo video", "video frame", BatchSave.LABEL));
     static final String OTHER = "other";
 
     private static final Object LOCK = new Object();
@@ -304,6 +304,28 @@ final class SaveRecords {
             slot.record.slots.remove(slot);
             slot.record.updated = System.currentTimeMillis();
             if (OPEN.get(slot.record.id) != slot.record) return;
+        }
+        persistNow(null);
+    }
+
+    /**
+     * One of the running save's files needed no writing: a post of a run that was saved here
+     * before. It takes a slot that is done at once, so a run that closes with TikTok doesn't name
+     * a file that was in the gallery all along as one that didn't finish.
+     */
+    static void countedWithoutFile() {
+        Record record = CURRENT.get();
+        if (record == null) return;
+        synchronized (LOCK) {
+            if (OPEN.get(record.id) != record) return;
+            record.updated = System.currentTimeMillis();
+            if (record.slots.size() >= MAX_SLOTS) {
+                record.unsure = true;
+            } else {
+                Slot slot = new Slot(record, null, null, -1L);
+                slot.published = true;
+                record.slots.add(slot);
+            }
         }
         persistNow(null);
     }

@@ -4,9 +4,10 @@ plugins {
 
 // One Bouncy Castle version across every module, because the request arrives in more places
 // than any single module can see. The patcher pins 1.77 and the Android build tools ask for
-// 1.79, and both are inside CVE-2025-8916 (1.44 to 1.79) and CVE-2026-5588 (1.49 to 1.84);
-// the reviewed release is the one gradle/libs.versions.toml pins, which says why it is that
-// one. None of this reaches the payload injected into TikTok. It is the build and signing
+// 1.79. 1.77 is inside CVE-2025-8916 (1.44 to 1.78), both are inside CVE-2026-5588 (1.67 to
+// 1.83, apart from the 1.80.2 and 1.81.1 maintenance releases) and CVE-2026-97873 (everything
+// before 1.86); the reviewed release is the one gradle/libs.versions.toml pins, which says why
+// it is that one. None of this reaches the payload injected into TikTok. It is the build and signing
 // classpath, and the repository's rule is that a known-affected component does not stay in a
 // reproducible graph.
 //

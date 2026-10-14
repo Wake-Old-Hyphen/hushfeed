@@ -121,6 +121,8 @@ final class UnfinishedSaves {
                 return L10n.t(context, "Video of photos");
             case "video frame":
                 return L10n.t(context, "Video frame");
+            case BatchSave.LABEL:
+                return L10n.t(context, "Picked videos");
             default:
                 return L10n.t(context, "Media save");
         }

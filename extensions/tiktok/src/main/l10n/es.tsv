@@ -1730,6 +1730,10 @@ Show exact LIVE viewer counts	Mostrar el número exacto de espectadores en LIVE
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Una sala LIVE muestra cuánta gente la ve con un número redondeado como 1,2K. Esto muestra el número exacto.
 Offer LIVE quality in more rooms	Ofrecer la calidad de LIVE en más salas
 TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.	TikTok solo te deja elegir la calidad de un LIVE en algunas salas. Esto añade Calidad de video al menú de casi todas las demás, y la siguiente sala se abre con la última calidad que elegiste.
+Keep the LIVE quality after TikTok restarts	Mantener la calidad de LIVE al reiniciar TikTok
+TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok olvida la calidad de LIVE que elegiste cuando se cierra. Esto hace que las salas vuelvan a empezar con esa calidad después de reiniciar. Una sala cuya transmisión no la tiene se abre con la que elija TikTok.
+Offer clear screen in every LIVE room	Ofrecer pantalla limpia en todas las salas LIVE
+Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	La pantalla limpia oculta el chat, los regalos y los botones de un LIVE para que solo se vea la transmisión. TikTok la pone en el menú de solo algunas salas. Esto la añade a las demás.
 Keep watching in a small window	Seguir viendo en una ventana pequeña
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Cuando sales de TikTok mientras se reproduce un video, sigue reproduciéndose en una ventana pequeña sobre tus otras apps, con un botón para pausarlo. Funciona en el feed y en los videos que abres desde un perfil, la búsqueda o un sonido. Requiere Android 8 o posterior.
 Play	Reproducir
@@ -2065,7 +2069,13 @@ Opens a GitHub report with your versions and settings filled in. Add what happen
 Support Hushfeed	Apoya Hushfeed
 No app on this phone opens web links	Ninguna app de este teléfono abre enlaces web
 Quick setups	Ajustes rápidos
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	Tranquilo oculta anuncios, Tienda y LIVE. Privacidad oculta tus visualizaciones y lo que escribes y detiene el rastreo. Restablecer devuelve cada interruptor a su valor original.
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	Tranquilo oculta anuncios, Tienda y LIVE. Privacidad oculta tus visualizaciones y lo que escribes y detiene el rastreo. Restablecer devuelve cada interruptor a su valor original. Mantén pulsado para ocultar esta fila.
+# context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
+Quick setups hidden. Bring it back from %1$s.	Ajustes rápidos ocultos. Puedes recuperarlos en %1$s.
+# context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
+Quick setups on the home page	Ajustes rápidos en la página de inicio
+Shown. Tap to hide it.	Se muestran. Toca para ocultarlos.
+Hidden. Tap to show it again.	Ocultos. Toca para mostrarlos de nuevo.
 Quiet	Tranquilo
 Back to defaults	Restablecer
 Changed 1 setting	Se cambió 1 ajuste
@@ -2083,3 +2093,50 @@ Privacy and app	Privacidad y aplicación
 # context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
 Hushfeed	Hushfeed
 Open Hushfeed settings	Abrir los ajustes de Hushfeed
+Several photos in one comment	Varias fotos en un comentario
+Scrolling comments on videos	Comentarios que se deslizan sobre los videos
+See-through bottom bar	Barra inferior transparente
+Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.	Deja que el vídeo llegue en el feed principal hasta el borde inferior de la pantalla y muestra las pestañas encima, sin barra detrás.
+LIVE chat auto-translate	Traducción automática del chat de LIVE
+
+Pick videos to save from profile grids	Elegir videos para guardar en las cuadrículas de perfil
+Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Pone un círculo en cada video de una cuadrícula de perfil, Me gusta o Favoritos. Elige hasta %1$s y toca Guardar para guardarlos uno tras otro, con un contador y Cancelar.
+Pick for saving	Elegir para guardar
+You can pick up to %1$s at a time	Puedes elegir hasta %1$s a la vez
+One picked	Uno elegido
+%1$s picked	%1$s elegidos
+None of the picked videos could be saved. Try again.	No se pudo guardar ninguno de los videos elegidos. Inténtalo de nuevo.
+Saved one video	Se guardó un video
+Saved %1$s videos	Se guardaron %1$s videos
+One was already saved	Uno ya estaba guardado
+%1$s were already saved	%1$s ya estaban guardados
+Picked videos	Videos elegidos
+Pick all	Elegir todos
+Picked the first %1$s. Save them, then tap Pick all again for the rest.	Se eligieron los primeros %1$s. Guárdalos y luego toca Elegir todos otra vez para el resto.
+Everything this list has loaded is picked or saved. Scroll down to load more.	Todo lo que esta lista ha cargado ya está elegido o guardado. Desplázate hacia abajo para cargar más.
+
+Record LIVEs you watch	Grabar los LIVE que ves
+Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Añade un botón Grabar a las salas LIVE. La grabación empieza cuando lo tocas y termina cuando tocas Detener o sales de la sala. Lo anterior no se guarda.
+Record	Grabar
+Stop	Detener
+Stop recording this LIVE	Detener la grabación de este LIVE
+Record this LIVE from now	Grabar este LIVE desde ahora
+Recording this LIVE from now	Grabando este LIVE desde ahora
+Saving the recording	Guardando la grabación
+Couldn't find this LIVE's stream to record. Leave the room and open it again.	No se encontró la transmisión de este LIVE para grabarla. Sal de la sala y vuelve a abrirla.
+Allow storage for TikTok in Android settings to record LIVEs	Permite el almacenamiento de TikTok en los ajustes de Android para grabar LIVE
+LIVE recording saved to %1$s	Grabación del LIVE guardada en %1$s
+The LIVE ended or the connection dropped. What was recorded is saved to %1$s	El LIVE terminó o se cortó la conexión. Lo grabado se guardó en %1$s
+The phone is running out of room. What was recorded is saved to %1$s	Al teléfono se le acaba el espacio. Lo grabado se guardó en %1$s
+The recording reached its size limit and was saved to %1$s	La grabación llegó a su límite de tamaño y se guardó en %1$s
+TikTok closed. What was recorded is saved to %1$s	TikTok se cerró. Lo grabado se guardó en %1$s
+Recording stopped early. What was recorded is saved to %1$s	La grabación se detuvo antes de tiempo. Lo grabado se guardó en %1$s
+This LIVE's stream can't be saved	La transmisión de este LIVE no se puede guardar
+There isn't enough room on the phone to record	No hay espacio suficiente en el teléfono para grabar
+Nothing was recorded	No se grabó nada
+The recording couldn't be saved. Try again.	No se pudo guardar la grabación. Inténtalo de nuevo.
+Those photos can't be tried again now. Save the post again to get the rest.	Esas fotos no se pueden reintentar ahora. Vuelve a guardar la publicación para conseguir el resto.
+Show the time zone	Mostrar la zona horaria
+Puts your time zone after the time to the second, like EDT.	Pone tu zona horaria después de la hora al segundo, como EDT.
+Short date	Fecha corta
+Writes the date before the time to the second the short way your language does, like 10/7/25.	Escribe la fecha antes de la hora al segundo en la forma corta de tu idioma, como 7/10/25.

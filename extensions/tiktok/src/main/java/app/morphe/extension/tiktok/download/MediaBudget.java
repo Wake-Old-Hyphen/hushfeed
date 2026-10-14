@@ -119,9 +119,19 @@ final class MediaBudget {
         checkDiskSpace(directory, transferBytes, null);
     }
 
+    /** The most a recorded LIVE may be: a recording runs far past what a post's download does. */
+    static final long MAX_LIVE_RECORDING_BYTES = 2L * 1024 * 1024 * 1024;
+
     static void checkDiskSpace(File directory, long transferBytes, Deadline deadline) throws IOException {
+        checkDiskSpace(directory, transferBytes, deadline, MAX_TRANSFER_BYTES);
+    }
+
+    static void checkDiskSpace(File directory, long transferBytes, Deadline deadline, long maxBytes)
+            throws IOException {
         check(deadline);
-        checkTransferLength(transferBytes);
+        if (transferBytes > maxBytes) {
+            throw new IOException("Media file is larger than the " + (maxBytes >> 20) + " MB limit");
+        }
         long free = usableSpace(directory);
         if (free <= 0) return;
         long estimate = transferBytes < 0

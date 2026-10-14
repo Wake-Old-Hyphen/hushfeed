@@ -518,37 +518,66 @@ public class CreatorExceptionsTest {
     /**
      * The Following tab on 47.1.4 reaches the filter only where TikTok reads its list, never
      * through the response hook, and a blocked creator still showed there on a phone. Every feed
-     * rule runs on that read now, except two: the For You padding rule, which reads marks only
-     * For You carries, and Hide seen videos, since the list grows under the video playing.
+     * rule runs on that read now, except the For You padding rule, which reads marks only For You
+     * carries. Hide seen videos runs too, on the videos no earlier read of the list kept.
      */
     @Test
-    public void theFollowingTabsReadRunsEveryFeedRuleButSeenAndForYouPadding() {
+    public void theFollowingTabsReadRunsEveryFeedRuleButForYouPadding() {
         List<Case> cases = new ArrayList<>(subjectiveCases());
         cases.addAll(hardCases());
         for (Case which : cases) {
             quiet();
             which.enable.run();
             Item post = tripped("post", which);
-            boolean seen = which.filter.equals("SeenVideoFilter");
-            if (seen) assertTrue("the post was never marked seen, so keeping it proves nothing",
-                    SeenVideoHistory.shouldHide("post"));
-            List<String> expected = seen || which.filter.equals("UnpersonalizedForYouFilter")
+            if (which.filter.equals("SeenVideoFilter")) {
+                assertTrue("the post was never marked seen, so hiding it proves nothing",
+                        SeenVideoHistory.shouldHide("post"));
+            }
+            List<String> expected = which.filter.equals("UnpersonalizedForYouFilter")
                     ? List.of("post", "plain") : List.of("plain");
             assertEquals(which.filter + " on the Following tab's read",
                     expected, followingSurvivors(post, stranger("plain")));
         }
     }
 
-    /** A video watched while the list grows under it stays where it is. */
+    /**
+     * A video watched while the list grows under it stays where it is, and one seen before that
+     * arrives later in the same list goes.
+     */
     @Test
     public void aFollowingVideoWatchedWhileTheListGrowsStays() {
         Settings.HIDE_SEEN_VIDEOS.save(true);
+        SeenVideoHistory.onPlayProgressChange("earlier", 9_000, 10_000);
         FollowFeedList list = new FollowFeedList();
         list.mItems = new ArrayList<>();
         assertEquals(List.of("playing"), followingSurvivors(list, stranger("playing")));
         SeenVideoHistory.onPlayProgressChange("playing", 9_000, 10_000);
         assertTrue(SeenVideoHistory.shouldHide("playing"));
-        assertEquals(List.of("playing", "next"), followingSurvivors(list, stranger("next")));
+        assertEquals(List.of("playing", "next"),
+                followingSurvivors(list, stranger("earlier"), stranger("next")));
+    }
+
+    /** Other lists read meanwhile never push out what the one being watched kept. */
+    @Test
+    public void theListBeingWatchedKeepsItsMemoryWhileOthersAreRead() {
+        Settings.HIDE_SEEN_VIDEOS.save(true);
+        FollowFeedList watched = new FollowFeedList();
+        watched.mItems = new ArrayList<>();
+        assertEquals(List.of("playing"), followingSurvivors(watched, stranger("playing")));
+        SeenVideoHistory.onPlayProgressChange("playing", 9_000, 10_000);
+        List<FollowFeedList> others = new ArrayList<>();
+        for (int round = 0; round < 2; round++) {
+            for (int i = 0; i < 255; i++) {
+                FollowFeedList other = new FollowFeedList();
+                other.mItems = new ArrayList<>();
+                others.add(other);
+                followingSurvivors(other, stranger("other-" + round + "-" + i));
+            }
+            // TikTok reads the list on screen again between the others.
+            assertEquals(List.of("playing"), followingSurvivors(watched));
+        }
+        assertTrue(FeedItemsFilter.keptBeforeOwnersForTests() <= 256);
+        assertEquals(List.of("playing", "next"), followingSurvivors(watched, stranger("next")));
     }
 
     @Test

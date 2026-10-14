@@ -43,17 +43,25 @@ public final class QuickSetupsPreference extends Preference {
     }
 
     private final Pages pages;
+    /** What a long press on the card does: hides it. Null leaves the long press alone. */
+    private final Runnable hide;
     private QuickSetups.Choice running;
 
     public QuickSetupsPreference(Context context, Pages pages) {
+        this(context, pages, null);
+    }
+
+    public QuickSetupsPreference(Context context, Pages pages, Runnable hide) {
         super(context);
         this.pages = pages;
+        this.hide = hide;
         setKey(KEY);
         setPersistent(false);
         setSelectable(false);
         setTitle(L10n.t(context, "Quick setups"));
         setSummary(L10n.t(context, "Quiet hides ads, Shop and LIVE. Privacy hides your views and "
-                + "typing and stops tracking. Back to defaults resets every switch."));
+                + "typing and stops tracking. Back to defaults resets every switch. "
+                + "Press and hold to hide this row."));
     }
 
     @Override
@@ -97,6 +105,19 @@ public final class QuickSetupsPreference extends Preference {
         card.addView(buttons, buttonsParams);
         card.setContentDescription(String.valueOf(getTitle()) + '.' + ' ' + getSummary());
         update(card);
+        if (hide != null) {
+            // The card and the three buttons on it: a press held anywhere on the row hides it.
+            card.setOnLongClickListener(held -> {
+                hide.run();
+                return true;
+            });
+            for (int index = 0; index < buttons.getChildCount(); index++) {
+                buttons.getChildAt(index).setOnLongClickListener(held -> {
+                    hide.run();
+                    return true;
+                });
+            }
+        }
 
         FrameLayout holder = new FrameLayout(context);
         holder.setBackgroundColor(SettingsUi.background());

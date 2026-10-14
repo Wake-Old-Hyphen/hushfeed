@@ -117,6 +117,10 @@ public final class SettingsBackupPreference extends Preference
             screen.addPreference(preference);
             ROWS.add(new java.lang.ref.WeakReference<>(preference));
         }
+        // Where the home page's Quick setups card comes back after a long press hid it.
+        QuickSetupsHomePreference quickSetups = new QuickSetupsHomePreference(fragment.getActivity());
+        quickSetups.setOrder(order);
+        screen.addPreference(quickSetups);
     }
 
     /**

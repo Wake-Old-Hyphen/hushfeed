@@ -1730,6 +1730,10 @@ Show exact LIVE viewer counts	LIVE izleyici sayısını tam göster
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Bir LIVE odası kaç kişinin izlediğini 1,2K gibi yuvarlanmış bir sayıyla gösterir. Bu, bunun yerine tam sayıyı gösterir.
 Offer LIVE quality in more rooms	Daha fazla LIVE odasında kalite seçimi sun
 TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.	TikTok bir LIVE'ın kalitesini yalnızca bazı odalarda seçtirir. Bu, diğer odaların çoğunun menüsüne Video kalitesi ekler ve sonraki oda en son seçtiğin kalitede açılır.
+Keep the LIVE quality after TikTok restarts	TikTok yeniden başlayınca LIVE kalitesini koru
+TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok kapandığında seçtiğin LIVE kalitesini unutur. Bu, yeniden başlatmadan sonra odaları yine o kalitede açar. Yayınında o kalite olmayan bir oda TikTok'un seçtiği kalitede açılır.
+Offer clear screen in every LIVE room	Her LIVE odasında temiz ekran sun
+Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Temiz ekran bir LIVE'ın sohbetini, hediyelerini ve düğmelerini gizler, yalnızca yayın görünür. TikTok bunu yalnızca bazı odaların menüsüne koyar. Bu, onu diğerlerine de ekler.
 Keep watching in a small window	Küçük bir pencerede izlemeye devam et
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Bir video oynarken TikTok'tan çıktığınızda, video diğer uygulamalarınızın üzerinde küçük bir pencerede oynamaya devam eder ve duraklatmak için bir düğme bulunur. Akışta ve bir profilden, aramadan veya bir sesten açtığınız videolarda çalışır. Android 8 veya üstü gerekir.
 Play	Oynat
@@ -2065,7 +2069,13 @@ Opens a GitHub report with your versions and settings filled in. Add what happen
 Support Hushfeed	Hushfeed'i destekle
 No app on this phone opens web links	Bu telefonda web bağlantılarını açan uygulama yok
 Quick setups	Hızlı kurulumlar
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	Sakin; reklamları, Mağaza'yı ve LIVE'ı gizler. Gizlilik; görüntülemelerini ve yazdığını gizler, izlemeyi durdurur. Varsayılana dön her anahtarı sıfırlar.
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	Sakin; reklamları, Mağaza'yı ve LIVE'ı gizler. Gizlilik; görüntülemelerini ve yazdığını gizler, izlemeyi durdurur. Varsayılana dön her anahtarı sıfırlar. Bu satırı gizlemek için basılı tut.
+# context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
+Quick setups hidden. Bring it back from %1$s.	Hızlı kurulumlar gizlendi. %1$s bölümünden geri getirebilirsin.
+# context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
+Quick setups on the home page	Ana sayfada hızlı kurulumlar
+Shown. Tap to hide it.	Gösteriliyor. Gizlemek için dokun.
+Hidden. Tap to show it again.	Gizli. Tekrar göstermek için dokun.
 Quiet	Sakin
 Back to defaults	Varsayılana dön
 Changed 1 setting	1 ayar değişti
@@ -2083,3 +2093,50 @@ Privacy and app	Gizlilik ve uygulama
 # context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
 Hushfeed	Hushfeed
 Open Hushfeed settings	Hushfeed ayarlarını aç
+Several photos in one comment	Bir yorumda birden fazla fotoğraf
+Scrolling comments on videos	Videoların üzerinde kayan yorumlar
+See-through bottom bar	Şeffaf alt çubuk
+Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.	Ana akışta videonun ekranın altına kadar uzanmasını sağlar ve sekmeleri arkalarında çubuk olmadan videonun üzerinde gösterir.
+LIVE chat auto-translate	LIVE sohbetini otomatik çevir
+
+Pick videos to save from profile grids	Profil ızgaralarından kaydedilecek videoları seç
+Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Profil, Beğenilenler veya Favoriler ızgarasındaki her videoya bir daire koyar. En fazla %1$s tane seç, sonra Kaydet'e dokun. Hepsi sayaç ve İptal ile sırayla kaydedilir.
+Pick for saving	Kaydetmek için seç
+You can pick up to %1$s at a time	Bir seferde en fazla %1$s seçebilirsin
+One picked	Bir tane seçildi
+%1$s picked	%1$s tane seçildi
+None of the picked videos could be saved. Try again.	Seçilen videoların hiçbiri kaydedilemedi. Tekrar deneyin.
+Saved one video	Bir video kaydedildi
+Saved %1$s videos	%1$s video kaydedildi
+One was already saved	Biri zaten kaydedilmişti
+%1$s were already saved	%1$s tanesi zaten kaydedilmişti
+Picked videos	Seçilen videolar
+Pick all	Tümünü seç
+Picked the first %1$s. Save them, then tap Pick all again for the rest.	İlk %1$s tanesi seçildi. Onları kaydet, sonra geri kalanı için Tümünü seç'e yeniden dokun.
+Everything this list has loaded is picked or saved. Scroll down to load more.	Bu listenin yüklediği her şey seçildi ya da kaydedildi. Daha fazlasını yüklemek için aşağı kaydır.
+
+Record LIVEs you watch	İzlediğin LIVE'ları kaydet
+Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	LIVE odalarına bir Kaydet düğmesi ekler. Kayıt ona dokunduğunda başlar, Durdur'a dokunduğunda veya odadan çıktığında biter. Öncesinde olanlar kaydedilmez.
+Record	Kaydet
+Stop	Durdur
+Stop recording this LIVE	Bu LIVE'ın kaydını durdur
+Record this LIVE from now	Bu LIVE'ı şimdiden kaydet
+Recording this LIVE from now	Bu LIVE şimdiden kaydediliyor
+Saving the recording	Kayıt kaydediliyor
+Couldn't find this LIVE's stream to record. Leave the room and open it again.	Bu LIVE'ın yayını kayıt için bulunamadı. Odadan çıkıp yeniden açın.
+Allow storage for TikTok in Android settings to record LIVEs	LIVE kaydetmek için Android ayarlarında TikTok'a depolama izni ver
+LIVE recording saved to %1$s	LIVE kaydı %1$s konumuna kaydedildi
+The LIVE ended or the connection dropped. What was recorded is saved to %1$s	LIVE bitti veya bağlantı koptu. Kaydedilen kısım %1$s konumuna kaydedildi
+The phone is running out of room. What was recorded is saved to %1$s	Telefonda yer azalıyor. Kaydedilen kısım %1$s konumuna kaydedildi
+The recording reached its size limit and was saved to %1$s	Kayıt boyut sınırına ulaştı ve %1$s konumuna kaydedildi
+TikTok closed. What was recorded is saved to %1$s	TikTok kapandı. Kaydedilen kısım %1$s konumuna kaydedildi
+Recording stopped early. What was recorded is saved to %1$s	Kayıt erken durdu. Kaydedilen kısım %1$s konumuna kaydedildi
+This LIVE's stream can't be saved	Bu LIVE'ın yayını kaydedilemiyor
+There isn't enough room on the phone to record	Kayıt için telefonda yeterli yer yok
+Nothing was recorded	Hiçbir şey kaydedilmedi
+The recording couldn't be saved. Try again.	Kayıt kaydedilemedi. Tekrar dene.
+Those photos can't be tried again now. Save the post again to get the rest.	Bu fotoğraflar şu an yeniden denenemez. Geri kalanını almak için gönderiyi yeniden kaydet.
+Show the time zone	Saat dilimini göster
+Puts your time zone after the time to the second, like EDT.	Saniyesine kadar gösterilen saatin ardına saat dilimini ekler, örneğin EDT.
+Short date	Kısa tarih
+Writes the date before the time to the second the short way your language does, like 10/7/25.	Saniyesine kadar gösterilen saatten önceki tarihi dilinin kısa biçimiyle yazar, örneğin 7.10.2025.

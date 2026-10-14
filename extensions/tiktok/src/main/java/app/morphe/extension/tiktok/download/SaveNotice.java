@@ -31,8 +31,17 @@ final class SaveNotice {
 
     /** Announces a completed save of {@code saved}, or by toast alone when it has no row. */
     static void saved(String message, MediaFileWriter.Saved saved) {
+        saved(message, saved, null);
+    }
+
+    /**
+     * As above, with Retry beside Open for a save whose failed files can be tried again. A save
+     * without a row to open still gets the banner then, with Retry alone, since a toast can't
+     * carry it.
+     */
+    static void saved(String message, MediaFileWriter.Saved saved, Runnable retry) {
         Uri uri = saved == null ? null : saved.uri;
-        if (uri == null) {
+        if (uri == null && retry == null) {
             Utils.showToastShort(message);
             return;
         }
@@ -52,7 +61,14 @@ final class SaveNotice {
             // which is the sheet while it is up and the activity's own decor otherwise.
             ViewGroup root = topWindowRoot(activity);
             if (root == null) root = activity.findViewById(android.R.id.content);
-            BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
+            if (retry == null) {
+                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri));
+            } else if (uri == null) {
+                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Retry"), retry);
+            } else {
+                BlockAuthorOverlay.showActionBanner(root, message, L10n.t("Open"), () -> open(uri),
+                        L10n.t("Retry"), retry);
+            }
         }, SHEET_SETTLE_MS);
     }
 

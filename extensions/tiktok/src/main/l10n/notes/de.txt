@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Bereits gesehene Videos ausblenden wirkt jetzt auch in Gefolgt, ohne das laufende Video zu verschieben.
+
+* **TikTok:** Ein Video, das in „Für dich“ oder Gefolgt läuft, verschwindet nicht mehr, sobald es das Höchstalter von Beiträgen überschreitet oder Bereits gesehene Videos ausblenden es mitzählt.
+
+* **TikTok:** Uhrzeit sekundengenau anzeigen hat zwei eigene Optionen: Zeitzone anzeigen, wie bisher an, und Kurzes Datum (#147).
+
+* **TikTok:** Videos in Profilrastern zum Speichern auswählen funktioniert jetzt auch in einer Sammlung deiner Favoriten, Alle auswählen inklusive (#27).
+
+* **TikTok:** Kommt beim Speichern von Originalfotos nur ein Teil an, gibt es jetzt neben Öffnen auch Erneut versuchen. Das versucht nur die Fotos noch einmal, die gefehlt haben.
+
+* **TikTok:** Schnelleinstellungen lassen sich mit langem Drücken auf ihre Karte von der Startseite der Einstellungen ausblenden. Die Zeile Schnelleinstellungen auf der Startseite unter Sichern und wiederherstellen holt sie zurück.
+
+* **TikTok:** LIVE-Räume können eine Aufnahme-Taste zeigen (standardmäßig aus, in den Wiedergabe-Einstellungen). Sie speichert, was du ab dem Antippen schaust, bis du Stopp tippst oder den Raum verlässt (#37).
+
+* **TikTok:** Ist Kommentarleiste bei geöffneten Videos ausblenden an, läuft die Spulleiste bei Videos, die du über ein Profil oder die Suche öffnest, nicht mehr durch die Beschreibung. Die Beschreibung und die Musikscheibe rücken gerade so weit nach oben, dass sie frei bleiben (#153).
+
+* **TikTok:** Der Diagnosebericht meldet die Kommentarleiste nicht mehr als fehlend, solange du im Hauptfeed bist (#153).
+
+* **TikTok:** Der Speicherbereich im Diagnosebericht zeigt keinen Teil deiner Konto-ID mehr als Ordnernamen (#70).
+
+* **TikTok:** Ist Kommentarleiste bei geöffneten Videos ausblenden an, enden Fotobeiträge in einem geöffneten Raster nicht mehr über einem schwarzen Streifen am unteren Rand (#153).
+
+* **TikTok:** Ist LIVE unter der Statusleiste zeigen an, beginnen die Bereiche über dem ersten Raum im LIVE-Feed jetzt unterhalb der Uhr und nicht mehr hinter der Statusleiste (#137).
+
+* **TikTok:** Ein LIVE im Feed Für dich zeigt nicht mehr die Service+-Zeile eines LIVE, an dem du vorbeigescrollt hast (#94).
+
+* **TikTok:** Ein neuer Schalter behält die gewählte LIVE-Qualität auch nach einem Neustart von TikTok (#57).
+
+* **TikTok:** Ein neuer Schalter fügt Bildschirm leeren, das nur den Stream zeigt, dem Menü jedes LIVE-Raums hinzu (#57).
+
+* **TikTok:** Der Anzeigename eines Creators, der nach dem Land oder dem @Namen zurückkommt, bleibt nicht mehr abgeschnitten (#127).
+
+* **TikTok:** Das AMOLED-Dunkeldesign macht jetzt auch die Karten auf TikToks eigenen Einstellungsseiten schwarz (#152).
+
+* **TikTok:** Feature Gate Lab hat zwei neue Voreinstellungen: Laufende Kommentare über Videos und Mehrere Fotos in einem Kommentar (#98).
+
+* **TikTok:** Ein neuer Schalter auf der Seite Feed screen, Durchsichtige untere Leiste, lässt das Video bis zum unteren Bildschirmrand reichen und nimmt der Tab-Leiste den Hintergrund. Er ist zunächst aus (#145).
+
+* **TikTok:** Feature Gate Lab hat eine neue Voreinstellung: Automatische Übersetzung im LIVE-Chat. Sie schaltet die Option Kommentare übersetzen unter Teilen in einem LIVE-Raum frei (#98).
+
+* **TikTok:** Schalte Videos in Profilrastern zum Speichern auswählen unter Hushfeed-Einstellungen > Downloads ein, dann bekommt jedes Video in einem Profil-, Gefällt-mir- oder Favoritenraster einen Kreis. Wähle bis zu 50 aus, tippe auf Speichern, und sie werden nacheinander mit Zähler und Abbrechen gespeichert (#27).
+
+* **TikTok:** Videos in Profilrastern zum Speichern auswählen hat jetzt eine Schaltfläche Alle auswählen. Sie wählt bis zu 50 der Beiträge aus, die eine Liste geladen hat, und lässt bei eingeschaltetem Bereits gespeicherte Videos prüfen gespeicherte Videos aus. So wird eine ganze Liste in Durchgängen gespeichert, die dort weitermachen, wo der letzte aufgehört hat (#27).
+
+* **TikTok:** Ist Bereits gesehene Videos ausblenden an und der Verlauf voll, geht nicht mehr jedes angesehene Video alle 10.000 Einträge durch, um den ältesten zu entfernen. Das passiert jetzt nur noch einmal alle 256 Videos (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt mit den geänderten Einstellungen. Er nennt jede Einstellung, die nicht mehr auf ihrem Standardwert steht, sodass ein Bericht zeigt, welche Schalter an sind. Text, den du in eine Einstellung eingegeben hast, steht nie darin (#149).

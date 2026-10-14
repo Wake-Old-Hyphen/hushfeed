@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Esconder os vídeos que você já viu agora também funciona em Seguindo, sem mover o vídeo que está tocando.
+
+* **TikTok:** Um vídeo tocando em Para você ou Seguindo não some mais quando passa da Idade máxima da publicação ou quando Esconder os vídeos que você já viu o conta.
+
+* **TikTok:** Mostrar o horário com segundos ganhou duas opções próprias: Mostrar o fuso horário, ligada como antes, e Data curta (#147).
+
+* **TikTok:** Escolher vídeos para salvar nas grades de perfil agora também funciona dentro de uma coleção dos Favoritos, com Escolher todos incluído (#27).
+
+* **TikTok:** Quando só parte das fotos originais é salva, agora aparece Tentar novamente ao lado de Abrir. Ele tenta de novo só as fotos que falharam.
+
+* **TikTok:** As Configurações rápidas podem ser escondidas da página inicial das configurações com um toque longo no cartão. A linha Configurações rápidas na página inicial, em Backup e restauração, traz de volta.
+
+* **TikTok:** As salas de LIVE podem mostrar um botão Gravar (desativado por padrão, nas configurações de Reprodução). Ele salva o que você assiste desde o toque até você tocar em Parar ou sair da sala (#37).
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, a barra de progresso não passa mais por cima da legenda nos vídeos que você abre de um perfil ou da busca. A legenda e o disco de música sobem só o suficiente para ficarem livres (#153).
+
+* **TikTok:** O relatório de diagnóstico não marca mais a barra de comentários como ausente enquanto você está no feed principal (#153).
+
+* **TikTok:** A seção de armazenamento do relatório de diagnóstico não mostra mais parte do ID da sua conta como nome de pasta (#70).
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, as publicações de fotos numa grade aberta não terminam mais acima de uma faixa preta embaixo (#153).
+
+* **TikTok:** Com Mostrar a LIVE sob a barra de status ligado, os painéis acima da primeira sala do feed de LIVE agora começam abaixo do relógio, e não mais atrás da barra de status (#137).
+
+* **TikTok:** Uma LIVE no feed Para você não mostra mais a linha Service+ de uma LIVE pela qual você já passou (#94).
+
+* **TikTok:** Uma nova chave mantém a qualidade da LIVE que você escolheu depois que o TikTok reinicia (#57).
+
+* **TikTok:** Uma nova chave adiciona a tela limpa, que deixa só a transmissão, ao menu de todas as salas de LIVE (#57).
+
+* **TikTok:** O nome de exibição de um criador que volta depois do país ou do @usuário não fica mais cortado (#127).
+
+* **TikTok:** O tema escuro AMOLED agora também deixa pretos os cartões das páginas de configurações do próprio TikTok (#152).
+
+* **TikTok:** O Feature Gate Lab tem duas novas predefinições: Comentários passando sobre os vídeos e Várias fotos em um comentário (#98).
+
+* **TikTok:** Um novo botão na página Feed screen, Barra inferior transparente, deixa o vídeo chegar até a parte de baixo da tela e tira o fundo da barra de abas. Começa desligado (#145).
+
+* **TikTok:** O Feature Gate Lab tem uma nova predefinição, Tradução automática do chat da LIVE. Ela liga a opção Traduzir comentários que fica em Compartilhar numa sala de LIVE (#98).
+
+* **TikTok:** Ligue Escolher vídeos para salvar nas grades de perfil em Configurações do Hushfeed > Downloads e cada vídeo de uma grade de perfil, Curtidos ou Favoritos ganha um círculo. Escolha até 50, toque em Salvar e eles são salvos um após o outro, com uma contagem e Cancelar (#27).
+
+* **TikTok:** Escolher vídeos para salvar nas grades de perfil ganhou um botão Escolher todos. Ele escolhe até 50 das publicações que uma lista carregou e, com Verificar vídeos já salvos ligado, pula os que você já salvou. Assim uma lista inteira é salva em rodadas, cada uma continuando de onde a anterior parou (#27).
+
+* **TikTok:** Com Esconder os vídeos que você já viu ligado e o registro cheio, cada vídeo que você assiste não percorre mais as 10.000 linhas para tirar a mais antiga. Agora isso acontece uma vez a cada 256 vídeos (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** O relatório de diagnóstico tem uma nova seção com as configurações alteradas. Ela lista cada configuração que não está mais no valor padrão, para que um relatório mostre quais chaves estão ligadas. O texto que você digitou em uma configuração nunca é incluído (#149).

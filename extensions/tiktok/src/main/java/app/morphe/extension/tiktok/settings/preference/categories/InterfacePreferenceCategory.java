@@ -270,6 +270,18 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Show the time zone",
+                    "Puts your time zone after the time to the second, like EDT.",
+                    Settings.PUBLISH_DATE_TIME_ZONE
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Short date",
+                    "Writes the date before the time to the second the short way your language does, like 10/7/25.",
+                    Settings.PUBLISH_DATE_SHORT_DATE
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Show dates on profile grids",
                     "Show the day each video was posted under its view count on profile grids.",
                     Settings.PUBLISH_DATE_ON_GRID
@@ -572,6 +584,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Keep faded controls in Clear display",
                     "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",
                     Settings.FADE_IN_CLEAR_DISPLAY
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "See-through bottom bar",
+                    "Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.",
+                    Settings.SEE_THROUGH_BOTTOM_BAR
             ));
             addPreference(new ChoicePreference(context, "Burn-in guard", Settings.BURN_IN_GUARD,
                     new String[]{"Off", "Dim when idle", "Dim when idle and shift"},

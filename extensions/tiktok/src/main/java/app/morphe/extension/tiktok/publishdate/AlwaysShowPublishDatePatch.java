@@ -74,7 +74,8 @@ public final class AlwaysShowPublishDatePatch {
             boolean hour24 = context != null
                     ? android.text.format.DateFormat.is24HourFormat(context)
                     : ((SimpleDateFormat) DateFormat.getTimeInstance(DateFormat.LONG)).toPattern().indexOf('H') >= 0;
-            return exactTime(seconds, Locale.getDefault(), TimeZone.getDefault(), hour24);
+            return exactTime(seconds, Locale.getDefault(), TimeZone.getDefault(), hour24,
+                    Settings.PUBLISH_DATE_TIME_ZONE.get(), Settings.PUBLISH_DATE_SHORT_DATE.get());
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not write the exact posting time", ex);
             return original;
@@ -152,8 +153,20 @@ public final class AlwaysShowPublishDatePatch {
      * The hours follow the phone's own 12 or 24 hour setting, which java.text never reads.
      */
     static String exactTime(long seconds, Locale locale, TimeZone zone, boolean hour24) {
+        return exactTime(seconds, locale, zone, hour24, true, false);
+    }
+
+    /**
+     * The same, with the zone left off or the date written short, both the language's own way
+     * rather than cut out of the long text (Discussion #147). Without the zone the time is the
+     * language's medium one, which every locale writes with the seconds and without a zone; the
+     * short date is the language's short one ("10/7/25", "07.10.25").
+     */
+    static String exactTime(long seconds, Locale locale, TimeZone zone, boolean hour24, boolean showZone,
+            boolean shortDate) {
         // A new instance per call: DateFormat isn't thread safe.
-        DateFormat format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, locale);
+        DateFormat format = DateFormat.getDateTimeInstance(shortDate ? DateFormat.SHORT : DateFormat.MEDIUM,
+                showZone ? DateFormat.LONG : DateFormat.MEDIUM, locale);
         if (format instanceof SimpleDateFormat) {
             SimpleDateFormat simple = (SimpleDateFormat) format;
             String pattern = simple.toPattern();

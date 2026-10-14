@@ -50,6 +50,8 @@ import java.util.WeakHashMap;
  * over the top of the room. Both go while the room is in front, and the room's controls are held
  * a bar lower again on their own, so only the stream reaches up under the clock. TikTok's dark
  * shade across the top goes down with the controls, so its first color is drawn on into the strip.
+ * A page of the room pager with no stream, like the LIVE feed's Discover panel above the first
+ * room, is held a bar lower as a whole.
  *
  * <p>A LIVE opened from the preview under a creator's card in search isn't a room of its own: it's
  * a page of TikTok's detail pager, the one opened videos scroll in. The detail page is watched for a
@@ -279,6 +281,11 @@ public final class LiveStatusBar {
         if (offset <= 0) return false;
         for (int bar : bars) if (bar == offset) return true;
         return false;
+    }
+
+    private static int topMarginOf(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        return params instanceof ViewGroup.MarginLayoutParams ? ((ViewGroup.MarginLayoutParams) params).topMargin : 0;
     }
 
     /**
@@ -684,6 +691,15 @@ public final class LiveStatusBar {
         private final WeakHashMap<View, Offset> strips = new WeakHashMap<>();
         /** The room pager, found from a stream once it holds two rooms. */
         private WeakReference<ViewGroup> pager = new WeakReference<>(null);
+        /** The height of the last strip taken from above a room's stream, 0 before one is. */
+        private int stripHeight;
+        /**
+         * The room pager's pages without a stream, held a bar lower under a bar left showing, with
+         * the top padding each had of its own and how much lower it went. The LIVE feed's Discover
+         * panel above the first room is such a page: it went up under the clock with the rooms, or
+         * sat under TikTok's cover that's hidden now, and its top row was hard to reach (#137).
+         */
+        private final WeakHashMap<View, int[]> loweredPages = new WeakHashMap<>();
         private int searches, relifts, coverSearches;
         /**
          * Shade searches spent on each layer held lower. One budget for the whole visit ran out
@@ -815,11 +831,22 @@ public final class LiveStatusBar {
                     liftAbove(first, content, barHeights(window));
                     return;
                 }
+                ViewGroup found = rooms;
+                Logger.printInfo(() -> "LIVE room pager " + found.getClass().getName()
+                        + " holds " + found.getChildCount() + " pages");
             }
             int[] bars = barHeights(window);
             for (int i = 0; i < rooms.getChildCount() && !fought; i++) {
-                View shown = rooms.getChildAt(i).findViewById(videoId);
-                if (shown != null) liftAbove(shown, content, bars);
+                View page = rooms.getChildAt(i);
+                View shown = page.findViewById(videoId);
+                if (shown == null) continue;
+                forgetPage(page);
+                liftAbove(shown, content, bars);
+            }
+            if (barHidden || fought || stripHeight == 0) return;
+            for (int i = 0; i < rooms.getChildCount(); i++) {
+                View page = rooms.getChildAt(i);
+                if (page.findViewById(videoId) == null) keepPageBelowBar(page, i, bars);
             }
         }
 
@@ -831,7 +858,55 @@ public final class LiveStatusBar {
             if (strips.containsKey(target) && !mayRelift()) return;
             strips.put(target, strip);
             strip.set(target, 0);
+            stripHeight = strip.value;
             HookStatus.bound(HOOK_FAMILY, "LIVE room top strip taken away");
+        }
+
+        /**
+         * Under a bar left showing, a page of the room pager with no stream in it, like the LIVE
+         * feed's Discover panel, is held a strip's height lower so its top row stays clear of the
+         * clock (#137). A page already held down a bar's height of its own is left alone, and one
+         * TikTok gives a padding of its own is let be.
+         */
+        private void keepPageBelowBar(View page, int index, int[] bars) {
+            int[] held = loweredPages.get(page);
+            if (held == null) {
+                if (isBar(page.getPaddingTop(), bars) || isBar(topMarginOf(page), bars)) return;
+                held = new int[] {page.getPaddingTop(), stripHeight};
+                loweredPages.put(page, held);
+                if (loweredPages.size() == 1) HookStatus.bound(HOOK_FAMILY, "LIVE feed panel kept below the bar");
+                int own = held[0], by = held[1];
+                Logger.printInfo(() -> "LIVE under the status bar: padded room pager page " + index + " ("
+                        + page.getClass().getName() + ", no stream, " + page.getWidth() + "x" + page.getHeight()
+                        + ") from " + own + " to " + (own + by) + " px at the top");
+            } else if (page.getPaddingTop() != held[0]) {
+                // Already a bar lower, or TikTok set a padding of its own.
+                return;
+            }
+            page.setPadding(page.getPaddingLeft(), held[0] + held[1], page.getPaddingRight(), page.getPaddingBottom());
+        }
+
+        /**
+         * Lets go of a page held lower that the pager has since bound a room to. A room's page is
+         * padded a bar by TikTok as it's bound, and the strip above its stream is taken from there,
+         * so only a padding of the page's own that isn't a bar is given back.
+         */
+        private void forgetPage(View page) {
+            int[] held = loweredPages.remove(page);
+            if (held == null || held[0] == 0 || page.getPaddingTop() != held[0] + held[1]) return;
+            page.setPadding(page.getPaddingLeft(), held[0], page.getPaddingRight(), page.getPaddingBottom());
+        }
+
+        /** Gives every page held lower its own padding back unless TikTok has set another. */
+        private void raisePages() {
+            for (Map.Entry<View, int[]> entry : loweredPages.entrySet()) {
+                View page = entry.getKey();
+                int[] held = entry.getValue();
+                if (page != null && page.getPaddingTop() == held[0] + held[1]) {
+                    page.setPadding(page.getPaddingLeft(), held[0], page.getPaddingRight(), page.getPaddingBottom());
+                }
+            }
+            loweredPages.clear();
         }
 
         /** Counts a strip TikTok put back; false once it has done so too often to keep up with. */
@@ -1022,6 +1097,7 @@ public final class LiveStatusBar {
             }
             pageCovers.clear();
             raiseControls();
+            raisePages();
             for (Map.Entry<View, Offset> entry : strips.entrySet()) {
                 View held = entry.getKey();
                 if (held != null && entry.getValue().current(held) == 0) entry.getValue().set(held, entry.getValue().value);

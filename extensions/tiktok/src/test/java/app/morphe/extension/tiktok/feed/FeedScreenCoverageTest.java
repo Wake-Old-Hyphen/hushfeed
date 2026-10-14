@@ -150,6 +150,9 @@ public class FeedScreenCoverageTest {
         put("feed_author_text_size", YES, YES, NONE);
         put("always_show_publish_date", YES, YES, NONE);
         put("publish_date_exact_time", YES, YES, NONE);
+        // Both only shape the exact time, so they reach where it does.
+        put("publish_date_time_zone", YES, YES, NONE);
+        put("publish_date_short_date", YES, YES, NONE);
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);
@@ -205,6 +208,8 @@ public class FeedScreenCoverageTest {
         put("hide_clear_display_controls", YES, YES, NONE);
         put("fade_controls_opacity", YES, YES, NONE);
         put("fade_in_clear_display", YES, YES, NONE);
+        // The tab bar belongs to the main feed; an opened video has none (#145).
+        put("see_through_bottom_bar", YES, NONE, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
         put("burn_in_guard", YES, YES, NONE);
 

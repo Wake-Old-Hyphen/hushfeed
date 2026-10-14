@@ -236,10 +236,14 @@ public final class StorageReport implements LogBufferManager.ReportSection {
         }
     }
 
-    /** A folder name with account-looking numbers and long hashes masked, and kept short. */
+    /** A folder name with account ids, account-looking numbers and long hashes masked, kept short. */
     static String mask(String name) {
-        // A hash has a letter in it; a run of digits alone is an id, and reads as one.
+        // A long run mixing capitals and digits is an encoded id such as the sec_uid TikTok names
+        // its offline mode folder after (MS4wLjABAAAA...). A hash has a letter in it; a run of
+        // digits alone is an id, and reads as one.
         String masked = name
+                .replaceAll("(?<![A-Za-z0-9_-])(?=[A-Za-z0-9_-]*[A-Z])(?=[A-Za-z0-9_-]*[0-9])"
+                        + "[A-Za-z0-9_-]{24,}", "<account>")
                 .replaceAll("(?<![0-9a-fA-F])(?=[0-9a-fA-F]{16,})(?=[0-9a-fA-F]*[a-fA-F])[0-9a-fA-F]+", "<hash>")
                 .replaceAll("[0-9]{6,}", "#");
         return masked.length() > 48 ? masked.substring(0, 45) + "..." : masked;

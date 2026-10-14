@@ -18,6 +18,9 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 @RunWith(RobolectricTestRunner.class)
@@ -37,7 +40,105 @@ public class LiveControlsTest {
         Settings.STOP_LIVE_AUTO_ENTER.save(Settings.STOP_LIVE_AUTO_ENTER.defaultValue);
         Settings.SHOW_EXACT_LIVE_VIEWERS.save(Settings.SHOW_EXACT_LIVE_VIEWERS.defaultValue);
         Settings.OFFER_LIVE_QUALITY.save(Settings.OFFER_LIVE_QUALITY.defaultValue);
+        Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
+        Settings.REMEMBERED_LIVE_QUALITY.save(Settings.REMEMBERED_LIVE_QUALITY.defaultValue);
+        Settings.OFFER_LIVE_CLEAR_SCREEN.save(Settings.OFFER_LIVE_CLEAR_SCREEN.defaultValue);
+        Settings.RECORD_LIVE.save(Settings.RECORD_LIVE.defaultValue);
         Locale.setDefault(savedLocale);
+    }
+
+    /** #37: the Record button is off until switched on, needs the patch, and Pause turns it off. */
+    @Test public void recordButtonIsOffByDefaultAndFollowsItsSwitchAndPause() {
+        assertFalse(Settings.RECORD_LIVE.defaultValue);
+        assertFalse(LiveRecordChip.enabled());
+        Settings.RECORD_LIVE.save(true);
+        assertTrue(LiveRecordChip.enabled());
+        setPaused(true);
+        assertFalse(LiveRecordChip.enabled());
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse(LiveRecordChip.enabled());
+    }
+
+    /** #57: off, TikTok's server setting decides which rooms offer clear screen. */
+    @Test public void clearScreenIsOffByDefaultAndFollowsItsSwitch() {
+        assertFalse(Settings.OFFER_LIVE_CLEAR_SCREEN.defaultValue);
+        assertFalse(LiveControls.offerClearScreen());
+        Settings.OFFER_LIVE_CLEAR_SCREEN.save(true);
+        assertTrue(LiveControls.offerClearScreen());
+        assertFalse("clear screen turned the quality picker on", LiveControls.offerQualityEverywhere());
+        Settings.OFFER_LIVE_CLEAR_SCREEN.save(false);
+        assertFalse("read at the call, so the next menu follows", LiveControls.offerClearScreen());
+    }
+
+    @Test public void pausedOrWithoutThePatchClearScreenIsTikToks() {
+        Settings.OFFER_LIVE_CLEAR_SCREEN.save(true);
+        setPaused(true);
+        assertFalse(LiveControls.offerClearScreen());
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse(LiveControls.offerClearScreen());
+    }
+
+    /** #57: off by default, a cold start leaves the first rooms at TikTok's choice. */
+    @Test public void keepingTheQualityIsOffByDefault() {
+        assertFalse(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        LiveControls.noteLiveQualityPick("hd");
+        assertEquals("a pick was saved with the switch off", "", Settings.REMEMBERED_LIVE_QUALITY.get());
+        Settings.REMEMBERED_LIVE_QUALITY.save("hd");
+        assertEquals(null, LiveControls.liveQualityPick(null));
+    }
+
+    /** On, a pick is saved and a cold start's empty pick reads it back; TikTok's own pick wins. */
+    @Test public void aKeptPickStartsTheRoomsAfterARestart() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        Settings.REMEMBER_LIVE_QUALITY.save(true);
+        LiveControls.noteLiveQualityPick("origin");
+        assertEquals("origin", Settings.REMEMBERED_LIVE_QUALITY.get());
+        assertEquals("after a cold start TikTok's pick is null", "origin", LiveControls.liveQualityPick(null));
+        assertEquals("a pick from this session was replaced", "sd", LiveControls.liveQualityPick("sd"));
+        LiveControls.noteLiveQualityPick("sd");
+        assertEquals("the next pick replaces the saved one", "sd", LiveControls.liveQualityPick(null));
+        LiveControls.noteLiveQualityPick(null);
+        LiveControls.noteLiveQualityPick("");
+        assertEquals("an empty pick overwrote the saved one", "sd", Settings.REMEMBERED_LIVE_QUALITY.get());
+    }
+
+    /** Nothing saved yet, the start keeps TikTok's null and so the stream's default. */
+    @Test public void withNothingSavedTheStreamsDefaultStays() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        Settings.REMEMBER_LIVE_QUALITY.save(true);
+        assertEquals(null, LiveControls.liveQualityPick(null));
+    }
+
+    /** It rides on Offer LIVE quality, the only thing that makes TikTok carry a pick at all. */
+    @Test public void keepingTheQualityNeedsOfferQualityAndThePatch() {
+        Settings.REMEMBER_LIVE_QUALITY.save(true);
+        Settings.REMEMBERED_LIVE_QUALITY.save("hd");
+        assertFalse(LiveControls.rememberQuality());
+        assertEquals(null, LiveControls.liveQualityPick(null));
+        LiveControls.noteLiveQualityPick("origin");
+        assertEquals("hd", Settings.REMEMBERED_LIVE_QUALITY.get());
+
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        assertTrue(LiveControls.rememberQuality());
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse("a saved switch did something without its patch", LiveControls.rememberQuality());
+        assertEquals(null, LiveControls.liveQualityPick(null));
+    }
+
+    /** Paused, the rooms start at TikTok's choice and a pick isn't saved over the kept one. */
+    @Test public void pausedTheKeptQualityIsLeftAlone() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        Settings.REMEMBER_LIVE_QUALITY.save(true);
+        Settings.REMEMBERED_LIVE_QUALITY.save("hd");
+        setPaused(true);
+        assertEquals(null, LiveControls.liveQualityPick(null));
+        LiveControls.noteLiveQualityPick("ld");
+        setPaused(false);
+        assertEquals("hd", Settings.REMEMBERED_LIVE_QUALITY.get());
+        assertEquals("hd", LiveControls.liveQualityPick(null));
     }
 
     /** Off, TikTok's own setting decides which rooms offer a quality. */
@@ -166,6 +267,52 @@ public class LiveControlsTest {
     private static String shown(long count, String tiktokText) {
         LiveControls.noteViewerCount(count);
         return LiveControls.viewerCountText(tiktokText);
+    }
+
+    /**
+     * #94: the For You LIVE preview's Service+ row showed under the next LIVE's name. A row still
+     * showing as it's bound to a LIVE without a Service+ item is hidden first; a row TikTok has
+     * hidden, or a LIVE that has its own Service+ item, is left to TikTok, and so is everything
+     * while Hushfeed is paused.
+     */
+    @Test public void aServicePlusRowLeftFromTheLastLiveIsHidden() {
+        Row showing = new Row(true);
+        assertTrue("a LIVE with no Service+ preview kept the last row", LiveControls.hideStaleServicePlus(showing, null));
+        assertTrue("a LIVE with no Service+ items kept the last row",
+                LiveControls.hideStaleServicePlus(showing, new Preview(null)));
+        assertTrue(LiveControls.hideStaleServicePlus(showing, new Preview(new ArrayList<>())));
+        assertFalse("a LIVE with a Service+ item of its own lost it",
+                LiveControls.hideStaleServicePlus(showing, new Preview(Collections.singletonList(new Object()))));
+        assertFalse("a hidden row was hidden again", LiveControls.hideStaleServicePlus(new Row(false), null));
+        assertFalse(LiveControls.hideStaleServicePlus(null, null));
+        assertFalse("a row without isShowing was hidden", LiveControls.hideStaleServicePlus(new Object(), null));
+
+        setPaused(true);
+        assertFalse("paused, the row was hidden", LiveControls.hideStaleServicePlus(showing, null));
+    }
+
+    /** Stands in for TikTok's Widget: only {@code isShowing} is read. */
+    @SuppressWarnings("unused")
+    private static final class Row {
+        private final boolean showing;
+
+        Row(boolean showing) {
+            this.showing = showing;
+        }
+
+        public boolean isShowing() {
+            return showing;
+        }
+    }
+
+    /** Stands in for SMBLivePreview: only {@code previewItem} is read. */
+    @SuppressWarnings("unused")
+    private static final class Preview {
+        private final List<Object> previewItem;
+
+        Preview(List<Object> items) {
+            this.previewItem = items;
+        }
     }
 
     private static void setPaused(boolean value) {

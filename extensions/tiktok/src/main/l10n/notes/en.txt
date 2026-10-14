@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Hide videos you have already seen now works on the Following tab too, without moving the video playing.
+
+* **TikTok:** A video playing on For You or Following no longer vanishes once it passes Maximum post age or Hide videos you have already seen counts it.
+
+* **TikTok:** Show the time to the second has two options of its own: Show the time zone, on as before, and Short date (#147).
+
+* **TikTok:** Pick videos to save works inside a Favorites collection folder too, Pick all included (#27).
+
+* **TikTok:** A save of original photos that only partly came through now offers Retry beside Open. It tries again only the photos that failed.
+
+* **TikTok:** Quick setups can be hidden from the settings home with a long press on its card. The Quick setups on the home page row on Backup and restore brings it back.
+
+* **TikTok:** LIVE rooms can show a Record button (off by default, in Playback settings). It saves what you watch from the moment you tap it until you tap Stop or leave the room (#37).
+
+* **TikTok:** With Hide the comment bar on opened videos on, the progress bar no longer runs across the caption on videos you open from a profile or search. The caption and the music disc move up just enough to clear it (#153).
+
+* **TikTok:** The diagnostic report no longer flags the comment bar as missing while you're on the main feed (#153).
+
+* **TikTok:** The diagnostic report's storage section no longer shows part of your account ID as a folder name (#70).
+
+* **TikTok:** With Hide the comment bar on opened videos on, photo posts in an opened grid no longer end above a black band at the bottom (#153).
+
+* **TikTok:** With Show a LIVE under the status bar on, the panels above the first room of the LIVE feed now start below the clock instead of under it (#137).
+
+* **TikTok:** A LIVE in the For You feed no longer shows the Service+ row of a LIVE you scrolled past (#94).
+
+* **TikTok:** A new switch keeps the LIVE quality you picked after TikTok restarts (#57).
+
+* **TikTok:** A new switch adds clear screen, which leaves only the stream, to every LIVE room's menu (#57).
+
+* **TikTok:** A creator's display name that comes back after the country or the @handle is no longer left cut short (#127).
+
+* **TikTok:** AMOLED dark theme now makes the cards on TikTok's own settings pages black too (#152).
+
+* **TikTok:** Feature Gate Lab has two new presets: Scrolling comments on videos and Several photos in one comment (#98).
+
+* **TikTok:** A new switch on the Feed screen page, See-through bottom bar, lets the video reach the bottom of the screen and takes the background off the tab bar so the tabs sit over the picture. It starts off (#145).
+
+* **TikTok:** Feature Gate Lab has a new preset from Japan's builds, LIVE chat auto-translate. It turns on the Translate comments option under Share in a LIVE room. It needs the Lab's overrides switch and a TikTok restart, and Undo puts back the value you had (#98).
+
+* **TikTok:** Turn on Pick videos to save from profile grids in Hushfeed settings > Downloads and every video in a profile, Liked or Favorites grid gets a circle. Pick up to 50, tap Save, and they're saved one after another with a count and Cancel (#27).
+
+* **TikTok:** Pick videos to save from profile grids has a Pick all button. It picks up to 50 of the posts a list has loaded, skipping videos already saved when Check for already-saved videos is on, so a whole list saves in runs that pick up where the last one stopped (#27).
+
+* **TikTok:** With Hide videos you have already seen on and its record full, each video you watch no longer goes through all 10,000 rows to drop the oldest one. That now takes one pass every 256 videos (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** The diagnostic report has a new Changed settings section. It names every setting you've moved off its default, so a report shows which switches are on. Text you typed into a setting is never included (#149).

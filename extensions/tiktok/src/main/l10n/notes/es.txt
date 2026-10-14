@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Ocultar los vídeos que ya has visto ahora también funciona en Siguiendo, sin mover el vídeo que se reproduce.
+
+* **TikTok:** Un vídeo que se reproduce en Para ti o Siguiendo ya no desaparece cuando supera la Antigüedad máxima de la publicación o cuando Ocultar los vídeos que ya has visto lo cuenta.
+
+* **TikTok:** Mostrar la hora al segundo tiene dos opciones propias: Mostrar la zona horaria, activada como antes, y Fecha corta (#147).
+
+* **TikTok:** Elegir videos para guardar en las cuadrículas de perfil ahora también funciona dentro de una colección de Favoritos, con Elegir todos incluido (#27).
+
+* **TikTok:** Si al guardar fotos originales solo llegan algunas, ahora aparece Reintentar junto a Abrir. Solo vuelve a intentar las fotos que fallaron.
+
+* **TikTok:** Los Ajustes rápidos se pueden ocultar de la página de inicio de los ajustes con una pulsación larga en su tarjeta. La fila Ajustes rápidos en la página de inicio, en Copia de seguridad y restauración, los trae de vuelta.
+
+* **TikTok:** Las salas LIVE pueden mostrar un botón Grabar (desactivado por defecto, en los ajustes de Reproducción). Guarda lo que ves desde que lo tocas hasta que tocas Detener o sales de la sala (#37).
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, la barra de progreso ya no pasa por encima de la descripción en los videos que abres desde un perfil o la búsqueda. La descripción y el disco de música suben lo justo para dejarla libre (#153).
+
+* **TikTok:** El informe de diagnóstico ya no marca la barra de comentarios como ausente mientras estás en el feed principal (#153).
+
+* **TikTok:** La sección de almacenamiento del informe de diagnóstico ya no muestra parte del ID de tu cuenta como nombre de carpeta (#70).
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, las publicaciones de fotos en una cuadrícula abierta ya no terminan sobre una franja negra abajo (#153).
+
+* **TikTok:** Con Mostrar el LIVE bajo la barra de estado activado, los paneles que hay encima de la primera sala del feed de LIVE ahora empiezan debajo del reloj y no detrás de la barra de estado (#137).
+
+* **TikTok:** Un LIVE del feed Para ti ya no muestra la fila de Service+ de un LIVE que ya pasaste (#94).
+
+* **TikTok:** Un nuevo interruptor mantiene la calidad de LIVE que elegiste después de reiniciar TikTok (#57).
+
+* **TikTok:** Un nuevo interruptor añade la pantalla limpia, que deja solo la transmisión, al menú de cada sala LIVE (#57).
+
+* **TikTok:** El nombre visible de un creador que vuelve tras el país o el @usuario ya no se queda cortado (#127).
+
+* **TikTok:** El tema oscuro AMOLED ahora también pone en negro las tarjetas de las páginas de ajustes de TikTok (#152).
+
+* **TikTok:** Feature Gate Lab tiene dos ajustes nuevos: Comentarios que se deslizan sobre los videos y Varias fotos en un comentario (#98).
+
+* **TikTok:** Un nuevo interruptor en la página Feed screen, Barra inferior transparente, deja que el vídeo llegue hasta el borde inferior de la pantalla y quita el fondo de la barra de pestañas. Empieza desactivado (#145).
+
+* **TikTok:** Feature Gate Lab tiene un nuevo ajuste preconfigurado, Traducción automática del chat de LIVE. Activa la opción Traducir comentarios que está bajo Compartir en una sala de LIVE (#98).
+
+* **TikTok:** Activa Elegir videos para guardar en las cuadrículas de perfil en Ajustes de Hushfeed > Descargas y cada video de una cuadrícula de perfil, Me gusta o Favoritos tendrá un círculo. Elige hasta 50, toca Guardar y se guardan uno tras otro con un contador y Cancelar (#27).
+
+* **TikTok:** Elegir videos para guardar en las cuadrículas de perfil tiene un botón Elegir todos. Elige hasta 50 de las publicaciones que una lista ha cargado y, con Comprobar videos ya guardados activado, se salta los que ya guardaste. Así una lista entera se guarda por tandas que siguen donde terminó la anterior (#27).
+
+* **TikTok:** Con Ocultar los vídeos que ya has visto activado y el registro lleno, cada video que ves ya no recorre las 10.000 filas para quitar la más antigua. Ahora eso pasa una vez cada 256 videos (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** El informe de diagnóstico tiene una sección nueva con los ajustes cambiados. Nombra cada ajuste que ya no está en su valor por defecto, así un informe muestra qué interruptores están activados. El texto que escribiste en un ajuste nunca se incluye (#149).

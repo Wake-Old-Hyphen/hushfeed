@@ -54,11 +54,17 @@ final class MediaFileWriter {
     }
 
     static Saved publishForResult(Context context, File source, String name, String mime, String path, boolean video) throws IOException {
+        return publishForResult(context, source, name, mime, path, video, MediaBudget.MAX_TRANSFER_BYTES);
+    }
+
+    /** As above, for a file that may be larger than a post's download is allowed to be. */
+    static Saved publishForResult(Context context, File source, String name, String mime, String path, boolean video,
+            long maxBytes) throws IOException {
         MediaBudget.check(null);
         File destinationDirectory = path == null
                 ? Environment.getExternalStorageDirectory()
                 : new File(Environment.getExternalStorageDirectory(), path);
-        MediaBudget.checkDiskSpace(destinationDirectory, source == null ? -1L : source.length());
+        MediaBudget.checkDiskSpace(destinationDirectory, source == null ? -1L : source.length(), null, maxBytes);
         if (Build.VERSION.SDK_INT >= 29) {
             var resolver = context.getContentResolver();
             ContentValues values = new ContentValues();
@@ -83,7 +89,7 @@ final class MediaFileWriter {
             try {
                 try (InputStream input = new FileInputStream(source); OutputStream output = resolver.openOutputStream(uri, "w")) {
                     if (output == null) throw new IOException("Could not open gallery entry");
-                    copy(input, output, MediaBudget.MAX_TRANSFER_BYTES, null,
+                    copy(input, output, maxBytes, null,
                             destinationDirectory);
                 }
                 MediaBudget.check(null);
@@ -142,7 +148,7 @@ final class MediaFileWriter {
             boolean landed = false;
             try {
                 try (InputStream input = new FileInputStream(source); OutputStream output = new FileOutputStream(target)) {
-                    copy(input, output, MediaBudget.MAX_TRANSFER_BYTES, null, directory);
+                    copy(input, output, maxBytes, null, directory);
                 } catch (IOException exception) {
                     if (!target.delete()) exception.addSuppressed(new IOException("Could not remove incomplete download"));
                     throw exception;

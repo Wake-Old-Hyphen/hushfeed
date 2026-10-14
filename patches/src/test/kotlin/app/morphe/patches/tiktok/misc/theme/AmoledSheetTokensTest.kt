@@ -89,6 +89,31 @@ class AmoledSheetTokensTest {
         }
     }
 
+    /**
+     * TikTok's own settings pages stayed stock under AMOLED (#152): Settings and privacy is
+     * UIPageGrouped1, already black in TikTok's dark mode, and its cards were #1E1E1E on the S22.
+     * A TuxCell (the settings row) fills with UIPageGrouped2 (a0g) unless it sits on a sheet,
+     * where it takes UISheetGrouped2 (a2b) like the long-press panel's cards. The dark themes send
+     * a0g to agn and the light ones to avv.
+     */
+    @Test
+    fun `settings rows off a sheet fill with UIPageGrouped2, which the patch rewrites`() {
+        Fixtures.forEachDeclared { apk ->
+            val table = FixtureResourceTable(apk)
+            val idOf = { name: String -> table.attrNames.entries.single { it.value == name }.key }
+
+            val cell = "Lcom/ss/android/ugc/aweme/cell/TuxCell;"
+            assertTrue("a TuxCell fills with UIPageGrouped2", loadsConstant(apk, cell, "e6", idOf("a0g")))
+            assertTrue("a TuxCell on a sheet fills with UISheetGrouped2", loadsConstant(apk, cell, "e6", idOf("a2b")))
+            assertEquals("what the themes point a0g at", setOf("?attr/agn", "?attr/avv"), table.styleValues("a0g").toSet())
+            val dark = table.styleValues("agn")
+            assertTrue("agn is a dark opaque literal wherever it is set: $dark", dark.isNotEmpty() && dark.all(::isDarkOpaqueLiteral))
+            assertTrue("avv stays light", table.styleValues("avv").none(::isDarkOpaqueLiteral))
+            assertTrue("the patch rewrites agn", "agn" in SURFACE_STYLE_ITEMS)
+            assertTrue("a sheet's cards keep their gray", "aii" !in SURFACE_STYLE_ITEMS)
+        }
+    }
+
     private fun loadsConstant(apk: File, type: String, method: String, value: Int): Boolean {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classDef = container.dexEntryNames.asSequence().mapNotNull { entry ->

@@ -181,13 +181,18 @@ internal fun declaredVersions(): Set<String> =
  *   sheets that group their rows into cards. The cards are UISheetGrouped2 and keep their gray.
  * - bx is BGPrimary, a literal of its own in the dark themes, which the Inbox Activity page, its
  *   rows and New followers fill with.
+ * - agn is UIPageGrouped2's (attr/a0g), the cards of TikTok's own settings pages: a TuxCell off
+ *   a sheet fills with it. The pages behind them are UIPageGrouped1, black in TikTok's own dark
+ *   mode already, so those cards were the only gray left on Settings and privacy (#152). A
+ *   TuxCell on a sheet (the profile menu panel) fills with UISheetGrouped2 instead and keeps its
+ *   gray like the long-press panel's cards.
  * - agk and c3 were the comments and share sheets' own through 46.x and are dark surfaces of
  *   their own on 47.x.
  * 47.1.4 keeps every attr where 47.0.3 had it (TuxSheet's background attribute is 0x7f0609fb).
  * On 46.x aia was another surface tier, which is why only a build whose palette was read is
  * patched.
  */
-internal val SURFACE_STYLE_ITEMS = setOf("agk", "c3", "aia", "aig", "bx")
+internal val SURFACE_STYLE_ITEMS = setOf("agk", "c3", "aia", "aig", "bx", "agn")
 
 /**
  * Sets every `<item name="...">` in the named set whose value is a dark opaque colour literal

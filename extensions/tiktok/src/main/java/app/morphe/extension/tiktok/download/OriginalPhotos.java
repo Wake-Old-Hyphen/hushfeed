@@ -7,8 +7,10 @@
 package app.morphe.extension.tiktok.download;
 
 import android.content.Context;
+import android.os.SystemClock;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.tiktok.SignedInUser;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.L10n;
@@ -16,8 +18,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class OriginalPhotos {
     private static final Set<String> ACTIVE = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
@@ -167,12 +171,25 @@ public final class OriginalPhotos {
         for (int i = 0; i < photos.size(); i++) {
             names.add(DownloadFilenameFormatter.formatOriginalPhotoName(aweme, i + 1, "tmp"));
         }
-        String key = "photos " + id;
-        if (!ACTIVE.add(id)) {
+        Retry run = new Retry(id, SignedInUser.id(), photoSnapshot, List.copyOf(names), path, chosen,
+                SystemClock.elapsedRealtime());
+        // The scheduler already reports a refusal. A requested image save must not become a
+        // native converted video merely because the image queue is full.
+        return queue(context.getApplicationContext(), run) || owned;
+    }
+
+    /**
+     * Queues the save of {@code run}'s photos, in the post's order. False only when the media
+     * queue refused it, which the queue has already said; a save of the same post still running
+     * says so and counts as taken.
+     */
+    private static boolean queue(Context app, Retry run) {
+        String key = "photos " + run.id;
+        if (!ACTIVE.add(run.id)) {
             Utils.showToastShort(MediaJobScheduler.busyMessage(key));
             return true;
         }
-        Context app = context.getApplicationContext();
+        List<Integer> chosen = run.positions;
         // Every original-photo save has a file count and Cancel, including one chosen still.
         SaveProgress progress = SaveProgress.queuedFiles(chosen.size());
         MediaJobScheduler.Job job = progress.submit("original photos", key, () -> {
@@ -181,38 +198,119 @@ public final class OriginalPhotos {
             try {
                 // A photo that fails is skipped and the rest still land, and the result says what did.
                 SaveProgress.Outcome outcome = progress.run(index -> {
-                    int i = chosen.get(index);
                     MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
-                    File temp = MediaCache.createTempFile(app, "original-photo-", ".tmp");
-                    try {
-                        String extension = PhotoToJpeg.convert(app, temp,
-                                RemoteMedia.fetch(photoSnapshot.get(i), temp, RemoteMedia.Kind.IMAGE));
-                        String mime = "jpg".equals(extension) ? "image/jpeg" : "image/" + extension;
-                        // Numbered by the photo's place in the post, also when only some are saved.
-                        String named = names.get(i);
-                        String name = named.substring(0, named.lastIndexOf('.') + 1) + extension;
-                        last[0] = MediaFileWriter.publishForResult(app, temp, name, mime, path, false);
-                    } finally {
-                        if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove original photo temporary file");
-                    }
+                    last[0] = savePhoto(app, run, chosen.get(index));
                 });
                 if (outcome.saved == 0 && outcome.cancelled == 0) {
                     Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
                 } else {
+                    Retry failed = run.failed(outcome);
                     SaveNotice.saved(SaveProgress.message(outcome, L10n.quantity(Utils.getContext(), outcome.saved,
-                            "Saved one original photo", "Saved %1$s original photos")), last[0]);
+                            "Saved one original photo", "Saved %1$s original photos")), last[0],
+                            failed == null ? null : () -> retry(failed));
                 }
             } catch (RuntimeException exception) {
                 Logger.printException(() -> "Original photo download failed", exception);
                 Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
             }
-        }, () -> ACTIVE.remove(id));
-        // The scheduler already reports a refusal. A requested image save must not become a
-        // native converted video merely because the image queue is full.
-        if (job == null) return owned;
+        }, () -> ACTIVE.remove(run.id));
+        if (job == null) return false;
         String saying = L10n.quantity(app, chosen.size(), "Saving one original photo", "Saving %1$s original photos");
         progress.acknowledge(saying, saying);
         return true;
+    }
+
+    /** Fetches, converts and publishes the photo at {@code position} in the post, by its own name. */
+    private static MediaFileWriter.Saved savePhoto(Context app, Retry run, int position) throws java.io.IOException {
+        PhotoStep stand = photoStepForTests;
+        if (stand != null) return stand.save(position, run.names.get(position));
+        File temp = MediaCache.createTempFile(app, "original-photo-", ".tmp");
+        try {
+            String extension = PhotoToJpeg.convert(app, temp,
+                    RemoteMedia.fetch(run.photos.get(position), temp, RemoteMedia.Kind.IMAGE));
+            String mime = "jpg".equals(extension) ? "image/jpeg" : "image/" + extension;
+            // Numbered by the photo's place in the post, also when only some are saved.
+            String named = run.names.get(position);
+            String name = named.substring(0, named.lastIndexOf('.') + 1) + extension;
+            return MediaFileWriter.publishForResult(app, temp, name, mime, run.path, false);
+        } finally {
+            if (!MediaCache.delete(temp)) Logger.printInfo(() -> "Could not remove original photo temporary file");
+        }
+    }
+
+    /**
+     * Retry on a save's result: queues the photos that didn't land, and nothing else. Refused
+     * with a word when the account changed since the save, the save is too old for TikTok's
+     * addresses to still be good, or this Retry already ran.
+     */
+    static void retry(Retry failed) {
+        if (!failed.stillUsable()) {
+            Utils.showToastLong(L10n.t("Those photos can't be tried again now. Save the post again to get the rest."));
+            return;
+        }
+        Context context = Utils.getContext();
+        if (context == null) return;
+        queue(context.getApplicationContext(), failed);
+    }
+
+    /** For the tests: stands in for fetching, converting and publishing one photo. */
+    interface PhotoStep {
+        MediaFileWriter.Saved save(int position, String name) throws java.io.IOException;
+    }
+
+    static volatile PhotoStep photoStepForTests;
+
+    /**
+     * How long a save's failed photos can be tried again. TikTok's photo addresses are signed and
+     * stop working after a while, and the Retry that holds them is only up for seconds anyway.
+     */
+    static final long RETRY_WINDOW_MS = 10 * 60_000L;
+
+    /**
+     * One run of a post's original photos, kept in memory only, for as long as its result's Retry
+     * is: the post, the account it was saved under, every photo's addresses and name as the save
+     * first read them, and the photos this run saves, in the post's order. Nothing here is written
+     * anywhere.
+     */
+    static final class Retry {
+        final String id;
+        final String account;
+        final List<List<String>> photos;
+        final List<String> names;
+        final String path;
+        final List<Integer> positions;
+        final long madeAt;
+        private final AtomicBoolean used = new AtomicBoolean();
+
+        Retry(String id, String account, List<List<String>> photos, List<String> names, String path,
+                List<Integer> positions, long madeAt) {
+            this.id = id;
+            this.account = account;
+            this.photos = photos;
+            this.names = names;
+            this.path = path;
+            this.positions = Collections.unmodifiableList(new ArrayList<>(positions));
+            this.madeAt = madeAt;
+        }
+
+        /**
+         * The run of the photos {@code outcome} didn't land, or null when every one it tried did
+         * or the rest were cancelled. Unselected photos never come into it, and the time the
+         * addresses were read stays the first save's.
+         */
+        Retry failed(SaveProgress.Outcome outcome) {
+            if (outcome.unsaved.isEmpty()) return null;
+            List<Integer> left = new ArrayList<>();
+            for (int index : outcome.unsaved) left.add(positions.get(index));
+            return new Retry(id, account, photos, names, path, left, madeAt);
+        }
+
+        /** Whether it may run now, which it can do once: same account, inside the window. */
+        boolean stillUsable() {
+            if (SystemClock.elapsedRealtime() - madeAt > RETRY_WINDOW_MS) return false;
+            if (!Objects.equals(account, SignedInUser.id())) return false;
+            return used.compareAndSet(false, true);
+        }
     }
 
     private static boolean failedConversion(boolean conversion) {

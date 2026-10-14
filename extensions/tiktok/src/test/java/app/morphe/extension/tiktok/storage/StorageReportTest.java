@@ -82,6 +82,11 @@ public class StorageReportTest {
         assertEquals("im_#", StorageReport.mask("im_7301234567890123"));
         assertEquals("cache_<hash>", StorageReport.mask("cache_9f86d081884c7d659a2feaa0c55ad015"));
         assertEquals("effect", StorageReport.mask("effect"));
+        // TikTok names its offline mode folder after the account's sec_uid (S22, 2026-10-14).
+        assertEquals("<account>", StorageReport.mask(
+                "MS4wLjABAAAA34LLrXri8BcF6OTb5Kl1xRglYyfLR5F1Lq_Hx-9Zk2TzQwErTy"));
+        assertEquals("offlineX_us_ttp", StorageReport.mask("offlineX_us_ttp"));
+        assertEquals("<hash>_arm64_v8a", StorageReport.mask("9f86d081884c7d659a2feaa0c55ad015_arm64_v8a"));
         assertEquals(48, StorageReport.mask("a_very_long_folder_name_that_goes_on_and_on_for_ever").length());
     }
 

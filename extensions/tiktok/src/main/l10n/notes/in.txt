@@ -1,3 +1,51 @@
+## Unreleased
+
+* **TikTok:** Sembunyikan video yang sudah kamu tonton kini juga bekerja di Mengikuti, tanpa menggeser video yang sedang diputar.
+
+* **TikTok:** Video yang sedang diputar di Untuk Anda atau Mengikuti tidak lagi hilang saat melewati Usia maksimum kiriman atau saat Sembunyikan video yang sudah kamu tonton menghitungnya.
+
+* **TikTok:** Tampilkan waktu hingga detik punya dua opsi sendiri: Tampilkan zona waktu, aktif seperti sebelumnya, dan Tanggal singkat (#147).
+
+* **TikTok:** Pilih video untuk disimpan dari grid profil kini juga berfungsi di dalam koleksi Favorit, termasuk Pilih semua (#27).
+
+* **TikTok:** Simpan foto asli yang hanya sebagian berhasil kini menawarkan Coba lagi di samping Buka. Itu hanya mencoba lagi foto yang gagal.
+
+* **TikTok:** Pengaturan cepat bisa disembunyikan dari beranda pengaturan dengan menekan lama kartunya. Baris Pengaturan cepat di Beranda pada Cadangkan dan pulihkan memunculkannya lagi.
+
+* **TikTok:** Ruang LIVE bisa menampilkan tombol Rekam (mati secara default, di pengaturan Pemutaran). Tombol ini menyimpan apa yang kamu tonton sejak diketuk sampai kamu mengetuk Berhenti atau keluar dari ruang (#37).
+
+* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, bilah progres tidak lagi melintasi keterangan di video yang kamu buka dari profil atau pencarian. Keterangan dan cakram musik naik secukupnya agar tidak tertutup (#153).
+
+* **TikTok:** Laporan diagnostik tidak lagi menandai bilah komentar sebagai hilang saat kamu berada di feed utama (#153).
+
+* **TikTok:** Bagian penyimpanan di laporan diagnostik tidak lagi menampilkan sebagian ID akunmu sebagai nama folder (#70).
+
+* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, postingan foto di grid yang dibuka tidak lagi berakhir di atas pita hitam di bagian bawah (#153).
+
+* **TikTok:** Saat Tampilkan LIVE di bawah bilah status aktif, panel di atas ruang pertama feed LIVE kini dimulai di bawah jam dan tidak lagi tertutup bilah status (#137).
+
+* **TikTok:** LIVE di feed Untuk Anda tidak lagi menampilkan baris Service+ dari LIVE yang sudah kamu lewati (#94).
+
+* **TikTok:** Sakelar baru mempertahankan kualitas LIVE yang kamu pilih setelah TikTok dimulai ulang (#57).
+
+* **TikTok:** Sakelar baru menambahkan layar bersih, yang hanya menyisakan siarannya, ke menu setiap ruang LIVE (#57).
+
+* **TikTok:** Nama tampilan kreator yang kembali setelah negara atau @nama pengguna tidak lagi terpotong (#127).
+
+* **TikTok:** Tema gelap AMOLED kini juga membuat kartu di halaman pengaturan TikTok sendiri menjadi hitam (#152).
+
+* **TikTok:** Feature Gate Lab punya dua preset baru: Komentar berjalan di atas video dan Beberapa foto dalam satu komentar (#98).
+
+* **TikTok:** Sakelar baru di halaman Feed screen, Bilah bawah transparan, membiarkan video menjangkau bagian bawah layar dan menghapus latar bilah tab. Awalnya mati (#145).
+
+* **TikTok:** Feature Gate Lab punya preset baru, Terjemahan otomatis chat LIVE. Preset ini mengaktifkan opsi Terjemahkan komentar di bawah Bagikan di ruang LIVE (#98).
+
+* **TikTok:** Aktifkan Pilih video untuk disimpan dari grid profil di setelan Hushfeed > Unduhan, dan setiap video di grid profil, Disukai, atau Favorit akan punya lingkaran. Pilih hingga 50, ketuk Simpan, dan semuanya disimpan satu per satu dengan hitungan dan Batal (#27).
+
+* **TikTok:** Pilih video untuk disimpan dari grid profil kini punya tombol Pilih semua. Tombol ini memilih hingga 50 postingan yang sudah dimuat daftar, melewati video yang sudah disimpan saat Periksa video yang sudah disimpan aktif, jadi seluruh daftar tersimpan bertahap, masing-masing melanjutkan dari tempat yang sebelumnya berhenti (#27).
+
+* **TikTok:** Saat Sembunyikan video yang sudah kamu tonton aktif dan catatannya penuh, setiap video yang kamu tonton tidak lagi memeriksa semua 10.000 baris untuk membuang yang tertua. Sekarang itu hanya terjadi sekali setiap 256 video (#84).
+
 ## 0.72.0 (2026-10-13)
 
 * **TikTok:** Laporan diagnostik punya bagian baru berisi pengaturan yang diubah. Bagian ini menyebut setiap pengaturan yang tidak lagi di nilai bawaannya, sehingga laporan menunjukkan sakelar mana yang aktif. Teks yang kamu ketik di sebuah pengaturan tidak pernah disertakan (#149).

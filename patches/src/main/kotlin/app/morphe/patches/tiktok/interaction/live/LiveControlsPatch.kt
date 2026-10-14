@@ -5,10 +5,12 @@
 package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
@@ -16,6 +18,7 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -30,6 +33,36 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveControls;"
+private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRecordChip;"
+
+/** A LIVE room page, one fragment per room in the room pager, real-named on 47.1.4. */
+internal const val LIVE_PLAY_FRAGMENT = "Lcom/bytedance/android/livesdk/chatroom/ui/LivePlayFragment;"
+
+/** The room model a LIVE page holds, with the creator and the stream addresses, real-named on 47.1.4. */
+internal const val LIVE_ROOM_TYPE = "Lcom/bytedance/android/livesdkapi/depend/model/live/Room;"
+
+/**
+ * A LIVE room page coming to the front (#37). The pager resumes a page as its room is shown, so the
+ * hook hands the page to the recording button, which finds the room (and with it the creator and the
+ * stream addresses) in the page's single Room field when the viewer taps Record. The page also
+ * names the room's activity, which is where the button goes. The hook only notes the page.
+ */
+internal object LivePlayFragmentResumeFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_FRAGMENT,
+    name = "onResume",
+    returnType = "V",
+    parameters = listOf(),
+)
+
+/**
+ * The one field of [fragment] that holds its room. The recording button reads the room from the
+ * page by that type, so a page with none or two would leave it recording the wrong LIVE or none.
+ */
+internal fun liveRoomField(fragment: ClassDef): String {
+    val rooms = fragment.fields.filter { it.type == LIVE_ROOM_TYPE }
+    return rooms.singleOrNull()?.name
+        ?: throw PatchException("LIVE controls: expected one Room field in ${fragment.type}, found ${rooms.map { it.name }}")
+}
 
 /** The feed LIVE preview's guide, real-named on 47.0.3, 47.1.3 and 47.1.4. */
 internal const val LIVE_PREVIEW_GUIDE_VM = "Lcom/ss/android/ugc/aweme/feed/adapter/widget/guide/LivePreviewGuideEnterVM;"
@@ -84,6 +117,174 @@ internal object LiveResolutionPersistFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(),
 )
+
+/** TikTok's server setting for the clear screen entry in a portrait LIVE room's menu, real-named on 47.1.4. */
+internal const val LIVE_CLEAR_SCREEN_ENTRY_SETTING =
+    "Lcom/bytedance/android/livesdk/setting/LiveClearScreenFeatureEntryCompletionSetting;"
+
+/**
+ * Whether a portrait LIVE room's menu offers clear screen, which hides the room's chat, gifts and
+ * buttons and leaves the stream on its own (#57). It answers the server's
+ * live_clear_screen_feature_entry_completion, false unless TikTok turns it on. The room's panel
+ * builder (PortraitAudienceInteractionFragment.n00 on 47.1.4) adds the entry, labeled clear or
+ * exit by IClearScreenService's state, only when this answers true, and the room's widget loader
+ * reads it the same way. The entry turns clear screen on and off through that service.
+ */
+internal object LiveClearScreenEntryFingerprint : Fingerprint(
+    definingClass = LIVE_CLEAR_SCREEN_ENTRY_SETTING,
+    name = "getValue",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+internal const val PULL_STREAM_SERVICE ="Lcom/bytedance/android/live/livepullstream/PullStreamService;"
+private const val LIVE_MODE = "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveMode;"
+
+/**
+ * The pull stream service's starting quality for a room that's created ahead (rs2 on 47.1.4):
+ * when [LiveResolutionPersistFingerprint] answers true it hands a video room TikTok's last
+ * quality pick, a static string that lives only until TikTok closes, and the stream's default
+ * while that's still null.
+ */
+internal object LiveStartQualityFingerprint : Fingerprint(
+    definingClass = PULL_STREAM_SERVICE,
+    returnType = "Ljava/lang/String;",
+    parameters = listOf("Ljava/lang/String;", LIVE_MODE, "Z"),
+    custom = { method, _ -> method.calls(LIVE_RESOLUTION_SELECTION_SETTING, "needPersistAcrossRooms") },
+)
+
+/**
+ * The LIVE player's start (X.0K9X.LJJJZ on 47.1.4). When [LiveResolutionPersistFingerprint]
+ * answers true it lists the stream's quality keys and starts at the last pick only when the
+ * stream has it, at the stream's default otherwise.
+ */
+internal object LivePlayerStartFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("L", "Z", "Ljava/lang/Long;"),
+    strings = listOf(" setDataSource()", "streamData is null when get video resolution"),
+)
+
+/**
+ * TikTok's last LIVE quality pick (#57): the static [field] the two starts read, and the one
+ * service method ([setter], vJ1 on 47.1.4) the picker writes it through.
+ */
+internal data class LiveQualityPick(val field: String, val setter: Method)
+
+private fun FieldReference.key() = "$definingClass->$name:$type"
+
+/** Every `sget-object` of [field] in this method. */
+internal fun Method.readsOf(field: String): List<Int> {
+    val instructions = implementation?.instructions?.toList().orEmpty()
+    return instructions.indices.filter { index ->
+        instructions[index].opcode == Opcode.SGET_OBJECT &&
+            ((instructions[index] as ReferenceInstruction).reference as FieldReference).key() == field
+    }
+}
+
+/**
+ * The pick and its setter, from the start [quality] answer's single static string read. Throws
+ * unless the service has exactly one method that only stores its argument there: the pick is
+ * saved at that call, so a second writer would leave a pick unsaved.
+ */
+internal fun liveQualityPick(service: ClassDef, quality: Method): LiveQualityPick {
+    val instructions = quality.implementation?.instructions?.toList().orEmpty()
+    val fields = instructions.filter { it.opcode == Opcode.SGET_OBJECT }
+        .map { (it as ReferenceInstruction).reference as FieldReference }
+        .filter { it.type == "Ljava/lang/String;" }
+        .map { it.key() }.distinct()
+    val field = fields.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one quality pick read in ${quality.name}, found $fields")
+    val setters = service.methods.filter { method ->
+        val body = method.implementation?.instructions?.toList().orEmpty()
+        val store = body.firstOrNull()
+        !AccessFlags.STATIC.isSet(method.accessFlags) && method.returnType == "V" &&
+            method.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;") &&
+            body.size == 2 && store?.opcode == Opcode.SPUT_OBJECT &&
+            ((store as ReferenceInstruction).reference as FieldReference).key() == field &&
+            (store as OneRegisterInstruction).registerA == method.implementation!!.registerCount - 1 &&
+            body[1].opcode == Opcode.RETURN_VOID
+    }
+    val setter = setters.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one quality pick setter in ${service.type}, found ${setters.map { it.name }}")
+    return LiveQualityPick(field, setter)
+}
+
+/** The For You LIVE preview's Service+ row ("Service+ | Ask me anything!"), real-named on 47.1.4. */
+internal const val SERVICE_PLUS_ROW =
+    "Lcom/ss/android/ugc/aweme/feed/adapter/widget/serviceplus/PreviewServicePlusBottomInfoWidget;"
+internal const val LIVE_ROOM_STRUCT = "Lcom/ss/android/ugc/aweme/feed/model/live/LiveRoomStruct;"
+internal const val SMB_LIVE_PREVIEW = "Lcom/ss/android/ugc/aweme/feed/model/live/SMBLivePreview;"
+private const val BASE_WIDGET = "Lcom/bytedance/android/widget/Widget;"
+
+/**
+ * Where the Service+ row takes a LIVE (#94). The row's bind ([method], f0 on 47.1.4) reads the
+ * room's smbLivePreview, keeps it in a field of its own ([store] is that iput-object, [preview]
+ * the register it stores and [row] the row itself) and shows it with the next call. That show
+ * returns without hiding the row when the room has no Service+ item, and only the row's [hide]
+ * (V0, run as a preview leaves the screen) takes it away, so a preview bound to the next LIVE
+ * without leaving first kept the last LIVE's row.
+ */
+internal data class ServicePlusBind(
+    val method: Method,
+    val store: Int,
+    val preview: Int,
+    val row: Int,
+    val hide: Method,
+)
+
+private fun Method.references() = implementation?.instructions?.toList().orEmpty()
+    .mapNotNull { (it as? ReferenceInstruction)?.reference }
+
+private fun Method.calls(owner: String, name: String) = references()
+    .any { it is MethodReference && it.definingClass == owner && it.name == name }
+
+/**
+ * The row's bind and hide, matched by shape. Throws when either isn't there exactly once, or the
+ * bind no longer stores the room's Service+ preview right before a plain show and a return: the
+ * hook writes the preview's register after the store, which is only safe when nothing reads it
+ * again.
+ */
+internal fun servicePlusBind(row: ClassDef): ServicePlusBind {
+    val instance = row.methods.filter {
+        it.implementation != null && !AccessFlags.STATIC.isSet(it.accessFlags) &&
+            it.parameterTypes.isEmpty() && it.returnType == "V"
+    }
+    val binds = instance.filter { method ->
+        method.references().any { it is FieldReference && it.definingClass == LIVE_ROOM_STRUCT && it.name == "smbLivePreview" }
+    }
+    val bind = binds.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one Service+ row bind, found ${binds.map { it.name }}")
+    val instructions = bind.implementation!!.instructions.toList()
+    val stores = instructions.indices.filter { index ->
+        val field = (instructions[index] as? ReferenceInstruction)?.reference as? FieldReference
+        instructions[index].opcode == Opcode.IPUT_OBJECT && field != null &&
+            field.definingClass == row.type && field.type == SMB_LIVE_PREVIEW
+    }
+    val store = stores.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one Service+ preview store in ${bind.name}, found ${stores.size}")
+    val put = instructions[store] as TwoRegisterInstruction
+    val self = bind.implementation!!.registerCount - 1
+    val show = instructions.getOrNull(store + 1)
+    val showCall = (show as? ReferenceInstruction)?.reference as? MethodReference
+    val plainShow = show is FiveRegisterInstruction && showCall != null &&
+        show.opcode == Opcode.INVOKE_VIRTUAL && showCall.definingClass == row.type &&
+        showCall.parameterTypes.isEmpty() && showCall.returnType == "V" &&
+        show.registerCount == 1 && show.registerC == self
+    if (put.registerB != self || put.registerA == self || !plainShow ||
+        instructions.getOrNull(store + 2)?.opcode != Opcode.RETURN_VOID
+    ) {
+        throw PatchException("LIVE controls: the Service+ row bind ${bind.name} has an unexpected shape")
+    }
+    // Called with invoke-virtual, so a private one wouldn't verify.
+    val hides = instance.filter { method ->
+        method !== bind && !AccessFlags.PRIVATE.isSet(method.accessFlags) &&
+            method.calls("Landroid/os/Handler;", "removeCallbacksAndMessages") &&
+            method.calls(BASE_WIDGET, "hide") && !method.calls(BASE_WIDGET, "show")
+    }
+    val hide = hides.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one Service+ row hide, found ${hides.map { it.name }}")
+    return ServicePlusBind(bind, store, put.registerA, self, hide)
+}
 
 /** The LIVE room's top-right viewer count, real-named on 47.0.3, 47.1.3 and 47.1.4. */
 internal const val ONLINE_AUDIENCE_RANK_WIDGET = "Lcom/bytedance/android/livesdk/rank/impl/widget/OnlineAudienceRankWidget;"
@@ -188,9 +389,12 @@ private fun wrapped(instructions: List<Instruction>, at: Int, result: Int): Bool
 @Suppress("unused")
 val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
-    description = "Stops a LIVE in the feed from opening by itself after a countdown, can " +
-        "show a LIVE's exact viewer count instead of a rounded one, and can offer a quality " +
-        "choice in more LIVE rooms. Starts off. Turn it on in Hushfeed settings > Playback.",
+    description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
+        "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
+        "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
+        "Starts off. Turn it on in Hushfeed settings > Playback. " +
+        "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +
+        "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -216,6 +420,20 @@ val liveControlsPatch = bytecodePatch(
                 "const/4 v0, 0x1\nreturn v0",
             )
         }
+        // Answers true while its switch is on, so every LIVE room's menu offers clear screen.
+        LiveClearScreenEntryFingerprint.method.guardAtEntry(
+            "LIVE controls",
+            "invoke-static {}, $EXTENSION->offerClearScreen()Z",
+            "const/4 v0, 0x1\nreturn v0",
+        )
+
+        // The room page coming to the front: where the Record button goes and which room it records (#37).
+        liveRoomField(classDefByOrNull(LIVE_PLAY_FRAGMENT)
+            ?: throw PatchException("LIVE controls: $LIVE_PLAY_FRAGMENT not found"))
+        LivePlayFragmentResumeFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range {p0 .. p0}, $RECORD_EXTENSION->noteRoomFragment(Ljava/lang/Object;)V",
+        )
 
         // The formatter's result lands in the upper half of the long it was given, so the count
         // can't be read back after the call and the hook needs no spare register: the count is
@@ -243,6 +461,54 @@ val liveControlsPatch = bytecodePatch(
             }
             hookViewerCounts(type, found)
         }
+
+        // A LIVE preview bound to a LIVE with no Service+ item runs the row's own hide first
+        // when it's still showing the last LIVE's row (#94). Matched and checked in full before
+        // anything is written.
+        val serviceRow = classDefByOrNull(SERVICE_PLUS_ROW)
+            ?: throw PatchException("LIVE controls: $SERVICE_PLUS_ROW not found")
+        val serviceBind = servicePlusBind(serviceRow)
+        mutableClassDefBy(SERVICE_PLUS_ROW).findMutableMethodOf(serviceBind.method).apply {
+            val at = serviceBind.store + 1
+            addInstructionsWithLabels(
+                at,
+                """
+                    invoke-static {v${serviceBind.row}, v${serviceBind.preview}}, $EXTENSION->hideStaleServicePlus(Ljava/lang/Object;Ljava/lang/Object;)Z
+                    move-result v${serviceBind.preview}
+                    if-eqz v${serviceBind.preview}, :morphe_keep_service_plus_row
+                    invoke-virtual {v${serviceBind.row}}, $SERVICE_PLUS_ROW->${serviceBind.hide.name}()V
+                """,
+                ExternalLabel("morphe_keep_service_plus_row", getInstruction(at)),
+            )
+        }
+
+        // A LIVE quality pick that outlives TikTok closing (#57): the picker's setter saves each
+        // pick, and both starts that read TikTok's last pick get the saved one while TikTok's is
+        // still null after a cold start. The player start only uses it when the stream has that
+        // quality, the same check it makes of a pick from this session. All four places are found
+        // and checked before anything is written.
+        val startQuality = LiveStartQualityFingerprint.method
+        val pick = liveQualityPick(mutableClassDefBy(PULL_STREAM_SERVICE), startQuality)
+        val playerStart = LivePlayerStartFingerprint.method
+        val readers = listOf(startQuality, playerStart).map { reader ->
+            val reads = reader.readsOf(pick.field)
+            val read = reads.singleOrNull()
+                ?: throw PatchException("LIVE controls: expected one quality pick read in ${reader.name}, found ${reads.size}")
+            Triple(reader, read, (reader.getInstruction(read) as OneRegisterInstruction).registerA)
+        }
+        readers.forEach { (reader, read, register) ->
+            reader.addInstructions(
+                read + 1,
+                """
+                    invoke-static/range {v$register .. v$register}, $EXTENSION->liveQualityPick(Ljava/lang/String;)Ljava/lang/String;
+                    move-result-object v$register
+                """,
+            )
+        }
+        mutableClassDefBy(PULL_STREAM_SERVICE).findMutableMethodOf(pick.setter).addInstruction(
+            0,
+            "invoke-static/range {p1 .. p1}, $EXTENSION->noteLiveQualityPick(Ljava/lang/String;)V",
+        )
     }
 }
 

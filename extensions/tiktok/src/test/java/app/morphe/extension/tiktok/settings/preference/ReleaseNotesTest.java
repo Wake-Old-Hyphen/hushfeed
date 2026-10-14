@@ -350,6 +350,19 @@ public class ReleaseNotesTest {
         captureDialog("dialogs/dark/whats-new-german-large.png", true);
     }
 
+    /** The version gradle.properties names, which release prepare bumps, so the capture never needs a hand edit. */
+    private static String sourceVersion() throws Exception {
+        Path cursor = Path.of(System.getProperty("user.dir")).toAbsolutePath();
+        while (!Files.isRegularFile(cursor.resolve("gradle.properties"))
+                || !Files.isRegularFile(cursor.resolve("CHANGELOG.md"))) {
+            cursor = cursor.getParent();
+        }
+        java.util.regex.Matcher version = java.util.regex.Pattern.compile("(?m)^version = (\\d+\\.\\d+\\.\\d+)$")
+                .matcher(new String(Files.readAllBytes(cursor.resolve("gradle.properties")), StandardCharsets.UTF_8));
+        assertTrue("gradle.properties has no version line", version.find());
+        return version.group(1);
+    }
+
     private static void captureDialog(String name, boolean dark) throws Exception {
         try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
             Activity activity = owner.get();
@@ -358,7 +371,7 @@ public class ReleaseNotesTest {
             Utils.setIsDarkModeEnabled(dark);
             activity.getSharedPreferences(ReleaseNotes.PREFS_NAME, Context.MODE_PRIVATE).edit()
                     .putString("dismissed_version", "0.67.0").commit();
-            ReleaseNotes.show(activity, "0.72.0", () -> {});
+            ReleaseNotes.show(activity, sourceVersion(), () -> {});
             AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             View decor = dialog.getWindow().getDecorView();

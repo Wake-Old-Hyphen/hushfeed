@@ -516,6 +516,8 @@ public final class FeatureGateLabStore {
      * the ones those mods ship. FeatureGatePresetsTest reads every listed build's shipped catalog
      * and fails on a key the build doesn't register, a type it registers differently or a value
      * the Lab would refuse. A preset may pin the in-code default, since the server overrides it.
+     * A rule is an AB (abmock) key unless it starts with {@link #LIVE_RULE}, which names one of
+     * TikTok's LIVE settings, read through its own settings manager.
      */
     static final class Preset {
         final String id;
@@ -533,13 +535,21 @@ public final class FeatureGateLabStore {
         JSONObject toJson() throws JSONException {
             JSONArray array = new JSONArray();
             for (String rule : rules) {
+                String manager = MANAGER_ABMOCK;
+                if (rule.startsWith(LIVE_RULE)) {
+                    manager = MANAGER_LIVE;
+                    rule = rule.substring(LIVE_RULE.length());
+                }
                 String[] parts = rule.split(":", 3);
-                array.put(new JSONObject().put("manager", MANAGER_ABMOCK).put("key", parts[0])
+                array.put(new JSONObject().put("manager", manager).put("key", parts[0])
                         .put("type", parts[1]).put("value", parts[2]));
             }
             return new JSONObject().put("title", title).put("rules", array);
         }
     }
+
+    /** Marks a preset rule as a LIVE setting rather than an AB key. */
+    static final String LIVE_RULE = "live/";
 
     private static final String[] CATALOG_BUILDS = GeneratedGateCatalogBuilds.BUILDS;
 
@@ -570,6 +580,10 @@ public final class FeatureGateLabStore {
             new Preset("comment_media", "Comment with live photos, the camera or audio", CATALOG_BUILDS,
                     "comment_enable_live_photo:INT:1", "comment_by_shooting:INT:1",
                     "audio_comment_publish:INT:1"),
+            // Japan's several photos per comment (#98). Group 2 is the only one the comment
+            // keyboard and the publish path read as on; 0, 1 and anything else keep one photo.
+            new Preset("comment_photos", "Several photos in one comment", CATALOG_BUILDS,
+                    "comment_multi_photo_group:INT:2"),
             // The shared INT reader serves both the comment UI and native emoji catalog fetch.
             // Group 2 enables send and view while retaining availability and V0 fallback checks.
             new Preset("comment_emoji", "New comment emoji", CATALOG_BUILDS,
@@ -597,6 +611,17 @@ public final class FeatureGateLabStore {
                     "background_play_enable:INT:1", "fyp_auto_scroll:INT:1"),
             new Preset("feed_timestamps", "Post dates in the feed", CATALOG_BUILDS,
                     "feed_title_timestamp_trial:STRING:v3"),
+            // Korea's one-line comments that scroll across a video (#98). Group 1 or 2 turns the
+            // feature on once TikTok's own strategy switch allows it, and the landscape flag
+            // only counts after that. Each video still carries its own server flag for them.
+            new Preset("scrolling_comments", "Scrolling comments on videos", CATALOG_BUILDS,
+                    "danmaku_exp:INT:1", "landscape_support_danmaku:INT:1"),
+            // Japan's LIVE chat auto-translate (#98). The audience setting is an INT in LIVE's own
+            // settings, 0 by default. Anything above 0 counts as on for the audience, and above 1
+            // also runs the buffered automatic translation, so 2 is the one that translates by
+            // itself. The anchor's own setting is left alone: it only matters in a room you host.
+            new Preset("live_translate", "LIVE chat auto-translate", CATALOG_BUILDS,
+                    LIVE_RULE + "live_auto_translate_model_audience:INT:2"),
             // Disable the client check; changing its separate maximum to 0 would reject all tags.
             new Preset("hashtag_limit", "More hashtags per post", CATALOG_BUILDS,
                     "studio_publish_limit_hashtag_switch:BOOLEAN:false"),

@@ -170,8 +170,11 @@ function Get-PublicationRelease {
         $release = Get-PublicationApi "repos/$Repository/releases/$($pending.databaseId)"
         if ([string]$release.id -cne [string]$pending.databaseId) { throw "Draft release identity changed for $Tag." }
     }
+    # A published release always says whether it's immutable. A draft can't be immutable yet and
+    # GitHub may leave the field out of it, which reads as not immutable.
     if ($null -eq $release -or $release.tag_name -cne $Tag -or [string]$release.id -notmatch '^[1-9][0-9]*$' -or
-        $release.draft -isnot [bool] -or $release.prerelease -isnot [bool] -or $release.immutable -isnot [bool] -or
+        $release.draft -isnot [bool] -or $release.prerelease -isnot [bool] -or
+        ($release.immutable -isnot [bool] -and -not ($release.draft -and $null -eq $release.immutable)) -or
         $release.assets -isnot [array]) {
         throw "GitHub returned incomplete or mismatched release metadata for $Tag."
     }
@@ -256,11 +259,15 @@ function Assert-PublicationTag {
 
 function Assert-PublicationRelease {
     param([object]$Release, [string]$Tag, [string]$ExpectedCommit, [string]$Notes,
-        [hashtable]$Files, [hashtable]$Hashes, [bool]$IsDraft, [string]$ReleaseId, [switch]$Complete)
-    # Older published releases recorded a branch here. The existing tag's independently
-    # resolved commit is authoritative; drafts created by this flow name the exact commit.
+        [hashtable]$Files, [hashtable]$Hashes, [bool]$IsDraft, [string]$ReleaseId, [switch]$Complete,
+        [switch]$SkipUnfinished)
+    # GitHub ignores target_commitish when the tag already exists, and this flow pushes the tag
+    # before it creates the draft, so a draft can name the default branch here or nothing at all
+    # (older published releases recorded a branch too). The tag's commit, resolved locally, on
+    # origin and through GitHub before every write, is the authority. Only a different full commit
+    # here contradicts it.
     $target = [string]$Release.target_commitish
-    $targetMismatch = -not $target -or (($IsDraft -or $target -match '^[0-9a-fA-F]{40}([0-9a-fA-F]{24})?$') -and $target -ine $ExpectedCommit)
+    $targetMismatch = $target -match '^[0-9a-fA-F]{40}([0-9a-fA-F]{24})?$' -and $target -ine $ExpectedCommit
     if ($Release.draft -ne $IsDraft -or ($ReleaseId -and [string]$Release.id -cne $ReleaseId) -or
         $targetMismatch -or $Release.name -cne $Tag -or $Release.prerelease -or
         ([string]$Release.body).Replace("`r`n", "`n").TrimEnd("`n") -cne $Notes.Replace("`r`n", "`n").TrimEnd("`n") -or
@@ -269,6 +276,8 @@ function Assert-PublicationRelease {
     $ids = @{}
     $fingerprints = foreach ($asset in $Release.assets) {
         $name = [string]$asset.name
+        # Left for Remove-UnfinishedDraftAsset, which takes only these off the draft.
+        if ($SkipUnfinished -and $IsDraft -and $asset.state -cne 'uploaded' -and $name -cin @($Files.Keys)) { continue }
         if ($name -cnotin @($Files.Keys) -or $seen.ContainsKey($name) -or [string]$asset.id -notmatch '^[1-9][0-9]*$' -or
             $ids.ContainsKey([string]$asset.id) -or $asset.state -cne 'uploaded' -or $asset.size -ne $Files[$name].Length -or
             ($asset.digest -and $asset.digest -ine "sha256:$($Hashes[$name])")) {
@@ -280,6 +289,24 @@ function Assert-PublicationRelease {
     }
     if ($Complete -and $seen.Count -ne 3) { throw "$Tag must contain exactly the three release assets." }
     return (($fingerprints | Sort-Object) -join "`n")
+}
+
+function Remove-UnfinishedDraftAsset {
+    param([object]$Release, [string]$Repository, [string]$Tag, [string[]]$Names)
+    # An upload cut off partway leaves its asset on the draft unfinished, under the very name the
+    # rerun has to upload, and GitHub refuses a second asset by that name: every rerun stopped at
+    # the same draft. Only an unfinished asset named as one of this release's files goes, from the
+    # draft whose identity was just checked, by its own ID. Anything else still stops the run.
+    if (-not $Release.draft) { return $false }
+    $removed = $false
+    foreach ($asset in @($Release.assets)) {
+        if ($asset.state -ceq 'uploaded' -or [string]$asset.name -cnotin $Names) { continue }
+        if ([string]$asset.id -notmatch '^[1-9][0-9]*$') { throw "$Tag has an unfinished asset without a valid ID: $($asset.name)" }
+        Step "removing the unfinished upload of $($asset.name) from draft $Tag"
+        Invoke-PublicationCommand gh @('api', "repos/$Repository/releases/assets/$($asset.id)", '--method', 'DELETE') | Out-Null
+        $removed = $true
+    }
+    return $removed
 }
 
 function Save-PublicationAsset {
@@ -369,6 +396,14 @@ function Invoke-ReleasePublication {
         Tag = $tag; ExpectedCommit = $ExpectedCommit; Notes = $notes; Files = $files; Hashes = $hashes
         ReleaseId = [string]$release.id; IsDraft = (-not $alreadyPublished)
     }
+    if (-not $alreadyPublished) {
+        # The draft's identity and every finished asset pass first, so an unfinished upload is
+        # only ever taken off the draft this run owns.
+        Assert-PublicationRelease -Release $release @identity -SkipUnfinished | Out-Null
+        if (Remove-UnfinishedDraftAsset -Release $release -Repository $Repository -Tag $tag -Names $names) {
+            $release = Get-PublicationRelease -Repository $Repository -Tag $tag
+        }
+    }
     $fingerprint = Assert-PublicationRelease -Release $release @identity -Complete:$alreadyPublished
     $temporaryRoot = [IO.Path]::GetTempPath()
     $work = Resolve-WithinRoot -Root $temporaryRoot -Path (Join-Path $temporaryRoot ("hushfeed-publication-$Version-" + [guid]::NewGuid().ToString('N')))
@@ -456,8 +491,10 @@ switch ($Stage) {
         $readme = Join-Path $root 'README.md'
         $text = [IO.File]::ReadAllText($readme) -replace 'badge/version-\d+\.\d+\.\d+-', "badge/version-$Version-"
         [IO.File]::WriteAllText($readme, $text)
-        Step 'patch list and What''s new'
+        Step 'patch list, developer guide and What''s new'
         Invoke-Gradle @(':patches:generatePatchesList')
+        $guideArgs = @('guide') + $(if ($Date) { @('--date', $Date) } else { @() })
+        Invoke-Native 'developer guide' { py -3.13 (Join-Path $root 'tools/release_text.py') @guideArgs }
         Invoke-Native 'What''s new' { py -3.13 (Join-Path $root 'tools/gen-release-notes.py') }
         Invoke-Native 'translation check' { py -3.13 (Join-Path $root 'tools/release_text.py') check-translations --version $Version }
         Invoke-Native 'facts precheck' {

@@ -13,7 +13,7 @@ $ast = [Management.Automation.Language.Parser]::ParseFile($ReleaseScript, [ref]$
 if ($parseErrors.Count) { throw ($parseErrors -join "`n") }
 foreach ($name in @('Step', 'Invoke-PublicationCommand', 'Get-PublicationApi', 'Get-PublicationRelease',
         'Assert-PublicationTag', 'Assert-PublicationRelease', 'Get-PublishedReleaseDate', 'Assert-ImmutablePublicationEnabled',
-        'Assert-PublicationDownloads', 'Assert-SingleTagRelease', 'Invoke-ReleasePublication')) {
+        'Assert-PublicationDownloads', 'Assert-SingleTagRelease', 'Remove-UnfinishedDraftAsset', 'Invoke-ReleasePublication')) {
     $definition = $ast.Find({ param($node)
         $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
     }, $false)
@@ -64,6 +64,7 @@ function Reset-Case {
         OmitDownload = ''; CorruptDownload = ''; ExtraDownload = $false; MetadataMutation = $null
         MetadataReads = 0; ApiFailure = 0; InvalidApiJson = $false; GraphQLFailure = $false; GitFailure = ''; NextAssetId = 100
         RemoteTagObject = ''; SkipUpload = ''; BeforePublish = $null; ExtraReleases = @(); SecondPageReleases = @(); Uploaded = 0
+        AfterCreate = $null; AfterUpload = $null
         Calls = (New-Object 'System.Collections.Generic.List[object]')
         DownloadDirectories = (New-Object 'System.Collections.Generic.List[string]')
         RemoteBytes = @{}; LastDownload = @(); AttestationFailure = ''
@@ -105,7 +106,12 @@ function Get-Option([string[]]$Arguments, [string]$Name) {
 }
 function Record-Command([string]$File, [string[]]$Arguments) {
     $script:state.Calls.Add([pscustomobject]@{ File = $File; Arguments = $Arguments })
-    if ($Arguments -contains '--clobber' -or $Arguments -contains 'delete' -or $Arguments -contains 'delete-asset') {
+    # The one removal allowed: an asset by its ID, which the gh mock then holds to an unfinished
+    # upload of one of the release's own files on the verified draft.
+    $assetDelete = $File -ceq 'gh' -and $Arguments.Count -eq 4 -and $Arguments[0] -ceq 'api' -and
+        $Arguments[1] -match '^repos/example/project/releases/assets/[1-9][0-9]*$' -and ($Arguments[2..3] -join '|') -ceq '--method|DELETE'
+    if ($Arguments -contains '--clobber' -or $Arguments -contains 'delete-asset' -or
+        (($Arguments -contains 'delete') -and -not $assetDelete)) {
         throw 'The publication flow attempted a destructive command.'
     }
     $global:LASTEXITCODE = 0
@@ -193,6 +199,16 @@ function gh {
                 Write-ApiResponse $script:state.Release $include
                 return
             }
+            { $_ -match '^repos/example/project/releases/assets/[1-9][0-9]*$' } {
+                Assert-True (($a -join '|') -ceq "api|$endpoint|--method|DELETE") 'Only an asset removal may name an asset endpoint here.'
+                $id = [int]($endpoint -split '/')[-1]
+                $asset = @($script:state.Release.assets | Where-Object { $_.id -eq $id })
+                Assert-True ($script:state.Release -and $script:state.Release.draft -and $asset.Count -eq 1) 'A removal targeted an asset outside the verified draft.'
+                Assert-True ($asset[0].state -cne 'uploaded' -and $asset[0].name -cin $names) 'A removal targeted a finished or foreign asset.'
+                $script:state.Release.assets = @($script:state.Release.assets | Where-Object { $_.id -ne $id })
+                $script:state.RemoteBytes.Remove([string]$asset[0].name)
+                return
+            }
             { $_ -match '^repos/example/project/releases\?per_page=100&page=[1-9][0-9]*$' } {
                 $items = @()
                 if ($script:state.Release -and $endpoint -match 'page=1$') { $items += $script:state.Release }
@@ -213,6 +229,7 @@ function gh {
                 if ($name -ceq $script:state.SkipUpload) { return }
                 Add-RemoteAsset $name ([IO.File]::ReadAllBytes($path))
                 $script:state.Uploaded++
+                if ($script:state.AfterUpload) { & $script:state.AfterUpload }
                 if ($script:state.UploadFailureAfter -eq $script:state.Uploaded) { $global:LASTEXITCODE = 23 }
                 return
             }
@@ -252,6 +269,7 @@ function gh {
             Assert-True ((Get-Option $a '--target') -ceq $commit -and (Get-Option $a '--title') -ceq 'v1.2.3') 'Create target/title differs.'
             Assert-True ((Get-Option $a '--notes-file') -ceq $script:invoke.NotesPath -and $a.Count -eq 13) 'Create must not upload or publish implicitly.'
             $script:state.Release = New-Release
+            if ($script:state.AfterCreate) { & $script:state.AfterCreate }
         }
         'edit' {
             # Reproduce the old CLI boundary, which reselected a draft by tag before PATCH.
@@ -289,16 +307,21 @@ function Complete-MockPublication {
     }
     if ($script:state.PublishFailure) { $global:LASTEXITCODE = 23; return }
     $script:state.Release.draft = $false
-    $script:state.Release.immutable = $script:state.ImmutableEnabled
+    # A draft may have come without the field at all; a published release always has it.
+    $script:state.Release | Add-Member -NotePropertyName immutable -NotePropertyValue $script:state.ImmutableEnabled -Force
     $script:state.Release.published_at = '2026-10-12T12:00:00Z'
 }
 function Get-ReleaseWrites {
     return @($script:state.Calls | Where-Object { $_.File -ceq 'gh' -and (
         ($_.Arguments[0] -ceq 'release' -and $_.Arguments[1] -in @('create', 'upload', 'edit')) -or
-        ($_.Arguments[0] -ceq 'api' -and ($_.Arguments -contains 'PATCH' -or $_.Arguments -contains 'POST'))) })
+        ($_.Arguments[0] -ceq 'api' -and ($_.Arguments -ccontains 'PATCH' -or $_.Arguments -ccontains 'POST' -or $_.Arguments -ccontains 'DELETE'))) })
 }
 function Get-WriteKind([object]$Call) {
-    if ($Call.Arguments[0] -ceq 'api') { if ($Call.Arguments -contains 'PATCH') { return 'publish' } else { return 'upload' } }
+    if ($Call.Arguments[0] -ceq 'api') {
+        if ($Call.Arguments -ccontains 'PATCH') { return 'publish' }
+        if ($Call.Arguments -ccontains 'DELETE') { return 'delete' }
+        return 'upload'
+    }
     return $Call.Arguments[1]
 }
 function Assert-NoPublish {
@@ -439,7 +462,6 @@ try {
     }
     foreach ($mutation in @(
         @{ Name = 'duplicate asset'; Change = { $script:state.Release.assets += $script:state.Release.assets[0] } },
-        @{ Name = 'unfinished upload'; Change = { $script:state.Release.assets[0].state = 'starter' } },
         @{ Name = 'wrong size'; Change = { $script:state.Release.assets[0].size++ } },
         @{ Name = 'wrong digest'; Change = { $script:state.Release.assets[0].digest = ('sha256:' + ('0' * 64)) } },
         @{ Name = 'wrong filename case'; Change = { $script:state.Release.assets[0].name = $names[0].ToUpperInvariant() } }
@@ -454,7 +476,6 @@ try {
     }
     foreach ($mutation in @(
         @{ Name = 'target commit'; Change = { $script:state.Release.target_commitish = ('f' * 40) } },
-        @{ Name = 'branch target'; Change = { $script:state.Release.target_commitish = 'main' } },
         @{ Name = 'title'; Change = { $script:state.Release.name = 'unexpected title' } },
         @{ Name = 'notes'; Change = { $script:state.Release.body = 'unexpected notes' } },
         @{ Name = 'prerelease'; Change = { $script:state.Release.prerelease = $true } },
@@ -467,6 +488,83 @@ try {
             Assert-True ((Get-ReleaseWrites).Count -eq 0) 'Unexpected draft identity caused a mutation.'
             Assert-NoPublish
         }
+    }
+    # GitHub ignores target_commitish once the tag exists, and the tag goes up before the draft.
+    foreach ($shape in @(
+        @{ Name = 'names the default branch'; Change = { $script:state.Release.target_commitish = 'main' } },
+        @{ Name = 'leaves out its target'; Change = { $script:state.Release.PSObject.Properties.Remove('target_commitish') } },
+        @{ Name = 'leaves out immutable'; Change = { $script:state.Release.PSObject.Properties.Remove('immutable') } }
+    )) {
+        Test-Case "A draft that $($shape.Name) is published by its verified tag" {
+            Seed-Release -AssetNames @($names[0])
+            & $shape.Change
+            $result = Invoke-ReleasePublication @script:invoke
+            Assert-True (-not $result.AlreadyPublished -and -not $script:state.Release.draft -and $script:state.Release.assets.Count -eq 3) 'A documented draft shape stopped publication.'
+            Assert-True (((Get-ReleaseWrites | ForEach-Object { Get-WriteKind $_ }) -join '|') -ceq 'upload|upload|publish') 'A documented draft shape changed the writes.'
+        }
+    }
+    Test-Case 'A draft created on an existing tag that reports the default branch publishes' {
+        $script:state.LocalTag = $commit
+        $script:state.RemoteTag = $commit
+        $script:state.AfterCreate = { $script:state.Release.target_commitish = 'main'; $script:state.Release.PSObject.Properties.Remove('immutable') }
+        $result = Invoke-ReleasePublication @script:invoke
+        Assert-True (-not $script:state.Release.draft -and -not $result.AlreadyPublished) 'A fresh draft on an existing tag did not publish.'
+        Assert-True (((Get-ReleaseWrites | ForEach-Object { Get-WriteKind $_ }) -join '|') -ceq 'create|upload|upload|upload|publish') 'Publication writes changed order.'
+    }
+    Test-Case 'A published release still has to say whether it is immutable' {
+        Seed-Release -Published
+        $script:state.Release.PSObject.Properties.Remove('immutable')
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'incomplete or mismatched release metadata'
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'A published release without immutability caused a write.'
+    }
+    # Not $state: at this scope that's the mock's own $script:state.
+    foreach ($assetState in @('starter', 'open')) {
+        Test-Case "An upload cut off as $assetState is removed from the draft and sent again" {
+            Seed-Release
+            $script:state.Release.assets[1].state = $assetState
+            Assert-True ($script:state.Release.assets[1].state -ceq $assetState) 'The unfinished state was not set.'
+            $unfinished = $script:state.Release.assets[1].id
+            $result = Invoke-ReleasePublication @script:invoke
+            Assert-True (-not $result.AlreadyPublished -and -not $script:state.Release.draft -and $script:state.Release.assets.Count -eq 3) 'The resumed draft did not publish all three assets.'
+            Assert-True (@($script:state.Release.assets | Where-Object { $_.state -cne 'uploaded' -or $_.id -eq $unfinished }).Count -eq 0) 'The unfinished asset survived.'
+            $writes = @(Get-ReleaseWrites)
+            Assert-True ((($writes | ForEach-Object { Get-WriteKind $_ }) -join '|') -ceq 'delete|upload|publish') 'Resume did more than replace the unfinished upload.'
+            Assert-True ($writes[0].Arguments[1] -ceq "repos/example/project/releases/assets/$unfinished") 'The removal missed the unfinished asset.'
+            Assert-True ((Split-Path -Leaf (Get-Option $writes[1].Arguments '--input')) -ceq $names[1]) 'The wrong file was sent again.'
+        }
+    }
+    Test-Case 'An interrupted upload left unfinished resumes on a second invocation' {
+        $script:state.UploadFailureAfter = 2
+        $script:state.AfterUpload = { if ($script:state.Uploaded -eq 2) { $script:state.Release.assets[-1].state = 'starter' } }
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'failed \(exit 23\)'
+        Assert-NoPublish
+        $script:state.UploadFailureAfter = 0
+        $script:state.AfterUpload = $null
+        Invoke-ReleasePublication @script:invoke
+        Assert-True (-not $script:state.Release.draft -and $script:state.Release.assets.Count -eq 3) 'The interrupted draft did not publish.'
+        Assert-True (@(Get-ReleaseWrites | Where-Object { (Get-WriteKind $_) -ceq 'delete' }).Count -eq 1) 'The unfinished asset was not replaced exactly once.'
+    }
+    Test-Case 'An unfinished asset under another name still stops the run untouched' {
+        Seed-Release -AssetNames @($names[0])
+        Add-RemoteAsset 'unexpected.zip' ([byte[]]@(1, 2, 3))
+        $script:state.Release.assets[-1].state = 'starter'
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'unexpected, incomplete or mismatched asset'
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'A foreign unfinished asset caused a mutation.'
+        Assert-NoPublish
+    }
+    Test-Case 'An unfinished asset on a draft with other notes is never removed' {
+        Seed-Release
+        $script:state.Release.assets[0].state = 'starter'
+        $script:state.Release.body = 'somebody else''s draft'
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'unexpected release identity'
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'An asset left a draft whose identity failed.'
+        Assert-NoPublish
+    }
+    Test-Case 'An unfinished asset on a published release is never removed' {
+        Seed-Release -Published
+        $script:state.Release.assets[0].state = 'starter'
+        Assert-Throws { Invoke-ReleasePublication @script:invoke } 'unexpected, incomplete or mismatched asset'
+        Assert-True ((Get-ReleaseWrites).Count -eq 0) 'A published release was changed.'
     }
     foreach ($property in @('LocalTag', 'RemoteTag', 'ApiTagCommit', 'Head')) {
         Test-Case "Reject mismatched $property before mutation" {

@@ -65,6 +65,7 @@ public class DeepFeedFilterBoundaryTest {
         private AwemeRawAd rawAd;
         private String anchorsExtras;
         private Object contentModel;
+        private long createTime;
         public List<?> anchors;
         public String commercialVideoInfo;
 
@@ -92,6 +93,12 @@ public class DeepFeedFilterBoundaryTest {
         public Object getVideo() { return new Duration(durationMs); }
         @Override public AwemeStatistics getStatistics() { return statistics; }
         @Override public String getShareUrl() { return null; }
+        @Override public long getCreateTime() { return createTime; }
+
+        Video postedHoursAgo(long hours) {
+            createTime = (System.currentTimeMillis() - hours * 3_600_000L) / 1000L;
+            return this;
+        }
 
         Video withRawAd() {
             rawAd = new AwemeRawAd();
@@ -355,6 +362,45 @@ public class DeepFeedFilterBoundaryTest {
         page.items = new ArrayList<>(List.of(tagged));
         FeedItemsFilter.filterOnRead(page);
         assertEquals(1, page.items.size());
+    }
+
+    @Test
+    public void aKeptVideoThatAgesPastTheLimitStaysWhileANewOldOneGoes() {
+        Settings.MAX_PUBLICATION_AGE_DAYS.save(1);
+        Video playing = new Video("playing", false, 500, "").postedHoursAgo(23);
+        FeedItemList page = new FeedItemList();
+        page.items = new ArrayList<>(List.of(playing));
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(List.of(playing), page.items);
+
+        // The clock moves past the limit while it plays, and TikTok reads the grown list again.
+        playing.postedHoursAgo(25);
+        Video fresh = new Video("fresh", false, 500, "").postedHoursAgo(2);
+        Video old = new Video("old", false, 500, "").postedHoursAgo(72);
+        page.items.add(fresh);
+        page.items.add(old);
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(List.of(playing, fresh), page.items);
+
+        // Turning a rule on is the reader's choice, so every video is judged again.
+        Settings.HIDE_LIVE.save(true);
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(List.of(fresh), page.items);
+    }
+
+    @Test
+    public void aKeptVideoStillGoesWhenItsAdMetadataArrivesLate() {
+        Settings.REMOVE_ADS.save(true);
+        Settings.MAX_PUBLICATION_AGE_DAYS.save(1);
+        Video video = new Video("kept-then-commission", false, 500, "").postedHoursAgo(1);
+        FeedItemList page = new FeedItemList();
+        page.items = new ArrayList<>(List.of(video));
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals(1, page.items.size());
+
+        video.withCreatorCommissionDisclosure();
+        FeedItemsFilter.filterOnRead(page);
+        assertTrue(page.items.isEmpty());
     }
 
     @Test

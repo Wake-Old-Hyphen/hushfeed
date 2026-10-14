@@ -115,8 +115,17 @@ public class AlwaysShowPublishDatePatchTest {
         SettingsStatus.engagementRateEnabled = engagementEnabled;
         Settings.ALWAYS_SHOW_PUBLISH_DATE.save(false);
         Settings.PUBLISH_DATE_EXACT_TIME.resetToDefault();
+        Settings.PUBLISH_DATE_TIME_ZONE.resetToDefault();
+        Settings.PUBLISH_DATE_SHORT_DATE.resetToDefault();
         Settings.PUBLISH_DATE_ON_GRID.resetToDefault();
         Settings.SHOW_ENGAGEMENT_RATE.resetToDefault();
+    }
+
+    private static long utcSeconds(int year, int month, int day, int hour, int minute) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.clear();
+        calendar.set(year, month - 1, day, hour, minute, 0);
+        return calendar.getTimeInMillis() / 1000L;
     }
 
     private static Context context() {
@@ -219,6 +228,87 @@ public class AlwaysShowPublishDatePatchTest {
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", new Post(0, "not an id")));
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", "not a video"));
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", null));
+    }
+
+    @Test
+    public void theZoneAndTheShortDateAreTheirOwnChoicesAndKeepTheSeconds() {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        String noZone = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, false, false);
+        assertTrue(noZone, noZone.startsWith("Oct 7, 2025"));
+        assertTrue(noZone, Pattern.compile("\\b3:04:05\\b").matcher(noZone).find());
+        assertTrue(noZone, noZone.contains("PM"));
+        assertFalse(noZone, noZone.contains("UTC"));
+
+        String shortWithZone = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, true, true);
+        assertTrue(shortWithZone, shortWithZone.startsWith("10/7/25"));
+        assertTrue(shortWithZone, shortWithZone.contains("3:04:05"));
+        assertTrue(shortWithZone, shortWithZone.contains("UTC"));
+
+        String shortOnly = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, true, false, true);
+        assertTrue(shortOnly, shortOnly.startsWith("10/7/25"));
+        assertTrue(shortOnly, shortOnly.contains("15:04:05"));
+        assertFalse(shortOnly, shortOnly.contains("PM") || shortOnly.contains("UTC"));
+
+        // The defaults are the row as it always read.
+        assertEquals(AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false),
+                AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, true, false));
+    }
+
+    @Test
+    public void anotherLanguageWritesItsOwnShortDateAndClock() {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        String german = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.GERMANY, utc, true, false, true);
+        assertTrue(german, german.contains("07.10.25"));
+        assertFalse(german, german.contains("07.10.2025"));
+        assertTrue(german, german.contains("15:04:05"));
+        assertFalse(german, german.contains("UTC") || german.contains("PM"));
+
+        String german12 = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.GERMANY, utc, false, false, false);
+        assertTrue(german12, german12.contains("07.10.2025"));
+        assertTrue(german12, Pattern.compile("\\b3:04:05\\b").matcher(german12).find());
+        assertTrue(german12, german12.contains("PM"));
+        assertFalse(german12, german12.contains("UTC"));
+    }
+
+    @Test
+    public void theSameInstantKeepsItsHourAcrossTheFallBack() {
+        // 2025-11-02 in New York: 05:30 UTC is 1:30 EDT, and an hour later 1:30 again, in EST.
+        TimeZone newYork = TimeZone.getTimeZone("America/New_York");
+        long beforeFallBack = utcSeconds(2025, 11, 2, 5, 30);
+        long afterFallBack = utcSeconds(2025, 11, 2, 6, 30);
+        String daylight = AlwaysShowPublishDatePatch.exactTime(beforeFallBack, Locale.US, newYork, false, true, false);
+        String standard = AlwaysShowPublishDatePatch.exactTime(afterFallBack, Locale.US, newYork, false, true, false);
+        assertTrue(daylight, daylight.contains("1:30:00") && daylight.contains("EDT"));
+        assertTrue(standard, standard.contains("1:30:00") && standard.contains("EST"));
+        // With the zone off both read the same local time: that hour happens twice there.
+        assertEquals(AlwaysShowPublishDatePatch.exactTime(beforeFallBack, Locale.US, newYork, false, false, true),
+                AlwaysShowPublishDatePatch.exactTime(afterFallBack, Locale.US, newYork, false, false, true));
+        assertTrue(AlwaysShowPublishDatePatch.exactTime(beforeFallBack, Locale.US, newYork, true, false, true)
+                .startsWith("11/2/25"));
+    }
+
+    @Test
+    public void theRowFollowsBothOptionsOnlyWhileTheTimeToTheSecondIsOn() {
+        assertEquals(Boolean.TRUE, Settings.PUBLISH_DATE_TIME_ZONE.defaultValue);
+        assertEquals(Boolean.FALSE, Settings.PUBLISH_DATE_SHORT_DATE.defaultValue);
+        Post post = new Post(POSTED, POSTED_ID);
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        Settings.PUBLISH_DATE_TIME_ZONE.save(false);
+        Settings.PUBLISH_DATE_SHORT_DATE.save(true);
+        assertEquals("both options with the time to the second off", "2d ago",
+                AlwaysShowPublishDatePatch.postTime("2d ago", post));
+
+        Settings.PUBLISH_DATE_EXACT_TIME.save(true);
+        assertEquals(AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false, false, true),
+                AlwaysShowPublishDatePatch.postTime("2d ago", post));
+        Settings.PUBLISH_DATE_TIME_ZONE.save(true);
+        Settings.PUBLISH_DATE_SHORT_DATE.save(false);
+        assertEquals(AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.US, utc, false),
+                AlwaysShowPublishDatePatch.postTime("2d ago", post));
+
+        Settings.PUBLISH_DATE_TIME_ZONE.save(false);
+        setPaused(true);
+        assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", post));
     }
 
     @Test

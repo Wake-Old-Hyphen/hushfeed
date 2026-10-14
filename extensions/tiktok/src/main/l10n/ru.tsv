@@ -1871,6 +1871,10 @@ Show exact LIVE viewer counts	Показывать точное число зр�
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	В комнате LIVE число зрителей показано округлённо, например 1,2K. Этот переключатель показывает точное число.
 Offer LIVE quality in more rooms	Выбор качества LIVE в большем числе комнат
 TikTok lets you pick a LIVE's quality only in some rooms. This adds Video quality to the menu in most of the others, and the next room opens at the quality you picked last.	TikTok даёт выбрать качество LIVE только в некоторых комнатах. Этот переключатель добавляет Качество видео в меню большинства остальных, а следующая комната открывается в последнем выбранном качестве.
+Keep the LIVE quality after TikTok restarts	Сохранять качество LIVE после перезапуска TikTok
+TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok забывает выбранное качество LIVE, когда закрывается. Этот переключатель снова запускает комнаты в этом качестве после перезапуска. Комната, в трансляции которой его нет, открывается в качестве, которое выберет TikTok.
+Offer clear screen in every LIVE room	Чистый экран в любой комнате LIVE
+Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Чистый экран скрывает чат, подарки и кнопки LIVE, и остаётся только трансляция. TikTok добавляет его в меню лишь некоторых комнат. Этот переключатель добавляет его в остальные.
 Keep watching in a small window	Смотреть в маленьком окне
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Если выйти из TikTok во время воспроизведения видео, оно продолжит воспроизводиться в маленьком окне поверх других приложений, с кнопкой паузы. Работает в ленте и в видео, открытых из профиля, поиска или звука. Требуется Android 8 или новее.
 Play	Воспроизвести
@@ -2233,7 +2237,13 @@ Opens a GitHub report with your versions and settings filled in. Add what happen
 Support Hushfeed	Поддержать Hushfeed
 No app on this phone opens web links	На этом телефоне нет приложения для веб-ссылок
 Quick setups	Быстрые настройки
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch.	«Тишина» скрывает рекламу, Shop и LIVE. «Конфиденциальность» скрывает ваши просмотры и набор текста и останавливает отслеживание. «По умолчанию» возвращает каждый переключатель в исходное положение.
+Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	«Тишина» скрывает рекламу, Shop и LIVE. «Конфиденциальность» скрывает ваши просмотры и набор текста и останавливает отслеживание. «По умолчанию» возвращает каждый переключатель в исходное положение. Нажмите и удерживайте, чтобы скрыть эту строку.
+# context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
+Quick setups hidden. Bring it back from %1$s.	Быстрые настройки скрыты. Вернуть их можно в разделе «%1$s».
+# context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
+Quick setups on the home page	Быстрые настройки на главной странице
+Shown. Tap to hide it.	Показаны. Нажмите, чтобы скрыть.
+Hidden. Tap to show it again.	Скрыты. Нажмите, чтобы показать снова.
 Quiet	Тишина
 Back to defaults	По умолчанию
 Changed 1 setting	Изменена 1 настройка
@@ -2254,3 +2264,59 @@ Privacy and app	Конфиденциальность и приложение
 # context: a heading on the settings home page, over Hushfeed's status, Pause, Diagnostics, About, Report a problem and Support; the app's name, usually kept as is
 Hushfeed	Hushfeed
 Open Hushfeed settings	Открыть настройки Hushfeed
+Several photos in one comment	Несколько фото в одном комментарии
+Scrolling comments on videos	Бегущие комментарии поверх видео
+See-through bottom bar	Прозрачная нижняя панель
+Let the video reach the bottom of the screen on the main feed and show the tabs over it with no bar behind them.	В основной ленте видео доходит до нижнего края экрана, а вкладки показываются поверх него без панели под ними.
+LIVE chat auto-translate	Автоперевод чата LIVE
+
+Pick videos to save from profile grids	Выбирать видео для сохранения в сетках профилей
+Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.	Ставит кружок на каждое видео в сетке профиля, «Понравилось» или «Избранное». Выберите до %1$s, затем нажмите «Сохранить», чтобы сохранить их по очереди, со счётчиком и кнопкой «Отмена».
+Pick for saving	Выбрать для сохранения
+You can pick up to %1$s at a time	За раз можно выбрать не больше %1$s
+One picked	Выбрано одно
+%1$s picked	Выбрано: %1$s
+%1$s picked|one	Выбрано: %1$s
+%1$s picked|few	Выбрано: %1$s
+%1$s picked|many	Выбрано: %1$s
+None of the picked videos could be saved. Try again.	Не удалось сохранить ни одно из выбранных видео. Повторите попытку.
+Saved one video	Сохранено одно видео
+Saved %1$s videos	Сохранено %1$s видео
+Saved %1$s videos|one	Сохранено %1$s видео
+Saved %1$s videos|few	Сохранено %1$s видео
+Saved %1$s videos|many	Сохранено %1$s видео
+One was already saved	Одно уже было сохранено
+%1$s were already saved	%1$s уже были сохранены
+%1$s were already saved|one	%1$s уже было сохранено
+%1$s were already saved|few	%1$s уже были сохранены
+%1$s were already saved|many	%1$s уже были сохранены
+Picked videos	Выбранные видео
+Pick all	Выбрать все
+Picked the first %1$s. Save them, then tap Pick all again for the rest.	Выбраны первые %1$s. Сохраните их, затем снова нажмите «Выбрать все», чтобы выбрать остальные.
+Everything this list has loaded is picked or saved. Scroll down to load more.	Всё, что загрузил этот список, уже выбрано или сохранено. Прокрутите вниз, чтобы загрузить ещё.
+
+Record LIVEs you watch	Записывать LIVE, которые вы смотрите
+Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.	Добавляет в комнаты LIVE кнопку записи. Запись начинается, когда вы нажимаете её, и заканчивается, когда вы нажимаете «Стоп» или выходите из комнаты. Всё, что было до этого, не сохраняется.
+Record	Запись
+Stop	Стоп
+Stop recording this LIVE	Остановить запись этого LIVE
+Record this LIVE from now	Записать этот LIVE с этого момента
+Recording this LIVE from now	Этот LIVE записывается с этого момента
+Saving the recording	Запись сохраняется
+Couldn't find this LIVE's stream to record. Leave the room and open it again.	Не удалось найти трансляцию этого LIVE для записи. Выйдите из комнаты и откройте её снова.
+Allow storage for TikTok in Android settings to record LIVEs	Разрешите TikTok доступ к памяти в настройках Android, чтобы записывать LIVE
+LIVE recording saved to %1$s	Запись LIVE сохранена в %1$s
+The LIVE ended or the connection dropped. What was recorded is saved to %1$s	LIVE закончился или пропало соединение. Записанное сохранено в %1$s
+The phone is running out of room. What was recorded is saved to %1$s	На телефоне заканчивается место. Записанное сохранено в %1$s
+The recording reached its size limit and was saved to %1$s	Запись достигла предела размера и сохранена в %1$s
+TikTok closed. What was recorded is saved to %1$s	TikTok закрылся. Записанное сохранено в %1$s
+Recording stopped early. What was recorded is saved to %1$s	Запись остановилась раньше времени. Записанное сохранено в %1$s
+This LIVE's stream can't be saved	Трансляцию этого LIVE нельзя сохранить
+There isn't enough room on the phone to record	На телефоне не хватает места для записи
+Nothing was recorded	Ничего не записано
+The recording couldn't be saved. Try again.	Не удалось сохранить запись. Попробуйте ещё раз.
+Those photos can't be tried again now. Save the post again to get the rest.	Сейчас эти фото нельзя попробовать снова. Сохраните публикацию ещё раз, чтобы получить остальные.
+Show the time zone	Показывать часовой пояс
+Puts your time zone after the time to the second, like EDT.	Добавляет ваш часовой пояс после времени до секунды, например EDT.
+Short date	Короткая дата
+Writes the date before the time to the second the short way your language does, like 10/7/25.	Пишет дату перед временем до секунды так коротко, как принято в вашем языке, например 07.10.2025.

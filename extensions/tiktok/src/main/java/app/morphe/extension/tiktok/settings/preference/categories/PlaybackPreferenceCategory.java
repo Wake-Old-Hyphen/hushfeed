@@ -112,6 +112,18 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "quality to the menu in most of the others, and the next room opens at the quality "
                             + "you picked last.",
                     Settings.OFFER_LIVE_QUALITY));
+            addPreference(new TogglePreference(context, "Keep the LIVE quality after TikTok restarts",
+                    "TikTok forgets the LIVE quality you picked when it closes. This starts rooms at "
+                            + "that quality again after a restart. A room whose stream doesn't have it "
+                            + "opens at TikTok's choice.",
+                    Settings.REMEMBER_LIVE_QUALITY));
+            addPreference(new TogglePreference(context, "Offer clear screen in every LIVE room",
+                    "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
+                            + "TikTok puts it in the menu of only some rooms. This adds it to the others.",
+                    Settings.OFFER_LIVE_CLEAR_SCREEN));
+            addPreference(new TogglePreference(context, "Record LIVEs you watch",
+                    "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
+                    Settings.RECORD_LIVE));
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(

@@ -179,6 +179,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SAVE_PROFILE_PICTURE = new BooleanSetting("save_profile_picture", FALSE);
     public static final BooleanSetting SAVE_STORY = new BooleanSetting("save_story", FALSE);
     public static final BooleanSetting SAVE_STORY_FROM_SHARE = new BooleanSetting("save_story_from_share", FALSE);
+    /** A circle on each profile, Liked or Favorites grid cell, to pick posts and save them in one run (#27). */
+    public static final BooleanSetting PICK_GRID_VIDEOS = new BooleanSetting("pick_grid_videos", FALSE);
     public static final StringSetting DOUBLE_TAP_ACTION = new StringSetting("double_tap_action", "default");
     public static final StringSetting LONG_PRESS_ACTION = new StringSetting("long_press_action", "default");
     /**
@@ -527,6 +529,26 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting OFFER_LIVE_QUALITY = new BooleanSetting("offer_live_quality", FALSE);
     /**
+     * Keeps the last LIVE quality picked after TikTok closes, so the first rooms after a cold
+     * start open at it when their stream has it (#57); the LIVE controls patch, under
+     * {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting quality, so no restart.
+     */
+    public static final BooleanSetting REMEMBER_LIVE_QUALITY = new BooleanSetting(
+            "remember_live_quality", FALSE, false, Setting.parent(OFFER_LIVE_QUALITY));
+    /** TikTok's key for that pick ("hd", "origin" and so on), saved from its picker. Never shown. */
+    public static final StringSetting REMEMBERED_LIVE_QUALITY = new StringSetting("remembered_live_quality", "");
+    /**
+     * Offers clear screen in every LIVE room's menu (#57); the LIVE controls patch. Read as a
+     * room builds its menu, so the next menu follows a change.
+     */
+    public static final BooleanSetting OFFER_LIVE_CLEAR_SCREEN = new BooleanSetting("offer_live_clear_screen", FALSE);
+    /**
+     * Puts a Record button in LIVE rooms (#37); the LIVE controls patch. A recording starts when the
+     * button is tapped and ends at Stop or when the room is left. Read as a room resumes and on the
+     * chip's once-a-second check, so no restart.
+     */
+    public static final BooleanSetting RECORD_LIVE = new BooleanSetting("record_live", FALSE);
+    /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
      */
@@ -544,6 +566,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting OPEN_EXTERNAL_LINKS = new BooleanSetting("open_external_links", TRUE);
     public static final BooleanSetting ALWAYS_SHOW_PUBLISH_DATE = new BooleanSetting("always_show_publish_date", TRUE, true);
     public static final BooleanSetting PUBLISH_DATE_EXACT_TIME = new BooleanSetting("publish_date_exact_time", FALSE);
+    /** The time zone after the exact time (Discussion #147). On keeps the row as it always read. */
+    public static final BooleanSetting PUBLISH_DATE_TIME_ZONE = new BooleanSetting(
+            "publish_date_time_zone", TRUE, false, Setting.parent(PUBLISH_DATE_EXACT_TIME));
+    /** The language's short date ("10/7/25") before the exact time, in place of its medium one ("Oct 7, 2025"). */
+    public static final BooleanSetting PUBLISH_DATE_SHORT_DATE = new BooleanSetting(
+            "publish_date_short_date", FALSE, false, Setting.parent(PUBLISH_DATE_EXACT_TIME));
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);
     public static final BooleanSetting CLEAR_DISPLAY = new BooleanSetting("clear_display", FALSE);
@@ -739,6 +767,13 @@ public class Settings extends BaseSettings {
      * for those who want the fade on the feed and Clear display still clear.
      */
     public static final BooleanSetting FADE_IN_CLEAR_DISPLAY = new BooleanSetting("fade_in_clear_display", TRUE);
+    /**
+     * Lets the video draw down behind TikTok's bottom tab bar and takes the bar's own background
+     * away, so the tabs sit over the picture (#145). VideoOverlayHider collapses the spacer under
+     * each video and swaps the bar's background for a clear one, and puts both back when this goes
+     * off or Hushfeed is paused.
+     */
+    public static final BooleanSetting SEE_THROUGH_BOTTOM_BAR = new BooleanSetting("see_through_bottom_bar", FALSE);
     /**
      * Burn-in guard for OLED screens (BurnInGuard): "dim" draws the controls the fade covers at a
      * quarter after a few seconds without a touch, "dim_shift" also moves the window's content a

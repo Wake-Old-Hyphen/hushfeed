@@ -193,6 +193,8 @@ public final class SeenVideoHistory {
     private static int generation;
 
     private static final ConcurrentHashMap<String, Long> SEEN = new ConcurrentHashMap<>();
+    /** Lines up the oldest rows of {@link #SEEN} for eviction at the cap. Guarded by {@link #HISTORY_LOCK}. */
+    private static final SeenEviction EVICTION = new SeenEviction();
     private static final ExecutorService IO = Executors.newSingleThreadExecutor(runnable -> {
         Thread thread = new Thread(runnable, "Morphe-SeenVideoHistory");
         thread.setDaemon(true);
@@ -246,8 +248,12 @@ public final class SeenVideoHistory {
             Long existing = SEEN.get(aid);
             if (existing != null && existing >= timestamp) return;
             if (existing == null) {
-                if (SEEN.putIfAbsent(aid, timestamp) == null) return;
+                if (SEEN.putIfAbsent(aid, timestamp) == null) {
+                    EVICTION.added(timestamp);
+                    return;
+                }
             } else if (SEEN.replace(aid, existing, timestamp)) {
+                EVICTION.added(timestamp);
                 return;
             }
         }
@@ -270,6 +276,7 @@ public final class SeenVideoHistory {
                 partition = account;
                 generation++;
                 SEEN.clear();
+                EVICTION.drop();
                 LOAD_STARTED.set(false);
                 callbackAid = null;
                 callbackAidMarked = false;
@@ -403,7 +410,7 @@ public final class SeenVideoHistory {
                             for (Map.Entry<String, Long> row : retained.entrySet()) {
                                 mergeSeen(row.getKey(), row.getValue());
                             }
-                            trimMemory(SEEN);
+                            EVICTION.trim(SEEN, MAX_RECORDS);
                             LOAD_STARTED.set(false);
                             undo = previousUndo;
                             undoAccount = previousUndoAccount;
@@ -604,7 +611,7 @@ public final class SeenVideoHistory {
                                 for (Map.Entry<String, Long> row : rows.entrySet()) {
                                     mergeSeen(row.getKey(), row.getValue());
                                 }
-                                trimMemory(SEEN);
+                                EVICTION.trim(SEEN, MAX_RECORDS);
                                 // Later sightings are separate writes, not part of this commit.
                                 for (String id : copy.keySet()) if (rows.containsKey(id)) retained++;
                                 undo = null;
@@ -832,7 +839,7 @@ public final class SeenVideoHistory {
                         if (!after.containsKey(row.getKey())) SEEN.remove(row.getKey(), row.getValue());
                     }
                     for (Map.Entry<String, Long> row : after.entrySet()) mergeSeen(row.getKey(), row.getValue());
-                    trimMemory(SEEN);
+                    EVICTION.trim(SEEN, MAX_RECORDS);
                     unowned = unownedCount;
                     LOAD_STARTED.set(true);
                     // Restoring an older clear on top of a full imported history can prune every
@@ -911,7 +918,7 @@ public final class SeenVideoHistory {
                     // Memory takes them only while it still holds the account that asked.
                     if (generation == adoptGeneration && account.equals(partition)) {
                         for (Map.Entry<String, Long> row : rows.entrySet()) mergeSeen(row.getKey(), row.getValue());
-                        trimMemory(SEEN);
+                        EVICTION.trim(SEEN, MAX_RECORDS);
                     }
                 }
                 pruneDatabase(account, System.currentTimeMillis());
@@ -943,7 +950,8 @@ public final class SeenVideoHistory {
             if (account.equals(partition)) {
                 ensureLoaded();
                 SEEN.put(aid, nowMs);
-                trimMemory(SEEN);
+                EVICTION.added(nowMs);
+                EVICTION.trim(SEEN, MAX_RECORDS);
             }
             IO.execute(() -> {
                 try {
@@ -1005,9 +1013,14 @@ public final class SeenVideoHistory {
                             synchronized (HISTORY_LOCK) {
                                 if (generation != loadGeneration) break;
                                 mergeSeen(aid, persisted);
-                                trimMemory(SEEN);
                             }
                         }
+                    }
+                    // Rows arrive newest first, each older than the last, so a trim per row
+                    // would line up again for every one. Memory runs over the cap only by the
+                    // videos watched while this loaded, and one trim at the end takes those off.
+                    synchronized (HISTORY_LOCK) {
+                        if (generation == loadGeneration) EVICTION.trim(SEEN, MAX_RECORDS);
                     }
                     pruneDatabase(account, nowMs);
                     try (Cursor count = readable.rawQuery("SELECT COUNT(*) FROM " + TABLE + " WHERE "
@@ -1064,10 +1077,8 @@ public final class SeenVideoHistory {
         int excess = rows.size() - MAX_RECORDS;
         if (excess <= 0) return;
         // One ordinary sighting needs one scan. Bulk merges sort once, not once per eviction.
-        java.util.Comparator<Map.Entry<String, Long>> oldestFirst = (left, right) -> {
-            int byTime = Long.compare(left.getValue(), right.getValue());
-            return byTime != 0 ? byTime : right.getKey().compareTo(left.getKey());
-        };
+        // Memory's own record goes through EVICTION instead; this trims a copy being built.
+        java.util.Comparator<Map.Entry<String, Long>> oldestFirst = SeenEviction.OLDEST_FIRST;
         if (excess == 1) {
             Map.Entry<String, Long> oldest = null;
             for (Map.Entry<String, Long> row : rows.entrySet()) {

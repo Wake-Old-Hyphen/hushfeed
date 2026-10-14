@@ -35,6 +35,14 @@ The main branch contains 2 patches, one more than v0.1.0.
 
 Manager shows all 1 Hushfeed patches in ten categories.
 """
+GUIDE = """# Map
+
+Its version and patch counts were last synced with the source on 2026-01-01, and a check fails when they drift.
+
+Source snapshot: version 0.1.0, 1 patch entries. Those come from gradle.properties and patches-list.json.
+
+Published bundle: version 0.1.0, 1 patches. Those come from patches-bundle.json and the release it names.
+"""
 
 
 def catalog(*versions: str) -> str:
@@ -49,6 +57,9 @@ class ReleaseTextTest(unittest.TestCase):
         self.root = Path(self.folder.name)
         (self.root / "extensions/tiktok/src/main/l10n/notes").mkdir(parents=True)
         (self.root / ".github/ISSUE_TEMPLATE").mkdir(parents=True)
+        (self.root / "concepts").mkdir()
+        self.write("concepts/patch-development.md", GUIDE)
+        self.write("gradle.properties", "org.gradle.caching = true\nversion = 0.2.0\n")
         self.write("CHANGELOG.md", CHANGELOG)
         self.write("extensions/tiktok/src/main/l10n/notes/en.txt",
                    CHANGELOG[CHANGELOG.index("## Unreleased"):].replace("Hide footnotes is new", "Hide footnotes")
@@ -196,6 +207,42 @@ class ReleaseTextTest(unittest.TestCase):
         self.assertIn("The main branch contains 2 patches, the same set as v0.2.0.", readme)
         self.assertIn("shows all 2 Hushfeed patches", readme)
         self.assertIn("placeholder: Version 0.2.0 for TikTok", self.read(".github/ISSUE_TEMPLATE/bug_report.yml"))
+        guide = self.read("concepts/patch-development.md")
+        self.assertIn("\nPublished bundle: version 0.2.0, 2 patches. Those come from", guide)
+        # The source line belongs to prepare, which runs before the bundle exists.
+        self.assertIn("\nSource snapshot: version 0.1.0, 1 patch entries.", guide)
+
+    def test_index_writes_no_file_when_any_line_it_owns_is_missing(self):
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        self.write("concepts/patch-development.md", GUIDE.replace("Published bundle:", "Published:"))
+        before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(SystemExit) as caught:
+            self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                             readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
+                             device_line="", runtime=1, patch=1)
+        self.assertIn("patch-development.md", str(caught.exception))
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+
+    def test_guide_holds_the_source_line_to_gradle_properties_and_the_catalog(self):
+        self.run_command(release_text.guide, date="2026-10-09")
+        guide = self.read("concepts/patch-development.md")
+        self.assertIn("\nSource snapshot: version 0.2.0, 2 patch entries. Those come from", guide)
+        self.assertIn("last synced with the source on 2026-10-09, and", guide)
+        # The published line waits for the index, after the bundle is out.
+        self.assertIn("\nPublished bundle: version 0.1.0, 1 patches.", guide)
+
+    def test_guide_changes_nothing_without_a_source_version_or_its_line(self):
+        for name, text in (("gradle.properties", "version = 0.2\n"),
+                           ("concepts/patch-development.md", GUIDE.replace("Source snapshot:", "Snapshot:")),
+                           ("concepts/patch-development.md", GUIDE.replace("last synced with", "synced with"))):
+            self.write("gradle.properties", "version = 0.2.0\n")
+            self.write("concepts/patch-development.md", GUIDE)
+            self.write(name, text)
+            before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+            with self.subTest(name=name, text=text[:30]), self.assertRaises(SystemExit):
+                self.run_command(release_text.guide, date="2026-10-09")
+            self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
 
     def test_index_names_one_target_as_the_supported_apk(self):
         self.write("patches-list.json", catalog("1.1.0"))
