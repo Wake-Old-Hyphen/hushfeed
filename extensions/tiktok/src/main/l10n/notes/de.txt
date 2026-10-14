@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** Der Diagnosebericht hat einen neuen Abschnitt mit den geänderten Einstellungen. Er nennt jede Einstellung, die nicht mehr auf ihrem Standardwert steht, sodass ein Bericht zeigt, welche Schalter an sind. Text, den du in eine Einstellung eingegeben hast, steht nie darin (#149).
+
+* **TikTok:** Hinweis zur Einrichtung des Android-17-Emulators ergänzt, für SDK-Tools, die API-Unterversionen falsch lesen.
 
 * **TikTok:** Jede Einstellungsseite steht jetzt direkt auf der Hauptseite der Einstellungen unter einer kurzen Überschrift, nur einen Tipp entfernt. Hushfeed pausieren und der ausführliche Status stehen weiter unten unter Hushfeed.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Drehst du das Handy oder wechselst den Dunkelmodus, während ein Listen-Editor offen ist, bleibt erhalten, was du ausgewählt oder eingetippt hast. Abbrechen ändert weiterhin nichts.
 
 * **TikTok:** Symbolbild prüft jetzt auch die Pixeldaten des PNG. Eine innen beschädigte Datei stoppt das Patchen sicher, statt in die App zu gelangen.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** LIVE unter der Statusleiste zeigen füllt jetzt in jedem Raum den oberen Rand, ohne schwarzen Balken oder hellen Streifen (#137).
 

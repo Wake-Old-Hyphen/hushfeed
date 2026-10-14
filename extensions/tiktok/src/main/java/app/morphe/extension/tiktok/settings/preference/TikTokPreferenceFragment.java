@@ -16,6 +16,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -1473,10 +1475,10 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         screen.addPreference(row);
     }
 
-    /** The last row of the home page: the Ko-fi page, the way HushPinterest words it. */
+    /** The last row of the home page: the Ko-fi page, under its title alone. */
     private void addSupport(PreferenceScreen screen) {
         SettingsMenuPreference row = new SettingsMenuPreference(getActivity(), "Support Hushfeed",
-                "Buy me a coffee on Ko-fi", SettingsMenuPreference.Icon.SUPPORT, preference -> {
+                "", SettingsMenuPreference.Icon.SUPPORT, preference -> {
                     openWebPage(getActivity(), SUPPORT_URL);
                     return true;
                 });
@@ -1489,7 +1491,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         Activity activity = getActivity();
         if (activity == null) return;
         ProblemReport.Facts facts = ProblemReport.collect(activity, switchesOnInEnglish(activity));
-        openWebPage(activity, ProblemReport.url(facts));
+        openInBrowser(activity, ProblemReport.url(facts));
     }
 
     /** A web page in the reader's browser, in a task of its own so it never opens inside TikTok's. */
@@ -1506,6 +1508,62 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         } catch (ActivityNotFoundException | SecurityException missing) {
             // No browser, or none switched on. Uncaught, Android's exception would close TikTok.
             SettingsActionBanner.showNotice(context, L10n.t(context, "No app on this phone opens web links"));
+        }
+    }
+
+    /**
+     * What Android itself asks to find a browser: a web link with no address on it, which only
+     * an app that opens every link answers. An app that claims one site's links doesn't.
+     */
+    static Intent anyWebPageIntent() {
+        return new Intent(Intent.ACTION_VIEW, Uri.fromParts("https", "", null))
+                .addCategory(Intent.CATEGORY_BROWSABLE);
+    }
+
+    /**
+     * A web page in a browser even when an app claims its address. GitHub's app takes a new-issue
+     * link into its own composer, which keeps the title and drops every field the bug form is
+     * filled through (S25, 2026-10-13), so the report names the browser it goes to: the default
+     * one, or the first that answers when none is the default. With no browser found the link is
+     * left to open the way any other does.
+     */
+    static Intent browserPageIntent(Context context, String url) {
+        Intent page = webPageIntent(url);
+        String browser = browserPackage(context);
+        if (browser != null) page.setPackage(browser);
+        return page;
+    }
+
+    static String browserPackage(Context context) {
+        try {
+            PackageManager packages = context.getPackageManager();
+            Intent anyPage = anyWebPageIntent();
+            String chosen = browserNamed(packages.resolveActivity(anyPage, PackageManager.MATCH_DEFAULT_ONLY));
+            if (chosen != null) return chosen;
+            for (ResolveInfo candidate : packages.queryIntentActivities(anyPage, PackageManager.MATCH_DEFAULT_ONLY)) {
+                String name = browserNamed(candidate);
+                if (name != null) return name;
+            }
+        } catch (RuntimeException unreadable) {
+            // The plain link still opens somewhere.
+        }
+        return null;
+    }
+
+    /** The package that answered, unless it's Android's own chooser standing in for several. */
+    private static String browserNamed(ResolveInfo answer) {
+        if (answer == null || answer.activityInfo == null) return null;
+        String name = answer.activityInfo.packageName;
+        return name == null || "android".equals(name) ? null : name;
+    }
+
+    static void openInBrowser(Context context, String url) {
+        if (context == null) return;
+        try {
+            context.startActivity(browserPageIntent(context, url));
+        } catch (ActivityNotFoundException | SecurityException refused) {
+            // The browser that answered a moment ago is gone or switched off.
+            openWebPage(context, url);
         }
     }
 

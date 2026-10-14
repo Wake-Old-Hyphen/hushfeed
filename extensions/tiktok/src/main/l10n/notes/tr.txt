@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** Tanılama raporunda değiştirilen ayarları gösteren yeni bir bölüm var. Varsayılan değerinde olmayan her ayarı adıyla yazar, böylece rapor hangi anahtarların açık olduğunu gösterir. Bir ayara yazdığın metin rapora hiç eklenmez (#149).
+
+* **TikTok:** API alt sürümlerini yanlış okuyan SDK araçları için Android 17 emülatör kurulum notu eklendi.
 
 * **TikTok:** Her ayar sayfası artık ana ayarlar sayfasında kısa bir başlığın altında, tek dokunuş uzakta. Hushfeed'i duraklat ve ayrıntılı durum, sona yakın Hushfeed başlığının altında.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Bir liste düzenleyicisi açıkken telefonu döndürmek veya karanlık modu değiştirmek artık seçtiklerini ya da yazdıklarını sıfırlamıyor. İptal yine hiçbir şeyi değiştirmiyor.
 
 * **TikTok:** Simge resmi artık PNG'nin piksel verisini de denetliyor, böylece içi bozuk bir dosya uygulamaya girmek yerine yamalamayı güvenle durduruyor.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** LIVE'ı durum çubuğunun altında göster artık her odada üst kenarı dolduruyor, siyah veya açık renk şerit bırakmıyor (#137).
 

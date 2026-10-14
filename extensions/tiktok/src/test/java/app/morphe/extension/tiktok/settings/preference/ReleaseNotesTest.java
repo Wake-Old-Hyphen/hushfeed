@@ -358,7 +358,7 @@ public class ReleaseNotesTest {
             Utils.setIsDarkModeEnabled(dark);
             activity.getSharedPreferences(ReleaseNotes.PREFS_NAME, Context.MODE_PRIVATE).edit()
                     .putString("dismissed_version", "0.67.0").commit();
-            ReleaseNotes.show(activity, "0.71.3", () -> {});
+            ReleaseNotes.show(activity, "0.72.0", () -> {});
             AlertDialog dialog = ShadowAlertDialog.getLatestAlertDialog();
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             View decor = dialog.getWindow().getDecorView();

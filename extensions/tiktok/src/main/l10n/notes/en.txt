@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** The diagnostic report has a new Changed settings section. It names every setting you've moved off its default, so a report shows which switches are on. Text you typed into a setting is never included (#149).
+
+* **TikTok:** Added an Android 17 emulator setup note for SDK tools that misread minor API versions.
 
 * **TikTok:** Every settings page now sits on the main settings page under a short heading, one tap away. Pause Hushfeed and the full status are near the end, under Hushfeed.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Rotating the phone or switching dark mode while a list editor is open keeps what you picked or typed instead of starting over. Cancel still changes nothing.
 
 * **TikTok:** Icon picture now checks a PNG's pixel data too, so a file that's damaged inside stops patching safely instead of going into the app.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** Show LIVE under the status bar now fills the top edge in every room, without a black band or pale strip (#137).
 

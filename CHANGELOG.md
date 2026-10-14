@@ -4,9 +4,11 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **Development:** Added an Android 17 emulator setup note for SDK tools that misread minor API versions.
+## 0.72.0 (2026-10-13)
 
-* **TikTok:** Translate draft stays available while the keyboard is composing a word or checking its spelling. A translation request that loses access to the signed-in account now ends without leaving the preview waiting for its timeout.
+* **TikTok:** The diagnostic report has a new Changed settings section. It names every Hushfeed setting you've moved off its default, so a report shows which switches are on without anyone having to ask. Switches say on or off and numbers show their value. A setting you typed text into, like blocked words or a proxy address, is only named, never quoted (#149).
+
+* **TikTok:** Added an Android 17 emulator setup note for SDK tools that misread minor API versions.
 
 * **TikTok:** Every Hushfeed settings page now sits right on the main settings page, under short headings: Your feed, Conversations, Saving and sharing, Privacy and app, and Hushfeed. Nothing is tucked inside another menu any more, so any page is one tap away. The "changed" counts the group pages showed went with them. Pause Hushfeed, the full status card and Diagnostics are near the end under the Hushfeed heading, and tapping the status next to the title scrolls you there.
 
@@ -22,7 +24,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** Hushfeed settings has a new look throughout. The home page has pink icons and a clearer search field. Pages share rounded panels, quieter section headings and pill switches. Feature Gate Lab and the creator editor follow the same style, with large text and light mode kept readable.
 
-* **Development:** Restored the profile-menu coverage check, the high-register hook fixture and the signing test project. The signing fixture also accepts D8 options in any order.
+* **TikTok:** Restored the profile-menu coverage check, the high-register hook fixture and the signing test project. The signing fixture also accepts D8 options in any order.
 
 * **TikTok:** Press and hold For You at the top of the feed to open Hushfeed settings. TikTok's feed has no logo to hold, so For You is the shortcut. A quick tap on For You still does what it always did, and the long press works while Hushfeed is paused.
 
@@ -154,7 +156,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** Forget saved videos, its Undo and Add apps to Share via no longer get stuck when TikTok's background queue is full. The row stayed greyed out, or the app list kept saying Looking for apps, until TikTok restarted. Now they tell you and you can try again. The app list also says when it couldn't look, instead of saying no app takes shared text.
 
-* **Development:** verify-all-patches.ps1 checks the -KeepIn folder before it empties it. A mistyped path used to be deleted whole, whatever it named. Now it refuses a drive root, your profile, the repository, any folder that holds an input, a path through a junction, and a folder with files an earlier run didn't leave there.
+* **TikTok:** verify-all-patches.ps1 checks the -KeepIn folder before it empties it. A mistyped path used to be deleted whole, whatever it named. Now it refuses a drive root, your profile, the repository, any folder that holds an input, a path through a junction, and a folder with files an earlier run didn't leave there.
 
 * **TikTok:** TalkBack can reach Hushfeed settings from For You now. TalkBack turns a press into a tap the shortcut never sees, so For You lists an Open Hushfeed settings action in TalkBack's actions instead. TikTok's own tap and what TalkBack reads for the tab are unchanged.
 
@@ -165,8 +167,6 @@ Every Hushfeed release, newest first.
 * **TikTok:** Rotating the phone, resizing the window or switching dark mode while an editor is open no longer throws away what you picked or typed in it. The share action lists, Add apps to Share via, Hide profile shortcuts, the popup list, Locally hidden creators and the count ranges keep your unsaved choices, and Cancel still changes nothing.
 
 * **TikTok:** Icon picture now checks the picture's pixel data too, not just its header and checksums. A PNG whose image data is cut short or damaged, or whose palette breaks the PNG rules, stops patching with the reason before anything in TikTok changes, instead of being copied into the app as it is.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** With Show a LIVE under the status bar on, every room you scroll to reaches up under the clock with the shade behind it. Some rooms kept a black band there, and after the first few LIVEs the strip could go light again (#137).
 

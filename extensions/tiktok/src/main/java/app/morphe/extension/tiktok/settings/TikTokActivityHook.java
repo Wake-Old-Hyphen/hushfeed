@@ -59,6 +59,8 @@ public class TikTokActivityHook {
         app.morphe.extension.tiktok.featuregatelab.FeatureGateLabReport.install();
         // Which connections follow the network proxy and which stay direct.
         app.morphe.extension.tiktok.network.NetworkRoutes.install();
+        // Which settings the reader changed, so an export answers "which switch is on" itself.
+        ChangedSettingsReport.install();
         // Build details and the full log export list the switches the patcher registered, read
         // here for the same reason. Both open from this screen.
         BuildDetails.setRegisteredSwitches(SettingsStatus.registered());

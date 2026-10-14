@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** Diaqnostik hesabatda dəyişdirilmiş ayarları göstərən yeni bölmə var. Standart dəyərində olmayan hər ayarın adını yazır, beləliklə hesabat hansı açarların açıq olduğunu göstərir. Ayara yazdığınız mətn hesabata heç vaxt daxil edilmir (#149).
+
+* **TikTok:** API-nin kiçik versiyalarını səhv oxuyan SDK alətləri üçün Android 17 emulyatorunun quraşdırılması haqqında qeyd əlavə edildi.
 
 * **TikTok:** Hər ayar səhifəsi indi əsas ayarlar səhifəsində qısa başlıq altındadır, bir toxunuş uzaqlığında. Hushfeed-i durdurun və ətraflı status sona yaxın, Hushfeed başlığı altındadır.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Siyahı redaktoru açıq olanda telefonu çevirmək və ya qaranlıq rejimi dəyişmək artıq seçdiklərinizi və ya yazdıqlarınızı sıfırlamır. Ləğv edin yenə heç nəyi dəyişmir.
 
 * **TikTok:** İkon şəkli indi PNG-nin piksel məlumatını da yoxlayır, belə ki, içi zədələnmiş fayl tətbiqə düşmək əvəzinə yamaqlamanı təhlükəsiz dayandırır.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** LIVE-ı status panelinin altında göstərin indi hər otaqda yuxarı kənarı qara və ya açıq zolaqsız doldurur (#137).
 

@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** Il rapporto diagnostico ha una nuova sezione con le impostazioni modificate. Elenca ogni impostazione che non è più al valore predefinito, così un rapporto mostra quali interruttori sono attivi. Il testo che hai scritto in un'impostazione non viene mai incluso (#149).
+
+* **TikTok:** Aggiunta una nota sulla configurazione dell'emulatore Android 17 per gli strumenti SDK che leggono male le versioni minori dell'API.
 
 * **TikTok:** Ogni pagina delle impostazioni ora è nella pagina principale delle impostazioni, sotto un breve titolo, a un tocco di distanza. Metti in pausa Hushfeed e lo stato completo sono verso la fine, sotto Hushfeed.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Ruotare il telefono o cambiare il tema scuro con un editor di elenchi aperto mantiene quello che hai scelto o scritto invece di ricominciare. Annulla continua a non cambiare nulla.
 
 * **TikTok:** Immagine dell'icona ora controlla anche i dati dei pixel del PNG, quindi un file danneggiato all'interno ferma le patch in sicurezza invece di finire nell'app.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** Mostra il LIVE sotto la barra di stato ora riempie il bordo superiore in ogni stanza, senza fasce nere o strisce chiare (#137).
 

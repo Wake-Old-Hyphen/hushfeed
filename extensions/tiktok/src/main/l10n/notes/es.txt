@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** El informe de diagnóstico tiene una sección nueva con los ajustes cambiados. Nombra cada ajuste que ya no está en su valor por defecto, así un informe muestra qué interruptores están activados. El texto que escribiste en un ajuste nunca se incluye (#149).
+
+* **TikTok:** Se añadió una nota de configuración del emulador de Android 17 para las herramientas del SDK que leen mal las versiones menores de la API.
 
 * **TikTok:** Todas las páginas de ajustes están ahora en la página principal de ajustes, bajo un título corto y a un toque. Pausar Hushfeed y el estado completo están cerca del final, bajo Hushfeed.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Girar el teléfono o cambiar el modo oscuro con un editor de listas abierto conserva lo que marcaste o escribiste en lugar de empezar de cero. Cancelar sigue sin cambiar nada.
 
 * **TikTok:** Imagen del icono ahora también revisa los datos de píxeles del PNG, así que un archivo dañado por dentro detiene el parcheo de forma segura en vez de entrar en la app.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** Mostrar el LIVE bajo la barra de estado ahora llena el borde superior en todas las salas, sin franjas negras ni claras (#137).
 

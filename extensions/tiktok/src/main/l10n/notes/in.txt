@@ -1,4 +1,8 @@
-## Unreleased
+## 0.72.0 (2026-10-13)
+
+* **TikTok:** Laporan diagnostik punya bagian baru berisi pengaturan yang diubah. Bagian ini menyebut setiap pengaturan yang tidak lagi di nilai bawaannya, sehingga laporan menunjukkan sakelar mana yang aktif. Teks yang kamu ketik di sebuah pengaturan tidak pernah disertakan (#149).
+
+* **TikTok:** Menambahkan catatan penyiapan emulator Android 17 untuk alat SDK yang salah membaca versi minor API.
 
 * **TikTok:** Setiap halaman pengaturan kini ada langsung di halaman utama pengaturan, di bawah judul singkat, cukup satu ketukan. Jeda Hushfeed dan status lengkap ada di dekat akhir, di bawah Hushfeed.
 
@@ -157,8 +161,6 @@
 * **TikTok:** Memutar ponsel atau mengganti mode gelap saat editor daftar terbuka kini mempertahankan pilihan dan ketikanmu, tidak mulai dari awal. Batal tetap tidak mengubah apa pun.
 
 * **TikTok:** Gambar ikon kini juga memeriksa data piksel PNG, jadi file yang rusak di dalamnya menghentikan patching dengan aman alih-alih masuk ke aplikasi.
-
-## 0.71.3 (2026-10-11)
 
 * **TikTok:** Tampilkan LIVE di bawah bilah status kini memenuhi tepi atas di setiap ruang tanpa pita hitam atau garis pucat (#137).
 
