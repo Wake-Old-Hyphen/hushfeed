@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Yeni bir anahtar Uzun basma seçimini videonun kenarlarıyla sınırlar, böylece ortada basmak yine TikTok menüsünü açar (#136).
+
 * **TikTok:** Yeni bir anahtar, bir yoruma basılı tutunca açılan menüye Bu yorumu yazanı engelle seçeneğini ekler (#169).
 
 ## 0.74.0 (2026-10-14)

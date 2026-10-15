@@ -383,6 +383,8 @@ public final class VideoOverlayHider {
     private static final Map<View, Float> CAPTIONS_LIFTED = new WeakHashMap<>();
     /** Music discs lifted with them: TikTok's own offset under the lift, then the offset written. */
     private static final Map<View, float[]> DISCS_LIFTED = new WeakHashMap<>();
+    /** Rail columns lifted clear of the row when Share is their lowest button, with the offset written. */
+    private static final Map<View, Float> RAILS_LIFTED = new WeakHashMap<>();
     /** When a disc's offset first changed under a lift this second, how often, and a pause until. */
     private static final Map<View, long[]> DISC_CHANGES = new WeakHashMap<>();
 
@@ -641,7 +643,8 @@ public final class VideoOverlayHider {
                     || seeThroughBar || SeeThroughBottomBar.holdsBackground()
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || fadeLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
-                    || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || touchScale != 1f || scaledLastPass) {
+                    || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || !RAILS_LIFTED.isEmpty()
+                    || touchScale != 1f || scaledLastPass) {
                 ViewGroup root = activity.findViewById(android.R.id.content);
                 int[] ids = TRAVERSAL.ids;
                 boolean[] hidden = TRAVERSAL.hidden;
@@ -1273,6 +1276,14 @@ public final class VideoOverlayHider {
                 && hidden[firstCandidate(DETAIL_COMMENT_STRIP_TARGET)];
         List<View> frames = underShownParents(selectedViews(found, selected, ANCHOR_TARGET));
         List<View> discs = underShownParents(selectedViews(found, selected, MUSIC_COVER_TARGET));
+        // The rail's buttons, the disc's own button left out since the disc has a lift of its own.
+        List<View> buttons = new ArrayList<>();
+        for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
+            if (RAIL_BUTTON_IDS[i] != MUSIC_BUTTON_IDS) {
+                buttons.addAll(underShownParents(selectedViews(found, selected, RAIL_TARGET_START + i)));
+            }
+        }
+        List<View> columns = new ArrayList<>();
         // Null while the lifts are left as they are: a row on screen with no frame over its slot
         // is a cell still being bound, and putting the captions back then would make them jump.
         Map<View, Float> lifts = barGone ? null : new HashMap<>();
@@ -1283,7 +1294,9 @@ public final class VideoOverlayHider {
             boolean shown = barGone && shownUpTheTree(row);
             rowShown |= shown;
             if (frame != null) {
-                if (shown && lifts == null) lifts = captionLifts(row, frame, frames, discs, cellId);
+                if (shown && lifts == null) {
+                    lifts = captionLifts(row, frame, frames, discs, buttons, columns, cellId);
+                }
                 Float lift = lifts == null ? null : lifts.get(frame);
                 drop = barRowDrop(row, frame, lift == null ? 0f : lift);
             }
@@ -1299,6 +1312,15 @@ public final class VideoOverlayHider {
             for (View disc : discs) {
                 Float lift = lifts.get(disc);
                 liftDisc(disc, lift == null ? 0f : lift);
+            }
+            for (View column : columns) {
+                Float lift = lifts.get(column);
+                offsetOwned(RAILS_LIFTED, column, lift == null ? 0f : -lift);
+            }
+            if (!RAILS_LIFTED.isEmpty()) {
+                for (View column : new ArrayList<>(RAILS_LIFTED.keySet())) {
+                    if (!columns.contains(column)) offsetOwned(RAILS_LIFTED, column, 0f);
+                }
             }
             if (!CAPTIONS_LIFTED.isEmpty()) {
                 for (View view : new ArrayList<>(CAPTIONS_LIFTED.keySet())) {
@@ -1492,9 +1514,16 @@ public final class VideoOverlayHider {
      * and the row's top is the nearest place that clears the time too. Measured from the top of
      * each frame's own cell, which lines up with the cell over the slot once it's swiped in.
      * Without a cell to measure from only the frame over the slot is lifted, from where it is now.
+     *
+     * <p>The rail's column goes up too when its lowest button would reach the row. With a disc
+     * under the buttons it never does, but a video with no disc, or one hidden by Hide the music
+     * button, leaves Share lowest, and Share and its label sat over the end of the line and the
+     * time (#153, 0.74.0). The column carries the disc, so the disc's own lift is what's left of
+     * its lift after the column's. Each column found is added to {@code columns}.
      */
     private static Map<View, Float> captionLifts(View row, View current, List<View> frames,
-                                                 List<View> discs, int cellId) {
+                                                 List<View> discs, List<View> buttons,
+                                                 List<View> columns, int cellId) {
         Map<View, Float> lifts = new HashMap<>();
         float lowestLine = topInWindow(row) + row.getHeight() / 2f + Math.max(0f, slotRoom(row));
         View currentCell = cellOf(current, cellId);
@@ -1513,14 +1542,65 @@ public final class VideoOverlayHider {
             if (lift > 0f) lifts.put(frame, lift);
             // The row comes down until its line meets the caption's bottom, never past its slot.
             float rowTopInCell = Math.min(bottomInCell, lineInCell) - row.getHeight() / 2f;
+            View column = railColumn(buttons, cell, cellId);
+            float columnOffset = column == null ? 0f : ownedOffset(RAILS_LIFTED, column);
+            float railLift = 0f;
+            if (column != null) {
+                columns.add(column);
+                float lowest = Float.NEGATIVE_INFINITY;
+                for (View button : buttons) {
+                    if (cellOf(button, cellId) != cell || button.getHeight() == 0
+                            || button.getVisibility() != View.VISIBLE) continue;
+                    lowest = Math.max(lowest, topInWindow(button) + button.getTranslationY()
+                            - columnOffset + button.getHeight() - cellTop);
+                }
+                railLift = Math.round(Math.max(0f, lowest - rowTopInCell));
+                if (railLift > 0f) lifts.put(column, railLift);
+            }
             for (View disc : discs) {
                 if (cellOf(disc, cellId) != cell || disc.getHeight() == 0) continue;
-                float discBottomInCell = unliftedDiscTop(disc) + disc.getHeight() - cellTop;
-                float discLift = Math.round(Math.max(lift, discBottomInCell - rowTopInCell));
+                float discBottomInCell = unliftedDiscTop(disc) - columnOffset + disc.getHeight() - cellTop;
+                float discLift = Math.round(Math.max(lift, discBottomInCell - rowTopInCell) - railLift);
                 if (discLift > 0f) lifts.put(disc, discLift);
             }
         }
         return lifts;
+    }
+
+    /**
+     * The view holding the rail's buttons in {@code cell}: the nearest parent shared by all of
+     * them, never the cell itself. Null with fewer than two buttons, since one alone can't say
+     * which of its parents is the column.
+     */
+    private static View railColumn(List<View> buttons, View cell, int cellId) {
+        View column = null;
+        int counted = 0;
+        for (View button : buttons) {
+            if (cellOf(button, cellId) != cell) continue;
+            counted++;
+            if (column == null) {
+                column = button.getParent() instanceof View ? (View) button.getParent() : null;
+                continue;
+            }
+            while (column != null && column != cell && !holds(column, button)) {
+                column = column.getParent() instanceof View ? (View) column.getParent() : null;
+            }
+        }
+        return counted < 2 || column == null || column == cell ? null : column;
+    }
+
+    private static boolean holds(View group, View view) {
+        for (android.view.ViewParent parent = view.getParent(); parent instanceof View;
+             parent = parent.getParent()) {
+            if (parent == group) return true;
+        }
+        return false;
+    }
+
+    /** The offset of ours {@code view} still carries, or 0 once TikTok has written its own. */
+    private static float ownedOffset(Map<View, Float> owned, View view) {
+        Float wrote = owned.get(view);
+        return wrote != null && view.getTranslationY() == wrote ? wrote : 0f;
     }
 
     /** Where {@code disc} sits in its window with TikTok's own offset and without our lift. */

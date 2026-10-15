@@ -524,12 +524,19 @@ public final class FeatureGateLabStore {
         final String title;
         final String[] builds;
         final String[] rules;
+        /** What the preset needs besides its gates, shown in its preview. Null for most. */
+        String note;
 
         Preset(String id, String title, String[] builds, String... rules) {
             this.id = id;
             this.title = title;
             this.builds = builds;
             this.rules = rules;
+        }
+
+        Preset note(String text) {
+            note = text;
+            return this;
         }
 
         JSONObject toJson() throws JSONException {
@@ -544,7 +551,8 @@ public final class FeatureGateLabStore {
                 array.put(new JSONObject().put("manager", manager).put("key", parts[0])
                         .put("type", parts[1]).put("value", parts[2]));
             }
-            return new JSONObject().put("title", title).put("rules", array);
+            JSONObject json = new JSONObject().put("title", title).put("rules", array);
+            return note == null ? json : json.put("note", note);
         }
     }
 
@@ -620,8 +628,11 @@ public final class FeatureGateLabStore {
             // settings, 0 by default. Anything above 0 counts as on for the audience, and above 1
             // also runs the buffered automatic translation, so 2 is the one that translates by
             // itself. The anchor's own setting is left alone: it only matters in a room you host.
+            // The Translate comments button also wants a Japanese SIM: BynchPOP saw it only with
+            // SIM spoof on, Country Code JP and the NTT DOCOMO preset, after a restart or two (#98).
             new Preset("live_translate", "LIVE chat auto-translate", CATALOG_BUILDS,
-                    LIVE_RULE + "live_auto_translate_model_audience:INT:2"),
+                    LIVE_RULE + "live_auto_translate_model_audience:INT:2")
+                    .note("The Translate comments button in a LIVE room also needs a Japanese SIM. Turn on Override SIM details in Hushfeed settings > Region, set SIM country preset to Japan, NTT DOCOMO (44010), then restart TikTok."),
             // Disable the client check; changing its separate maximum to 0 would reject all tags.
             new Preset("hashtag_limit", "More hashtags per post", CATALOG_BUILDS,
                     "studio_publish_limit_hashtag_switch:BOOLEAN:false"),

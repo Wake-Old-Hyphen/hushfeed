@@ -852,4 +852,87 @@ public class GestureActionsTest {
         assertTrue("the link does not name the sound: " + link,
                 link.endsWith("7712345678901234567"));
     }
+
+    /**
+     * #136: a Long press choice that took the whole video stopped TikTok's menu from opening.
+     * Only on the sides hands the middle third back and keeps the choice on the outer thirds.
+     */
+    @Test public void onlyOnTheSidesLeavesTheMiddleOfTheVideoToTikTok() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            int width = activity.getResources().getDisplayMetrics().widthPixels;
+            int third = width / 3;
+            Settings.EDGE_SEEK.save(false);
+            Settings.LONG_PRESS_ACTION.save("nothing");
+
+            // Off, today's behavior: the choice takes the press everywhere, and TikTok's own
+            // edge hold stays off under it.
+            Settings.LONG_PRESS_SIDES_ONLY.save(false);
+            for (float at : new float[]{0f, width * 0.2f, width / 2f, width * 0.8f, width - 1f}) {
+                assertTrue("off, press at " + at, GestureActions.onLongPress(press(at)));
+                assertTrue("off, native press at " + at, GestureActions.onLongPress(at));
+                assertFalse("off, native hold at " + at, GestureActions.allowNativeEdgeSpeedup(at));
+            }
+
+            // On: the middle third is TikTok's, the outer thirds are the choice's.
+            Settings.LONG_PRESS_SIDES_ONLY.save(true);
+            for (float at : new float[]{third, width / 2f, width - third - 1f}) {
+                assertFalse("middle press at " + at, GestureActions.onLongPress(press(at)));
+                assertFalse("middle native press at " + at, GestureActions.onLongPress(at));
+                assertTrue("TikTok's hold may start at " + at, GestureActions.allowNativeEdgeSpeedup(at));
+            }
+            for (float at : new float[]{0f, third - 1f, width - third, width - 1f}) {
+                assertTrue("side press at " + at, GestureActions.onLongPress(press(at)));
+                assertTrue("side native press at " + at, GestureActions.onLongPress(at));
+                assertFalse("native hold at " + at, GestureActions.allowNativeEdgeSpeedup(at));
+            }
+
+            // No position to go by keeps today's behavior and runs the choice.
+            assertTrue(GestureActions.onLongPress((MotionEvent) null));
+
+            // TikTok's own choice has nothing to narrow: the switch changes nothing there.
+            Settings.LONG_PRESS_ACTION.save("default");
+            assertFalse(GestureActions.onLongPress(press(width / 2f)));
+            assertFalse(GestureActions.onLongPress(press(0f)));
+            assertTrue(GestureActions.allowNativeEdgeSpeedup(0f));
+        } finally {
+            Settings.LONG_PRESS_SIDES_ONLY.resetToDefault();
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
+        }
+    }
+
+    /** Seek from the edges keeps the sides when Only on the sides is on, and the middle is still TikTok's. */
+    @Test public void edgeSeekStillWinsOnTheSidesWithOnlyOnTheSides() {
+        try (var controller = Robolectric.buildActivity(android.app.Activity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            int width = activity.getResources().getDisplayMetrics().widthPixels;
+            Settings.EDGE_SEEK.save(true);
+            Settings.EDGE_SEEK_SECONDS.save(5);
+            Settings.LONG_PRESS_ACTION.save("nothing");
+            Settings.LONG_PRESS_SIDES_ONLY.save(true);
+
+            FakeController player = new FakeController();
+            FeedSeek.recordProgress(player, "sides", 10_000L, player.player.durationMs);
+            BlockAuthorPatch.setCurrentVideoParams(new Params("sides"));
+            BlockAuthorPatch.setPlayingAweme("sides");
+
+            assertTrue(GestureActions.onLongPress(press(width * 0.9f)));
+            assertEquals("the right side seeks", 15_000f, player.player.sought, 1f);
+            assertTrue(GestureActions.onLongPress(width * 0.1f));
+            assertEquals("the left side seeks", 10_000f, player.player.sought, 1f);
+            assertFalse("TikTok's hold stays off on a seeking side", GestureActions.allowNativeEdgeSpeedup(width * 0.9f));
+
+            player.player.sought = Float.NaN;
+            assertFalse("the middle goes to TikTok", GestureActions.onLongPress(press(width / 2f)));
+            assertTrue("the middle moved nothing", Float.isNaN(player.player.sought));
+        } finally {
+            Settings.LONG_PRESS_SIDES_ONLY.resetToDefault();
+            Settings.LONG_PRESS_ACTION.resetToDefault();
+            Settings.EDGE_SEEK.resetToDefault();
+            Settings.EDGE_SEEK_SECONDS.resetToDefault();
+        }
+    }
 }

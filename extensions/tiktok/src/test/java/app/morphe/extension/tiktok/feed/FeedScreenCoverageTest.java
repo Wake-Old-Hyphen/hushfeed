@@ -231,6 +231,8 @@ public class FeedScreenCoverageTest {
         put("double_tap_action", YES, UNCHECKED, NONE);
         put("swipe_left_action", YES, YES, NONE);
         put("long_press_action", YES, YES, NONE);
+        // The same press hook as the choice it narrows, so it reaches the same windows (#136).
+        put("long_press_sides_only", YES, YES, NONE);
         // Only the profile-opened video's compact menu changes; For You already has the full menu.
         put("long_press_full_menu_on_profiles", NONE, YES, NONE);
         // The same for a video opened from search, which opens in the detail pager (#120).

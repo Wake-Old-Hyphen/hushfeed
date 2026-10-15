@@ -235,12 +235,26 @@ public final class L10n {
      */
     static List<String> tags(Context context) {
         List<String> tags = new ArrayList<>(4);
+        List<String> seenLanguages = new ArrayList<>(4);
         for (Locale locale : locales(context)) {
             String language = locale.getLanguage().toLowerCase(Locale.ROOT);
-            if (language.isEmpty() || tags.contains(language)) {
+            if (language.isEmpty() || seenLanguages.contains(language)) {
                 continue;
             }
+            seenLanguages.add(language);
             String country = locale.getCountry();
+            if ("zh".equals(language)) {
+                String script = locale.getScript();
+                boolean traditional = "Hant".equalsIgnoreCase(script)
+                        || script.isEmpty() && ("TW".equalsIgnoreCase(country)
+                        || "HK".equalsIgnoreCase(country) || "MO".equalsIgnoreCase(country));
+                String family = traditional ? "zh-hant" : "zh-hans";
+                if (country != null && !country.isEmpty()) {
+                    tags.add(family + "-r" + country.toLowerCase(Locale.ROOT));
+                }
+                tags.add(family);
+                continue;
+            }
             if (country != null && !country.isEmpty()) {
                 tags.add(language + "-r" + country.toLowerCase(Locale.ROOT));
             }
@@ -314,9 +328,10 @@ public final class L10n {
     }
 
     /** A table tag as a locale: "pt-rbr" is Portuguese in Brazil, whose plural rule differs. */
-    private static Locale localeOf(String tag) {
+    static Locale localeOf(String tag) {
         int region = tag.indexOf("-r");
-        return region < 0 ? new Locale(tag)
-                : new Locale(tag.substring(0, region), tag.substring(region + 2).toUpperCase(Locale.ROOT));
+        String languageTag = region < 0 ? tag
+                : tag.substring(0, region) + "-" + tag.substring(region + 2).toUpperCase(Locale.ROOT);
+        return Locale.forLanguageTag(languageTag);
     }
 }

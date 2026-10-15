@@ -152,23 +152,46 @@ public final class ScreenLayout {
         }
 
         Resources resources = activity.getResources();
-        int[] budget = {MAX_VIEWS, MAX_CHARS};
+        // The other windows are walked first, with up to half the bounds, so a feed that fills
+        // the bounds on its own can't cut a popup over it down to its window line (#162). They
+        // still come after the screen in the export.
+        int[] budget = {MAX_VIEWS / 2, MAX_CHARS / 2, 0};
         int skipped = 0;
+        List<String> overlays = new ArrayList<>();
         for (View root : roots) {
-            lines.add("window: " + windowName(root));
-            skipped += walk(root, 0, resources, lines, budget);
+            if (root == decor) continue;
+            overlays.add("window: " + windowName(root));
+            skipped += walk(root, 0, resources, overlays, budget);
         }
+        budget[0] += MAX_VIEWS - MAX_VIEWS / 2;
+        budget[1] += MAX_CHARS - MAX_CHARS / 2;
+        if (decor != null) {
+            lines.add("window: " + windowName(decor));
+            skipped += walk(decor, 0, resources, lines, budget);
+        }
+        lines.addAll(overlays);
+        if (budget[2] > 0) lines.add("(" + budget[2] + " views off screen not listed)");
         if (skipped > 0) lines.add("(" + skipped + " more views not listed)");
         return Collections.unmodifiableList(lines);
     }
 
-    /** Adds the view and its shown children; answers how many were left out for the bounds. */
+    /**
+     * Adds the view and its shown children; answers how many were left out for the bounds. A
+     * group clipped out of sight, like the next video the feed keeps laid out under this one,
+     * gets its own line marked offscreen and its children are only counted (#162: the next
+     * video took the bounds before the rest of the screen was reached).
+     */
     private static int walk(View view, int depth, Resources resources, List<String> lines, int[] budget) {
         if (budget[0] <= 0 || budget[1] <= 0) return 1 + descendants(view);
-        String line = line(view, depth, resources);
+        boolean offscreen = isClippedGroup(view);
+        String line = line(view, depth, resources) + (offscreen ? " offscreen" : "");
         budget[0]--;
         budget[1] -= line.length() + 1;
         lines.add(line);
+        if (offscreen) {
+            budget[2] += descendants(view);
+            return 0;
+        }
         if (view.getVisibility() != View.VISIBLE || !(view instanceof ViewGroup)) return 0;
         ViewGroup group = (ViewGroup) view;
         int skipped = 0;
@@ -182,6 +205,15 @@ public final class ScreenLayout {
             skipped += walk(child, depth + 1, resources, lines, budget);
         }
         return skipped;
+    }
+
+    /** A shown group with a size and children, none of it inside its window's visible area. */
+    private static boolean isClippedGroup(View view) {
+        if (view.getVisibility() != View.VISIBLE || !(view instanceof ViewGroup)) return false;
+        if (((ViewGroup) view).getChildCount() == 0 || view.getWidth() <= 0 || view.getHeight() <= 0) {
+            return false;
+        }
+        return !view.getGlobalVisibleRect(new android.graphics.Rect());
     }
 
     private static int descendants(View view) {

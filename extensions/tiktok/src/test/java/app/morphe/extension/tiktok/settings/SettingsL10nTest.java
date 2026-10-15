@@ -833,6 +833,32 @@ public class SettingsL10nTest {
     }
 
     @Test
+    public void simplifiedChineseUsesItsScriptTableAndTraditionalChineseKeepsEnglish() {
+        Context simplified = contextFor(Locale.forLanguageTag("zh-Hans-CN"));
+        assertEquals(List.of("zh-hans-rcn", "zh-hans"), L10n.tags(simplified));
+        assertEquals("隐藏文案", L10n.t(simplified, "Hide the caption"));
+        assertEquals("信息流过滤器", L10n.t(simplified, "Feed filter"));
+        assertEquals("信息流界面", L10n.t(simplified, "Feed screen"));
+        assertEquals("信息流标签页", L10n.t(simplified, "Feed tabs"));
+        assertEquals("你的信息流", L10n.t(simplified, "Your feed"));
+        assertEquals("zh-hans", L10n.tableTag(simplified));
+        assertEquals("zh-Hans", L10n.shownLocale(simplified).toLanguageTag());
+
+        Context mainland = contextFor(Locale.forLanguageTag("zh-CN"));
+        assertEquals(List.of("zh-hans-rcn", "zh-hans"), L10n.tags(mainland));
+        assertEquals("隐藏文案", L10n.t(mainland, "Hide the caption"));
+
+        Context traditional = contextFor(Locale.forLanguageTag("zh-Hant-TW"));
+        assertEquals(List.of("zh-hant-rtw", "zh-hant"), L10n.tags(traditional));
+        assertEquals("Hide the caption", L10n.t(traditional, "Hide the caption"));
+        assertNull(L10n.tableTag(traditional));
+
+        Context taiwan = contextFor(Locale.forLanguageTag("zh-TW"));
+        assertEquals(List.of("zh-hant-rtw", "zh-hant"), L10n.tags(taiwan));
+        assertEquals("Hide the caption", L10n.t(taiwan, "Hide the caption"));
+    }
+
+    @Test
     public void asecondLanguageAnswersWhenTheFirstHasNoTable() {
         // A phone set to French and then German shows German, because Android resolves a
         // string against the whole language list rather than only the first entry.
@@ -869,9 +895,13 @@ public class SettingsL10nTest {
 
     /** A context whose resources report one locale, which is what the lookup reads. */
     private static Context contextFor(String language, String country) {
+        return contextFor(new Locale(language, country));
+    }
+
+    private static Context contextFor(Locale locale) {
         Configuration configuration = new Configuration(
                 RuntimeEnvironment.getApplication().getResources().getConfiguration());
-        configuration.setLocale(new Locale(language, country));
+        configuration.setLocale(locale);
         return RuntimeEnvironment.getApplication().createConfigurationContext(configuration);
     }
 
@@ -1029,9 +1059,8 @@ public class SettingsL10nTest {
         List<String> missing = new ArrayList<>();
         for (String language : L10nTranslations.LANGUAGES) {
             Map<String, String> table = L10nTranslations.of(language);
-            String[] tag = language.split("-r", 2);
-            android.icu.text.PluralRules rules = android.icu.text.PluralRules.forLocale(tag.length == 2
-                    ? new Locale(tag[0], tag[1].toUpperCase(Locale.ROOT)) : new Locale(tag[0]));
+            android.icu.text.PluralRules rules = android.icu.text.PluralRules.forLocale(
+                    L10n.localeOf(language));
             Set<String> needed = new LinkedHashSet<>();
             for (long count = 0; count <= 200; count++) {
                 String category = rules.select(count);

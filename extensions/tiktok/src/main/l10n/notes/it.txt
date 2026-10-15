@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Un nuovo interruttore limita la scelta di Pressione prolungata ai lati del video, così una pressione al centro apre ancora il menu di TikTok (#136).
+
 * **TikTok:** Un nuovo interruttore aggiunge Blocca l'autore del commento al menu che si apre tenendo premuto un commento (#169).
 
 ## 0.74.0 (2026-10-14)

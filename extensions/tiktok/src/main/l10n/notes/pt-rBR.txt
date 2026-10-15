@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Uma nova chave limita sua escolha de Toque longo às laterais do vídeo, então um toque no meio continua abrindo o menu do TikTok (#136).
+
 * **TikTok:** Uma nova chave adiciona Bloquear quem comentou ao menu que abre ao tocar e segurar um comentário (#169).
 
 ## 0.74.0 (2026-10-14)

@@ -113,6 +113,47 @@ public class FeatureGatePresetsTest {
         assertEquals(FeatureGateLabStore.PRESETS.length * GeneratedGateCatalogBuilds.BUILDS.length, reviewed);
     }
 
+    /**
+     * LIVE chat auto-translate's button also wants a Japanese SIM, which no gate gives it (#98).
+     * The preview says so ahead of the values; a preset with nothing more to say adds no line.
+     */
+    @Test public void aPresetsNoteLeadsItsPreview() throws Exception {
+        JSONObject presets = FeatureGateLabStore.reviewedPresets().getJSONObject("47.1.4");
+        assertTrue(presets.getJSONObject("live_translate").getString("note").contains("Japanese SIM"));
+        assertFalse(presets.getJSONObject("see_translation").has("note"));
+        Map<String, FeatureGateCatalog.Entry> everything = new LinkedHashMap<>();
+        for (FeatureGateCatalog.Entry entry : FeatureGateCatalog.readStaticCatalog("47.1.4")) {
+            everything.put(entry.identity(), entry);
+        }
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            var lab = new FeatureGateLabFragment();
+            activity.getFragmentManager().beginTransaction().replace(android.R.id.content, lab).commit();
+            activity.getFragmentManager().executePendingTransactions();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            var field = FeatureGateLabFragment.class.getDeclaredField("snapshot");
+            field.setAccessible(true);
+            field.set(lab, new FeatureGateCatalog.Snapshot(List.copyOf(everything.values()), everything, 0, 0, true));
+            var show = FeatureGateLabFragment.class.getDeclaredMethod("showPreset", String.class, String.class);
+            show.setAccessible(true);
+            show.invoke(lab, "47.1.4", "live_translate");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            AlertDialog preview = (AlertDialog) ShadowDialog.getLatestDialog();
+            String text = ((TextView) preview.findViewById(android.R.id.message)).getText().toString();
+            int note = text.indexOf("Override SIM details");
+            assertTrue(text, note > 0);
+            assertTrue("the note comes before the values", note < text.indexOf("live_auto_translate_model_audience"));
+            preview.dismiss();
+
+            show.invoke(lab, "47.1.4", "see_translation");
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            preview = (AlertDialog) ShadowDialog.getLatestDialog();
+            text = ((TextView) preview.findViewById(android.R.id.message)).getText().toString();
+            assertFalse(text, text.contains("SIM"));
+        }
+    }
+
     @Test public void aMissingGateOrAnotherBuildCannotApplyHalfAPreset() throws Exception {
         catalog.remove("abmock\nfeed_translation_reverse");
         assertThrows(JSONException.class, () -> FeatureGateLabUndo.applyPreset("47.1.4", "see_translation", catalog));

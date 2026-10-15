@@ -1995,6 +1995,65 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * A video with no disc leaves Share as the rail's lowest button. With the comment bar gone the
+     * cell grows to the bottom and Share's label sat over the end of the line and the time beside
+     * it (#153, BynchPOP on 0.74.0, videos opened from search). The rail's column goes up until
+     * Share ends above the row, the buttons keep their spacing, and it all comes back down with the
+     * comment bar.
+     */
+    @Test
+    public void theRailClearsTheRowWhenShareIsItsLowestButton() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:g85", 0x7f0a0216);
+        VideoOverlayHider.resolveForTests("47.1.4:wct", 0x7f0a0217);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, false);
+            View row = views[1];
+            View frame = views[3];
+            FrameLayout cell = (FrameLayout) frame.getParent();
+            LinearLayout column = new LinearLayout(detail);
+            column.setOrientation(LinearLayout.VERTICAL);
+            View like = new View(detail);
+            like.setId(0x7f0a0216);
+            View share = new View(detail);
+            share.setId(0x7f0a0217);
+            column.addView(like, new LinearLayout.LayoutParams(180, 169));
+            column.addView(share, new LinearLayout.LayoutParams(180, 169));
+            cell.addView(column, new FrameLayout.LayoutParams(180, FrameLayout.LayoutParams.WRAP_CONTENT,
+                    android.view.Gravity.BOTTOM | android.view.Gravity.END));
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+
+            assertTrue("Share runs into the row: " + bottomOf(share) + " under " + drawnTop(row),
+                    bottomOf(share) <= drawnTop(row) + 1f);
+            assertTrue("the column wasn't lifted", column.getTranslationY() < 0f);
+            assertEquals("the buttons lost their spacing", bottomOf(like), drawnTop(share), 0.5f);
+            float lifted = column.getTranslationY();
+
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("a second pass lifted the column again", lifted, column.getTranslationY(), 0.5f);
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the column didn't go back down", 0f, column.getTranslationY(), 0f);
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:g85", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:wct", 0);
+        }
+    }
+
+    /**
      * A short caption ends above the lowest line, so it needs no lift and the line comes down to
      * meet it. The disc only ever took the caption's lift, so it got none and sat across the end of
      * the line and the time beside it (#153, a video opened from search on 0.73.0). It now goes up

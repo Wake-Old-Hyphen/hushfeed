@@ -100,7 +100,8 @@ class TranslationXmlTest(unittest.TestCase):
                 self.assertEqual(before, XML.table_entries(table))
 
     def test_android_language_alias_and_region_use_standard_xml_tags(self):
-        for filename, language in (("in.tsv", "id"), ("pt-rBR.tsv", "pt-BR")):
+        for filename, language in (("in.tsv", "id"), ("pt-rBR.tsv", "pt-BR"),
+                                   ("zh-Hans.tsv", "zh-Hans")):
             with self.subTest(filename=filename):
                 table = self.root / filename
                 table.write_text("Hello\tOlá\n", encoding="utf-8")

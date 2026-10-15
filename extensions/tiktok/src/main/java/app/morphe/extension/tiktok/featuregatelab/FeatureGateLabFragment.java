@@ -1365,6 +1365,9 @@ public final class FeatureGateLabFragment extends Fragment {
             String title = preset.getString("title");
             StringBuilder preview = new StringBuilder(L10n.f(getContext(),
                     "Reviewed for TikTok %1$s", build));
+            // What the gates alone don't do, ahead of the values so it's read first (#98).
+            String note = preset.optString("note", "");
+            if (!note.isEmpty()) preview.append("\n\n").append(L10n.t(getContext(), note));
             boolean compatible = build.equals(app.morphe.extension.shared.BuildNames.runningBuild());
             if (compatible) {
                 FeatureGateLabStore.ImportReview review = FeatureGateLabStore.reviewPreset(build, id, snapshot.byIdentity);

@@ -217,6 +217,78 @@ public class ScreenLayoutTest {
         behind.dismiss();
     }
 
+    @Test @Config(sdk = 35)
+    public void aPopupOverAScreenThatFillsTheBoundsIsStillListed() {
+        // #162: the feed alone used the whole bounds, so the card over it came out as a bare
+        // window line and "(478 more views not listed)".
+        Activity feed = Robolectric.buildActivity(Activity.class).setup().get();
+        LinearLayout column = new LinearLayout(feed);
+        for (int index = 0; index < ScreenLayout.MAX_VIEWS * 2; index++) {
+            column.addView(new View(feed));
+        }
+        feed.setContentView(column);
+        idle(0);
+        FrameLayout card = new FrameLayout(feed);
+        TextView cardButton = new TextView(feed);
+        cardButton.setId(android.R.id.button3);
+        cardButton.setText("Discover more");
+        card.addView(cardButton);
+        android.widget.PopupWindow popup = new android.widget.PopupWindow(card, 600, 300);
+        popup.showAtLocation(feed.getWindow().getDecorView(), android.view.Gravity.BOTTOM, 0, 0);
+        idle(0);
+        ScreenLayout.start(settings, results::add);
+        idle(ScreenLayout.DELAY_MS);
+
+        List<String> lines = ScreenLayout.lines();
+        String all = String.join("\n", lines);
+        int popupAt = all.indexOf("\nwindow: PopupWindow$PopupDecorView");
+        assertTrue("the popup window is listed: " + all.substring(Math.max(0, all.length() - 400)),
+                popupAt > 0);
+        assertTrue("the screen comes first", all.indexOf("\nwindow: ") < popupAt);
+        assertTrue("the popup's own views are listed",
+                all.substring(popupAt).contains("TextView #button3 "));
+        assertFalse(all.contains("Discover more"));
+        int views = 0;
+        for (String line : lines) {
+            if (!line.startsWith("window: ") && !line.startsWith("activity: ")
+                    && !line.startsWith("recorded_utc: ") && !line.startsWith("(")) views++;
+        }
+        assertTrue("views: " + views, views <= ScreenLayout.MAX_VIEWS);
+        assertTrue(lines.get(lines.size() - 1).matches("\\(\\d+ more views not listed\\)"));
+        popup.dismiss();
+    }
+
+    @Test public void aGroupClippedOutOfSightIsCountedNotWalked() {
+        // #162: the feed keeps the next video laid out under the screen, clipped by the pager,
+        // and walking it used the bounds before the views on screen were reached.
+        Activity feed = Robolectric.buildActivity(Activity.class).setup().get();
+        FrameLayout pager = new FrameLayout(feed);
+        LinearLayout next = new LinearLayout(feed);
+        next.setId(android.R.id.button1);
+        for (int index = 0; index < 50; index++) next.addView(new View(feed), 10, 10);
+        FrameLayout.LayoutParams below = new FrameLayout.LayoutParams(200, 200);
+        below.topMargin = 400;
+        pager.addView(next, below);
+        TextView shown = new TextView(feed);
+        shown.setId(android.R.id.button2);
+        pager.addView(shown, new FrameLayout.LayoutParams(100, 100));
+        FrameLayout screen = new FrameLayout(feed);
+        screen.addView(pager, new FrameLayout.LayoutParams(300, 300));
+        feed.setContentView(screen);
+        idle(0);
+        ScreenLayout.start(settings, results::add);
+        idle(ScreenLayout.DELAY_MS);
+
+        String all = String.join("\n", ScreenLayout.lines());
+        assertTrue(all, all.contains("LinearLayout #button1 ") && all.contains(" offscreen"));
+        assertTrue(all, all.contains("TextView #button2 "));
+        assertTrue(all, all.contains("\n(50 views off screen not listed)"));
+        for (String line : ScreenLayout.lines()) {
+            assertFalse("the clipped group's children are not walked: " + all,
+                    line.trim().startsWith("View ") && line.endsWith(" 10x10"));
+        }
+    }
+
     @Test public void frameworkClassesAreShortAndTikToksAreInFull() {
         assertEquals("FrameLayout", ScreenLayout.className(FrameLayout.class));
         assertEquals(TargetActivity.class.getName(), ScreenLayout.className(TargetActivity.class));

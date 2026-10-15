@@ -187,6 +187,9 @@ public final class GestureActions {
     /** Eligibility callback from the native edge-speedup component before its 300 ms timer. */
     public static boolean allowNativeEdgeSpeedup(float x) {
         if (edgeSeekDelta(x) != 0) return false;
+        // Sides only: the middle third is TikTok's, so its own hold may start there. On the
+        // sides the Long press choice runs, and the 2x hold must not start under it (#136).
+        if (leavesPressToTikTok(sideOf(x))) return true;
         return !takesLongPress(Settings.LONG_PRESS_ACTION.get());
     }
 
@@ -215,11 +218,28 @@ public final class GestureActions {
         // The dialog offers at most 60. A restored backup is never asked, and a press that
         // jumps an hour is indistinguishable from the video ending.
         seconds = Math.min(60, seconds);
+        int side = sideOf(x);
+        if (side == SIDE_LEFT) return -seconds * 1000L;
+        if (side == SIDE_RIGHT) return seconds * 1000L;
+        return 0;
+    }
+
+    private static final int SIDE_LEFT = -1;
+    private static final int SIDE_MIDDLE = 0;
+    private static final int SIDE_RIGHT = 1;
+    /** No window to place the press against. */
+    private static final int SIDE_UNKNOWN = 2;
+
+    /**
+     * Which third of the window a press at {@code x} landed in, shared by Seek from the edges and
+     * Only on the sides of the video (#136) so both draw the line in the same place.
+     */
+    private static int sideOf(float x) {
         // The window's width, not the display's: the press is placed against the window.
         Context context = Utils.getWindowContext();
-        if (context == null) return 0;
+        if (context == null) return SIDE_UNKNOWN;
         int width = context.getResources().getDisplayMetrics().widthPixels;
-        if (width <= 0) return 0;
+        if (width <= 0) return SIDE_UNKNOWN;
 
         // Whole pixels, so a press exactly on a third lands on one side of the line every
         // time. A screen width times a third does not, and 106.666664 sits below 106.66667.
@@ -227,9 +247,24 @@ public final class GestureActions {
         // The listener sits on the cell's touch layer, which fills the window, so the press
         // is placed against the window. getRawX would be the position on the whole display,
         // which in a side by side split view puts every press in the right hand third.
-        if (x < third) return -seconds * 1000L;
-        if (x >= width - third) return seconds * 1000L;
-        return 0;
+        if (x < third) return SIDE_LEFT;
+        if (x >= width - third) return SIDE_RIGHT;
+        return SIDE_MIDDLE;
+    }
+
+    /** {@link #sideOf(float)} for a press that may have no event to place. */
+    private static int sideOf(MotionEvent event) {
+        return event == null ? SIDE_UNKNOWN : sideOf(event.getX());
+    }
+
+    /**
+     * Whether Only on the sides of the video hands a press in this third back to TikTok: the
+     * switch is on, the Long press choice is one Hushfeed takes, and the press is in the middle.
+     * A press with no known position keeps today's behavior and runs the choice.
+     */
+    private static boolean leavesPressToTikTok(int side) {
+        return side == SIDE_MIDDLE && Settings.LONG_PRESS_SIDES_ONLY.get()
+                && takesLongPress(Settings.LONG_PRESS_ACTION.get());
     }
 
     /**
@@ -239,16 +274,16 @@ public final class GestureActions {
      */
     public static boolean onLongPress(MotionEvent event) {
         if (event == null ? isTakenDoubleTap() : isTakenDoubleTap(event.getDownTime())) return true;
-        return handleLongPress(edgeSeekDelta(event));
+        return handleLongPress(edgeSeekDelta(event), sideOf(event));
     }
 
     /** Ordinary feed cells deliver the saved local DOWN x through their native timer. */
     public static boolean onLongPress(float x) {
         if (isTakenDoubleTap()) return true;
-        return handleLongPress(edgeSeekDelta(x));
+        return handleLongPress(edgeSeekDelta(x), sideOf(x));
     }
 
-    private static boolean handleLongPress(long delta) {
+    private static boolean handleLongPress(long delta, int side) {
         if (delta != 0) {
             // Named, so a post that never reported progress cannot move the video before it. Right
             // after a swipe the new video may not have, and the press says so instead.
@@ -258,6 +293,8 @@ public final class GestureActions {
             // otherwise start under the finger does not fire on top of it.
             return true;
         }
+        // Only on the sides: a press in the middle opens TikTok's own menu (#136).
+        if (leavesPressToTikTok(side)) return false;
         return runAction(Settings.LONG_PRESS_ACTION.get());
     }
 

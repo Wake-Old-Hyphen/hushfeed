@@ -185,6 +185,18 @@ public class Settings extends BaseSettings {
     public static final StringSetting DOUBLE_TAP_ACTION = new StringSetting("double_tap_action", "default");
     public static final StringSetting LONG_PRESS_ACTION = new StringSetting("long_press_action", "default");
     /**
+     * The Long press choice runs only on the left and right thirds of the video, so a press in the
+     * middle still opens TikTok's own menu (#136). It means something only while the choice is one
+     * Hushfeed takes.
+     */
+    public static final BooleanSetting LONG_PRESS_SIDES_ONLY =
+            new BooleanSetting("long_press_sides_only", FALSE, new Setting.Availability() {
+                @Override
+                public boolean isAvailable() {
+                    return GestureActions.takesLongPress(LONG_PRESS_ACTION.savedValue());
+                }
+            });
+    /**
      * A long press on a side button plays at the hold speed only while TikTok's hold can start
      * there: the Long press row leaves the press to TikTok, and Seek from the edges isn't seeking
      * the right third, where the buttons sit. GestureActions.allowNativeEdgeSpeedup decides each

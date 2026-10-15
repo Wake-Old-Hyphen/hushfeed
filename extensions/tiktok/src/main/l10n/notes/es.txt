@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Un nuevo interruptor limita tu elección de Pulsación larga a los lados del video, así que una pulsación en el centro sigue abriendo el menú de TikTok (#136).
+
 * **TikTok:** Un nuevo interruptor añade Bloquear a quien comenta al menú que se abre al mantener pulsado un comentario (#169).
 
 ## 0.74.0 (2026-10-14)

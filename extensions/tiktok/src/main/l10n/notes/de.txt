@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Ein neuer Schalter beschränkt deine Auswahl bei Langes Drücken auf die Seiten des Videos, sodass ein Druck in der Mitte weiterhin TikToks Menü öffnet (#136).
+
 * **TikTok:** Ein neuer Schalter fügt „Diesen Kommentierenden blockieren“ zum Menü hinzu, das sich beim langen Drücken auf einen Kommentar öffnet (#169).
 
 ## 0.74.0 (2026-10-14)

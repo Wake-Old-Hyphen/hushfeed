@@ -57,6 +57,8 @@ import java.util.Map;
  *   adb -s S shell am instrument app.hushfeed.verification/.Probe
  *   adb -s S shell am broadcast -a app.hushfeed.verification.PROBE -p com.zhiliaoapp.musically \
  *       -e action dump
+ *       -e action secure-popup
+ *       -e action secure-popup-close
  *       -e action labrule -e manager abmock -e key favorite_reverse -e type INT -e value 1
  *       -e action labclear
  *       -e action mediacache -e op plant
@@ -1181,6 +1183,16 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok set " + key + " " + before + " -> " + valueOf(find(key)));
                         break;
                     }
+                    case "secure-popup": {
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        Log.i(TAG, "ok secure-popup "
+                                + SecurePopupProbe.show(loader, activity));
+                        break;
+                    }
+                    case "secure-popup-close":
+                        Log.i(TAG, "ok secure-popup-close " + SecurePopupProbe.close());
+                        break;
                     case "seam": {
                         // A public static int or boolean test seam on one of Hushfeed's own
                         // classes, for a device check that needs a state the phone will not

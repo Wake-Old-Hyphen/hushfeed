@@ -693,6 +693,11 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                             "Save the video's cover"},
                     new String[]{"default", "nothing", "like", "comments", "original_sound", "copy_link",
                             "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
+            addPreference(new TogglePreference(context, "Only on the sides of the video",
+                    "Your Long press choice runs only on the left and right thirds of the video. "
+                            + "A press in the middle still opens TikTok's own menu. "
+                            + "It needs a Long press choice other than TikTok default.",
+                    Settings.LONG_PRESS_SIDES_ONLY));
             addPreference(new TogglePreference(context, "Full long-press menu on a creator's videos",
                     "A long press on a video you opened from someone's profile opens the same menu as on For You, "
                             + "not the small share sheet. It needs Long press on TikTok default.",

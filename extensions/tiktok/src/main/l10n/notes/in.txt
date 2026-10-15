@@ -1,5 +1,7 @@
 ## Unreleased
 
+* **TikTok:** Sakelar baru membatasi pilihan Tekan lama di sisi video, jadi tekan di tengah tetap membuka menu TikTok (#136).
+
 * **TikTok:** Sakelar baru menambahkan Blokir pengomentar ini ke menu yang terbuka saat komentar ditekan lama (#169).
 
 ## 0.74.0 (2026-10-14)
