@@ -112,17 +112,17 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "quality to the menu in most of the others, and the next room opens at the quality "
                             + "you picked last.",
                     Settings.OFFER_LIVE_QUALITY));
-            // REMEMBER_LIVE_QUALITY has no row until a room after a restart opens at the saved pick.
-            // On the S22 (2026-10-14) the pick saved from Share > Video quality, but the first room
-            // after a force-stop opened at AUTO and the restore never ran.
+            addPreference(new TogglePreference(context, "Keep the LIVE quality after TikTok restarts",
+                    "TikTok forgets the LIVE quality you picked when it closes. This starts rooms at "
+                            + "that quality again after a restart. A room whose stream doesn't have it "
+                            + "opens at TikTok's choice.",
+                    Settings.REMEMBER_LIVE_QUALITY));
             addPreference(new TogglePreference(context, "Offer clear screen in every LIVE room",
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",
                     Settings.OFFER_LIVE_CLEAR_SCREEN));
-            addPreference(new TogglePreference(context, "Dark LIVE panels in dark mode",
-                    "With TikTok in dark mode, a LIVE room still opens its share menu, fan club and "
-                            + "other panels in light colors. This opens them dark.",
-                    Settings.DARK_LIVE_PANELS));
+            // DARK_LIVE_PANELS has no row until the panels themselves turn dark: on the S25 the
+            // provider answer only darkened the panels' navigation bar (#159).
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));

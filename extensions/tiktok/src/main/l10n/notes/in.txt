@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Sakelar baru membuka panel LIVE seperti Bagikan dan klub penggemar dalam warna gelap saat TikTok dalam mode gelap (#159).
+* **TikTok:** Sakelar baru mempertahankan kualitas LIVE yang kamu pilih setelah TikTok dimulai ulang (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos kini juga menyembunyikan bilah Pesan di video teman yang saling mengikuti, yang menutupi deskripsi dan bilah progres (#153).
 

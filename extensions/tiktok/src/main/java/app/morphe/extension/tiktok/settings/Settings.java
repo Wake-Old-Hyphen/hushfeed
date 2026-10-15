@@ -550,8 +550,7 @@ public class Settings extends BaseSettings {
      * {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting quality, so no restart.
      * A pick is saved from either of TikTok's pickers: the newer one's setter and the older
      * LiveDefinitionSelectionDialog's applied switch, which Share > Video quality opens in rooms
-     * whose stream asks for a quality button. Has no settings row yet: on the S22 the first room
-     * after a restart still opened at TikTok's own choice.
+     * whose stream asks for a quality button.
      */
     public static final BooleanSetting REMEMBER_LIVE_QUALITY = new BooleanSetting(
             "remember_live_quality", FALSE, false, Setting.parent(OFFER_LIVE_QUALITY));
@@ -564,7 +563,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting OFFER_LIVE_CLEAR_SCREEN = new BooleanSetting("offer_live_clear_screen", FALSE);
     /**
      * Opens LIVE panels in TikTok's dark LIVE theme while TikTok is in dark mode (#159); the LIVE
-     * controls patch. Read as each panel opens, so the next panel follows a change.
+     * controls patch. Read as each panel opens, so the next panel follows a change. Has no
+     * settings row yet: on the S25 the Share panel, viewer rankings and the Video quality list
+     * stayed light with it on, and only their navigation bar turned dark.
      */
     public static final BooleanSetting DARK_LIVE_PANELS = new BooleanSetting("dark_live_panels", FALSE);
     /**

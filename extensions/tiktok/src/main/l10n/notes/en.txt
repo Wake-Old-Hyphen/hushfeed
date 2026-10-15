@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** A new switch opens LIVE panels like Share and the fan club dark while TikTok is in dark mode (#159).
+* **TikTok:** A new switch keeps the LIVE quality you picked after TikTok restarts (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos also hides the Message bar on a mutual friend's video, which covered the caption and the progress bar (#153).
 

@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Un nuevo interruptor abre en oscuro los paneles de LIVE como Compartir y el club de fans cuando TikTok está en modo oscuro (#159).
+* **TikTok:** Un nuevo interruptor mantiene la calidad de LIVE que elegiste después de reiniciar TikTok (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos ahora también oculta la barra de Mensaje en los videos de amigos mutuos, que tapaba la descripción y la barra de progreso (#153).
 

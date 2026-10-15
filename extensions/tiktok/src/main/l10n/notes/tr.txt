@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken Paylaş ve hayran kulübü gibi LIVE panellerini koyu açar (#159).
+* **TikTok:** Yeni bir anahtar, seçtiğin LIVE kalitesini TikTok yeniden başladıktan sonra da korur (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos artık karşılıklı arkadaşların videolarındaki Mesaj çubuğunu da gizliyor, bu çubuk açıklamayı ve ilerleme çubuğunu kapatıyordu (#153).
 

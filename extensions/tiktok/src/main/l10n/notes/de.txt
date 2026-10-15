@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie Teilen und den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
+* **TikTok:** Ein neuer Schalter behält die gewählte LIVE-Qualität auch nach einem Neustart von TikTok (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos blendet jetzt auch die Nachrichtenleiste bei Videos von gegenseitigen Freunden aus, die Beschreibung und Fortschrittsbalken verdeckte (#153).
 

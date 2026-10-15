@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como Compartilhar e o fã-clube, quando o TikTok está no modo escuro (#159).
+* **TikTok:** Uma nova chave mantém a qualidade da LIVE que você escolheu depois que o TikTok reinicia (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos agora também esconde a barra de Mensagem nos vídeos de amigos em comum, que cobria a legenda e a barra de progresso (#153).
 

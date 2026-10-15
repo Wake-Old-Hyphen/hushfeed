@@ -558,7 +558,7 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
-        "clear screen in more LIVE rooms, open LIVE panels dark in dark mode, and keep your quality " +
+        "clear screen in more LIVE rooms, and keep your quality " +
         "pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +

@@ -1,6 +1,7 @@
-## Unreleased
+## 0.74.0 (2026-10-14)
 
-* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda Paylaş və fan klubu kimi LIVE panellərini tünd açır (#159).
+* **TikTok:** Yeni açar seçdiyin LIVE keyfiyyətini TikTok yenidən başlayandan sonra da saxlayır (#57).
+
 
 * **TikTok:** Hide the comment bar on opened videos indi qarşılıqlı dostların videolarında açıqlamanı və irəliləmə zolağını örtən Mesaj zolağını da gizlədir (#153).
 

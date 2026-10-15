@@ -650,6 +650,7 @@ Keep a paused video paused,Biarkan video yang dijeda tetap dijeda
 Keep captions in Clear display,Pertahankan keterangan saat tampilan bersih
 Keep going,Lanjutkan
 Keep the Favorites tab,Pertahankan tab Favorit
+Keep the LIVE quality after TikTok restarts,Pertahankan kualitas LIVE setelah TikTok dimulai ulang
 Dark Favorites popup,Popup Favorit gelap
 "When TikTok is in dark mode, the list of collections you get by holding the Favorites button is dark too instead of white.","Saat TikTok dalam mode gelap, daftar koleksi yang muncul saat kamu menahan tombol Favorit juga gelap, bukan putih."
 Keep the clock and status icons off the screen while TikTok is open. Swipe down from the top to peek at them.,Sembunyikan jam dan ikon status selama TikTok terbuka. Geser dari atas untuk mengintipnya.
@@ -1184,6 +1185,7 @@ TikTok default,Bawaan TikTok
 "TikTok default (hold to speed up, quick share)","Bawaan TikTok (tahan untuk mempercepat, bagikan cepat)"
 TikTok didn't block %1$s. Try again in a moment.,TikTok tidak memblokir %1$s. Coba lagi sebentar lagi.
 TikTok didn't unblock %1$s. Try again in a moment.,TikTok tidak membuka blokir %1$s. Coba lagi sebentar lagi.
+TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.,TikTok melupakan kualitas LIVE yang kamu pilih saat ditutup. Ini membuat ruang dimulai lagi dengan kualitas itu setelah dimulai ulang. Ruang yang streamingnya tidak memilikinya terbuka dengan pilihan TikTok.
 TikTok didn't accept the feedback. Try again later.,TikTok tidak menerima masukannya. Coba lagi nanti.
 "TikTok hasn't loaded this setting yet. Open the part of the app that uses it, then come back.","TikTok belum memuat pengaturan ini. Buka bagian aplikasi yang memakainya, lalu kembali."
 TikTok read it,TikTok sudah membacanya
@@ -2142,5 +2144,3 @@ Floating bottom bar,Bilah bawah mengambang
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.","Tampilkan tab feed utama di atas kapsul gelap yang membulat dan transparan, yang mengambang di atas video. Perlu Bilah bawah transparan."
 Show translation options in Language settings,Tampilkan opsi terjemahan di pengaturan Bahasa
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.","Mengembalikan baris terjemahan di halaman Bahasa TikTok, di Pengaturan dan privasi, untuk akun yang di sana hanya melihat Bahasa aplikasi."
-"Dark LIVE panels in dark mode","Panel LIVE gelap di mode gelap"
-"With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.","Saat TikTok dalam mode gelap, ruang LIVE tetap membuka menu bagikan, klub penggemar, dan panel lainnya dengan warna terang. Ini membukanya dalam warna gelap."
