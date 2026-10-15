@@ -384,7 +384,7 @@ Where things live:
 - `extensions/tiktok/`: the Java code that runs inside TikTok, with its Robolectric tests. The settings translations are in `src/main/l10n/`.
 - `scripts/`: patching and checking scripts. `release/release.ps1` runs a release in five stages (`prepare`, `preflight`, `build`, `publish` and `index`), and `validate-release-facts.ps1` holds this README and the index to the catalog.
 - `tools/`: release text and What's new generation, plus the test-only verification probe a device check drives.
-- `patches-list.json` is the generated patch catalog. `patches-bundle.json` is the Morphe source index for the published bundle and only changes at release time.
+- `patches-list.json` is the generated patch catalog. `patches-bundle.json` is the Morphe source index for the published bundle and only changes at release time. Starting with the next release, its description includes that release's grouped change list so Morphe Manager can show it right away.
 - [App and patch development map](concepts/patch-development.md): the target boundary, the source modules and how to add a patch. The research lives beside it in the [TikTok app audit](concepts/tiktok-app-audit.md), the [network and power measurements](concepts/runtime-observation.md) and the [measured TikTok runtime](concepts/runtime-results-2026-10-09.md).
 
 ## Privacy

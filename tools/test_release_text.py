@@ -17,11 +17,15 @@ CHANGELOG = """# Changelog
 
 ## Unreleased
 
+### Features and fixes
+
 * **TikTok:** Hide footnotes is new (#5).
 
 * **TikTok:** About 6.7 MB smaller.
 
 ## 0.1.0 (2026-01-01)
+
+### Features and fixes
 
 * **TikTok:** First.
 """
@@ -98,6 +102,9 @@ class ReleaseTextTest(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             command(argparse.Namespace(**values))
 
+    def cut_grouped_release(self) -> None:
+        self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
+
     def translate_all(self, bullet_one: str = "* **TikTok:** Hinweise (#5).", bullet_two: str = "* **TikTok:** 6,7 MB.") -> None:
         for lang in release_text.LANGUAGES:
             self.write(f"extensions/tiktok/src/main/l10n/notes/{lang}.txt",
@@ -107,7 +114,8 @@ class ReleaseTextTest(unittest.TestCase):
         self.translate_all()
         self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
         changelog = self.read("CHANGELOG.md")
-        self.assertIn("## Unreleased\n\n## 0.2.0 (2026-10-09)\n\n* **TikTok:** Hide footnotes", changelog)
+        self.assertIn("## Unreleased\n\n## 0.2.0 (2026-10-09)\n\n### Features and fixes\n\n"
+                      "* **TikTok:** Hide footnotes", changelog)
         self.assertEqual(changelog.count("## 0.1.0 (2026-01-01)"), 1)
         for lang in ("en",) + release_text.LANGUAGES:
             self.assertTrue(self.read(f"extensions/tiktok/src/main/l10n/notes/{lang}.txt").startswith("## 0.2.0 (2026-10-09)\n"))
@@ -199,6 +207,7 @@ class ReleaseTextTest(unittest.TestCase):
         self.assertTrue(notes.startswith("Intro line.\n\n") and notes.endswith("* Checked on a phone.\n"))
 
     def test_index_points_the_bundle_readme_and_bug_form_at_the_release(self):
+        self.cut_grouped_release()
         for name, text in (("readme.txt", "a fade.\n"), ("bundle.txt", "Fade is new.\n")):
             self.write(name, text)
         self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
@@ -222,7 +231,57 @@ class ReleaseTextTest(unittest.TestCase):
         # The source line belongs to prepare, which runs before the bundle exists.
         self.assertIn("\nSource snapshot: version 0.1.0, 1 patch entries.", guide)
 
+    def test_index_carries_the_current_releases_grouped_changelog(self):
+        self.write("CHANGELOG.md", CHANGELOG.replace(
+            "* **TikTok:** About 6.7 MB smaller.",
+            "### Size\n\n* **TikTok:** About 6.7 MB smaller.", 1))
+        self.cut_grouped_release()
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                         readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
+                         device_line="", runtime=10, patch=4)
+        description = json.loads(self.read("patches-bundle.json"))["description"]
+        facts, groups = description.split("\n\n### ", 1)
+        self.assertNotIn("Hide footnotes", facts)
+        self.assertEqual(groups, "Features and fixes\n\n* **TikTok:** Hide footnotes is new (#5).\n"
+                         "\n### Size\n\n* **TikTok:** About 6.7 MB smaller.")
+
+    def test_grouped_changelog_refuses_loose_empty_and_duplicate_groups(self):
+        cases = {
+            "loose": "* **TikTok:** Loose.",
+            "empty": "### Empty\n\n### Fixes\n\n* **TikTok:** Fixed.",
+            "duplicate": ("### Fixes\n\n* **TikTok:** One.\n\n"
+                          "### Fixes\n\n* **TikTok:** Two."),
+        }
+        for label, body in cases.items():
+            with self.subTest(label=label), self.assertRaises(SystemExit):
+                release_text.grouped_changelog(body, label)
+
+    def test_cut_refuses_unreleased_without_changelog_groups(self):
+        self.write("CHANGELOG.md", CHANGELOG.replace("### Features and fixes\n\n", "", 1))
+        before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(SystemExit) as caught:
+            self.run_command(release_text.cut, version="0.2.0", date="2026-10-09")
+        self.assertIn("no ### groups", str(caught.exception))
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+
+    def test_index_refuses_malformed_cut_groups_without_writing(self):
+        self.cut_grouped_release()
+        self.write("CHANGELOG.md", self.read("CHANGELOG.md").replace(
+            "### Features and fixes", "### Empty\n\n### Features and fixes", 1))
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(SystemExit) as caught:
+            self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                             readme_summary=str(self.root / "readme.txt"),
+                             bundle_summary=str(self.root / "bundle.txt"), device_line="", runtime=10, patch=4)
+        self.assertIn("empty ### Empty group", str(caught.exception))
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+
     def test_index_writes_no_file_when_any_line_it_owns_is_missing(self):
+        self.cut_grouped_release()
         for name in ("readme.txt", "bundle.txt"):
             self.write(name, "x.\n")
         self.write("concepts/patch-development.md", GUIDE.replace("Published bundle:", "Published:"))
@@ -259,6 +318,7 @@ class ReleaseTextTest(unittest.TestCase):
             self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
 
     def test_index_names_one_target_as_the_supported_apk(self):
+        self.cut_grouped_release()
         self.write("patches-list.json", catalog("1.1.0"))
         for name in ("readme.txt", "bundle.txt"):
             self.write(name, "x.\n")

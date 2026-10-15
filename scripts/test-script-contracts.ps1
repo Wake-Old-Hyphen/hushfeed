@@ -1507,6 +1507,24 @@ try {
         if ($Name -eq $guideRelative) { Sync-FixtureGuide }
     }
 
+    function Set-FixtureManagerChangelog {
+        param([string[]]$Changes)
+        $indexPath = Join-Path $factsRoot 'patches-bundle.json'
+        $document = Get-Content -LiteralPath $indexPath -Raw | ConvertFrom-Json
+        $group = "### Fixes`n`n" + (@($Changes | ForEach-Object { "* **TikTok:** $_" }) -join "`n")
+        $changelogPath = Join-Path $factsRoot 'CHANGELOG.md'
+        $changelog = Get-Content -LiteralPath $changelogPath -Raw
+        $release = [regex]::Match($changelog,
+            "(?ms)^## $([regex]::Escape([string]$document.version)) \([^\r\n)]+\)\r?\n(?<Body>.*?)(?=^## |\z)")
+        if (-not $release.Success) { throw "The fixture CHANGELOG has no $($document.version) section." }
+        $body = $release.Groups['Body']
+        $changelog = $changelog.Substring(0, $body.Index) + "`n$group`n`n" +
+            $changelog.Substring($body.Index + $body.Length)
+        Set-Content -LiteralPath $changelogPath -Value $changelog -Encoding UTF8 -NoNewline
+        $document.description += "`n`n$group"
+        Set-Content -LiteralPath $indexPath -Value ($document | ConvertTo-Json -Depth 100) -Encoding UTF8 -NoNewline
+    }
+
     Sync-FixtureIndex
     Sync-FixtureBugForm
     Sync-FixtureGuide
@@ -1555,6 +1573,43 @@ try {
     Reset-FactsFile 'patches-bundle.json'
     Reset-FactsFile $bugFormRelative
     Reset-FactsFile $guideRelative
+
+    # Manager reads the release's ### groups after the description facts. Those bullets may name
+    # older builds and counts, so they cannot satisfy or contradict the prose contract above them.
+    Set-FixtureManagerChangelog @('TikTok 9.9.9 once had 3 patches.')
+    Invoke-Facts
+    Assert-True ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) `
+        'The release facts check treated a CHANGELOG bullet as description facts.'
+    Reset-FactsFile 'patches-bundle.json'
+    Reset-FactsFile 'CHANGELOG.md'
+
+    Set-FixtureManagerChangelog @("The current list has $catalogCount patches.")
+    Set-FactsFile 'patches-bundle.json' {
+        param($text)
+        $document = $text | ConvertFrom-Json
+        $description = [string]$document.description
+        $group = [regex]::Match($description, '(?m)^### ')
+        $document.description = ($description.Substring(0, $group.Index) -replace
+            "\b$catalogCount patches\b", '3 patches') + $description.Substring($group.Index)
+        $document | ConvertTo-Json -Depth 100
+    }
+    Assert-Throws { Invoke-Facts } '*bundle description patch count*' `
+        'A correct count in a CHANGELOG group hid a stale count in the description facts.'
+    Reset-FactsFile 'patches-bundle.json'
+    Reset-FactsFile 'CHANGELOG.md'
+
+    Set-FixtureManagerChangelog @('First complete change.', 'Second complete change.')
+    Set-FactsFile 'patches-bundle.json' {
+        param($text)
+        $document = $text | ConvertFrom-Json
+        $document.description = ([string]$document.description).Replace(
+            "`n* **TikTok:** Second complete change.", '')
+        $document | ConvertTo-Json -Depth 100
+    }
+    Assert-Throws { Invoke-Facts } '*Manager changelog does not match*' `
+        'A truncated Manager changelog passed the release facts gate.'
+    Reset-FactsFile 'patches-bundle.json'
+    Reset-FactsFile 'CHANGELOG.md'
 
     # Manager decodes created_at as kotlinx.datetime.LocalDateTime, not Instant.
     # A trailing Z produces its generic "remote metadata file is unavailable" error,
@@ -1787,6 +1842,51 @@ try {
         Invoke-StrictFacts
         Assert-True ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) `
             'The strict release check refused results that match their sources and the description.'
+
+        Set-FixtureManagerChangelog @('An older run had 1 runtime test and 1 patch test pass.')
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
+        Invoke-StrictFacts
+        Assert-True ($LASTEXITCODE -eq 0 -or $null -eq $LASTEXITCODE) `
+            'CHANGELOG test counts were treated as the published validation facts.'
+        Reset-FactsFile 'patches-bundle.json'
+        Reset-FactsFile 'CHANGELOG.md'
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
+
+        Set-FixtureManagerChangelog @("Validation had $runtimeQuoted runtime tests passed.")
+        Set-FactsFile 'patches-bundle.json' {
+            param($text)
+            $document = $text | ConvertFrom-Json
+            $description = [string]$document.description
+            $group = [regex]::Match($description, '(?m)^### ')
+            $document.description = ($description.Substring(0, $group.Index) -replace
+                "\b$runtimeQuoted runtime tests passed\b", '1 runtime test passed') +
+                $description.Substring($group.Index)
+            $document | ConvertTo-Json -Depth 100
+        }
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
+        Assert-Throws { Invoke-StrictFacts } '*bundle description test count*' `
+            'A correct runtime count in a CHANGELOG group hid a stale description fact.'
+        Reset-FactsFile 'patches-bundle.json'
+        Reset-FactsFile 'CHANGELOG.md'
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
+
+        Set-FixtureManagerChangelog @("Validation had $patchQuoted patch tests passed.")
+        Set-FactsFile 'patches-bundle.json' {
+            param($text)
+            $document = $text | ConvertFrom-Json
+            $description = [string]$document.description
+            $group = [regex]::Match($description, '(?m)^### ')
+            $document.description = ($description.Substring(0, $group.Index) -replace
+                "\b$patchQuoted patch tests passed\b", '1 patch test passed') +
+                $description.Substring($group.Index)
+            $document | ConvertTo-Json -Depth 100
+        }
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
+        Assert-Throws { Invoke-StrictFacts } '*bundle description patch test count*' `
+            'A correct patch count in a CHANGELOG group hid a stale description fact.'
+        Reset-FactsFile 'patches-bundle.json'
+        Reset-FactsFile 'CHANGELOG.md'
+        Write-FactsResults $documentationResults 'DocumentationTest' 1
 
         Write-FactsResults $documentationResults 'DocumentationTest' 1 -Skipped 1
         Assert-Throws { Invoke-StrictFacts } '*skipped 1 test*' `

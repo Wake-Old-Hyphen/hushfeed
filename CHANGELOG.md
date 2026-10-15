@@ -4,7 +4,11 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
-* **Android 17:** The current TikTok 47.1.4 build passed strict 16 KB-page runtime checks. It cold-started twice and played more than one feed video with compatibility mode disabled on the Android 17 16 KB emulator. The target-37 audit also covers the reflection used by Block this commenter. Static alignment results remain separate and don't claim that every bundled 32-bit file is compatible.
+### Features and fixes
+
+* **TikTok:** Starting with the next release, Morphe Manager shows that release's whole change list even while it is the newest one. Before, Manager showed only the short bundle summary for the release on a phone, then showed its full list after another release came out. The published 0.74.0 index stays unchanged.
+
+* **TikTok:** The current TikTok 47.1.4 build passed strict Android 17 16 KB-page runtime checks. It cold-started twice and played more than one feed video with compatibility mode disabled on the 16 KB emulator. The target-37 audit also covers the reflection used by Block this commenter. Static alignment results remain separate and don't claim that every bundled 32-bit file is compatible.
 
 * **TikTok:** The Profile tab opens again on phones where it crashed or came up blank since 0.72.0. Two of Show follow status's hooks left a value typed two ways where their paths met, and some phones' Android refused the whole profile name class for it (#165, #140).
 

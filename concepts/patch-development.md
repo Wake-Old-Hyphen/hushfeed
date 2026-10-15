@@ -12,6 +12,8 @@ Published bundle: version 0.74.0, 135 patches. Those come from patches-bundle.js
 
 The source runs ahead of the published bundle until the next release ships. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
 
+Keep every Unreleased bullet under a `###` group. The release cutter preserves those groups, and the index stage appends them to the bundle description so Morphe Manager can show the newest release's whole change list. Release fact checks read only the prose above the first group because a change bullet may mention an older build or count. The same gate checks that the appended groups exactly match the release entry in this changelog.
+
 ## Target app and version boundary
 
 | Property | Current patch target |

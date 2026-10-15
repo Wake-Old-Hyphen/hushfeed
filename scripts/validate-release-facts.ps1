@@ -103,6 +103,55 @@ function Require-Match {
     }
 }
 
+function Get-ManagerChangelogGroups {
+    param(
+        [string]$Text,
+        [string]$Version
+    )
+
+    $release = [regex]::Match($Text,
+        "(?ms)^## $([regex]::Escape($Version)) \([^\r\n)]+\)\r?\n(?<Body>.*?)(?=^## |\z)")
+    if (-not $release.Success) {
+        throw "CHANGELOG.md has no dated $Version section for the indexed Manager changelog."
+    }
+
+    $output = New-Object System.Collections.Generic.List[string]
+    $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    $heading = $null
+    $items = 0
+    foreach ($line in @($release.Groups['Body'].Value -split '\r?\n' | Where-Object { $_.Trim() })) {
+        if ($line -match '^### (.+)$') {
+            if ($null -ne $heading -and $items -eq 0) {
+                throw "CHANGELOG.md $Version has an empty ### $heading group."
+            }
+            $heading = $Matches[1].Trim()
+            if (-not $heading -or -not $seen.Add($heading)) {
+                throw "CHANGELOG.md $Version has an empty or duplicate ### group."
+            }
+            if ($output.Count -gt 0) { $output.Add('') }
+            $output.Add("### $heading")
+            $output.Add('')
+            $items = 0
+            continue
+        }
+        if ($line -notmatch '^\* \*\*TikTok:\*\* ') {
+            throw "CHANGELOG.md $Version has text outside a TikTok-scoped ### group: $line"
+        }
+        if ($null -eq $heading) {
+            throw "CHANGELOG.md $Version has a loose bullet before its first ### group."
+        }
+        $output.Add($line)
+        $items++
+    }
+    if ($null -eq $heading) {
+        throw "CHANGELOG.md $Version has no ### groups for the indexed Manager changelog."
+    }
+    if ($items -eq 0) {
+        throw "CHANGELOG.md $Version has an empty ### $heading group."
+    }
+    return ($output -join "`n")
+}
+
 function Assert-UrlReachable {
     param(
         [Uri]$Uri,
@@ -180,9 +229,13 @@ $targetVersions = @($target.PackageVersions)
 $targetVersionText = Format-VersionList -Versions $targetVersions
 
 $bundleVersion = [string]$bundle.version
-$publishedPatchMatch = [regex]::Match([string]$bundle.description, '\b(\d+) patches\b')
+$bundleDescription = [string]$bundle.description
+# The facts are the prose before the first Manager changelog group. A change bullet may
+# legitimately name an older TikTok build, patch count or test count.
+$bundleFacts = ($bundleDescription -split '(?m)^### ', 2)[0]
+$publishedPatchMatch = [regex]::Match($bundleFacts, '\b(\d+) patches\b')
 # "TikTok 47.1.4", or with more than one target "TikTok 47.1.4 and 47.2.3".
-$publishedTargetMatch = [regex]::Match([string]$bundle.description,
+$publishedTargetMatch = [regex]::Match($bundleFacts,
     'TikTok\s+(\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*)')
 # @() around the whole if: an if hands back one match as a plain string, and indexing that
 # string reads its first character (the index named "TikTok 4" on 2026-09-26).
@@ -217,6 +270,17 @@ if ($indexLagsSource) {
     }
 }
 $publishedVersion = if ($indexLagsSource) { $bundleVersion } else { $releaseVersion }
+$bundleGroupMatch = [regex]::Match($bundleDescription, '(?m)^### ')
+if ($bundleGroupMatch.Success) {
+    $changelog = Get-Content -LiteralPath (Join-Path $rootPath 'CHANGELOG.md') -Raw
+    $expectedGroups = Get-ManagerChangelogGroups -Text $changelog -Version $publishedVersion
+    $indexedGroups = ($bundleDescription.Substring($bundleGroupMatch.Index) -replace "`r`n", "`n") `
+        -replace '[\r\n]+\z', ''
+    if ($indexedGroups -cne $expectedGroups) {
+        throw "patches-bundle.json Manager changelog does not match CHANGELOG.md $publishedVersion."
+    }
+    Write-Host "[release] the indexed Manager changelog matches CHANGELOG.md $publishedVersion"
+}
 Require-Match -Text ([string]$bundle.download_url) -Pattern "/v$([regex]::Escape($publishedVersion))/patches-$([regex]::Escape($publishedVersion))\.mpp$" -Description 'patches-bundle.json download URL'
 
 # Matching the pattern only proves the index spells the version right. Reaching the address is
@@ -263,14 +327,14 @@ if ($indexLagsSource) {
     if (-not $publishedPatchMatch.Success -or -not $publishedTargetMatch.Success) {
         throw 'The published bundle description does not name its patch count and TikTok target.'
     }
-    Require-Match -Text ([string]$bundle.description) -Pattern "\bv$([regex]::Escape($publishedVersion))\b" -Description 'published bundle description version'
+    Require-Match -Text $bundleFacts -Pattern "\bv$([regex]::Escape($publishedVersion))\b" -Description 'published bundle description version'
     $descriptionVersion = "v$publishedVersion"
     $descriptionPatchCount = [int]$publishedPatchMatch.Groups[1].Value
     $descriptionTargetVersions = @($publishedTargets)
 } else {
-    Require-Match -Text ([string]$bundle.description) -Pattern "\b$patchCount patches\b" -Description 'bundle description patch count'
+    Require-Match -Text $bundleFacts -Pattern "\b$patchCount patches\b" -Description 'bundle description patch count'
     foreach ($version in $targetVersions) {
-        Require-Match -Text ([string]$bundle.description) -Pattern "(?<![\d.])$([regex]::Escape($version))(?!\d|\.\d)" -Description "bundle description target version $version"
+        Require-Match -Text $bundleFacts -Pattern "(?<![\d.])$([regex]::Escape($version))(?!\d|\.\d)" -Description "bundle description target version $version"
     }
 }
 $descriptionTargetText = Format-VersionList -Versions $descriptionTargetVersions
@@ -482,7 +546,7 @@ if ($SkipDescriptionTestCount) {
     Write-Host ("[release] patches-bundle.json did not change, so its description is left " +
         "against the release it describes" + $ranHere)
 } else {
-    Require-Match -Text ([string]$bundle.description) -Pattern "\b$testCount runtime tests passed\b" -Description 'bundle description test count'
+    Require-Match -Text $bundleFacts -Pattern "\b$testCount runtime tests passed\b" -Description 'bundle description test count'
 }
 
 # The patch module's tests, which the description quotes as "All N patch tests passed". Until
@@ -574,7 +638,7 @@ if (-not $SkipDescriptionTestCount) {
         }
         $patchTestCount += @($results.testsuite.testcase).Count
     }
-    Require-Match -Text ([string]$bundle.description) -Pattern "\b$patchTestCount patch tests passed\b" `
+    Require-Match -Text $bundleFacts -Pattern "\b$patchTestCount patch tests passed\b" `
         -Description 'bundle description patch test count'
     $testFacts += ", $patchTestCount patch tests"
 }

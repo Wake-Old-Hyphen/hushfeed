@@ -8,7 +8,8 @@
         --readme-summary FILE --bundle-summary FILE --device-line TEXT --runtime N --patch N
 
 Each command checks its inputs and changes nothing when a check fails. scripts/release/release.ps1
-runs them in order; they can also run alone.
+runs them in order; they can also run alone. The indexed bundle description ends with the cut
+release's ### groups so Morphe Manager can show the current release's full change list.
 """
 
 import argparse
@@ -94,10 +95,44 @@ def section(text: str, heading: str, *, legacy: bool = False) -> str | None:
 
 def bullets(body: str) -> list[str]:
     lines = [line for line in body.split("\n") if line.strip()]
-    stray = [line for line in lines if not line.startswith("* ")]
+    stray = [line for line in lines if not line.startswith("* ") and not line.startswith("### ")]
     if stray:
         fail("a bullet runs over more than one line, join it: " + stray[0][:80])
-    return lines
+    return [line for line in lines if line.startswith("* ")]
+
+
+def grouped_changelog(body: str, label: str) -> str:
+    """Canonical ### groups for Manager, refusing loose bullets or empty/duplicate groups."""
+    groups: list[tuple[str, list[str]]] = []
+    seen = set()
+    heading = None
+    items: list[str] = []
+    for line in (line for line in body.split("\n") if line.strip()):
+        if line.startswith("### "):
+            if heading is not None:
+                if not items:
+                    fail(f"{label} has an empty ### {heading} group")
+                groups.append((heading, items))
+            heading = line[4:].strip()
+            if not heading or heading in seen:
+                fail(f"{label} has an empty or duplicate ### group")
+            seen.add(heading)
+            items = []
+        elif line.startswith("* "):
+            if heading is None:
+                fail(f"{label} has loose bullets and no ### groups")
+            if not line.startswith(SCOPE):
+                fail(f"{label} has a bullet that doesn't start {SCOPE.strip()}")
+            items.append(line)
+        else:
+            fail(f"{label} has text outside its ### groups: {line[:80]}")
+    if heading is not None:
+        if not items:
+            fail(f"{label} has an empty ### {heading} group")
+        groups.append((heading, items))
+    if not groups:
+        fail(f"{label} has no ### groups for the description")
+    return "\n\n".join(f"### {name}\n\n" + "\n".join(group) for name, group in groups)
 
 
 def heading_of(version: str) -> str:
@@ -124,11 +159,12 @@ def cut(args) -> None:
     items = bullets(body)
     if not items:
         fail("Unreleased is empty")
+    grouped = grouped_changelog(body, "Unreleased")
     unscoped = [i for i in items if not i.startswith(SCOPE)]
     if unscoped:
         fail("Manager shows only TikTok-scoped bullets, retag these: " + "; ".join(i[:60] for i in unscoped))
     heading = f"## {args.version} ({date})"
-    new = "## Unreleased\n\n" + heading + "\n\n" + "\n\n".join(items) + "\n\n"
+    new = "## Unreleased\n\n" + heading + "\n\n" + grouped + "\n\n"
     start = text.index("## Unreleased\n")
     end = start + len("## Unreleased\n") + len(body)
     tables = {lang: NOTES / f"{lang}.txt" for lang in LANGUAGES}
@@ -324,6 +360,10 @@ def index(args) -> None:
     manager = manager_floor()
     readme_summary = read(Path(args.readme_summary)).strip()
     bundle_summary = read(Path(args.bundle_summary)).strip()
+    release_body = section(read(CHANGELOG), args.version, legacy=True)
+    if release_body is None:
+        fail(f"CHANGELOG has no dated {args.version} heading. Run cut first.")
+    groups = grouped_changelog(release_body, args.version)
     apks = "the supported APK" if len(targets) == 1 else f"all {counted(len(targets))} supported APKs"
     description = (
         f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically).\n\n"
@@ -334,6 +374,7 @@ def index(args) -> None:
         + (f" {args.device_line.strip()}" if args.device_line else "") + "\n\n"
         + f"Needs Morphe Manager {manager} or newer. Refresh the Hushfeed source to update. The .mpp is a patch "
         + "bundle, not a TikTok APK. Keep the manager's existing signing key when updating."
+        + "\n\n" + groups
     )
     if any(d in description + readme_summary for d in DASHES):
         fail("the summaries have an em or en dash")
