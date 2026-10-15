@@ -52,11 +52,11 @@ import org.junit.Test;
  * shares with the Robolectric tests). The other eight are NSD, deprecated
  * RenderScript, deprecated data builder constructors, non-thread-local network matching, the
  * MediaStore trash and unreliable-volume changes, and Wear wallpaper scaling; the payload calls
- * none of those APIs. The device half of the audit, forcing the changes on with
- * {@code am compat enable}, needs an Android 17 runtime this desk does not have. Android 16
- * refuses ("the change's targetSdk threshold (36) is above the platform sdk"), and an
- * android-37.0 emulator image boots and then loops on a surfaceflinger abort that takes
- * system_server with it, so nothing can be installed there. Roadmap_Blocked.md carries both.
+ * none of those APIs. The device half of this target-37 compatibility audit remains open.
+ * Android 37.0 {@code google_apis_ps16k} revision 7 on emulator 37.2.12 now boots reliably,
+ * and the current signed build launched and played feed videos there under strict 16 KB page
+ * settings. That run checked page-size linkage only; it did not force the four compatibility
+ * changes on individually and together. {@code ROADMAP.md} carries that remaining acceptance.
  *
  * <p>Not covered here, because source text cannot show it: what the three patches that emit
  * {@code sput} write into. All three take their field from an instruction already in TikTok's own
@@ -90,6 +90,9 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("comment/CommentTools.java", 1,
                     "safe: writes pollInfo on a comment model instance, and skips static fields "
                             + "where it reads them"),
+            new ReviewedWrites("comment/CommentMenuBlock.java", 4,
+                    "safe: fields() rejects static fields before all four writes; the receivers "
+                            + "are comment-menu instances or objects this class just created"),
             new ReviewedWrites("featuregatelab/StructuredConfigController.java", 3,
                     "safe: writes an instance this class just built with newInstance, and "
                             + "instanceFields() and isEditable() both drop Modifier.isStatic "
@@ -190,8 +193,8 @@ public class AndroidTargetChangesGuardTest {
         }
         int reviewed = REVIEWED_WRITES.stream().mapToInt(row -> row.writes).sum();
         assertEquals("the reviewed total no longer matches what the scan finds", reviewed, total);
-        // Eight on 2026-09-15; the ninth is the Following feed's renamed items field (#12).
-        assertEquals("the audit counted nine reflective writes on 2026-09-19", 9, total);
+        // Nine on 2026-09-19; four comment-menu instance writes were added for #169.
+        assertEquals("the audit counted thirteen reflective writes on 2026-10-15", 13, total);
     }
 
     @Test
