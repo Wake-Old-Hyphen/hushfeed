@@ -1187,6 +1187,8 @@ This video has no link to send, so TikTok's own save runs instead	Dieses Video h
 This video has no original sound to save	Dieses Video hat keinen Originalsound zum Speichern
 This video has no sound of its own	Dieses Video hat keinen eigenen Sound
 Thumbs down blocks the commenter	Daumen runter blockiert den Kommentierenden
+Block from a comment's menu	Über das Menü eines Kommentars blockieren
+Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.	Halte einen Kommentar gedrückt, um „Diesen Kommentierenden blockieren“ im Menü zu finden. Seine Kommentare verschwinden sofort aus der Liste und ein Rückgängig-Banner folgt.
 TikTok default	TikTok-Standard
 TikTok default (hold to speed up, quick share)	TikTok-Standard (halten zum Beschleunigen, schnelles Teilen)
 TikTok didn't block %1$s. Try again in a moment.	TikTok hat %1$s nicht blockiert. Versuch es gleich noch einmal.
@@ -1389,7 +1391,7 @@ Hide the Products block and product cards in search results.	Den Produkte-Block 
 Hide TikTok's Auto scroll button	TikToks Auto-Scroll-Schaltfläche ausblenden
 Takes TikTok's own Auto scroll action out of the video panel. Auto-advance keeps working.	Entfernt TikToks eigene Auto-Scroll-Aktion aus dem Videomenü. Videos werden weiterhin automatisch weitergeschaltet.
 Hide the unread badges on the bottom tabs	Ungelesen-Abzeichen auf den unteren Tabs ausblenden
-Hide the red counts and dots on every bottom tab, Inbox and Profile included. The inbox itself still shows what came in.	Blendet die roten Zähler und Punkte auf allen unteren Tabs aus, Posteingang und Profil eingeschlossen. Der Posteingang selbst zeigt weiterhin, was angekommen ist.
+Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Blendet die roten Zähler und Punkte auf allen unteren Tabs aus, Posteingang und Profil eingeschlossen, dazu die Blase über dem Posteingang, die neue Likes, Follower, Kommentare und laufende LIVEs zählt. Der Posteingang selbst zeigt weiterhin, was angekommen ist.
 Speed while you hold the video	Geschwindigkeit, solange du das Video gedrückt hältst
 Hide mini dramas	Mini-Dramen ausblenden
 Hide TikTok's short drama episodes and the cards that promote them.	TikToks kurze Drama-Folgen und die Karten, die dafür werben, ausblenden.

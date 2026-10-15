@@ -16,6 +16,8 @@ public class User {
     public int nickNameModifyTs;
     public boolean secret;
     public boolean hasOpenFavorite;
+    /** A UrlModel in TikTok; here anything with a urlList, which is all the avatar saver reads. */
+    public Object avatar300;
 
     public String getUid() { return uid; }
     public String getUniqueId() { return uniqueId; }

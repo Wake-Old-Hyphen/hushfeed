@@ -108,7 +108,8 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
         addPreference(new TogglePreference(
                 context,
                 "Hide the unread badges on the bottom tabs",
-                "Hide the red counts and dots on every bottom tab, Inbox and Profile included. "
+                "Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the "
+                        + "bubble over Inbox that counts new likes, followers, comments and who's LIVE. "
                         + "The inbox itself still shows what came in.",
                 Settings.HIDE_TAB_BADGES
         ));

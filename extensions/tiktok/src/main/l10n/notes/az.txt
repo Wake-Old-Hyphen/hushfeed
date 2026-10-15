@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Yeni açar şərhə basıb saxlayanda açılan menyuya Bu şərh yazanı bloklayın seçimini əlavə edir (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** Yeni açar seçdiyin LIVE keyfiyyətini TikTok yenidən başlayandan sonra da saxlayır (#57).

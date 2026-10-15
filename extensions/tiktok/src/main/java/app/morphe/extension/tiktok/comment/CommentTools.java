@@ -72,6 +72,22 @@ public final class CommentTools {
     }
 
     /**
+     * The search service's own "no comment suggestions here" answer, which every comment sheet
+     * surface for the banner asks before it takes the header: the older header anchor's two
+     * checks and the newer top bar's canShow. True closes it for all of them.
+     *
+     * <p>Answering only at the factory (above) left a blank band over the comment count (#161).
+     * The older anchor, in one of its orders, claims the header slot as soon as the check says
+     * yes and builds the banner after, so a null banner kept a slot TikTok then reserved 48 dp
+     * for. Closed here, nothing claims the slot and the header lays out as on a video with no
+     * suggestion.
+     */
+    public static boolean closeCommentSuggestionGate() {
+        HookStatus.bound("comment search suggestions", "suggestion gate");
+        return Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS.get();
+    }
+
+    /**
      * The brand animation TikTok plays over the comment sheet when a comment matches an
      * advertiser's trigger. TikTok's server sends it as a surprise with the published comment or
      * the comment page, and every way the sheet shows it reads that surprise out of the struct

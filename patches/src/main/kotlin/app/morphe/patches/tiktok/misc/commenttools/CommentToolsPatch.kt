@@ -91,6 +91,52 @@ internal fun MutableMethod.resolveCommentSearchSuggestions(): CommentToolsWrite 
     }
 }
 
+internal const val ABS_SEARCH_SERVICE = "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;"
+internal const val SEARCH_SERVICE = "Lcom/ss/android/ugc/aweme/search/ISearchService;"
+internal const val COMMENT_TOP_RELATED_SEARCH =
+    "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/rs/core/refactor/SearchCommentTopRelatedImpl;"
+
+/**
+ * The search service's own "no comment suggestions" check (#161), asked by every comment sheet
+ * surface for the suggestion banner before it takes the header: the newer top bar's canShow
+ * and the older header anchor's two checks. Guarding only the banner factory left the older
+ * anchor's slot claimed with nothing in it, which TikTok then laid out as a 48 dp blank band
+ * over the comment count. The check is renamed per build (`LLLZLL` on 47.1.4), so its name is
+ * read off the one search service question the real-named top bar's canShow asks.
+ */
+internal fun commentSuggestionGate(classOf: (String) -> ClassDef?): Method {
+    fun fail(why: String): Nothing = throw PatchException("Comment tools: $why")
+    val related = classOf(COMMENT_TOP_RELATED_SEARCH) ?: fail("$COMMENT_TOP_RELATED_SEARCH is not in the app")
+    val canShow = related.methods.singleOrNull { it.name == "canShow" && it.returnType == "Z" }
+        ?: fail("expected one canShow on $COMMENT_TOP_RELATED_SEARCH")
+    val names = canShow.implementation?.instructions?.toList().orEmpty()
+        .mapNotNull { it.getReference<MethodReference>() }
+        .filter { it.parameterTypes.isEmpty() && it.returnType == "Z" && isSearchService(it.definingClass, classOf) }
+        .map { it.name }
+        .distinct()
+    val name = names.singleOrNull()
+        ?: fail("expected the comment top bar to ask the search service one question, found ${names.size}")
+    val service = classOf(ABS_SEARCH_SERVICE) ?: fail("$ABS_SEARCH_SERVICE is not in the app")
+    return service.methods.singleOrNull {
+        it.name == name && it.parameterTypes.isEmpty() && it.returnType == "Z" && it.implementation != null
+    } ?: fail("$ABS_SEARCH_SERVICE has no $name()Z to close")
+}
+
+private fun isSearchService(type: String, classOf: (String) -> ClassDef?): Boolean =
+    type == SEARCH_SERVICE || classOf(type)?.interfaces?.contains(SEARCH_SERVICE) == true
+
+/** True closes the gate, which every asker already reads as "no suggestion for this video". */
+internal fun MutableMethod.resolveCommentSuggestionGate(): CommentToolsWrite {
+    requireLocals("Comment tools", 1)
+    return {
+        guardAtEntry(
+            "Comment tools",
+            "invoke-static {}, $EXTENSION_CLASS_DESCRIPTOR->closeCommentSuggestionGate()Z",
+            "const/4 v0, 0x1\nreturn v0",
+        )
+    }
+}
+
 /**
  * The comment like-and-hate view's bind. The view keeps no name from build to build (`LX/0nvj;`
  * on 46.2.3, `LX/0lNa;` on 46.8.3), but the line its bind logs is the same on every build and in
@@ -172,6 +218,10 @@ val commentToolsPatch = bytecodePatch(
             },
             { CommentSearchHeaderFactoryFingerprint.method.resolveCommentSearchSuggestions() },
             {
+                val gate = commentSuggestionGate { classDefByOrNull(it) }
+                mutableClassDefBy(gate.definingClass).findMutableMethodOf(gate).resolveCommentSuggestionGate()
+            },
+            {
                 // A comment poll draws its bars and percentages once the poll has ended or the
                 // reader voted, and one method on the poll row answers that for everything the row
                 // draws. The counts are already in the page TikTok fetched, so Show poll results
@@ -215,6 +265,17 @@ val commentToolsPatch = bytecodePatch(
                 CaptionExpandFingerprint.method.resolveCaptionOpensComments()
             },
             { CaptionRowFingerprint.method.resolveCaptionRow() },
+            {
+                // Block this commenter in the menu a long press on a comment opens (#169). The
+                // finished rows pass through the extension on their way into the panel's adapter,
+                // and the row's icon is TikTok's own block glyph in the menu's icon style.
+                val icon = commentMenuBlockIcon(
+                    CommentMenuItemsFingerprint.originalMethod,
+                    AdReportActionKeyFingerprint.matchAll().map { it.originalClassDef },
+                    ProfileBlockActionKeyFingerprint.originalClassDef,
+                )
+                CommentMenuListFingerprint.method.resolveCommentMenuBlock(icon)
+            },
             {
                 val settingsStatus = SettingsStatusLoadFingerprint.method
                 // Blocking a commenter goes through the same BlockApi as the block button. Fail

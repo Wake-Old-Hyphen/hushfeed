@@ -1268,6 +1268,8 @@ This video has no link to send, so TikTok's own save runs instead	У этого 
 This video has no original sound to save	У этого видео нет оригинального звука для сохранения
 This video has no sound of its own	У этого видео нет собственного звука
 Thumbs down blocks the commenter	Палец вниз блокирует автора комментария
+Block from a comment's menu	Блокировка из меню комментария
+Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.	Нажмите и удерживайте комментарий, чтобы найти в меню пункт «Заблокировать этого комментирующего». Его комментарии сразу исчезнут из списка, а затем появится баннер отмены.
 TikTok default	Стандарт TikTok
 TikTok default (hold to speed up, quick share)	Стандарт TikTok (удержание ускоряет, быстрая отправка)
 TikTok didn't block %1$s. Try again in a moment.	TikTok не заблокировал %1$s. Повторите попытку через момент.
@@ -1506,7 +1508,7 @@ Hide the Products block and product cards in search results.	Скрывать б
 Hide TikTok's Auto scroll button	Скрывать кнопку автопрокрутки TikTok
 Takes TikTok's own Auto scroll action out of the video panel. Auto-advance keeps working.	Убирает собственную функцию автопрокрутки TikTok из панели видео. Автоматическое переключение продолжает работать.
 Hide the unread badges on the bottom tabs	Скрывать значки непрочитанного на нижних вкладках
-Hide the red counts and dots on every bottom tab, Inbox and Profile included. The inbox itself still shows what came in.	Скрывать красные счётчики и точки на всех нижних вкладках, включая «Входящие» и «Профиль». Сами входящие по-прежнему показывают, что пришло.
+Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Скрывать красные счётчики и точки на всех нижних вкладках, включая «Входящие» и «Профиль», а также всплывающий значок над «Входящими» с числом новых лайков, подписчиков, комментариев и тех, кто в LIVE. Сами входящие по-прежнему показывают, что пришло.
 Speed while you hold the video	Скорость при удержании видео
 Hide mini dramas	Скрывать мини-драмы
 Hide TikTok's short drama episodes and the cards that promote them.	Скрывать короткие драма-эпизоды TikTok и карточки, которые их продвигают.

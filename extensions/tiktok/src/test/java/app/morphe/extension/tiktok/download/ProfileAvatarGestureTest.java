@@ -11,6 +11,7 @@ import android.widget.TextView;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
+import com.ss.android.ugc.aweme.profile.model.User;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class ProfileAvatarGestureTest {
         header.addView(avatar);
         activity.setContentView(header);
         // A modern ProfileUser response need not invoke UserResponse.getUser at all.
-        ProfileAvatarSaver.recordProfileResponse(new LegacyResponse(new User("previous-profile")));
+        ProfileAvatarSaver.recordProfileResponse(new LegacyResponse(user("previous-profile")));
         Shadows.shadowOf(RuntimeEnvironment.getApplication())
                 .denyPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         ShadowToast.reset();
@@ -88,12 +89,52 @@ public class ProfileAvatarGestureTest {
         NativeSlotThree gesture = install(owner);
         pressAndAssertSave(gesture, owner);
 
-        owner.user = new User("another-profile");
+        owner.user = user("another-profile");
         handle.setText("@another-profile");
         ShadowToast.reset();
         pressAndAssertSave(gesture, owner);
 
         assertEquals("the second hold used a cached profile instead of the current component", 2, owner.reads);
+    }
+
+    /**
+     * #160: every hold on 47.1.4 said to open the profile again, because the getter was asked for
+     * by the name an older build gave it. It is found by its return type now, whatever R8 named it.
+     */
+    @Test public void holdFindsTheProfileGetterWhateverThisBuildNamedIt() {
+        OtherProfileOwner owner = new OtherProfileOwner("nasa");
+        pressAndAssertSave(install(owner), owner);
+        assertEquals("the hold read a profile other than the getter's", 1, owner.reads);
+    }
+
+    @Test public void componentWithTwoProfileGettersSavesNobodysPicture() {
+        AmbiguousOwner owner = new AmbiguousOwner();
+        handle.setText("@nasa");
+        NativeSlotThree gesture = new NativeSlotThree();
+        gesture.add(view -> {
+            if (!ProfileAvatarSaver.onAvatarLongPress(owner, view)) gesture.nativeActions++;
+        });
+        avatar.setOnLongClickListener(view -> {
+            gesture.dispatch(view);
+            return true;
+        });
+
+        assertTrue(avatar.performLongClick());
+        idle();
+
+        assertEquals(0, owner.reads);
+        assertEquals("Open the profile again and try once more", ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test public void profileOnScreenStillDecidesWhosePictureIsSaved() {
+        OtherProfileOwner owner = new OtherProfileOwner("nasa");
+        install(owner);
+        handle.setText("@somebody-else");
+
+        assertTrue(avatar.performLongClick());
+        idle();
+
+        assertEquals("Open the profile again and try once more", ShadowToast.getTextOfLatestToast());
     }
 
     @Test public void disabledSettingKeepsTheNativeLongPress() {
@@ -149,11 +190,17 @@ public class ProfileAvatarGestureTest {
         void dispatch(View view) { for (View.OnClickListener listener : listeners) listener.onClick(view); }
     }
 
+    /**
+     * The avatar component as 47.1.4 builds it: its profile getter is R8's {@code Qr}. The name
+     * 46.2.3 gave it ({@code bq}) is gone, and 46.9.3's ({@code ds}) names something else here.
+     */
     public static class ProfileOwner {
         User user;
         int reads;
-        ProfileOwner(String handle) { user = new User(handle); }
-        public User bq() { reads++; return user; }
+        ProfileOwner(String handle) { user = user(handle); }
+        public User Qr() { reads++; return user; }
+        public Object ds() { return null; }
+        public User withHandle(String handle) { return user(handle); }
     }
     public static final class OtherProfileOwner extends ProfileOwner {
         OtherProfileOwner(String handle) { super(handle); }
@@ -161,14 +208,22 @@ public class ProfileAvatarGestureTest {
     public static final class MyProfileOwner extends ProfileOwner {
         MyProfileOwner(String handle) { super(handle); }
     }
+    /** Two profile getters on one component: nothing says which profile the avatar is. */
+    public static final class AmbiguousOwner {
+        final User user = user("nasa");
+        int reads;
+        public User Qr() { reads++; return user; }
+        public User Rr() { reads++; return user("somebody-else"); }
+    }
     public static final class LegacyResponse {
         public final User user;
         LegacyResponse(User user) { this.user = user; }
     }
-    public static final class User {
-        public final String uniqueId;
-        public final Address avatar300 = new Address();
-        User(String handle) { uniqueId = handle; }
+    static User user(String handle) {
+        User user = new User();
+        user.uniqueId = handle;
+        user.avatar300 = new Address();
+        return user;
     }
     public static final class Address {
         public final List<String> urlList = List.of("https://example.com/avatar.jpg");

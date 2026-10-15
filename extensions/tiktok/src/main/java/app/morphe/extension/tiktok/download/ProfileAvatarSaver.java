@@ -18,8 +18,12 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -54,8 +58,70 @@ public final class ProfileAvatarSaver {
     /** Called by the native avatar gesture with the component that owns the current profile. */
     public static boolean onAvatarLongPress(Object owner, View avatar) {
         if (!enabled()) return false;
-        save(avatar, Reflect.invoke(owner, "bq"));
+        save(avatar, ownerProfile(owner));
         return true;
+    }
+
+    static final String USER_CLASS = "com.ss.android.ugc.aweme.profile.model.User";
+    private static final Object NO_GETTER = new Object();
+    private static final Map<Class<?>, Object> USER_GETTERS = new ConcurrentHashMap<>();
+
+    /**
+     * The profile the avatar's component shows: the viewer's own account on their own profile,
+     * the page's account anywhere else. R8 renames that getter on every build ({@code bq} on
+     * 46.2.3, {@code ds} on 46.9.3, {@code Qr} on 47.1.4), and asking for one of those names by
+     * hand found nothing on 47.1.4, so every hold said to open the profile again (#160). It is
+     * found by what it is instead: the component's one no-argument method returning a User.
+     */
+    static Object ownerProfile(Object owner) {
+        if (owner == null) return null;
+        Method getter = userGetter(owner.getClass());
+        if (getter == null) {
+            Logger.printInfo(() -> "No profile getter on " + owner.getClass().getName());
+            return null;
+        }
+        try {
+            return getter.invoke(owner);
+        } catch (ReflectiveOperationException | RuntimeException exception) {
+            Logger.printException(() -> "Could not read the profile behind the avatar", exception);
+            return null;
+        }
+    }
+
+    /**
+     * The nearest class that declares a no-argument User getter, and only when it declares
+     * exactly one: two would leave it to chance whose picture is saved, so that answers none.
+     */
+    static Method userGetter(Class<?> type) {
+        Object known = USER_GETTERS.get(type);
+        if (known == null) {
+            known = NO_GETTER;
+            for (Class<?> current = type; current != null && current != Object.class;
+                 current = current.getSuperclass()) {
+                Method found = null;
+                int count = 0;
+                for (Method method : current.getDeclaredMethods()) {
+                    if (method.getParameterTypes().length != 0 || Modifier.isStatic(method.getModifiers())
+                            || method.isSynthetic() || !USER_CLASS.equals(method.getReturnType().getName())) {
+                        continue;
+                    }
+                    found = method;
+                    count++;
+                }
+                if (count == 0) continue;
+                if (count == 1) {
+                    try {
+                        found.setAccessible(true);
+                        known = found;
+                    } catch (RuntimeException ignored) {
+                        // An unusable getter is the same as none.
+                    }
+                }
+                break;
+            }
+            USER_GETTERS.put(type, known);
+        }
+        return known instanceof Method ? (Method) known : null;
     }
 
     /**

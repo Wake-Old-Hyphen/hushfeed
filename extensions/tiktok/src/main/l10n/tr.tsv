@@ -1222,6 +1222,8 @@ This video has no link to send, so TikTok's own save runs instead	Bu videonun g�
 This video has no original sound to save	Bu videonun kaydedilecek orijinal sesi yok
 This video has no sound of its own	Bu videonun kendine ait bir sesi yok
 Thumbs down blocks the commenter	Aşağı başparmak yorumu yazanı engeller
+Block from a comment's menu	Yorum menüsünden engelle
+Press and hold a comment to find Block this commenter in its menu. Their comments leave the list right away and an undo banner follows.	Bir yoruma basılı tutun ve menüsünde Bu yorumu yazanı engelle seçeneğini bulun. Yorumları hemen listeden kalkar ve ardından bir geri alma şeridi çıkar.
 TikTok default	TikTok varsayılanı
 TikTok default (hold to speed up, quick share)	TikTok varsayılanı (hızlandırmak için basılı tut, hızlı paylaşım)
 TikTok didn't block %1$s. Try again in a moment.	TikTok %1$s hesabını engellemedi. Birazdan yeniden dene.
@@ -1386,7 +1388,7 @@ Hide the Products block and product cards in search results.	Arama sonuçlarınd
 Hide TikTok's Auto scroll button	TikTok'un Otomatik kaydırma düğmesini gizle
 Takes TikTok's own Auto scroll action out of the video panel. Auto-advance keeps working.	TikTok'un kendi Otomatik kaydırma eylemini video panelinden kaldırır. Videolar otomatik geçmeye devam eder.
 Hide the unread badges on the bottom tabs	Alt sekmelerdeki okunmamış rozetlerini gizle
-Hide the red counts and dots on every bottom tab, Inbox and Profile included. The inbox itself still shows what came in.	Gelen Kutusu ve Profil dahil tüm alt sekmelerdeki kırmızı sayaçları ve noktaları gizler. Gelen kutusunun kendisi gelenleri göstermeye devam eder.
+Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Gelen Kutusu ve Profil dahil tüm alt sekmelerdeki kırmızı sayaçları ve noktaları, ayrıca Gelen Kutusu'nun üstünde yeni beğenileri, takipçileri, yorumları ve kimin LIVE'da olduğunu sayan baloncuğu gizler. Gelen kutusunun kendisi gelenleri göstermeye devam eder.
 Speed while you hold the video	Videoyu basılı tutarken hız
 Hide mini dramas	Mini dizileri gizle
 Hide TikTok's short drama episodes and the cards that promote them.	TikTok'un kısa dizi bölümlerini ve onları tanıtan kartları gizle.

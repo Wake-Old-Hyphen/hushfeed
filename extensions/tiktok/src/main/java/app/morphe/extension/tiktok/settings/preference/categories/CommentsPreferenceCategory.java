@@ -298,6 +298,13 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "unblocks.",
                     Settings.BLOCK_FROM_COMMENT
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Block from a comment's menu",
+                    "Press and hold a comment to find Block this commenter in its menu. Their "
+                            + "comments leave the list right away and an undo banner follows.",
+                    Settings.BLOCK_FROM_COMMENT_MENU
+            ));
         }
         if (SettingsStatus.lengthLimitsEnabled || SettingsStatus.voiceCommentsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Writing"));

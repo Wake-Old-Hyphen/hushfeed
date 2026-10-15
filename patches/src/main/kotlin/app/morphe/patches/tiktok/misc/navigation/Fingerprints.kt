@@ -76,6 +76,19 @@ internal object TabDotVisibilityFingerprint : Fingerprint(
 )
 
 /**
+ * The bubble TikTok floats over Inbox when it opens and whenever a count comes in, counting new
+ * likes, followers, comments, mentions and who's LIVE (#170). It isn't a tab badge view: its
+ * manager (`LX/0CxD;` on 47.1.4, the notice count tab badge presenter) builds it on its own, and
+ * every show goes through the one method that logs "showBubble start" (`LJJIJ`), from a count
+ * change, an in-app push, a shop tooltip closing or its own retry.
+ */
+internal object InboxNoticeBubbleFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("showBubble start"),
+)
+
+/**
  * The feed's LIVE button asks whether LIVE already has a bottom tab, and hides itself when it does.
  * The question is the one static ()Z the button carries on every build (LIZLLL on 47.0.3, LJIIJ on
  * 46.7.3), and it reads TikTok's own list of bottom tabs, a static CopyOnWriteArrayList the bottom

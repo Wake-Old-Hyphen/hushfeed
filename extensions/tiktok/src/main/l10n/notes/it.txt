@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Un nuovo interruttore aggiunge Blocca l'autore del commento al menu che si apre tenendo premuto un commento (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** Un nuovo interruttore mantiene la qualità LIVE che hai scelto dopo il riavvio di TikTok (#57).

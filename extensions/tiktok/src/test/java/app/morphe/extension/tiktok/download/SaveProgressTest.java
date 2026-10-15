@@ -322,6 +322,30 @@ public class SaveProgressTest {
                 SaveProgress.message(new SaveProgress.Outcome(4, 1, 0, 3, SaveProgress.Stop.NO_TIME), "all"));
     }
 
+    /** #27: a long save is timed file by file, so 50 picks don't run out of time a few files in. */
+    @Test public void eachFileGetsTheJobsFullTimeAndAStalledOneStillRunsOut() throws Exception {
+        try (var clock = new MediaTransportFixtures.RetryClock(MediaBudget.JOB_DEADLINE_MS)) {
+            List<Integer> ran = new ArrayList<>();
+            SaveProgress.Outcome outcome = SaveProgress.begin(5).run(index -> {
+                ran.add(index);
+                clock.nanos += 50_000L * 1_000_000L;
+                MediaBudget.check(null);
+            });
+            assertEquals("five files of 50 s each under a two-minute budget", List.of(0, 1, 2, 3, 4), ran);
+            assertEquals(5, outcome.saved);
+            assertEquals(SaveProgress.Stop.NONE, outcome.stop);
+        }
+        try (var clock = new MediaTransportFixtures.RetryClock(MediaBudget.JOB_DEADLINE_MS)) {
+            SaveProgress.Outcome outcome = SaveProgress.begin(3).run(index -> {
+                clock.nanos += (index == 1 ? 130_000L : 10_000L) * 1_000_000L;
+                MediaBudget.check(null);
+            });
+            assertEquals(1, outcome.saved);
+            assertEquals(SaveProgress.Stop.NO_TIME, outcome.stop);
+            assertEquals("Saved 1 of 3, the rest ran out of time", SaveProgress.message(outcome, "all"));
+        }
+    }
+
     /** A save that failed says so itself; the row must not announce a file that never comes. */
     @Test public void aFailedSaveStopsTheRestWithoutSayingItIsStopping() {
         try (var owner = Robolectric.buildActivity(SaveNoticeTest.HostActivity.class).setup().visible()) {

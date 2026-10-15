@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 import com.ss.android.ugc.aweme.detail.ui.DetailActivity;
 
 import org.junit.After;
@@ -55,6 +56,8 @@ public class SeeThroughStatusBarTest {
     public void tearDown() {
         Settings.SEE_THROUGH_STATUS_BAR.resetToDefault();
         Settings.HIDE_STATUS_BAR.resetToDefault();
+        Settings.FIT_VIDEO_TO_SCREEN.resetToDefault();
+        SettingsStatus.videoFitEnabled = false;
         PausedProcess.set(false);
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         VideoOverlayHider.resolveForTests("47.1.4:dux", 0);
@@ -242,6 +245,112 @@ public class SeeThroughStatusBarTest {
             Settings.SEE_THROUGH_STATUS_BAR.save(true);
             VideoOverlayHider.applyTo(activity);
             assertEquals("TikTok's own zoom was overwritten", 1.5f, surface.getScaleY(), 0f);
+        }
+    }
+
+    /**
+     * #164: only the first video after a cold start filled. That one plays in the surface TikTok
+     * creates at launch inside the player. Later cells can get TikTok's SurfaceControl player,
+     * whose view is the player itself: TikTok sizes the player to the picture and places it with
+     * its translation, and nothing inside it is a surface. The player grows in its space then, and
+     * goes back with the switch.
+     */
+    @Test
+    public void aLaterVideoInTikToksSurfaceControlPlayerFillsToo() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            // The first video: TikTok's launch surface inside the player.
+            FrameLayout firstCell = new FrameLayout(activity);
+            firstCell.setId(CELL_ID);
+            FrameLayout firstPlayer = new FrameLayout(activity);
+            firstPlayer.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            firstPlayer.addView(surface);
+            firstCell.addView(firstPlayer, new FrameLayout.LayoutParams(1080, 2181));
+            root.addView(firstCell);
+            // The next one: the player is the picture, 1107 by 1968, moved down by TikTok.
+            FrameLayout nextCell = new FrameLayout(activity);
+            nextCell.setId(CELL_ID);
+            FrameLayout space = new FrameLayout(activity);
+            FrameLayout nextPlayer = new FrameLayout(activity);
+            nextPlayer.setId(PLAYER_ID);
+            nextPlayer.addView(new View(activity), new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            space.addView(nextPlayer, new FrameLayout.LayoutParams(1107, 1968));
+            nextCell.addView(space, new FrameLayout.LayoutParams(1080, 2181));
+            root.addView(nextCell);
+            activity.setContentView(root);
+            showVideo(firstPlayer, surface, 1107, 1968);
+            layOut(space, 1080, 2181);
+            nextPlayer.setTranslationX(-13f);
+            nextPlayer.setTranslationY(106f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("the first video stopped short of the top", 1968 * surface.getScaleY() >= 2181);
+            float scale = nextPlayer.getScaleY();
+            assertEquals(scale, nextPlayer.getScaleX(), 0f);
+            float center = 106f + 1968 / 2f;
+            assertTrue("the next video stopped short of the top: " + scale, center - 1968 * scale / 2f <= 0f);
+            assertTrue("the next video stopped short of the bottom: " + scale, center + 1968 * scale / 2f >= 2181f);
+            assertTrue("grown past what the space needs: " + scale, scale <= SeeThroughStatusBar.MAX_FILL_SCALE);
+
+            // A wide picture in that player keeps its bands.
+            nextPlayer.setLayoutParams(new FrameLayout.LayoutParams(1080, 608));
+            layOut(space, 1080, 2181);
+            nextPlayer.setTranslationY(786f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("a landscape video was cropped", 1f, nextPlayer.getScaleY(), 0f);
+
+            nextPlayer.setLayoutParams(new FrameLayout.LayoutParams(1107, 1968));
+            layOut(space, 1080, 2181);
+            nextPlayer.setTranslationY(106f);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(scale, nextPlayer.getScaleY(), 0f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the player back", 1f, nextPlayer.getScaleX(), 0f);
+            assertEquals(1f, nextPlayer.getScaleY(), 0f);
+            assertEquals(1f, surface.getScaleY(), 0f);
+            assertFalse(SeeThroughStatusBar.anyFilled());
+        }
+    }
+
+    /**
+     * Fit the video to the screen shrinks a picture until all of it shows, and growing it back to
+     * cover the player would undo that, so Fit wins while both are on.
+     */
+    @Test
+    public void fitTheVideoToTheScreenWinsOverTheFill() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            // What Fit leaves a 9:16 video at in this player: the whole width, 1920 tall.
+            showVideo(player, surface, 1080, 1920);
+            SettingsStatus.videoFitEnabled = true;
+            Settings.FIT_VIDEO_TO_SCREEN.save(true);
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the fitted video was grown back over its sides", 1f, surface.getScaleY(), 0f);
+
+            Settings.FIT_VIDEO_TO_SCREEN.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("with Fit off the video didn't fill", 1920 * surface.getScaleY() >= 2181);
+
+            Settings.FIT_VIDEO_TO_SCREEN.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("Fit coming back on didn't put the video back", 1f, surface.getScaleY(), 0f);
         }
     }
 

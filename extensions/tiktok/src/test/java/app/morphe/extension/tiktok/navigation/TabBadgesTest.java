@@ -5,6 +5,7 @@
 package app.morphe.extension.tiktok.navigation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.view.View;
@@ -21,7 +22,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-/** The unread badges on the bottom tabs, answered in the tab icon's own visibility setters. */
+/**
+ * The unread badges on the bottom tabs, answered in the tab icon's own visibility setters, and the
+ * bubble over Inbox, answered where its show starts.
+ */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class TabBadgesTest {
@@ -57,10 +61,25 @@ public class TabBadgesTest {
         assertEquals(View.VISIBLE, TabBadges.tabDotVisibility(View.VISIBLE));
     }
 
+    /**
+     * #170: the bubble over Inbox counting new likes, followers and who's LIVE came up every time
+     * TikTok opened, with the badges hidden. It goes with them, and Pause brings it back.
+     */
+    @Test public void theBubbleOverInboxStaysDownWithTheBadges() {
+        assertFalse("off, TikTok's bubble still shows", TabBadges.hideInboxBubble());
+        Settings.HIDE_TAB_BADGES.save(true);
+        assertTrue("the bubble over Inbox still came up with the badges hidden", TabBadges.hideInboxBubble());
+        // A second count change asks again, and the answer holds.
+        assertTrue(TabBadges.hideInboxBubble());
+        PausedProcess.set(true);
+        assertFalse("Pause kept the bubble down", TabBadges.hideInboxBubble());
+    }
+
     @Test public void theExportNamesTheFamilyOnceItWasReached() {
         TabBadges.countDotVisibility(View.VISIBLE);
         TabBadges.tabDotVisibility(View.GONE);
+        TabBadges.hideInboxBubble();
         assertTrue(HookStatus.report().toString(),
-                HookStatus.report().stream().anyMatch(line -> line.startsWith(TabBadges.FAMILY + ": 2 found, 0 missing")));
+                HookStatus.report().stream().anyMatch(line -> line.startsWith(TabBadges.FAMILY + ": 3 found, 0 missing")));
     }
 }

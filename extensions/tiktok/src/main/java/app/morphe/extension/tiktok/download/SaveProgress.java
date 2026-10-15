@@ -306,6 +306,10 @@ final class SaveProgress {
      * the row down. A step that throws is a skipped file, not the end of the save: the photos
      * after a bad one still land, and the result says how many did not. A refusal from the disk
      * or the clock is the end of it, since every file after would fail the same way.
+     *
+     * <p>Each file gets the job's full time from the moment it starts (#27). One deadline for
+     * the whole run let a 50-video save stop a few files in with "the rest ran out of time",
+     * though every file was moving; a single file that stalls still runs out on its own.
      */
     Outcome run(Step step) {
         started = true;
@@ -322,6 +326,7 @@ final class SaveProgress {
                     showCount(index + 1);
                     try {
                         if (deadline.networkStop != null) throw deadline.networkStop;
+                        deadline.allowAtLeast(MediaBudget.JOB_DEADLINE_MS);
                         step.save(index);
                         saved++;
                     } catch (MediaBudget.StopException refusal) {

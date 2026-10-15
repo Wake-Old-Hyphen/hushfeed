@@ -40,6 +40,32 @@ public class CommentSearchSuggestionsTest {
         }
     }
 
+    /**
+     * #161: the banner factory's null left the older header anchor's slot claimed, a blank band
+     * over the comment count. The gate every header check asks is closed by the same switch, and
+     * only by it, so the slot is never claimed while the banner is hidden.
+     */
+    @Test public void suggestionGateClosesWithTheBannerSwitchAlone() throws Exception {
+        Map<Setting<?>, Object> original = Map.of(
+                Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS, Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS.get(),
+                Settings.HIDE_SEARCH_SUGGESTIONS, Settings.HIDE_SEARCH_SUGGESTIONS.get(),
+                Settings.HIDE_BOTTOM_SEARCH_BAR, Settings.HIDE_BOTTOM_SEARCH_BAR.get());
+        try {
+            for (boolean hide : new boolean[]{false, true}) {
+                for (boolean others : new boolean[]{false, true}) {
+                    Setting.saveAll(Map.of(Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS, hide,
+                            Settings.HIDE_SEARCH_SUGGESTIONS, others,
+                            Settings.HIDE_BOTTOM_SEARCH_BAR, others));
+                    assertEquals(hide, CommentTools.closeCommentSuggestionGate());
+                    assertEquals(CommentTools.shouldHideCommentSearchSuggestions(),
+                            CommentTools.closeCommentSuggestionGate());
+                }
+            }
+        } finally {
+            Setting.saveAll(original);
+        }
+    }
+
     @Test public void cachedNativeHeadersRequireAnExplicitRestartNote() {
         assertTrue(Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS.rebootApp);
         assertEquals(Boolean.FALSE, Settings.HIDE_COMMENT_SEARCH_SUGGESTIONS.defaultValue);

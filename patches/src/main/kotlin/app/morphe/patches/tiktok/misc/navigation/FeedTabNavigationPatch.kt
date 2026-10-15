@@ -269,6 +269,21 @@ val feedTabNavigationPatch = bytecodePatch(
                 """,
             )
         }
+        // The bubble over Inbox counting new likes, followers and who's LIVE, which TikTok floats
+        // up when it opens (#170). It goes with the badges: its show returns before it starts.
+        InboxNoticeBubbleFingerprint.method.apply {
+            requireLocals("Feed tab navigation", 1)
+            addInstructionsWithLabels(
+                0,
+                """
+                    invoke-static {}, $TAB_BADGES_CLASS_DESCRIPTOR->hideInboxBubble()Z
+                    move-result v0
+                    if-eqz v0, :bubble
+                    return-void
+                """,
+                ExternalLabel("bubble", getInstruction(0)),
+            )
+        }
 
         // The names under the bottom tab icons: the icon reports its tab's tag when it is built,
         // and its name view once the tab logic has made it. The extension holds that view to the

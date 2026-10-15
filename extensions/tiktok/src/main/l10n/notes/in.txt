@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Sakelar baru menambahkan Blokir pengomentar ini ke menu yang terbuka saat komentar ditekan lama (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** Sakelar baru mempertahankan kualitas LIVE yang kamu pilih setelah TikTok dimulai ulang (#57).

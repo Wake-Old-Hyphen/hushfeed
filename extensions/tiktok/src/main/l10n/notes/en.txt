@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** A new switch adds Block this commenter to the menu a long press on a comment opens (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** A new switch keeps the LIVE quality you picked after TikTok restarts (#57).

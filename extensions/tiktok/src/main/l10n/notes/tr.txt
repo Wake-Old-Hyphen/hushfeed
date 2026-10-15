@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Yeni bir anahtar, bir yoruma basılı tutunca açılan menüye Bu yorumu yazanı engelle seçeneğini ekler (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** Yeni bir anahtar, seçtiğin LIVE kalitesini TikTok yeniden başladıktan sonra da korur (#57).

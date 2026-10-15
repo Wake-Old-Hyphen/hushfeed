@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.misc.navigation
 
 import app.morphe.Fixtures
+import app.morphe.takes
 import app.morphe.util.getReference
 import app.morphe.util.literalReads
 import com.android.tools.smali.dexlib2.Opcode
@@ -9,6 +10,7 @@ import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -130,6 +132,33 @@ class TabBadgeAnchorsTest {
                     )
                 }
             }
+        }
+    }
+
+    /**
+     * #170: the bubble over Inbox that counts new likes, followers, comments and who's LIVE when
+     * TikTok opens. The hook returns at the start of the one method the fingerprint takes, so it
+     * holds only if that method is the bubble's whole show: it builds the bubble view and reports
+     * it shown itself, and nothing else in the app builds one.
+     */
+    @Test
+    fun `each declared build shows the inbox bubble from one method the hook returns from`() {
+        Fixtures.forEachDeclared { apk ->
+            val app = load(apk)
+            val taken = app.values.flatMap { classDef ->
+                classDef.methods.filter { InboxNoticeBubbleFingerprint.takes(it, classDef) }
+            }
+            assertEquals("methods the bubble fingerprint takes: ${taken.map { "${it.definingClass}->${it.name}" }}", 1, taken.size)
+            val show = taken.single()
+            val strings = { method: Method ->
+                method.implementation?.instructions?.mapNotNull { it.getReference<StringReference>()?.string }.orEmpty()
+            }
+            assertTrue("the show doesn't build the bubble itself", "createBubbleView" in strings(show) && "onBubbleShow" in strings(show))
+            assertTrue("no local register for the check", show.implementation!!.registerCount > 1)
+            val builders = app.values.asSequence().flatMap { it.methods.asSequence() }
+                .filter { "createBubbleView" in strings(it) }
+                .map { "${it.definingClass}->${it.name}" }.toList()
+            assertEquals("methods that build the bubble", listOf("${show.definingClass}->${show.name}"), builders)
         }
     }
 

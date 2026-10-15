@@ -322,19 +322,26 @@ private fun bridge(owner: String, name: String, parameters: List<String>, result
         addInstructionsWithLabels(0, instructions)
     }
 
-private fun uidRead(getter: Method, register: Int, fallback: String, receiver: String = "p0") = """
+/**
+ * Leaves v[register] null or the profile's uid and walks the holders in v[scratch], which nothing
+ * reads after the label. ART's verifier does not narrow a reference on if-eqz, so a holder left in
+ * the uid register merges with the String path to Object at the label, and a String use after it
+ * fails verification for the whole class (#165: the profile tab crashed on 0.72.0 to 0.74.0).
+ */
+private fun uidRead(getter: Method, register: Int, scratch: Int, fallback: String, receiver: String = "p0") = """
+    const/4 v$register, 0x0
     invoke-virtual { $receiver }, ${getter.descriptor()}
-    move-result-object v$register
-    if-eqz v$register, :$fallback
-    invoke-virtual { v$register }, $PROFILE_COMMON_INFO->getUserProfileInfo()$PROFILE_INFO
-    move-result-object v$register
-    if-eqz v$register, :$fallback
-    invoke-virtual { v$register }, $PROFILE_INFO->getUid()$STRING
+    move-result-object v$scratch
+    if-eqz v$scratch, :$fallback
+    invoke-virtual { v$scratch }, $PROFILE_COMMON_INFO->getUserProfileInfo()$PROFILE_INFO
+    move-result-object v$scratch
+    if-eqz v$scratch, :$fallback
+    invoke-virtual { v$scratch }, $PROFILE_INFO->getUid()$STRING
     move-result-object v$register
 """
 
 internal fun legacyAppearanceBridge(getter: Method, original: MethodReference) = bridge(
-    LEGACY_NICKNAME_OWNER, APPEARANCE_LEGACY, listOf(BOOLEAN, BOOLEAN), "Z", 4, instructions = """
+    LEGACY_NICKNAME_OWNER, APPEARANCE_LEGACY, listOf(BOOLEAN, BOOLEAN), "Z", 5, instructions = """
         invoke-static { p1, p2 }, ${original.descriptor()}
         move-result v0
         if-nez v0, :native_badge
@@ -342,7 +349,7 @@ internal fun legacyAppearanceBridge(getter: Method, original: MethodReference) =
         invoke-virtual { p0 }, $LEGACY_NICKNAME_OWNER->Ns()Z
         move-result v1
         if-eqz v1, :native_badge
-        ${uidRead(getter, 2, "native_badge")}
+        ${uidRead(getter, 2, 4, "native_badge")}
         const-string v3, "user_account_user_name"
         invoke-static { p1, v2, v3 }, $LOCAL_APPEARANCE->legacyBadge($BOOLEAN$STRING$STRING)$BOOLEAN
         move-result-object v1
@@ -360,7 +367,7 @@ private fun component(owner: String) = when (owner) {
 }
 
 internal fun nicknameAppearanceBridge(getter: Method, owner: String = NICKNAME_OWNER) = bridge(owner, APPEARANCE_SELECT,
-    listOf(INTEGER), INTEGER, 4, instructions = """
+    listOf(INTEGER), INTEGER, 5, instructions = """
         move-object v0, p1
         if-nez v0, :native_badge
         iget-object v2, p0, $PROFILE_PROTOCOL->LLJLLIL:Lcom/ss/android/ugc/profile/platform/base/data/BizBaseData;
@@ -370,7 +377,7 @@ internal fun nicknameAppearanceBridge(getter: Method, owner: String = NICKNAME_O
         invoke-virtual { v2 }, $NICKNAME_DATA->getVerifyIcon()$NATIVE_ICON
         move-result-object v2
         if-nez v2, :native_badge
-        ${uidRead(getter, 1, "native_badge")}
+        ${uidRead(getter, 1, 4, "native_badge")}
         const/4 v2, 0x1
         const-string v3, "${component(owner)}"
         invoke-static { p1, v2, v1, v3 }, $LOCAL_APPEARANCE->badgeResource(${INTEGER}Z$STRING$STRING)$INTEGER
@@ -397,9 +404,8 @@ internal fun nicknameRenderBridge(owner: String = NICKNAME_OWNER) = bridge(owner
     """)
 
 internal fun nicknameBeginBridge(getter: Method, owner: String) = bridge(owner, APPEARANCE_BEGIN,
-    emptyList(), "V", 2, instructions = """
-        const/4 v0, 0x0
-        ${uidRead(getter, 0, "identity_ready")}
+    emptyList(), "V", 3, instructions = """
+        ${uidRead(getter, 0, 2, "identity_ready")}
         :identity_ready
         const-string v1, "${component(owner)}"
         invoke-static { p0, v0, v1 }, $LOCAL_APPEARANCE->beginNicknameBind($OBJECT$STRING$STRING)V
@@ -407,10 +413,10 @@ internal fun nicknameBeginBridge(getter: Method, owner: String) = bridge(owner, 
     """)
 
 internal fun nicknameCurrentBridge(getter: Method, repaint: String) = bridge(repaint, APPEARANCE_CURRENT,
-    emptyList(), "Z", 3, instructions = """
+    emptyList(), "Z", 4, instructions = """
         iget-object v0, p0, $repaint->${if (repaint == NICKNAME_REPAINT) "LL:$NICKNAME_OWNER" else "LLJJIJIIJIL:$NAVBAR_NICKNAME_OWNER"}
         if-eqz v0, :stale
-        ${uidRead(getter, 1, "identity_ready", "v0")}
+        ${uidRead(getter, 1, 3, "identity_ready", "v0")}
         :identity_ready
         const-string v2, "${component(if (repaint == NICKNAME_REPAINT) NICKNAME_OWNER else NAVBAR_NICKNAME_OWNER)}"
         invoke-static { p0, v0, v1, v2 }, $LOCAL_APPEARANCE->currentNicknameRepaint($OBJECT$OBJECT$STRING$STRING)Z
@@ -423,7 +429,7 @@ internal fun nicknameCurrentBridge(getter: Method, repaint: String) = bridge(rep
 
 /** Construct only the host's existing icon configuration and native image span. */
 internal fun nicknameAppendBridge(getter: Method, owner: String) = bridge(owner, APPEARANCE_APPEND,
-    listOf(SPANNABLE), SPANNABLE, 5, instructions = """
+    listOf(SPANNABLE), SPANNABLE, 6, instructions = """
         const/4 v0, 0x0
         invoke-direct { p0, v0 }, $owner->$APPEARANCE_SELECT($INTEGER)$INTEGER
         move-result-object v0
@@ -451,7 +457,7 @@ internal fun nicknameAppendBridge(getter: Method, owner: String) = bridge(owner,
         invoke-direct { p0, v0 }, $owner->$APPEARANCE_SELECT($INTEGER)$INTEGER
         move-result-object v0
         if-eqz v0, :native_text
-        ${uidRead(getter, 1, "native_text")}
+        ${uidRead(getter, 1, 5, "native_text")}
         const-string v4, "${component(owner)}"
         invoke-static { p0, p1, v2, v1, v4 }, $LOCAL_APPEARANCE->badgeText($OBJECT$SPANNABLE$OBJECT$STRING$STRING)$SPANNABLE
         move-result-object v0
@@ -492,9 +498,9 @@ internal fun nicknameCachedBridge() = bridge(NAVBAR_NICKNAME_OWNER, APPEARANCE_C
     """)
 
 internal fun noticeAppearanceBridge(getter: Method) = bridge(RESTRICTION_OWNER, APPEARANCE_NOTICE,
-    listOf("I", VIEW), "V", 4, instructions = """
+    listOf("I", VIEW), "V", 5, instructions = """
         move v0, p1
-        ${uidRead(getter, 1, "native_visibility")}
+        ${uidRead(getter, 1, 4, "native_visibility")}
         iget-object v2, p0, $PROFILE_PROTOCOL->LLJJL:$VIEW
         const-string v3, "user_account_ags_warning"
         invoke-static { v0, p2, v2, v1, v3 }, $LOCAL_APPEARANCE->noticeVisibility(I$VIEW$VIEW$STRING$STRING)I

@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Uma nova chave adiciona Bloquear quem comentou ao menu que abre ao tocar e segurar um comentário (#169).
+
 ## 0.74.0 (2026-10-14)
 
 * **TikTok:** Uma nova chave mantém a qualidade da LIVE que você escolheu depois que o TikTok reinicia (#57).

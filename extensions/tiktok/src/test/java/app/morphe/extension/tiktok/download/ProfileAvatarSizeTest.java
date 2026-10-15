@@ -236,11 +236,12 @@ public class ProfileAvatarSizeTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
+    /** The avatar component: its one profile getter is found by its return type (#160). */
     public static final class ProfileOwner {
         private final User user;
         int reads;
         ProfileOwner(User user) { this.user = user; }
-        public User bq() { reads++; return user; }
+        public com.ss.android.ugc.aweme.profile.model.User Qr() { reads++; return user; }
     }
 
     public static final class LegacyResponse {
@@ -248,7 +249,7 @@ public class ProfileAvatarSizeTest {
         LegacyResponse(User user) { this.user = user; }
     }
 
-    public static final class User {
+    public static final class User extends com.ss.android.ugc.aweme.profile.model.User {
         private final String handle;
         Address larger, medium, small, tiny, thumb;
         User(String handle) { this.handle = handle; }

@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.captions;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -174,10 +175,43 @@ public final class CaptionStyle {
             BACKGROUNDS.put(background, drawable == null ? null : drawable.getConstantState());
         }
         if ("default".equals(color)) {
+            PAINTED.remove(background);
             if (!BACKGROUNDS.containsKey(background)) return;
             Drawable.ConstantState nativeState = BACKGROUNDS.remove(background);
             background.setBackground(nativeState == null ? null : nativeState.newDrawable(background.getResources()));
-        } else background.setBackgroundColor(backgroundColor());
+        } else paint(background, BACKGROUNDS.get(background), backgroundColor());
+    }
+
+    /**
+     * TikTok's caption strip is a rounded rectangle: both backgrounds its render sets on 47.1.4
+     * are shapes with 4 dp corners ({@code res/a/vu.xml} and {@code res/a/a1n.xml}). A plain
+     * color put in their place filled the strip edge to edge with square corners (#158), so the
+     * chosen color goes into a copy of TikTok's own shape, and into a 4 dp rounded rectangle
+     * when the strip had no shape to copy. The copy is mutated on its own, because the shape's
+     * state is shared with every other view drawn from that resource.
+     */
+    private static final Map<View, GradientDrawable> PAINTED = new WeakHashMap<>();
+    private static final float TIKTOK_CORNER_DP = 4;
+
+    private static void paint(View strip, Drawable.ConstantState nativeState, int color) {
+        GradientDrawable painted = PAINTED.get(strip);
+        if (painted == null) {
+            painted = shapeOf(strip, nativeState);
+            PAINTED.put(strip, painted);
+        }
+        painted.setColor(color);
+        // TikTok's render sets its own background again on most renders, so this puts ours back.
+        if (strip.getBackground() != painted) strip.setBackground(painted);
+    }
+
+    private static GradientDrawable shapeOf(View strip, Drawable.ConstantState nativeState) {
+        Drawable copy = nativeState == null ? null
+                : nativeState.newDrawable(strip.getResources(), strip.getContext().getTheme()).mutate();
+        if (copy instanceof GradientDrawable) return (GradientDrawable) copy;
+        GradientDrawable shape = new GradientDrawable();
+        shape.setCornerRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TIKTOK_CORNER_DP,
+                strip.getResources().getDisplayMetrics()));
+        return shape;
     }
 
     /**

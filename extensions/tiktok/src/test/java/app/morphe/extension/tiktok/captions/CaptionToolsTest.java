@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -81,13 +82,67 @@ public class CaptionToolsTest {
         Settings.CAPTION_BACKGROUND.save("black");
         CaptionStyle.apply(root);
         assertTrue(text.getTextSize() > originalSize);
-        assertEquals(Color.BLACK, ((ColorDrawable) background.getBackground()).getColor());
+        // A strip with no shape of its own still gets TikTok's rounded corners.
+        GradientDrawable painted = (GradientDrawable) background.getBackground();
+        assertEquals(Color.BLACK, painted.getColor().getDefaultColor());
+        assertEquals(dp(4), painted.getCornerRadius(), 0.01f);
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
         CaptionStyle.apply(root);
         assertEquals(originalSize, text.getTextSize(), 0);
         assertEquals(Color.BLUE, ((ColorDrawable) background.getBackground()).getColor());
         assertSame(original, CaptionStyle.layout(original));
+    }
+    /**
+     * #158: TikTok's caption strip is a rounded rectangle, and a Dark or Black background put a
+     * plain color in its place, so the strip came out with square corners. The chosen color now
+     * fills a copy of TikTok's own shape, and TikTok's shape itself is left as it was.
+     */
+    @Test public void chosenCaptionBackgroundKeepsTikToksRoundedCorners() {
+        int textId = View.generateViewId();
+        int backgroundId = View.generateViewId();
+        CaptionStyle.resolveForTests("47.1.4:dmb", textId);
+        CaptionStyle.resolveForTests("47.1.4:dm5", backgroundId);
+        FrameLayout root = new FrameLayout(Utils.getContext());
+        FrameLayout strip = new FrameLayout(Utils.getContext());
+        strip.setId(backgroundId);
+        TextView text = new TextView(Utils.getContext());
+        text.setId(textId);
+        strip.addView(text);
+        root.addView(strip);
+        // TikTok's strip on 47.1.4: a solid shape with 4 dp corners.
+        GradientDrawable tiktok = new GradientDrawable();
+        tiktok.setColor(0xCC4D4D4D);
+        tiktok.setCornerRadius(dp(4));
+        strip.setBackground(tiktok);
+
+        for (String choice : new String[]{"dark", "black"}) {
+            Settings.CAPTION_BACKGROUND.save(choice);
+            CaptionStyle.apply(root);
+            assertTrue(choice + " drew a square strip", strip.getBackground() instanceof GradientDrawable);
+            GradientDrawable painted = (GradientDrawable) strip.getBackground();
+            assertNotSame(choice + " recolored TikTok's shared shape", tiktok, painted);
+            assertEquals(choice, CaptionStyle.backgroundColor(), painted.getColor().getDefaultColor());
+            assertEquals(choice, dp(4), painted.getCornerRadius(), 0.01f);
+        }
+        assertEquals("TikTok's own shape changed color", 0xCC4D4D4D, tiktok.getColor().getDefaultColor());
+
+        // TikTok sets its own background again on the next render; the chosen one goes back on.
+        GradientDrawable again = new GradientDrawable();
+        again.setColor(0xCC4D4D4D);
+        again.setCornerRadius(dp(4));
+        strip.setBackground(again);
+        CaptionStyle.apply(root);
+        assertEquals(Color.BLACK, ((GradientDrawable) strip.getBackground()).getColor().getDefaultColor());
+
+        Settings.CAPTION_BACKGROUND.save("default");
+        CaptionStyle.apply(root);
+        GradientDrawable restored = (GradientDrawable) strip.getBackground();
+        assertEquals(0xCC4D4D4D, restored.getColor().getDefaultColor());
+        assertEquals(dp(4), restored.getCornerRadius(), 0.01f);
+    }
+    private static float dp(float value) {
+        return value * Utils.getContext().getResources().getDisplayMetrics().density;
     }
     /**
      * TikTok draws spoken captions bold, and #158 asked for them at normal weight. The switch

@@ -48,8 +48,13 @@ import app.morphe.patches.tiktok.profile.REUSED_SLOT_ASSEM
 import app.morphe.patches.tiktok.profile.RelationCellBindFingerprint
 import app.morphe.patches.tiktok.profile.commonInfoGetter
 import app.morphe.patches.tiktok.profile.itemViewField
+import app.morphe.patches.tiktok.misc.commenttools.ABS_SEARCH_SERVICE
+import app.morphe.patches.tiktok.misc.commenttools.COMMENT_TOP_RELATED_SEARCH
+import app.morphe.patches.tiktok.misc.commenttools.SEARCH_SERVICE
+import app.morphe.patches.tiktok.misc.commenttools.commentSuggestionGate
 import app.morphe.patches.tiktok.misc.commenttools.isCommentSearchHeaderFactory
 import app.morphe.patches.tiktok.misc.commenttools.resolveCommentSearchSuggestions
+import app.morphe.patches.tiktok.misc.commenttools.resolveCommentSuggestionGate
 import app.morphe.patches.tiktok.misc.commenttools.compactCommentHeaderComponents
 import app.morphe.patches.tiktok.misc.commenttools.isCompactCommentHeaderBind
 import app.morphe.patches.tiktok.misc.commenttools.resolveCompactCommentHeader
@@ -486,6 +491,66 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 Opcode.CONST_4, Opcode.RETURN_OBJECT, Opcode.NOP),
                 method.implementation!!.instructions.take(6).map { it.opcode })
             assertEquals(original, method.implementation!!.instructions.drop(6).toList())
+        }
+    }
+
+    @Test
+    fun `comment suggestion gate closes every header check before a slot is claimed on every fixture`() {
+        val apks = fixtures()
+        for (apk in apks) {
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
+                .associateBy { it.type }
+            val gate = commentSuggestionGate { classes[it] }
+            assertEquals(ABS_SEARCH_SERVICE, gate.definingClass)
+            fun asksGate(method: Method) = method.implementation?.instructions?.any {
+                val ref = (it as? ReferenceInstruction)?.reference as? MethodReference
+                ref != null && ref.name == gate.name && ref.parameterTypes.isEmpty() && ref.returnType == "Z" &&
+                    (ref.definingClass == SEARCH_SERVICE ||
+                        classes[ref.definingClass]?.interfaces?.contains(SEARCH_SERVICE) == true)
+            } == true
+            fun readsSuggestions(method: Method) = method.implementation?.instructions?.any {
+                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "getCommentSuggestWordList"
+            } == true
+
+            // #161: the older header anchor's provider builds its banner through the guarded
+            // factory, and claims the header slot after its check says yes. Both its checks
+            // must ask the gate, so a closed gate leaves no slot claimed.
+            val factory = classes.getValue(ABS_SEARCH_SERVICE).methods.single(::isCommentSearchHeaderFactory)
+            val providers = classes.values.filter { owner ->
+                owner.type != ABS_SEARCH_SERVICE && SEARCH_SERVICE !in owner.interfaces && owner.methods.any { method ->
+                    method.returnType == "Landroid/view/View;" && method.implementation?.instructions?.any {
+                        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { ref ->
+                            ref.definingClass == SEARCH_SERVICE && ref.name == factory.name
+                        } == true
+                    } == true
+                }
+            }
+            assertEquals("${apk.name}: one header anchor provider builds the banner", 1, providers.size)
+            val checks = providers.single().methods.filter { it.returnType == "Z" && asksGate(it) }
+            assertEquals("${apk.name}: both of the provider's checks ask the gate", 2, checks.size)
+
+            // Every asker outside the service's own forwarding reads the comment suggestions, so
+            // closing it reaches nothing else.
+            val askers = classes.values.flatMap { owner -> owner.methods.filter(::asksGate) }
+                .filterNot { it.name == gate.name && it.parameterTypes.isEmpty() }
+            assertTrue("${apk.name}: top bar and anchor checks", askers.size >= 3)
+            askers.forEach { assertTrue("${apk.name}: ${it.definingClass}->${it.name}", readsSuggestions(it)) }
+            assertTrue(classes.getValue(COMMENT_TOP_RELATED_SEARCH).methods.single { it.name == "canShow" }
+                .let(::asksGate))
+
+            val method = MutableMethod(gate)
+            val original = method.implementation!!.instructions.toList()
+            val write = method.resolveCommentSuggestionGate()
+            assertEquals("preflight must not edit", original, method.implementation!!.instructions.toList())
+            write()
+            val after = method.implementation!!.instructions.toList()
+            assertEquals(listOf(Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT, Opcode.IF_EQZ,
+                Opcode.CONST_4, Opcode.RETURN, Opcode.NOP), after.take(6).map { it.opcode })
+            assertEquals("Lapp/morphe/extension/tiktok/comment/CommentTools;->closeCommentSuggestionGate()Z",
+                (after[0] as ReferenceInstruction).reference.toString())
+            assertEquals(1, (after[3] as NarrowLiteralInstruction).narrowLiteral)
+            assertEquals(original, after.drop(6))
         }
     }
 
