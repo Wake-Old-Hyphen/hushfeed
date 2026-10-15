@@ -13,6 +13,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import java.util.Locale
+import java.util.zip.CRC32
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import org.w3c.dom.Document
@@ -75,9 +76,17 @@ val accentColorPatch = resourcePatch(
             // A dry run on a throwaway copy of each file first: a refusal leaves every file as it was.
             val found = files.flatMapTo(mutableSetOf()) { recolorAccentItems(readXml(it), tokens, target) }
             if (found != tokens) throw PatchException(incompleteAccentRefusal(tokens - found))
+            // Icons with the red drawn in, each recolored in memory first for the same reason.
+            val drawables = get("res").listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
+            val icons = accentIcons(packageMetadata.versionName).flatMap { name ->
+                val pictures = drawables.map { it.resolve("$name.png") }.filter { it.isFile }
+                if (pictures.isEmpty()) throw PatchException(missingAccentIconRefusal(name))
+                pictures.map { it to (recolorRedPalette(it.readBytes(), target) ?: throw PatchException(missingAccentIconRefusal(name))) }
+            }
             for (file in files) {
                 document(file.relativeTo(get(".")).invariantSeparatorsPath).use { recolorAccentItems(it, tokens, target) }
             }
+            for ((picture, bytes) in icons) picture.writeBytes(bytes)
         }
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "accentColor")
     }
@@ -116,6 +125,80 @@ internal fun unreadAccentRefusal(versionName: String?): String {
     return "Accent color hasn't read the accent palette of $build, so nothing was changed. TikTok " +
         "renames its colors from one build to the next, and a name taken from another build can " +
         "recolor a background or a warning. The palette is known for TikTok $builds."
+}
+
+/**
+ * Drawables with TikTok's red drawn into their pixels, per build, which the palette rewrite can't
+ * reach. On 47.1.4 `bv8` is the follow plus under each feed avatar (FeedAvatarDefaultAssem sets it
+ * as an icon res, or as a TuxIcon behind a flag) and on a DM's profile card (#84). Each is a
+ * palette PNG of TikTok's red, white and the blends between them, so only its palette changes.
+ * AccentColorPaletteTest holds each declared build's fixture to its entry here.
+ */
+internal val ACCENT_ICONS: Map<String, List<String>> = linkedMapOf(
+    "47.1.4" to listOf("bv8"),
+)
+
+/** The drawables to recolor on this build, or a refusal. */
+internal fun accentIcons(versionName: String?): List<String> =
+    versionName?.let { ACCENT_ICONS[it] } ?: throw PatchException(unreadAccentRefusal(versionName))
+
+internal fun missingAccentIconRefusal(name: String): String =
+    "Accent color: this TikTok has no red follow plus picture where the patch looked ($name), so its " +
+        "resources aren't the ones this patch read. Nothing was changed."
+
+/**
+ * [png] with every palette entry that is TikTok's red, white or a blend of the two moved the same
+ * distance from white toward [target]; transparency stays in the PNG's tRNS chunk, so the edges
+ * keep their smoothing. Null when [png] isn't a palette PNG or has no red in its palette. Only the
+ * PLTE chunk and its checksum change, so no image decoding is needed (Morphe Manager patches on
+ * the phone, where there's no image library).
+ */
+internal fun recolorRedPalette(png: ByteArray, target: String): ByteArray? {
+    val signature = byteArrayOf(-119, 80, 78, 71, 13, 10, 26, 10)
+    if (png.size < 33 || !png.copyOfRange(0, 8).contentEquals(signature)) return null
+    // IHDR comes first, and its color type 3 is a palette image.
+    if (String(png, 12, 4, Charsets.US_ASCII) != "IHDR" || png[25].toInt() != 3) return null
+    val to = target.removePrefix("#").takeLast(6).toInt(16)
+    val out = png.copyOf()
+    var at = 8
+    while (at + 12 <= png.size) {
+        val length = ((png[at].toInt() and 0xff) shl 24) or ((png[at + 1].toInt() and 0xff) shl 16) or
+            ((png[at + 2].toInt() and 0xff) shl 8) or (png[at + 3].toInt() and 0xff)
+        if (length < 0 || at + 12 + length > png.size) return null
+        if (String(png, at + 4, 4, Charsets.US_ASCII) != "PLTE") {
+            at += 12 + length
+            continue
+        }
+        var reds = 0
+        for (entry in at + 8 until at + 8 + length - 2 step 3) {
+            val rgb = ((png[entry].toInt() and 0xff) shl 16) or ((png[entry + 1].toInt() and 0xff) shl 8) or
+                (png[entry + 2].toInt() and 0xff)
+            val blend = redBlend(rgb) ?: continue
+            if (blend >= 0.5) reds++
+            for ((channel, shift) in listOf(16, 8, 0).withIndex()) {
+                val wanted = to shr shift and 0xff
+                out[entry + channel] = (255 - blend * (255 - wanted)).roundToInt().coerceIn(0, 255).toByte()
+            }
+        }
+        if (reds == 0) return null
+        val crc = CRC32().apply { update(out, at + 4, 4 + length) }.value
+        for (i in 0 until 4) out[at + 8 + length + i] = (crc shr (24 - 8 * i)).toByte()
+        return out
+    }
+    return null
+}
+
+/**
+ * How far [rgb] is from white toward TikTok's red, 0 to 1, or null when it isn't white, that red or
+ * a blend of the two. The red channel barely moves between them, so green and blue have to agree.
+ */
+internal fun redBlend(rgb: Int): Double? {
+    val red = TIKTOK_ACCENT.substring(1).toInt(16)
+    if ((rgb shr 16 and 0xff) < 240) return null
+    val green = (255 - (rgb shr 8 and 0xff)).toDouble() / (255 - (red shr 8 and 0xff))
+    val blue = (255 - (rgb and 0xff)).toDouble() / (255 - (red and 0xff))
+    if (abs(green - blue) > 0.12) return null
+    return ((green + blue) / 2).coerceIn(0.0, 1.0)
 }
 
 internal fun incompleteAccentRefusal(missing: Set<String>): String =

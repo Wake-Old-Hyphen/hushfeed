@@ -2348,6 +2348,68 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    private static final int MESSAGE_BAR_ID = 0x7f0a0240;
+
+    /**
+     * A mutual friend's opened video has TikTok's Message bar where the comment bar goes, over the
+     * same strip, and no comment bar. With the switch on the strip went and the Message bar stayed
+     * over the bottom of the caption and the right-hand column (#153). It goes and comes back with
+     * the strip and isn't called missing. The quick message pill a feed cell keeps under the same
+     * name stays, and so does one in the main feed's window.
+     */
+    @Test
+    public void aMutualsMessageBarGoesWithTheCommentBar() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("47.1.4:tt3", MESSAGE_BAR_ID);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        HookStatus.clear();
+        try (var main = Robolectric.buildActivity(Activity.class).setup();
+             var opened = Robolectric.buildActivity(
+                     com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            FrameLayout feed = new FrameLayout(main.get());
+            feed.addView(pagerColumn(main.get(), new View(main.get())));
+            View feedPill = new View(main.get());
+            feedPill.setId(MESSAGE_BAR_ID);
+            feed.addView(feedPill);
+            main.get().setContentView(feed);
+            VideoOverlayHider.applyTo(main.get());
+            assertEquals("the main feed's pill went", View.VISIBLE, feedPill.getVisibility());
+
+            Activity detail = opened.get();
+            View strip = new View(detail);
+            LinearLayout column = pagerColumn(detail, strip);
+            View cellPill = new View(detail);
+            cellPill.setId(MESSAGE_BAR_ID);
+            ((FrameLayout) column.getChildAt(0)).addView(cellPill);
+            FrameLayout root = new FrameLayout(detail);
+            root.addView(column);
+            // The bar's layout root has no id; the pill inside it does.
+            FrameLayout messageRoot = new FrameLayout(detail);
+            View messageBar = new View(detail);
+            messageBar.setId(MESSAGE_BAR_ID);
+            messageRoot.addView(messageBar);
+            root.addView(messageRoot);
+            detail.setContentView(root);
+            opened.resume();
+
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the Message bar stayed over the grown pager", View.GONE, messageBar.getVisibility());
+            assertEquals(View.GONE, strip.getVisibility());
+            assertEquals("the pill inside a cell went", View.VISIBLE, cellPill.getVisibility());
+            assertTrue("a mutual's video called a bar missing: " + HookStatus.missing("overlay"),
+                    HookStatus.missing("overlay").stream().noneMatch(
+                            line -> line.contains("47.1.4:qqw") || line.contains("47.1.4:tt3")));
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals(View.VISIBLE, messageBar.getVisibility());
+            assertEquals(View.VISIBLE, strip.getVisibility());
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            HookStatus.clear();
+        }
+    }
+
     /**
      * The phones take the Android 11 and later branch, which hides through each window's own
      * insets controller. That branch keeps one record per window too (#50).

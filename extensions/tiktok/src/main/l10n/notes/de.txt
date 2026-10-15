@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie Teilen und den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
+
+* **TikTok:** Hide the comment bar on opened videos blendet jetzt auch die Nachrichtenleiste bei Videos von gegenseitigen Freunden aus, die Beschreibung und Fortschrittsbalken verdeckte (#153).
+
+* **TikTok:** Accent color färbt jetzt auch das Folgen-Plus unter dem Profilbild im Feed in deiner Farbe (#84).
+
 * **TikTok:** Mit Kommentarleiste bei geöffneten Videos ausblenden verdeckt die Musikscheibe nicht mehr das Ende des Fortschrittsbalkens oder die Zeit daneben (#153).
 
 * **TikTok:** Das AMOLED-Dunkeldesign macht jetzt auch die Karten auf der Liste Einstellungen und Datenschutz selbst schwarz (#152).

@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** A new switch opens LIVE panels like Share and the fan club dark while TikTok is in dark mode (#159).
+
+* **TikTok:** Hide the comment bar on opened videos also hides the Message bar on a mutual friend's video, which covered the caption and the progress bar (#153).
+
+* **TikTok:** Accent color now also colors the follow plus under the creator's avatar on the feed (#84).
+
 * **TikTok:** With Hide the comment bar on opened videos on, the music disc no longer covers the end of the progress bar or the time beside it (#153).
 
 * **TikTok:** AMOLED dark theme now makes the cards on the Settings and privacy list black too (#152).

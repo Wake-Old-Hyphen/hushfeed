@@ -119,6 +119,8 @@ public final class SettingsUi {
     public static final int RADIUS_SETTINGS_CARD = 18;
     public static final int RADIUS_SETTINGS_FIELD = 16;
     public static final int RADIUS_PILL = 24;
+    /** Taller than any bar TikTok draws, so a pill's ends stay round at whatever height it's given. */
+    public static final int RADIUS_ROUND_ENDS = 100;
 
     /** The focus ring's stroke, thick enough to read at arm's length on a phone. */
     private static final int FOCUS_RING_DP = 2;

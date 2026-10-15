@@ -5,7 +5,10 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.util.zip.ZipFile
+import javax.imageio.ImageIO
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -65,6 +68,57 @@ class AccentColorPaletteTest {
             assertTrue("$version: a danger token is recolored", dangerTokens.none { it in recolored })
             assertTrue("$version: e7 is recolored", "e7" !in recolored)
         }
+    }
+
+    @Test
+    fun `each declared build's red icons are the feed avatar's follow plus and turn the accent`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val table = FixtureResourceTable(apk)
+            val avatarLiterals = classLiterals(apk, "Lcom/ss/android/ugc/aweme/feed/assem/avatar/FeedAvatarDefaultAssem;")
+            for (name in accentIcons(version)) {
+                val id = table.drawableIds[name] ?: error("$version: no drawable $name")
+                assertTrue("$version: the feed avatar never sets $name", id in avatarLiterals)
+                val paths = table.drawableFiles[name].orEmpty()
+                assertTrue("$version: $name's files are $paths", paths.isNotEmpty() && paths.all { it.endsWith(".png") })
+                ZipFile(apk).use { zip ->
+                    for (path in paths) {
+                        val original = zip.getInputStream(zip.getEntry(path)).use { it.readBytes() }
+                        val recolored = recolorRedPalette(original, "#2D7FF9") ?: error("$version: $path has no red palette")
+                        assertEquals("$version: $path changes size", original.size, recolored.size)
+                        val before = ImageIO.read(ByteArrayInputStream(original))
+                        val after = ImageIO.read(ByteArrayInputStream(recolored))
+                        var reds = 0
+                        for (x in 0 until before.width) for (y in 0 until before.height) {
+                            val was = before.getRGB(x, y)
+                            val now = after.getRGB(x, y)
+                            assertEquals("$version: $path alpha at $x,$y", was ushr 24, now ushr 24)
+                            if (was ushr 24 == 0) continue
+                            if (isRedLiteral(String.format("#%06x", was and 0xffffff))) reds++
+                            assertTrue(
+                                "$version: $path keeps red at $x,$y: ${Integer.toHexString(now)}",
+                                !isRedLiteral(String.format("#%06x", now and 0xffffff)),
+                            )
+                            if (was and 0xffffff == 0xffffff) assertEquals("$version: $path white at $x,$y", 0xffffff, now and 0xffffff)
+                        }
+                        assertTrue("$version: $path had only $reds red pixels", reds > before.width * before.height / 2)
+                        // The circle's fill above the plus is the accent itself.
+                        assertEquals(0x2D7FF9, after.getRGB(before.width / 2, before.height / 8) and 0xffffff)
+                    }
+                }
+            }
+        }
+    }
+
+    /** Every 32-bit literal the methods of [descriptor] load. */
+    private fun classLiterals(apk: File, descriptor: String): Set<Int> {
+        val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+        val owner = container.dexEntryNames.asSequence()
+            .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+            .firstOrNull { it.type == descriptor } ?: error("no $descriptor")
+        return owner.methods.flatMap { method ->
+            method.implementation?.instructions?.mapNotNull { (it as? NarrowLiteralInstruction)?.narrowLiteral }.orEmpty()
+        }.toSet()
     }
 
     /** The token table's name to attr id pairs: each name's string, then the id it returns. */

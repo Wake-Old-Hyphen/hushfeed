@@ -48,6 +48,7 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHid
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|opp
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|pqg
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|qqw
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|tt3
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|uzf
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|v1c
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|w_0
@@ -100,7 +101,6 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/follow/FollowDiagnosticsP
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/Fingerprints.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/SettingsPatch.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/SettingsPatch.kt|LX/
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/SettingsPatch.kt|Lkotlin/jvm/internal/AwS
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/SettingsPatch.kt|l0
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/settings/SettingsPatch.kt|l1
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a40
@@ -350,3 +350,6 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AccentColorPatch.kt
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AccentColorPatch.kt|ah7
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AccentColorPatch.kt|ay3
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AccentColorPatch.kt|ay4
+# The 47.1.4 drawable with TikTok's red drawn into its pixels (the follow plus, #84). Drawables are
+# renamed per build like the tokens; AccentColorPaletteTest holds each declared build to its entry.
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AccentColorPatch.kt|bv8

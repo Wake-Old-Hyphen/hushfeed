@@ -6,8 +6,9 @@ import java.nio.ByteOrder
 import java.util.zip.ZipFile
 
 /**
- * Just enough of a fixture's resources.arsc for the AMOLED tests: the app package's attr and
- * color names, the colors' default literals, and every style's items.
+ * Just enough of a fixture's resources.arsc for the AMOLED and Accent color tests: the app
+ * package's attr and color names, the colors' default literals, every style's items, and where
+ * each drawable's files are.
  */
 internal class FixtureResourceTable(apk: File) {
     private val table: ByteBuffer = ZipFile(apk).use { zip ->
@@ -20,6 +21,13 @@ internal class FixtureResourceTable(apk: File) {
     /** Color id to name, and name to its literal in the default configuration (#aarrggbb). */
     val colorNames = HashMap<Int, String>()
     val colorValues = HashMap<String, String>()
+
+    /** Drawable name to id, and to the archive path of its file in every configuration that has one. */
+    val drawableIds = HashMap<String, Int>()
+    val drawableFiles = HashMap<String, MutableList<String>>()
+
+    /** The table's own string pool, where a file resource's value names its path. */
+    private var values: StringPool? = null
 
     /** Every style entry, each configuration's on its own, with its items in the table's order. */
     val styles = ArrayList<Style>()
@@ -36,7 +44,10 @@ internal class FixtureResourceTable(apk: File) {
     class Item(val attr: Int, val type: Int, val data: Int)
 
     init {
-        forEachChunk(u16(2), table.limit()) { chunk, type -> if (type == PACKAGE) readPackage(chunk) }
+        forEachChunk(u16(2), table.limit()) { chunk, type ->
+            if (type == STRING_POOL) values = StringPool(table, chunk)
+            if (type == PACKAGE) readPackage(chunk)
+        }
     }
 
     fun styleValues(attr: String): List<String> = styleItems[attrIds.getValue(attr)].orEmpty()
@@ -58,12 +69,13 @@ internal class FixtureResourceTable(apk: File) {
         val attrType = typeId("attr")
         val styleType = typeId("style")
         val colorType = typeId("color")
+        val drawableType = typeId("drawable")
         val chunks = ArrayList<Int>()
         forEachChunk(start + headerSize, end) { chunk, type -> if (type == TYPE) chunks += chunk }
         // Names first: a style's items name their attrs, and point at colors, by id.
         for (chunk in chunks) {
             val typeId = u8(chunk + 8)
-            if (typeId != attrType && typeId != colorType) continue
+            if (typeId != attrType && typeId != colorType && typeId != drawableType) continue
             val defaultConfig = isDefaultConfig(chunk)
             forEachEntry(chunk) { index, entry ->
                 val name = keys[keyOf(entry)]
@@ -74,6 +86,7 @@ internal class FixtureResourceTable(apk: File) {
                     return@forEachEntry
                 }
                 if (typeId == colorType) colorNames[id] = name
+                if (typeId == drawableType) drawableIds[name] = id
                 if (u16(entry + 2) and COMPLEX != 0) return@forEachEntry
                 // A compact entry keeps the value's type in its flags' high byte and the data inline.
                 val flags = u16(entry + 2)
@@ -82,6 +95,9 @@ internal class FixtureResourceTable(apk: File) {
                 val data = table.getInt(if (flags and COMPACT != 0) entry + 4 else value + 4)
                 if (typeId == colorType && defaultConfig && type in 0x1c..0x1f) {
                     colorValues[name] = "#" + String.format("%08x", data)
+                }
+                if (typeId == drawableType && type == TYPE_STRING) {
+                    drawableFiles.getOrPut(name) { ArrayList() } += checkNotNull(values) { "no string pool before the package" }[data]
                 }
             }
         }
@@ -180,6 +196,7 @@ internal class FixtureResourceTable(apk: File) {
     }
 
     companion object {
+        const val STRING_POOL = 0x0001
         const val PACKAGE = 0x0200
         const val TYPE = 0x0201
         const val SPARSE = 0x01
@@ -188,5 +205,6 @@ internal class FixtureResourceTable(apk: File) {
         const val COMPACT = 0x0008
         const val TYPE_REFERENCE = 0x01
         const val TYPE_ATTRIBUTE = 0x02
+        const val TYPE_STRING = 0x03
     }
 }

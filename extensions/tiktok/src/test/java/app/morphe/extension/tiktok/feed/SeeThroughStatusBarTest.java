@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.view.Gravity;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -37,6 +39,7 @@ public class SeeThroughStatusBarTest {
     private static final int CELL_ID = 0x7f0a0211;
     private static final int SPACER_ID = 0x7f0a0d31;
     private static final int BAND_ID = 0x7f0a0d32;
+    private static final int PLAYER_ID = 0x7f0a5f5e;
     private static final int OWN_BAR_COLOR = 0xFF121212;
 
     @Before
@@ -45,6 +48,7 @@ public class SeeThroughStatusBarTest {
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
         VideoOverlayHider.resolveForTests("47.1.4:dux", SPACER_ID);
         VideoOverlayHider.resolveForTests("47.1.4:wll", BAND_ID);
+        VideoOverlayHider.resolveForTests("player_view", PLAYER_ID);
     }
 
     @After
@@ -55,7 +59,20 @@ public class SeeThroughStatusBarTest {
         VideoOverlayHider.resolveForTests("view_rootview", 0);
         VideoOverlayHider.resolveForTests("47.1.4:dux", 0);
         VideoOverlayHider.resolveForTests("47.1.4:wll", 0);
+        VideoOverlayHider.resolveForTests("player_view", 0);
         Utils.setContext(RuntimeEnvironment.getApplication());
+    }
+
+    private static void layOut(View view, int width, int height) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        view.layout(0, 0, width, height);
+    }
+
+    /** TikTok's player sizes the surface to the picture and centers it, the S22's numbers by default. */
+    private static void showVideo(FrameLayout player, View surface, int width, int height) {
+        surface.setLayoutParams(new FrameLayout.LayoutParams(width, height, Gravity.CENTER));
+        layOut(player, 1080, 2181);
     }
 
     /** A feed cell as 47.1.4 lays it out on a tall screen: the bar's spacer, then the video. */
@@ -162,6 +179,69 @@ public class SeeThroughStatusBarTest {
             Settings.HIDE_STATUS_BAR.save(true);
             VideoOverlayHider.applyTo(activity);
             assertEquals(View.INVISIBLE, band.getVisibility());
+        }
+    }
+
+    /**
+     * With the spacer and the band gone the S22 still showed black under the clock: TikTok sizes
+     * a 9:16 video's surface to the picture (1107 by 1968) and centers it in a 2181 px player. The
+     * surface grows from its center until it covers the player. A landscape video and a squarer
+     * portrait one keep their bands, and off, Pause and a zoom TikTok set itself are respected.
+     */
+    @Test
+    public void aPortraitVideoGrowsToFillThePlayerUnderTheClock() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            showVideo(player, surface, 1107, 1968);
+            assertEquals("not TikTok's centered surface", 106, surface.getTop());
+
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the switch is off by default", 1f, surface.getScaleY(), 0f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            float scale = surface.getScaleY();
+            assertEquals(scale, surface.getScaleX(), 0f);
+            assertTrue("the picture still stopped short of the top", 1968 * scale >= 2181);
+            assertTrue("grown past what the player needs", 1968 * scale <= 2181 + 3);
+
+            // Each pass measures again, so the next video in the same cell gets its own answer.
+            showVideo(player, surface, 1080, 608);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("a landscape video was cropped", 1f, surface.getScaleY(), 0f);
+            showVideo(player, surface, 1080, 1440);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("a 3:4 video lost a third of its width", 1f, surface.getScaleY(), 0f);
+            showVideo(player, surface, 1107, 1968);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(scale, surface.getScaleY(), 0f);
+
+            PausedProcess.set(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("Pause kept the picture grown", 1f, surface.getScaleY(), 0f);
+            PausedProcess.set(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(scale, surface.getScaleY(), 0f);
+
+            Settings.SEE_THROUGH_STATUS_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the picture back", 1f, surface.getScaleX(), 0f);
+            assertEquals(1f, surface.getScaleY(), 0f);
+            assertFalse(SeeThroughStatusBar.anyFilled());
+
+            surface.setScaleX(1.5f);
+            surface.setScaleY(1.5f);
+            Settings.SEE_THROUGH_STATUS_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("TikTok's own zoom was overwritten", 1.5f, surface.getScaleY(), 0f);
         }
     }
 

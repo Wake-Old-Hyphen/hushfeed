@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como Compartilhar e o fã-clube, quando o TikTok está no modo escuro (#159).
+
+* **TikTok:** Hide the comment bar on opened videos agora também esconde a barra de Mensagem nos vídeos de amigos em comum, que cobria a legenda e a barra de progresso (#153).
+
+* **TikTok:** Accent color agora também pinta com a sua cor o mais de seguir embaixo do avatar do criador no feed (#84).
+
 * **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, o disco de música não cobre mais o fim da barra de progresso nem o tempo ao lado (#153).
 
 * **TikTok:** O tema escuro AMOLED agora também deixa pretos os cartões da própria lista de Configurações e privacidade (#152).

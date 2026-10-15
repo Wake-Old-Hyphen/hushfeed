@@ -7,8 +7,10 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -86,6 +88,95 @@ class LiveQualityPickAnchorsTest {
                     call?.definingClass == LIVE_RESOLUTION_SELECTION_SETTING && call.name == "needPersistAcrossRooms"
                 },
             )
+        }
+    }
+
+    /**
+     * #57: the player start can set game and PC rooms up in a branch of its own (when TikTok's game
+     * quality setting is on or the room's options say so) that jumps past the pick read, so the
+     * patch asks for the pick at that branch's end and switches the room the way the regular branch
+     * does: the same quality field, stream data and player call.
+     */
+    @Test
+    fun `the player start's game branch ends in a jump past the pick read and its quality switch`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val playerStart = classes.flatMap { cls -> cls.methods.filter { LivePlayerStartFingerprint.takes(it, cls) } }.single()
+            val startQuality = classes.flatMap { cls -> cls.methods.filter { LiveStartQualityFingerprint.takes(it, cls) } }.single()
+            val pick = liveQualityPick(classes.single { it.type == PULL_STREAM_SERVICE }, startQuality)
+            val read = playerStart.readsOf(pick.field).single()
+            val game = gameRoomStart(playerStart, read)
+            val instructions = playerStart.implementation!!.instructions.toList()
+
+            // The branch is the game and PC one: the mode check comes before its end.
+            val modeCheck = instructions.indexOfFirst {
+                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "isWatchGameLiveOrPCLive"
+            }
+            assertTrue("${apk.name}: no game LIVE check before the branch's end", modeCheck in 0 until game.end)
+
+            // Its goto lands past the regular branch's quality switch.
+            val offsets = instructions.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+            val goto = instructions[game.end] as OffsetInstruction
+            val target = offsets.indexOf(offsets[game.end] + goto.codeOffset)
+            val switchAt = instructions.indexOfFirst {
+                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { call ->
+                    "${call.definingClass}->${call.name}" == "${game.setter.definingClass}->${game.setter.name}"
+                } == true
+            }
+            assertTrue("${apk.name}: the game branch's goto lands at $target, not past the switch at $switchAt", target > switchAt && switchAt > read)
+
+            // The fields are the start's own, and the switch is the player field's.
+            for (field in listOf(game.quality, game.data, game.player)) {
+                assertEquals("${apk.name}: ${field.name}", playerStart.definingClass, field.definingClass)
+            }
+            assertEquals("${apk.name}: the quality and stream fields", "Ljava/lang/String;", game.data.type)
+            assertEquals("${apk.name}: the switch's owner", game.player.type, game.setter.definingClass)
+            assertTrue("${apk.name}: the start has ${playerStart.implementation!!.registerCount} registers", playerStart.implementation!!.registerCount > 3)
+        }
+    }
+
+    /**
+     * #57: on the S22 the gaming rooms from the LIVE button were LIVE Studio rooms that reached the
+     * regular branch, and it compares the room's mode with LIVE_STUDIO and jumps past the pick read
+     * on a match, so they opened at AUTO after a pick. The patch empties that comparison while
+     * Offer LIVE quality is on. It has to be the room's own mode against LIVE_STUDIO, between the
+     * game branch's end and the read, jumping past the read, with the audio check still after it.
+     */
+    @Test
+    fun `the player start's regular branch skips the pick for LIVE Studio rooms with one comparison`() {
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val playerStart = classes.flatMap { cls -> cls.methods.filter { LivePlayerStartFingerprint.takes(it, cls) } }.single()
+            val startQuality = classes.flatMap { cls -> cls.methods.filter { LiveStartQualityFingerprint.takes(it, cls) } }.single()
+            val pick = liveQualityPick(classes.single { it.type == PULL_STREAM_SERVICE }, startQuality)
+            val read = playerStart.readsOf(pick.field).single()
+            val game = gameRoomStart(playerStart, read)
+            val studio = liveStudioSkip(playerStart, game.end, read)
+            val instructions = playerStart.implementation!!.instructions.toList()
+
+            val compare = instructions[studio + 1] as TwoRegisterInstruction
+            val studioRegister = (instructions[studio] as OneRegisterInstruction).registerA
+            assertTrue("${apk.name}: the comparison doesn't use the LIVE_STUDIO read", studioRegister in listOf(compare.registerA, compare.registerB))
+            val modeRegister = if (compare.registerA == studioRegister) compare.registerB else compare.registerA
+            val mode = (studio - 1 downTo game.end).asSequence().map { instructions[it] }.first {
+                it is OneRegisterInstruction && it.registerA == modeRegister
+            }
+            assertEquals("${apk.name}: the compared mode", Opcode.IGET_OBJECT, mode.opcode)
+            val modeField = (mode as ReferenceInstruction).reference as FieldReference
+            assertEquals("${apk.name}: the compared mode's owner", playerStart.definingClass, modeField.definingClass)
+            assertEquals("${apk.name}: the compared mode's type", "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveMode;", modeField.type)
+
+            val offsets = instructions.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+            val target = offsets.indexOf(offsets[studio + 1] + (instructions[studio + 1] as OffsetInstruction).codeOffset)
+            assertTrue("${apk.name}: a LIVE Studio room jumps to $target, not past the pick read at $read", target > read)
+            val audio = (studio + 2 until read).any {
+                ((instructions[it] as? ReferenceInstruction)?.reference as? FieldReference)?.name == "AUDIO"
+            }
+            assertTrue("${apk.name}: audio rooms are no longer left out after the LIVE Studio check", audio)
         }
     }
 

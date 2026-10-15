@@ -706,6 +706,13 @@ public final class LiveStatusBar {
          * sat under TikTok's cover that's hidden now, and its top row was hard to reach (#137).
          */
         private final WeakHashMap<View, int[]> loweredPages = new WeakHashMap<>();
+        /**
+         * Pager pages already described in the log: a room's page with where its stream starts, and
+         * a page without a stream left where TikTok put it, with why. On an S23 Ultra the Discover
+         * panel still reached under the clock and no page was padded, while on the S22 it stays
+         * below the clock, so the log has to say which kind of page holds it there (#137).
+         */
+        private final WeakHashMap<View, Boolean> pagesLogged = new WeakHashMap<>();
         private int searches, relifts, coverSearches;
         /**
          * Shade searches spent on each layer held lower. One budget for the whole visit ran out
@@ -855,11 +862,17 @@ public final class LiveStatusBar {
                 if (shown == null) continue;
                 forgetPage(page);
                 liftAbove(shown, content, bars);
+                logRoomPage(page, i, shown);
             }
-            if (barHidden || fought || stripHeight == 0) return;
+            if (barHidden || fought) return;
             for (int i = 0; i < rooms.getChildCount(); i++) {
                 View page = rooms.getChildAt(i);
-                if (page.findViewById(videoId) == null) keepPageBelowBar(page, i, bars);
+                if (page.findViewById(videoId) != null) continue;
+                if (stripHeight > 0) {
+                    keepPageBelowBar(page, i, bars);
+                } else {
+                    leftAlone(page, i, "no room's strip taken yet", bars);
+                }
             }
         }
 
@@ -885,7 +898,10 @@ public final class LiveStatusBar {
         private void keepPageBelowBar(View page, int index, int[] bars) {
             int[] held = loweredPages.get(page);
             if (held == null) {
-                if (isBar(page.getPaddingTop(), bars) || isBar(topMarginOf(page), bars)) return;
+                if (isBar(page.getPaddingTop(), bars) || isBar(topMarginOf(page), bars)) {
+                    leftAlone(page, index, "already a bar lower", bars);
+                    return;
+                }
                 held = new int[] {page.getPaddingTop(), stripHeight};
                 loweredPages.put(page, held);
                 if (loweredPages.size() == 1) HookStatus.bound(HOOK_FAMILY, "LIVE feed panel kept below the bar");
@@ -899,6 +915,33 @@ public final class LiveStatusBar {
             }
             page.setPadding(page.getPaddingLeft(), held[0] + held[1], page.getPaddingRight(), page.getPaddingBottom());
             relaid = true;
+        }
+
+        /**
+         * Logs, once per page, where a room's page and its stream start on screen. A stream far
+         * below its page's top means something else, like the Discover panel, is in the page above it.
+         */
+        private void logRoomPage(View page, int index, View shown) {
+            if (page.getHeight() == 0 || pagesLogged.put(page, Boolean.TRUE) != null) return;
+            int[] pageAt = new int[2];
+            int[] streamAt = new int[2];
+            page.getLocationOnScreen(pageAt);
+            shown.getLocationOnScreen(streamAt);
+            Logger.printInfo(() -> "LIVE under the status bar: room pager page " + index + " ("
+                    + page.getClass().getName() + ", " + page.getWidth() + "x" + page.getHeight() + " at y "
+                    + pageAt[1] + ", padding " + page.getPaddingTop() + ") has its stream at y " + streamAt[1]);
+        }
+
+        /** Logs, once per page, a page without a stream that stays where TikTok put it, and why. */
+        private void leftAlone(View page, int index, String why, int[] bars) {
+            if (pagesLogged.put(page, Boolean.TRUE) != null) return;
+            int padding = page.getPaddingTop(), margin = topMarginOf(page);
+            int[] screen = new int[2];
+            page.getLocationOnScreen(screen);
+            Logger.printInfo(() -> "LIVE under the status bar: left room pager page " + index + " ("
+                    + page.getClass().getName() + ", no stream, " + page.getWidth() + "x" + page.getHeight()
+                    + " at y " + screen[1] + ") as it was, " + why + ": padding " + padding + ", margin "
+                    + margin + ", bars " + java.util.Arrays.toString(bars));
         }
 
         /**

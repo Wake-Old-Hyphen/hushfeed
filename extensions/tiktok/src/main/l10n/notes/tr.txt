@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken Paylaş ve hayran kulübü gibi LIVE panellerini koyu açar (#159).
+
+* **TikTok:** Hide the comment bar on opened videos artık karşılıklı arkadaşların videolarındaki Mesaj çubuğunu da gizliyor, bu çubuk açıklamayı ve ilerleme çubuğunu kapatıyordu (#153).
+
+* **TikTok:** Accent color artık akıştaki içerik üreticisinin avatarının altındaki takip artısını da senin rengine boyuyor (#84).
+
 * **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken müzik diski artık ilerleme çubuğunun sonunu ve yanındaki süreyi kapatmıyor (#153).
 
 * **TikTok:** AMOLED koyu tema artık Ayarlar ve gizlilik listesinin kendisindeki kartları da siyah yapıyor (#152).

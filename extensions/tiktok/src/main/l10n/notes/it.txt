@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Un nuovo interruttore apre scuri i pannelli LIVE come Condividi e il fan club quando TikTok è in modalità scura (#159).
+
+* **TikTok:** Hide the comment bar on opened videos ora nasconde anche la barra Messaggio nei video degli amici reciproci, che copriva la descrizione e la barra di avanzamento (#153).
+
+* **TikTok:** Accent color ora colora anche il più per seguire sotto l'avatar del creator nel feed (#84).
+
 * **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, il disco musicale non copre più la fine della barra di avanzamento né il tempo accanto (#153).
 
 * **TikTok:** Il tema scuro AMOLED ora rende nere anche le schede dell'elenco Impostazioni e privacy (#152).

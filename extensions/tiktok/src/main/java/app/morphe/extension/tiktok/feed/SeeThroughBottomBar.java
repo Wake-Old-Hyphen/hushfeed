@@ -12,6 +12,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.view.View;
 
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -67,8 +69,7 @@ final class SeeThroughBottomBar {
         private static GradientDrawable pill(float density) {
             GradientDrawable pill = new GradientDrawable();
             pill.setShape(GradientDrawable.RECTANGLE);
-            // Larger than any bar is tall, so the ends are round whatever height TikTok gives it.
-            pill.setCornerRadius(100 * density);
+            pill.setCornerRadius(SettingsUi.RADIUS_ROUND_ENDS * density);
             pill.setColor(PILL_COLOR);
             pill.setStroke(Math.max(1, Math.round(density)), PILL_EDGE_COLOR);
             return pill;

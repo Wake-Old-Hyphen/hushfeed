@@ -1,5 +1,11 @@
 ## Unreleased
 
+* **TikTok:** Sakelar baru membuka panel LIVE seperti Bagikan dan klub penggemar dalam warna gelap saat TikTok dalam mode gelap (#159).
+
+* **TikTok:** Hide the comment bar on opened videos kini juga menyembunyikan bilah Pesan di video teman yang saling mengikuti, yang menutupi deskripsi dan bilah progres (#153).
+
+* **TikTok:** Accent color sekarang juga mewarnai tanda plus untuk mengikuti di bawah avatar kreator di feed (#84).
+
 * **TikTok:** Dengan Sembunyikan bilah komentar di video yang dibuka aktif, piringan musik tidak lagi menutupi ujung bilah progres atau waktu di sebelahnya (#153).
 
 * **TikTok:** Tema gelap AMOLED kini juga membuat kartu di daftar Pengaturan dan privasi itu sendiri menjadi hitam (#152).

@@ -2,6 +2,8 @@ package app.morphe.extension.tiktok.live;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import app.morphe.extension.shared.Utils;
@@ -43,8 +45,15 @@ public class LiveControlsTest {
         Settings.REMEMBER_LIVE_QUALITY.save(Settings.REMEMBER_LIVE_QUALITY.defaultValue);
         Settings.REMEMBERED_LIVE_QUALITY.save(Settings.REMEMBERED_LIVE_QUALITY.defaultValue);
         Settings.OFFER_LIVE_CLEAR_SCREEN.save(Settings.OFFER_LIVE_CLEAR_SCREEN.defaultValue);
+        Settings.DARK_LIVE_PANELS.save(Settings.DARK_LIVE_PANELS.defaultValue);
         Settings.RECORD_LIVE.save(Settings.RECORD_LIVE.defaultValue);
+        coldStart();
         Locale.setDefault(savedLocale);
+    }
+
+    /** A new TikTok process: nothing picked this run. */
+    private static void coldStart() {
+        ReflectionHelpers.setStaticField(LiveControls.class, "pickThisRun", null);
     }
 
     /** #37: the Record button is off until switched on, needs the patch, and Pause turns it off. */
@@ -71,6 +80,33 @@ public class LiveControlsTest {
         assertFalse("read at the call, so the next menu follows", LiveControls.offerClearScreen());
     }
 
+    /**
+     * #159: TikTok keeps LIVE panels light in rooms even in dark mode. With the switch on a panel
+     * whose context is in dark mode takes the dark LIVE theme; light mode, the switch off, Pause and
+     * a build without the patch leave TikTok's answer.
+     */
+    @Test public void livePanelsGoDarkOnlyInDarkModeWithTheirSwitch() {
+        android.content.Context app = RuntimeEnvironment.getApplication();
+        android.content.res.Configuration night = new android.content.res.Configuration(app.getResources().getConfiguration());
+        night.uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES | android.content.res.Configuration.UI_MODE_TYPE_NORMAL;
+        android.content.Context dark = app.createConfigurationContext(night);
+        android.content.res.Configuration day = new android.content.res.Configuration(night);
+        day.uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO | android.content.res.Configuration.UI_MODE_TYPE_NORMAL;
+        android.content.Context light = app.createConfigurationContext(day);
+
+        assertFalse(Settings.DARK_LIVE_PANELS.defaultValue);
+        assertFalse(LiveControls.darkLivePanels(dark));
+        Settings.DARK_LIVE_PANELS.save(true);
+        assertTrue(LiveControls.darkLivePanels(dark));
+        assertFalse("light mode went dark", LiveControls.darkLivePanels(light));
+        assertFalse(LiveControls.darkLivePanels(null));
+        setPaused(true);
+        assertFalse(LiveControls.darkLivePanels(dark));
+        setPaused(false);
+        SettingsStatus.liveControlsEnabled = false;
+        assertFalse(LiveControls.darkLivePanels(dark));
+    }
+
     @Test public void pausedOrWithoutThePatchClearScreenIsTikToks() {
         Settings.OFFER_LIVE_CLEAR_SCREEN.save(true);
         setPaused(true);
@@ -87,6 +123,7 @@ public class LiveControlsTest {
         LiveControls.noteLiveQualityPick("hd");
         assertEquals("a pick was saved with the switch off", "", Settings.REMEMBERED_LIVE_QUALITY.get());
         Settings.REMEMBERED_LIVE_QUALITY.save("hd");
+        coldStart();
         assertEquals(null, LiveControls.liveQualityPick(null));
     }
 
@@ -96,6 +133,7 @@ public class LiveControlsTest {
         Settings.REMEMBER_LIVE_QUALITY.save(true);
         LiveControls.noteLiveQualityPick("origin");
         assertEquals("origin", Settings.REMEMBERED_LIVE_QUALITY.get());
+        coldStart();
         assertEquals("after a cold start TikTok's pick is null", "origin", LiveControls.liveQualityPick(null));
         assertEquals("a pick from this session was replaced", "sd", LiveControls.liveQualityPick("sd"));
         LiveControls.noteLiveQualityPick("sd");
@@ -103,6 +141,67 @@ public class LiveControlsTest {
         LiveControls.noteLiveQualityPick(null);
         LiveControls.noteLiveQualityPick("");
         assertEquals("an empty pick overwrote the saved one", "sd", Settings.REMEMBERED_LIVE_QUALITY.get());
+    }
+
+    /**
+     * #57: a game room's start never reads the pick, so the patch asks at its end. It gets the
+     * saved pick after a restart and TikTok's own pick within a run, only when the stream lists it
+     * and the room isn't on it already; off, TikTok's choice stays.
+     */
+    @Test public void aGameRoomStartsAtThePickWhenItsStreamHasIt() {
+        String stream = "{\"data\":{\"ld\":{},\"hd\":{},\"origin\":{}}}";
+        Settings.REMEMBERED_LIVE_QUALITY.save("ld");
+        Settings.REMEMBER_LIVE_QUALITY.save(true);
+        assertEquals("Offer LIVE quality is off", null, LiveControls.gameRoomQuality("hd", stream, "origin"));
+
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        assertEquals("after a restart", "ld", LiveControls.gameRoomQuality(null, stream, "origin"));
+        assertEquals("a pick from this run", "hd", LiveControls.gameRoomQuality("hd", stream, "origin"));
+        assertEquals("already there", null, LiveControls.gameRoomQuality("origin", stream, "origin"));
+        assertEquals("the stream lacks it", null, LiveControls.gameRoomQuality("sd", stream, "origin"));
+        assertEquals("no stream data", null, LiveControls.gameRoomQuality("hd", null, "origin"));
+        assertEquals("broken stream data", null, LiveControls.gameRoomQuality("hd", "{\"data\":", "origin"));
+
+        Settings.REMEMBER_LIVE_QUALITY.save(false);
+        assertEquals("nothing kept and nothing picked", null, LiveControls.gameRoomQuality(null, stream, "origin"));
+        setPaused(true);
+        assertEquals("paused", null, LiveControls.gameRoomQuality("hd", stream, "origin"));
+    }
+
+    /**
+     * #57: TikTok's player start leaves LIVE Studio rooms out of the pick by comparing the room's
+     * mode with LIVE_STUDIO. With Offer LIVE quality on the hook hands it null, which no room
+     * matches; off or paused it hands back the mode and TikTok's check is unchanged.
+     */
+    @Test public void liveStudioRoomsTakeThePickOnlyWhileOfferLiveQualityIsOn() {
+        Object liveStudio = new Object();
+        assertSame("Offer LIVE quality is off", liveStudio, LiveControls.liveStudioPickSkip(liveStudio));
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        assertNull("Offer LIVE quality is on", LiveControls.liveStudioPickSkip(liveStudio));
+        setPaused(true);
+        assertSame("paused", liveStudio, LiveControls.liveStudioPickSkip(liveStudio));
+    }
+
+    /**
+     * #57: the older picker never writes TikTok's pick, so with Offer LIVE quality on the last pick
+     * from either picker carries to the next room this run, ahead of an older one TikTok still
+     * holds. Off or paused, TikTok's own pick stays, and a pick made while off isn't carried later.
+     */
+    @Test public void thisRunsLastPickCarriesToTheNextRoom() {
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        LiveControls.noteLiveQualityPick("ld");
+        assertEquals("a pick from the older picker", "ld", LiveControls.liveQualityPick(null));
+        assertEquals("ahead of TikTok's older pick", "ld", LiveControls.liveQualityPick("hd"));
+        assertEquals("nothing saved without the keep switch", "", Settings.REMEMBERED_LIVE_QUALITY.get());
+
+        setPaused(true);
+        assertEquals("paused", "hd", LiveControls.liveQualityPick("hd"));
+        setPaused(false);
+        Settings.OFFER_LIVE_QUALITY.save(false);
+        assertEquals("Offer LIVE quality is off", null, LiveControls.liveQualityPick(null));
+        LiveControls.noteLiveQualityPick("origin");
+        Settings.OFFER_LIVE_QUALITY.save(true);
+        assertEquals("a pick made while it was off", "ld", LiveControls.liveQualityPick(null));
     }
 
     /** Nothing saved yet, the start keeps TikTok's null and so the stream's default. */

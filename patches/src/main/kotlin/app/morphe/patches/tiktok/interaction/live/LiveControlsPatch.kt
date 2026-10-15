@@ -137,6 +137,38 @@ internal object LiveClearScreenEntryFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
+/** The host side of the LIVE SDK's resources, real-named on 47.1.4. */
+internal const val LIVE_HOST_RESOURCE = "Lcom/ss/android/ugc/aweme/live/livehostimpl/LiveHostResource;"
+
+/**
+ * Whether a LIVE panel takes the LIVE design system's dark theme (X.0Jz4.LIZ on 47.1.4, in the
+ * theme provider the host hands the LIVE SDK). Every theme-aware LIVE fragment and dialog asks it
+ * before picking the dark or the light overlay. It answers TikTok's dark mode and then the page
+ * TikTok finds for the panel's context, and the LIVE room pages (LivePlayRootFragment,
+ * BaseLiveSdkSceneFragment) and LIVE activities always say no, so the share menu, the fan club and
+ * the first gift dialog opened light in a dark app (#159). The provider is the class holding a
+ * LiveHostResource; this answer is the one whose first call is the provider's own dark mode check,
+ * which tells it from the provider's other (Context)Z answer.
+ */
+internal object LiveDarkThemeFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf("Landroid/content/Context;"),
+    custom = { method, classDef -> isLiveDarkThemeAnswer(method, classDef) },
+)
+
+internal fun isLiveDarkThemeAnswer(method: Method, classDef: ClassDef): Boolean {
+    if (classDef.fields.none { it.type == LIVE_HOST_RESOURCE }) return false
+    val instructions = method.implementation?.instructions?.toList() ?: return false
+    val first = instructions.firstOrNull() ?: return false
+    val own = (first as? ReferenceInstruction)?.reference as? MethodReference ?: return false
+    return first.opcode == Opcode.INVOKE_VIRTUAL && own.definingClass == classDef.type &&
+        own.returnType == "Z" && own.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;") &&
+        instructions.any {
+            it.opcode == Opcode.INVOKE_STATIC &&
+                ((it as ReferenceInstruction).reference as MethodReference).definingClass == LIVE_HOST_RESOURCE
+        }
+}
+
 internal const val PULL_STREAM_SERVICE ="Lcom/bytedance/android/live/livepullstream/PullStreamService;"
 private const val LIVE_MODE = "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveMode;"
 
@@ -209,7 +241,83 @@ internal fun liveQualityPick(service: ClassDef, quality: Method): LiveQualityPic
     return LiveQualityPick(field, setter)
 }
 
-internal const val PUSH_STREAM_QUALITY = "Lcom/bytedance/android/live/broadcast/model/PushStreamInfo\$Quality;"
+/**
+ * Where the player start's game and PC LIVE branch ends, and what its regular branch switches a
+ * room's quality with (#57). Rooms that LiveMode.isWatchGameLiveOrPCLive answers true for set their
+ * stream up in a branch of their own (when TikTok's game quality setting is on or the room's
+ * options say so) whose last call, on a Pair, is followed by a goto past the pick read, so such a
+ * room opens at the stream's default even with a pick. [end] is that goto.
+ * After the pick read the regular branch stores the picked key in [quality] and calls
+ * [setter] on [player] with [data] and that key.
+ */
+internal class GameRoomStart(
+    val end: Int,
+    val quality: FieldReference,
+    val data: FieldReference,
+    val player: FieldReference,
+    val setter: MethodReference,
+) {
+    fun quality() = quality.key()
+    fun data() = data.key()
+    fun player() = player.key()
+    fun setter() = "${setter.definingClass}->${setter.name}(${setter.parameterTypes.joinToString("")})${setter.returnType}"
+}
+
+internal fun gameRoomStart(start: Method, pickRead: Int): GameRoomStart {
+    val instructions = start.implementation?.instructions?.toList().orEmpty()
+    fun refuse(what: String): Nothing = throw PatchException("LIVE controls: the LIVE player start has $what")
+    val store = (pickRead until instructions.size).firstOrNull { index ->
+        val field = (instructions[index] as? ReferenceInstruction)?.reference as? FieldReference
+        instructions[index].opcode == Opcode.IPUT_OBJECT && field?.definingClass == start.definingClass &&
+            field.type == "Ljava/lang/String;"
+    } ?: refuse("no store of the picked quality after the pick read")
+    val switchAt = (store until instructions.size).firstOrNull { index ->
+        val call = (instructions[index] as? ReferenceInstruction)?.reference as? MethodReference
+        instructions[index].opcode == Opcode.INVOKE_INTERFACE && call?.returnType == "V" &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;", "Ljava/lang/String;")
+    } ?: refuse("no quality switch after the picked quality's store")
+    val switch = instructions[switchAt] as FiveRegisterInstruction
+    fun fieldInto(register: Int): FieldReference = (switchAt - 1 downTo store + 1).asSequence()
+        .map { instructions[it] }
+        .firstOrNull { it.opcode == Opcode.IGET_OBJECT && (it as TwoRegisterInstruction).registerA == register }
+        ?.let { (it as ReferenceInstruction).reference as FieldReference }
+        ?: refuse("no field read for v$register before its quality switch")
+    val quality = fieldInto(switch.registerE)
+    if (quality.key() != (((instructions[store] as ReferenceInstruction).reference as FieldReference).key())) {
+        refuse("a quality switch that doesn't use the stored pick")
+    }
+    val end = (0 until pickRead).firstOrNull { index ->
+        val call = (instructions[index] as? ReferenceInstruction)?.reference as? MethodReference
+        instructions[index].opcode == Opcode.INVOKE_VIRTUAL && call?.definingClass == start.definingClass &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("Lkotlin/Pair;") &&
+            instructions.getOrNull(index + 1)?.opcode in setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
+    } ?: refuse("no game LIVE branch ending before the pick read")
+    return GameRoomStart(
+        end + 1,
+        quality,
+        fieldInto(switch.registerD),
+        fieldInto(switch.registerC),
+        (instructions[switchAt] as ReferenceInstruction).reference as MethodReference,
+    )
+}
+
+/**
+ * Where the player start's regular branch leaves LIVE Studio rooms out of the quality pick (#57):
+ * it compares the room's mode with LiveMode.LIVE_STUDIO and jumps past the pick read when they
+ * match. LIVE Studio is TikTok's PC streaming app, and on the S22 the gaming rooms from the LIVE
+ * button were LIVE Studio rooms whose game branch was off, so they opened at AUTO whatever was
+ * picked. Returns the index of that LIVE_STUDIO read; the if-eq follows it.
+ */
+internal fun liveStudioSkip(start: Method, from: Int, pickRead: Int): Int {
+    val instructions = start.implementation?.instructions?.toList().orEmpty()
+    return (from until pickRead).singleOrNull { index ->
+        val field = (instructions[index] as? ReferenceInstruction)?.reference as? FieldReference
+        instructions[index].opcode == Opcode.SGET_OBJECT && field?.definingClass == LIVE_MODE &&
+            field.name == "LIVE_STUDIO" && instructions.getOrNull(index + 1)?.opcode == Opcode.IF_EQ
+    } ?: throw PatchException("LIVE controls: the LIVE player start no longer leaves LIVE Studio rooms out of the pick")
+}
+
+internal const val PUSH_STREAM_QUALITY ="Lcom/bytedance/android/live/broadcast/model/PushStreamInfo\$Quality;"
 private const val AUDIENCE_SHARE_SCREEN_DEFINITION =
     "Lcom/bytedance/android/livesdk/dataChannel/AudienceShareScreenDefinition;"
 
@@ -450,7 +558,8 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
-        "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
+        "clear screen in more LIVE rooms, open LIVE panels dark in dark mode, and keep your quality " +
+        "pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
@@ -483,6 +592,13 @@ val liveControlsPatch = bytecodePatch(
         LiveClearScreenEntryFingerprint.method.guardAtEntry(
             "LIVE controls",
             "invoke-static {}, $EXTENSION->offerClearScreen()Z",
+            "const/4 v0, 0x1\nreturn v0",
+        )
+        // Answers true while its switch is on and the panel's context is in dark mode, so LIVE
+        // panels take TikTok's dark LIVE theme in rooms too (#159).
+        LiveDarkThemeFingerprint.method.guardAtEntry(
+            "LIVE controls",
+            "invoke-static {p1}, $EXTENSION->darkLivePanels(Landroid/content/Context;)Z",
             "const/4 v0, 0x1\nreturn v0",
         )
 
@@ -549,6 +665,11 @@ val liveControlsPatch = bytecodePatch(
         val startQuality = LiveStartQualityFingerprint.method
         val pick = liveQualityPick(mutableClassDefBy(PULL_STREAM_SERVICE), startQuality)
         val playerStart = LivePlayerStartFingerprint.method
+        val playerPickRead = playerStart.readsOf(pick.field).singleOrNull()
+            ?: throw PatchException("LIVE controls: expected one quality pick read in ${playerStart.name}")
+        val gameRoom = gameRoomStart(playerStart, playerPickRead)
+        val studioSkip = liveStudioSkip(playerStart, gameRoom.end, playerPickRead)
+        val studioMode = (playerStart.getInstruction(studioSkip) as OneRegisterInstruction).registerA
         val readers = listOf(startQuality, playerStart).map { reader ->
             val reads = reader.readsOf(pick.field)
             val read = reads.singleOrNull()
@@ -564,6 +685,50 @@ val liveControlsPatch = bytecodePatch(
                 """,
             )
         }
+        // LIVE Studio rooms skip the pick read in the regular branch. With Offer LIVE quality on the
+        // mode they're compared with becomes null, so they read the pick and check the stream has
+        // it like other rooms. Audio rooms stay left out. It sits between the game branch's end and
+        // the pick read, so it goes in after the read's hook and before the game end's.
+        playerStart.addInstructions(
+            studioSkip + 1,
+            """
+                invoke-static {v$studioMode}, $EXTENSION->liveStudioPickSkip(Ljava/lang/Object;)Ljava/lang/Object;
+                move-result-object v$studioMode
+            """,
+        )
+        // A game or PC LIVE room's start jumps past the pick read, so its end asks for the pick
+        // and switches the room the way the regular branch does. It sits before the pick read, so
+        // the hook above is already in. v0 to v2 are written again after the goto before any read.
+        playerStart.addInstructionsWithLabels(
+            gameRoom.end,
+            """
+                sget-object v0, ${pick.field}
+                iget-object v1, p0, ${gameRoom.data()}
+                iget-object v2, p0, ${gameRoom.quality()}
+                invoke-static {v0, v1, v2}, $EXTENSION->gameRoomQuality(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+                move-result-object v0
+                if-eqz v0, :morphe_game_room_keep
+                iput-object v0, p0, ${gameRoom.quality()}
+                iget-object v2, p0, ${gameRoom.player()}
+                invoke-interface {v2, v1, v0}, ${gameRoom.setter()}
+            """,
+            ExternalLabel("morphe_game_room_keep", playerStart.getInstruction(gameRoom.end)),
+        )
+        // Rooms from the LIVE button logged neither start's pick read on the S22, so with debug on
+        // every player start says whether it had stream data and which LIVE mode it was. Added last
+        // so the indices above still hold; v0 and v1 are written before they're read.
+        val liveMode = playerStart.implementation!!.instructions.firstNotNullOfOrNull {
+            ((it as? ReferenceInstruction)?.reference as? FieldReference)
+                ?.takeIf { field -> it.opcode == Opcode.IGET_OBJECT && field.type == LIVE_MODE && field.definingClass == playerStart.definingClass }
+        } ?: throw PatchException("LIVE controls: the LIVE player start reads no LIVE mode")
+        playerStart.addInstructions(
+            0,
+            """
+                iget-object v0, p0, ${gameRoom.data()}
+                iget-object v1, p0, ${liveMode.key()}
+                invoke-static {v0, v1}, $EXTENSION->notePlayerStart(Ljava/lang/String;Ljava/lang/Object;)V
+            """,
+        )
         mutableClassDefBy(PULL_STREAM_SERVICE).findMutableMethodOf(pick.setter).addInstruction(
             0,
             "invoke-static/range {p1 .. p1}, $EXTENSION->noteLiveQualityPick(Ljava/lang/String;)V",

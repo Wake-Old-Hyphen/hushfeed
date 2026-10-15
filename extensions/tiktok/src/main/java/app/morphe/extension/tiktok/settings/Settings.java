@@ -563,6 +563,11 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting OFFER_LIVE_CLEAR_SCREEN = new BooleanSetting("offer_live_clear_screen", FALSE);
     /**
+     * Opens LIVE panels in TikTok's dark LIVE theme while TikTok is in dark mode (#159); the LIVE
+     * controls patch. Read as each panel opens, so the next panel follows a change.
+     */
+    public static final BooleanSetting DARK_LIVE_PANELS = new BooleanSetting("dark_live_panels", FALSE);
+    /**
      * Puts a Record button in LIVE rooms (#37); the LIVE controls patch. A recording starts when the
      * button is tapped and ends at Stop or when the room is left. Read as a room resumes and on the
      * chip's once-a-second check, so no restart.
