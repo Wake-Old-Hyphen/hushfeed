@@ -25,6 +25,10 @@ final class MediaBudget {
     static final long PUBLISH_OVERHEAD_BYTES = 8L * 1024 * 1024;
     static final long STREAM_SPACE_CHECK_BYTES = 1024L * 1024;
     static final long JOB_DEADLINE_MS = 2L * 60 * 1000;
+    /** How long a download may go without a byte once the job's own time is up. */
+    static final long STALL_MS = 30_000L;
+    /** The most a download that keeps moving may run: 50 MB at about 40 KB a second. */
+    static final long MOVING_CEILING_MS = 20L * 60 * 1000;
     static final int MAX_ATTEMPTS_PER_MIRROR = 2;
     static final long DEFAULT_RETRY_DELAY_MS = 250L;
     static final long MAX_RETRY_DELAY_MS = 2_000L;
@@ -89,6 +93,12 @@ final class MediaBudget {
         if (deadline != null && deadline.expired()) {
             throw new StopException("Media job deadline exceeded", false);
         }
+    }
+
+    /** {@link Deadline#moved} on {@code deadline}, or on the running job's when it is null. */
+    static void moved(Deadline deadline) {
+        Deadline active = deadline != null ? deadline : CURRENT_DEADLINE.get();
+        if (active != null) active.moved();
     }
 
     static int timeoutMillis(Deadline deadline, int configuredMillis) throws IOException {
@@ -281,6 +291,7 @@ final class MediaBudget {
 
     static final class Deadline {
         private long endNanos;
+        private long ceilingNanos;
         private final Clock clock;
         AtomicBoolean cancellation;
         StopException networkStop;
@@ -294,6 +305,7 @@ final class MediaBudget {
         Deadline(long endNanos, Clock clock) {
             this.endNanos = endNanos;
             this.clock = clock;
+            this.ceilingNanos = clock.nanoTime() + MOVING_CEILING_MS * 1_000_000L;
         }
 
         boolean expired() {
@@ -305,10 +317,28 @@ final class MediaBudget {
          * For a step whose length follows the media rather than the network: writing a caption
          * into a video encodes all of it again, which runs about as long as the video plays,
          * and a long one used up the two minutes the whole save gets. That step still has its
-         * own checks for a codec that stops moving.
+         * own checks for a codec that stops moving. It also starts a fresh
+         * {@link MediaBudget#MOVING_CEILING_MS} for {@link #moved}, so each file of a save gets its own.
          */
         void allowAtLeast(long millis) {
-            long end = clock.nanoTime() + Math.max(0L, millis) * 1_000_000L;
+            long now = clock.nanoTime();
+            long end = now + Math.max(0L, millis) * 1_000_000L;
+            if (end - endNanos > 0) endNanos = end;
+            long ceiling = now + MOVING_CEILING_MS * 1_000_000L;
+            if (ceiling - ceilingNanos > 0) ceilingNanos = ceiling;
+        }
+
+        /**
+         * Called as a download's bytes arrive: one that is still moving gets {@link MediaBudget#STALL_MS}
+         * past its latest bytes, up to {@link MediaBudget#MOVING_CEILING_MS}. The fixed two minutes cut a
+         * long video off on a slow connection while it was still coming in (#179). A download
+         * that stops for that long, or trickles on past the ceiling, still runs out: bytes that
+         * turn up after the end don't bring it back.
+         */
+        void moved() {
+            if (expired()) return;
+            long end = clock.nanoTime() + STALL_MS * 1_000_000L;
+            if (end - ceilingNanos > 0) end = ceilingNanos;
             if (end - endNanos > 0) endNanos = end;
         }
     }

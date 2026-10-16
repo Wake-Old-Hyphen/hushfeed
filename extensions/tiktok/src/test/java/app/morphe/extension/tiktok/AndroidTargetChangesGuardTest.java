@@ -149,6 +149,12 @@ public class AndroidTargetChangesGuardTest {
                         + "still fits once GitHub's sign-in page wraps it");
         REVIEWED_ADDRESSES.put("https://ko-fi.com/X8K126YVER",
                 "not fetched: the Support Hushfeed row, opened in the reader's browser");
+        REVIEWED_ADDRESSES.put("https://(?:(?:vm|vt)\\\\.tiktok\\\\.com/[A-Za-z0-9]+|(?:www\\\\.|m\\\\.)?"
+                        + "tiktok\\\\.com/t/[A-Za-z0-9]{4,20})/?",
+                "not a host: the pattern that finds a TikTok short link in copied text. The "
+                        + "link it finds is the one TikTok put on the clipboard, and it is opened "
+                        + "only when isShort takes its host (vm.tiktok.com, vt.tiktok.com or "
+                        + "tiktok.com/t/), over https with the platform's own checks");
     }
 
     /** Where a java.lang.reflect.Field lands in a local, a field or a parameter. */

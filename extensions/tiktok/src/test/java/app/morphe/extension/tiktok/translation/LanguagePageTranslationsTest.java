@@ -31,15 +31,16 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 /**
- * Show translation options in Language settings (#143). TikTok hides the translation rows on its
- * Language page when either of two gates answers true. The switch starts off, answers each gate
- * false while it is on, never turns a false into true, and leaves TikTok's answer alone while
- * Hushfeed is paused or before the settings context exists.
+ * Bring back TikTok's translation (#143). TikTok hides the translation rows on its Language page
+ * when either of two gates answers true, and takes See translation off videos when
+ * {@code feed_translation_reverse} is 1. The switch starts off, answers each gate false and the
+ * reverse value 0 while it is on, never takes translation away itself, and leaves TikTok's answer
+ * alone while Hushfeed is paused or before the settings context exists.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28)
 public class LanguagePageTranslationsTest {
-    private static final String TITLE = "Show translation options in Language settings";
+    private static final String TITLE = "Bring back TikTok's translation";
 
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
 
@@ -55,7 +56,7 @@ public class LanguagePageTranslationsTest {
     public void theSwitchStartsOffAndOnlyItShowsTheRows() {
         assertEquals("show_translation_settings", Settings.SHOW_TRANSLATION_SETTINGS.key);
         assertEquals(Boolean.FALSE, Settings.SHOW_TRANSLATION_SETTINGS.defaultValue);
-        assertFalse("the page asks each time it opens", Settings.SHOW_TRANSLATION_SETTINGS.rebootApp);
+        assertTrue("the videos' answer is read once per process", Settings.SHOW_TRANSLATION_SETTINGS.rebootApp);
 
         assertTrue("off, TikTok hides them", LanguagePageTranslations.hidden(true));
         assertFalse("off, TikTok shows them", LanguagePageTranslations.hidden(false));
@@ -88,29 +89,71 @@ public class LanguagePageTranslationsTest {
         assertFalse(LanguagePageTranslations.hidden(true));
     }
 
-    /** The row shows on the Comments page only where the patch found both gates. */
+    @Test
+    public void onlyAOneTakesTranslationOffVideos() {
+        assertEquals("off, TikTok's 1 stands", 1, LanguagePageTranslations.feedReverse(1));
+        assertEquals(0, LanguagePageTranslations.feedReverse(0));
+
+        Settings.SHOW_TRANSLATION_SETTINGS.save(true);
+        assertEquals(0, LanguagePageTranslations.feedReverse(1));
+        assertEquals("a value that already leaves translation on passes through", 2, LanguagePageTranslations.feedReverse(2));
+        assertEquals(0, LanguagePageTranslations.feedReverse(0));
+        String report = String.join("\n", HookStatus.report());
+        assertTrue(report, report.contains("video translations"));
+
+        PausedProcess.set(true);
+        assertEquals("paused, TikTok's 1 stands", 1, LanguagePageTranslations.feedReverse(1));
+        PausedProcess.set(false);
+        Utils.setContext(null);
+        try {
+            assertEquals("no context, TikTok's 1 stands", 1, LanguagePageTranslations.feedReverse(1));
+        } finally {
+            Utils.setContext(RuntimeEnvironment.getApplication());
+        }
+    }
+
+    /** The row shows on the Comments page where the patch hooked either part, and says which. */
     @Test
     public void theRowShowsOnlyWhereTheGatesWereHooked() {
-        boolean status = SettingsStatus.languagePageTranslationsEnabled;
+        boolean page = SettingsStatus.languagePageTranslationsEnabled;
+        boolean videos = SettingsStatus.feedTranslationsEnabled;
         try (var controller = Robolectric.buildActivity(DoNotAutoTranslateTest.TestActivity.class).setup()) {
             var activity = controller.get();
             Utils.setContext(activity);
 
             SettingsStatus.languagePageTranslationsEnabled = false;
+            SettingsStatus.feedTranslationsEnabled = false;
             PreferenceScreen without = activity.getPreferenceManager().createPreferenceScreen(activity);
             new CommentsPreferenceCategory(activity, without);
-            assertNull("the row showed on a build where the gates weren't hooked",
+            assertNull("the row showed on a build where nothing was hooked",
                     without.findPreference(Settings.SHOW_TRANSLATION_SETTINGS.key));
 
+            SettingsStatus.feedTranslationsEnabled = true;
+            assertTrue("the Comments page opens for this row alone", CommentsPreferenceCategory.isAvailable());
+            String videosOnly = summaryOn(activity);
+            assertTrue(videosOnly, videosOnly.contains("See translation") && !videosOnly.contains("Language page"));
+
+            SettingsStatus.feedTranslationsEnabled = false;
             SettingsStatus.languagePageTranslationsEnabled = true;
             assertTrue("the Comments page opens for this row alone", CommentsPreferenceCategory.isAvailable());
-            PreferenceScreen with = activity.getPreferenceManager().createPreferenceScreen(activity);
-            new CommentsPreferenceCategory(activity, with);
-            Preference row = with.findPreference(Settings.SHOW_TRANSLATION_SETTINGS.key);
-            assertNotNull(row);
-            assertEquals(TITLE, String.valueOf(row.getTitle()));
+            String pageOnly = summaryOn(activity);
+            assertTrue(pageOnly, pageOnly.contains("Language page") && !pageOnly.contains("See translation"));
+
+            SettingsStatus.feedTranslationsEnabled = true;
+            String both = summaryOn(activity);
+            assertTrue(both, both.contains("Language page") && both.contains("See translation"));
         } finally {
-            SettingsStatus.languagePageTranslationsEnabled = status;
+            SettingsStatus.languagePageTranslationsEnabled = page;
+            SettingsStatus.feedTranslationsEnabled = videos;
         }
+    }
+
+    private static String summaryOn(DoNotAutoTranslateTest.TestActivity activity) {
+        PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+        new CommentsPreferenceCategory(activity, screen);
+        Preference row = screen.findPreference(Settings.SHOW_TRANSLATION_SETTINGS.key);
+        assertNotNull(row);
+        assertEquals(TITLE, String.valueOf(row.getTitle()));
+        return String.valueOf(row.getSummary());
     }
 }

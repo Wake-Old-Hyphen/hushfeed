@@ -2054,6 +2054,69 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * Comment, Save and Share carry their counts inside the button, but the heart's count is a
+     * row of its own under the heart (S22, 2026-10-16: the heart 126 px tall, its count the 24 px
+     * under it). With the other buttons hidden the heart was the lowest, the column went up until
+     * the heart ended on the row, and its count sat on the time (#145, FBI-PRC on 0.74.0).
+     */
+    @Test
+    public void theRailClearsTheRowWithTheLikeCountWhenLikeIsItsLowestButton() {
+        resolveCommentBarIds();
+        VideoOverlayHider.resolveForTests("video_seek_bar", SEEK_ROW_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:bqv", CAPTION_FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.1.4:g85", 0x7f0a0216);
+        VideoOverlayHider.resolveForTests("47.1.4:wct", 0x7f0a0217);
+        VideoOverlayHider.resolveForTests("47.1.4:g87", 0x7f0a0218);
+        Settings.HIDE_DETAIL_COMMENT_BAR.save(true);
+        try (var detailController = Robolectric.buildActivity(
+                com.ss.android.ugc.aweme.detail.ui.DetailActivity.class).create().start()) {
+            Activity detail = detailController.get();
+            View[] views = openedVideo(detail, false);
+            View row = views[1];
+            View frame = views[3];
+            FrameLayout cell = (FrameLayout) frame.getParent();
+            LinearLayout column = new LinearLayout(detail);
+            column.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout likeSlot = new LinearLayout(detail);
+            likeSlot.setOrientation(LinearLayout.VERTICAL);
+            View like = new View(detail);
+            like.setId(0x7f0a0216);
+            View count = new View(detail);
+            count.setId(0x7f0a0218);
+            likeSlot.addView(like, new LinearLayout.LayoutParams(180, 126));
+            likeSlot.addView(count, new LinearLayout.LayoutParams(180, 24));
+            // Hidden by its rail switch, as the reporter had Share, Save and Comment.
+            View share = new View(detail);
+            share.setId(0x7f0a0217);
+            share.setVisibility(View.GONE);
+            column.addView(likeSlot, new LinearLayout.LayoutParams(180, LinearLayout.LayoutParams.WRAP_CONTENT));
+            column.addView(share, new LinearLayout.LayoutParams(180, 169));
+            cell.addView(column, new FrameLayout.LayoutParams(180, FrameLayout.LayoutParams.WRAP_CONTENT,
+                    android.view.Gravity.BOTTOM | android.view.Gravity.END));
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+            layOutAt(views[0]);
+            VideoOverlayHider.applyTo(detail);
+
+            assertTrue("the like count runs into the row: " + bottomOf(count) + " under " + drawnTop(row),
+                    bottomOf(count) <= drawnTop(row) + 1f);
+            assertTrue("the column wasn't lifted", column.getTranslationY() < 0f);
+            assertEquals("the count left the heart", bottomOf(like), drawnTop(count), 0.5f);
+
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.applyTo(detail);
+            assertEquals("the column didn't go back down", 0f, column.getTranslationY(), 0f);
+        } finally {
+            Settings.HIDE_DETAIL_COMMENT_BAR.save(false);
+            VideoOverlayHider.resolveForTests("video_seek_bar", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:g85", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:wct", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:g87", 0);
+        }
+    }
+
+    /**
      * A short caption ends above the lowest line, so it needs no lift and the line comes down to
      * meet it. The disc only ever took the caption's lift, so it got none and sat across the end of
      * the line and the time beside it (#153, a video opened from search on 0.73.0). It now goes up

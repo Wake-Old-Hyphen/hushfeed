@@ -1292,6 +1292,11 @@ public final class VideoOverlayHider {
                 buttons.addAll(underShownParents(selectedViews(found, selected, RAIL_TARGET_START + i)));
             }
         }
+        // The heart's count is a row under the heart, not inside its button the way the others'
+        // are, so a heart left lowest ended on the row with its count over the time (#145).
+        for (int i = 0; i < RAIL_COUNT_ROW_IDS.length; i++) {
+            buttons.addAll(underShownParents(selectedViews(found, selected, COUNT_ROW_TARGET_START + i)));
+        }
         List<View> columns = new ArrayList<>();
         // Null while the lifts are left as they are: a row on screen with no frame over its slot
         // is a cell still being bound, and putting the captions back then would make them jump.
@@ -1527,8 +1532,9 @@ public final class VideoOverlayHider {
      * <p>The rail's column goes up too when its lowest button would reach the row. With a disc
      * under the buttons it never does, but a video with no disc, or one hidden by Hide the music
      * button, leaves Share lowest, and Share and its label sat over the end of the line and the
-     * time (#153, 0.74.0). The column carries the disc, so the disc's own lift is what's left of
-     * its lift after the column's. Each column found is added to {@code columns}.
+     * time (#153, 0.74.0). {@code buttons} holds the count rows too, since the heart's sits under
+     * it rather than inside it (#145). The column carries the disc, so the disc's own lift is
+     * what's left of its lift after the column's. Each column found is added to {@code columns}.
      */
     private static Map<View, Float> captionLifts(View row, View current, List<View> frames,
                                                  List<View> discs, List<View> buttons,

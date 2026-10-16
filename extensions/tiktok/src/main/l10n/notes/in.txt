@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, jumlah suka tidak lagi menimpa bilah progres saat Suka adalah tombol terbawah yang tersisa di kanan (#145).
+
+* **TikTok:** Sakelar terjemahan di Komentar sekarang bernama Kembalikan terjemahan TikTok. Sakelar ini juga mengembalikan "Lihat terjemahan" di video dan teks, dan menawarkan mulai ulang (#143).
+
+* **TikTok:** Saat Catat diagnostik aktif, laporan yang diekspor kini menunjukkan apakah komentar LIVE sampai ke siaran tempat kamu berada (#110).
+
+* **TikTok:** Video panjang di koneksi lambat kini tersimpan, tidak lagi berhenti setelah dua menit. Unduhan yang berhenti menerima data tetap dihentikan (#179).
+
+* **TikTok:** Sembunyikan pintasan hadiah kini menawarkan mulai ulang saat kamu mengubahnya.
+
+* **TikTok:** Salin bio dan ID kini juga menaruh Salin nama pengguna dan Salin ID pengguna di lembar Bagikan profil di Pengaturan dan privasi.
+
+* **TikTok:** Matikan transisi layar berfungsi lagi, jadi halaman terbuka tanpa animasi.
+
+* **TikTok:** Sembunyikan akun yang disarankan kini menawarkan mulai ulang saat kamu mengubahnya, karena tab Teman dan profil menyimpan kartu yang sudah ditampilkan.
+
+* **TikTok:** Salin tautan lengkap untuk tautan pendek kini juga berfungsi saat Bersihkan tautan yang dibagikan mati, dan kini mengenali tautan tiktok.com/t/.
+
+* **TikTok:** Mematikan Kecepatan pemutaran bawaan kini langsung berlaku mulai video berikutnya.
 
 * **TikTok:** Hapus aset kredensial konten dan pemindai kartu serta Hapus alat kreasi tidak lagi membuat sebagian TikTok berbahasa Inggris di ponsel berbahasa lain. Patch ulang untuk mengembalikan bahasa Anda (#125).
 
-* **TikTok:** Sakelar baru membuka panel LIVE seperti klub penggemar dalam warna gelap saat TikTok dalam mode gelap (#159).
-
 * **TikTok:** Daftar Kualitas video LIVE tidak lagi menampilkan barisnya putih di atas putih dalam mode gelap (#57).
+
+* **TikTok:** Saat Tampilan bersih otomatis aktif tanpa jeda, video yang dibuka dari pencarian langsung mulai bersih, tidak lagi menampilkan tombolnya sedetik (#84).
 
 * **TikTok:** Saat Sembunyikan gelembung Tako aktif, keterangan yang muat seluruhnya tidak lagi menampilkan "selengkapnya" di video dengan konten Tako (#162).
 
 * **TikTok:** Accent color punya opsi baru, Ikuti wallpaper, yang mengambil warna dari wallpaper Anda di Android 12 ke atas (#163).
 
-* **TikTok:** Dua pilihan baru untuk bilah progres: waktu bisa ditampilkan di atas bilah, dan bilah bisa membentang dari tepi ke tepi (#173).
+* **TikTok:** Sakelar baru Bilah progres selebar layar membuat bilah progres membentang dari satu tepi layar ke tepi lainnya (#173).
+
+* **TikTok:** Saat Sembunyikan gelembung Tako aktif, mengetuk keterangan kini membukanya di tempat, tidak lagi membuka lembar Ask Tako (#162).
 
 * **TikTok:** Sakelar baru membatasi pilihan Tekan lama di sisi video, jadi tekan di tengah tetap membuka menu TikTok (#136).
 
+* **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, Bagikan dan labelnya tidak lagi menutupi ujung bilah progres (#153).
+
+* **TikTok:** Preset terjemahan otomatis obrolan LIVE di Feature Gate Lab kini memberi tahu bahwa preset itu juga butuh Timpa detail SIM dengan Jepang (#98).
+
+* **TikTok:** Tata letak layar yang direkam kini mencantumkan tampilan sebuah popup meski layar di belakangnya sangat ramai (#162).
+
+* **TikTok:** Pengaturan Hushfeed kini bisa mengikuti TikTok dalam bahasa Mandarin Sederhana.
+
+* **TikTok:** Izinkan tangkapan layar dan Circle to Search kini juga berlaku untuk popup yang dibuka TikTok di luar jendela utamanya.
+
+* **TikTok:** Mulai rilis berikutnya, Morphe Manager menampilkan daftar perubahan lengkap dari rilis terbaru.
+
+* **TikTok:** TikTok 47.1.4 dengan Hushfeed lolos pemeriksaan ketat halaman 16 KB di Android 17.
+
+* **TikTok:** Tab Profil kembali terbuka di ponsel yang sejak 0.72.0 membuatnya tertutup paksa atau kosong (#165, #140).
+
+* **TikTok:** Latar keterangan Gelap atau Hitam kini mempertahankan sudut membulat dari TikTok (#158).
+
+* **TikTok:** Simpan foto profil dengan tekan lama berfungsi lagi di TikTok 47.1.4 (#160).
+
+* **TikTok:** Saat Sembunyikan saran pencarian di atas komentar aktif, komentar tidak lagi terbuka dengan pita putih kosong di atas jumlahnya (#161).
+
 * **TikTok:** Sakelar baru menambahkan Blokir pengomentar ini ke menu yang terbuka saat komentar ditekan lama (#169).
+
+* **TikTok:** Saat Bilah status transparan aktif, setiap video feed kini sampai ke bawah jam, bukan hanya yang pertama (#164).
+
+* **TikTok:** Sembunyikan lencana belum dibaca di tab bawah kini juga menahan gelembung yang dimunculkan TikTok di atas Kotak masuk (#170).
+
+* **TikTok:** Menyimpan pilihan besar dari kisi profil tidak lagi berhenti setelah beberapa video. Setiap video kini punya dua menitnya sendiri (#27).
 
 * **TikTok:** Sembunyikan saran di halaman pencarian kini juga menyembunyikan daftar pencarian yang disarankan yang masih terlihat di beberapa akun.
 

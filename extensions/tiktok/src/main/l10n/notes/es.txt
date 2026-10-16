@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, el número de me gusta ya no queda sobre la barra de progreso cuando Me gusta es el botón más bajo que queda a la derecha (#145).
+
+* **TikTok:** El interruptor de traducción en Comentarios ahora se llama Recuperar la traducción de TikTok. También recupera «Ver traducción» en videos y subtítulos, y pide reiniciar (#143).
+
+* **TikTok:** Con Registrar diagnósticos activado, un informe exportado ahora muestra si un comentario de LIVE llegó a la sala en la que estabas (#110).
+
+* **TikTok:** Los videos largos con una conexión lenta ahora se guardan en lugar de detenerse a los dos minutos. Una descarga que deja de recibir datos todavía se detiene (#179).
+
+* **TikTok:** Ocultar el acceso a recompensas ahora ofrece reiniciar al cambiarlo.
+
+* **TikTok:** Copiar biografía e ID también pone Copiar nombre de usuario y Copiar ID de usuario en la hoja Compartir perfil de Ajustes y privacidad.
+
+* **TikTok:** Desactivar las transiciones de pantalla vuelve a funcionar, así que las páginas se abren sin animación.
+
+* **TikTok:** Ocultar las cuentas sugeridas ahora ofrece reiniciar al cambiarlo, porque la pestaña Amigos y los perfiles conservan las tarjetas que ya mostraron.
+
+* **TikTok:** Copiar el enlace completo en los enlaces cortos ahora funciona también con Limpiar los enlaces compartidos desactivado, y ya admite enlaces tiktok.com/t/.
+
+* **TikTok:** Al desactivar Velocidad de reproducción predeterminada, el cambio cuenta ya desde el siguiente video.
 
 * **TikTok:** Quitar archivos de credenciales de contenido y escáner de tarjetas y Quitar las herramientas de creación ya no dejan partes de TikTok en inglés en un teléfono con otro idioma. Vuelve a parchear para recuperar el tuyo (#125).
 
-* **TikTok:** Un nuevo interruptor abre en oscuro los paneles de LIVE como el club de fans cuando TikTok está en modo oscuro (#159).
-
 * **TikTok:** La lista de Calidad de video de LIVE ya no muestra sus filas en blanco sobre blanco en modo oscuro (#57).
+
+* **TikTok:** Con Ocultar controles automáticamente activado y sin retraso, un video abierto desde la búsqueda empieza ya despejado en lugar de mostrar sus botones un segundo (#84).
 
 * **TikTok:** Con Ocultar la burbuja de Tako activado, una descripción que cabe entera ya no muestra un «más» en los videos con contenido de Tako (#162).
 
 * **TikTok:** Accent color tiene una opción nueva, Seguir el fondo de pantalla, que toma el color de tu fondo en Android 12 y posteriores (#163).
 
-* **TikTok:** Dos opciones nuevas para la barra de progreso: el tiempo puede ir encima de la barra y la barra puede ocupar todo el ancho (#173).
+* **TikTok:** Un nuevo interruptor, Barra de progreso a todo el ancho, lleva la barra de progreso de un borde de la pantalla al otro (#173).
+
+* **TikTok:** Con Ocultar la burbuja de Tako activado, tocar una descripción la expande en su sitio en lugar de abrir la hoja de Ask Tako (#162).
 
 * **TikTok:** Un nuevo interruptor limita tu elección de Pulsación larga a los lados del video, así que una pulsación en el centro sigue abriendo el menú de TikTok (#136).
 
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, Compartir y su etiqueta ya no tapan el final de la barra de progreso (#153).
+
+* **TikTok:** El ajuste predefinido de traducción automática del chat de LIVE en el Laboratorio de interruptores ahora avisa de que también necesita Sustituir los datos de la SIM con Japón (#98).
+
+* **TikTok:** Un diseño de pantalla grabado ahora incluye las vistas de una ventana emergente aunque la pantalla de detrás esté muy cargada (#162).
+
+* **TikTok:** Los ajustes de Hushfeed ahora pueden seguir a TikTok en chino simplificado.
+
+* **TikTok:** Permitir capturas de pantalla y Círculo para buscar ahora también cubre las ventanas emergentes que TikTok abre fuera de su ventana principal.
+
+* **TikTok:** A partir de la próxima versión, Morphe Manager muestra la lista completa de cambios de la versión más reciente.
+
+* **TikTok:** TikTok 47.1.4 con Hushfeed pasó las estrictas pruebas de páginas de 16 KB de Android 17.
+
+* **TikTok:** La pestaña Perfil vuelve a abrirse en los teléfonos donde se cerraba o salía en blanco desde la 0.72.0 (#165, #140).
+
+* **TikTok:** Un Fondo de los subtítulos Oscuro o Negro mantiene las esquinas redondeadas de TikTok (#158).
+
+* **TikTok:** Guardar una foto de perfil con una pulsación larga vuelve a funcionar en TikTok 47.1.4 (#160).
+
+* **TikTok:** Con Ocultar sugerencias de búsqueda sobre los comentarios activado, los comentarios ya no se abren con una franja blanca vacía sobre el total (#161).
+
 * **TikTok:** Un nuevo interruptor añade Bloquear a quien comenta al menú que se abre al mantener pulsado un comentario (#169).
+
+* **TikTok:** Con Barra de estado transparente activada, cada video del feed llega ahora hasta debajo del reloj, no solo el primero (#164).
+
+* **TikTok:** Ocultar las insignias de no leídos en las pestañas inferiores ahora también evita la burbuja que TikTok muestra sobre Bandeja de entrada (#170).
+
+* **TikTok:** Guardar una selección grande de una cuadrícula de perfil ya no se detiene a los pocos videos. Cada video tiene ahora sus propios dos minutos (#27).
 
 * **TikTok:** Ocultar sugerencias en la página de búsqueda ahora también oculta la lista de búsquedas recomendadas que algunas cuentas todavía veían.
 

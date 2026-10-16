@@ -132,8 +132,8 @@ public class ChangedSettingsReportTest {
                 "download_video_quality", "feed_navigation_tabs", "hold_speed", "live_min_max_followers",
                 "live_min_max_viewers", "long_press_action", "min_max_comments", "min_max_favourites",
                 "min_max_likes", "min_max_shares", "min_max_views", "network_proxy_type",
-                "playback_quality", "playback_quality_metered", "start_page", "store_identity_installer",
-                "subtitle_language", "swipe_left_action", "swipe_levels_left", "swipe_levels_right",
+                "playback_quality", "playback_quality_metered", "seekbar_time_placement", "start_page",
+                "store_identity_installer", "subtitle_language", "swipe_left_action", "swipe_levels_left", "swipe_levels_right",
                 "touch_target_scale", "ytdlnis_download_type")), shown);
     }
 

@@ -121,10 +121,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",
                     Settings.OFFER_LIVE_CLEAR_SCREEN));
-            addPreference(new TogglePreference(context, "Dark LIVE panels in dark mode",
-                    "With TikTok in dark mode, a LIVE room still opens its share menu, fan club "
-                            + "and other panels in light colors. This opens them dark.",
-                    Settings.DARK_LIVE_PANELS));
+            // Dark LIVE panels in dark mode (Settings.DARK_LIVE_PANELS) has no row until a LIVE
+            // panel is seen dark with it on (#159).
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));
@@ -169,12 +167,8 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "while it's on screen.",
                     Settings.SEEKBAR_TIME
             ));
-            addPreference(new ChoicePreference(context, "Where the time goes",
-                    Settings.SEEKBAR_TIME_PLACEMENT,
-                    new String[]{"Beside the bar", "Above the bar"},
-                    new String[]{"beside", "above"})
-                    .withNote("Above puts the time over the right end of the bar while nothing on "
-                            + "screen is in the way, and beside the bar when something is."));
+            // Where the time goes (Settings.SEEKBAR_TIME_PLACEMENT) has no row until the time is seen
+            // above the bar: on 47.1.4 the caption or the rail always sits over both ends (#173).
             addPreference(new TogglePreference(
                     context,
                     "Full-width progress bar",

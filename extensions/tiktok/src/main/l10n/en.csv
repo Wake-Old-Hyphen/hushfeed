@@ -156,8 +156,6 @@ About,About
 About %1$s of storage at this limit,About %1$s of storage at this limit
 About Hushfeed,About Hushfeed
 About overrides,About overrides
-"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.","Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is."
-Above the bar,Above the bar
 Account facts,Account facts
 Account facts copied,Account facts copied
 Account facts on profiles,Account facts on profiles
@@ -270,7 +268,6 @@ Back,Back
 Back to defaults,Back to defaults
 Back up settings,Back up settings
 Backup and restore,Backup and restore
-Beside the bar,Beside the bar
 Bigger progress bar handle,Bigger progress bar handle
 Bio copied,Bio copied
 Black,Black
@@ -304,6 +301,7 @@ Blocked sounds,Blocked sounds
 Blocking,Blocking
 Bottom tabs to keep,Bottom tabs to keep
 Brightness,Brightness
+Bring back TikTok's translation,Bring back TikTok's translation
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.","Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there."
 Browse,Browse
 Budgets and reminders,Budgets and reminders
@@ -481,7 +479,6 @@ Daily time budget,Daily time budget
 Daily video budget,Daily video budget
 Dark,Dark
 Dark Favorites popup,Dark Favorites popup
-Dark LIVE panels in dark mode,Dark LIVE panels in dark mode
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
 Default,Default
@@ -602,6 +599,8 @@ Follows you,Follows you
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.","For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes."
 For You,For You
 "For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed.","For You, Following and the other feed tabs stay behind a calm panel and won't swipe. Messages, profiles and search work as usual, a link to one video still opens that video, and the app opens on Inbox instead of the feed."
+"For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.","For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos."
+For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.
 Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Forced %1$d gates of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
 Forced %1$d gates. Restart TikTok to apply this.,Forced %1$d gates. Restart TikTok to apply this.
 Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.,Forced 1 gate of %2$d. The rest don't take a true or false value. Restart TikTok to apply this.
@@ -1589,7 +1588,6 @@ Show the time zone,Show the time zone
 Show the whole Activity and New followers lists instead of stopping at a View all button.,Show the whole Activity and New followers lists instead of stopping at a View all button.
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.","Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off."
 Show translation,Show translation
-Show translation options in Language settings,Show translation options in Language settings
 Show what is left of the budget,Show what is left of the budget
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.","Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name."
 Show when the camera or microphone is in use,Show when the camera or microphone is in use
@@ -2102,12 +2100,10 @@ What's new,What's new
 When to send,When to send
 "When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.","When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later."
 "When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual.","When you open TikTok from its icon, the first video in the feed waits for one tap before it plays. A link, a notification or a shortcut opens as usual."
-Where the time goes,Where the time goes
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
 Who to message,Who to message
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.
-"With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.","With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark."
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.","With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100."
 "Word rules only, not every feed filter:","Word rules only, not every feed filter:"
 "Words, countries and languages","Words, countries and languages"

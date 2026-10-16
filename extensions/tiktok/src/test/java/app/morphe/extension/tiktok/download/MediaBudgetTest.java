@@ -157,4 +157,58 @@ public class MediaBudgetTest {
         assertEquals("Media job deadline exceeded", failure.getMessage());
         assertEquals("the expired copy read from its source", 0, reads.get());
     }
+
+    /** A source that hands out {@code chunk} bytes per read, each read taking {@code gapMs}. */
+    private static InputStream slowSource(MediaTransportFixtures.RetryClock clock, int reads,
+            int chunk, long gapMs) {
+        return new InputStream() {
+            int left = reads;
+
+            @Override public int read() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override public int read(byte[] buffer, int offset, int length) {
+                if (left-- <= 0) return -1;
+                clock.nanos += gapMs * 1_000_000L;
+                return Math.min(chunk, length);
+            }
+        };
+    }
+
+    @Test public void aDownloadStillMovingOutlastsTheTwoMinutes() throws Exception {
+        try (var clock = new MediaTransportFixtures.RetryClock(MediaBudget.JOB_DEADLINE_MS)) {
+            // Five minutes of a slow connection (#179): a chunk every ten seconds.
+            long copied = MediaFileWriter.copy(slowSource(clock, 30, 1000, 10_000),
+                    new ByteArrayOutputStream(), MediaBudget.MAX_TRANSFER_BYTES, clock.deadline, null);
+            assertEquals(30_000L, copied);
+            assertEquals(300_000_000_000L, clock.nanos);
+        }
+    }
+
+    @Test public void aDownloadThatStallsPastTheStallWindowStillStops() throws Exception {
+        try (var clock = new MediaTransportFixtures.RetryClock(MediaBudget.JOB_DEADLINE_MS)) {
+            var refusal = assertThrows(MediaBudget.StopException.class, () -> MediaFileWriter.copy(
+                    slowSource(clock, 100, 1000, MediaBudget.STALL_MS + 1_000),
+                    new ByteArrayOutputStream(), MediaBudget.MAX_TRANSFER_BYTES, clock.deadline, null));
+            assertEquals(MediaBudget.StopException.Reason.TIME, refusal.reason);
+            assertTrue("stopped before the two minutes were up", clock.nanos >= MediaBudget.JOB_DEADLINE_MS * 1_000_000L);
+            assertTrue("ran on past one stall", clock.nanos <= (MediaBudget.JOB_DEADLINE_MS + MediaBudget.STALL_MS + 1_000) * 1_000_000L);
+        }
+    }
+
+    @Test public void aTrickleStopsAtTheCeilingAndTheNextFileGetsItsOwn() throws Exception {
+        try (var clock = new MediaTransportFixtures.RetryClock(MediaBudget.JOB_DEADLINE_MS)) {
+            var refusal = assertThrows(MediaBudget.StopException.class, () -> MediaFileWriter.copy(
+                    slowSource(clock, 1_000, 1, 10_000), new ByteArrayOutputStream(),
+                    MediaBudget.MAX_TRANSFER_BYTES, clock.deadline, null));
+            assertEquals(MediaBudget.StopException.Reason.TIME, refusal.reason);
+            assertEquals(MediaBudget.MOVING_CEILING_MS * 1_000_000L, clock.nanos);
+
+            // The next file of a save starts its own time (#27) and its own ceiling.
+            clock.deadline.allowAtLeast(MediaBudget.JOB_DEADLINE_MS);
+            assertEquals(300L, MediaFileWriter.copy(slowSource(clock, 30, 10, 10_000),
+                    new ByteArrayOutputStream(), MediaBudget.MAX_TRANSFER_BYTES, clock.deadline, null));
+        }
+    }
 }

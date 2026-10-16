@@ -249,6 +249,7 @@ final class MediaFileWriter {
             MediaBudget.check(deadline);
             count = input.read(buffer);
             if (count == -1) break;
+            if (count > 0) MediaBudget.moved(deadline);
             total += count;
             if (total > limit) {
                 throw new IOException("That file is larger than " + (limit >> 20) + " MB");

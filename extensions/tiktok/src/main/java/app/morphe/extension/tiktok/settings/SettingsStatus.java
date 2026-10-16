@@ -264,6 +264,13 @@ public class SettingsStatus {
         languagePageTranslationsEnabled = true;
     }
 
+    /** Translate comments hooked the read that takes translation off videos for some accounts. */
+    public static boolean feedTranslationsEnabled = false;
+
+    public static void enableFeedTranslations() {
+        feedTranslationsEnabled = true;
+    }
+
     public static void enableHideCommentQuickReactions() {
         hideCommentQuickReactionsEnabled = true;
     }

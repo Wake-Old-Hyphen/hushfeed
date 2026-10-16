@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, o número de curtidas não fica mais sobre a barra de progresso quando Curtir é o botão mais baixo que sobrou à direita (#145).
+
+* **TikTok:** A chave de tradução em Comentários agora se chama Trazer de volta a tradução do TikTok. Ela também traz de volta «Ver tradução» nos vídeos e nas legendas e pede para reiniciar (#143).
+
+* **TikTok:** Com Registrar diagnósticos ligado, um relatório exportado agora mostra se um comentário da LIVE chegou à sala em que você estava (#110).
+
+* **TikTok:** Vídeos longos numa conexão lenta agora são salvos em vez de parar depois de dois minutos. Um download que para de receber dados ainda para (#179).
+
+* **TikTok:** Ocultar o atalho de recompensas agora oferece reiniciar quando você o muda.
+
+* **TikTok:** Copiar bio e IDs também coloca Copiar nome de usuário e Copiar ID de usuário na folha Compartilhar perfil de Configurações e privacidade.
+
+* **TikTok:** Desativar as transições de tela voltou a funcionar, então as páginas abrem sem animação.
+
+* **TikTok:** Esconder as contas sugeridas agora oferece reiniciar quando você o muda, porque a aba Amigos e os perfis mantêm os cartões que já mostraram.
+
+* **TikTok:** Copiar o link completo nos links curtos agora funciona também com Limpar os links compartilhados desligado, e aceita links tiktok.com/t/.
+
+* **TikTok:** Desligar Velocidade de reprodução padrão agora vale já a partir do próximo vídeo.
 
 * **TikTok:** Remover recursos de credenciais de conteúdo e leitor de cartões e Remover ferramentas de criação não deixam mais partes do TikTok em inglês num celular em outro idioma. Aplique o patch de novo para recuperar o seu (#125).
 
-* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como o fã-clube, quando o TikTok está no modo escuro (#159).
-
 * **TikTok:** A lista de Qualidade do vídeo da LIVE não mostra mais as linhas em branco sobre branco no modo escuro (#57).
+
+* **TikTok:** Com Limpar a tela automaticamente ligado e sem atraso, um vídeo aberto pela pesquisa já começa limpo em vez de mostrar os botões por um segundo (#84).
 
 * **TikTok:** Com Esconder a bolha do Tako ligado, uma legenda que cabe inteira não mostra mais um «mais» em vídeos com conteúdo do Tako (#162).
 
 * **TikTok:** Accent color tem uma nova opção, Seguir o papel de parede, que pega a cor do seu papel de parede no Android 12 ou mais novo (#163).
 
-* **TikTok:** Duas novas opções para a barra de progresso: o tempo pode ficar acima da barra e a barra pode ocupar toda a largura (#173).
+* **TikTok:** Uma nova chave, Barra de progresso em largura total, leva a barra de progresso de uma borda da tela à outra (#173).
+
+* **TikTok:** Com Esconder a bolha do Tako ligado, tocar numa legenda a expande no lugar em vez de abrir a folha Ask Tako (#162).
 
 * **TikTok:** Uma nova chave limita sua escolha de Toque longo às laterais do vídeo, então um toque no meio continua abrindo o menu do TikTok (#136).
 
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, Compartilhar e o rótulo dele não cobrem mais o fim da barra de progresso (#153).
+
+* **TikTok:** A predefinição de tradução automática do chat da LIVE no Laboratório de gates agora avisa que também precisa de Substituir os dados do SIM com o Japão (#98).
+
+* **TikTok:** Um layout de tela gravado agora lista as views de um pop-up mesmo quando a tela atrás está muito cheia (#162).
+
+* **TikTok:** As configurações do Hushfeed agora podem seguir o TikTok em chinês simplificado.
+
+* **TikTok:** Permitir capturas de tela e Círculo para pesquisar agora também vale para os pop-ups que o TikTok abre fora da janela principal.
+
+* **TikTok:** A partir da próxima versão, o Morphe Manager mostra a lista completa de mudanças da versão mais recente.
+
+* **TikTok:** O TikTok 47.1.4 com Hushfeed passou nas verificações rígidas de páginas de 16 KB do Android 17.
+
+* **TikTok:** A aba Perfil volta a abrir nos celulares em que ela fechava ou ficava em branco desde a 0.72.0 (#165, #140).
+
+* **TikTok:** Um Fundo das legendas Escuro ou Preto mantém os cantos arredondados do TikTok (#158).
+
+* **TikTok:** Salvar uma foto de perfil com um toque longo voltou a funcionar no TikTok 47.1.4 (#160).
+
+* **TikTok:** Com Ocultar sugestões de pesquisa acima dos comentários ligado, os comentários não abrem mais com uma faixa branca vazia acima da contagem (#161).
+
 * **TikTok:** Uma nova chave adiciona Bloquear quem comentou ao menu que abre ao tocar e segurar um comentário (#169).
+
+* **TikTok:** Com Barra de status transparente ligada, todo vídeo do feed agora chega até embaixo do relógio, não só o primeiro (#164).
+
+* **TikTok:** Esconder os selos de não lidos nas abas inferiores agora também afasta a bolha que o TikTok mostra sobre a Caixa de entrada (#170).
+
+* **TikTok:** Salvar uma seleção grande de uma grade de perfil não para mais depois de poucos vídeos. Cada vídeo agora tem seus próprios dois minutos (#27).
 
 * **TikTok:** Ocultar sugestões na página de pesquisa agora também oculta a lista de pesquisas recomendadas que algumas contas ainda viam.
 

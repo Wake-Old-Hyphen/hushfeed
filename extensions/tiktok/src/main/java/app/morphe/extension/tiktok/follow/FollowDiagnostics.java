@@ -77,6 +77,16 @@ public final class FollowDiagnostics {
     private static volatile boolean loggedSettingsSnapshot;
     private static volatile long followReadbackWindowUntil;
     private static volatile FollowRequestContext activeReadbackContext;
+    /**
+     * The room the last LIVE room enter named, as a hash of its id, and when it was answered.
+     * A comment that the server takes but never shows (#110: from a room opened on the feed,
+     * fine from the profile) may be going to a room this session never entered.
+     */
+    private static volatile int lastEnteredRoom;
+    private static volatile long lastEnterAtMs;
+    /** Query keys whose value says how a room was opened, as a word like homepage_hot. */
+    private static final String[] LIVE_ROUTE_KEYS =
+            {"enter_from_merge", "enter_method", "enter_from", "enter_source", "enter_type"};
 
     private FollowDiagnostics() {}
 
@@ -320,7 +330,13 @@ public final class FollowDiagnostics {
 
         String chatPath = liveChatPath(request);
         if (chatPath != null) {
-            logLiveChatResponse(chatPath, response);
+            logLiveChatResponse(chatPath, requestPath(request), response);
+            return;
+        }
+
+        String fullPath = requestPath(request);
+        if (fullPath != null && fullPath.toLowerCase(Locale.ROOT).contains("/webcast/room/enter/")) {
+            logLiveEnterResponse(fullPath, response);
             return;
         }
 
@@ -341,7 +357,7 @@ public final class FollowDiagnostics {
      * send is recorded: the transport result, the server's status code and message, and whether
      * a risk check was hidden just before. Nothing the user typed and no account id is read.
      */
-    private static void logLiveChatResponse(String path, Object response) {
+    private static void logLiveChatResponse(String path, String fullPath, Object response) {
         if (!reserveNetworkEvent()) return;
 
         try {
@@ -355,6 +371,8 @@ public final class FollowDiagnostics {
                     + " status_code=" + verdict.statusCode
                     + " status_msg=" + safeShort(verdict.statusMsg)
                     + " riskCheck=" + (suppressed == null ? "none" : safeShort(suppressed))
+                    + " room=" + roomAgainstLastEnter(fullPath)
+                    + " route=" + liveRoute(fullPath)
                     + " bodyClass=" + className(body)
                     + " bodyFieldNames=" + describeFieldNames(body)
                     + " outcome=" + (FollowVerdict.isRefusalCode(verdict.statusCode) ? "refused" : "server_accept");
@@ -362,6 +380,88 @@ public final class FollowDiagnostics {
         } catch (Throwable throwable) {
             Logger.printDebug(() -> "[Morphe TikTok FollowProbe] live comment response read failed: " + throwable);
         }
+    }
+
+    /**
+     * The answer to TikTok entering a LIVE room: its status and how the room was opened, and the
+     * room kept as a hash so a later comment can say whether it went to the same one. Recorded
+     * with logging off too, so turning logging on inside a room still compares the next comment.
+     */
+    private static void logLiveEnterResponse(String fullPath, Object response) {
+        String room = queryValue(fullPath, "room_id");
+        if (room != null) {
+            lastEnteredRoom = room.hashCode();
+            lastEnterAtMs = System.currentTimeMillis();
+        }
+        if (!reserveNetworkEvent()) return;
+
+        try {
+            Object body = response == null ? null : readField(response, "LIZIZ");
+            FollowVerdict verdict = FollowVerdict.of(body);
+            String line = "[Morphe TikTok FollowProbe] live room enter response"
+                    + " responseCode=" + (response == null ? "n/a" : invokeValue(response, "LIZ"))
+                    + " status_code=" + verdict.statusCode
+                    + " status_msg=" + safeShort(verdict.statusMsg)
+                    + " room=" + (room == null ? "not_in_query" : "noted")
+                    + " route=" + liveRoute(fullPath)
+                    + " queryKeys=" + queryKeys(fullPath);
+            Logger.printDebug(() -> line);
+        } catch (Throwable throwable) {
+            Logger.printDebug(() -> "[Morphe TikTok FollowProbe] live room enter response read failed: " + throwable);
+        }
+    }
+
+    /** Whether a comment's room is the one entered last, and how long ago, never the id itself. */
+    static String roomAgainstLastEnter(String fullPath) {
+        String room = queryValue(fullPath, "room_id");
+        if (room == null) return "not_in_query";
+        if (lastEnterAtMs == 0L) return "no_enter_seen";
+        long ago = Math.max(0L, (System.currentTimeMillis() - lastEnterAtMs) / 1000L);
+        return (room.hashCode() == lastEnteredRoom ? "last_entered" : "other_than_last_entered")
+                + ",enteredSecondsAgo=" + ago;
+    }
+
+    /** The route keys present in a LIVE request, each with its value when it is a plain word. */
+    static String liveRoute(String fullPath) {
+        StringBuilder route = new StringBuilder();
+        for (String key : LIVE_ROUTE_KEYS) {
+            String value = queryValue(fullPath, key);
+            if (value == null) continue;
+            if (route.length() > 0) route.append(',');
+            // A word like homepage_hot or live_cell says how the room opened; anything else
+            // (digits, an encoded blob) could carry an id, so only that the key was there.
+            route.append(key).append(':').append(value.matches("(?=.*[a-z])[a-z0-9_]{1,40}") ? value : "set");
+        }
+        return route.length() == 0 ? "none" : route.toString();
+    }
+
+    /** The query's key names, never their values. */
+    static String queryKeys(String fullPath) {
+        int start = fullPath == null ? -1 : fullPath.indexOf('?');
+        if (start < 0) return "none";
+        StringBuilder keys = new StringBuilder();
+        for (String pair : fullPath.substring(start + 1).split("&")) {
+            int equals = pair.indexOf('=');
+            String key = equals < 0 ? pair : pair.substring(0, equals);
+            if (key.isEmpty() || !key.matches("[A-Za-z0-9_.-]{1,40}")) continue;
+            if (keys.length() > 0) keys.append(',');
+            keys.append(key);
+            if (keys.length() > 400) break;
+        }
+        return keys.length() == 0 ? "none" : keys.toString();
+    }
+
+    static String queryValue(String fullPath, String key) {
+        int start = fullPath == null ? -1 : fullPath.indexOf('?');
+        if (start < 0) return null;
+        for (String pair : fullPath.substring(start + 1).split("&")) {
+            int equals = pair.indexOf('=');
+            if (equals > 0 && pair.substring(0, equals).equals(key)) {
+                String value = pair.substring(equals + 1);
+                return value.isEmpty() ? null : value;
+            }
+        }
+        return null;
     }
 
     private static String liveChatPath(Object request) {

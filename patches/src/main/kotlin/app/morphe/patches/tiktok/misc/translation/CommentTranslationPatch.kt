@@ -350,6 +350,23 @@ val commentTranslationPatch = bytecodePatch(
             )
         }
 
+        // See translation on videos, which the same server value takes away from those accounts
+        // (#143). Held to declared builds by FeedTranslationsAnchorsTest the same way.
+        val videos = try {
+            hookFeedTranslations()
+            true
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out See translation on videos on ${packageMetadata.versionName}: ${problem.message}")
+            false
+        }
+        if (videos) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeedTranslations()V",
+            )
+        }
+
         // Every method carrying the anchor, not the first one a fingerprint happened to
         // match. On 46.2.3 the string sits in two bodies of the same class, both static and
         // both V(L), and `.method` takes one of them without a word about the other. A batch

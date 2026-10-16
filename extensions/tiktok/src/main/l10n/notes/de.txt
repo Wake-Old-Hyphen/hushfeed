@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Mit „Kommentarleiste bei geöffneten Videos ausblenden“ liegt die Like-Zahl nicht mehr auf dem Fortschrittsbalken, wenn Like der unterste verbliebene Button rechts ist (#145).
+
+* **TikTok:** Der Übersetzungsschalter unter Kommentare heißt jetzt „TikToks Übersetzung zurückholen“. Er bringt auch „Übersetzung anzeigen“ bei Videos und Untertiteln zurück und bietet einen Neustart an (#143).
+
+* **TikTok:** Mit „Diagnose protokollieren“ zeigt ein exportierter Bericht jetzt, ob ein LIVE-Kommentar im Raum ankam, in dem du warst (#110).
+
+* **TikTok:** Lange Videos werden bei langsamer Verbindung jetzt gespeichert, statt nach zwei Minuten abzubrechen. Ein Download, der keine Daten mehr bekommt, endet weiterhin (#179).
+
+* **TikTok:** „Belohnungs-Schaltfläche ausblenden“ bietet jetzt beim Umschalten einen Neustart an.
+
+* **TikTok:** „Bio und IDs kopieren“ setzt „Nutzernamen kopieren“ und „Nutzer-ID kopieren“ jetzt auch auf das Blatt „Profil teilen“ in Einstellungen und Datenschutz.
+
+* **TikTok:** „Bildschirmübergänge ausschalten“ funktioniert wieder, Seiten öffnen sich also ohne Animation.
+
+* **TikTok:** „Vorgeschlagene Konten ausblenden“ bietet jetzt beim Umschalten einen Neustart an, weil der Freunde-Tab und Profile ihre schon gezeigten Karten behalten.
+
+* **TikTok:** „Bei Kurzlinks den vollständigen Link kopieren“ funktioniert jetzt auch mit ausgeschaltetem „Geteilte Links bereinigen“ und kennt jetzt tiktok.com/t/-Links.
+
+* **TikTok:** Wenn du „Standard-Wiedergabegeschwindigkeit“ ausschaltest, gilt das jetzt schon ab dem nächsten Video.
 
 * **TikTok:** Dateien für Inhaltsnachweise und Kartenscanner entfernen und Erstellungstools entfernen lassen Teile von TikTok auf einem Handy mit anderer Sprache nicht mehr auf Englisch. Patche neu, um deine Sprache zurückzubekommen (#125).
 
-* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
-
 * **TikTok:** Die LIVE-Liste Videoqualität zeigt ihre Zeilen im Dunkelmodus nicht mehr weiß auf weiß (#57).
+
+* **TikTok:** Mit „Automatische freie Ansicht“ ohne Verzögerung startet ein aus der Suche geöffnetes Video jetzt frei, statt kurz seine Buttons zu zeigen (#84).
 
 * **TikTok:** Bei eingeschaltetem „Tako-Blase ausblenden“ zeigt eine Beschreibung, die komplett passt, bei Videos mit Tako-Inhalt kein „mehr“ mehr (#162).
 
 * **TikTok:** Accent color hat die neue Option „Dem Hintergrundbild folgen“, die ab Android 12 die Farbe aus deinem Hintergrundbild übernimmt (#163).
 
-* **TikTok:** Zwei neue Optionen für den Fortschrittsbalken: Die Zeit kann über dem Balken stehen, und der Balken kann von Rand zu Rand laufen (#173).
+* **TikTok:** Ein neuer Schalter „Fortschrittsbalken in voller Breite“ lässt den Fortschrittsbalken von einem Bildschirmrand zum anderen laufen (#173).
+
+* **TikTok:** Mit „Tako-Blase ausblenden“ klappt ein Tipp auf eine Beschreibung sie jetzt an Ort und Stelle auf, statt das Ask-Tako-Blatt zu öffnen (#162).
 
 * **TikTok:** Ein neuer Schalter beschränkt deine Auswahl bei Langes Drücken auf die Seiten des Videos, sodass ein Druck in der Mitte weiterhin TikToks Menü öffnet (#136).
 
+* **TikTok:** Mit „Kommentarleiste bei geöffneten Videos ausblenden“ verdecken Teilen und seine Beschriftung nicht mehr das Ende des Fortschrittsbalkens (#153).
+
+* **TikTok:** Die Vorlage für automatische LIVE-Chat-Übersetzung im Feature Gate Lab sagt jetzt, dass sie auch „SIM-Angaben überschreiben“ mit Japan braucht (#98).
+
+* **TikTok:** Ein aufgezeichnetes Bildschirm-Layout listet die Ansichten eines Pop-ups jetzt auch dann, wenn der Bildschirm dahinter sehr voll ist (#162).
+
+* **TikTok:** Die Hushfeed-Einstellungen können TikTok jetzt auch auf vereinfachtem Chinesisch folgen.
+
+* **TikTok:** „Screenshots und Circle to Search erlauben“ gilt jetzt auch für Pop-ups, die TikTok außerhalb seines Hauptfensters öffnet.
+
+* **TikTok:** Ab dem nächsten Release zeigt Morphe Manager die vollständige Änderungsliste des neuesten Releases.
+
+* **TikTok:** TikTok 47.1.4 mit Hushfeed hat die strengen 16-KB-Seitenprüfungen von Android 17 bestanden.
+
+* **TikTok:** Der Profil-Tab öffnet sich wieder auf Handys, auf denen er seit 0.72.0 abstürzte oder leer blieb (#165, #140).
+
+* **TikTok:** Bei Untertitel-Hintergrund Dunkel oder Schwarz bleiben TikToks abgerundete Ecken erhalten (#158).
+
+* **TikTok:** „Profilbild per langem Druck speichern“ funktioniert auf TikTok 47.1.4 wieder (#160).
+
+* **TikTok:** Mit „Suchvorschläge über Kommentaren ausblenden“ öffnen sich Kommentare nicht mehr mit einem leeren weißen Streifen über der Anzahl (#161).
+
 * **TikTok:** Ein neuer Schalter fügt „Diesen Kommentierenden blockieren“ zum Menü hinzu, das sich beim langen Drücken auf einen Kommentar öffnet (#169).
+
+* **TikTok:** Mit „Durchsichtige Statusleiste“ reicht jetzt jedes Feed-Video bis unter die Uhr, nicht nur das erste (#164).
+
+* **TikTok:** „Ungelesen-Abzeichen auf den unteren Tabs ausblenden“ hält jetzt auch die Blase fern, die TikTok über dem Posteingang einblendet (#170).
+
+* **TikTok:** Eine große Auswahl aus einem Profilraster wird nicht mehr nach ein paar Videos abgebrochen. Jedes Video hat jetzt seine eigenen zwei Minuten (#27).
 
 * **TikTok:** „Vorschläge auf der Suchseite ausblenden“ blendet jetzt auch die Liste empfohlener Suchen aus, die manche Konten noch sahen.
 

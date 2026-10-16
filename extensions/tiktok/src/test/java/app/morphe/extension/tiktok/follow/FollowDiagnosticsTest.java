@@ -450,6 +450,58 @@ public class FollowDiagnosticsTest {
         assertTrue(liveCommentLines().get(0), liveCommentLines().get(0).contains("status_code=unknown"));
     }
 
+    public static final class EnterBody {
+        public int status_code = 0;
+        public String status_msg = "ok";
+    }
+
+    private static List<String> linesStarting(String prefix) {
+        List<String> lines = new ArrayList<>();
+        for (org.robolectric.shadows.ShadowLog.LogItem log : org.robolectric.shadows.ShadowLog.getLogs()) {
+            if (log.msg.startsWith(prefix)) lines.add(log.msg);
+        }
+        return lines;
+    }
+
+    @Test
+    public void aLiveCommentSaysWhetherItWentToTheRoomEnteredLast() throws Exception {
+        for (String name : new String[]{"lastEnteredRoom", "lastEnterAtMs"}) {
+            java.lang.reflect.Field field = FollowDiagnostics.class.getDeclaredField(name);
+            field.setAccessible(true);
+            if (field.getType() == int.class) field.setInt(null, 0); else field.setLong(null, 0L);
+        }
+        BaseSettings.DEBUG.save(true);
+        org.robolectric.shadows.ShadowLog.clear();
+
+        FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/chat/?room_id=7400000000000000001"),
+                new ParsedResponse(new ChatBody()));
+        FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/enter/?room_id=7400000000000000001"
+                        + "&enter_from_merge=homepage_hot&enter_method=live_cell&enter_source=20261016123456"),
+                new ParsedResponse(new EnterBody()));
+        FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/chat/?room_id=7400000000000000001"),
+                new ParsedResponse(new ChatBody()));
+        FollowDiagnostics.logParsedResponse(new CaptchaGateRequest("/webcast/room/chat/?room_id=7400000000000000002"),
+                new ParsedResponse(new ChatBody()));
+
+        List<String> enters = linesStarting("[Morphe TikTok FollowProbe] live room enter response ");
+        assertEquals(enters.toString(), 1, enters.size());
+        String enter = enters.get(0);
+        assertTrue(enter, enter.contains("status_code=0"));
+        assertTrue(enter, enter.contains("route=enter_from_merge:homepage_hot,enter_method:live_cell,enter_source:set"));
+        assertTrue(enter, enter.contains("queryKeys=room_id,enter_from_merge,enter_method,enter_source"));
+        assertFalse("the room id stays out of the report", enter.contains("7400000000000000001"));
+        assertFalse("a number in a route value stays out too", enter.contains("20261016123456"));
+
+        List<String> comments = liveCommentLines();
+        assertEquals(comments.toString(), 3, comments.size());
+        assertTrue(comments.get(0), comments.get(0).contains("room=no_enter_seen "));
+        assertTrue(comments.get(1), comments.get(1).contains("room=last_entered,enteredSecondsAgo="));
+        assertTrue(comments.get(2), comments.get(2).contains("room=other_than_last_entered,enteredSecondsAgo="));
+        for (String comment : comments) {
+            assertFalse(comment, comment.contains("740000000000000000"));
+        }
+    }
+
     public static final class CaptchaGateRequest {
         private final String path;
         CaptchaGateRequest(String path) { this.path = path; }

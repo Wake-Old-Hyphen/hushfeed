@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken, sağda kalan en alttaki düğme Beğen olduğunda beğeni sayısı artık ilerleme çubuğunun üstünde durmuyor (#145).
+
+* **TikTok:** Yorumlar altındaki çeviri anahtarının adı artık TikTok'un çevirisini geri getir. Videolarda ve altyazılarda "Çeviriyi gör" seçeneğini de geri getiriyor ve yeniden başlatma öneriyor (#143).
+
+* **TikTok:** Tanılamayı günlüğe kaydet açıkken, dışa aktarılan rapor artık bir LIVE yorumunun bulunduğun yayına gidip gitmediğini gösteriyor (#110).
+
+* **TikTok:** Yavaş bağlantıda uzun videolar artık iki dakika sonra durmak yerine kaydediliyor. Veri almayı bırakan bir indirme yine duruyor (#179).
+
+* **TikTok:** Ödül kısayolunu gizle artık değiştirdiğinde yeniden başlatma öneriyor.
+
+* **TikTok:** Biyografiyi ve kimlikleri kopyala, Kullanıcı adını kopyala ve Kullanıcı kimliğini kopyala seçeneklerini Ayarlar ve gizlilik içindeki Profili paylaş sayfasına da ekliyor.
+
+* **TikTok:** Ekran geçişlerini kapat yeniden çalışıyor, sayfalar animasyonsuz açılıyor.
+
+* **TikTok:** Önerilen hesapları gizle artık değiştirdiğinde yeniden başlatma öneriyor, çünkü Arkadaşlar sekmesi ve profiller zaten gösterdikleri kartları tutuyor.
+
+* **TikTok:** Kısa bağlantılarda tam bağlantıyı kopyala artık Paylaşılan bağlantıları temizle kapalıyken de çalışıyor ve tiktok.com/t/ bağlantılarını da tanıyor.
+
+* **TikTok:** Varsayılan oynatma hızı kapatıldığında artık hemen sonraki videodan itibaren geçerli oluyor.
 
 * **TikTok:** İçerik kimlik bilgilerini ve kart tarayıcı kaynaklarını kaldır ile Oluşturma araçlarını kaldır, başka dile ayarlı bir telefonda TikTok'un bazı kısımlarını artık İngilizce bırakmıyor. Dilini geri almak için yeniden yamala (#125).
 
-* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken hayran kulübü gibi LIVE panellerini koyu açar (#159).
-
 * **TikTok:** LIVE Video kalitesi listesi karanlık modda satırlarını artık beyaz üstüne beyaz göstermiyor (#57).
+
+* **TikTok:** Otomatik temiz ekran gecikmesiz açıkken, aramadan açılan bir video artık düğmelerini bir saniye göstermek yerine temiz başlıyor (#84).
 
 * **TikTok:** Tako balonunu gizle açıkken, tamamen sığan bir açıklama Tako içerikli videolarda artık "daha fazla" göstermiyor (#162).
 
 * **TikTok:** Accent color'a Android 12 ve üstünde rengi duvar kağıdından alan yeni bir Duvar kağıdını takip et seçeneği geldi (#163).
 
-* **TikTok:** İlerleme çubuğu için iki yeni seçenek: süre çubuğun üstünde görünebilir ve çubuk kenardan kenara uzanabilir (#173).
+* **TikTok:** Yeni Tam genişlikte ilerleme çubuğu anahtarı, ilerleme çubuğunu ekranın bir kenarından diğerine uzatıyor (#173).
+
+* **TikTok:** Tako balonunu gizle açıkken, bir açıklamaya dokunmak Ask Tako sayfasını açmak yerine onu yerinde genişletiyor (#162).
 
 * **TikTok:** Yeni bir anahtar Uzun basma seçimini videonun kenarlarıyla sınırlar, böylece ortada basmak yine TikTok menüsünü açar (#136).
 
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken, Paylaş ve etiketi artık ilerleme çubuğunun sonunu kapatmıyor (#153).
+
+* **TikTok:** Feature Gate Lab'deki LIVE sohbet otomatik çeviri hazır ayarı artık Japonya ile SIM bilgilerini geçersiz kıl seçeneğine de ihtiyaç duyduğunu söylüyor (#98).
+
+* **TikTok:** Kaydedilen ekran düzeni artık arkasındaki ekran çok kalabalık olsa da bir açılır pencerenin görünümlerini listeliyor (#162).
+
+* **TikTok:** Hushfeed ayarları artık TikTok'u Basitleştirilmiş Çince ile de takip edebiliyor.
+
+* **TikTok:** Ekran görüntüsüne ve Circle to Search'e izin ver artık TikTok'un ana penceresi dışında açtığı açılır pencereleri de kapsıyor.
+
+* **TikTok:** Bir sonraki sürümden itibaren Morphe Manager en yeni sürümün tüm değişiklik listesini gösteriyor.
+
+* **TikTok:** Hushfeed ile TikTok 47.1.4, Android 17'nin katı 16 KB sayfa kontrollerini geçti.
+
+* **TikTok:** Profil sekmesi, 0.72.0'dan beri çöktüğü ya da boş açıldığı telefonlarda yeniden açılıyor (#165, #140).
+
+* **TikTok:** Koyu veya Siyah bir Altyazı arka planı TikTok'un yuvarlak köşelerini koruyor (#158).
+
+* **TikTok:** Uzun basınca profil fotoğrafını kaydet TikTok 47.1.4'te yeniden çalışıyor (#160).
+
+* **TikTok:** Yorumların üzerindeki arama önerilerini gizle açıkken, yorumlar artık sayının üstünde boş beyaz bir şeritle açılmıyor (#161).
+
 * **TikTok:** Yeni bir anahtar, bir yoruma basılı tutunca açılan menüye Bu yorumu yazanı engelle seçeneğini ekler (#169).
+
+* **TikTok:** Şeffaf durum çubuğu açıkken artık her akış videosu yalnızca ilki değil, saatin altına kadar uzanıyor (#164).
+
+* **TikTok:** Alt sekmelerdeki okunmamış rozetlerini gizle artık TikTok'un Gelen kutusu üstünde gösterdiği balonu da engelliyor (#170).
+
+* **TikTok:** Bir profil ızgarasından büyük bir seçimi kaydetmek artık birkaç videodan sonra durmuyor. Her videonun artık kendi iki dakikası var (#27).
 
 * **TikTok:** Arama sayfasındaki önerileri gizle artık bazı hesapların hâlâ gördüğü önerilen aramalar listesini de gizliyor.
 

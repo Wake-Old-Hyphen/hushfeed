@@ -1779,6 +1779,67 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok captionstate" + (out.length() == 0 ? " none" : out.toString()));
                         break;
                     }
+                    case "overlap": {
+                        // Whether two kinds of view cross on screen: -e a <id name> -e b <id name>.
+                        // Only views shown in a visible window and inside the screen count, so the
+                        // cells above and below the current video and a stopped activity behind
+                        // an opened one stay out. Places come from getLocationOnScreen, offsets
+                        // included, which is where a hider's lift actually draws them. Rects that
+                        // only touch don't cross (#145: the like count on the time).
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.content.res.Resources resources = activity.getResources();
+                        String aName = intent.getStringExtra("a");
+                        String bName = intent.getStringExtra("b");
+                        if (aName == null || bName == null) throw new IllegalArgumentException("overlap needs -e a and -e b");
+                        int aId = resources.getIdentifier(aName, "id", activity.getPackageName());
+                        int bId = resources.getIdentifier(bName, "id", activity.getPackageName());
+                        android.util.DisplayMetrics metrics = resources.getDisplayMetrics();
+                        android.graphics.Rect screen = new android.graphics.Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
+                        java.util.List<android.graphics.Rect> aRects = new java.util.ArrayList<>();
+                        java.util.List<android.graphics.Rect> bRects = new java.util.ArrayList<>();
+                        java.util.ArrayDeque<android.view.View> pending = new java.util.ArrayDeque<>(windowRoots());
+                        while (!pending.isEmpty()) {
+                            android.view.View view = pending.removeFirst();
+                            int id = view.getId();
+                            if (id != 0 && (id == aId || id == bId) && view.isShown()
+                                    && view.getWindowVisibility() == android.view.View.VISIBLE
+                                    && view.getWidth() > 0 && view.getHeight() > 0) {
+                                int[] where = new int[2];
+                                view.getLocationOnScreen(where);
+                                android.graphics.Rect rect = new android.graphics.Rect(where[0], where[1],
+                                        where[0] + view.getWidth(), where[1] + view.getHeight());
+                                if (android.graphics.Rect.intersects(rect, screen)) {
+                                    if (id == aId) aRects.add(rect);
+                                    if (id == bId) bRects.add(rect);
+                                }
+                            }
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) pending.add(group.getChildAt(i));
+                            }
+                        }
+                        StringBuilder out = new StringBuilder();
+                        int crossing = 0;
+                        for (android.graphics.Rect a : aRects) {
+                            for (android.graphics.Rect b : bRects) {
+                                if (!android.graphics.Rect.intersects(a, b)) continue;
+                                crossing++;
+                                out.append(" cross[").append(aName).append(' ').append(a.toShortString())
+                                        .append(" over ").append(bName).append(' ').append(b.toShortString())
+                                        .append(" by ").append(Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top)).append("px]");
+                            }
+                        }
+                        for (android.graphics.Rect a : aRects) out.append(" a").append(a.toShortString());
+                        for (android.graphics.Rect b : bRects) out.append(" b").append(b.toShortString());
+                        // An id this build lacks must not read the same as nothing crossing.
+                        if (aId == 0) out.append(' ').append(aName).append("=missing");
+                        if (bId == 0) out.append(' ').append(bName).append("=missing");
+                        Log.i(TAG, "ok overlap a=" + aName + " b=" + bName + " shownA=" + aRects.size()
+                                + " shownB=" + bRects.size() + " crossing=" + crossing + out);
+                        break;
+                    }
                     case "fadestate": {
                         // The feed controls Fade the video controls and Clear display both write
                         // opacity to (#84): for each shown rail column, caption, anchor frame, search

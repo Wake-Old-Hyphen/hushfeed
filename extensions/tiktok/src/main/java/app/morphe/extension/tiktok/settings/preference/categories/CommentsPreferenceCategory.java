@@ -32,6 +32,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.languagePageTranslationsEnabled
+                || SettingsStatus.feedTranslationsEnabled
                 || SettingsStatus.hideCommentQuickReactionsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
@@ -53,6 +54,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.languagePageTranslationsEnabled
+                || SettingsStatus.feedTranslationsEnabled
                 || SettingsStatus.commentSortControlsEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
@@ -99,12 +101,11 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.COMMENT_TRANSLATE_BUTTON
             ));
         }
-        if (SettingsStatus.languagePageTranslationsEnabled) {
+        if (SettingsStatus.languagePageTranslationsEnabled || SettingsStatus.feedTranslationsEnabled) {
             addPreference(new TogglePreference(
                     context,
-                    "Show translation options in Language settings",
-                    "Brings back the translation rows on TikTok's Language page, under Settings and privacy, "
-                            + "for accounts that only see App language there.",
+                    "Bring back TikTok's translation",
+                    translationSummary(),
                     Settings.SHOW_TRANSLATION_SETTINGS
             ));
         }
@@ -327,5 +328,21 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.ENABLE_VOICE_COMMENTS
             ));
         }
+    }
+
+    /** What the translation switch brings back, by which of its two hooks this build has. */
+    static String translationSummary() {
+        // Each one whole, so the translation tables' check finds it in the source as written.
+        if (!SettingsStatus.feedTranslationsEnabled) {
+            return "Brings back the translation rows on TikTok's Language page, under Settings and privacy, "
+                    + "for accounts that only see App language there.";
+        }
+        if (!SettingsStatus.languagePageTranslationsEnabled) {
+            return "For accounts TikTok took translation away from. Brings back See translation under video "
+                    + "descriptions and in captions. Restart TikTok to see the change.";
+        }
+        return "For accounts TikTok took translation away from. Brings back See translation under video "
+                + "descriptions and in captions, and the translation rows on the Language page in Settings "
+                + "and privacy. Restart TikTok to see it on videos.";
     }
 }

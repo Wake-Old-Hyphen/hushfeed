@@ -12,10 +12,13 @@ import app.morphe.util.addInstructions
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 /**
  * TikTok's Settings and privacy > Language page (the route `//display/caption/setting_compose`).
@@ -98,6 +101,82 @@ internal fun MutableMethod.showLanguagePageTranslations() {
             """,
         )
     }
+}
+
+/** The App AB value that takes translation off the videos at 1 (#143). */
+internal const val FEED_TRANSLATION_REVERSE = "feed_translation_reverse"
+
+/** The App AB int getter's parameters: the setting id, the default, the key and whether to log the exposure. */
+private val APP_AB_INT_PARAMETERS = listOf("I", "I", "Ljava/lang/String;", "Z")
+
+/**
+ * The index of the move-result that takes TikTok's `feed_translation_reverse` here, or null when
+ * this method doesn't read it.
+ *
+ * At 1 the value takes translation off the videos: on 47.1.4 every check in
+ * `CLATranslatabilityServiceImpl` (See translation under a description, translated captions,
+ * photo titles, text stickers) asks it first and gives up. TikTok reads it in one place, a lazy
+ * that hands the App AB int getter the key as its third argument and keeps the answer for the
+ * process. Only that read counts. The key also sits in TikTok's list of every AB value and in a
+ * debug map, and neither of those is a read.
+ */
+internal fun Method.feedTranslationReverseRead(): Int? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    val reads = instructions.indices.filter { index ->
+        val call = instructions[index]
+        val target = call.getReference<MethodReference>() ?: return@filter false
+        if (target.returnType != "I" || target.parameterTypes.map { it.toString() } != APP_AB_INT_PARAMETERS) {
+            return@filter false
+        }
+        if (instructions.getOrNull(index + 1)?.opcode != Opcode.MOVE_RESULT) return@filter false
+        val arguments = call.argumentRegisters() ?: return@filter false
+        // The key is the third parameter, after `this` on an instance call.
+        val key = arguments.getOrNull(if (call.opcode.isStaticInvoke()) 2 else 3) ?: return@filter false
+        keyLoadedInto(instructions, index, key)
+    }
+    return reads.singleOrNull()?.plus(1)
+}
+
+/** Whether the last write to [register] before [call] loads the reverse key. */
+private fun keyLoadedInto(instructions: List<Instruction>, call: Int, register: Int): Boolean {
+    for (index in call - 1 downTo 0) {
+        val instruction = instructions[index]
+        if (instruction !is OneRegisterInstruction || instruction.registerA != register) continue
+        if (instruction.opcode != Opcode.CONST_STRING && instruction.opcode != Opcode.CONST_STRING_JUMBO) return false
+        return instruction.getReference<StringReference>()?.string == FEED_TRANSLATION_REVERSE
+    }
+    return false
+}
+
+private fun Opcode.isStaticInvoke() = this == Opcode.INVOKE_STATIC || this == Opcode.INVOKE_STATIC_RANGE
+
+/** The registers an invoke passes, in order, or null for anything that isn't an invoke. */
+private fun Instruction.argumentRegisters(): List<Int>? = when (this) {
+    is RegisterRangeInstruction -> (startRegister until startRegister + registerCount).toList()
+    is FiveRegisterInstruction -> listOf(registerC, registerD, registerE, registerF, registerG).take(registerCount)
+    else -> null
+}
+
+/** TikTok's reverse answer goes through LanguagePageTranslations.feedReverse before the lazy keeps it. */
+internal fun MutableMethod.keepTranslationOnVideos() {
+    val move = feedTranslationReverseRead()
+        ?: throw PatchException("Translate comments: TikTok's $FEED_TRANSLATION_REVERSE read is not where it was.")
+    val register = getInstruction<OneRegisterInstruction>(move).registerA
+    addInstructions(
+        move + 1,
+        """
+            invoke-static/range {v$register .. v$register}, $LANGUAGE_PAGE_TRANSLATIONS->feedReverse(I)I
+            move-result v$register
+        """,
+    )
+}
+
+/**
+ * Lets the reader keep See translation on videos when TikTok's server takes it off their account
+ * (#143). Fails closed: exactly one method may read the value the way TikTok's lazy does.
+ */
+internal fun BytecodePatchContext.hookFeedTranslations() {
+    FeedTranslationReverseFingerprint.method.keepTranslationOnVideos()
 }
 
 /**

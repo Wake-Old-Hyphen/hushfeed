@@ -302,6 +302,8 @@ Blocking,阻塞
 Bottom tabs to keep,要保留的底部选项卡
 Brightness,亮度
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.",对于仅在那里看到应用程序语言的帐户，在 TikTok 的语言页面上的“设置和隐私”下返回翻译行.
+For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,适用于被 TikTok 取消翻译的帐户。恢复视频描述下方和字幕中的“查看翻译”。重新启动 TikTok 以查看更改.
+"For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.",适用于被 TikTok 取消翻译的帐户。恢复视频描述下方和字幕中的“查看翻译”，以及“设置和隐私”下语言页面上的翻译行。重新启动 TikTok 以在视频中查看.
 Browse,浏览
 Budgets and reminders,预算和提醒
 Build details,构建细节
@@ -478,7 +480,6 @@ Daily time budget,每日时间预算
 Daily video budget,每日视频预算
 Dark,黑暗
 Dark Favorites popup,深色收藏夹弹出窗口
-Dark LIVE panels in dark mode,深色模式下的深色 LIVE 面板
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,记住视频的日子。零消除了年龄限制。历史最多保留 %1$s 个视频.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.",天。零保留着每个年龄。没有可用时间戳的帖子（包括未来的帖子）保持可见.
 Default,默认
@@ -1584,7 +1585,7 @@ Show the time zone,显示时区
 Show the whole Activity and New followers lists instead of stopping at a View all button.,显示整个活动和新关注者列表，而不是停在“查看全部”按钮上.
 "Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.",显示整个视频而不是将其裁剪到窗口。对于已经适合的高手机来说，没有任何变化。在打开的折叠手机上，方形屏幕或分屏视图的侧面或末端不再被切断.
 Show translation,显示翻译
-Show translation options in Language settings,在语言设置中显示翻译选项
+Bring back TikTok's translation,恢复 TikTok 的翻译
 Show what is left of the budget,显示预算的剩余金额
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.",显示视频发布时间，精确到秒，并用您的时区代替 TikTok 的短日期，并用创建者的姓名表示.
 Show when the camera or microphone is in use,显示何时使用摄像头或麦克风
@@ -2100,7 +2101,6 @@ When to send,何时发送
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.",当诊断日志记录打开时，一条消息会指出 Hushfeed 失败的部分。关闭仅在报告中保留失败.
 Who to message,给谁发消息
 Window width needed to enable the layout. Restart TikTok to apply this.,启用布局所需的窗口宽度。重新启动 TikTok 以应用此操作.
-"With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.",TikTok 处于深色模式时，LIVE 房间仍会以浅色打开分享菜单、粉丝团和其他面板。开启后它们会以深色打开.
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",当淡入度低于 100 时，按钮和标题会以清晰显示的方式保留在屏幕上，点击即可浏览它们并观看视频。关闭时，清除显示会像 100 时那样隐藏它们.
 "Word rules only, not every feed filter:",仅单词规则，并非每个信息流过滤器:
 "Words, countries and languages",单词、国家和语言
@@ -2149,9 +2149,5 @@ expanded,扩大
 this creator,这位创造者
 Only on the sides of the video,仅在视频两侧
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,长按所选的操作只在视频的左侧和右侧三分之一生效。在中间长按仍会打开 TikTok 自带的菜单。需要把长按设为 TikTok 默认以外的选项.
-Where the time goes,时间显示位置
-Beside the bar,在进度条旁边
-Above the bar,在进度条上方
-"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",选择上方时，只要屏幕上没有东西挡着，时间就显示在进度条右端上方，有东西挡着时则显示在进度条旁边.
 Full-width progress bar,全宽进度条
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",进度条从屏幕一侧延伸到另一侧，去掉 TikTok 在两端留下的空隙.

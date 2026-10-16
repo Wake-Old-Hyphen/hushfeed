@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** With Hide the comment bar on opened videos on, the like count no longer sits on the progress bar when Like is the lowest button left on the right (#145).
+
+* **TikTok:** The translation switch under Comments is now Bring back TikTok's translation. It also brings back See translation on videos and in captions, and asks for a restart (#143).
+
+* **TikTok:** With Log diagnostics on, an exported report now shows whether a LIVE comment went to the room you were in (#110).
+
+* **TikTok:** Long videos on a slow connection save now instead of stopping after two minutes. A download that stops getting data still ends (#179).
+
+* **TikTok:** Hide the rewards shortcut now offers a restart when you flip it.
+
+* **TikTok:** Copy bio and IDs also puts Copy username and Copy user ID on the Share profile sheet in Settings and privacy.
+
+* **TikTok:** Turn off screen transitions works again, so pages open with a plain cut.
+
+* **TikTok:** Hide suggested accounts now offers a restart when you flip it, since the Friends tab and profiles keep the cards they already drew.
+
+* **TikTok:** Copy the full link for short links works with Clean up shared links off too, and it handles tiktok.com/t/ links now.
+
+* **TikTok:** Turning Default playback speed off now counts from the very next video.
 
 * **TikTok:** Remove content credential and card scanner assets and Remove creation tools no longer leave parts of TikTok in English on a phone set to another language. Patch again to get yours back (#125).
 
-* **TikTok:** A new switch opens LIVE panels like the fan club dark while TikTok is in dark mode (#159).
-
 * **TikTok:** The LIVE Video quality list no longer shows its rows white on white in dark mode (#57).
+
+* **TikTok:** With Automatic Clear display on and no delay, a video opened from search starts cleared instead of showing its buttons for a second (#84).
 
 * **TikTok:** With Hide the Tako bubble on, a caption that fits no longer shows a "more" on videos with Tako content (#162).
 
 * **TikTok:** Accent color has a new Follow the wallpaper option that takes the color from your wallpaper on Android 12 and up (#163).
 
-* **TikTok:** Two new choices for the progress bar: the time can sit above the bar, and the bar can run edge to edge (#173).
+* **TikTok:** A new Full-width progress bar switch runs the progress bar from one screen edge to the other (#173).
+
+* **TikTok:** With Hide the Tako bubble on, tapping a caption expands it in place instead of opening the Ask Tako sheet (#162).
 
 * **TikTok:** A new switch keeps your Long press choice to the sides of the video, so a press in the middle still opens TikTok's menu (#136).
 
+* **TikTok:** With Hide the comment bar on opened videos on, Share and its label no longer cover the end of the progress bar (#153).
+
+* **TikTok:** The LIVE chat auto-translate preset in Feature Gate Lab now tells you it also needs Override SIM details set to Japan (#98).
+
+* **TikTok:** A recorded screen layout now lists a popup's views even when the screen behind it is busy (#162).
+
+* **TikTok:** Hushfeed settings can now follow TikTok in Simplified Chinese.
+
+* **TikTok:** Allow screenshots and Circle to Search now also covers popups TikTok opens outside its main window.
+
+* **TikTok:** From the next release on, Morphe Manager shows the newest release's whole change list.
+
+* **TikTok:** TikTok 47.1.4 with Hushfeed passed Android 17's strict 16 KB page checks.
+
+* **TikTok:** The Profile tab opens again on phones where it crashed or came up blank since 0.72.0 (#165, #140).
+
+* **TikTok:** A Dark or Black caption background keeps TikTok's rounded corners (#158).
+
+* **TikTok:** Save a profile picture on a long press works again on TikTok 47.1.4 (#160).
+
+* **TikTok:** With Hide search suggestions above comments on, comments no longer open with an empty white band above the count (#161).
+
 * **TikTok:** A new switch adds Block this commenter to the menu a long press on a comment opens (#169).
+
+* **TikTok:** With See-through status bar on, every feed video reaches up under the clock now, not only the first one (#164).
+
+* **TikTok:** Hide the unread badges on the bottom tabs also keeps away the bubble TikTok floats over Inbox (#170).
+
+* **TikTok:** Saving a big pick from a profile grid no longer stops a few videos in. Each video gets its own two minutes now (#27).
 
 * **TikTok:** Hide suggestions on the search page now also hides the "You may like" list some accounts still saw.
 

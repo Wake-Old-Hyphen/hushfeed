@@ -1,20 +1,70 @@
-## Unreleased
+## 0.75.0 (2026-10-16)
+
+* **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, il numero di Mi piace non sta più sopra la barra di avanzamento quando Mi piace è l'ultimo pulsante rimasto in basso a destra (#145).
+
+* **TikTok:** L'interruttore della traduzione in Commenti ora si chiama Riporta la traduzione di TikTok. Riporta anche «Visualizza traduzione» su video e sottotitoli e chiede un riavvio (#143).
+
+* **TikTok:** Con Registra la diagnostica attivo, un report esportato ora mostra se un commento LIVE è arrivato nella stanza in cui eri (#110).
+
+* **TikTok:** I video lunghi con una connessione lenta ora si salvano invece di fermarsi dopo due minuti. Un download che smette di ricevere dati si ferma comunque (#179).
+
+* **TikTok:** Nascondi la scorciatoia delle ricompense ora offre un riavvio quando lo cambi.
+
+* **TikTok:** Copia bio e ID mette Copia nome utente e Copia ID utente anche nel foglio Condividi profilo di Impostazioni e privacy.
+
+* **TikTok:** Disattiva le transizioni tra schermate funziona di nuovo, quindi le pagine si aprono senza animazione.
+
+* **TikTok:** Nascondi gli account suggeriti ora offre un riavvio quando lo cambi, perché la scheda Amici e i profili tengono le schede già mostrate.
+
+* **TikTok:** Copia il link completo per i link brevi ora funziona anche con Pulisci i link condivisi disattivato, e accetta anche i link tiktok.com/t/.
+
+* **TikTok:** Disattivare Velocità di riproduzione predefinita ora vale già dal video successivo.
 
 * **TikTok:** Rimuovi i file delle credenziali dei contenuti e dello scanner di carte e Rimuovi gli strumenti di creazione non lasciano più parti di TikTok in inglese su un telefono in un'altra lingua. Rifai la patch per riavere la tua (#125).
 
-* **TikTok:** Un nuovo interruttore apre scuri i pannelli LIVE come il fan club quando TikTok è in modalità scura (#159).
-
 * **TikTok:** L'elenco Qualità video delle LIVE non mostra più le righe bianco su bianco in modalità scura (#57).
+
+* **TikTok:** Con Vista pulita automatica attiva e senza ritardo, un video aperto dalla ricerca parte già pulito invece di mostrare i pulsanti per un secondo (#84).
 
 * **TikTok:** Con Nascondi la bolla di Tako attivo, una didascalia che ci sta tutta non mostra più un «altro» nei video con contenuti Tako (#162).
 
 * **TikTok:** Accent color ha una nuova opzione, Segui lo sfondo, che prende il colore dal tuo sfondo da Android 12 in poi (#163).
 
-* **TikTok:** Due nuove opzioni per la barra di avanzamento: il tempo può stare sopra la barra e la barra può occupare tutta la larghezza (#173).
+* **TikTok:** Un nuovo interruttore, Barra di avanzamento a tutta larghezza, porta la barra di avanzamento da un bordo dello schermo all'altro (#173).
+
+* **TikTok:** Con Nascondi la bolla di Tako attivo, toccare una didascalia la espande sul posto invece di aprire il foglio Ask Tako (#162).
 
 * **TikTok:** Un nuovo interruttore limita la scelta di Pressione prolungata ai lati del video, così una pressione al centro apre ancora il menu di TikTok (#136).
 
+* **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, Condividi e la sua etichetta non coprono più la fine della barra di avanzamento (#153).
+
+* **TikTok:** Il preset per la traduzione automatica della chat LIVE nel Feature Gate Lab ora dice che serve anche Sovrascrivi i dati SIM con il Giappone (#98).
+
+* **TikTok:** Un layout dello schermo registrato ora elenca le viste di un popup anche quando lo schermo dietro è molto pieno (#162).
+
+* **TikTok:** Le impostazioni di Hushfeed ora possono seguire TikTok in cinese semplificato.
+
+* **TikTok:** Consenti screenshot e Circle to Search ora vale anche per i popup che TikTok apre fuori dalla sua finestra principale.
+
+* **TikTok:** Dalla prossima versione, Morphe Manager mostra l'elenco completo delle modifiche della versione più recente.
+
+* **TikTok:** TikTok 47.1.4 con Hushfeed ha superato i rigidi controlli sulle pagine da 16 KB di Android 17.
+
+* **TikTok:** La scheda Profilo si apre di nuovo sui telefoni dove dalla 0.72.0 si chiudeva o restava vuota (#165, #140).
+
+* **TikTok:** Uno Sfondo dei sottotitoli Scuro o Nero mantiene gli angoli arrotondati di TikTok (#158).
+
+* **TikTok:** Salva la foto del profilo con una pressione prolungata funziona di nuovo su TikTok 47.1.4 (#160).
+
+* **TikTok:** Con Nascondi i suggerimenti di ricerca sopra i commenti attivo, i commenti non si aprono più con una fascia bianca vuota sopra il conteggio (#161).
+
 * **TikTok:** Un nuovo interruttore aggiunge Blocca l'autore del commento al menu che si apre tenendo premuto un commento (#169).
+
+* **TikTok:** Con Barra di stato trasparente attiva, ogni video del feed ora arriva fin sotto l'orologio, non solo il primo (#164).
+
+* **TikTok:** Nascondi i badge non letti sulle schede in basso ora tiene lontana anche la bolla che TikTok mostra sopra Posta (#170).
+
+* **TikTok:** Salvare una selezione grande da una griglia del profilo non si ferma più dopo pochi video. Ogni video ora ha i suoi due minuti (#27).
 
 * **TikTok:** Nascondi i suggerimenti nella pagina di ricerca ora nasconde anche l'elenco delle ricerche consigliate che alcuni account vedevano ancora.
 

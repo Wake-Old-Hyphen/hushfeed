@@ -4,68 +4,43 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.75.0 (2026-10-16)
+
 ### Features and fixes
 
+* **TikTok:** With `Hide the comment bar on opened videos` on and Like the lowest button left on the right, the like count no longer sits on the progress bar and the time beside it. The buttons already moved up to clear the bar, but they stopped at the heart and left its count under it (#145).
+* **TikTok:** `Show translation options in Language settings` is now `Bring back TikTok's translation`, and it brings back See translation under video descriptions and in captions as well. TikTok takes translation away from some accounts with one setting on its side, which hid the button on videos along with the Language page rows. Turning it on asks for a restart now, since TikTok checks that setting once when it starts (#143).
+* **TikTok:** With `Log diagnostics` on, an exported report now notes each LIVE room TikTok enters and whether a LIVE comment went to that same room. It's for comments that show for you but never reach the room (#110). Room ids and what you typed stay out of it.
+* **TikTok:** A long video on a slow connection saves now instead of stopping with "The video couldn't be saved". Every save had two minutes, and a big file was cut off while it was still coming in. A download that keeps moving gets up to 20 minutes, and one that goes 30 seconds without any data still stops (#179).
 * **TikTok:** Hide the rewards shortcut shows a restart button now when you flip it. Hushfeed hides the gift box as TikTok draws the profile, so a profile that was already open kept it until TikTok restarted.
-
 * **TikTok:** Copy bio and IDs puts Copy username and Copy user ID on the Share profile sheet in Settings and privacy too. That sheet only has Send to and the apps row, so the buttons never showed up there. They now sit under the apps.
-
 * **TikTok:** Turn off screen transitions works again. TikTok asks for its own slide after the screen has opened, later than Hushfeed used to ask for none, so pages kept sliding in with the switch on. Hushfeed asks again after TikTok now, and pages like Hushfeed's settings open with a plain cut.
-
 * **TikTok:** Hide suggested accounts shows a restart button now when you flip it. The Friends tab and profiles keep the suggestion cards they've already drawn until TikTok restarts, so turning it on while TikTok was open seemed to do nothing there. The Inbox still changes right away.
-
 * **TikTok:** Copy the full link for short links now works with Clean up shared links off. TikTok shortens a link that still has its tracking on its own servers, after Hushfeed has already seen it, so the short link reached the clipboard untouched. It also takes the tiktok.com/t/ short form now, not only vt.tiktok.com and vm.tiktok.com.
-
 * **TikTok:** Turning Default speed off now counts from the very next video. Before, the video after it still played at the old default, since TikTok hands each video the last one's speed when you swipe and Hushfeed took that for a speed you'd picked. Speeds you pick yourself work as before.
-
 * **TikTok:** Remove content credential and card scanner assets and Remove creation tools no longer leave parts of TikTok in English on a phone set to another language. Both emptied small code packages that TikTok loads every time it starts, and when one was empty, buttons and other text of TikTok's own came up in English. Those packages now stay. Remove content credential and card scanner assets no longer takes out TikTok's on-device AI files either (Stop on-device AI profiling still keeps that AI from starting), so it now saves about 11 MB, and Remove creation tools about 38 MB. Patch again to get your language back (#125).
-
-* **TikTok:** LIVE controls can open LIVE panels dark while TikTok is in dark mode. TikTok keeps a LIVE room's fan club sheet, first gift dialog and similar panels light even in a dark app, so they flashed white over the stream. Turn on Dark LIVE panels in dark mode in Hushfeed settings > Playback. Light mode doesn't change (#159).
-
-* **TikTok:** The Video quality list in a LIVE room's Share menu no longer shows its qualities white on white in dark mode. Text in that list that can't be read against what's behind it now turns white on a dark row and dark on a light one, with or without Dark LIVE panels. Light mode doesn't change (#57).
-
+* **TikTok:** The Video quality list in a LIVE room's Share menu no longer shows its qualities white on white in dark mode. Text in that list that can't be read against what's behind it now turns white on a dark row and dark on a light one. Light mode doesn't change (#57).
 * **TikTok:** With Automatic Clear Display on and no delay, a video opened from search starts cleared. Before, it showed its buttons, its caption, the comment box and the "find related content" bar along the top for about a second before they went, every time a result was opened. TikTok now opens those videos inside its main screen rather than a page of their own, so the hold that keeps the controls away until the clear lands never started there (#84).
-
 * **TikTok:** With Hide the Tako bubble on, a caption that already fits no longer shows a "more" on videos with Tako content. That "more" led into the search sheet, so with the sheet skipped it looked like a button that did nothing. These captions now behave like the ones on any other video: "more" only when the text is cut off, and a tap expands the caption in place. Turn the switch off, or pause Hushfeed, and TikTok's own captions come back (#162).
-
 * **TikTok:** Accent color has a new patch option, Follow the wallpaper. On Android 12 and up, TikTok's buttons and red text take the color of your wallpaper theme and change on their own when you change the wallpaper, with no new patch needed. Android 11 and older keep TikTok's red, and the color you pick above isn't used while the option is on (#163).
-
-* **TikTok:** Two new choices sit under Show the time beside the progress bar in Playback. Where the time goes can put the time above the bar, over its right end under the buttons, and it drops back beside the bar whenever a caption, a button or the music disc would be under it. Full-width progress bar takes away the gap TikTok leaves at each end, so the bar runs from one screen edge to the other and dragging still seeks. The time stays beside the bar and the gap stays unless you change them, and turning them off or pausing Hushfeed puts the row back as TikTok built it (#173).
-
+* **TikTok:** A new Full-width progress bar switch sits under Show the time beside the progress bar in Playback. It takes away the gap TikTok leaves at each end, so the bar runs from one screen edge to the other and dragging still seeks. Turning it off or pausing Hushfeed puts the bar back as TikTok built it (#173).
 * **TikTok:** With Hide the Tako bubble on, tapping a caption (or its "more") no longer opens a sheet with "Discover more with Tako" and an "Ask Tako" box on some videos. The caption expands in place instead, the way it already did on videos without Tako content. Turn the switch off, or pause Hushfeed, and TikTok's sheet comes back (#162).
-
 * **TikTok:** A new switch, Only on the sides of the video, sits right under Long press in the Gestures section of Feed screen. Pick any Long press choice other than TikTok default, turn it on, and the choice runs only on the left and right thirds of the video. A press in the middle opens TikTok's own menu again, with Download, Not interested, Speed and the rest. It's off by default (#136).
-
 * **TikTok:** With Hide the comment bar on opened videos on, Share and its label no longer sit over the end of the progress bar and the time beside it. On a video with no music disc, Share is the lowest button on the right, and only the disc used to move up out of the bar's way. Now the whole row of buttons goes up when it needs to (#153).
-
 * **TikTok:** The LIVE chat auto-translate preset in Feature Gate Lab now says what else it needs. Its Translate comments button only shows up with a Japanese SIM too, so the preview asks you to turn on Override SIM details and pick Japan, NTT DOCOMO before you restart TikTok (#98).
-
 * **TikTok:** A recorded screen layout now lists a popup's own views even when the screen behind it is very busy, and it no longer spends its space on the next video waiting under the For You feed. Before, the export could run out of room before it reached a card on screen (#162).
-
 * **TikTok:** Hushfeed settings can now follow TikTok in Simplified Chinese. The complete first translation covers the settings pages, dialogs and runtime messages. Traditional Chinese stays in English until it has its own translation, and corrections to this first pass are welcome.
-
 * **TikTok:** Allow screenshots and Circle to Search now covers popups that TikTok builds outside an Activity window. A controlled Android 15 check of TikTok's own Compose popup showed black with the switch off, visible content with it on, and black again while Hushfeed was paused. Naturally served popups still depend on what TikTok enables for an account.
-
 * **TikTok:** Starting with the next release, Morphe Manager shows that release's whole change list even while it is the newest one. Before, Manager showed only the short bundle summary for the release on a phone, then showed its full list after another release came out. The published 0.74.0 index stays unchanged.
-
 * **TikTok:** The current TikTok 47.1.4 build passed strict Android 17 16 KB-page runtime checks. It cold-started twice and played more than one feed video with compatibility mode disabled on the 16 KB emulator. The target-37 audit also covers the reflection used by Block this commenter. Static alignment results remain separate and don't claim that every bundled 32-bit file is compatible.
-
 * **TikTok:** The Profile tab opens again on phones where it crashed or came up blank since 0.72.0. Two of Show follow status's hooks left a value typed two ways where their paths met, and some phones' Android refused the whole profile name class for it (#165, #140).
-
 * **TikTok:** A Dark or Black caption background keeps the rounded corners TikTok gives the caption. Hushfeed used to put a plain color in place of TikTok's rounded shape, so the corners came out square. The color now fills TikTok's own shape (#158).
-
 * **TikTok:** Save a profile picture on a long press works again. On TikTok 47.1.4 every hold on a profile picture said "Open the profile again and try once more", because Hushfeed looked for the profile under a name an older TikTok gave it. It now finds the profile the picture belongs to however TikTok names it, and still checks it against the @name on screen before saving (#160).
-
 * **TikTok:** With Hide search suggestions above comments on, comments no longer open with an empty white band above the comment count on some videos. On some accounts TikTok saves the banner's spot before it builds the banner, so hiding only the banner left its spot behind. The switch now answers TikTok's own "any suggestion here?" check, so no spot is saved, and the newer style of that banner goes too (#161).
-
 * **TikTok:** A comment's menu can now block the person who wrote it. Press and hold a comment and pick Block this commenter, and their comments leave the list right away, the way they do after a block from their profile. A banner names who you blocked and offers Undo. Turn on Block from a comment's menu in Hushfeed settings > Comments, under Blocking (#169).
-
 * **TikTok:** With See-through status bar on, every feed video now reaches up under the clock, not only the first one after TikTok starts. TikTok plays that first video in a surface it makes at launch, and later videos can play in another kind of player with no surface inside it, so they kept a black band above and below. That player grows now too. With Fit the video to the screen also on, Fit wins and the whole picture stays in view instead of being grown back over its sides. Fill the screen with the video already covers the screen, so it and See-through status bar don't undo each other (#164).
-
 * **TikTok:** Hide the unread badges on the bottom tabs also keeps down the bubble TikTok floats over Inbox when it opens, the one counting new likes, followers, comments and who's LIVE. It used to take only the red counts and dots off the tabs, so that bubble still came up every time (#170).
-
 * **TikTok:** Saving a big pick from a profile grid no longer gives up a few videos in with "the rest ran out of time". The whole save had two minutes for all its videos, so a pick of 50 always ran out. Each video now gets its own two minutes, and one that really stalls still stops the save (#27).
-
 * **TikTok:** Hide suggestions on the search page also hides the "You may like" list on accounts where TikTok 47.1.4 draws that list itself. On those accounts the list and its Refresh button stayed on the search page with the switch on, because none of the switch's hooks reached it. Your search history still shows, and turning the switch off brings the list back.
 
 ## 0.74.0 (2026-10-14)

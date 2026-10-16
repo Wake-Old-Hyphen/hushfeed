@@ -2145,15 +2145,11 @@ See-through status bar,Bilah status transparan
 "Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.","Biarkan video di feed utama menjangkau bagian atas layar, dengan jam dan ikon status di atasnya. Tab di bagian atas tetap di tempatnya."
 Floating bottom bar,Bilah bawah mengambang
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.","Tampilkan tab feed utama di atas kapsul gelap yang membulat dan transparan, yang mengambang di atas video. Perlu Bilah bawah transparan."
-Show translation options in Language settings,Tampilkan opsi terjemahan di pengaturan Bahasa
+Bring back TikTok's translation,Kembalikan terjemahan TikTok
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.","Mengembalikan baris terjemahan di halaman Bahasa TikTok, di Pengaturan dan privasi, untuk akun yang di sana hanya melihat Bahasa aplikasi."
+For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions. Restart TikTok to see the change.,Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video. Mulai ulang TikTok untuk melihat perubahannya.
+"For accounts TikTok took translation away from. Brings back See translation under video descriptions and in captions, and the translation rows on the Language page in Settings and privacy. Restart TikTok to see it on videos.","Untuk akun yang terjemahannya dihapus TikTok. Mengembalikan Lihat terjemahan di bawah deskripsi video dan di teks video, serta baris terjemahan di halaman Bahasa, di Pengaturan dan privasi. Mulai ulang TikTok untuk melihatnya di video."
 Only on the sides of the video,Hanya di sisi video
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Pilihan Tekan lama hanya berjalan di sepertiga kiri dan kanan video. Tekan di tengah tetap membuka menu bawaan TikTok. Perlu pilihan Tekan lama selain Bawaan TikTok.
-"Dark LIVE panels in dark mode","Panel LIVE gelap di mode gelap"
-"With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.","Saat TikTok dalam mode gelap, ruang LIVE tetap membuka menu bagikan, klub penggemar, dan panel lainnya dengan warna terang. Ini membukanya dalam warna gelap."
-Where the time goes,Posisi waktu
-Beside the bar,Di samping bilah
-Above the bar,Di atas bilah
-"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.","Di atas bilah menampilkan waktu di atas ujung kanan bilah selama tidak ada yang menghalangi di layar, dan di samping bilah saat ada yang menghalangi."
 Full-width progress bar,Bilah progres selebar layar
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Bilah progres membentang dari satu tepi layar ke tepi lainnya, tanpa celah yang disisakan TikTok di kedua ujung."
