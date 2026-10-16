@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie Teilen und den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
+
+* **TikTok:** Die LIVE-Liste Videoqualität zeigt ihre Zeilen im Dunkelmodus nicht mehr weiß auf weiß (#57).
+
+* **TikTok:** Bei eingeschaltetem „Tako-Blase ausblenden“ zeigt eine Beschreibung, die komplett passt, bei Videos mit Tako-Inhalt kein „mehr“ mehr (#162).
+
+* **TikTok:** Accent color hat die neue Option „Dem Hintergrundbild folgen“, die ab Android 12 die Farbe aus deinem Hintergrundbild übernimmt (#163).
+
+* **TikTok:** Zwei neue Optionen für den Fortschrittsbalken: Die Zeit kann über dem Balken stehen, und der Balken kann von Rand zu Rand laufen (#173).
+
 * **TikTok:** Ein neuer Schalter beschränkt deine Auswahl bei Langes Drücken auf die Seiten des Videos, sodass ein Druck in der Mitte weiterhin TikToks Menü öffnet (#136).
 
 * **TikTok:** Ein neuer Schalter fügt „Diesen Kommentierenden blockieren“ zum Menü hinzu, das sich beim langen Drücken auf einen Kommentar öffnet (#169).

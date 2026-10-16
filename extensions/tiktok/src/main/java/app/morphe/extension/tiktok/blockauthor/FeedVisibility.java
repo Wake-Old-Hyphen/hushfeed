@@ -7,6 +7,8 @@
 package app.morphe.extension.tiktok.blockauthor;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import android.view.ViewParent;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
+import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -111,6 +114,11 @@ public final class FeedVisibility {
 
     public static void onDetailView(Object page, View view) {
         detailPage(page).view = new WeakReference<>(view);
+        // On 47.1.4 a video opened from search is this fragment inside the main activity, not a
+        // DetailActivity, so the page's start window the activity opens never opened there and
+        // the video showed its controls and its search row for about a second (#84, Login2
+        // emulator 2026-10-15). A page in the detail pager has that window from the activity.
+        if (view != null && !isDetailPager(activityOf(view))) RememberClearDisplayPatch.onPageOpened(page);
     }
 
     public static void onDetailResume(Object page) {
@@ -120,6 +128,7 @@ public final class FeedVisibility {
     public static void onDetailPause(Object page) {
         PageState state = DETAIL_PAGES.get(page);
         if (state != null) state.resumed = false;
+        RememberClearDisplayPatch.onPageLeft(page);
     }
 
     public static void onDetailVisibility(Object page, boolean visible) {
@@ -128,6 +137,16 @@ public final class FeedVisibility {
 
     public static void onDetailDestroyed(Object page) {
         DETAIL_PAGES.remove(page);
+        RememberClearDisplayPatch.onPageLeft(page);
+    }
+
+    private static Activity activityOf(View view) {
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return (Activity) context;
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
     }
 
     static boolean isDetailVisible() {

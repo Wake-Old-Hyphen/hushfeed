@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda Paylaş və fan klubu kimi LIVE panellərini tünd açır (#159).
+
+* **TikTok:** LIVE-ın Video keyfiyyəti siyahısı qaranlıq rejimdə sətirlərini artıq ağ fonda ağ göstərmir (#57).
+
+* **TikTok:** Tako qabarcığını gizlədin aktiv olanda, tam sığan təsvir Tako məzmunlu videolarda artıq "daha çox" göstərmir (#162).
+
+* **TikTok:** Accent color-a Android 12 və daha yenisində rəngi divar kağızından götürən yeni Divar kağızını izlə seçimi əlavə olundu (#163).
+
+* **TikTok:** İrəliləyiş paneli üçün iki yeni seçim: vaxt panelin üstündə görünə bilər və panel kənardan kənara uzana bilər (#173).
+
 * **TikTok:** Yeni açar Uzun basma seçimini videonun yanlarında saxlayır, beləliklə ortada basmaq yenə TikTok menyusunu açır (#136).
 
 * **TikTok:** Yeni açar şərhə basıb saxlayanda açılan menyuya Bu şərh yazanı bloklayın seçimini əlavə edir (#169).

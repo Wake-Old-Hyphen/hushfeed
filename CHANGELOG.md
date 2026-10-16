@@ -6,6 +6,20 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
+* **TikTok:** LIVE controls can open LIVE panels dark while TikTok is in dark mode. TikTok keeps a LIVE room's share menu, fan club sheet, first gift dialog and similar panels light even in a dark app, so they flashed white over the stream. Turn on Dark LIVE panels in dark mode in Hushfeed settings > Playback. Light mode doesn't change (#159).
+
+* **TikTok:** The Video quality list in a LIVE room's Share menu no longer shows its qualities white on white in dark mode. Text in that list that can't be read against what's behind it now turns white on a dark row and dark on a light one, with or without Dark LIVE panels. Light mode doesn't change (#57).
+
+* **TikTok:** With Automatic Clear Display on and no delay, a video opened from search starts cleared. Before, it showed its buttons, its caption, the comment box and the "find related content" bar along the top for about a second before they went, every time a result was opened. TikTok now opens those videos inside its main screen rather than a page of their own, so the hold that keeps the controls away until the clear lands never started there (#84).
+
+* **TikTok:** With Hide the Tako bubble on, a caption that already fits no longer shows a "more" on videos with Tako content. That "more" led into the search sheet, so with the sheet skipped it looked like a button that did nothing. These captions now behave like the ones on any other video: "more" only when the text is cut off, and a tap expands the caption in place. Turn the switch off, or pause Hushfeed, and TikTok's own captions come back (#162).
+
+* **TikTok:** Accent color has a new patch option, Follow the wallpaper. On Android 12 and up, TikTok's buttons and red text take the color of your wallpaper theme and change on their own when you change the wallpaper, with no new patch needed. Android 11 and older keep TikTok's red, and the color you pick above isn't used while the option is on (#163).
+
+* **TikTok:** Two new choices sit under Show the time beside the progress bar in Playback. Where the time goes can put the time above the bar, over its left end, and it drops back beside the bar whenever a caption or other text on screen would be under it. Full-width progress bar takes away the gap TikTok leaves at each end, so the bar runs from one screen edge to the other and dragging still seeks. The time stays beside the bar and the gap stays unless you change them, and turning them off or pausing Hushfeed puts the row back as TikTok built it (#173).
+
+* **TikTok:** With Hide the Tako bubble on, tapping a caption (or its "more") no longer opens a sheet with "Discover more with Tako" and an "Ask Tako" box on some videos. The caption expands in place instead, the way it already did on videos without Tako content. Turn the switch off, or pause Hushfeed, and TikTok's sheet comes back (#162).
+
 * **TikTok:** A new switch, Only on the sides of the video, sits right under Long press in the Gestures section of Feed screen. Pick any Long press choice other than TikTok default, turn it on, and the choice runs only on the left and right thirds of the video. A press in the middle opens TikTok's own menu again, with Download, Not interested, Speed and the rest. It's off by default (#136).
 
 * **TikTok:** With Hide the comment bar on opened videos on, Share and its label no longer sit over the end of the progress bar and the time beside it. On a video with no music disc, Share is the lowest button on the right, and only the disc used to move up out of the bar's way. Now the whole row of buttons goes up when it needs to (#153).

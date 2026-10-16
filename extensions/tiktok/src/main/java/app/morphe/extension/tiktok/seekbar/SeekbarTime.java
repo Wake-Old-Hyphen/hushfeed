@@ -31,6 +31,11 @@ import app.morphe.extension.tiktok.settings.Settings;
  * buttons on the right, and it goes wherever the row goes: Clear display fades the row, and the
  * label follows the seek bar inside it. Ads and LIVE get no time. Turned off, or with Hushfeed
  * paused (every switch then answers off), the label comes out and the row is put back as it was.
+ *
+ * <p>Two choices sit beside the time (#173). {@link Settings#SEEKBAR_TIME_PLACEMENT} moves the
+ * label over the bar's left end while nothing on screen reaches into that spot (see {@link
+ * SeekbarTimePlacement}), and {@link Settings#SEEKBAR_FULL_WIDTH} takes TikTok's side gap off
+ * the bar's row ({@link SeekbarFullWidth}), with or without the time.
  */
 @SuppressWarnings("unused")
 public final class SeekbarTime {
@@ -94,12 +99,18 @@ public final class SeekbarTime {
             return;
         }
         try {
+            // The full-width bar (#173) doesn't depend on the time, and it is put back first so the
+            // label below attaches to the row as it will stay.
+            SeekbarFullWidth.apply(bar, SeekbarFullWidth.isEnabled());
             if (!isEnabled()) {
                 SeekbarTimeLabel.removeFrom(bar);
                 return;
             }
             SeekbarTimeLabel label = SeekbarTimeLabel.attach(bar);
-            if (label != null) label.show(percent, matching(percent, SystemClock.uptimeMillis()));
+            if (label == null) return;
+            long now = SystemClock.uptimeMillis();
+            label.show(percent, matching(percent, now));
+            label.place(SeekbarTimePlacement.wantsAbove(), now);
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Seekbar time: could not update the time", failure);
         }

@@ -408,6 +408,14 @@ public final class VideoOverlayHider {
     private static boolean fadedClear;
 
     /**
+     * Whether the current pass holds an opened video's controls away before its own clear has
+     * landed. The top bar is left to TikTok otherwise, and its Clear display takes it off a video
+     * opened from search, but until then the bar and its "find related content" box showed over
+     * the cleared video as the page opened (#84, Login2 emulator 2026-10-15).
+     */
+    private static boolean topBarHeld;
+
+    /**
      * How long a status bar may stay visible before it is hidden again on Android 11 and
      * up. A swipe from the top shows the bar transiently and the system takes it away by
      * itself, so re-hiding inside this window would only snap a peek shut. TikTok's own
@@ -583,6 +591,7 @@ public final class VideoOverlayHider {
             fadedClear = clearLive && chosenFade > 0 && chosenFade < 100 && Settings.FADE_IN_CLEAR_DISPLAY.get();
             fadeLevel = BurnInGuard.pass(activity, chosenFade, overlaysOn);
             boolean carryHides = carry && !fadedClear;
+            topBarHeld = carryHides && !RememberClearDisplayPatch.isClearDisplayNow();
             boolean tabStrip = !detailPager && clearLive;
             // The comment bar is the opened post's own; the main feed has the tabs there. TikTok
             // leaves it up in Clear display on a photo or video opened from search or a profile
@@ -1797,8 +1806,9 @@ public final class VideoOverlayHider {
                             setFaded(view, fadeLevel, fadedClear);
                         }
                     } else if (target == TOP_SEARCH_BAR_TARGET || target == TOP_SEARCH_SCRIM_TARGET) {
-                        // The way back out of the page: faded like the tabs, never past the floor.
-                        setFaded(view, Math.max(NAVIGATION_FADE_FLOOR, fadeLevel), fadedClear);
+                        // The way back out of the page: faded like the tabs, never past the floor,
+                        // and out of sight only until TikTok's own clear lands on the page.
+                        setFaded(view, topBarHeld ? 0 : Math.max(NAVIGATION_FADE_FLOOR, fadeLevel), fadedClear);
                     } else if (target == DETAIL_SEARCH_BOX_TARGET || target == STATUS_BAR_SCRIM_TARGET) {
                         // Invisible, not gone: the bar keeps its shape and Back stays put, and
                         // the cell's band keeps its place.

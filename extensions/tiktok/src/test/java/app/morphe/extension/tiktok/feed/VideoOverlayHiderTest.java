@@ -3242,6 +3242,61 @@ public class VideoOverlayHiderTest {
     }
 
     /**
+     * A video opened from search with Automatic Clear Display at no delay: until its clear lands,
+     * the top bar and its "find related content" box showed over the held-away controls (#84,
+     * Login2 emulator). They're out of sight while the page's window holds, and TikTok's own
+     * value comes back once the clear is TikTok's.
+     */
+    @Test
+    public void theTopBarOfAnOpenedVideoWaitsForItsClear() {
+        int barId = 0x7f0a0e22;
+        int scrimId = 0x7f0a0e23;
+        VideoOverlayHider.resolveForTests("47.1.4:j2g", barId);
+        VideoOverlayHider.resolveForTests("47.1.4:g5p", scrimId);
+        boolean overlays = app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled;
+        boolean automatic = app.morphe.extension.tiktok.settings.SettingsStatus.automaticClearDisplayEnabled;
+        app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = true;
+        app.morphe.extension.tiktok.settings.SettingsStatus.automaticClearDisplayEnabled = true;
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            View scrim = new View(activity);
+            scrim.setId(scrimId);
+            View bar = new FrameLayout(activity);
+            bar.setId(barId);
+            root.addView(scrim);
+            root.addView(bar);
+            activity.setContentView(root);
+            Settings.AUTOMATIC_CLEAR_DISPLAY.save(true);
+            Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(0);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch.onPageOpened(new Object());
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the bar showed before the page's clear", 0f, bar.getAlpha(), 0f);
+            assertEquals(0f, scrim.getAlpha(), 0f);
+
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("TikTok's own value didn't come back", 1f, bar.getAlpha(), 0f);
+            assertEquals(1f, scrim.getAlpha(), 0f);
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            org.robolectric.util.ReflectionHelpers.callStaticMethod(
+                    app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch.class, "resetForTests");
+            Settings.CLEAR_DISPLAY.save(false);
+            Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+            Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(1000);
+            app.morphe.extension.tiktok.settings.SettingsStatus.videoOverlaysEnabled = overlays;
+            app.morphe.extension.tiktok.settings.SettingsStatus.automaticClearDisplayEnabled = automatic;
+            VideoOverlayHider.resolveForTests("47.1.4:j2g", 0);
+            VideoOverlayHider.resolveForTests("47.1.4:g5p", 0);
+        }
+    }
+
+    /**
      * Also on opened videos (#158): with the feed's search button switch and its own row on, the
      * search box in an opened video's top bar goes invisible and Back stays. A box of the same name
      * outside the bar is another page's and is left alone. TikTok showing it again is answered on

@@ -18,6 +18,7 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -34,6 +35,8 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveControls;"
 private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRecordChip;"
+private const val PANEL_THEME = "Lapp/morphe/extension/tiktok/live/LivePanelTheme;"
+private const val QUALITY_LIST_COLORS = "Lapp/morphe/extension/tiktok/live/LiveQualityListColors;"
 
 /** A LIVE room page, one fragment per room in the room pager, real-named on 47.1.4. */
 internal const val LIVE_PLAY_FRAGMENT = "Lcom/bytedance/android/livesdk/chatroom/ui/LivePlayFragment;"
@@ -167,6 +170,91 @@ internal fun isLiveDarkThemeAnswer(method: Method, classDef: ClassDef): Boolean 
             it.opcode == Opcode.INVOKE_STATIC &&
                 ((it as ReferenceInstruction).reference as MethodReference).definingClass == LIVE_HOST_RESOURCE
         }
+}
+
+/** The base of every themed LIVE dialog (LiveDialogFragment and the rest), real-named on 47.1.4. */
+internal const val LIVE_THEMED_DIALOG = "Lcom/bytedance/android/live/design/resource/theme/LiveThemeAwareDialogFragment;"
+
+/** The base of LIVE's sheet pages (LiveSheetFragment) and of the room's own fragments, real-named on 47.1.4. */
+internal const val LIVE_THEMED_FRAGMENT = "Lcom/bytedance/android/live/design/resource/theme/LiveThemeAwareFragment;"
+
+/** LIVE's sheet page, the fan club sheets and most newer LIVE panels, real-named on 47.1.4. */
+internal const val LIVE_SHEET_FRAGMENT = "Lcom/bytedance/android/live/design/view/sheet/LiveSheetFragment;"
+
+/**
+ * The layout inflater a themed LIVE dialog or fragment hands its views (#159). In a dark app it
+ * inflates through TikTok's light LIVE theme, with force, when the page says light, and through
+ * its own unwrapped inflater when the page says dark, which leaves the room's light colors in
+ * place: TikTok only adds the dark theme to the room's theme without force. Every return hands
+ * its inflater to the extension, which wraps it in the panel's own (dark) overlay while Dark LIVE
+ * panels is on.
+ */
+internal object LiveThemedDialogInflaterFingerprint : Fingerprint(
+    definingClass = LIVE_THEMED_DIALOG,
+    name = "onGetLayoutInflater",
+    returnType = "Landroid/view/LayoutInflater;",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/** [LiveThemedDialogInflaterFingerprint] for LIVE's fragments; the extension only touches sheet pages. */
+internal object LiveThemedFragmentInflaterFingerprint : Fingerprint(
+    definingClass = LIVE_THEMED_FRAGMENT,
+    name = "onGetLayoutInflater",
+    returnType = "Landroid/view/LayoutInflater;",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/** The older LIVE quality picker, Share > Video quality in rooms whose stream asks for it, real-named on 47.1.4. */
+internal const val LIVE_DEFINITION_DIALOG = "Lcom/bytedance/android/livesdk/definition/LiveDefinitionSelectionDialog;"
+
+/** The quality list's view being set up, which the extension watches so its rows stay readable in dark mode. */
+internal object LiveDefinitionListFingerprint : Fingerprint(
+    definingClass = LIVE_DEFINITION_DIALOG,
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+)
+
+/**
+ * Every return-object in [method], last first, with the register it returns. A return that
+ * isn't a plain v0..v15 register, or a method whose `this` sits above v15, can't take the
+ * four-bit call the hook adds, so it's refused instead of written.
+ */
+internal fun inflaterReturns(method: Method): List<Pair<Int, Int>> {
+    val body = method.implementation ?: throw PatchException("LIVE controls: ${method.definingClass} has no inflater body")
+    if (body.registerCount - 2 > 15) throw PatchException("LIVE controls: ${method.definingClass}'s inflater keeps this above v15")
+    val returns = body.instructions.withIndex()
+        .filter { it.value.opcode == Opcode.RETURN_OBJECT }
+        .map { it.index to (it.value as OneRegisterInstruction).registerA }
+        .reversed()
+    if (returns.isEmpty() || returns.any { it.second > 15 }) {
+        throw PatchException("LIVE controls: ${method.definingClass}'s inflater returns don't fit the hook: $returns")
+    }
+    return returns
+}
+
+/** Hands every inflater [inflater] returns to the extension first, on each return's own label. */
+internal fun hookPanelInflater(inflater: MutableMethod) {
+    inflaterReturns(inflater).forEach { (index, register) ->
+        inflater.addInstructionsAtControlFlowLabel(
+            index,
+            """
+                invoke-static {p0, v$register}, $PANEL_THEME->darkLivePanel(Ljava/lang/Object;Landroid/view/LayoutInflater;)Landroid/view/LayoutInflater;
+                move-result-object v$register
+            """,
+        )
+    }
+}
+
+/**
+ * Hands the quality list's view to the extension as the dialog sets it up. The method keeps the
+ * view above v15 on 47.1.4, so the call takes the range form.
+ */
+internal fun hookQualityList(viewCreated: MutableMethod) {
+    viewCreated.addInstruction(
+        0,
+        "invoke-static/range {p1 .. p1}, $QUALITY_LIST_COLORS->readableQualityList(Landroid/view/View;)V",
+    )
 }
 
 internal const val PULL_STREAM_SERVICE ="Lcom/bytedance/android/live/livepullstream/PullStreamService;"
@@ -558,7 +646,7 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
-        "clear screen in more LIVE rooms, and keep your quality " +
+        "clear screen in more LIVE rooms, open LIVE panels dark in dark mode, and keep your quality " +
         "pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +
@@ -601,6 +689,17 @@ val liveControlsPatch = bytecodePatch(
             "invoke-static {p1}, $EXTENSION->darkLivePanels(Landroid/content/Context;)Z",
             "const/4 v0, 0x1\nreturn v0",
         )
+        // That answer alone left the panels white (S25, 2026-10-14): TikTok adds the dark theme
+        // to the room's light one without force. Each themed dialog's and sheet page's inflater
+        // goes through the extension, which applies the panel's dark overlay with force while
+        // the switch is on in dark mode. The hook sits on each return's own label, so a branch
+        // onto the return runs it too.
+        listOf(LiveThemedDialogInflaterFingerprint, LiveThemedFragmentInflaterFingerprint).forEach {
+            hookPanelInflater(it.method)
+        }
+        // The older quality list's rows can read white on white in dark mode, switch or no
+        // switch; the extension gives poorly contrasted text a readable color there.
+        hookQualityList(LiveDefinitionListFingerprint.method)
 
         // The room page coming to the front: where the Record button goes and which room it records (#37).
         liveRoomField(classDefByOrNull(LIVE_PLAY_FRAGMENT)

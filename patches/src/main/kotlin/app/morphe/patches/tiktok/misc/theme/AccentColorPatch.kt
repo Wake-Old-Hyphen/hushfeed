@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.theme
 
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.colorOption
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -12,6 +13,7 @@ import app.morphe.patches.tiktok.misc.branding.readXml
 import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
+import java.io.File
 import java.util.Locale
 import java.util.zip.CRC32
 import kotlin.math.abs
@@ -39,9 +41,10 @@ internal val ACCENT_PRESETS: Map<String, String> = linkedMapOf(
 val accentColorPatch = resourcePatch(
     name = "Accent color",
     description = "Swaps the red of TikTok's main buttons and red text for blue, green, purple, " +
-        "orange, teal or a color code you type in this patch's options. Warnings stay red, and so " +
-        "can icons with the red drawn in. It's built in while patching, so only patching again " +
-        "without it undoes it.",
+        "orange, teal or a color code you type in this patch's options, or for the color of the " +
+        "phone's wallpaper theme on Android 12 and up. Warnings stay red, and so can icons with " +
+        "the red drawn in. It's built in while patching, so only patching again without it " +
+        "undoes it.",
     default = false,
 ) {
     category("Interface")
@@ -55,9 +58,20 @@ val accentColorPatch = resourcePatch(
             "leaves the red as it is. TikTok's lighter and darker reds follow the color you pick.",
         values = ACCENT_PRESETS,
     )
+    val followWallpaper by booleanOption(
+        key = "followWallpaper",
+        default = false,
+        title = "Follow the wallpaper",
+        description = "On Android 12 and up, buttons and red text take the color of the phone's " +
+            "wallpaper theme and change when the wallpaper does, and the color above is not used. " +
+            "Android 11 and older keep TikTok's red. The follow plus under a creator's avatar " +
+            "and the soft see-through reds stay as they are.",
+        required = false,
+    )
     execute {
         // Checked before anything is read or written, so a refused color changes nothing.
         val target = checkedAccent(accent)
+        val wallpaper = followWallpaper == true
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
         val collisions = renamedPathCollisions(
@@ -67,26 +81,34 @@ val accentColorPatch = resourcePatch(
             isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size, "Accent color"))
-        if (target != TIKTOK_ACCENT) {
+        if (wallpaper || target != TIKTOK_ACCENT) {
             // This build's accent tokens, or a refusal: a name carried over from another build is a guess.
             val tokens = accentTokens(packageMetadata.versionName)
             val files = get("res").listFiles().orEmpty()
                 .filter { it.isDirectory && it.name.startsWith("values") }
                 .map { it.resolve("styles.xml") }.filter { it.exists() }
             // A dry run on a throwaway copy of each file first: a refusal leaves every file as it was.
-            val found = files.flatMapTo(mutableSetOf()) { recolorAccentItems(readXml(it), tokens, target) }
+            val found = files.flatMapTo(mutableSetOf()) {
+                recolorAccentItems(readXml(it), tokens, accentRecolor(wallpaper, target, mutableSetOf()))
+            }
             if (found != tokens) throw PatchException(incompleteAccentRefusal(tokens - found))
-            // Icons with the red drawn in, each recolored in memory first for the same reason.
+            // Icons with the red drawn in, each recolored in memory first for the same reason. A picture
+            // can't take a color the phone picks later, so the wallpaper choice leaves them as they are.
             val drawables = get("res").listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
-            val icons = accentIcons(packageMetadata.versionName).flatMap { name ->
+            val icons = if (wallpaper) emptyList() else accentIcons(packageMetadata.versionName).flatMap { name ->
                 val pictures = drawables.map { it.resolve("$name.png") }.filter { it.isFile }
                 if (pictures.isEmpty()) throw PatchException(missingAccentIconRefusal(name))
                 pictures.map { it to (recolorRedPalette(it.readBytes(), target) ?: throw PatchException(missingAccentIconRefusal(name))) }
             }
+            val wallpaperLiterals = mutableSetOf<String>()
+            val colorFiles = if (wallpaper) wallpaperColorPaths(get("res")) else null
             for (file in files) {
-                document(file.relativeTo(get(".")).invariantSeparatorsPath).use { recolorAccentItems(it, tokens, target) }
+                document(file.relativeTo(get(".")).invariantSeparatorsPath).use {
+                    recolorAccentItems(it, tokens, accentRecolor(wallpaper, target, wallpaperLiterals))
+                }
             }
             for ((picture, bytes) in icons) picture.writeBytes(bytes)
+            if (colorFiles != null) writeWallpaperColors(colorFiles, wallpaperLiterals)
         }
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "accentColor")
     }
@@ -222,17 +244,127 @@ internal fun solidAccent(raw: String?): String? {
  * names it changed. White (a palette's UIShapePrimary5 in the high-contrast theme), references and
  * anything else that isn't red stay.
  */
-internal fun recolorAccentItems(styles: Document, names: Set<String>, target: String): Set<String> {
+internal fun recolorAccentItems(styles: Document, names: Set<String>, target: String): Set<String> =
+    recolorAccentItems(styles, names) { literal -> accentShade(literal, target) }
+
+/**
+ * The same walk with the new value left to [recolor], which answers null for a literal that
+ * stays as it is. Such an item still counts as found, because its red was there to change.
+ */
+internal fun recolorAccentItems(styles: Document, names: Set<String>, recolor: (String) -> String?): Set<String> {
     val changed = mutableSetOf<String>()
     val items = styles.getElementsByTagName("item")
     for (index in 0 until items.length) {
         val item = items.item(index) as Element
         val name = item.getAttribute("name")
         if (name !in names || !isRedLiteral(item.textContent)) continue
-        item.textContent = accentShade(item.textContent, target)
+        recolor(item.textContent)?.let { item.textContent = it }
         changed.add(name)
     }
     return changed
+}
+
+/** What each accent item becomes: a shade of [target], or with [wallpaper] a reference collected into [literals]. */
+internal fun accentRecolor(wallpaper: Boolean, target: String, literals: MutableSet<String>): (String) -> String? =
+    if (wallpaper) { literal -> wallpaperReference(literal)?.also { literals.add(literal) } }
+    else { literal -> accentShade(literal, target) }
+
+/**
+ * The file both wallpaper color tables go into, in `values` and in `values-v31`. The patcher takes
+ * a values file's resource type from its name, so a file of our own name fails to encode: the
+ * entries join the APK's `colors.xml`, or start one in `values-v31`, which the name makes a color file.
+ */
+internal const val WALLPAPER_COLORS_FILE = "colors.xml"
+
+/** What every color the wallpaper choice adds is named from. */
+internal const val WALLPAPER_COLOR_PREFIX = "hushfeed_accent_"
+
+/**
+ * Android's system accent ramp as (tone, step) pairs: `system_accent1_<step>` has a tone (the L*
+ * of CIELAB lightness) of about [tone]. Android 12 and up fill the ramp from the wallpaper.
+ */
+internal val WALLPAPER_STEPS: List<Pair<Int, Int>> = listOf(
+    99 to 10, 95 to 50, 90 to 100, 80 to 200, 70 to 300, 60 to 400, 50 to 500, 40 to 600, 30 to 700, 20 to 800, 10 to 900,
+)
+
+/**
+ * The ramp step that stands in for an accent literal. TikTok's own red sits at tone 50 (step 500),
+ * which keeps its white label above 4.5:1, and every other shade moves along the ramp by the
+ * lightness it differs from the base red by: lighter text on dark, darker text on light.
+ */
+internal fun wallpaperStep(literal: String): Int {
+    val base = hsl(TIKTOK_ACCENT.substring(1).toInt(16)).l
+    val tone = 50 + (hsl(literalRgb(literal) ?: throw IllegalArgumentException("not a color literal: $literal")).l - base) * 100
+    return WALLPAPER_STEPS.minByOrNull { abs(it.first - tone) }!!.second
+}
+
+/** Whether the literal has no transparency: six digits, or eight starting with ff. */
+internal fun isOpaqueLiteral(literal: String): Boolean {
+    val hex = literal.trim().removePrefix("#")
+    return hex.length == 6 || (hex.length == 8 && hex.startsWith("ff", ignoreCase = true))
+}
+
+/** The color resource name for an opaque literal, one per red, however many items hold it. */
+internal fun wallpaperColorName(literal: String): String =
+    WALLPAPER_COLOR_PREFIX + String.format(Locale.ROOT, "%06x", literalRgb(literal) ?: throw IllegalArgumentException("not a color literal: $literal"))
+
+/**
+ * What an item holding [literal] becomes with the wallpaper choice: a reference to a color that
+ * is the system accent on Android 12 and up and the literal itself below. Null for a see-through
+ * red: a color resource can't take a system color at a fraction of its strength, so those keep
+ * their red.
+ */
+internal fun wallpaperReference(literal: String): String? =
+    if (isOpaqueLiteral(literal)) "@color/" + wallpaperColorName(literal) else null
+
+/** The two color files the wallpaper choice adds to, or a refusal when either already holds one of its names. */
+internal fun wallpaperColorPaths(res: File): Pair<File, File> {
+    val files = res.resolve("values").resolve(WALLPAPER_COLORS_FILE) to res.resolve("values-v31").resolve(WALLPAPER_COLORS_FILE)
+    if (listOf(files.first, files.second).any { it.isFile && it.readText(Charsets.UTF_8).contains("name=\"$WALLPAPER_COLOR_PREFIX") }) {
+        throw PatchException(
+            "Accent color: this TikTok already has colors named $WALLPAPER_COLOR_PREFIX* in its resources, so the " +
+                "wallpaper choice would write over them. Nothing was changed.",
+        )
+    }
+    return files
+}
+
+/**
+ * The two color tables for [literals]: `values` gives each red back as it was, and `values-v31`
+ * points the same names at the system accent step for that red's lightness, so Android 12 and
+ * up pick them up and older versions never meet a resource they don't have.
+ */
+internal fun wallpaperColorTables(literals: Collection<String>): Pair<String, String> {
+    val (plain, system) = wallpaperColorEntries(literals)
+    return newColorsFile(plain) to newColorsFile(system)
+}
+
+private fun newColorsFile(entries: String) = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n$entries</resources>\n"
+
+/** The `<color>` lines of each table, one per opaque red, in name order. */
+internal fun wallpaperColorEntries(literals: Collection<String>): Pair<String, String> {
+    val reds = literals.filter(::isOpaqueLiteral).associateBy(::wallpaperColorName).toSortedMap()
+    fun lines(value: (String) -> String) = buildString {
+        for ((name, literal) in reds) append("    <color name=\"$name\">${value(literal)}</color>\n")
+    }
+    return lines { it.trim().lowercase(Locale.ROOT) } to lines { "@android:color/system_accent1_${wallpaperStep(it)}" }
+}
+
+/** Adds each table's entries to the end of its file's `resources`, or writes a new file where there is none. */
+internal fun writeWallpaperColors(files: Pair<File, File>, literals: Collection<String>) {
+    val (plain, system) = wallpaperColorEntries(literals)
+    for ((file, entries) in listOf(files.first to plain, files.second to system)) {
+        file.parentFile.mkdirs()
+        if (!file.isFile) {
+            file.writeText(newColorsFile(entries), Charsets.UTF_8)
+            continue
+        }
+        val text = file.readText(Charsets.UTF_8)
+        val end = text.lastIndexOf("</resources>")
+        if (end < 0) throw PatchException("Accent color: ${file.name} has no closing resources tag. Nothing was changed.")
+        val lead = if (text.substring(0, end).endsWith("\n")) "" else "\n"
+        file.writeText(text.substring(0, end) + lead + entries + text.substring(end), Charsets.UTF_8)
+    }
 }
 
 /** A `#RRGGBB` or `#AARRGGBB` literal in the red family: a saturated hue within 40 degrees of red. */

@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.seekbar;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,6 +18,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import app.morphe.extension.shared.Logger;
 
@@ -34,6 +38,10 @@ import app.morphe.extension.shared.Logger;
  * its own big readout. The seek bar is asked before every frame is drawn, because TikTok hides it
  * in several places without going through the bar's progress method.
  *
+ * <p>With the time set to go above the bar (#173) the label stays in the row but takes no room
+ * in it, so the bar keeps the whole row, and is drawn over the bar's left end instead. That only
+ * holds while the spot is free of text; see {@link #place}.
+ *
  * <p>Screen readers skip it. The seek bar already reports the progress, and a label that changes
  * every second would only interrupt.
  */
@@ -48,6 +56,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     static final int TEXT_COLOR = 0xE6FFFFFF;
     static final int SHADOW_COLOR = 0x99000000;
 
+    private final LinearLayout row;
     private final View frame;
     private final ViewGroup.LayoutParams frameParams;
     @Nullable private ProgressBar seekBar;
@@ -61,10 +70,19 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     @Nullable private Boolean drawn;
     private String sizedFor = "";
 
+    /** Whether the time sits over the bar's left end instead of at the end of the row (#173). */
+    private boolean above;
+    /** When the row last asked whether the spot above is free; 0 before the first ask. */
+    private long checkedAt;
+    /** The ancestors that had clipChildren on and were given it off so the time can draw above. */
+    private final List<ViewGroup> unclipped = new ArrayList<>();
+
     private static boolean reportedShape;
 
-    private SeekbarTimeLabel(Context context, View frame, ViewGroup.LayoutParams frameParams) {
+    private SeekbarTimeLabel(Context context, LinearLayout row, View frame,
+                             ViewGroup.LayoutParams frameParams) {
         super(context);
+        this.row = row;
         this.frame = frame;
         this.frameParams = frameParams;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -131,7 +149,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         squeezed.width = 0;
         squeezed.weight = 1f;
 
-        label = new SeekbarTimeLabel(bar.getContext(), frame, original);
+        label = new SeekbarTimeLabel(bar.getContext(), bar, frame, original);
         label.sizedFor = SeekbarTime.widest(0L);
         LinearLayout.LayoutParams own = new LinearLayout.LayoutParams(
                 label.widthFor(label.sizedFor), ViewGroup.LayoutParams.MATCH_PARENT);
@@ -165,6 +183,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     static void removeFrom(LinearLayout bar) {
         SeekbarTimeLabel label = find(bar);
         if (label == null) return;
+        label.goBeside();
         bar.removeView(label);
         if (label.frame.getParent() == bar) label.frame.setLayoutParams(label.frameParams);
     }
@@ -179,6 +198,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     void show(float percent, @Nullable SeekbarTime.Tick tick) {
         boolean sameVideo = tick != null && tick.aid != null && tick.aid.equals(aid);
         if (tick != null && (percent > 0f || sameVideo)) {
+            if (!sameVideo) checkedAt = 0L;
             aid = tick.aid;
             hidden = tick.hidden;
             if (tick.durationMs > 0L) durationMs = tick.durationMs;
@@ -229,6 +249,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
 
     @Override
     public boolean onPreDraw() {
+        alignAbove();
         follow();
         return true;
     }
@@ -242,6 +263,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
 
     @Override
     protected void onDetachedFromWindow() {
+        restoreClipping();
         ViewTreeObserver attached = observer;
         if (attached != null && attached.isAlive()) {
             attached.removeOnPreDrawListener(this);
@@ -250,6 +272,126 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         }
         observer = null;
         super.onDetachedFromWindow();
+    }
+
+    /**
+     * Puts the time where the setting says (#173). Above the bar's left end only while that spot
+     * is free: a laid-out row, an ancestor that holds the spot, and no text on screen reaching
+     * into it. Otherwise it steps back beside the bar and asks again after {@link
+     * SeekbarTimePlacement#RECHECK_MS}, or at once when the row shows another video.
+     */
+    void place(boolean wantAbove, long now) {
+        if (!wantAbove) {
+            if (above) goBeside();
+            checkedAt = 0L;
+            return;
+        }
+        if (checkedAt != 0L && now - checkedAt < SeekbarTimePlacement.RECHECK_MS) return;
+        Rect spot = spotAbove();
+        if (spot == null) {
+            if (above) goBeside();
+            return;
+        }
+        checkedAt = now;
+        List<ViewGroup> chain = SeekbarTimePlacement.textReaches(row.getRootView(), spot, row)
+                ? null : SeekbarTimePlacement.clipChain(row, spot);
+        if (chain == null) {
+            if (above) goBeside();
+            return;
+        }
+        if (!above) goAbove();
+        unclip(chain);
+    }
+
+    /** Whether the time sits above the bar right now. */
+    boolean isAbove() {
+        return above;
+    }
+
+    /** The window rectangle just over the bar's left end, or null before the row is laid out. */
+    @Nullable
+    private Rect spotAbove() {
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if (params == null || row.getWidth() <= 0 || row.getHeight() <= 0
+                || frame.getWidth() <= 0 || params.width <= 0) {
+            return null;
+        }
+        int[] at = new int[2];
+        SeekbarTimePlacement.positionInWindow(frame, at);
+        int[] rowAt = new int[2];
+        SeekbarTimePlacement.positionInWindow(row, rowAt);
+        return new Rect(at[0], rowAt[1] - row.getHeight(), at[0] + params.width, rowAt[1]);
+    }
+
+    /**
+     * The label stays the row's last child, so the row, Clear display's fade and the removal path
+     * are the ones beside the bar uses. Its start margin cancels its width, which gives the bar
+     * the whole row, and a translation (set before each draw, from the row's current layout)
+     * lifts it over the bar's left end.
+     */
+    private void goAbove() {
+        above = true;
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if (params instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams own = (LinearLayout.LayoutParams) params;
+            own.setMarginStart(-own.width);
+            setLayoutParams(own);
+        }
+        setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+        setPaddingRelative(Math.round(EDGE_DP * density()), 0, Math.round(GAP_DP * density()), 0);
+    }
+
+    /** The label back at the end of the row, as it was attached. */
+    private void goBeside() {
+        restoreClipping();
+        if (!above) return;
+        above = false;
+        ViewGroup.LayoutParams params = getLayoutParams();
+        if (params instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams own = (LinearLayout.LayoutParams) params;
+            own.setMarginStart(0);
+            setLayoutParams(own);
+        }
+        setTranslationX(0f);
+        setTranslationY(0f);
+        setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
+        setPaddingRelative(Math.round(GAP_DP * density()), 0, Math.round(EDGE_DP * density()), 0);
+    }
+
+    /** Keeps the lift over the bar's left end true to the row's current layout. */
+    private void alignAbove() {
+        if (!above) return;
+        float dx = frame.getLeft() - getLeft();
+        float dy = -getHeight();
+        if (getTranslationX() != dx) setTranslationX(dx);
+        if (getTranslationY() != dy) setTranslationY(dy);
+    }
+
+    /** Lets exactly [chain] draw outside its bounds; any other group this label unclipped is put back. */
+    private void unclip(List<ViewGroup> chain) {
+        for (int i = unclipped.size() - 1; i >= 0; i--) {
+            ViewGroup group = unclipped.get(i);
+            if (!chain.contains(group)) {
+                group.setClipChildren(true);
+                unclipped.remove(i);
+            }
+        }
+        for (ViewGroup group : chain) {
+            if (group.getClipChildren()) {
+                group.setClipChildren(false);
+                unclipped.add(group);
+            }
+        }
+    }
+
+    /** Gives back every clipChildren this label turned off. */
+    private void restoreClipping() {
+        for (ViewGroup group : unclipped) group.setClipChildren(true);
+        unclipped.clear();
+    }
+
+    private float density() {
+        return getResources().getDisplayMetrics().density;
     }
 
     /** TikTok's seek bar, the one progress bar inside the frame. */
@@ -283,6 +425,9 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         int width = widthFor(widest);
         if (params != null && params.width != width) {
             params.width = width;
+            if (above && params instanceof LinearLayout.LayoutParams) {
+                ((LinearLayout.LayoutParams) params).setMarginStart(-width);
+            }
             setLayoutParams(params);
         }
     }

@@ -7,7 +7,12 @@ package app.morphe.patches.tiktok.feedfilter
 import app.morphe.patcher.Fingerprint
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
@@ -870,6 +875,114 @@ internal object TakoCommentTopBarBridgeFingerprint : Fingerprint(
     definingClass = TAKO_COMMENT_TOP_BAR_BRIDGE,
     name = "bridgeTopBar",
     parameters = emptyList(),
+)
+
+internal const val VISUAL_SEARCH_SERVICE =
+    "Lcom/ss/android/ugc/aweme/search/df/api/visualsearch/ISearchVisualSearchService;"
+internal const val SMART_SEARCH_INFO = "Lcom/ss/android/ugc/aweme/feed/model/search/SmartSearchInfoStruct;"
+private const val POST_MODE_ENTRANCE = "Lcom/ss/android/ugc/aweme/model/PostModeEntranceMechanism;"
+
+/**
+ * Whether the instruction hands a caption tap to TikTok's search panel: the visual search
+ * service, real named, asked with the video's smart search info and answering whether the panel
+ * opened. The method's own name is R8's, so the call is known by its owner and its types.
+ */
+internal fun Instruction.opensCaptionSearchPanel(): Boolean =
+    (opcode == Opcode.INVOKE_INTERFACE || opcode == Opcode.INVOKE_INTERFACE_RANGE) &&
+        getReference<MethodReference>()?.let { call ->
+            call.definingClass == VISUAL_SEARCH_SERVICE && call.returnType == "Z" &&
+                call.parameterTypes.any { it.toString() == SMART_SEARCH_INFO }
+        } == true
+
+/** Each instruction's code address, with one past the end. */
+internal fun List<Instruction>.codeAddresses(): IntArray {
+    val addresses = IntArray(size + 1)
+    for (index in indices) addresses[index + 1] = addresses[index] + this[index].codeUnits
+    return addresses
+}
+
+/** The index a branch at [index] lands on, or null when it lands between instructions. */
+internal fun List<Instruction>.branchTarget(index: Int, addresses: IntArray = codeAddresses()): Int? {
+    val target = addresses[index] + (this[index] as OffsetInstruction).codeOffset
+    return addresses.indexOfFirst { it == target }.takeIf { it in indices }
+}
+
+/**
+ * Issue #162. The index of the move that holds the gate the caption's expand asks before it
+ * hands the tap to the search panel (the one with "Discover more with Tako" and "Ask Tako"):
+ * the nearest static no-argument boolean before the panel's single call, whose answer goes
+ * straight into an if-eqz that jumps past that call, to where the caption expands in place.
+ * Null when the method isn't that shape.
+ */
+internal fun Method.captionSearchPanelGate(): Int? {
+    val instructions = implementation?.instructions?.toList() ?: return null
+    val open = instructions.indices.filter { instructions[it].opensCaptionSearchPanel() }.singleOrNull() ?: return null
+    val addresses = instructions.codeAddresses()
+    for (ask in open - 1 downTo 0) {
+        val gate = instructions[ask]
+        if (gate.opcode != Opcode.INVOKE_STATIC && gate.opcode != Opcode.INVOKE_STATIC_RANGE) continue
+        val call = gate.getReference<MethodReference>() ?: continue
+        if (call.returnType != "Z" || call.parameterTypes.isNotEmpty()) continue
+        val move = instructions.getOrNull(ask + 1) ?: continue
+        val branch = instructions.getOrNull(ask + 2) ?: continue
+        if (move.opcode != Opcode.MOVE_RESULT || branch.opcode != Opcode.IF_EQZ) continue
+        if ((move as OneRegisterInstruction).registerA != (branch as OneRegisterInstruction).registerA) continue
+        val skip = instructions.branchTarget(ask + 2, addresses) ?: continue
+        if (skip > open) return ask + 1
+    }
+    return null
+}
+
+/**
+ * The feed caption's expand and collapse, the same method Comment tools hands to the comments:
+ * the one method taking a boolean, a string and the post page's entrance enum in that order,
+ * here also asking a gate before the caption's search panel.
+ */
+internal object CaptionSearchPanelFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    returnType = "V",
+    parameters = listOf("Z", "Ljava/lang/String;", POST_MODE_ENTRANCE),
+    custom = { method, _ -> method.captionSearchPanelGate() != null },
+)
+
+internal const val TITLE_PANEL_STYLE = "Lcom/ss/android/ugc/aweme/experiment/TitlePanelStyle;"
+
+/**
+ * Issue #162 follow-up. Whether the title panel helper treats a video's caption as a smart
+ * search one: a public static (Aweme, String, boolean)boolean in the class that reads
+ * TitlePanelStyle's DESC_AND_SEARCH and DESC_AND_COMMENT_AND_SEARCH, which asks that class's own
+ * static (Aweme)boolean (whether the video can show the search entrance at all). The caption
+ * builder calls it with "this video has smart search info" as the boolean and, on a yes, always
+ * draws the "more" tail that leads into the search panel, whether the caption fits or not. Its
+ * sibling with the same parameters asks a (Aweme, boolean)boolean instead, which is what keeps
+ * the two apart.
+ */
+internal fun Method.asksSmartSearchCaption(classDef: ClassDef): Boolean {
+    val own = implementation?.instructions?.toList() ?: return false
+    val asksOwnGate = own.any { instruction ->
+        (instruction.opcode == Opcode.INVOKE_STATIC || instruction.opcode == Opcode.INVOKE_STATIC_RANGE) &&
+            instruction.getReference<MethodReference>()?.let { call ->
+                call.definingClass == definingClass && call.returnType == "Z" &&
+                    call.parameterTypes.map(CharSequence::toString) == listOf(AWEME_DESCRIPTOR)
+            } == true
+    }
+    if (!asksOwnGate) return false
+    val styles = mutableSetOf<String>()
+    for (sibling in classDef.methods) {
+        val body = sibling.implementation ?: continue
+        for (instruction in body.instructions) {
+            val field = instruction.getReference<FieldReference>() ?: continue
+            if (field.definingClass == TITLE_PANEL_STYLE) styles.add(field.name)
+        }
+    }
+    return "DESC_AND_SEARCH" in styles && "DESC_AND_COMMENT_AND_SEARCH" in styles
+}
+
+internal object SmartSearchCaptionFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "Z",
+    parameters = listOf(AWEME_DESCRIPTOR, "Ljava/lang/String;", "Z"),
+    custom = { method, classDef -> method.asksSmartSearchCaption(classDef) },
 )
 
 internal const val SEARCH_DYNAMIC_TAB_LIST_DESCRIPTOR =

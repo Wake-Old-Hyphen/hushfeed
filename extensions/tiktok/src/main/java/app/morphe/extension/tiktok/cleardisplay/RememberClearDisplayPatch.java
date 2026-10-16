@@ -108,7 +108,7 @@ public final class RememberClearDisplayPatch {
     static final long START_LIMIT_MS = 10000;
     static final long PAGE_LIMIT_MS = 3000;
     /** The video page whose opening started the window, until it goes; see {@link #onPageOpened}. */
-    private static WeakReference<Activity> openedPage = new WeakReference<>(null);
+    private static WeakReference<Object> openedPage = new WeakReference<>(null);
     private static final Runnable END_START = () -> {
         if (!starting) return;
         starting = false;
@@ -393,10 +393,13 @@ public final class RememberClearDisplayPatch {
      * controls stay away until its own clear lands. Its player there often reports no first
      * frame, so that clear waits for the first progress report, and after the controls had been
      * brought back by hand on the feed (which a search starts with, since Clear display hides the
-     * search button) they showed for about half a second (#84).
+     * search button) they showed for about half a second (#84). The page is that activity, or
+     * on 47.1.4 the video page fragment search opens inside the main activity.
      */
-    public static void onPageOpened(Activity page) {
+    public static void onPageOpened(Object page) {
         if (carrying) return;
+        Logger.printDebug(() -> "Clear display: video page opened, "
+                + (page instanceof Activity ? "its own window" : "in the main window"));
         starting = true;
         // A page's own limit, armed now: the result is usually handed over already playing, and
         // a photo post never reports anything, so its controls come back after a moment.
@@ -410,7 +413,7 @@ public final class RememberClearDisplayPatch {
      * The page that opened a start window is going away. Left before its clear landed, the window
      * would have hidden the controls of the video behind it, which had them brought back by hand.
      */
-    public static void onPageLeft(Activity page) {
+    public static void onPageLeft(Object page) {
         if (page == null || openedPage.get() != page) return;
         openedPage.clear();
         END_START.run();

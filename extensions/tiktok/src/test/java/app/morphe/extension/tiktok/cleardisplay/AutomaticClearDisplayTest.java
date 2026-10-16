@@ -389,6 +389,30 @@ public class AutomaticClearDisplayTest {
         }
     }
 
+    /**
+     * On 47.1.4 search opens its video as a page fragment inside the main activity, which never
+     * opened a start window, and the result showed its controls and search row for about a second
+     * on the Login2 emulator. The fragment's view opens it, and the fragment pausing ends it.
+     */
+    @Test public void aVideoPageInTheMainActivityOpensItsOwnWindow() {
+        SettingsStatus.automaticClearDisplayEnabled = true;
+        Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(0);
+        List<Boolean> events = new ArrayList<>();
+        RememberClearDisplayPatch.firstFrame("feed", () -> true, events::add);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+        assertFalse(RememberClearDisplayPatch.isCarryingClear());
+        try (var main = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            Object page = new Object();
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailView(page, new android.view.View(main.get()));
+            assertTrue("the result's controls show until its clear lands", RememberClearDisplayPatch.isCarryingClear());
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailPause(new Object());
+            assertTrue("another page pausing ended this one's window", RememberClearDisplayPatch.isCarryingClear());
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailPause(page);
+            assertFalse("the feed's restored controls stayed hidden", RememberClearDisplayPatch.isCarryingClear());
+        }
+    }
+
     /** A page whose post never plays (a photo post reports nothing) gets its controls back soon. */
     @Test public void aPageThatNeverPlaysGetsItsControlsBackAfterItsLimit() {
         SettingsStatus.automaticClearDisplayEnabled = true;

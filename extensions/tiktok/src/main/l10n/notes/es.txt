@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Un nuevo interruptor abre en oscuro los paneles de LIVE como Compartir y el club de fans cuando TikTok está en modo oscuro (#159).
+
+* **TikTok:** La lista de Calidad de video de LIVE ya no muestra sus filas en blanco sobre blanco en modo oscuro (#57).
+
+* **TikTok:** Con Ocultar la burbuja de Tako activado, una descripción que cabe entera ya no muestra un «más» en los videos con contenido de Tako (#162).
+
+* **TikTok:** Accent color tiene una opción nueva, Seguir el fondo de pantalla, que toma el color de tu fondo en Android 12 y posteriores (#163).
+
+* **TikTok:** Dos opciones nuevas para la barra de progreso: el tiempo puede ir encima de la barra y la barra puede ocupar todo el ancho (#173).
+
 * **TikTok:** Un nuevo interruptor limita tu elección de Pulsación larga a los lados del video, así que una pulsación en el centro sigue abriendo el menú de TikTok (#136).
 
 * **TikTok:** Un nuevo interruptor añade Bloquear a quien comenta al menú que se abre al mantener pulsado un comentario (#169).

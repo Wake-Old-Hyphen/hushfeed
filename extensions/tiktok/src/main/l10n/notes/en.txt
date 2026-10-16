@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** A new switch opens LIVE panels like Share and the fan club dark while TikTok is in dark mode (#159).
+
+* **TikTok:** The LIVE Video quality list no longer shows its rows white on white in dark mode (#57).
+
+* **TikTok:** With Hide the Tako bubble on, a caption that fits no longer shows a "more" on videos with Tako content (#162).
+
+* **TikTok:** Accent color has a new Follow the wallpaper option that takes the color from your wallpaper on Android 12 and up (#163).
+
+* **TikTok:** Two new choices for the progress bar: the time can sit above the bar, and the bar can run edge to edge (#173).
+
 * **TikTok:** A new switch keeps your Long press choice to the sides of the video, so a press in the middle still opens TikTok's menu (#136).
 
 * **TikTok:** A new switch adds Block this commenter to the menu a long press on a comment opens (#169).

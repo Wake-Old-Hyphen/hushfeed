@@ -121,8 +121,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",
                     Settings.OFFER_LIVE_CLEAR_SCREEN));
-            // DARK_LIVE_PANELS has no row until the panels themselves turn dark: on the S25 the
-            // provider answer only darkened the panels' navigation bar (#159).
+            addPreference(new TogglePreference(context, "Dark LIVE panels in dark mode",
+                    "With TikTok in dark mode, a LIVE room still opens its share menu, fan club "
+                            + "and other panels in light colors. This opens them dark.",
+                    Settings.DARK_LIVE_PANELS));
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));
@@ -166,6 +168,19 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Show the time played and the video's length at the end of the progress bar "
                             + "while it's on screen.",
                     Settings.SEEKBAR_TIME
+            ));
+            addPreference(new ChoicePreference(context, "Where the time goes",
+                    Settings.SEEKBAR_TIME_PLACEMENT,
+                    new String[]{"Beside the bar", "Above the bar"},
+                    new String[]{"beside", "above"})
+                    .withNote("Above puts the time over the left end of the bar while nothing on "
+                            + "screen is in the way, and beside the bar when something is."));
+            addPreference(new TogglePreference(
+                    context,
+                    "Full-width progress bar",
+                    "Run the progress bar from one screen edge to the other, without the gap "
+                            + "TikTok leaves at each end.",
+                    Settings.SEEKBAR_FULL_WIDTH
             ));
             addPreference(new TogglePreference(
                     context,

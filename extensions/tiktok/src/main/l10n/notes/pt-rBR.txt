@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como Compartilhar e o fã-clube, quando o TikTok está no modo escuro (#159).
+
+* **TikTok:** A lista de Qualidade do vídeo da LIVE não mostra mais as linhas em branco sobre branco no modo escuro (#57).
+
+* **TikTok:** Com Esconder a bolha do Tako ligado, uma legenda que cabe inteira não mostra mais um «mais» em vídeos com conteúdo do Tako (#162).
+
+* **TikTok:** Accent color tem uma nova opção, Seguir o papel de parede, que pega a cor do seu papel de parede no Android 12 ou mais novo (#163).
+
+* **TikTok:** Duas novas opções para a barra de progresso: o tempo pode ficar acima da barra e a barra pode ocupar toda a largura (#173).
+
 * **TikTok:** Uma nova chave limita sua escolha de Toque longo às laterais do vídeo, então um toque no meio continua abrindo o menu do TikTok (#136).
 
 * **TikTok:** Uma nova chave adiciona Bloquear quem comentou ao menu que abre ao tocar e segurar um comentário (#169).

@@ -1,5 +1,15 @@
 ## Unreleased
 
+* **TikTok:** Un nuovo interruttore apre scuri i pannelli LIVE come Condividi e il fan club quando TikTok è in modalità scura (#159).
+
+* **TikTok:** L'elenco Qualità video delle LIVE non mostra più le righe bianco su bianco in modalità scura (#57).
+
+* **TikTok:** Con Nascondi la bolla di Tako attivo, una didascalia che ci sta tutta non mostra più un «altro» nei video con contenuti Tako (#162).
+
+* **TikTok:** Accent color ha una nuova opzione, Segui lo sfondo, che prende il colore dal tuo sfondo da Android 12 in poi (#163).
+
+* **TikTok:** Due nuove opzioni per la barra di avanzamento: il tempo può stare sopra la barra e la barra può occupare tutta la larghezza (#173).
+
 * **TikTok:** Un nuovo interruttore limita la scelta di Pressione prolungata ai lati del video, così una pressione al centro apre ancora il menu di TikTok (#136).
 
 * **TikTok:** Un nuovo interruttore aggiunge Blocca l'autore del commento al menu che si apre tenendo premuto un commento (#169).
