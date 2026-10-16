@@ -72,6 +72,9 @@ public final class Probe extends Instrumentation {
     private static final String SETTING = "app.morphe.extension.shared.settings.Setting";
     private static final String SETTINGS = "app.morphe.extension.tiktok.settings.Settings";
     private static final String UTILS = "app.morphe.extension.shared.Utils";
+    private static final java.util.Set<String> OVERLAY_KEYS = new java.util.HashSet<>(java.util.Arrays.asList(
+            "block_author_button", "local_hide_button", "block_sound_button",
+            "not_interested_button", "feed_mute_button"));
     private static final String SETTINGS_ACTIVITY =
             "com.bytedance.ies.ugc.aweme.commercialize.compliance.personalization."
                     + "AdPersonalizationActivity";
@@ -330,7 +333,11 @@ public final class Probe extends Instrumentation {
                                 android.view.View view = queue.poll();
                                 if (view instanceof android.webkit.WebView) {
                                     android.webkit.WebView web = (android.webkit.WebView) view;
-                                    List<String> names = new ArrayList<>();
+                                    // Each tracked name with its object's @JavascriptInterface
+                                    // methods. A page script may define a same-named object of
+                                    // its own (TikTok's JS SDK does, ToutiaoJSBridge), so only a
+                                    // name whose Java methods resolve counts as the bridge itself.
+                                    JSONArray tracked = new JSONArray();
                                     Object state = null;
                                     synchronized (states) {
                                         Object reference = states.get(web);
@@ -343,31 +350,38 @@ public final class Probe extends Instrumentation {
                                         interfacesField.setAccessible(true);
                                         synchronized (state) {
                                             Map<?, ?> interfaces = (Map<?, ?>) interfacesField.get(state);
-                                            for (Object name : interfaces.keySet()) {
-                                                if (name instanceof String) names.add((String) name);
+                                            for (Map.Entry<?, ?> binding : interfaces.entrySet()) {
+                                                if (!(binding.getKey() instanceof String)) continue;
+                                                JSONArray methods = new JSONArray();
+                                                if (binding.getValue() != null) {
+                                                    for (Method method : binding.getValue().getClass().getMethods()) {
+                                                        if (method.isAnnotationPresent(
+                                                                android.webkit.JavascriptInterface.class)) {
+                                                            methods.put(method.getName());
+                                                        }
+                                                    }
+                                                }
+                                                tracked.put(new JSONArray().put(binding.getKey()).put(methods));
                                             }
                                         }
                                     }
 
-                                    StringBuilder script = new StringBuilder(
-                                            "(function(){var n=[");
-                                    for (int i = 0; i < names.size(); i++) {
-                                        if (i > 0) script.append(',');
-                                        script.append(JSONObject.quote(names.get(i)));
-                                    }
-                                    script.append("];var exposed=[];for(var i=0;i<n.length;i++){"
-                                            + "if(typeof window[n[i]]!=='undefined'){var v=window[n[i]],k=[];"
+                                    String script = "(function(){var n=" + tracked
+                                            + ";var exposed=[];for(var i=0;i<n.length;i++){var name=n[i][0];"
+                                            + "if(typeof window[name]!=='undefined'){var v=window[name],k=[],j=[];"
                                             + "try{k=Object.getOwnPropertyNames(v).sort();}catch(e){}"
-                                            + "exposed.push([n[i],typeof v,Object.prototype.toString.call(v),k]);}}"
-                                            + "return JSON.stringify(exposed);})()");
+                                            + "for(var m=0;m<n[i][1].length;m++){try{if(typeof v[n[i][1][m]]==='function')"
+                                            + "j.push(n[i][1][m]);}catch(e){}}"
+                                            + "exposed.push([name,typeof v,Object.prototype.toString.call(v),k,j]);}}"
+                                            + "return JSON.stringify(exposed);})()";
                                     final int index = ++scheduled;
-                                    final int tracked = names.size();
+                                    final int trackedCount = tracked.length();
                                     final String origin = hostAndPath(web.getUrl() == null
                                             ? null : android.net.Uri.parse(web.getUrl()));
-                                    final String javascript = script.toString();
-                                    web.post(() -> web.evaluateJavascript(javascript, value ->
+                                    web.post(() -> web.evaluateJavascript(script, value ->
                                             Log.i(TAG, "bridge-exposure webview=" + index
-                                                    + " origin=" + origin + " tracked=" + tracked
+                                                    + " origin=" + origin + " tracked=" + trackedCount
+                                                    + " java=" + javaBridgesExposed(value)
                                                     + " exposed=" + value)));
                                 }
                                 if (view instanceof android.view.ViewGroup) {
@@ -424,9 +438,14 @@ public final class Probe extends Instrumentation {
                         }
                         Log.i(TAG, "ok commission-view");
                         break;
-                    case "video-link":
-                        Log.i(TAG, "ok video-link " + copiedTikTokVideoLink());
+                    case "video-link": {
+                        String link = copiedTikTokVideoLink();
+                        // What else is there, without the link itself: a short link and a
+                        // missing one need different fixes.
+                        if ("not-a-tiktok-video-url".equals(link)) link += " " + copiedLinkShape();
+                        Log.i(TAG, "ok video-link " + link);
                         break;
+                    }
                     case "clear-test-clipboard": {
                         String aid = required(intent, "aid");
                         if (!aid.matches("[0-9]+")) throw new IllegalArgumentException("invalid video id");
@@ -638,7 +657,11 @@ public final class Probe extends Instrumentation {
                         Object digg = optional(optional(aweme, "getStatistics"), "getDiggCount");
                         String likes = !(digg instanceof Number) ? "unknown"
                                 : ((Number) digg).longValue() <= 100 ? "100orFewer"
-                                : ((Number) digg).longValue() <= 1000 ? "1000orFewer" : "over1000";
+                                : ((Number) digg).longValue() <= 1000 ? "1000orFewer"
+                                // Below 10,000 TikTok writes a count out whole (2,447), so a
+                                // check on abbreviated counts needs the top bucket. It still
+                                // reads as over1000 to a pattern looking for that.
+                                : ((Number) digg).longValue() < 10000 ? "over1000" : "over10000";
                         Object awemeType = optional(aweme, "getAwemeType");
                         Object liveId = optional(aweme, "getLiveId");
                         Object music = optional(aweme, "getMusic");
@@ -652,6 +675,11 @@ public final class Probe extends Instrumentation {
                                 + " photo=" + photo + " durationMs=" + duration
                                 + " verified=" + verified + " aiLabel=" + aiLabel + " authorFollowers=" + followers
                                 + " likes=" + likes
+                                // The author's story status as stored, then as the getter the
+                                // story ring switch filters answers it: a ring check needs a
+                                // creator with a story and can't see the drawable.
+                                + " storyStatus=" + (creator == null ? null : fieldValue(creator, "storyStatus"))
+                                + "/" + optional(creator, "getStoryStatus")
                                 // Whether TikTok serves it as separate video and audio (DASH),
                                 // the case a chosen-quality download muxes itself.
                                 + " dash=" + optional(video, "hasDashBitrate")
@@ -1173,11 +1201,15 @@ public final class Probe extends Instrumentation {
                         // Counts only; the text never leaves the phone.
                         String idName = required(intent, "id");
                         String word = required(intent, "word").toLowerCase(java.util.Locale.ROOT);
+                        // -e onscreen true: only views on the screen. The feed keeps the cells
+                        // above and below laid out, so a rail count matched the next video's too.
+                        boolean onScreenOnly = "true".equals(intent.getStringExtra("onscreen"));
                         int[] counts = new int[2];
                         java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
                         while (!queue.isEmpty()) {
                             android.view.View view = queue.removeFirst();
                             if (view instanceof android.widget.TextView && view.isShown()
+                                    && (!onScreenOnly || view.getGlobalVisibleRect(new android.graphics.Rect()))
                                     && safeResourceName(view).endsWith("/" + idName)) {
                                 counts[0]++;
                                 CharSequence text = ((android.widget.TextView) view).getText();
@@ -1258,7 +1290,10 @@ public final class Probe extends Instrumentation {
                         String value = required(intent, "value");
                         String before = valueOf(find(key));
                         write(key, value);
-                        if ("block_author_button".equals(key)) {
+                        // The same five the settings page refreshes the feed controls for. A set
+                        // step writes several keys in turn, so refreshing on only the first one
+                        // left the others' buttons up until the next creator.
+                        if (OVERLAY_KEYS.contains(key)) {
                             loader.loadClass("app.morphe.extension.tiktok.blockauthor.BlockAuthorOverlay")
                                     .getMethod("refresh").invoke(null);
                         }
@@ -1975,6 +2010,49 @@ public final class Probe extends Instrumentation {
                                 : result instanceof Number || result instanceof Boolean ? String.valueOf(result)
                                 : "<" + result.getClass().getName() + ", value not shown>";
                         Log.i(TAG, "ok call " + target.getName() + " -> " + shown);
+                        break;
+                    }
+                    case "tiktoktheme": {
+                        // TikTok's own Display choice, which it reads once at start-up and hands
+                        // to the night mode: dark_mode in its sp_dark_mode store, 1 when unset.
+                        // Without it set to dark, TikTok stays light whatever the phone's night
+                        // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
+                        // factory, the static (int, Context, String) -> SharedPreferences method
+                        // TikTok reads it with (-e store X.02s6 -e method LIZJ on 47.1.4), since
+                        // that one may route the store to Keva rather than a plain file; its
+                        // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
+                        // -e set unset removes it.
+                        String storeClass = intent.getStringExtra("store");
+                        if (storeClass == null) storeClass = "X.02s6";
+                        String storeMethod = intent.getStringExtra("method");
+                        if (storeMethod == null) storeMethod = "LIZJ";
+                        Method factory = loader.loadClass(storeClass)
+                                .getDeclaredMethod(storeMethod, int.class, Context.class, String.class);
+                        if (!Modifier.isStatic(factory.getModifiers())
+                                || factory.getReturnType() != android.content.SharedPreferences.class) {
+                            throw new IllegalStateException("not a store factory: " + factory);
+                        }
+                        factory.setAccessible(true);
+                        android.content.SharedPreferences store = (android.content.SharedPreferences)
+                                factory.invoke(null, 0, app, "sp_dark_mode");
+                        boolean stored = store.contains("dark_mode");
+                        int was = store.getInt("dark_mode", 1);
+                        String set = intent.getStringExtra("set");
+                        String wrote = "";
+                        if ("unset".equals(set)) {
+                            // Back to never chosen, for undoing a check on a phone that had no choice.
+                            boolean committed = store.edit().remove("dark_mode").commit();
+                            wrote = " set=unset committed=" + committed + " now=" + store.getInt("dark_mode", 1);
+                        } else if (set != null) {
+                            int value = Integer.parseInt(set);
+                            boolean committed = store.edit().putInt("dark_mode", value).commit();
+                            wrote = " set=" + value + " committed=" + committed
+                                    + " now=" + store.getInt("dark_mode", 1);
+                        }
+                        Log.i(TAG, "ok tiktoktheme dark_mode=" + was + " stored=" + stored + wrote
+                                + " via=" + storeClass + "." + factory.getName()
+                                + " night=" + (app.getResources().getConfiguration().uiMode
+                                        & android.content.res.Configuration.UI_MODE_NIGHT_MASK));
                         break;
                     }
                     case "fieldswatch": {
@@ -3566,6 +3644,27 @@ public final class Probe extends Instrumentation {
         }
 
         /**
+         * How many webview-bridges entries reach their Java object, read from the page's answer:
+         * a JSON string holding the array, whose fifth element per entry lists the Java methods
+         * that resolve. -1 when the answer can't be read.
+         */
+        private static int javaBridgesExposed(String value) {
+            try {
+                Object decoded = new org.json.JSONTokener(value).nextValue();
+                if (!(decoded instanceof String)) return -1;
+                JSONArray entries = new JSONArray((String) decoded);
+                int count = 0;
+                for (int i = 0; i < entries.length(); i++) {
+                    JSONArray methods = entries.getJSONArray(i).optJSONArray(4);
+                    if (methods != null && methods.length() > 0) count++;
+                }
+                return count;
+            } catch (Exception unreadable) {
+                return -1;
+            }
+        }
+
+        /**
          * Which paid-series markers the current video carries. Strings are reported by length and
          * by whether they are a bare number, never by content, so no collection name is recorded.
          */
@@ -4357,6 +4456,33 @@ public final class Probe extends Instrumentation {
             String text = value == null ? "" : value.toString().trim();
             if (text.startsWith("https://www.tiktok.com/") && text.contains("/video/")) return text;
             return "not-a-tiktok-video-url";
+        }
+
+        /**
+         * The copied text's host, whether it has a query and the kind of page its path names, or
+         * what it is when it isn't a link.
+         */
+        private String copiedLinkShape() {
+            android.content.ClipboardManager clipboard =
+                    (android.content.ClipboardManager) app.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = clipboard == null ? null : clipboard.getPrimaryClip();
+            if (clip == null || clip.getItemCount() == 0) return "clip=empty";
+            CharSequence value = clip.getItemAt(0).coerceToText(app);
+            String text = value == null ? "" : value.toString().trim();
+            if (!text.startsWith("https://") && !text.startsWith("http://")) return "clip=not-a-link";
+            android.net.Uri uri = android.net.Uri.parse(text);
+            return "host=" + uri.getHost() + " query=" + (uri.getQuery() != null)
+                    + " path=" + linkPathShape(uri.getPath());
+        }
+
+        /** The kind of page a path names, by its shape alone: never the name or the code in it. */
+        private String linkPathShape(String path) {
+            if (path == null || path.isEmpty() || path.equals("/")) return "root";
+            if (path.matches("/@[^/]+/video/\\d+/?")) return "video";
+            if (path.matches("/@[^/]+/photo/\\d+/?")) return "photo";
+            if (path.matches("/t/[A-Za-z0-9]+/?")) return "t-short";
+            if (path.matches("/[A-Za-z0-9]{4,20}/?")) return "short";
+            return "other-" + (path.split("/", -1).length - 1) + "-segments";
         }
 
         /**

@@ -28,13 +28,17 @@
    },
    {
     "id": "dark-surfaces",
-    "what": "Review: with the phone in dark mode the comment sheet and the Inbox use the chosen color (pure black by default) rather than TikTok's dark gray, and light mode stays white.",
+    "what": "Review: with TikTok's own Display set to Dark the comment sheet and the Inbox use the chosen color (pure black by default) rather than TikTok's dark gray, and with it set to Light they stay white.",
     "steps": [
      {
-      "night": "yes"
+      "theme": "dark"
      },
      {
       "restart": true
+     },
+     {
+      "probe": "tiktoktheme",
+      "expect": "^ok tiktoktheme dark_mode=2 stored=true"
      },
      {
       "open": "feed"
@@ -55,7 +59,7 @@
      },
      {
       "shot": "amoled-comments",
-      "review": "Phone in dark mode, comment sheet open: the sheet behind the comments is pure black #000000 (or the Mocha/Dark gray option the build chose), not TikTok's dark gray. Failing looks like a gray panel."
+      "review": "TikTok set to Dark, comment sheet open: the sheet behind the comments is pure black #000000 (or the Mocha/Dark gray option the build chose), not TikTok's dark gray. Failing looks like a gray panel."
      },
      {
       "back": true
@@ -68,13 +72,17 @@
      },
      {
       "shot": "amoled-inbox",
-      "review": "Inbox in dark mode: the list background is the same pure black, not dark gray."
+      "review": "Inbox with TikTok set to Dark: the list background is the same pure black, not dark gray."
      },
      {
-      "night": "no"
+      "theme": "light"
      },
      {
       "restart": true
+     },
+     {
+      "probe": "tiktoktheme",
+      "expect": "^ok tiktoktheme dark_mode=1 stored=true"
      },
      {
       "open": "inbox"
@@ -84,13 +92,13 @@
      },
      {
       "shot": "amoled-inbox-light",
-      "review": "Inbox in light mode: white as stock. The patch must not darken light mode."
+      "review": "Inbox with TikTok set to Light: white as stock. The patch must not darken light mode."
      }
     ],
     "auto": false
    }
   ],
-  "notes": "Built in at patch time, so only patching again without it undoes it. The colour option's default is #000000 (lane file lists Black, Mocha #181825 and Dark gray #121212). The patch refuses a TikTok APK whose resource paths would clash (renamedPathCollisions), so a build that exists has passed that. TikTok follows the system theme here, so the check's night steps switch the phone (the runner puts the phone's own mode back). The probe's backgrounds action (x,y) can print the painting view and colour for a spot on screen if a number is wanted."
+  "notes": "Built in at patch time, so only patching again without it undoes it. The colour option's default is #000000 (lane file lists Black, Mocha #181825 and Dark gray #121212). The patch refuses a TikTok APK whose resource paths would clash (renamedPathCollisions), so a build that exists has passed that. TikTok only follows the phone's dark mode when its own Settings and privacy > Display has Use device settings on; the S22's says Light with that off, so `cmd uimode night yes` left every shot light (discovery 10, 2026-10-16). TikTok keeps the choice as dark_mode in its sp_dark_mode store (1 Light, 2 Dark, read through X.02s6.LIZJ on 47.1.4) and applies it at start-up, so the check uses theme steps, which write it through the probe's tiktoktheme, then restarts; the runner puts TikTok's own choice back after the patch. The probe's backgrounds action (x,y) can print the painting view and colour for a spot on screen if a number is wanted."
  },
  {
   "name": "Accent color",
@@ -433,7 +441,7 @@
     "auto": true
    }
   ],
-  "notes": "The grid-picker check needs at least one video on the test account's own profile grid (the Pick for saving circle is drawn per cell); an empty grid fails the 'found' step, which then reads as a missing precondition. Nothing is saved: the picker is only looked at. Story saves, profile-picture saves, audio track, original photos and photo-to-video all act on a held press or a real save and need a person. Quality choice (download_video_quality) shows its effect only on a save: read the file size or the gear list from probe videoinfo (gears=) if a person does one."
+  "notes": "The grid-picker check needs at least one video on the test account's own profile grid (the Pick for saving circle is drawn per cell); an empty grid fails the 'found' step, which then reads as a missing precondition. Nothing is saved: the picker is only looked at. Story saves, profile-picture saves, audio track, original photos and photo-to-video all act on a held press or a real save and need a person. Quality choice (download_video_quality) shows its effect only on a save: read the file size or the gear list from probe videoinfo (gears=) if a person does one. The grid picker check opens @tiktok, TikTok's own account, because it needs a profile grid full of videos. TikTok reports a profile view only for creators of 5,000 followers or fewer, so nobody is told about the visit. Never point it at a person's profile."
  },
  {
   "name": "Allow Duet and Stitch",
@@ -1335,14 +1343,22 @@
       }
      },
      {
+      "restart": true
+     },
+     {
       "open": "feed"
      },
      {
       "open": "friends"
      },
      {
+      "wait": 8000
+     },
+     {
       "log": "Contact list blocker: blocked a query to content://com\\.android\\.contacts",
-      "within": 15000
+      "fromStep": 2,
+      "within": 3000,
+      "precondition": true
      }
     ],
     "auto": true
@@ -1367,7 +1383,7 @@
     "auto": true
    }
   ],
-  "notes": "The learned notes (2026-09-17 device audit) say the contact blocker fires when the Friends tab opens, which is why the first check opens it. It needs TikTok to actually query ContactsContract: with no contacts permission or Facebook friends consent pending, the query may not happen and the log step times out (inconclusive, not a patch failure). The log line is Logger.printInfo so it needs no debug."
+  "notes": "The 2026-09-17 device audit saw the contact blocker fire when the Friends tab opened. On TikTok 47.1.4 (2026-10-16) the Friends tab showed \"From your contacts\" cards matched on TikTok's server and made no local read in 15 seconds, so the check now turns the switch on before a restart and reads the log from the restart's marker (fromStep), which counts a read at start-up as well as one on Friends. A process that never reads the contacts provider is inconclusive, not a failure: the patch log's intercepted site count is then the proof. Never open Find friends or a contacts page to force a read, since that's where TikTok asks to upload them. The log line is Logger.printInfo so it needs no debug."
  },
  {
   "name": "Block installed app scanning",
@@ -1423,15 +1439,22 @@
       "wait": 8000
      },
      {
+      "open": "profile"
+     },
+     {
+      "wait": 4000
+     },
+     {
       "probe": "report",
       "expect": "Installed apps blocker: blocked (getInstalledPackages|getInstalledApplications|the launcher enumeration)",
-      "waitMs": 10000
+      "waitMs": 10000,
+      "precondition": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "Reads the export (probe report) instead of logcat because TikTok scans at start-up, before the runner's log marker. The scan happens only when TikTok asks (ad SDKs, app-link checks), so a quiet session can leave no line; rerun after opening a profile or search if it is empty. The description says opening another app from TikTok still works: that is not exercised (the runner cannot leave TikTok). Logged at Logger.printInfo, buffered by LogBufferManager.appendEvent."
+  "notes": "Reads the export (probe report) instead of logcat because TikTok scans at start-up, before the runner's log marker. The scan happens only when TikTok asks (ad SDKs, app-link checks), so the check also opens the own profile, and a session that still lists nothing reads inconclusive (the patch log's intercepted site count is the proof then, 2026-10-16). The description says opening another app from TikTok still works: that is not exercised (the runner cannot leave TikTok). Logged at Logger.printInfo, buffered by LogBufferManager.appendEvent."
  },
  {
   "name": "Block popups",
@@ -1475,7 +1498,7 @@
   "checks": [
    {
     "id": "live-bubble",
-    "what": "With Hide the LIVE bubble on, the bubble's check returns early (debug line 'Block popups: skipped the LIVE bubble').",
+    "what": "With Hide the LIVE bubble on, the bubble's check returns early (debug line 'Block popups: skipped the LIVE bubble'). TikTok only runs that check when its server sends a bubble, so no line in 20 seconds is inconclusive.",
     "steps": [
      {
       "set": {
@@ -1486,20 +1509,9 @@
       "restart": true
      },
      {
-      "open": "feed"
-     },
-     {
-      "wait": 3000
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "wait": 2000
-     },
-     {
       "log": "Block popups: skipped the LIVE bubble",
-      "within": 12000
+      "within": 20000,
+      "precondition": true
      },
      {
       "set": {
@@ -2511,10 +2523,44 @@
      {
       "probe": "findtext",
       "extras": {
-       "text": "Copy user ID"
+       "text": "^Copy (user ID|username)$",
+       "match": "regex"
       },
-      "expect": "^ok findtext found",
+      "expect": "^ok findtext none",
       "waitMs": 1500
+     },
+     {
+      "back": true
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "open": "profile"
+     },
+     {
+      "tap": {
+       "desc": "^Profile menu$"
+      }
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "tap": {
+       "text": "^Settings and privacy$"
+      }
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "tap": {
+       "label": "^Share profile$"
+      }
+     },
+     {
+      "wait": 2500
      },
      {
       "probe": "findtext",
@@ -2525,13 +2571,32 @@
       "waitMs": 1500
      },
      {
+      "probe": "findtext",
+      "extras": {
+       "text": "Copy user ID"
+      },
+      "expect": "^ok findtext found",
+      "waitMs": 1500
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "Copy video ID"
+      },
+      "expect": "^ok findtext none",
+      "waitMs": 1500
+     },
+     {
+      "back": true
+     },
+     {
       "back": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.1.4 view id wct (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). The English labels of the three buttons are unverified on a phone. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile."
+  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.1.4 view id wct (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). A video's sheet gets only Copy video ID (seen 2026-10-16), and a profile's sheet gets Copy username and Copy user ID (CopyIds.targetsOf, itemType user), so the second half opens Share profile. On 47.1.4 the own profile has no Share profile button; the row is in Settings and privacy under Account, so the check goes Profile menu > Settings and privacy > Share profile (2026-10-16). Nothing on either sheet is tapped. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile. Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
  },
  {
   "name": "Copy comments without username",
@@ -3684,8 +3749,70 @@
   "surface": "comments",
   "checks": [
    {
-    "id": "gate-answers-yes",
-    "what": "With the switch on, TikTok's lazily read audio_comment_publish gate is read and answered by Hushfeed (Feature Gate Recorder report lists it).",
+    "id": "gate-read-when-off",
+    "what": "With the switch off, focusing the comment box makes TikTok read audio_comment_publish, so the gate the patch hooks is the one the entry asks.",
+    "steps": [
+     {
+      "set": {
+       "enable_voice_comments": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "likes=over1000.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "probe": "labreport",
+      "extras": {
+       "op": "begin"
+      },
+      "expect": "recording=true"
+     },
+     {
+      "probe": "comments",
+      "expect": "openComments\\([^)]*\\)=true",
+      "waitMs": 2500
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "^Add comment",
+       "match": "regex",
+       "click": "true"
+      },
+      "expect": "ok findtext found .*clicked=true"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "probe": "labreport",
+      "extras": {
+       "op": "stop",
+       "key": "audio_comment_publish"
+      },
+      "expect": "ok labreport key audio_comment_publish read=true"
+     },
+     {
+      "back": true
+     },
+     {
+      "back": true
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "gate-answered-when-on",
+    "what": "With the switch on, the same steps leave no read of audio_comment_publish: the hook answered yes before TikTok's own read.",
     "steps": [
      {
       "set": {
@@ -3717,7 +3844,16 @@
       "waitMs": 2500
      },
      {
-      "wait": 2500
+      "probe": "findtext",
+      "extras": {
+       "text": "^Add comment",
+       "match": "regex",
+       "click": "true"
+      },
+      "expect": "ok findtext found .*clicked=true"
+     },
+     {
+      "wait": 1800
      },
      {
       "probe": "labreport",
@@ -3725,7 +3861,10 @@
        "op": "stop",
        "key": "audio_comment_publish"
       },
-      "expect": "ok labreport key audio_comment_publish read=true"
+      "expect": "ok labreport key audio_comment_publish read=false"
+     },
+     {
+      "back": true
      },
      {
       "back": true
@@ -3810,7 +3949,7 @@
     "auto": true
    }
   ],
-  "notes": "The patch description says it has not been tried on a real account. Roadmap_Blocked.md 'Voice comment plays for a second account' records that recording, publication, playback and deletion once worked on one account, but a second viewer is unproven. Recording needs the microphone, so the audit only checks that the gate is consulted and (by eye) that the entry shows. The labreport step asks for the one gate: read=true is the pass condition, and the value it prints is the thing to read by hand. The test account already gets the mic with the switch off (seen 2026-10-16 in the focused box's tool row), so on it the shot proves the entry still builds and the gate check is what shows the switch is asked."
+  "notes": "The patch description says it has not been tried on a real account. Roadmap_Blocked.md 'Voice comment plays for a second account' records that recording, publication, playback and deletion once worked on one account, but a second viewer is unproven. Recording needs the microphone, so the audit only checks that the gate is consulted and (by eye) that the entry shows. The patch answers at the top of TikTok's lazy gate, so with the switch on TikTok's own settings read never runs: the gate checks are an A/B on that read (read=true with the switch off, read=false with it on), each after a restart so the lazy value is fresh. The test account already gets the mic with the switch off (seen 2026-10-16 in the focused box's tool row), so on it the shot proves the entry still builds and the gate check is what shows the switch is asked. audio_comment_publish is read lazily when the comment box's tool row is built, so the gate check focuses Add comment before reading the record (2026-10-16)."
  },
  {
   "name": "Expand activity list",
@@ -3956,7 +4095,7 @@
    },
    {
     "id": "gate-forced",
-    "what": "A stored override changes what TikTok reads: with favorite_reverse forced to 1 and Keep the Favorites tab on, Hushfeed's answer to the gate is recorded ('refused favorite_reverse') after the profile opens.",
+    "what": "A stored override changes what TikTok reads: with favorite_reverse forced to 1 and Keep the Favorites tab on, opening the share sheet reads the gate as 1, which Hushfeed's answer records ('refused favorite_reverse').",
     "steps": [
      {
       "set": {
@@ -3977,10 +4116,43 @@
       "restart": true
      },
      {
-      "open": "profile"
+      "probe": "labreport",
+      "extras": {
+       "op": "begin"
+      },
+      "expect": "recording=true"
      },
      {
-      "wait": 3500
+      "open": "feed"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "click",
+      "extras": {
+       "find": "wct"
+      },
+      "expect": "^ok click",
+      "waitMs": 2000
+     },
+     {
+      "wait": 3000
+     },
+     {
+      "back": true
+     },
+     {
+      "wait": 1000
+     },
+     {
+      "probe": "labreport",
+      "extras": {
+       "op": "stop",
+       "key": "favorite_reverse"
+      },
+      "expect": "ok labreport key favorite_reverse read=true",
+      "precondition": true
      },
      {
       "probe": "hookdetails",
@@ -4014,7 +4186,7 @@
     "auto": true
    }
   ],
-  "notes": "The Lab is a power-user page; its screens are not driven here. The two checks use the same path issue #4 was traced with (Roadmap and FavoritesTab.java): forcing the server gate favorite_reverse to 1 makes TikTok skip building the Favorites pages, and Keep the Favorites tab answers 0 and says so. Always run labclear afterwards (the check does) or the test account's Favorites tab stays empty. Rules are stored per TikTok version (FeatureGateLabStore.targetVersion), 47.1.4 here."
+  "notes": "The Lab is a power-user page; its screens are not driven here. The two checks use the same path issue #4 was traced with (Roadmap and FavoritesTab.java): forcing the server gate favorite_reverse to 1 makes TikTok skip building the Favorites pages, and Keep the Favorites tab answers 0 and says so. Always run labclear afterwards (the check does) or the test account's Favorites tab stays empty. Rules are stored per TikTok version (FeatureGateLabStore.targetVersion), 47.1.4 here. On 47.1.4 TikTok reads favorite_reverse as the share sheet opens (caller X.034M#LIZ), so gate-forced opens the share sheet on the feed and backs out, tapping nothing on it (2026-10-16)."
  },
  {
   "name": "Feature Gate Recorder",
@@ -4391,15 +4563,14 @@
    },
    {
     "id": "content-filters",
-    "what": "With photo, verified, AI-labelled, LIVE and long-video filters on, none of ten videos swiped through is any of those.",
+    "what": "With photo, verified, AI-labelled and LIVE filters on, none of ten videos swiped through is any of those.",
     "steps": [
      {
       "set": {
        "hide_image": "true",
        "hide_verified": "true",
        "hide_ai_generated": "true",
-       "hide_live": "true",
-       "max_video_seconds": "20"
+       "hide_live": "true"
       }
      },
      {
@@ -4416,7 +4587,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4426,7 +4597,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4436,7 +4607,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4446,7 +4617,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4456,7 +4627,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4466,7 +4637,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4476,7 +4647,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4486,7 +4657,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4496,7 +4667,7 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "swipe": "up"
@@ -4506,14 +4677,87 @@
      },
      {
       "probe": "videoinfo",
-      "expectNot": "photo=true|verified=true|aiLabel=true|live=true|durationMs=(2[1-9]\\d{3}|[3-9]\\d{4}|\\d{6,})"
+      "expectNot": "photo=true|verified=true|aiLabel=true|live=true"
      },
      {
       "set": {
        "hide_image": "false",
        "hide_verified": "false",
        "hide_ai_generated": "false",
-       "hide_live": "false",
+       "hide_live": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "length-limit",
+    "what": "With Maximum video length 20, the filter removes videos over 20 seconds from what TikTok sends (its own item line says FILTER(QualityFilter)).",
+    "steps": [
+     {
+      "set": {
+       "max_video_seconds": "20",
+       "morphe_debug": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1800
+     },
+     {
+      "log": "=> FILTER\\(QualityFilter\\)",
+      "fromStep": 2,
+      "within": 3000
+     },
+     {
+      "set": {
        "max_video_seconds": "0"
       }
      },
@@ -4601,7 +4845,7 @@
     "auto": true
    }
   ],
-  "notes": "The baseline is not asserted: whether a photo, verified, AI-labelled or LIVE item would have appeared in ten swipes is up to the For You feed, so a pass can be vacuous. Read the [FEED FILTER] lines in the export (probe report) for 'removed' counts to see the filter did work. The ads check is the most reliable because ads are served in nearly every session; if no ad is served in eight videos it is vacuous too. Keyword, creator, sound, region, language, view/like/comment/share ranges and Creator exceptions use text and numbers the probe does not expose per video, so they are not exercised; the unit tests in extensions/tiktok/src/test cover the rules. The settings rows are on Hushfeed settings > Feed filter. The restart is needed after changing a restart-flagged switch (remove_ads, hide_image, hide_ai_generated, hide_verified, hide_live)."
+  "notes": "The baseline is not asserted: whether a photo, verified, AI-labelled or LIVE item would have appeared in ten swipes is up to the For You feed, so a pass can be vacuous. Read the [FEED FILTER] lines in the export (probe report) for 'removed' counts to see the filter did work. The ads check is the most reliable because ads are served in nearly every session; if no ad is served in eight videos it is vacuous too. Keyword, creator, sound, region, language, view/like/comment/share ranges and Creator exceptions use text and numbers the probe does not expose per video, so they are not exercised; the unit tests in extensions/tiktok/src/test cover the rules. The settings rows are on Hushfeed settings > Feed filter. The restart is needed after changing a restart-flagged switch (remove_ads, hide_image, hide_ai_generated, hide_verified, hide_live). Maximum video length is soft by design: when everything one response sent would go, the video closest to the limit stays (the setting's summary says so), and 47.1.4's For You responses are often a single video, so a long one can still play. The length check reads the filter's own removals from the log (Log diagnostics on) instead of the durations on screen (2026-10-16)."
  },
  {
   "name": "Feed tab navigation",
@@ -4841,11 +5085,11 @@
    },
    {
     "id": "filter-bottom-tabs",
-    "what": "Review: with Filter bottom tabs on and only some tabs ticked, the unticked tabs leave the bottom bar.",
+    "what": "With Filter bottom tabs on and Friends left out of its ticks, the Friends tab leaves the bottom bar and the ticked tabs stay; with the switch off it's back.",
     "steps": [
      {
       "set": {
-       "bottom_navigation": "true"
+       "bottom_navigation": "false"
       }
      },
      {
@@ -4858,19 +5102,55 @@
       "wait": 1500
      },
      {
-      "shot": "bottom-tabs-filtered",
-      "review": "With Filter bottom tabs on and its default ticks the bar still shows the ticked tabs (Home, Inbox, Profile and Friends if ticked); unticking Shop/Friends in the page then restarting removes them. Failing looks like an unticked tab still drawn. Restore with the switch off."
+      "probe": "findtext",
+      "extras": {
+       "text": "Friends"
+      },
+      "expect": "ok findtext found",
+      "precondition": true
+     },
+     {
+      "set": {
+       "bottom_navigation": "true",
+       "bottom_navigation_tabs": "HOME,PUBLISH,INBOX,PROFILE"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "Friends"
+      },
+      "expect": "ok findtext none"
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "Inbox"
+      },
+      "expect": "ok findtext found"
      },
      {
       "set": {
        "bottom_navigation": "false"
       }
+     },
+     {
+      "restart": true
      }
     ],
-    "auto": false
+    "auto": true
    }
   ],
-  "notes": "The Home tap in keep-for-you is the probe's findtext click on the bottom bar's English 'Home' label (a uiautomator tap cannot be used on a playing feed); if that label is not a TextView on this build the step fails to find it, which is a probe problem rather than the patch. 'hide-top-names' relies on the English 'For You' label above the feed being a TextView TikTok draws; in 47.1.4 it may be drawn as an image, in which case findtext finds nothing even with the switch off and the baseline expect fails (read that as the label not being findable, then use the screenshot). Start page for Inbox/Profile needs a signed-in account and is not used here because the runner's restart waits for the feed. Tab filter lists (feed_navigation_tabs, bottom_navigation_tabs) are chosen by tick lists with no row title; the review check covers them."
+  "notes": "The Home tap in keep-for-you is the probe's findtext click on the bottom bar's English 'Home' label (a uiautomator tap cannot be used on a playing feed); if that label is not a TextView on this build the step fails to find it, which is a probe problem rather than the patch. 'hide-top-names' relies on the English 'For You' label above the feed being a TextView TikTok draws; in 47.1.4 it may be drawn as an image, in which case findtext finds nothing even with the switch off and the baseline expect fails (read that as the label not being findable, then use the screenshot). Start page for Inbox/Profile needs a signed-in account and is not used here because the runner's restart waits for the feed. Tab filter lists (feed_navigation_tabs, bottom_navigation_tabs) are comma-separated keys (HOME, FRIENDS, PUBLISH, INBOX, PROFILE, MALL for the bottom bar), set straight through the probe; filter-bottom-tabs leaves FRIENDS out."
  },
  {
   "name": "Feed text sizes",
@@ -5369,8 +5649,8 @@
     "auto": true
    },
    {
-    "id": "profile-view-held-back",
-    "what": "Swiping left to a creator's profile makes TikTok ask Ghost mode about the profile view report and the answer is blocked.",
+    "id": "switch-drives-hook",
+    "what": "The call TikTok's profile view report goes through answers true (held back) with Ghost mode on and false (sent) with it off.",
     "steps": [
      {
       "set": {
@@ -5378,68 +5658,33 @@
       }
      },
      {
-      "open": "feed"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "left"
-     },
-     {
-      "wait": 3500
-     },
-     {
-      "probe": "hookdetails",
+      "probe": "call",
       "extras": {
-       "family": "ghost mode"
+       "class": "app.morphe.extension.tiktok.ghostmode.GhostMode",
+       "method": "shouldBlockProfileView"
       },
-      "expect": "profile view blocked",
+      "expect": "^ok call shouldBlockProfileView -> true",
       "waitMs": 1500
      },
-     {
-      "back": true
-     }
-    ],
-    "auto": true
-   },
-   {
-    "id": "mode-off-sends",
-    "what": "With Ghost mode off the same call site records the report as sent.",
-    "steps": [
      {
       "set": {
        "ghost_mode": "false"
       }
      },
      {
-      "open": "feed"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "left"
-     },
-     {
-      "wait": 3500
-     },
-     {
-      "probe": "hookdetails",
+      "probe": "call",
       "extras": {
-       "family": "ghost mode"
+       "class": "app.morphe.extension.tiktok.ghostmode.GhostMode",
+       "method": "shouldBlockProfileView"
       },
-      "expect": "profile view sent",
+      "expect": "^ok call shouldBlockProfileView -> false",
       "waitMs": 1500
-     },
-     {
-      "back": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The profile view call site is only reached for creators of 5,000 followers or fewer (TikTok 47.0.3 reports a profile view only then; probe profileviewgates shows the gates), so on a big creator both profile checks fail with \"no match\" and the swipe should be repeated on another video; ghost_mode on and off also leave \"typing status\", \"story view\" and \"story play stats\" untested, because those need a chat or a story and the audit never opens either. Swipe left opens the creator's profile only while Swipe-left controls is on \"TikTok default\". The profile checks leave the profile with Back; they never press Follow or Message. Hide online status (ghost_hide_online_status) is reported by TikTok's periodic activity status call, so look for \"online status blocked\" in hookdetails after a minute with both switches on; not a separate check because its timing is TikTok's."
+  "notes": "The audit never opens a stranger's profile or story, and with Ghost mode off opening one would send that person a profile view, so the profile view block is checked through the call TikTok's report goes through (GhostMode.shouldBlockProfileView) with the switch on and off, and hooks-installed shows the call sites were bound at start. The swipe-left checks that did open a creator's profile were taken out on 2026-10-16. TikTok reports a profile view only for creators of 5,000 followers or fewer (probe profileviewgates shows the gates). Typing status, story view and story play stats need a chat or a story and are not driven. Hide online status (ghost_hide_online_status) is reported by TikTok's periodic activity status call, so look for \"online status blocked\" in hookdetails after a minute with both switches on; not a separate check because its timing is TikTok's."
  },
  {
   "name": "Hide CAPTCHA popups",
@@ -6092,6 +6337,14 @@
       "extras": {
        "family": "side menu button"
       },
+      "expect": "^hookdetail side menu button ",
+      "precondition": true
+     },
+     {
+      "probe": "hookdetails",
+      "extras": {
+       "family": "side menu button"
+      },
       "expect": "left to TikTok",
       "expectNot": "hidden"
      },
@@ -6164,7 +6417,7 @@
   "checks": [
    {
     "id": "follow-plus-gone",
-    "what": "The + under the creator's picture exists with the switch off and is gone (visibility forced to GONE by FeatureControls.hideFeedFollowButtonVisibility) with it on.",
+    "what": "The + under the creator's picture is shown with the switch off and gone (visibility forced to GONE by FeatureControls.hideFeedFollowButtonVisibility) with it on.",
     "steps": [
      {
       "set": {
@@ -6181,12 +6434,13 @@
       "wait": 3000
      },
      {
-      "probe": "finddesc",
+      "probe": "hasids",
       "extras": {
-       "desc": "Follow",
-       "match": "prefix"
+       "names": "ixq,iwi"
       },
-      "expect": "finddesc found"
+      "expect": "(ixq|iwi)=\\d+/[1-9]",
+      "retrySwipe": 6,
+      "precondition": true
      },
      {
       "set": {
@@ -6203,12 +6457,12 @@
       "wait": 3000
      },
      {
-      "probe": "finddesc",
+      "probe": "hasids",
       "extras": {
-       "desc": "Follow",
-       "match": "prefix"
+       "names": "ixq,iwi"
       },
-      "expectNot": "finddesc found"
+      "expect": "ixq=\\d+/0\\b",
+      "expectNot": "iwi=\\d+/[1-9]"
      },
      {
       "set": {
@@ -6264,7 +6518,7 @@
     "auto": false
    }
   ],
-  "notes": "The follow control has no view id in the extension (the patch forces the avatar assem's visibility argument to GONE), so the automatic check relies on the plus view's accessibility description starting with 'Follow' in an English UI. If a TikTok string change breaks that, the off phase fails first, which is the signal to fall back to the screenshot check. The 'Follow' description may also match a different 'Follow' control on screen; the runner should read the off phase's bounds (finddesc prints class, position and size) and expect it near the avatar."
+  "notes": "The + under the avatar has no content description on 47.1.4; the only 'Follow' match on the feed is the Following tab at the top (seen 2026-10-16). The check counts the plus views by id instead: ixq is the TuxIconView plus and iwi the icon-res one, both in ix9 under user_avatar (from the probe's windowviews on 47.1.4). Ids are renamed every build, so a retarget takes them from a fresh windowviews of the feed: the views just below user_avatar in the avatar column. hasids counts a view as shown only when every parent is visible, so it reads 0 whichever of them the patch sets GONE."
  },
  {
   "name": "Hide feed save button",
@@ -6310,7 +6564,7 @@
       "extras": {
        "find": "i93"
       },
-      "expect": "id=i93\\b[^\\n]* shown=true"
+      "expect": "id=i93\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -6331,7 +6585,7 @@
       "extras": {
        "find": "i93"
       },
-      "expectNot": "id=i93\\b[^\\n]* shown=true"
+      "expectNot": "id=i93\\b[^\\n]* size=\\d+x[1-9]\\d*\\b[^\\n]* shown=true"
      },
      {
       "set": {
@@ -6357,7 +6611,7 @@
     "auto": true
    }
   ],
-  "notes": "i93 is the favorite button id the overlay hider also uses for the Save entry of the right column list (hide_rail_favourite), so a failed 'on' phase can be the rail switch rather than this one; the check forces hide_rail_favourite off first. The patch targets VideoFavoriteAssem's root LinearLayout, which may be the parent of i93: if i93 stays shown=true with the switch on, read its 'under=' chain in the views output and check the parent's vis= is 8."
+  "notes": "i93 is the favorite button id the overlay hider also uses for the Save entry of the right column list (hide_rail_favourite), so a failed 'on' phase can be the rail switch rather than this one; the check forces hide_rail_favourite off first. The patch targets VideoFavoriteAssem's root LinearLayout, which may be the parent of i93: if i93 stays shown=true with the switch on, read its 'under=' chain in the views output and check the parent's vis= is 8. Seen 2026-10-16 on 47.1.4: with the switch on, i93 stays vis=0 and shown=true but is 0 pixels high, since its child i94 (the assem's root) is GONE, and the bookmark is gone from the column. So the check reads 'drawn' as shown with a height above 0."
  },
  {
   "name": "Hide feed search button",
@@ -6597,7 +6851,7 @@
      },
      {
       "shot": "rewards-off",
-      "review": "Own profile header: the purple rewards icon is beside the Add friends button (if the account is served one)."
+      "review": "Own profile header: the rewards shortcut is showing (on 47.1.4 a red gift box beside the edit pencil, top left), if the account is served one."
      },
      {
       "set": {
@@ -6615,7 +6869,7 @@
      },
      {
       "shot": "rewards-on",
-      "review": "Own profile header: no purple rewards icon, no gap where it was."
+      "review": "Own profile header: no gift box beside the edit pencil, and no gap where it was."
      },
      {
       "set": {
@@ -7210,11 +7464,9 @@
       "open": "profile"
      },
      {
-      "wait": 3500
-     },
-     {
       "log": "Profile shortcuts: .* hidden",
-      "within": 12000
+      "within": 12000,
+      "fromStep": 2
      },
      {
       "set": {
@@ -7240,7 +7492,7 @@
     "auto": true
    }
   ],
-  "notes": "Which shortcuts exist depends on the account: the test account shows whatever the server sends (often TikTok Studio, sometimes Your orders). If it has none, the catalog is empty and both checks fail for lack of a precondition rather than a bug. The shortcut titles typed here are English; the checklist normally stores a kind or feature id, and typed titles hide alike (ProfileShortcuts.canonical). Thoughts (hide_profile_thoughts, restart-required) removes the Thoughts bubble; it is a visual check only."
+  "notes": "Which shortcuts exist depends on the account: the test account shows whatever the server sends (often TikTok Studio, sometimes Your orders). If it has none, the catalog is empty and both checks fail for lack of a precondition rather than a bug. The shortcut titles typed here are English; the checklist normally stores a kind or feature id, and typed titles hide alike (ProfileShortcuts.canonical). Thoughts (hide_profile_thoughts, restart-required) removes the Thoughts bubble; it is a visual check only. On 47.1.4 the test account is served Watch history, LIVE (live events), Showcase, Subscription (live subscription) and Shop (seen 2026-10-16), so Shop and LIVE events in the typed list match by kind."
  },
  {
   "name": "Hide search suggestions",
@@ -7971,7 +8223,9 @@
       "extras": {
        "find": "o97"
       },
-      "expect": "id=o97\\b[^\\n]* shown=true"
+      "expect": "id=o97\\b[^\\n]* shown=true",
+      "retrySwipe": 8,
+      "precondition": true
      },
      {
       "set": {
@@ -7989,7 +8243,9 @@
       "extras": {
        "find": "o97"
       },
-      "expectNot": "id=o97\\b[^\\n]* shown=true"
+      "expectNot": "id=o97\\b[^\\n]* shown=true",
+      "expect": "id=o97 vis=8 [^\\n]*under=exn\\(vis=0",
+      "retrySwipe": 4
      },
      {
       "set": {
@@ -8153,7 +8409,7 @@
    },
    {
     "id": "music-disc-spin",
-    "what": "Spin the music disc turns the disc and Keep the music disc still holds it (HookStatus 'music disc spin' and the extension's own Music disc log line).",
+    "what": "Spin the music disc turns the disc, and with Keep the music disc still nothing turns it: the spin phase needs 'spun the disc' and the Music disc log line, the hold phase a record with nothing spun or lifted.",
     "steps": [
      {
       "set": {
@@ -8163,6 +8419,10 @@
      },
      {
       "restart": true
+     },
+     {
+      "log": "Music disc: music_animation_close_exp came back",
+      "within": 10000
      },
      {
       "open": "feed"
@@ -8177,10 +8437,6 @@
       },
       "expect": "spun the disc",
       "expectNot": "held the disc"
-     },
-     {
-      "log": "Music disc: music_animation_close_exp came back",
-      "within": 8000
      },
      {
       "set": {
@@ -8202,8 +8458,8 @@
       "extras": {
        "family": "music disc spin"
       },
-      "expect": "held the disc",
-      "expectNot": "spun the disc"
+      "expect": "bound=\\[installed(, held the disc[^,\\]]*)*\\]",
+      "expectNot": "spun the disc|lifted"
      },
      {
       "set": {
@@ -8273,7 +8529,7 @@
     "auto": true
    }
   ],
-  "notes": "Eighteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist."
+  "notes": "Eighteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses exn), so the music check first swipes to a video that shows one, and the hidden state it asks for is o97 GONE under a visible exn (2026-10-16). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16)."
  },
  {
   "name": "Hold-and-slide 2x lock",
@@ -8323,7 +8579,8 @@
      {
       "set": {
        "enable_long_press_speed_lock": "true",
-       "hold_speed": "2"
+       "hold_speed": "2",
+       "remembered_speed_v2": "1.0"
       }
      },
      {
@@ -8342,9 +8599,15 @@
       "wait": 2500
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "holdslide",
       "extras": {
-       "x": "540",
+       "x": "180",
        "y": "1000",
        "dy": "500",
        "hold": "1500",
@@ -8379,7 +8642,8 @@
      {
       "set": {
        "enable_long_press_speed_lock": "false",
-       "hold_speed": "2"
+       "hold_speed": "2",
+       "remembered_speed_v2": "1.0"
       }
      },
      {
@@ -8398,9 +8662,15 @@
       "wait": 2500
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "holdslide",
       "extras": {
-       "x": "540",
+       "x": "180",
        "y": "1000",
        "dy": "500",
        "hold": "1500",
@@ -8429,7 +8699,7 @@
     "auto": true
    }
   ],
-  "notes": "The 2026-09-22 device notes say TikTok's pull-down lock only works past the first video (on the first one the feed's pull to refresh takes the drag), so both checks swipe up twice first. holdslide injects the hold and slide inside TikTok's own window; it presses the middle of the video, never a rail button. The player handle X.037t / LJIILIIL is the 47.1.4 one from the spec. The lock distance default is 140 dp (FeatureControls.DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP), so the 500 px slide is enough on a 420 dpi screen. The checks leave the video with a swipe because a locked 2x would otherwise carry into the next patch's checks (the runner also restarts after a patch that set a restart-gated key)."
+  "notes": "The 2026-09-22 device notes say TikTok's pull-down lock only works past the first video (on the first one the feed's pull to refresh takes the drag), so both checks swipe up twice first. holdslide injects the hold and slide inside TikTok's own window; it presses the left third of the video, never a rail button: on 47.1.4 a hold in the middle opens TikTok's long-press menu and the 2x hold lives on the sides (seen 2026-10-16). The player handle X.037t / LJIILIIL is the 47.1.4 one from the spec. The lock distance default is 140 dp (FeatureControls.DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP), so the 500 px slide is enough on a 420 dpi screen. The checks leave the video with a swipe because a locked 2x would otherwise carry into the next patch's checks (the runner also restarts after a patch that set a restart-gated key). TikTok marks the lock as a chosen speed (swipe_up_lock_persist) and Remember the last speed saves it, so both checks set remembered_speed_v2 to 1.0 first and the runner puts the phone's own value back afterwards; without that the lock check left 2.0 for every later video. Each hold waits for a normal video (photo=false, ad=false), since ads and photos have no side hold (2026-10-16)."
  },
  {
   "name": "In-app browser privacy guard",
@@ -8467,29 +8737,84 @@
     "auto": true
    },
    {
-    "id": "bridges-withheld-or-restored",
-    "what": "Opening a web page in TikTok's browser with the switch on makes the guard decide about the page's JavaScript bridges and log it.",
+    "id": "bridges-withheld-external",
+    "what": "With the switch on, an external link opened in TikTok's browser (TikTok's link-safety page for example.com) gets no Java bridge: the guard logs that it withheld them, and none of the page's bridge names reaches its Java object.",
     "steps": [
      {
       "set": {
-       "block_webview_js_interfaces": "true"
+       "block_webview_js_interfaces": "true",
+       "open_external_links": "false"
       }
      },
      {
-      "open": "url:https://www.tiktok.com/legal/terms-of-service"
+      "open": "url:snssdk1233://webview?url=https%3A%2F%2Fexample.com%2F"
      },
      {
       "wait": 4000
      },
      {
-      "log": "Browser privacy guard: JavaScript bridge (withheld from|restored for) ",
-      "within": 12000
+      "probe": "webview-bridges",
+      "expect": "^ok webview-bridges scheduled=[1-9]",
+      "waitMs": 3000
+     },
+     {
+      "log": "bridge-exposure webview=\\d+ origin=https://www\\.tiktoklinksafety\\.\\w+/link/ tracked=[1-9]\\d* java=0 ",
+      "within": 6000
+     },
+     {
+      "logNot": "bridge-exposure webview=\\d+ origin=https://www\\.tiktoklinksafety\\.\\w+/link/ tracked=\\d+ java=(-|[1-9])",
+      "within": 1000,
+      "fromStep": 4
+     },
+     {
+      "log": "Browser privacy guard: JavaScript bridge withheld from www\\.tiktoklinksafety\\.",
+      "within": 1000,
+      "fromStep": 2
+     },
+     {
+      "back": true
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "bridges-left-alone",
+    "what": "With the switch off, the same page keeps TikTok's Java bridges (at least one bridge name reaches its Java object) and the guard withholds nothing. This is the control that shows the probe can see a bridge.",
+    "steps": [
+     {
+      "set": {
+       "block_webview_js_interfaces": "false",
+       "open_external_links": "false"
+      }
+     },
+     {
+      "open": "url:snssdk1233://webview?url=https%3A%2F%2Fexample.com%2F"
+     },
+     {
+      "wait": 4000
+     },
+     {
+      "probe": "webview-bridges",
+      "expect": "^ok webview-bridges scheduled=[1-9]",
+      "waitMs": 3000
+     },
+     {
+      "log": "bridge-exposure webview=\\d+ origin=https://www\\.tiktoklinksafety\\.\\w+/link/ tracked=[1-9]\\d* java=[1-9]",
+      "within": 6000
+     },
+     {
+      "logNot": "Browser privacy guard: JavaScript bridge withheld",
+      "within": 1000,
+      "fromStep": 2
+     },
+     {
+      "back": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The guard logs only when it changes a WebView's bridge state (BrowserPrivacyGuard.prepareForPage), so it needs a page that is not already in the state the switch asks for. A tiktok.com legal page is a trusted host, which restores or leaves the bridges (the line may then not appear); a stronger proof is to load an untrusted page and run the probe webview-bridges (async answer \"bridge-exposure webview=N origin=... tracked=T exposed=[]\"). The repo records no deep link that loads an arbitrary external page in TikTok's browser, so that half stays manual: from a profile with a bio link or a shop link, open it, then run probe webview-bridges and expect exposed=[]."
+  "notes": "The guard logs only when it changes a WebView's bridge state (BrowserPrivacyGuard.prepareForPage), so a trusted tiktok.com page proves nothing: the bridges stay as they are and no line appears. TikTok 47.1.4 opens an external address passed to snssdk1233://webview?url=<encoded page> (DeepLinkActivityV2) on its link-safety interstitial, www.tiktoklinksafety.us/link/ (\"This link may be unsafe\"), in SparkActivity, and that host is deliberately outside the trusted list, so example.com gives an untrusted page without tapping anything (discovery 8, 2026-10-16). Open external links directly is set off so the page stays in TikTok's browser. The probe's webview-bridges answers asynchronously with \"bridge-exposure webview=N origin=... tracked=T java=J exposed=...\": tracked is how many bridge names the guard holds for that WebView, and java is how many of them reach their Java object (a name counts when one of its @JavascriptInterface methods resolves as a function). exposed alone misleads: TikTok's JS SDK defines its own window.ToutiaoJSBridge (members _handleMessageFromApp and _handleMessageFromToutiao), which shows up even while the Java object is withheld. bridges-left-alone is the control with the switch off. The guard's \"withheld\" line is read from the open step on, since the probe step moves the log marker."
  },
  {
   "name": "Keep a streak going",
@@ -8686,7 +9011,7 @@
        "getter": "LJIILIIL",
        "gap": "1500"
       },
-      "expect": "moved=([6-9]\\d\\d|\\d{4,})ms",
+      "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
       "waitMs": 3000
      }
     ],
@@ -8814,7 +9139,7 @@
    },
    {
     "id": "gate-refused",
-    "what": "With the server gate favorite_reverse forced to 1, the switch on answers the read with 0 and records 'refused favorite_reverse' plus the info line 'Kept the Favorites tab: favorite_reverse came back 1'.",
+    "what": "With the server gate favorite_reverse forced to 1 and the share sheet opened, TikTok reads the gate, and the switch on answers 0 and records 'refused favorite_reverse' plus the info line 'Kept the Favorites tab: favorite_reverse came back 1'.",
     "steps": [
      {
       "set": {
@@ -8835,10 +9160,43 @@
       "restart": true
      },
      {
-      "open": "profile"
+      "probe": "labreport",
+      "extras": {
+       "op": "begin"
+      },
+      "expect": "recording=true"
      },
      {
-      "wait": 3500
+      "open": "feed"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "click",
+      "extras": {
+       "find": "wct"
+      },
+      "expect": "^ok click",
+      "waitMs": 2000
+     },
+     {
+      "wait": 3000
+     },
+     {
+      "back": true
+     },
+     {
+      "wait": 1000
+     },
+     {
+      "probe": "labreport",
+      "extras": {
+       "op": "stop",
+       "key": "favorite_reverse"
+      },
+      "expect": "ok labreport key favorite_reverse read=true",
+      "precondition": true
      },
      {
       "probe": "hookdetails",
@@ -8866,7 +9224,7 @@
    },
    {
     "id": "gate-left-alone",
-    "what": "With the switch off the same forced gate is not answered (no 'refused' record on a fresh process).",
+    "what": "With the switch off, the same forced gate is read when the share sheet opens and nothing refuses it.",
     "steps": [
      {
       "set": {
@@ -8887,10 +9245,43 @@
       "restart": true
      },
      {
-      "open": "profile"
+      "probe": "labreport",
+      "extras": {
+       "op": "begin"
+      },
+      "expect": "recording=true"
      },
      {
-      "wait": 3500
+      "open": "feed"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "probe": "click",
+      "extras": {
+       "find": "wct"
+      },
+      "expect": "^ok click",
+      "waitMs": 2000
+     },
+     {
+      "wait": 3000
+     },
+     {
+      "back": true
+     },
+     {
+      "wait": 1000
+     },
+     {
+      "probe": "labreport",
+      "extras": {
+       "op": "stop",
+       "key": "favorite_reverse"
+      },
+      "expect": "ok labreport key favorite_reverse read=true",
+      "precondition": true
      },
      {
       "probe": "hookdetails",
@@ -8937,7 +9328,7 @@
     "auto": false
    }
   ],
-  "notes": "Whether a real account is in the server experiment that empties the tab is TikTok's decision; the Feature Gate Lab forces the gate on the S22 exactly as the Roadmap's issue #4 notes did. The 'gate-left-alone' check relies on HookStatus being per process; if a future build persists hook records across restarts it can fail spuriously, so read the line order. Always finishes with labclear."
+  "notes": "Whether a real account is in the server experiment that empties the tab is TikTok's decision; the Feature Gate Lab forces the gate on the S22 exactly as the Roadmap's issue #4 notes did. The 'gate-left-alone' check relies on HookStatus being per process; if a future build persists hook records across restarts it can fail spuriously, so read the line order. Always finishes with labclear. The gate is read as the Favorites tab builds its pages, so the checks tap the profile's Favorites tab (content-desc 'Favorites') after a lab recording starts; opening the profile alone reads nothing on 47.1.4 (seen 2026-10-16). On 47.1.4 TikTok reads favorite_reverse as the share sheet opens (caller X.034M#LIZ), not on the profile or its Favorites tab, so both gate checks open the share sheet on the feed (wct) and back out; nothing on the sheet is tapped (2026-10-16)."
  },
  {
   "name": "Keep the app language",
@@ -9070,13 +9461,15 @@
        "names": "highest"
       },
       "expect": "highest=(60|90|120|144)\\.0",
-      "waitMs": 1500
+      "waitMs": 1500,
+      "retrySwipe": 10,
+      "precondition": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "highest stays 0.0 until preferredRefreshRate is asked for a request below the screen's best with the switch on, so a 60 Hz screen or a video already at the screen's rate leaves it at 0.0 (then swipe more). The measurable end result, the window's preferredRefreshRate staying 0, is a dumpsys window reading the runner has no step for."
+  "notes": "highest stays 0.0 until TikTok asks the window for a rate above zero with the switch on, so a feed where TikTok never caps reads inconclusive after ten swipes. On the S22 at 2026-10-16 no TikTok window asked for one: `dumpsys window windows` prints preferredRefreshRate only when it's set, and it was nowhere, so TikTok 47.1.4 may only cap some videos or none. The fingerprint check at patch time is what shows the hook is in place."
  },
  {
   "name": "LIVE controls",
@@ -9402,7 +9795,7 @@
        "getter": "LJIILIIL",
        "gap": "1500"
       },
-      "expect": "moved=([6-9]\\d\\d|\\d{4,})ms",
+      "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
       "waitMs": 3000
      }
     ],
@@ -9467,7 +9860,8 @@
      {
       "probe": "report",
       "expect": "Location governor: blocked (getLastKnownLocation|requestSingleUpdate|requestLocationUpdates)",
-      "waitMs": 10000
+      "waitMs": 10000,
+      "precondition": true
      }
     ],
     "auto": true
@@ -10311,7 +10705,7 @@
        "getter": "LJIILIIL",
        "gap": "1500"
       },
-      "expect": "moved=([6-9]\\d\\d|\\d{4,})ms",
+      "expect": "moved=(-\\d{3,}|[6-9]\\d\\d|\\d{4,})ms",
       "waitMs": 3000
      }
     ],
@@ -10361,7 +10755,7 @@
     "steps": [
      {
       "set": {
-       "play_sdr": "false"
+       "play_sdr": "true"
       }
      },
      {
@@ -10371,37 +10765,22 @@
       "open": "feed"
      },
      {
-      "set": {
-       "play_sdr": "true"
-      }
+      "wait": 2500
      },
      {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "log": "SDR playback dropped \\d+ HDR gear\\(s\\) of \\d+ from ",
-      "within": 12000
+      "probe": "hookdetails",
+      "extras": {
+       "family": "SDR playback"
+      },
+      "expect": "bound=\\[.+\\]",
+      "retrySwipe": 15,
+      "precondition": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The line is written once per process and only when a video's gear list holds an HDR gear (getHdrType 1 or 2), which most videos do not, so the step swipes through six videos and can still time out on a feed with no HDR (inconclusive, not a patch failure). The switch is turned on after the restart so the first HDR video seen after it is the one that logs. The filter shares its entry with Prefer H.264 (SdrPlayback.filter calls H264Playback.keepH264 first), so an H.264-only list passes through unchanged. Needs morphe_debug? No: Logger.printInfo."
+  "notes": "Most videos have no HDR gear, so the check swipes up to fifteen times for one and reads inconclusive on a feed without (not a patch failure). It reads the \"SDR playback\" family through hookdetails, which SdrPlayback binds on every drop from SimVideo or SimVideoUrlModel setBitRate, rather than the once-per-process log line (\"SDR playback dropped N HDR gear(s) of M from ...\"), which a log step could only see if it landed after the step in front of it (2026-10-16). The switch is on before the restart so every gear list in the process passes the filter. The filter shares its entry with Prefer H.264 (SdrPlayback.filter calls H264Playback.keepH264 first), so an H.264-only list passes through unchanged."
  },
  {
   "name": "Playback quality",
@@ -10476,7 +10855,8 @@
      },
      {
       "log": "Playback quality lowest picked .* of \\d+ gears from ",
-      "within": 12000
+      "within": 12000,
+      "fromStep": 4
      }
     ],
     "auto": true
@@ -10501,13 +10881,14 @@
      },
      {
       "log": "Playback quality 720 picked .* of \\d+ gears from ",
-      "within": 12000
+      "within": 12000,
+      "fromStep": 1
      }
     ],
     "auto": true
    }
   ],
-  "notes": "PlaybackQuality.describeChoice writes one Logger.printInfo line per kind of choice (mode, source, ladder, pick), and a kind repeats across videos with the same ladder, so the checks restart first (clears the kind set) or change mode (new kind). It logs only for the feed's own picker calls, so a stalled swipe produces no line; the 12 second window covers three swipes. Mode strings are the setting values: auto, highest, lowest, 1080, 720, 540, 480, 360. \"On mobile data\" (playback_quality_metered) only matters on a metered connection and is not exercised."
+  "notes": "PlaybackQuality.describeChoice writes one Logger.printInfo line per kind of choice (mode, source, ladder, pick), and a kind repeats across videos with the same ladder, so the checks restart first (clears the kind set) or change mode (new kind). It logs only for the feed's own picker calls, so a stalled swipe produces no line; each log step reads from the set step that changed the mode (fromStep), since the line can land on any of the three swipes and a log step otherwise sees only what came after the last one began (2026-10-16). Mode strings are the setting values: auto, highest, lowest, 1080, 720, 540, 480, 360. \"On mobile data\" (playback_quality_metered) only matters on a metered connection and is not exercised."
  },
  {
   "name": "Playback speed",
@@ -10618,11 +10999,12 @@
    },
    {
     "id": "no-default-plays-at-one",
-    "what": "With the default speed switch off a newly shown video plays at 1.0.",
+    "what": "With the default speed switch off and the remembered speed at 1.0, a newly shown video plays at 1.0, not at the default the video before it got.",
     "steps": [
      {
       "set": {
-       "default_speed_enabled": "false"
+       "default_speed_enabled": "false",
+       "remembered_speed_v2": "1.0"
       }
      },
      {
@@ -10666,9 +11048,15 @@
       "wait": 2000
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "holdslide",
       "extras": {
-       "x": "540",
+       "x": "180",
        "y": "1000",
        "dy": "0",
        "hold": "1500",
@@ -10689,7 +11077,7 @@
     "auto": true
    }
   ],
-  "notes": "Remember the last speed (remember_playback_speed, on by default) only changes when the person picks a speed in TikTok's speed menu, which is a sheet over the video that the runner cannot open by a stable selector, so it is not exercised; the menu extras (custom_speeds, restart-gated) are the same. The hold log is written once per value per process (loggedHoldSpeed), which is why the check restarts first and reads the export, not logcat (the line is written mid-hold, before the runner's marker). The hold presses the middle of the video, never a rail button."
+  "notes": "Remember the last speed (remember_playback_speed, on by default) only changes when the person picks a speed in TikTok's speed menu, which is a sheet over the video that the runner cannot open by a stable selector, so it is not exercised; the menu extras (custom_speeds, restart-gated) are the same. The hold log is written once per value per process (loggedHoldSpeed), which is why the check restarts first and reads the export, not logcat (the line is written mid-hold, before the runner's marker). The hold presses the middle of the video, never a rail button. The side hold only exists on a normal video: on an ad, a photo or LIVE TikTok's side press opens the long-press panel, so the hold waits for photo=false and ad=false. no-default-plays-at-one pins remembered_speed_v2 to 1.0, since with Default speed off a new video plays at the remembered speed and the hold-and-slide lock is remembered as a choice (2026-10-16)."
  },
  {
   "name": "Prefer H.264 playback",
@@ -10732,7 +11120,7 @@
     "steps": [
      {
       "set": {
-       "prefer_h264": "false"
+       "prefer_h264": "true"
       }
      },
      {
@@ -10742,25 +11130,16 @@
       "open": "feed"
      },
      {
-      "set": {
-       "prefer_h264": "true"
-      }
+      "wait": 2500
      },
      {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "log": "H\\.264 playback dropped \\d+ HEVC or ByteVC2 gear\\(s\\) of \\d+ from ",
-      "within": 12000
+      "probe": "hookdetails",
+      "extras": {
+       "family": "H.264 playback"
+      },
+      "expect": "bound=\\[.+\\]",
+      "retrySwipe": 15,
+      "precondition": true
      }
     ],
     "auto": true
@@ -10782,7 +11161,7 @@
     "auto": true
    }
   ],
-  "notes": "The line is written once per process and only for a gear list that mixes codecs (H264Playback.filter). A feed that serves H.264 only, or lists whose H.264 gears have no playable address (PreferredGears.narrow keeps all and logs \"Prefer H.264 video kept all N gears\"), leave it silent: inconclusive, not a failure. The switch is turned on after the restart so the first mixed list after it logs."
+  "notes": "H264Playback binds the \"H.264 playback\" family on every gear list it narrows, and only then, so the check swipes up to fifteen times for a list that mixes codecs and reads hookdetails (the once-per-process log line \"H.264 playback dropped N HEVC or ByteVC2 gear(s) of M from ...\" can land before a log step's marker). A feed that serves H.264 only, or lists whose H.264 gears have no playable address (PreferredGears.narrow keeps all), read inconclusive, not a failure. The switch is on before the restart so every list in the process passes the filter. anchors-bound only shows nothing missed. On 47.1.4 most lists this account gets have no H.264 gear at all (the S22 saw one of 71 on 2026-10-16), so inconclusive is the usual answer there; videoinfo's gear names carry the codec as <describe>_codec_<n>_<format>, with 0 for H.264, 1 for HEVC and 2 for ByteVC2."
  },
  {
   "name": "Profile background",
@@ -11015,9 +11394,12 @@
     "auto": true
    },
    {
-    "id": "auto-clear-lands-and-carries",
-    "what": "With Automatic Clear display on, a video clears by itself after the delay, and the next video starts cleared (the mode is remembered across the swipe).",
+    "id": "auto-clear-lands",
+    "what": "With Automatic Clear display on and a 2 second delay, a video clears by itself after the delay and the next one does too after its own delay. Nothing carries across the swipe with a delay.",
     "steps": [
+     {
+      "open": "feed"
+     },
      {
       "set": {
        "automatic_clear_display": "true",
@@ -11025,13 +11407,80 @@
       }
      },
      {
-      "open": "feed"
+      "swipe": "up"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false live=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "wait": 5000
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch",
+       "method": "isClearDisplayNow"
+      },
+      "expect": "^ok call isClearDisplayNow -> true",
+      "waitMs": 1500
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch",
+       "method": "isCarryingClear"
+      },
+      "expect": "^ok call isCarryingClear -> false",
+      "waitMs": 1500
      },
      {
       "swipe": "up"
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false live=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "wait": 5000
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch",
+       "method": "isClearDisplayNow"
+      },
+      "expect": "^ok call isClearDisplayNow -> true",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "no-delay-carries",
+    "what": "With no delay, a video clears as it starts and the clear carries across the swipe, so the next video never shows its controls.",
+    "steps": [
+     {
+      "set": {
+       "automatic_clear_display": "true",
+       "automatic_clear_display_delay": "0"
+      }
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false live=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "wait": 2500
      },
      {
       "probe": "call",
@@ -11071,7 +11520,7 @@
    },
    {
     "id": "auto-clear-off",
-    "what": "With Automatic Clear display off, a video is not cleared by the extension.",
+    "what": "With Automatic Clear display off, the next video isn't cleared and nothing carries.",
     "steps": [
      {
       "set": {
@@ -11092,12 +11541,21 @@
       },
       "expect": "^ok call isCarryingClear -> false",
       "waitMs": 1500
+     },
+     {
+      "probe": "call",
+      "extras": {
+       "class": "app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch",
+       "method": "isClearDisplayNow"
+      },
+      "expect": "^ok call isClearDisplayNow -> false",
+      "waitMs": 1500
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The \"Following stories bubble comes back when clear display ends\" half is a debug line \"[FollowingStoriesBubble] shown again after clear display\" and needs a Following stories bubble on screen. Clear display set by hand (long press, Clear display) is the other way in and is not driven here (it would need a tap on TikTok's long-press menu). If the first swipe lands on a photo post or a LIVE, the automatic clear \"skipped, the video or its window isn't current\" appears in the debug log and the check fails: swipe once more and rerun."
+  "notes": "The \"Following stories bubble comes back when clear display ends\" half is a debug line \"[FollowingStoriesBubble] shown again after clear display\" and needs a Following stories bubble on screen. Clear display set by hand (long press, Clear display) is the other way in and is not driven here (it would need a tap on TikTok's long-press menu). A photo post or a LIVE skips the automatic clear (\"skipped, the video or its window isn't current\" in the debug log), so each clear waits for a normal video first. isCarryingClear only holds when every video clears as it starts (no delay, or the remembered choice); with a delay the next video shows its controls until its own delay ends, and the old single check that expected a carry with a 2000 ms delay failed on that (2026-10-16). The feed opens before the switch goes on: with TikTok already on the feed, the clear lands inside the delay and hides the tab bar the open step presses (2026-10-16)."
  },
  {
   "name": "Remove LIVE extras",
@@ -11206,6 +11664,50 @@
     "auto": true
    },
    {
+    "id": "story-status-answer",
+    "what": "With a creator who has a story in front, User.getStoryStatus passes the stored status through with Hide story rings off and answers 0 with it on, which is what keeps the ring and its story tap off the avatar.",
+    "steps": [
+     {
+      "set": {
+       "hide_story_rings": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "storyStatus=([1-9]\\d*)/\\1\\b",
+      "retrySwipe": 20,
+      "precondition": true
+     },
+     {
+      "set": {
+       "hide_story_rings": "true"
+      }
+     },
+     {
+      "wait": 1000
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "storyStatus=[1-9]\\d*/0\\b",
+      "waitMs": 1500
+     },
+     {
+      "set": {
+       "hide_story_rings": "false"
+      }
+     }
+    ]
+   },
+   {
     "id": "ring-gone",
     "what": "A creator who has a story or is live has a ring on the avatar with the switches off and none with them on.",
     "steps": [
@@ -11225,8 +11727,14 @@
       "wait": 3000
      },
      {
+      "probe": "videoinfo",
+      "expect": "storyStatus=[1-9]\\d*/",
+      "retrySwipe": 20,
+      "precondition": true
+     },
+     {
       "shot": "rings-off",
-      "review": "Find a For You video whose creator avatar has a coloured story ring or a pulsing LIVE ring (scroll up to 20 videos; none are served on some accounts, then mark n/a)."
+      "review": "The creator avatar on the rail has a coloured story ring or a pulsing LIVE ring (the check swiped to a creator with a story first)."
      },
      {
       "set": {
@@ -11244,8 +11752,14 @@
       "wait": 3000
      },
      {
+      "probe": "videoinfo",
+      "expect": "storyStatus=[1-9]\\d*/",
+      "retrySwipe": 20,
+      "precondition": true
+     },
+     {
       "shot": "rings-on",
-      "review": "Same creator or any: no ring around any avatar, and a tap target on the avatar opens the profile, not a story or LIVE. Do not tap."
+      "review": "The creator avatar on the rail has no ring, though this creator has a story (the check swiped to one first). Do not tap."
      },
      {
       "set": {
@@ -11257,7 +11771,7 @@
     "auto": false
    }
   ],
-  "notes": "Whether a ring exists to remove depends on whether the creator in the feed has a story or is live right then, which the test account cannot cause, so the runtime effect is review only. The Probe 'finddesc' / 'views' actions have no stable id for the ring (it is a drawable on the avatar). The hook returns 0 from User.getStoryStatus and filters the author-live and User.isLive reads, so it is mostly proved by the injected calls plus the diagnostic registration."
+  "notes": "Whether a ring exists to remove depends on whether the creator in the feed has a story or is live right then, which the test account cannot cause, so the runtime effect is review only. The Probe 'finddesc' / 'views' actions have no stable id for the ring (it is a drawable on the avatar). The hook returns 0 from User.getStoryStatus and filters the author-live and User.isLive reads, so it is mostly proved by the injected calls plus the diagnostic registration. 'story-status-answer' reads the hook itself: videoinfo's storyStatus=<stored>/<getter> on a creator with a story (a cyan ring was served on 2026-10-16). If it answers storyStatus=null/..., the stored field was renamed: find User's int field behind getStoryStatus in the dex and update the probe. ring-gone swipes to a creator with a story before each shot (videoinfo storyStatus 1 or more, up to 20 swipes, else inconclusive), since the feed's first video rarely has one (2026-10-16)."
  },
  {
   "name": "Remove content credential and card scanner assets",
@@ -11570,7 +12084,8 @@
      {
       "probe": "report",
       "expect": "Resource governor: blocked sensor registration for type \\d+",
-      "waitMs": 10000
+      "waitMs": 10000,
+      "precondition": true
      }
     ],
     "auto": true
@@ -11664,6 +12179,15 @@
       "open": "feed"
      },
      {
+      "wait": 2500
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "photo=false durationMs=(1[5-9]\\d{3}|[2-9]\\d{4}|\\d{6,})\\b.*ad=false",
+      "retrySwipe": 10,
+      "precondition": true
+     },
+     {
       "wait": 7000
      },
      {
@@ -11692,7 +12216,7 @@
     "auto": true
    }
   ],
-  "notes": "The position check reads the player 0.9 seconds after the swipe back, so a video that resumed shows \"from\" of 3000 ms or more (7 seconds watched minus the swipe), while one that started over shows under 1500 ms. If the first video is shorter than 7 seconds it loops and the position can wrap; rerun on a longer video. The first item must be a normal video: a photo post, LIVE or ad has no player handle (\"no player\"). resume_video_after_scroll is restart-gated, hence the restart."
+  "notes": "The position check reads the player 0.9 seconds after the swipe back, so a video that resumed shows \"from\" of 3000 ms or more (7 seconds watched minus the swipe), while one that started over shows under 1500 ms. A video shorter than 7 seconds ends, and the patch clears a finished video's position on purpose, so the check first swipes to a normal video of 15 seconds or more (videoinfo photo=false and durationMs) and reads inconclusive when none comes up. A photo post, LIVE or ad has no player handle (\"no player\"). 2026-10-16 answered from=1427ms on an unmeasured video, which is why. resume_video_after_scroll is restart-gated, hence the restart."
  },
  {
   "name": "Run beside the store app",
@@ -11873,7 +12397,8 @@
     "steps": [
      {
       "set": {
-       "morphe_sanitize_sharing_links": "true"
+       "morphe_sanitize_sharing_links": "true",
+       "expand_short_share_links": "true"
       }
      },
      {
@@ -11900,13 +12425,18 @@
       "waitMs": 1500
      },
      {
-      "wait": 1500
+      "wait": 6000
      },
      {
       "probe": "video-link",
       "expect": "^ok video-link https://www\\.tiktok\\.com/[^?\\s]+/video/\\d+$",
       "expectNot": "\\?",
       "waitMs": 1500
+     },
+     {
+      "set": {
+       "expand_short_share_links": "false"
+      }
      }
     ],
     "auto": true
@@ -11917,7 +12447,8 @@
     "steps": [
      {
       "set": {
-       "morphe_sanitize_sharing_links": "false"
+       "morphe_sanitize_sharing_links": "false",
+       "expand_short_share_links": "true"
       }
      },
      {
@@ -11947,18 +12478,23 @@
       "waitMs": 1500
      },
      {
-      "wait": 1500
+      "wait": 6000
      },
      {
       "probe": "video-link",
       "expect": "^ok video-link https://www\\.tiktok\\.com/\\S+/video/\\d+\\?",
       "waitMs": 1500
+     },
+     {
+      "set": {
+       "expand_short_share_links": "false"
+      }
      }
     ],
     "auto": true
    }
   ],
-  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.1.4 view id wct (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. video-link answers \"not-a-tiktok-video-url\" for a short vm.tiktok.com link; with expand_short_share_links on, TikTok's short link is expanded first. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell)."
+  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.1.4 view id wct (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. On 47.1.4 Copy link gives a short vt.tiktok.com link with no query (seen 2026-10-16), so both checks turn on expand_short_share_links (Copy the full link for short links), which swaps in the full link through the same sanitizer. A full link proves the expander, its query the sanitize switch. video-link answers \"not-a-tiktok-video-url host=... query=... path=<shape>\" when the swap didn't happen (shape is video, photo, t-short, short, root or other-N-segments, never the link), and \"clip=empty\" when nothing was copied. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell). 47.1.4 also hands out the tiktok.com/t/<code>/ short form, which the expander didn't take until 2026-10-16: the switch-off check then read host=www.tiktok.com query=false with no /video/."
  },
  {
   "name": "Settings",
@@ -12064,7 +12600,7 @@
    },
    {
     "id": "home-long-press",
-    "what": "Review: pressing and holding the Home tab opens Hushfeed settings (switch home_tab_opens_settings, on by default), and the row sits at the top of TikTok's Settings and privacy.",
+    "what": "Holding the Home tab opens Hushfeed's settings (home_tab_opens_settings, on by default), and the Hushfeed row in TikTok's Settings and privacy opens them too.",
     "steps": [
      {
       "set": {
@@ -12078,14 +12614,76 @@
       "wait": 1500
      },
      {
-      "shot": "home-long-press",
-      "review": "Press and hold the Home tab (the step language has no long press, so a person does it): Hushfeed's settings page opens. Then Profile > menu > Settings and privacy: a Hushfeed row sits at the top of the list. Failing looks like nothing happening on the long press, or no row in Settings and privacy."
+      "probe": "findtext",
+      "extras": {
+       "text": "Home",
+       "hold": "900"
+      },
+      "expect": "ok findtext found .*held=900ms"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "(?i)^hushfeed$",
+       "match": "regex"
+      },
+      "expect": "ok findtext found"
+     },
+     {
+      "back": true
+     },
+     {
+      "open": "profile"
+     },
+     {
+      "tap": {
+       "desc": "^Profile menu$"
+      }
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "tap": {
+       "text": "^Settings and privacy$"
+      }
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "tap": {
+       "label": "^Hushfeed$"
+      }
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "findtext",
+      "extras": {
+       "text": "(?i)^hushfeed$",
+       "match": "regex"
+      },
+      "expect": "ok findtext found"
+     },
+     {
+      "back": true
+     },
+     {
+      "back": true
+     },
+     {
+      "back": true
      }
     ],
-    "auto": false
+    "auto": true
    }
   ],
-  "notes": "The probe's settings action starts the same activity the row does, so the first three checks prove the page, its sections and the registration; the two entry points a person uses (the row inside Settings and privacy and the Home long press) need the real gesture. Section rows show only when their patches' status flags are set (Section.isAvailable in TikTokPreferenceFragment.java), which makes the home page a second applied-patch proof. Labels are English. 'Hide new followers' is an Inbox row title near the top of that page."
+  "notes": "The probe's settings action starts the same activity the row does, so the first three checks prove the page, its sections and the registration; the two entry points a person uses (the row inside Settings and privacy and the Home long press) need the real gesture. Section rows show only when their patches' status flags are set (Section.isAvailable in TikTokPreferenceFragment.java), which makes the home page a second applied-patch proof. Labels are English. 'Hide new followers' is an Inbox row title near the top of that page. Settings and privacy is a Compose screen on 47.1.4 (SettingContainerActivity), which the probe's findtext can't see into, so the check taps the Hushfeed row through the dump and reads Hushfeed's own page (2026-10-16). Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
  },
  {
   "name": "Share sheet tools",
@@ -12818,15 +13416,16 @@
      },
      {
       "probe": "videoinfo",
-      "expect": "likes=over1000",
-      "retrySwipe": 8,
+      "expect": "likes=over10000",
+      "retrySwipe": 12,
       "precondition": true
      },
      {
       "probe": "textwords",
       "extras": {
        "id": "g86",
-       "word": ","
+       "word": ",",
+       "onscreen": "true"
       },
       "expect": "containing=0"
      },
@@ -12843,15 +13442,16 @@
      },
      {
       "probe": "videoinfo",
-      "expect": "likes=over1000",
-      "retrySwipe": 8,
+      "expect": "likes=over10000",
+      "retrySwipe": 12,
       "precondition": true
      },
      {
       "probe": "textwords",
       "extras": {
        "id": "g86",
-       "word": ","
+       "word": ",",
+       "onscreen": "true"
       },
       "expect": "containing=[1-9]"
      },
@@ -12879,7 +13479,7 @@
     "auto": true
    }
   ],
-  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over1000' only proves 1,000+. The runner should prefer a video where the heart shows K or M with the switch off. The rail count view is g86 (like), ek5 (comment), i82 (save) and w_0 (share) on 47.1.4."
+  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over10000' bucket picks one (2,447 is written whole by TikTok itself, seen 2026-10-16). textwords takes onscreen=true, since the feed keeps the next cell's g86 laid out. The rail count view is g86 (like), ek5 (comment), i82 (save) and w_0 (share) on 47.1.4."
  },
  {
   "name": "Show follow status",
@@ -12944,11 +13544,11 @@
       "wait": 2500
      },
      {
-      "probe": "findtext",
+      "probe": "finddesc",
       "extras": {
-       "text": "Edit profile"
+       "desc": "Profile menu"
       },
-      "expect": "^ok findtext found",
+      "expect": "^ok finddesc found",
       "waitMs": 1500
      },
      {
@@ -12993,11 +13593,11 @@
       "wait": 2500
      },
      {
-      "probe": "findtext",
+      "probe": "finddesc",
       "extras": {
-       "text": "Edit profile"
+       "desc": "Profile menu"
       },
-      "expect": "^ok findtext found",
+      "expect": "^ok finddesc found",
       "waitMs": 1500
      },
      {
@@ -13032,7 +13632,7 @@
     "auto": true
    }
   ],
-  "notes": "Needs the audit account to follow at least one account that does not follow it back (the labels are drawn from followStatus 1 and followerStatus != 1 on each list cell, FollowStatus.listLabel); if the list has none, the first check fails for want of data, not a bad patch. The runner's own tap step refuses any target that starts with \"Following\" (run-audit.ps1 $outwardWords: on someone else's profile that button unfollows), so the stat is opened with the probe findtext click instead. That is safe only on the account's own profile, which is why the steps first require the text \"Edit profile\" (present only there) and stop if it is missing. Nothing in the list is tapped. The label is a TextView of ours tagged hushfeed_follow_status, so findtext sees it. The profile-header labels \"Follows you\" and \"Doesn't follow you back\" on another creator's profile need a creator who follows or does not follow back, and are not exercised. The row's English \"Edit profile\" label is unverified on a phone."
+  "notes": "Needs the audit account to follow at least one account that does not follow it back (the labels are drawn from followStatus 1 and followerStatus != 1 on each list cell, FollowStatus.listLabel); if the list has none, the first check fails for want of data, not a bad patch. The runner's own tap step refuses any target that starts with \"Following\" (run-audit.ps1 $outwardWords: on someone else's profile that button unfollows), so the stat is opened with the probe findtext click instead. That is safe only on the account's own profile, which is why the steps first require the \"Profile menu\" button (present only there; 47.1.4's own profile has a pencil icon and no \"Edit profile\" button, seen 2026-10-16) and stop if it is missing. Nothing in the list is tapped. The label is a TextView of ours tagged hushfeed_follow_status, so findtext sees it. The profile-header labels \"Follows you\" and \"Doesn't follow you back\" on another creator's profile need a creator who follows or does not follow back, and are not exercised."
  },
  {
   "name": "Show the progress bar",
@@ -13341,7 +13941,9 @@
       "extras": {
        "family": "sensitive warnings"
       },
-      "expect": "bound=\\[.+\\]"
+      "expect": "bound=\\[.+\\]",
+      "precondition": true,
+      "retrySwipe": 15
      },
      {
       "set": {
@@ -13354,7 +13956,7 @@
     "auto": true
    }
   ],
-  "notes": "Content warnings, unverified notices and Check sources banners are naturally served only (Roadmap_Blocked.md lists them under served-content acceptance), so the 'warning-skipped' check is opportunistic: it passes only when one of the first six videos carried a mask, and a failure of it alone means 'not served', not 'broken'. The extension emits no logcat line for the other two switches."
+  "notes": "Content warnings, unverified notices and Check sources banners are naturally served only (Roadmap_Blocked.md lists them under served-content acceptance), so the 'warning-skipped' check is opportunistic: it passes only when a video carrying a mask turns up within about twenty swipes, and otherwise reads inconclusive ('not served', not 'broken'). The family registers only when a mask object is bound, so a feed with no masked video answers 'ok hookdetails 0' (seen 2026-10-16). The extension emits no logcat line for the other two switches."
  },
  {
   "name": "Skip first-launch setup",
@@ -13826,11 +14428,11 @@
       "open": "feed"
      },
      {
-      "wait": 6000
+      "wait": 14000
      },
      {
       "probe": "pitaya",
-      "expect": "^ok pitaya libs=\\[\\]",
+      "expect": "^ok pitaya libs=\\[(libdex_[^,\\]]*(, )?)*\\] .*\\brealProvider=null\\b",
       "waitMs": 2500
      },
      {
@@ -13857,18 +14459,19 @@
       "open": "feed"
      },
      {
-      "wait": 6000
+      "wait": 14000
      },
      {
       "probe": "pitaya",
-      "expect": "^ok pitaya libs=\\[[^\\]]+\\]",
-      "waitMs": 2500
+      "expect": "libs=\\[[^\\]]*\\blib(?!dex_)[A-Za-z0-9_]*[Pp]itaya|\\brealProvider=(?!null\\b)\\S",
+      "waitMs": 2500,
+      "precondition": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The CHANGELOG says the switch keeps Pitaya's plugin from starting so \"Pitaya's native engine doesn't load\"; the probe reads the Pitaya libraries mapped in /proc/self/maps. The core asset strip keeps them (ResourceOptimizerPatches.kt:69-71), so the switch-off run should list libraries and makes the on/off pair meaningful. If the off case also shows libs=[] the libraries load lazily on this build and only the hook check remains. stop_ai_profiling is restart-gated. With the plugin stopped TikTok carries on as if it were not installed, so reaching the feed in both restarts is also the proof that nothing breaks."
+  "notes": "The CHANGELOG says the switch keeps Pitaya's plugin from starting so \"Pitaya's native engine doesn't load\". The probe lists the files with pitaya in their name mapped in /proc/self/maps and DelegateCoreProvider's realProvider, which stays null while every core is TikTok's \"host not ready\" stand-in. libdex_df_pitaya.so is one of the libdex_*.so code packages TikTok injects at every start (kept by the asset strip since #125), so it is mapped either way and both checks leave libdex_ files out. PitayaBootLoader delays its boot task by 8 s (delayBootTasks=[8000=BootTask] on 47.1.4), so both read after 14 s. With the switch off, no engine library and a null provider means Pitaya loads lazily on this build: inconclusive, and only the hook check remains. stop_ai_profiling is restart-gated. With the plugin stopped TikTok carries on as if it were not installed, so reaching the feed in both restarts is also the proof that nothing breaks (2026-10-16)."
  },
  {
   "name": "Stop recording watch history",
@@ -14536,7 +15139,8 @@
     "steps": [
      {
       "set": {
-       "swipe_left_action": "comments"
+       "swipe_left_action": "comments",
+       "ghost_mode": "true"
       }
      },
      {
@@ -14571,7 +15175,8 @@
     "steps": [
      {
       "set": {
-       "swipe_left_action": "nothing"
+       "swipe_left_action": "nothing",
+       "ghost_mode": "true"
       }
      },
      {
@@ -14593,7 +15198,7 @@
     "auto": true
    }
   ],
-  "notes": "The default action opens the creator's profile; it is not asserted here to keep the audit off strangers' profiles. The comment sheet is only opened, never typed in. Back closes it. GestureActions registers hook status families \"swipe left\" and \"double tap\"."
+  "notes": "The default action opens the creator's profile; it is not asserted here to keep the audit off strangers' profiles. The comment sheet is only opened, never typed in. Back closes it. GestureActions registers hook status families \"swipe left\" and \"double tap\". Both swipe checks turn Ghost mode on as well: if the patch stopped working, TikTok's own swipe left would open the creator's profile, and Ghost mode keeps that from sending them a profile view (2026-10-16)."
  },
  {
   "name": "Translate comments",
@@ -14864,52 +15469,8 @@
     "auto": true
    },
    {
-    "id": "long-press-haptic-held-back",
-    "what": "With the switch on, holding a video makes TikTok ask for a vibration and the hook holds it back.",
-    "steps": [
-     {
-      "set": {
-       "turn_off_haptics": "true"
-      }
-     },
-     {
-      "open": "feed"
-     },
-     {
-      "swipe": "up"
-     },
-     {
-      "wait": 1500
-     },
-     {
-      "probe": "holdslide",
-      "extras": {
-       "x": "540",
-       "y": "1000",
-       "dy": "0",
-       "hold": "1500",
-       "slide": "200"
-      },
-      "expect": "^ok holdslide",
-      "waitMs": 3500
-     },
-     {
-      "wait": 500
-     },
-     {
-      "probe": "report",
-      "expect": "Turn off haptics: held back a (long press|view haptic|timed vibration|vibration)",
-      "waitMs": 10000
-     },
-     {
-      "back": true
-     }
-    ],
-    "auto": true
-   },
-   {
     "id": "nothing-held-back-when-off",
-    "what": "With the switch off the hook lets the vibrations through (no new \"held back\" line while the same gesture runs).",
+    "what": "With the switch off, TikTok's side 2x hold plays its vibration and the hook holds nothing back.",
     "steps": [
      {
       "set": {
@@ -14920,15 +15481,15 @@
       "open": "feed"
      },
      {
-      "swipe": "up"
-     },
-     {
-      "wait": 1500
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false live=false",
+      "retrySwipe": 8,
+      "precondition": true
      },
      {
       "probe": "holdslide",
       "extras": {
-       "x": "540",
+       "x": "180",
        "y": "1000",
        "dy": "0",
        "hold": "1500",
@@ -14940,12 +15501,61 @@
      {
       "logNot": "Turn off haptics: held back",
       "within": 3000
+     },
+     {
+      "vibrations": "some",
+      "precondition": true
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "hold-haptic-held-back",
+    "what": "With the switch on, the same side 2x hold plays no vibration, and the hook's log says it held one back.",
+    "steps": [
+     {
+      "set": {
+       "turn_off_haptics": "true"
+      }
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false live=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "probe": "holdslide",
+      "extras": {
+       "x": "180",
+       "y": "1000",
+       "dy": "0",
+       "hold": "1500",
+       "slide": "200"
+      },
+      "expect": "^ok holdslide",
+      "waitMs": 3500
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "vibrations": "none"
+     },
+     {
+      "probe": "report",
+      "expect": "Turn off haptics: held back a (long press|view haptic|timed vibration|vibration)",
+      "waitMs": 10000,
+      "precondition": true
      }
     ],
     "auto": true
    }
   ],
-  "notes": "The line is written at debug level with the buffer on (the runner turns Log diagnostics on for the run) and is read from the export because the vibration is asked for mid-hold, before the runner's log marker. Whether the phone actually vibrates cannot be measured. The hold also runs TikTok's own 2x hold gesture on the middle of the video; it presses no rail button. The second check relies on logNot after a hold, so a haptic request from something else on the screen (the bottom bar) in those 3 seconds would fail it spuriously."
+  "notes": "Both checks hold the left side of a normal video for 1.5 s, TikTok's side 2x hold (the Playback speed check's gesture), and read Android's own record of what it played for TikTok (the runner's vibrations step, dumpsys vibrator_manager's Recent vibrations since the check started). Ads, photos and LIVE have no side hold and open the long-press panel instead, so each waits for a normal video; nothing on the panel would be pressed anyway. The off check runs first and must see a buzz, or it reads inconclusive. The on check fails when a vibration plays, and reads inconclusive when nothing played and nothing was held back, which means TikTok asked for none. On 47.1.4 a hold on the middle of a video, and a long press on a comment's timestamp (the old route), asked for no haptic at all (2026-10-16); the side hold did (TOUCH, 53 ms). The held back line is written at debug level with the buffer on (the runner turns Log diagnostics on for the run) and is read from the export because it lands mid-hold, before the runner's log marker."
  },
  {
   "name": "Turn off screen transitions",
@@ -14983,33 +15593,103 @@
    },
    {
     "id": "slide-gone",
-    "what": "Review: opening a video from a profile (or Hushfeed's settings) appears at once with the switch on and slides with it off.",
+    "what": "Hushfeed's settings open over a paused feed video while the screen is filmed: with the switch off the clip passes through a run of frames between the two screens (TikTok's slide), with it on it jumps straight to the settings page.",
     "steps": [
+     {
+      "animations": "on"
+     },
+     {
+      "set": {
+       "turn_off_screen_transitions": "false"
+      }
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
+      "probe": "holdslide",
+      "extras": {
+       "x": "540",
+       "y": "1000",
+       "dy": "0",
+       "hold": "50",
+       "slide": "50"
+      },
+      "expect": "^ok holdslide",
+      "waitMs": 1500
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "record": "start",
+      "seconds": 4
+     },
+     {
+      "open": "settings"
+     },
+     {
+      "record": "stop",
+      "transition": "animated",
+      "precondition": true
+     },
+     {
+      "back": true
+     },
      {
       "set": {
        "turn_off_screen_transitions": "true"
       }
      },
      {
-      "open": "profile"
+      "open": "feed"
      },
      {
-      "wait": 2000
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
      },
      {
-      "shot": "transition-off",
-      "review": "Tap a video on the profile grid (do not like, comment or follow): the player appears without a slide animation; back closes it the same way. A screenshot cannot show animation, so a person compares by eye against the switch off."
+      "probe": "holdslide",
+      "extras": {
+       "x": "540",
+       "y": "1000",
+       "dy": "0",
+       "hold": "50",
+       "slide": "50"
+      },
+      "expect": "^ok holdslide",
+      "waitMs": 1500
      },
      {
-      "set": {
-       "turn_off_screen_transitions": "false"
-      }
+      "wait": 1500
+     },
+     {
+      "record": "start",
+      "seconds": 4
+     },
+     {
+      "open": "settings"
+     },
+     {
+      "record": "stop",
+      "transition": "still"
+     },
+     {
+      "back": true
      }
     ],
-    "auto": false
+    "auto": true
    }
   ],
-  "notes": "There is no log line or state to read; the setting is read each time a screen is created or paused, so no restart is needed. Swipes inside one screen follow the finger and are not touched."
+  "notes": "There is no log line or state to read, since Android plays the slide, not TikTok's views. slide-gone films it instead: the runner's record step (screenrecord, then ffmpeg shrinks each frame to 54x116 grey) measures each frame against the last and counts the ones part way between the first screen and the last. A synthetic 0.3 s slide counted 14, a jump 0; the check wants 6 or more with the switch off (else inconclusive) and 3 or fewer with it on. The feed video is paused with one short press first (only on a plain video, since a tap on an ad opens it), so its own frames don't count. The setting is read each time a screen is created or paused, so no restart is needed. Swipes inside one screen follow the finger and are not touched. A phone with its animation scales at 0 (the S22's baseline) slides nothing, so the check turns them on first with an animations step and the runner puts the phone's values back afterwards; with them at 0 the switch-off half found no frames in between (2026-10-16)."
  },
  {
   "name": "Use non-personalized search",

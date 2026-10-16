@@ -33,9 +33,10 @@ import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Copy the full link for short links: once the clipboard holds a short vt.tiktok.com or
- * vm.tiktok.com link TikTok made, that link is opened in the background, the way a browser
- * opening it would, and the full video link it points to takes its place on the clipboard.
+ * Copy the full link for short links: once the clipboard holds a short vt.tiktok.com,
+ * vm.tiktok.com or tiktok.com/t/ link TikTok made, that link is opened in the background, the
+ * way a browser opening it would, and the full video link it points to takes its place on the
+ * clipboard.
  *
  * <p>Nothing is opened before the link is copied. TikTok makes its share link once for every
  * channel as the sheet opens, so each link made only starts a wait of {@link #WATCH_MS} for Copy
@@ -50,6 +51,11 @@ public final class ShortLinkExpander {
     private static final List<String> TIKTOK_HOSTS = Arrays.asList("tiktok.com", "www.tiktok.com", "m.tiktok.com");
     /** A post's own page, /@name/video/123 or /@name/photo/123, with anything after it. */
     private static final Pattern POST_PATH = Pattern.compile("/@[^/?#]+/(video|photo)/\\d+([/?#].*)?");
+    /**
+     * The short link on TikTok's own site, tiktok.com/t/ZT8abc/, with anything after it. TikTok
+     * hands this form out as well as the vt.tiktok.com one, and it leads to the video the same way.
+     */
+    private static final Pattern SITE_SHORT_PATH = Pattern.compile("/t/[A-Za-z0-9]{4,20}/?([?#].*)?");
     /** How long after the link is made a Copy link still gets the full one. */
     static final long WATCH_MS = 60_000;
     /** How long a short link that couldn't be opened is left before it's tried again. */
@@ -105,7 +111,10 @@ public final class ShortLinkExpander {
     }
 
     static boolean isShort(String url) {
-        return url.startsWith("https://") && SHORT_HOSTS.contains(host(url));
+        if (!url.startsWith("https://")) return false;
+        String host = host(url);
+        return SHORT_HOSTS.contains(host)
+                || (TIKTOK_HOSTS.contains(host) && SITE_SHORT_PATH.matcher(path(url)).matches());
     }
 
     /**

@@ -74,6 +74,15 @@ public class PlaybackSpeedTest {
         assertEquals(2.5f, PlaybackSpeedPatch.preserveTransitionSpeed(1f), 0);
         assertEquals(2f, PlaybackSpeedPatch.preserveTransitionSpeed(2f), 0);
     }
+    @Test public void turningTheDefaultOffDoesNotCarryItIntoTheNextVideo() {
+        assertEquals(1.5f, PlaybackSpeedPatch.getPlaybackSpeedForVideo(video("a")), 0);
+        Settings.DEFAULT_SPEED_ENABLED.save(false);
+        // The swipe hands the next video what TikTok's state holds: the default "a" was given.
+        PlaybackSpeedPatch.beginVideo(video("b"));
+        assertEquals(1f, PlaybackSpeedPatch.preserveTransitionSpeed(1.5f), 0);
+        assertEquals("a speed TikTok carries itself still stands",
+                2f, PlaybackSpeedPatch.preserveTransitionSpeed(2f), 0);
+    }
     @Test public void malformedDefaultUsesSafeDefaultAndMenuFailuresKeepNativeList() {
         var nativeList = List.of(0.5f, 1f, 1.5f, 2f);
         assertSame(nativeList, PlaybackSpeedPatch.menuSpeeds(nativeList));

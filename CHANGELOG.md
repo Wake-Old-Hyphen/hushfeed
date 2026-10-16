@@ -6,6 +6,10 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
+* **TikTok:** Copy the full link for short links now also works on the tiktok.com/t/ short links TikTok gives for some videos. Before, only vt.tiktok.com and vm.tiktok.com links were swapped for the full one, so those stayed short.
+
+* **TikTok:** Turning Default speed off now counts from the very next video. Before, the video after it still played at the old default, since TikTok hands each video the last one's speed when you swipe and Hushfeed took that for a speed you'd picked. Speeds you pick yourself work as before.
+
 * **TikTok:** Remove content credential and card scanner assets and Remove creation tools no longer leave parts of TikTok in English on a phone set to another language. Both emptied small code packages that TikTok loads every time it starts, and when one was empty, buttons and other text of TikTok's own came up in English. Those packages now stay. Remove content credential and card scanner assets no longer takes out TikTok's on-device AI files either (Stop on-device AI profiling still keeps that AI from starting), so it now saves about 11 MB, and Remove creation tools about 38 MB. Patch again to get your language back (#125).
 
 * **TikTok:** LIVE controls can open LIVE panels dark while TikTok is in dark mode. TikTok keeps a LIVE room's fan club sheet, first gift dialog and similar panels light even in a dark app, so they flashed white over the stream. Turn on Dark LIVE panels in dark mode in Hushfeed settings > Playback. Light mode doesn't change (#159).

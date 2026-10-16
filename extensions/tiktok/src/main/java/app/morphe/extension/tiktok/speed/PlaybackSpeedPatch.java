@@ -49,6 +49,8 @@ public final class PlaybackSpeedPatch {
     private static volatile float rememberedSpeed = 1.0f;
     private static String currentVideoId = "";
     private static float manualSpeed = Float.NaN;
+    /** The Default speed value the first-frame bridge last gave TikTok's speed state, or NaN. */
+    private static float defaultInNativeState = Float.NaN;
     /**
      * The last live change, which is saved nowhere: the video it was made on and its speed. It's
      * kept apart from {@link #currentVideoId}, since a preloaded neighbour's early first frame moves
@@ -80,6 +82,7 @@ public final class PlaybackSpeedPatch {
                 (!isExplicitSelectionSource(source) && !isEdgeSpeedupSelection(source))) return;
         beginVideo(aweme);
         manualSpeed = speed;
+        defaultInNativeState = Float.NaN;
         forgetLiveSpeed();
         rememberPlaybackSpeed(speed, source);
     }
@@ -89,8 +92,13 @@ public final class PlaybackSpeedPatch {
         // A speed dragged in for this video stands for as long as the video does, even when the
         // first frame is drawn again (nothing was saved for it to come back from).
         float live = liveSpeedFor(currentVideoId);
-        if (isValidSpeed(live)) return live;
-        return getPlaybackSpeed();
+        float speed = isValidSpeed(live) ? live : getPlaybackSpeed();
+        // The bridge writes this speed into TikTok's own speed state, which TikTok hands the next
+        // video at the swipe. One that came from Default speed is kept so that, once the switch is
+        // off, the swipe doesn't carry it on (a preloaded neighbour drew its first frame with it).
+        defaultInNativeState = !isValidSpeed(live) && !isValidSpeed(manualSpeed)
+                && Settings.DEFAULT_SPEED_ENABLED.get() ? speed : Float.NaN;
+        return speed;
     }
 
     /** The speed dragged in for video {@code id}, or NaN when the last live change wasn't on it. */
@@ -507,6 +515,12 @@ public final class PlaybackSpeedPatch {
             // a dragged speed asked for any other video is the dragged one's alone.
             if (isValidSpeed(liveSpeed) && !currentVideoId.equals(liveVideoId)
                     && Float.compare(requestedSpeed, liveSpeed) == 0) {
+                return getPlaybackSpeed();
+            }
+            // Default speed's value, left in that state by a video started while the switch was on,
+            // is not a speed TikTok chose.
+            if (!Settings.DEFAULT_SPEED_ENABLED.get()
+                    && Float.compare(requestedSpeed, defaultInNativeState) == 0) {
                 return getPlaybackSpeed();
             }
         }

@@ -18,7 +18,9 @@
 
     Settings a patch's checks change are read first and written back after its last check,
     and TikTok is restarted then if any of its checks restarted it, so each patch starts from
-    the phone's own settings. Taps come from a fresh uiautomator dump or from the probe's
+    the phone's own settings. A check that finds TikTok out of the front starts it again first.
+    A check that stops early clears the lab rules it forced, since its own labclear step never
+    runs and the rules outlive the restart. Taps come from a fresh uiautomator dump or from the probe's
     click by view id or description, never from fixed coordinates, and the runner refuses to
     tap anything labeled like an action that reaches other people (Follow, Message, Send,
     Post, Repost, Duet, Stitch, Go LIVE, Buy, Request).
@@ -52,6 +54,7 @@ param(
     [string]$Results,
     [string]$Adb,
     [string]$Aapt2,
+    [string]$Ffmpeg,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
     [switch]$NoDevice,
     [string]$ApplyVerdicts,
@@ -117,7 +120,7 @@ if ($Validate) {
     Get-ChildItem -Path (Join-Path $root 'extensions') -Recurse -Filter *.java | Where-Object { $_.FullName -match '[\\/]src[\\/]main[\\/]' } | ForEach-Object {
         foreach ($found in [regex]::Matches((Get-Content -LiteralPath $_.FullName -Raw), 'Setting\(\s*"([A-Za-z0-9_]+)"')) { [void]$keys.Add($found.Groups[1].Value) }
     }
-    $stepKinds = 'set', 'restart', 'open', 'swipe', 'wait', 'tap', 'longpress', 'back', 'probe', 'log', 'logNot', 'shot', 'apk', 'night'
+    $stepKinds = 'set', 'restart', 'open', 'swipe', 'wait', 'tap', 'longpress', 'back', 'probe', 'log', 'logNot', 'shot', 'apk', 'night', 'animations', 'theme', 'vibrations', 'record'
     $apkKinds = 'entry-empty', 'entry-absent', 'entry-present', 'manifest', 'resources', 'icon-xml', 'dex-string'
     foreach ($entry in $entries) {
         $where = "'$($entry.name)'"
@@ -142,9 +145,25 @@ if ($Validate) {
                     }
                     'swipe' { if ([string]$step.swipe -notin 'up', 'down', 'left', 'right') { & $bad "swipes '$($step.swipe)'" } }
                     'night' { if ([string]$step.night -notin 'yes', 'no') { & $bad "sets night mode '$($step.night)'" } }
-                    { $_ -in 'tap', 'longpress' } { $target = $step.$kind; if (-not ($target.text -or $target.desc -or $target.id)) { & $bad "a $kind with no text, desc or id" } }
+                    'animations' { if ([string]$step.animations -notin 'on', 'off') { & $bad "sets animations '$($step.animations)'" } }
+                    'theme' { if ([string]$step.theme -notin 'dark', 'light') { & $bad "sets TikTok's theme '$($step.theme)'" } }
+                    'vibrations' { if ([string]$step.vibrations -notin 'none', 'some') { & $bad "expects vibrations '$($step.vibrations)'" } }
+                    'record' {
+                        if ([string]$step.record -notin 'start', 'stop') { & $bad "records '$($step.record)'" }
+                        elseif ($step.record -eq 'stop' -and [string]$step.transition -notin 'still', 'animated') { & $bad "expects a transition '$($step.transition)'" }
+                    }
+                    { $_ -in 'tap', 'longpress' } { $target = $step.$kind; if (-not ($target.text -or $target.desc -or $target.label -or $target.id)) { & $bad "a $kind with no text, desc, label or id" } }
                     'apk' { if ([string]$step.apk -notin $apkKinds) { & $bad "unknown apk check '$($step.apk)'" } }
                     'shot' { if (-not $step.review) { & $bad 'a shot with no review text' } }
+                    { $_ -in 'log', 'logNot' } {
+                        if ($null -ne $step.fromStep) {
+                            $fromIndex = [int]$step.fromStep
+                            $fromStep = if ($fromIndex -ge 1) { @($check.steps)[$fromIndex - 1] }
+                            if ($fromIndex -lt 1 -or $fromIndex -ge $index -or -not $fromStep -or @($fromStep.PSObject.Properties.Name)[0] -in 'apk', 'log', 'logNot') {
+                                & $bad "reads from step $($step.fromStep), which isn't an earlier step with a marker"
+                            }
+                        }
+                    }
                 }
                 foreach ($field in 'expect', 'expectNot', 'log', 'logNot') {
                     $pattern = [string]$step.$field
@@ -153,8 +172,8 @@ if ($Validate) {
                     }
                 }
             }
-            $decides = @($check.steps | Where-Object { $_.expect -or $_.expectNot -or $_.log -or $_.logNot -or $_.apk -or $_.shot }).Count
-            if ($decides -eq 0) { $problems.Add("$at decides nothing: no expect, log, apk or shot step") }
+            $decides = @($check.steps | Where-Object { $_.expect -or $_.expectNot -or $_.log -or $_.logNot -or $_.apk -or $_.shot -or $_.vibrations -or $_.record -eq 'stop' }).Count
+            if ($decides -eq 0) { $problems.Add("$at decides nothing: no expect, log, apk, shot, vibrations or record stop step") }
             $reviews = @($check.steps | Where-Object { $_.shot }).Count
             if ($check.auto -and $reviews -gt 0) { $problems.Add("$at is marked auto but has a shot") }
         }
@@ -176,6 +195,21 @@ function Resolve-AuditAdb {
     $sdkAdb = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
     if (Test-Path -LiteralPath $sdkAdb) { return $sdkAdb }
     throw 'No adb found. Pass -Adb or set HUSHFEED_ADB.'
+}
+
+# Only a record step needs it, so a missing ffmpeg fails that step and nothing else.
+function Resolve-AuditFfmpeg {
+    if ($Ffmpeg) { return $Ffmpeg }
+    if ($env:HUSHFEED_FFMPEG) { return $env:HUSHFEED_FFMPEG }
+    $onPath = Get-Command ffmpeg -ErrorAction SilentlyContinue
+    if ($onPath) { return $onPath.Source }
+    # winget's Gyan.FFmpeg package doesn't always reach PATH.
+    $packages = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Packages'
+    $found = Get-ChildItem $packages -Directory -Filter 'Gyan.FFmpeg*' -ErrorAction SilentlyContinue |
+        ForEach-Object { Get-ChildItem $_.FullName -Recurse -Filter ffmpeg.exe -ErrorAction SilentlyContinue } |
+        Select-Object -First 1
+    if ($found) { return $found.FullName }
+    return $null
 }
 
 function Resolve-AuditAapt2 {
@@ -427,12 +461,18 @@ function Invoke-DumpTapOnce($Target, [int]$HoldMs = 0) {
     $xml = (Invoke-DeviceShell 'cat /sdcard/hushfeed-audit.xml') -join ''
     Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.xml' | Out-Null
     if ($xml -notlike '*<hierarchy*') { throw 'uiautomator could not dump the screen (a playing video blocks it)' }
-    $attribute, $pattern = if ($Target.text) { 'text', $Target.text } elseif ($Target.desc) { 'content-desc', $Target.desc } else { 'resource-id', $Target.id }
+    # A label is the text or the description, whichever the row has: TikTok's Compose pages
+    # (Settings and privacy) put a row's words in its description and leave its text empty.
+    $attribute, $pattern = if ($Target.text) { 'text', $Target.text } elseif ($Target.desc) { 'content-desc', $Target.desc }
+        elseif ($Target.label) { 'label', $Target.label } else { 'resource-id', $Target.id }
+    $attributes = if ($attribute -eq 'label') { @('text', 'content-desc') } else { @($attribute) }
     foreach ($node in [regex]::Matches($xml, '<node [^>]*>')) {
         # Without invisible format characters: TikTok wraps numbers in direction marks, so a
         # pattern anchored at a digit ("^3d") never matched its text.
-        $value = if ($node.Value -match " $attribute=`"([^`"]*)`"") { [Net.WebUtility]::HtmlDecode($Matches[1]) -replace '\p{Cf}', '' } else { '' }
-        if ($value -notmatch $pattern) { continue }
+        $values = foreach ($name in $attributes) {
+            if ($node.Value -match " $name=`"([^`"]*)`"") { [Net.WebUtility]::HtmlDecode($Matches[1]) -replace '\p{Cf}', '' }
+        }
+        if (@($values | Where-Object { $_ -and $_ -match $pattern }).Count -eq 0) { continue }
         $label = @('text', 'content-desc') | ForEach-Object { if ($node.Value -match " $_=`"([^`"]*)`"") { [Net.WebUtility]::HtmlDecode($Matches[1]) -replace '\p{Cf}', '' } }
         if (@($label | Where-Object { $_ -and $_.Trim().ToLowerInvariant() -match $outwardWords }).Count -gt 0) {
             throw "refused to tap '$($label -join ' / ')': it reaches other people"
@@ -455,9 +495,17 @@ function Open-Surface([string]$Where) {
     $tabs = @{ feed = '^Home'; friends = '^Friends'; inbox = '^Inbox'; profile = '^Profile' }
     if ($tabs.ContainsKey($Where)) {
         # The tabs live on the main screen. Anything else in front (a search page a deep link
-        # left on the back stack, a settings page, another app) costs a fresh start.
-        if ((Get-Focus) -notmatch 'com\.ss\.android\.ugc\.aweme\.main\.MainActivity') { Restart-TikTok }
+        # left on the back stack, a settings page, another app) costs a fresh start. On 47.1.4
+        # the main screen is SplashActivity's window, which stays in front after a start; reading
+        # only MainActivity restarted TikTok at every open, which threw away whatever a check had
+        # set up in the process before it (a lab recording, hook records), 2026-10-16.
+        $onMain = (Get-Focus) -match 'com\.ss\.android\.ugc\.aweme\.(main\.MainActivity|splash\.SplashActivity)\b'
+        if (-not $onMain) { Restart-TikTok }
         $answer = Invoke-AuditProbe 'click' ([pscustomobject]@{ desc = $tabs[$Where] }) 1500
+        if (-not (Test-Pattern $answer '^ok click') -and $onMain) {
+            Restart-TikTok
+            $answer = Invoke-AuditProbe 'click' ([pscustomobject]@{ desc = $tabs[$Where] }) 1500
+        }
         if (-not (Test-Pattern $answer '^ok click')) { throw "could not open $Where`: $answer" }
     } elseif ($Where -eq 'settings') {
         $answer = Invoke-AuditProbe 'settings' $null 2500
@@ -498,6 +546,101 @@ function ConvertTo-LeafName([string]$Value) {
     return $Value
 }
 
+# The phone's clock to the second, in the form its vibration record uses ("10-16 04:41:32").
+function Get-DeviceClock {
+    [string]$now = (Invoke-DeviceShell 'date "+%m-%d %H:%M:%S"') -join ''
+    if ($now.Trim() -notmatch '^\d\d-\d\d \d\d:\d\d:\d\d$') { throw "could not read the phone clock: $now" }
+    return $now.Trim()
+}
+
+# The vibrations Android lists under "Recent vibrations" for TikTok from $Since on. The year
+# isn't in the record, so a check across New Year's Eve would miss some.
+function Get-TikTokVibrations([string]$Since) {
+    $recent = $false
+    $indent = 0
+    foreach ($line in @(Invoke-DeviceShell 'dumpsys vibrator_manager')) {
+        $text = "$line"
+        if ($text -match '^( *)Recent vibrations:') { $recent = $true; $indent = $Matches[1].Length; continue }
+        # Its entries sit under one heading per usage (TOUCH:, UNKNOWN:), indented deeper; the
+        # next section ("Aggregated vibration history:") is back at its own level.
+        if ($recent -and $text -match '^( *)\S[^|]*:\s*$' -and $Matches[1].Length -le $indent) { $recent = $false }
+        if ($recent -and $text -match "^\s*(\d\d-\d\d \d\d:\d\d:\d\d)\.\d+ \|.*\| $([regex]::Escape($package)) \(uid=" `
+                -and [string]::CompareOrdinal($Matches[1], $Since) -ge 0) {
+            $text.Trim()
+        }
+    }
+}
+
+# A screen recording over the steps between a record start and a record stop.
+$script:recorder = $null
+$script:ffmpegExe = $null
+function Start-ScreenRecord([int]$Seconds) {
+    Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.mp4' | Out-Null
+    $start = [Diagnostics.ProcessStartInfo]::new($adbExe)
+    $start.Arguments = "-s $Serial shell screenrecord --time-limit $Seconds /sdcard/hushfeed-audit.mp4"
+    $start.UseShellExecute = $false
+    $start.CreateNoWindow = $true
+    $script:recorder = [Diagnostics.Process]::Start($start)
+    # screenrecord takes a moment before its first frame.
+    Start-Sleep -Milliseconds 1000
+}
+
+function Stop-ScreenRecord([string]$Local) {
+    if (-not $script:recorder) { throw 'a record stop with no record start before it' }
+    $finished = $script:recorder.WaitForExit(30000)
+    if (-not $finished) { $script:recorder.Kill() }
+    $script:recorder = $null
+    if (-not $finished) { throw 'screenrecord never finished' }
+    Start-Sleep -Milliseconds 500
+    Invoke-AuditAdb pull /sdcard/hushfeed-audit.mp4 $Local 2>&1 | Out-Null
+    Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.mp4' | Out-Null
+    if (-not (Test-Path -LiteralPath $Local)) { throw 'the screen recording could not be pulled' }
+}
+
+# How each frame of a clip stands against its last one, the screen it settled on: a slide or a
+# fade passes through frames part way between the first screen and the last, and a screen that
+# opens still jumps from one to the other. screenrecord writes a frame only when the screen
+# changes, so a frame in between is the animation itself.
+function Measure-ScreenChange([string]$Clip) {
+    if (-not ('HushfeedFrameDiff' -as [type])) {
+        Add-Type -TypeDefinition @'
+public static class HushfeedFrameDiff {
+    public static double[] FromLast(byte[] data, int size) {
+        int count = data.Length / size;
+        double[] distance = new double[count];
+        int last = (count - 1) * size;
+        for (int frame = 0; frame < count; frame++) {
+            long sum = 0;
+            int at = frame * size;
+            for (int k = 0; k < size; k++) sum += System.Math.Abs(data[at + k] - data[last + k]);
+            distance[frame] = sum / (size * 255.0);
+        }
+        return distance;
+    }
+}
+'@
+    }
+    $width = 54; $height = 116
+    $raw = [IO.Path]::ChangeExtension($Clip, '.gray')
+    & $script:ffmpegExe -hide_banner -loglevel error -y -i $Clip -fps_mode passthrough -vf "scale=${width}:${height},format=gray" -f rawvideo $raw
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $raw)) { throw 'ffmpeg could not read the screen recording' }
+    $data = [IO.File]::ReadAllBytes($raw)
+    Remove-Item -LiteralPath $raw
+    if ($data.Length -lt 2 * $width * $height) { throw 'the screen recording has fewer than two frames' }
+    $distance = [HushfeedFrameDiff]::FromLast($data, $width * $height)
+    $first = $distance[0]
+    $between = 0
+    $moving = $false
+    foreach ($value in $distance) {
+        if ($value -lt 0.85 * $first) { $moving = $true }
+        if ($moving -and $value -gt 0.1 * $first -and $value -lt 0.85 * $first) { $between++ }
+    }
+    return [pscustomobject]@{
+        frames = $distance.Count; first = $first; between = $between
+        distances = ($distance | ForEach-Object { '{0:0.000}' -f $_ }) -join ' '
+    }
+}
+
 # One check: every step in order, the first failed expectation ends it.
 $script:nightWas = $null
 # Puts back the phone's night mode a night step changed. Returns whether it changed anything.
@@ -509,18 +652,63 @@ function Restore-NightMode {
     return $true
 }
 
+# Android's three animation scales, which an animations step changes. The S22 keeps them at 0,
+# where no screen slides at all, so a transitions check turns them on first.
+$script:animationScales = 'window_animation_scale', 'transition_animation_scale', 'animator_duration_scale'
+$script:animationsWere = $null
+# Puts back the scales an animations step changed. Returns whether it changed anything.
+function Restore-Animations {
+    if ($null -eq $script:animationsWere) { return $false }
+    foreach ($scale in $script:animationScales) {
+        $was = $script:animationsWere[$scale]
+        try {
+            if ([string]::IsNullOrEmpty($was) -or $was -eq 'null') { Invoke-DeviceShell "settings delete global $scale" | Out-Null }
+            else { Invoke-DeviceShell "settings put global $scale $was" | Out-Null }
+        } catch { Write-Warning "could not put $scale back to ${was}: $($_.Exception.Message)" }
+    }
+    $script:animationsWere = $null
+    return $true
+}
+
+# TikTok's own Display choice, which a theme step changes through the probe's tiktoktheme. TikTok
+# reads it once at start-up, and while it says Light the phone's night mode changes nothing (the
+# S22's TikTok stayed light under `cmd uimode night yes`, 2026-10-16). 1 is Light, 2 is Dark;
+# 'unset' means the phone never had a choice stored.
+$script:themeWas = $null
+# Puts back the choice a theme step changed. Returns whether it changed anything.
+function Restore-TikTokTheme {
+    if ($null -eq $script:themeWas) { return $false }
+    try {
+        [string]$answer = Invoke-AuditProbe 'tiktoktheme' ([pscustomobject]@{ set = $script:themeWas }) 1500
+        if ([string]::IsNullOrEmpty($answer) -or $answer -notmatch 'ok tiktoktheme .* committed=true') {
+            Write-Warning "could not put TikTok's theme back to $($script:themeWas): $answer"
+        }
+    } catch { Write-Warning "could not put TikTok's theme back to $($script:themeWas): $($_.Exception.Message)" }
+    $script:themeWas = $null
+    return $true
+}
+
 function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
     $result = [ordered]@{ id = $Check.id; what = $Check.what; auto = [bool]$Check.auto; status = 'pass'; failures = @(); evidence = @(); review = @() }
     $tag = "$($Entry.name)-$($Check.id)"
     $index = 0
     $lastMarker = $null
+    # Each step's marker, for a log step that reads from further back ("fromStep": n): a line
+    # written once, during one of several swipes, is gone by the time the last swipe's marker is.
+    $markers = @{}
+    # The phone's clock when the check starts, for a vibrations step to count from. Only read
+    # for a check that has one.
+    $vibrationsSince = $null
+    if ($deviceUp -and @($Check.steps | Where-Object { $_.PSObject.Properties.Name -contains 'vibrations' }).Count -gt 0) {
+        $vibrationsSince = Get-DeviceClock
+    }
     foreach ($step in $Check.steps) {
         $index++
         $kind = @($step.PSObject.Properties.Name)[0]
         try {
             # A log step reads what was logged from the start of the step before it, so the
             # lines a swipe or a restart causes are in its window.
-            if ($deviceUp -and $kind -notin 'apk', 'log', 'logNot') { $lastMarker = Write-Marker }
+            if ($deviceUp -and $kind -notin 'apk', 'log', 'logNot') { $lastMarker = Write-Marker; $markers[$index] = $lastMarker }
             if ($kind -eq 'apk') {
                 $path = [string]$step.path
                 switch ([string]$step.apk) {
@@ -583,6 +771,66 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
                     Invoke-DeviceShell "cmd uimode night $($step.night)" | Out-Null
                     Start-Sleep -Milliseconds 1500
                 }
+                'animations' {
+                    # All three scales at 1 or 0. The phone's own values go back once the patch's
+                    # checks are done.
+                    if ($null -eq $script:animationsWere) {
+                        $were = @{}
+                        foreach ($scale in $script:animationScales) { $were[$scale] = "$(Invoke-DeviceShell "settings get global $scale")".Trim() }
+                        $script:animationsWere = $were
+                    }
+                    $value = if ($step.animations -eq 'on') { '1.0' } else { '0.0' }
+                    foreach ($scale in $script:animationScales) { Invoke-DeviceShell "settings put global $scale $value" | Out-Null }
+                    Start-Sleep -Milliseconds 500
+                }
+                'theme' {
+                    # TikTok's own Light or Dark, applied at its next start, so a restart step
+                    # follows. TikTok's own choice goes back once the patch's checks are done.
+                    if ($null -eq $script:themeWas) {
+                        [string]$now = Invoke-AuditProbe 'tiktoktheme' $null 1500
+                        if ([string]::IsNullOrEmpty($now) -or $now -notmatch 'ok tiktoktheme dark_mode=(-?\d+) stored=(true|false)') {
+                            throw "could not read TikTok's theme: $now"
+                        }
+                        $script:themeWas = if ($Matches[2] -eq 'true') { $Matches[1] } else { 'unset' }
+                    }
+                    $value = if ($step.theme -eq 'dark') { '2' } else { '1' }
+                    [string]$answer = Invoke-AuditProbe 'tiktoktheme' ([pscustomobject]@{ set = $value }) 1500
+                    $result.evidence += Save-Evidence "$tag-$index-theme" $answer
+                    if ([string]::IsNullOrEmpty($answer) -or $answer -notmatch "committed=true now=$value\b") { throw "TikTok's theme didn't take $($step.theme): $answer" }
+                }
+                'vibrations' {
+                    # What Android itself played for TikTok since the check started or the last
+                    # vibrations step: the phone's own record, so a haptic the patch never saw
+                    # still counts.
+                    if (-not $vibrationsSince) { throw 'could not read the phone clock at the start of the check' }
+                    $hits = @(Get-TikTokVibrations $vibrationsSince)
+                    $result.evidence += Save-Evidence "$tag-$index-vibrations" $(if ($hits.Count) { $hits -join "`n" } else { "no vibration for $package since $vibrationsSince" })
+                    $vibrationsSince = Get-DeviceClock
+                    if ($step.vibrations -eq 'none' -and $hits.Count -gt 0) { throw "the phone vibrated for TikTok $($hits.Count) time(s): $($hits[0])" }
+                    if ($step.vibrations -eq 'some' -and $hits.Count -eq 0) {
+                        if ($step.precondition) { throw [System.InvalidOperationException]::new('precondition: TikTok asked for no vibration') }
+                        throw 'the phone did not vibrate for TikTok'
+                    }
+                }
+                'record' {
+                    if ($step.record -eq 'start') {
+                        Start-ScreenRecord $(if ($step.seconds) { [int]$step.seconds } else { 4 })
+                    } else {
+                        if (-not $script:ffmpegExe) { $script:ffmpegExe = Resolve-AuditFfmpeg }
+                        if (-not $script:ffmpegExe) { throw 'a record step needs ffmpeg: pass -Ffmpeg or set HUSHFEED_FFMPEG' }
+                        $clipName = "$("$tag-$index-screen" -replace '[^\w.-]', '_').mp4"
+                        Stop-ScreenRecord (Join-Path $OutDir $clipName)
+                        $result.evidence += $clipName
+                        $change = Measure-ScreenChange (Join-Path $OutDir $clipName)
+                        $result.evidence += Save-Evidence "$tag-$index-frames" ("frames=$($change.frames) first={0:0.000} between=$($change.between)`n$($change.distances)" -f $change.first)
+                        if ($change.first -lt 0.05) { throw [System.InvalidOperationException]::new('precondition: the screen barely changed, so nothing opened while it recorded') }
+                        if ($step.transition -eq 'still' -and $change.between -gt 3) { throw "the screen passed through $($change.between) frames on its way, an animation" }
+                        if ($step.transition -eq 'animated' -and $change.between -lt 6) {
+                            if ($step.precondition) { throw [System.InvalidOperationException]::new("precondition: only $($change.between) frames in between, no animation to compare with") }
+                            throw "only $($change.between) frames in between: no animation"
+                        }
+                    }
+                }
                 'back' { Invoke-DeviceShell 'input keyevent KEYCODE_BACK' | Out-Null; Start-Sleep -Milliseconds 1200 }
                 'tap' { $result.evidence += (Invoke-DumpTap $step.tap); Start-Sleep -Milliseconds 1500 }
                 'longpress' { $result.evidence += (Invoke-DumpTap $step.longpress 900); Start-Sleep -Milliseconds 1500 }
@@ -622,14 +870,24 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
                 { $_ -in 'log', 'logNot' } {
                     $within = if ($step.within) { [int]$step.within } else { 8000 }
                     if (-not $lastMarker) { $lastMarker = Write-Marker }
+                    $from = $lastMarker
+                    if ($step.fromStep) {
+                        $from = $markers[[int]$step.fromStep]
+                        if (-not $from) { throw "step $($step.fromStep) left no marker to read from" }
+                    }
                     $pattern = [string]$step.$kind
                     # A log step waits until its line shows up or its window closes; logNot waits the whole window.
                     $deadline = [DateTime]::UtcNow.AddMilliseconds($within)
                     do {
                         Start-Sleep -Milliseconds 1000
-                        $hits = @(Get-LogAfter $lastMarker | Where-Object { Test-Pattern "$_" $pattern })
+                        $hits = @(Get-LogAfter $from | Where-Object { Test-Pattern "$_" $pattern })
                     } until (($kind -eq 'log' -and $hits.Count -gt 0) -or [DateTime]::UtcNow -gt $deadline)
-                    if ($kind -eq 'log' -and $hits.Count -eq 0) { throw "no log line matching $pattern" }
+                    if ($kind -eq 'log' -and $hits.Count -eq 0) {
+                        # A line only TikTok's own event can cause (a LIVE bubble arriving) says
+                        # nothing about the patch when the event never came.
+                        if ($step.precondition) { throw [System.InvalidOperationException]::new("precondition: no log line matching $pattern") }
+                        throw "no log line matching $pattern"
+                    }
                     if ($kind -eq 'logNot' -and $hits.Count -gt 0) { throw "logged: $($hits[0])" }
                     if ($hits.Count -gt 0) { $result.evidence += Save-Evidence "$tag-$index-log" ($hits -join "`n") }
                 }
@@ -644,8 +902,18 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
         } catch {
             $result.status = if ($_.Exception.Message -like 'precondition: *') { 'inconclusive' } else { 'fail' }
             $result.failures += "step $index ($kind): $($_.Exception.Message)"
+            if ($script:recorder) { try { $script:recorder.Kill() } catch { }; $script:recorder = $null }
             if ($deviceUp -and $kind -ne 'apk') {
                 try { $result.evidence += Save-Shot "$tag-failed-step$index" } catch { }
+                # A lab rule outlives a restart, and the check's own labclear step comes after the
+                # one that stopped it: a forced favorite_reverse answered for every patch after Keep
+                # the Favorites tab went inconclusive (2026-10-16).
+                if (@($Check.steps | Where-Object { $_.probe -eq 'labrule' }).Count -gt 0) {
+                    try {
+                        $cleared = Invoke-AuditProbe 'labclear' $null 1500
+                        if ($cleared -notmatch '^ok labclear') { $result.failures += "labclear after the failure: $cleared" }
+                    } catch { $result.failures += "labclear after the failure: $($_.Exception.Message)" }
+                }
                 # A check that stopped halfway leaves a sheet, a page or a settings screen open.
                 # The next check starts from the feed of a fresh TikTok instead.
                 try { Restart-TikTok; $Restarted.Value = $true } catch { $result.failures += "restart after the failure: $($_.Exception.Message)" }
@@ -729,6 +997,13 @@ try {
         $restarted = $false
         $checks = @()
         foreach ($check in $entry.checks) {
+            # A check starts with TikTok in front. Behind the home screen its process may be gone or
+            # frozen, and no probe answers: on 47.1.4 that failed a patch-applied check with the
+            # home screen up (2026-10-16). A fresh start then says nothing about this check's patch.
+            if ($deviceUp -and (Get-Focus) -notmatch [regex]::Escape($package)) {
+                Write-Host "  (TikTok wasn't in front, so it starts again before $($check.id))"
+                Restart-TikTok
+            }
             $checkResult = Invoke-Check $entry $check $originals ([ref]$restarted)
             Write-Host "  $($checkResult.status.PadRight(7)) $($check.id)$(if ($checkResult.failures) { ': ' + ($checkResult.failures -join '; ') })"
             $checks += [pscustomobject]$checkResult
@@ -744,6 +1019,8 @@ try {
             if ($restarted) { Restart-TikTok }
         }
         if ($deviceUp -and (Restore-NightMode)) { Start-Sleep -Seconds 2; Restart-TikTok }
+        if ($deviceUp) { [void](Restore-Animations) }
+        if ($deviceUp -and (Restore-TikTokTheme)) { Restart-TikTok }
         $run.patches = @($run.patches) + [pscustomobject][ordered]@{ name = $entry.name; category = $entry.category; kind = $entry.kind
             ranUtc = [DateTime]::UtcNow.ToString('o'); apkSha256 = $run.apk.sha256; evidence = $run.evidence; checks = $checks }
         # Written after every patch, so a run cut short still leaves what it found.
@@ -767,6 +1044,11 @@ try {
     $apkZip.Dispose()
     if ($deviceUp) {
         [void](Restore-NightMode)
+        [void](Restore-Animations)
+        if ($null -ne $script:themeWas) {
+            try { Restart-TikTok } catch { }
+            if (Restore-TikTokTheme) { try { Restart-TikTok } catch { } }
+        }
         if ($runOriginals.Count -gt 0) {
             try {
                 Restart-TikTok

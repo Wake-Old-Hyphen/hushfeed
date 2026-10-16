@@ -43,6 +43,7 @@ public class ShortLinkExpanderTest {
 
     private static final String SHORT = "https://vt.tiktok.com/ZS123/";
     private static final String OTHER = "https://vt.tiktok.com/ZS9/";
+    private static final String SITE_SHORT = "https://www.tiktok.com/t/ZT8abc/";
     private static final String VIDEO = "https://www.tiktok.com/@nasa/video/7312345678901234567";
     private static final String PHOTO = "https://www.tiktok.com/@nasa/photo/7312345678901234999";
 
@@ -114,6 +115,30 @@ public class ShortLinkExpanderTest {
         assertFalse(ShortLinkExpander.isShort(VIDEO));
         assertFalse(ShortLinkExpander.isShort("http://vt.tiktok.com/ZS123/"));
         assertFalse(ShortLinkExpander.isShort("https://vt.tiktok.com.example.com/ZS123/"));
+    }
+
+    @Test public void theSitesOwnShortLinkIsShortToo() {
+        assertTrue(ShortLinkExpander.isShort(SITE_SHORT));
+        assertTrue(ShortLinkExpander.isShort("https://tiktok.com/t/ZT8abc"));
+        assertTrue(ShortLinkExpander.isShort("https://m.tiktok.com/t/ZT8abc/?_r=1"));
+        for (String link : new String[]{
+                "http://www.tiktok.com/t/ZT8abc/",
+                "https://example.com/t/ZT8abc/",
+                "https://www.tiktok.com.example.com/t/ZT8abc/",
+                "https://www.tiktok.com/t/",
+                "https://www.tiktok.com/t/ZT8abc/more",
+                "https://www.tiktok.com/tag/ZT8abc",
+                "https://www.tiktok.com/@nasa/t/ZT8abc/",
+        }) {
+            assertFalse(link, ShortLinkExpander.isShort(link));
+        }
+
+        landings.put(SITE_SHORT, VIDEO + "?_r=1");
+        ShortLinkExpander.watch(context, SITE_SHORT, SITE_SHORT, ShortLinkExpander.clipStamp(context), resolver);
+        copy(SITE_SHORT);
+        idle();
+        assertEquals(1, opens.get());
+        assertEquals(VIDEO, text());
     }
 
     @Test public void onlyTheSwitchStartsIt() {
