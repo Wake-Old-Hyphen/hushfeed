@@ -42,7 +42,9 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * sheet from: a profile's package holds the account's {@code User} in {@code user}, a video's
  * the {@code Aweme} in {@code aweme}. The buttons are a row of ours at the bottom of TikTok's
  * action panel, a FrameLayout that holds just the action list, which is moved up by the row's
- * height. A member that's missing leaves the bio and the sheet as TikTok made them.
+ * height. The profile sheet from Settings and privacy has no action panel, only Send to and the
+ * apps, so there the row goes at the bottom of the apps panel the same way. A member that's
+ * missing leaves the bio and the sheet as TikTok made them.
  */
 public final class CopyIds {
     static final String BIO_COPIED = "Bio copied";
@@ -60,6 +62,9 @@ public final class CopyIds {
     /** The bottom margin each moved panel child had before the row took its place. */
     private static final Map<View, Integer> ORIGINAL_MARGINS = new WeakHashMap<>();
     private static volatile WeakReference<Object> sharePackage = new WeakReference<>(null);
+    /** The panels last attached; a sheet with both shows the row in the action panel. Main thread only. */
+    private static WeakReference<FrameLayout> actionPanel = new WeakReference<>(null);
+    private static WeakReference<FrameLayout> appsPanel = new WeakReference<>(null);
 
     private static final View.OnLongClickListener BIO_LISTENER = CopyIds::copyBio;
 
@@ -166,8 +171,12 @@ public final class CopyIds {
         try {
             if (!(panel instanceof FrameLayout)) return;
             FrameLayout frame = (FrameLayout) panel;
+            actionPanel = new WeakReference<>(frame);
             frame.post(() -> {
                 try {
+                    // An apps panel that drew the row before this panel came up hands it over.
+                    FrameLayout apps = inSheetOf(frame, appsPanel.get());
+                    if (apps != null) showRow(apps, Collections.emptyList());
                     showRow(frame, targetsOf(sharePackage.get()));
                 } catch (Throwable ex) {
                     Logger.printException(() -> "Could not add the copy buttons to the share sheet", ex);
@@ -176,6 +185,35 @@ public final class CopyIds {
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not watch the share sheet for copy buttons", ex);
         }
+    }
+
+    /**
+     * From the apps panel's onAttachedToWindow, the FrameLayout that holds the Copy link, SMS and
+     * other apps. The row goes in only when the sheet has no action panel.
+     */
+    public static void onAppsPanel(@Nullable View panel) {
+        try {
+            if (!(panel instanceof FrameLayout)) return;
+            FrameLayout frame = (FrameLayout) panel;
+            appsPanel = new WeakReference<>(frame);
+            frame.post(() -> {
+                try {
+                    boolean hasActions = inSheetOf(frame, actionPanel.get()) != null;
+                    showRow(frame, hasActions ? Collections.emptyList() : targetsOf(sharePackage.get()));
+                } catch (Throwable ex) {
+                    Logger.printException(() -> "Could not add the copy buttons under the share apps", ex);
+                }
+            });
+        } catch (Throwable ex) {
+            Logger.printException(() -> "Could not watch the share apps for copy buttons", ex);
+        }
+    }
+
+    /** {@code other} when it's attached in the same sheet as {@code panel}. */
+    @Nullable
+    private static FrameLayout inSheetOf(View panel, @Nullable FrameLayout other) {
+        if (other == null || other == panel || !other.isAttachedToWindow()) return null;
+        return other.getRootView() == panel.getRootView() ? other : null;
     }
 
     static void showRow(FrameLayout panel, List<Target> targets) {

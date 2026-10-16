@@ -38,7 +38,7 @@
     audit/run-audit.ps1 -Apk C:\scratch\hushfeed-0.74.0-signed.apk -NoDevice
 
 .EXAMPLE
-    audit/run-audit.ps1 -Apk C:\scratch\hushfeed-0.74.0-signed.apk -Serial R5CT139QJ5F -Only 'Hide the LIVE button,category:Comments'
+    audit/run-audit.ps1 -Apk C:\scratch\hushfeed-0.74.0-signed.apk -Serial <serial> -Only 'Hide the LIVE button,category:Comments'
 
 .EXAMPLE
     audit/run-audit.ps1 -ApplyVerdicts C:\scratch\verdicts.json -Results audit\results\tiktok-47.1.4.json
@@ -964,8 +964,7 @@ try {
     if ($deviceUp) {
         Grant-AuditLease
         $run.device = [ordered]@{
-            serial = $Serial
-            model = "$(Invoke-DeviceShell 'getprop ro.product.model')".Trim()
+            model ="$(Invoke-DeviceShell 'getprop ro.product.model')".Trim()
             android = "$(Invoke-DeviceShell 'getprop ro.build.version.release')".Trim()
         }
         Invoke-DeviceShell 'input keyevent KEYCODE_WAKEUP' | Out-Null

@@ -22,6 +22,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import app.morphe.extension.shared.settings.BaseSettings;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -139,6 +140,70 @@ public class ShortLinkExpanderTest {
         idle();
         assertEquals(1, opens.get());
         assertEquals(VIDEO, text());
+    }
+
+    @Test public void aLinkTikTokMakesShortAfterTheRewriteIsSwappedWhenCopied() {
+        String full = VIDEO + "?u_code=abc&share_link_id=x";
+        assertFalse("off by default", ShortLinkExpander.wantsShortened(full));
+        Settings.EXPAND_SHORT_SHARE_LINKS.save(true);
+        assertTrue(ShortLinkExpander.wantsShortened(full));
+        assertTrue(ShortLinkExpander.wantsShortened(PHOTO + "?_r=1"));
+        assertFalse("TikTok shares a link without a query as it is", ShortLinkExpander.wantsShortened(VIDEO));
+        assertFalse(ShortLinkExpander.wantsShortened(SHORT + "?share=1"));
+        assertFalse(ShortLinkExpander.wantsShortened("https://www.tiktok.com/@nasa?lang=en"));
+        assertFalse(ShortLinkExpander.wantsShortened("https://example.com/@nasa/video/1?a=1"));
+        assertFalse(ShortLinkExpander.wantsShortened(null));
+
+        landings.put(SITE_SHORT, VIDEO + "?_r=1");
+        copy("hello");
+        // Every channel's link starts the one wait again.
+        ShortLinkExpander.watchShortened(context, ShortLinkExpander.clipStamp(context), resolver);
+        ShortLinkExpander.watchShortened(context, ShortLinkExpander.clipStamp(context), resolver);
+        idle();
+        copy("not a link");
+        idle();
+        assertEquals(0, opens.get());
+        assertEquals("not a link", text());
+
+        copy("Look: " + SITE_SHORT);
+        idle();
+        assertEquals(1, opens.get());
+        assertEquals("Look: " + VIDEO, text());
+        assertEquals("Full link copied", ShadowToast.getTextOfLatestToast());
+        assertFalse(ShortLinkExpander.watchingShortenedForTests());
+    }
+
+    @Test public void aShortLinkCopiedBeforeTheSheetIsNeverRead() {
+        copy(SHORT);
+        ShortLinkExpander.watchShortened(context, ShortLinkExpander.clipStamp(context), resolver);
+        idle();
+        assertEquals(SHORT, text());
+        assertEquals(0, opens.get());
+
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ShortLinkExpander.WATCH_MS + 1));
+        copy(OTHER);
+        idle();
+        assertEquals("the wait ended", OTHER, text());
+        assertEquals(0, opens.get());
+    }
+
+    @Test public void theRewriteWaitsForTheShortLinkOnlyWhileTheLinkKeepsItsQuery() {
+        String full = VIDEO + "?u_code=abc&share_link_id=x";
+        Settings.EXPAND_SHORT_SHARE_LINKS.save(true);
+        BaseSettings.SANITIZE_SHARING_LINKS.save(false);
+        try {
+            assertEquals(full, ShareUrlSanitizer.rewriteShareUrl(full));
+            idle();
+            assertTrue("Clean up shared links off: TikTok shortens it", ShortLinkExpander.watchingShortenedForTests());
+            ShortLinkExpander.forgetForTests();
+
+            BaseSettings.SANITIZE_SHARING_LINKS.save(true);
+            assertEquals(VIDEO, ShareUrlSanitizer.rewriteShareUrl(full));
+            idle();
+            assertFalse("no query left to shorten", ShortLinkExpander.watchingShortenedForTests());
+        } finally {
+            BaseSettings.SANITIZE_SHARING_LINKS.resetToDefault();
+        }
     }
 
     @Test public void onlyTheSwitchStartsIt() {

@@ -38,6 +38,8 @@ public final class ShareUrlSanitizer {
         try {
             String rewritten = stripAllQueryParams(withCustomDomain(url));
             if (ShortLinkExpander.wants(url)) ShortLinkExpander.later(rewritten, url);
+            // A link that keeps its query is made short by TikTok after this, out of sight.
+            else if (ShortLinkExpander.wantsShortened(rewritten)) ShortLinkExpander.laterShortened();
             return rewritten;
         } catch (Throwable ex) {
             HookStatus.threw("share links", "rewrite", ex);

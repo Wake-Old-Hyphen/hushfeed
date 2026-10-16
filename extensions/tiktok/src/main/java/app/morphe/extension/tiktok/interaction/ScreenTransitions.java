@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -23,6 +24,12 @@ import app.morphe.extension.tiktok.settings.Settings;
  * to the front and as it closes, after TikTok has asked for its own, since the last one asked
  * wins. The Android 14 overrides are set as well: the back gesture's preview reads those.
  *
+ * <p>Android calls the plain callbacks from inside the screen's own onCreate, onResume and
+ * onPause, at their call to super, and TikTok's screens run code of their own after that call
+ * (BaseActivity hands onResume to a list of processors on both sides of it, and some screens ask
+ * for their slide right there). From Android 10 the same requests go again from the callbacks
+ * Android makes once those methods have returned, so TikTok's request can't come after ours.
+ *
  * <p>Swipes inside one screen, like For You to a profile, follow the finger and aren't touched.
  *
  * <p>The callbacks are registered from the host application before any screen exists, so a link
@@ -30,11 +37,17 @@ import app.morphe.extension.tiktok.settings.Settings;
  * Off, paused, or a failure in here, and screens slide as before.
  */
 public final class ScreenTransitions {
+    private static final String FAMILY = "screen transitions";
     private static boolean installed;
 
     private static final Application.ActivityLifecycleCallbacks CALLBACKS =
             new Application.ActivityLifecycleCallbacks() {
                 @Override public void onActivityCreated(Activity activity, Bundle state) {
+                    created(activity);
+                }
+
+                // Android 10 and later: after the screen's own onCreate has returned.
+                @Override public void onActivityPostCreated(Activity activity, Bundle state) {
                     created(activity);
                 }
 
@@ -45,7 +58,15 @@ public final class ScreenTransitions {
                     resumed(activity);
                 }
 
+                @Override public void onActivityPostResumed(Activity activity) {
+                    resumed(activity);
+                }
+
                 @Override public void onActivityPaused(Activity activity) {
+                    paused(activity);
+                }
+
+                @Override public void onActivityPostPaused(Activity activity) {
                     paused(activity);
                 }
 
@@ -68,6 +89,7 @@ public final class ScreenTransitions {
             if (installed || !(context instanceof Application)) return;
             installed = true;
             ((Application) context).registerActivityLifecycleCallbacks(CALLBACKS);
+            HookStatus.bound(FAMILY, "screen callbacks");
         } catch (Throwable error) {
             Logger.printInfo(() -> "Turn off screen transitions could not follow TikTok's screens: " + error);
         }
@@ -79,6 +101,7 @@ public final class ScreenTransitions {
             if (Build.VERSION.SDK_INT < 34 || !on()) return;
             activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, 0, 0);
             activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0);
+            HookStatus.bound(FAMILY, "screen overrides");
         } catch (Throwable failure) {
             Logger.printException(() -> "Turn off screen transitions: could not set a screen's overrides", failure);
         }
@@ -91,7 +114,9 @@ public final class ScreenTransitions {
     @SuppressWarnings("deprecation")
     static void resumed(Activity activity) {
         try {
-            if (on()) activity.overridePendingTransition(0, 0);
+            if (!on()) return;
+            activity.overridePendingTransition(0, 0);
+            HookStatus.bound(FAMILY, "screen opened still");
         } catch (Throwable failure) {
             Logger.printException(() -> "Turn off screen transitions: could not open a screen still", failure);
         }
@@ -101,7 +126,9 @@ public final class ScreenTransitions {
     @SuppressWarnings("deprecation")
     static void paused(Activity activity) {
         try {
-            if (activity.isFinishing() && on()) activity.overridePendingTransition(0, 0);
+            if (!activity.isFinishing() || !on()) return;
+            activity.overridePendingTransition(0, 0);
+            HookStatus.bound(FAMILY, "screen closed still");
         } catch (Throwable failure) {
             Logger.printException(() -> "Turn off screen transitions: could not close a screen still", failure);
         }

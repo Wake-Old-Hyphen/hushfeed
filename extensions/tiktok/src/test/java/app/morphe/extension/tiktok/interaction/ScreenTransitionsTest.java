@@ -41,6 +41,22 @@ public class ScreenTransitionsTest {
         }
     }
 
+    /**
+     * Stands in for a TikTok screen whose own code runs after Android's callbacks: BaseActivity's
+     * processors after super.onResume, and a screen that asks for its slide right there.
+     */
+    public static class LateSlidingActivity extends Activity {
+        @Override protected void onResume() {
+            super.onResume();
+            overridePendingTransition(SLIDE_IN, SLIDE_OUT);
+        }
+
+        @Override protected void onPause() {
+            super.onPause();
+            if (isFinishing()) overridePendingTransition(SLIDE_IN, SLIDE_OUT);
+        }
+    }
+
     @Before public void setUp() {
         // The switch starts off; these tests are about what it does once the reader turns it on.
         Settings.TURN_OFF_SCREEN_TRANSITIONS.save(true);
@@ -60,6 +76,25 @@ public class ScreenTransitionsTest {
         assertTrue(Settings.TURN_OFF_SCREEN_TRANSITIONS.get());
         ScreenTransitions.install(RuntimeEnvironment.getApplication());
         try (var controller = Robolectric.buildActivity(SlidingActivity.class).setup()) {
+            assertEquals(0, shadowOf(controller.get()).getPendingTransitionEnterAnimationResourceId());
+            assertEquals(0, shadowOf(controller.get()).getPendingTransitionExitAnimationResourceId());
+        }
+    }
+
+    @Test @Config(sdk = 30) public void aSlideAskedForAfterSuperOnResumeIsAskedOverAgain() {
+        ScreenTransitions.install(RuntimeEnvironment.getApplication());
+        try (var controller = Robolectric.buildActivity(LateSlidingActivity.class).setup()) {
+            assertEquals("the screen asked after Android's resume callback, so the request goes again after it",
+                    0, shadowOf(controller.get()).getPendingTransitionEnterAnimationResourceId());
+            assertEquals(0, shadowOf(controller.get()).getPendingTransitionExitAnimationResourceId());
+        }
+    }
+
+    @Test @Config(sdk = 30) public void aClosingScreenThatAsksAfterSuperOnPauseClosesStill() {
+        ScreenTransitions.install(RuntimeEnvironment.getApplication());
+        try (var controller = Robolectric.buildActivity(LateSlidingActivity.class).setup()) {
+            controller.get().finish();
+            controller.pause();
             assertEquals(0, shadowOf(controller.get()).getPendingTransitionEnterAnimationResourceId());
             assertEquals(0, shadowOf(controller.get()).getPendingTransitionExitAnimationResourceId());
         }

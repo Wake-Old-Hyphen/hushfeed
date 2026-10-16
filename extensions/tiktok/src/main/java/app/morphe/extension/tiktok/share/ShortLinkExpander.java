@@ -38,6 +38,10 @@ import app.morphe.extension.tiktok.settings.Settings;
  * way a browser opening it would, and the full video link it points to takes its place on the
  * clipboard.
  *
+ * <p>A link TikTok makes short after the rewrite, which it does to every link that still has its
+ * query, never passes through here as a short one, so for those the wait is for any short TikTok
+ * link to land on the clipboard ({@link #watchShortened}).
+ *
  * <p>Nothing is opened before the link is copied. TikTok makes its share link once for every
  * channel as the sheet opens, so each link made only starts a wait of {@link #WATCH_MS} for Copy
  * link, one per link, and a link sent straight to another app goes out as TikTok made it,
@@ -56,6 +60,11 @@ public final class ShortLinkExpander {
      * hands this form out as well as the vt.tiktok.com one, and it leads to the video the same way.
      */
     private static final Pattern SITE_SHORT_PATH = Pattern.compile("/t/[A-Za-z0-9]{4,20}/?([?#].*)?");
+    /** A short link inside copied text, in either form. {@link #isShort} has the last word. */
+    private static final Pattern SHORT_IN_TEXT = Pattern.compile(
+            "https://(?:(?:vm|vt)\\.tiktok\\.com/[A-Za-z0-9]+|(?:www\\.|m\\.)?tiktok\\.com/t/[A-Za-z0-9]{4,20})/?");
+    /** The wait for a link TikTok makes short after the rewrite, which has no text to wait for. */
+    private static final String SHORTENED_LATER = "\u0000shortened later";
     /** How long after the link is made a Copy link still gets the full one. */
     static final long WATCH_MS = 60_000;
     /** How long a short link that couldn't be opened is left before it's tried again. */
@@ -110,6 +119,19 @@ public final class ShortLinkExpander {
         return url != null && isShort(url) && Settings.EXPAND_SHORT_SHARE_LINKS.get();
     }
 
+    /**
+     * True for a full video or photo link that still has its query, with the switch on. TikTok's
+     * share sheet sends a link with a query to its server to be made short before it shows the
+     * sheet (one without a query goes out as it is), so the short link Copy link puts on the
+     * clipboard never passes the rewrite. On 47.1.4 that is every link while Clean up shared links
+     * is off, and the expander never ran for them.
+     */
+    static boolean wantsShortened(@Nullable String url) {
+        return url != null && url.startsWith("https://") && url.indexOf('?') > 0
+                && TIKTOK_HOSTS.contains(host(url)) && POST_PATH.matcher(path(url)).matches()
+                && Settings.EXPAND_SHORT_SHARE_LINKS.get();
+    }
+
     static boolean isShort(String url) {
         if (!url.startsWith("https://")) return false;
         String host = host(url);
@@ -153,6 +175,67 @@ public final class ShortLinkExpander {
         WATCHING.put(copied, listener[0]);
         clipboard.addPrimaryClipChangedListener(listener[0]);
         Utils.runOnMainThreadDelayed(() -> stopWatching(clipboard, copied, listener[0]), WATCH_MS);
+    }
+
+    /**
+     * From the share link rewrite, for a link TikTok goes on to make short ({@link
+     * #wantsShortened}). Nothing is opened here.
+     */
+    static void laterShortened() {
+        Context context = Utils.getContext();
+        long before = clipStamp(context);
+        Utils.runOnMainThreadNowOrLater(() -> watchShortened(context, before, NETWORK));
+    }
+
+    /**
+     * Waits {@link #WATCH_MS} for a short TikTok link to land on the clipboard, then opens it and
+     * swaps in where it leads, as {@link #watch} does for a short link TikTok made before the
+     * rewrite. Each new sheet starts the wait again. Main thread.
+     */
+    static void watchShortened(@Nullable Context context, long before, Resolver resolver) {
+        if (context == null) return;
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard == null) return;
+        ClipboardManager.OnPrimaryClipChangedListener earlier = WATCHING.get(SHORTENED_LATER);
+        if (earlier != null) stopWatching(clipboard, SHORTENED_LATER, earlier);
+        // A copy that came before this ran; the clip that was there when the link was made is
+        // never read.
+        if (changedSince(clipboard, before)) {
+            String copiedShort = shortLinkOn(clipboard);
+            if (copiedShort != null) {
+                open(copiedShort, resolver, full -> swap(clipboard, copiedShort, full));
+                return;
+            }
+        }
+        ClipboardManager.OnPrimaryClipChangedListener[] listener = new ClipboardManager.OnPrimaryClipChangedListener[1];
+        listener[0] = () -> {
+            String copiedShort = shortLinkOn(clipboard);
+            if (copiedShort == null) return;
+            // Off before the swap, whose own change would otherwise come back here.
+            stopWatching(clipboard, SHORTENED_LATER, listener[0]);
+            open(copiedShort, resolver, full -> swap(clipboard, copiedShort, full));
+        };
+        WATCHING.put(SHORTENED_LATER, listener[0]);
+        clipboard.addPrimaryClipChangedListener(listener[0]);
+        Utils.runOnMainThreadDelayed(() -> stopWatching(clipboard, SHORTENED_LATER, listener[0]), WATCH_MS);
+    }
+
+    /** The first short TikTok link in the clip on the clipboard, or null. */
+    @Nullable
+    private static String shortLinkOn(ClipboardManager clipboard) {
+        try {
+            ClipData clip = clipboard.getPrimaryClip();
+            if (clip == null || clip.getItemCount() == 0) return null;
+            CharSequence text = clip.getItemAt(0).getText();
+            if (text == null) return null;
+            java.util.regex.Matcher found = SHORT_IN_TEXT.matcher(text);
+            while (found.find()) {
+                if (isShort(found.group())) return found.group();
+            }
+            return null;
+        } catch (RuntimeException failure) {
+            return null;
+        }
     }
 
     private static void stopWatching(ClipboardManager clipboard, String copied,
@@ -208,6 +291,11 @@ public final class ShortLinkExpander {
 
     private static String rewrite(String full) {
         return ShareUrlSanitizer.stripAllQueryParams(ShareUrlSanitizer.withCustomDomain(full));
+    }
+
+    /** Whether a wait for a link TikTok makes short later is on. Main thread. */
+    static boolean watchingShortenedForTests() {
+        return WATCHING.containsKey(SHORTENED_LATER);
     }
 
     static synchronized void forgetForTests() {

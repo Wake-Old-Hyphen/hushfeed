@@ -2596,7 +2596,7 @@
     "auto": true
    }
   ],
-  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.1.4 view id wct (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). A video's sheet gets only Copy video ID (seen 2026-10-16), and a profile's sheet gets Copy username and Copy user ID (CopyIds.targetsOf, itemType user), so the second half opens Share profile. On 47.1.4 the own profile has no Share profile button; the row is in Settings and privacy under Account, so the check goes Profile menu > Settings and privacy > Share profile (2026-10-16). Nothing on either sheet is tapped. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile. Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
+  "notes": "The share sheet is opened with the probe click on the rail's Share button by its 47.1.4 view id wct (SHARE_BUTTON_IDS in view-id-anchors.txt); no recipient or app is tapped and Back closes the sheet. If click answers \"no shown view matches\" the feed was not on a video cell yet; \"N shown views match\" means two cells are on screen (add -e index). A video's sheet gets only Copy video ID (seen 2026-10-16), and a profile's sheet gets Copy username and Copy user ID (CopyIds.targetsOf, itemType user), so the second half opens Share profile. On 47.1.4 the own profile has no Share profile button; the row is in Settings and privacy under Account, so the check goes Profile menu > Settings and privacy > Share profile (2026-10-16). That sheet has only Send to and the apps row, no action panel, so the row goes at the bottom of the apps panel (0IQ2 on 47.1.4, found by share_panel_channel); before 2026-10-16 it never showed there. Nothing on either sheet is tapped. The bio long-press half (profile bio copyable, \"Bio copied\" toast) is not automated: it needs a long press on the bio text of the own profile. Settings and privacy is a Compose page whose rows carry their words in the content description with an empty text, so its rows are tapped by label, which matches either (2026-10-16)."
  },
  {
   "name": "Copy comments without username",
@@ -6762,7 +6762,8 @@
     "key": "hide_profile_rewards_shortcut",
     "default": false,
     "type": "bool",
-    "row": "Hide the rewards shortcut"
+    "row": "Hide the rewards shortcut",
+    "restart": true
    }
   ],
   "surface": "feed",
@@ -6844,6 +6845,9 @@
       }
      },
      {
+      "restart": true
+     },
+     {
       "open": "profile"
      },
      {
@@ -6859,7 +6863,7 @@
       }
      },
      {
-      "open": "feed"
+      "restart": true
      },
      {
       "open": "profile"
@@ -6880,7 +6884,7 @@
     "auto": false
    }
   ],
-  "notes": "What is on screen depends on what the server serves to the test account (promotions and the rewards shortcut are account and region features), so there is no automatic view id check. The patch filters TikTok's TouchPoint model objects (NormalPendant, TimerPendant, SunshinePendant, CoinBottomTab, BottomTabBubble) before the UI binds them and nulls them, which leaves nothing to find in the view tree either way. hide_homepage_coin is restart-flagged; hide_profile_rewards_shortcut is read at bind time."
+  "notes": "What is on screen depends on what the server serves to the test account (promotions and the rewards shortcut are account and region features), so there is no automatic view id check. The patch filters TikTok's TouchPoint model objects (NormalPendant, TimerPendant, SunshinePendant, CoinBottomTab, BottomTabBubble) before the UI binds them and nulls them, which leaves nothing to find in the view tree either way. Both switches are restart-flagged. hide_profile_rewards_shortcut hides the gift box when the profile header binds it, so on 47.1.4 a live flip left it on a profile TikTok had already drawn, even after opening the profile again; after a restart it is gone (2026-10-16), and the check restarts TikTok after each set."
  },
  {
   "name": "Hide inbox items",
@@ -7454,7 +7458,7 @@
     "steps": [
      {
       "set": {
-       "hidden_profile_shortcuts": "TikTok Studio,Your orders,Shop,LIVE events,Your private videos"
+       "hidden_profile_shortcuts": "Watch history,TikTok Studio,Your orders,Shop,LIVE events,Your private videos"
       }
      },
      {
@@ -7464,8 +7468,14 @@
       "open": "profile"
      },
      {
-      "log": "Profile shortcuts: .* hidden",
+      "log": "Profile shortcuts: \\S+ #\\d+ ",
       "within": 12000,
+      "fromStep": 2,
+      "precondition": true
+     },
+     {
+      "log": "Profile shortcuts: .* hidden",
+      "within": 1000,
       "fromStep": 2
      },
      {
@@ -7492,7 +7502,7 @@
     "auto": true
    }
   ],
-  "notes": "Which shortcuts exist depends on the account: the test account shows whatever the server sends (often TikTok Studio, sometimes Your orders). If it has none, the catalog is empty and both checks fail for lack of a precondition rather than a bug. The shortcut titles typed here are English; the checklist normally stores a kind or feature id, and typed titles hide alike (ProfileShortcuts.canonical). Thoughts (hide_profile_thoughts, restart-required) removes the Thoughts bubble; it is a visual check only. On 47.1.4 the test account is served Watch history, LIVE (live events), Showcase, Subscription (live subscription) and Shop (seen 2026-10-16), so Shop and LIVE events in the typed list match by kind."
+  "notes": "Which shortcuts exist depends on the account: the test account shows whatever the server sends (often TikTok Studio, sometimes Your orders). If it has none, the catalog is empty and both checks fail for lack of a precondition rather than a bug. The shortcut titles typed here are English; the checklist normally stores a kind or feature id, and typed titles hide alike (ProfileShortcuts.canonical). Thoughts (hide_profile_thoughts, restart-required) removes the Thoughts bubble; it is a visual check only. On 47.1.4 the test account is served Watch history, LIVE (live events), Showcase, Subscription (live subscription) and Shop (seen 2026-10-16), so Shop and LIVE events in the typed list match by kind. The served set changes within a day: by 08:44 EDT on 2026-10-16 the account got only Watch history (watch_history #32), so shortcut-hidden types Watch history too and first waits for any shortcut line (inconclusive when none is served)."
  },
  {
   "name": "Hide search suggestions",
@@ -7782,7 +7792,7 @@
    },
    {
     "id": "friends-tab",
-    "what": "Review: the Friends tab and a profile show no People you may like strip with the switch on.",
+    "what": "Review: after the switch goes on and TikTok restarts (the row's restart button), the Friends tab and a profile show no People you may like strip.",
     "steps": [
      {
       "set": {
@@ -7805,7 +7815,7 @@
       }
      },
      {
-      "open": "feed"
+      "restart": true
      },
      {
       "open": "friends"
@@ -7837,7 +7847,7 @@
     "auto": true
    }
   ],
-  "notes": "Suggestions come from several sources (Inbox, Activity, New followers, profile header, Friends tab, feed account cards); the Inbox ones are handled by InboxFilter's row matching, the others by SuggestedAccountCells.onBind collapsing the cell. Whether any suggestion is served at all depends on the account, so the inbox check compares a baseline with the hidden state and can pass vacuously when nothing was served; read the baseline lines. Never tap Follow, Message, the wave or a person's row. The Clear all control InboxFilter adds to the Suggested accounts heading dismisses suggestions through TikTok's API and is not exercised."
+  "notes": "Suggestions come from several sources (Inbox, Activity, New followers, profile header, Friends tab, feed account cards); the Inbox ones are handled by InboxFilter's row matching, the others by SuggestedAccountCells.onBind collapsing the cell. Whether any suggestion is served at all depends on the account, so the inbox check compares a baseline with the hidden state and can pass vacuously when nothing was served; read the baseline lines. Never tap Follow, Message, the wave or a person's row. The Clear all control InboxFilter adds to the Suggested accounts heading dismisses suggestions through TikTok's API and is not exercised. The switch is a restart switch since 2026-10-16: the Friends tab keeps the suggestion cells it already drew (only a new bind collapses one), so on the S22 the strip stayed after a live flip and a tab change. The friends-tab check restarts TikTok after setting it, the way a person presses the row's restart button."
  },
  {
   "name": "Hide the launcher shortcuts",
@@ -8529,7 +8539,7 @@
     "auto": true
    }
   ],
-  "notes": "Eighteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses exn), so the music check first swipes to a video that shows one, and the hidden state it asks for is o97 GONE under a visible exn (2026-10-16). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16)."
+  "notes": "Eighteen switches in one patch; the checks above cover the ones with a view id or a HookStatus line. Not automated: Hide surveys (f98) and location labels / effect tags only exist on videos that carry them (naturally served; Roadmap_Blocked lists the visual-search and survey surfaces as unserved), and Hide full screen button needs a landscape video. Both are covered only by the registered check and the hookdetails 'overlay' family. View ids are 47.1.4 names read from VideoOverlayHider's id lists (obfuscated, they change every TikTok build). A hider acts on layout passes, so each 'on' phase swipes once and waits before it reads. 'morphe_debug' is the Log diagnostics setting; the Music disc log line only prints with it on. The right column list rows (hide_rail_*) have no row title of their own, they are items in the Right column checklist. Some videos have no music line (TikTok puts a search suggestion bar there and collapses exn), so the music check first swipes to a video that shows one, and the hidden state it asks for is o97 GONE under a visible exn (2026-10-16). Keep the music disc still records 'held the disc' only when TikTok's music_animation_close_exp would let the disc turn; an account that gets 1 or 3 (the S22's gets 3, which the spin phase's log line names) is already held, so its hold phase shows installed alone (2026-10-16). music-line-hidden is inconclusive on 47.1.4 when TikTok shows no music line at all: on 2026-10-16 every video in eight swipes had `exn` (the music line's parent) gone and `o97` at 0x0 with the switch off, and the caption ran into a Search bar where the line used to be. That says nothing about the patch; rerun it on another day."
  },
  {
   "name": "Hold-and-slide 2x lock",
@@ -8600,7 +8610,7 @@
      },
      {
       "probe": "videoinfo",
-      "expect": "photo=false.*ad=false",
+      "expect": "photo=false durationMs=(1[5-9]\\d{3}|[2-9]\\d{4}|\\d{6,})\\b.*ad=false",
       "retrySwipe": 8,
       "precondition": true
      },
@@ -8699,7 +8709,7 @@
     "auto": true
    }
   ],
-  "notes": "The 2026-09-22 device notes say TikTok's pull-down lock only works past the first video (on the first one the feed's pull to refresh takes the drag), so both checks swipe up twice first. holdslide injects the hold and slide inside TikTok's own window; it presses the left third of the video, never a rail button: on 47.1.4 a hold in the middle opens TikTok's long-press menu and the 2x hold lives on the sides (seen 2026-10-16). The player handle X.037t / LJIILIIL is the 47.1.4 one from the spec. The lock distance default is 140 dp (FeatureControls.DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP), so the 500 px slide is enough on a 420 dpi screen. The checks leave the video with a swipe because a locked 2x would otherwise carry into the next patch's checks (the runner also restarts after a patch that set a restart-gated key). TikTok marks the lock as a chosen speed (swipe_up_lock_persist) and Remember the last speed saves it, so both checks set remembered_speed_v2 to 1.0 first and the runner puts the phone's own value back afterwards; without that the lock check left 2.0 for every later video. Each hold waits for a normal video (photo=false, ad=false), since ads and photos have no side hold (2026-10-16)."
+  "notes": "The 2026-09-22 device notes say TikTok's pull-down lock only works past the first video (on the first one the feed's pull to refresh takes the drag), so both checks swipe up twice first. holdslide injects the hold and slide inside TikTok's own window; it presses the left third of the video, never a rail button: on 47.1.4 a hold in the middle opens TikTok's long-press menu and the 2x hold lives on the sides (seen 2026-10-16). The player handle X.037t / LJIILIIL is the 47.1.4 one from the spec. The lock distance default is 140 dp (FeatureControls.DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP), so the 500 px slide is enough on a 420 dpi screen. The checks leave the video with a swipe because a locked 2x would otherwise carry into the next patch's checks (the runner also restarts after a patch that set a restart-gated key). TikTok marks the lock as a chosen speed (swipe_up_lock_persist) and Remember the last speed saves it, so both checks set remembered_speed_v2 to 1.0 first and the runner puts the phone's own value back afterwards; without that the lock check left 2.0 for every later video. Each hold waits for a normal video (photo=false, ad=false), since ads and photos have no side hold (2026-10-16). The video picked before a rate reading is 15 s or longer: pass 3 (2026-10-16) read 'speed=2.0 then 2.0 moved=-3580ms' on a 6 s video that looped while the player ran at 2x, so the lock held but the rate came out negative."
  },
  {
   "name": "In-app browser privacy guard",
@@ -9322,7 +9332,7 @@
      },
      {
       "shot": "quick-favorites-dark",
-      "review": "With the phone in dark mode, press and hold the Favorites (bookmark) button on a video (a person does it; no long press step exists): the collections popup is dark, not white. Do not save anything. Failing looks like a white sheet in dark mode. HookStatus 'quick favorites dark' then reads 'painted dark'."
+      "review": "With the phone in dark mode, press and hold the Favorites (bookmark) button on a video (a person does it: a press there that lands as a tap saves the video, and the audit never saves anything): the collections popup is dark, not white. Do not save anything. Failing looks like a white sheet in dark mode. HookStatus 'quick favorites dark' then reads 'painted dark'."
      }
     ],
     "auto": false
@@ -12405,6 +12415,12 @@
       "open": "feed"
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "click",
       "extras": {
        "find": "wct"
@@ -12458,6 +12474,12 @@
       "swipe": "up"
      },
      {
+      "probe": "videoinfo",
+      "expect": "photo=false.*ad=false",
+      "retrySwipe": 8,
+      "precondition": true
+     },
+     {
       "probe": "click",
       "extras": {
        "find": "wct"
@@ -12494,7 +12516,7 @@
     "auto": true
    }
   ],
-  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.1.4 view id wct (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. On 47.1.4 Copy link gives a short vt.tiktok.com link with no query (seen 2026-10-16), so both checks turn on expand_short_share_links (Copy the full link for short links), which swaps in the full link through the same sanitizer. A full link proves the expander, its query the sanitize switch. video-link answers \"not-a-tiktok-video-url host=... query=... path=<shape>\" when the swap didn't happen (shape is video, photo, t-short, short, root or other-N-segments, never the link), and \"clip=empty\" when nothing was copied. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell). 47.1.4 also hands out the tiktok.com/t/<code>/ short form, which the expander didn't take until 2026-10-16: the switch-off check then read host=www.tiktok.com query=false with no /video/."
+  "notes": "Copy link only writes the clipboard (no recipient is touched; the share sheet's contact row is never tapped). The Share button is clicked by its 47.1.4 view id wct (view-id-anchors.txt SHARE_BUTTON_IDS); the English \"Copy link\" label is unverified on a phone: if probe click answers \"no shown view matches\" read the rail with probe views, and note the copy happens at the sheet cell's click. On 47.1.4 Copy link gives a short vt.tiktok.com link with no query (seen 2026-10-16), so both checks turn on expand_short_share_links (Copy the full link for short links), which swaps in the full link through the same sanitizer. A full link proves the expander, its query the sanitize switch. video-link answers \"not-a-tiktok-video-url host=... query=... path=<shape>\" when the swap didn't happen (shape is video, photo, t-short, short, root or other-N-segments, never the link), and \"clip=empty\" when nothing was copied. The setting key is the shared morphe_sanitize_sharing_links (BaseSettings), not in Settings.java. The swap domain (custom_share_domain) must be empty for the plain-URL expectation, which is its default; the checks do not touch it because the runner cannot send an empty value (an empty -e value is dropped by the shell). 47.1.4 also hands out the tiktok.com/t/<code>/ short form, which the expander didn't take until 2026-10-16: the switch-off check then read host=www.tiktok.com query=false with no /video/. Why the switch-off check reads a short link: TikTok's share sheet sends a link that still has its query to its server to be made short (AwemeChannelShareProtocol, getPreShareLinkShortenUrl, only when the first link has query parameters), after the tracker method this patch rewrites. With Clean up shared links on the query is gone and the link goes out full; with it off the server's short link reaches the clipboard without passing the rewrite, so the expander has to wait for it there (ShortLinkExpander.watchShortened, 2026-10-16). Each copy check picks a video first: on 2026-10-16 the feed served a photo post, whose cleaned link is /photo/<id> and which the probe reports as not-a-tiktok-video-url (path=photo, query=false), so the /video/ expectation failed with the cleanup working."
  },
  {
   "name": "Settings",
@@ -13409,6 +13431,9 @@
       }
      },
      {
+      "restart": true
+     },
+     {
       "open": "feed"
      },
      {
@@ -13433,6 +13458,18 @@
       "set": {
        "show_exact_counts": "true"
       }
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1500
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 1500
      },
      {
       "swipe": "up"
@@ -13464,6 +13501,108 @@
     "auto": true
    },
    {
+    "id": "formatters-exact",
+    "what": "TikTok's main count formatter and a compact one, called with 123456: 123,456 with the switch on, TikTok's 123.4K style with it off.",
+    "steps": [
+     {
+      "set": {
+       "show_exact_counts": "true"
+      }
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "countformat",
+      "extras": {
+       "class": "X.0EYv",
+       "method": "LIZIZ",
+       "count": "123456"
+      },
+      "expect": "count=123456 -> 123,456(\\s|$)"
+     },
+     {
+      "probe": "countformat",
+      "extras": {
+       "class": "X.0HAE",
+       "method": "LIZ",
+       "count": "123456"
+      },
+      "expect": "count=123456 -> 123,456(\\s|$)"
+     },
+     {
+      "set": {
+       "show_exact_counts": "false"
+      }
+     },
+     {
+      "probe": "countformat",
+      "extras": {
+       "class": "X.0EYv",
+       "method": "LIZIZ",
+       "count": "123456"
+      },
+      "expect": "count=123456 -> \\d+(\\.\\d)?K(\\s|$)"
+     },
+     {
+      "probe": "countformat",
+      "extras": {
+       "class": "X.0HAE",
+       "method": "LIZ",
+       "count": "123456"
+      },
+      "expect": "count=123456 -> \\d+(\\.\\d)?K(\\s|$)"
+     }
+    ]
+   },
+   {
+    "id": "comment-title-exact",
+    "what": "Review: with the switch on, the comment sheet's title writes a big comment count whole (12,345 comments, not 12.3K).",
+    "steps": [
+     {
+      "set": {
+       "show_exact_counts": "true"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "videoinfo",
+      "expect": "comments=over10000.*ad=false",
+      "retrySwipe": 30,
+      "precondition": true
+     },
+     {
+      "probe": "comments",
+      "expect": "openComments\\([^)]*\\)=true",
+      "waitMs": 2500
+     },
+     {
+      "shot": "comment-title-exact",
+      "review": "Comment sheet title: the count is a whole number with commas (12,345 comments), never 12.3K. A video with fewer than 10,000 comments reads the same either way, so that shot is inconclusive. Do not type or post."
+     },
+     {
+      "back": true
+     },
+     {
+      "set": {
+       "show_exact_counts": "false"
+      }
+     }
+    ],
+    "auto": false
+   },
+   {
     "id": "hook-present",
     "what": "The count formatters call ExactCounts.format and the flag is registered. (The dex-string steps show the extension class or constant is shipped, the whole extension is kept in the dex; the registered-switch step is what shows the patch ran.)",
     "steps": [
@@ -13479,7 +13618,7 @@
     "auto": true
    }
   ],
-  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over10000' bucket picks one (2,447 is written whole by TikTok itself, seen 2026-10-16). textwords takes onscreen=true, since the feed keeps the next cell's g86 laid out. The rail count view is g86 (like), ek5 (comment), i82 (save) and w_0 (share) on 47.1.4."
+  "notes": "Exact counts only differ for counts of 10,000 and up (TikTok already shows 1,234 whole), so the check needs a video with a big like count; videoinfo's 'likes=over10000' bucket picks one (2,447 is written whole by TikTok itself, seen 2026-10-16). textwords takes onscreen=true, since the feed keeps the next cell's g86 laid out. The rail count view is g86 (like), ek5 (comment), i82 (save) and w_0 (share) on 47.1.4. The comment sheet title, the likes list and the viewers list come from X/0HAE.LIZIZ(Aweme, long) on 47.1.4. For someone else's video it calls TikTok's general formatter with no compact style, which writes the count whole with the switch off too (123456 as 123,456 through probe countformat on the S22, 2026-10-16); your own video goes to X/0HAE.LIZ(J) and the flag-off path to X/0EYv.LIZIZ(J), both hooked. So it needs no hook of its own, and the one added that morning was reverted (a1a60d832). comment-title-exact picks its video by videoinfo's comments bucket (probe since 2026-10-16): with likes=over10000 the a8 run opened a video with 35 comments, whose title reads the same either way. Videos with 10,000 comments are rarer than ones with 10,000 likes, hence 30 swipes. A live flip reaches only cells bound after it: the next cell is already laid out with the old text, which is why pass 3 read 69.4K right after the flip. On 2026-10-16 the comma was there both after a restart and live three swipes on, so like-count-exact restarts for its off half and swipes three times after turning it on. formatters-exact calls the main formatter (CountFormatterFingerprint, X.0EYv.LIZIZ) and a compact one (CompactCountFormatterFingerprint, X.0HAE.LIZ) through probe countformat with a count of its own, so it reads the same on any feed (none of 31 videos had 10,000 comments on 2026-10-16, and like-count-exact went inconclusive once). The names are 47.1.4's obfuscated ones: on a new TikTok build put in what those two fingerprints match there (the anchors fixture test resolves them). The switch is read at each call, so the off half needs no restart."
  },
  {
   "name": "Show follow status",
@@ -15593,7 +15732,7 @@
    },
    {
     "id": "slide-gone",
-    "what": "Hushfeed's settings open over a paused feed video while the screen is filmed: with the switch off the clip passes through a run of frames between the two screens (TikTok's slide), with it on it jumps straight to the settings page.",
+    "what": "Hushfeed's row on TikTok's Settings and privacy is tapped while the screen is filmed: with the switch off the clip passes through a run of frames between the two screens (the slide), with it on it jumps straight to Hushfeed's page.",
     "steps": [
      {
       "animations": "on"
@@ -15604,35 +15743,35 @@
       }
      },
      {
-      "open": "feed"
+      "open": "profile"
      },
      {
-      "probe": "videoinfo",
-      "expect": "photo=false.*ad=false",
-      "retrySwipe": 8,
-      "precondition": true
+      "wait": 2000
      },
      {
-      "probe": "holdslide",
-      "extras": {
-       "x": "540",
-       "y": "1000",
-       "dy": "0",
-       "hold": "50",
-       "slide": "50"
-      },
-      "expect": "^ok holdslide",
-      "waitMs": 1500
+      "tap": {
+       "desc": "^Profile menu$"
+      }
      },
      {
       "wait": 1500
      },
      {
-      "record": "start",
-      "seconds": 4
+      "tap": {
+       "text": "^Settings and privacy$"
+      }
      },
      {
-      "open": "settings"
+      "wait": 3000
+     },
+     {
+      "record": "start",
+      "seconds": 7
+     },
+     {
+      "tap": {
+       "label": "^Hushfeed$"
+      }
      },
      {
       "record": "stop",
@@ -15643,44 +15782,50 @@
       "back": true
      },
      {
+      "back": true
+     },
+     {
       "set": {
        "turn_off_screen_transitions": "true"
       }
      },
      {
-      "open": "feed"
+      "open": "profile"
      },
      {
-      "probe": "videoinfo",
-      "expect": "photo=false.*ad=false",
-      "retrySwipe": 8,
-      "precondition": true
+      "wait": 2000
      },
      {
-      "probe": "holdslide",
-      "extras": {
-       "x": "540",
-       "y": "1000",
-       "dy": "0",
-       "hold": "50",
-       "slide": "50"
-      },
-      "expect": "^ok holdslide",
-      "waitMs": 1500
+      "tap": {
+       "desc": "^Profile menu$"
+      }
      },
      {
       "wait": 1500
      },
      {
-      "record": "start",
-      "seconds": 4
+      "tap": {
+       "text": "^Settings and privacy$"
+      }
      },
      {
-      "open": "settings"
+      "wait": 3000
+     },
+     {
+      "record": "start",
+      "seconds": 7
+     },
+     {
+      "tap": {
+       "label": "^Hushfeed$"
+      }
      },
      {
       "record": "stop",
       "transition": "still"
+     },
+     {
+      "back": true
      },
      {
       "back": true
@@ -15689,7 +15834,7 @@
     "auto": true
    }
   ],
-  "notes": "There is no log line or state to read, since Android plays the slide, not TikTok's views. slide-gone films it instead: the runner's record step (screenrecord, then ffmpeg shrinks each frame to 54x116 grey) measures each frame against the last and counts the ones part way between the first screen and the last. A synthetic 0.3 s slide counted 14, a jump 0; the check wants 6 or more with the switch off (else inconclusive) and 3 or fewer with it on. The feed video is paused with one short press first (only on a plain video, since a tap on an ad opens it), so its own frames don't count. The setting is read each time a screen is created or paused, so no restart is needed. Swipes inside one screen follow the finger and are not touched. A phone with its animation scales at 0 (the S22's baseline) slides nothing, so the check turns them on first with an animations step and the runner puts the phone's values back afterwards; with them at 0 the switch-off half found no frames in between (2026-10-16)."
+  "notes": "There is no log line or state to read, since Android plays the slide, not TikTok's views. slide-gone films it instead: the runner's record step (screenrecord, then ffmpeg shrinks each frame to 54x116 grey) measures each frame against the last and counts the ones part way between the first screen and the last. A synthetic 0.3 s slide counted 14, a jump 0; the check wants 6 or more with the switch off (else inconclusive) and 3 or fewer with it on. The filmed step is the tap on Hushfeed's row in Settings and privacy, one screen of TikTok's opening another, which is the case the patch covers; the probe's settings action starts the page from the application context as a new task instead, and that launch faded the same way with the switch on and off (17 and 18 frames in between, 2026-10-16), so it isn't filmed. The setting is read each time a screen is created or paused, so no restart is needed. Swipes inside one screen follow the finger and are not touched. A phone with its animation scales at 0 (the S22's baseline) slides nothing, so the check turns them on first with an animations step and the runner puts the phone's values back afterwards; with them at 0 the switch-off half found no frames in between (2026-10-16)."
  },
  {
   "name": "Use non-personalized search",

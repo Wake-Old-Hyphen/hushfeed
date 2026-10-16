@@ -15,9 +15,11 @@ import app.morphe.patches.tiktok.feedfilter.isTakoSearchEntranceInflater
 import app.morphe.patches.tiktok.feedfilter.takoSearchEntranceVariants
 import app.morphe.patches.tiktok.interaction.copyids.BASE_SHARE_PACKAGE
 import app.morphe.patches.tiktok.interaction.copyids.BioBindFingerprint
+import app.morphe.patches.tiktok.interaction.copyids.SHARE_APPS_MARKER
 import app.morphe.patches.tiktok.interaction.copyids.SHARE_PANEL_MARKER
 import app.morphe.patches.tiktok.interaction.copyids.SIGNATURE_COMPONENT
 import app.morphe.patches.tiktok.interaction.copyids.bioTextField
+import app.morphe.patches.tiktok.interaction.copyids.resolveShareAppsPanel
 import app.morphe.patches.tiktok.interaction.copyids.sharePackageField
 import app.morphe.patches.tiktok.interaction.downloads.drawsCommentImageWatermark
 import app.morphe.patches.tiktok.interaction.sharesheet.ShareSnapshotFingerprint
@@ -1157,6 +1159,14 @@ class TikTokPatchAnchorsMatchFixturesTest {
                 }
             })
             assertEquals("the action panel", "onAttachedToWindow", panel.name)
+            val apps = resolveShareAppsPanel(classes.values.filter { classDef ->
+                classDef.methods.any { method ->
+                    method.implementation?.instructions?.any {
+                        ((it as? ReferenceInstruction)?.reference as? StringReference)?.string == SHARE_APPS_MARKER
+                    } == true
+                }
+            })
+            assertTrue("the apps panel is its own class", apps.definingClass != panel.definingClass)
 
             assertEquals("a share package's kind", 1, classes.getValue(BASE_SHARE_PACKAGE).fields.count {
                 it.name == "itemType" && it.type == "Ljava/lang/String;"

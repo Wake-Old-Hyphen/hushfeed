@@ -16,9 +16,12 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Field
+import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/interaction/CopyIds;"
 internal const val SIGNATURE_COMPONENT =
@@ -26,6 +29,30 @@ internal const val SIGNATURE_COMPONENT =
 internal const val TUX_TEXT_VIEW = "Lcom/bytedance/tux/input/TuxTextView;"
 internal const val BASE_SHARE_PACKAGE = "Lcom/ss/android/ugc/aweme/share/base/model/BaseSharePackage;"
 internal const val SHARE_PANEL_MARKER = "share_panel_action"
+internal const val SHARE_APPS_MARKER = "share_panel_channel"
+
+/**
+ * The share sheet's apps panel attach: `0IQ2` on 47.1.4, a FrameLayout whose onAttachedToWindow
+ * names `share_panel_channel` and inflates the apps list. The profile sheet in Settings and
+ * privacy has only this panel and Send to, no action panel.
+ */
+internal fun resolveShareAppsPanel(classes: Iterable<ClassDef>): Method {
+    val candidates = classes.flatMap { classDef ->
+        classDef.methods.filter { method ->
+            method.name == "onAttachedToWindow" && method.returnType == "V" && method.parameterTypes.isEmpty() &&
+                !AccessFlags.STATIC.isSet(method.accessFlags) &&
+                method.implementation?.instructions?.any {
+                    it.getReference<StringReference>()?.string == SHARE_APPS_MARKER
+                } == true
+        }.map { classDef to it }
+    }
+    val (owner, method) = candidates.singleOrNull()
+        ?: throw PatchException("Copy bio and IDs: expected one share apps panel attach method, found ${candidates.size}.")
+    if (owner.superclass != "Landroid/widget/FrameLayout;") {
+        throw PatchException("Copy bio and IDs: the share apps panel is no longer a FrameLayout.")
+    }
+    return method
+}
 
 /**
  * The profile header's bio bind, handed the signature and its extra spans: `Q53` on 47.0.3, `D73`
@@ -106,6 +133,11 @@ val copyIdsPatch = bytecodePatch(
         mutableClassDefBy(panel.definingClass).findMutableMethodOf(panel).addInstruction(
             0,
             "invoke-static/range { p0 .. p0 }, $EXTENSION->onSharePanel(Landroid/view/View;)V",
+        )
+        val apps = resolveShareAppsPanel(classDefByStrings(SHARE_APPS_MARKER))
+        mutableClassDefBy(apps.definingClass).findMutableMethodOf(apps).addInstruction(
+            0,
+            "invoke-static/range { p0 .. p0 }, $EXTENSION->onAppsPanel(Landroid/view/View;)V",
         )
     }
 }

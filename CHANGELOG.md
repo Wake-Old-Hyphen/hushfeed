@@ -6,7 +6,15 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
-* **TikTok:** Copy the full link for short links now also works on the tiktok.com/t/ short links TikTok gives for some videos. Before, only vt.tiktok.com and vm.tiktok.com links were swapped for the full one, so those stayed short.
+* **TikTok:** Hide the rewards shortcut shows a restart button now when you flip it. Hushfeed hides the gift box as TikTok draws the profile, so a profile that was already open kept it until TikTok restarted.
+
+* **TikTok:** Copy bio and IDs puts Copy username and Copy user ID on the Share profile sheet in Settings and privacy too. That sheet only has Send to and the apps row, so the buttons never showed up there. They now sit under the apps.
+
+* **TikTok:** Turn off screen transitions works again. TikTok asks for its own slide after the screen has opened, later than Hushfeed used to ask for none, so pages kept sliding in with the switch on. Hushfeed asks again after TikTok now, and pages like Hushfeed's settings open with a plain cut.
+
+* **TikTok:** Hide suggested accounts shows a restart button now when you flip it. The Friends tab and profiles keep the suggestion cards they've already drawn until TikTok restarts, so turning it on while TikTok was open seemed to do nothing there. The Inbox still changes right away.
+
+* **TikTok:** Copy the full link for short links now works with Clean up shared links off. TikTok shortens a link that still has its tracking on its own servers, after Hushfeed has already seen it, so the short link reached the clipboard untouched. It also takes the tiktok.com/t/ short form now, not only vt.tiktok.com and vm.tiktok.com.
 
 * **TikTok:** Turning Default speed off now counts from the very next video. Before, the video after it still played at the old default, since TikTok hands each video the last one's speed when you swipe and Hushfeed took that for a speed you'd picked. Speeds you pick yourself work as before.
 

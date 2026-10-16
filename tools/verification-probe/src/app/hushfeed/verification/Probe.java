@@ -654,14 +654,10 @@ public final class Probe extends Instrumentation {
                                 : ((Number) followerCount).intValue() <= 5000 ? "5000orFewer" : "over5000";
                         // The feed leaves the author's follower count at zero (only the profile
                         // fills it), so the video's likes stand in for a small creator: a bucket.
-                        Object digg = optional(optional(aweme, "getStatistics"), "getDiggCount");
-                        String likes = !(digg instanceof Number) ? "unknown"
-                                : ((Number) digg).longValue() <= 100 ? "100orFewer"
-                                : ((Number) digg).longValue() <= 1000 ? "1000orFewer"
-                                // Below 10,000 TikTok writes a count out whole (2,447), so a
-                                // check on abbreviated counts needs the top bucket. It still
-                                // reads as over1000 to a pattern looking for that.
-                                : ((Number) digg).longValue() < 10000 ? "over1000" : "over10000";
+                        Object statistics = optional(aweme, "getStatistics");
+                        String likes = countBucket(optional(statistics, "getDiggCount"));
+                        // The comment sheet's title shows this one, so its check needs a big one.
+                        String comments = countBucket(optional(statistics, "getCommentCount"));
                         Object awemeType = optional(aweme, "getAwemeType");
                         Object liveId = optional(aweme, "getLiveId");
                         Object music = optional(aweme, "getMusic");
@@ -674,7 +670,7 @@ public final class Probe extends Instrumentation {
                                 + " hasDesc=" + (desc != null && String.valueOf(desc).trim().length() > 0)
                                 + " photo=" + photo + " durationMs=" + duration
                                 + " verified=" + verified + " aiLabel=" + aiLabel + " authorFollowers=" + followers
-                                + " likes=" + likes
+                                + " likes=" + likes + " comments=" + comments
                                 // The author's story status as stored, then as the getter the
                                 // story ring switch filters answers it: a ring check needs a
                                 // creator with a story and can't see the drawable.
@@ -2010,6 +2006,37 @@ public final class Probe extends Instrumentation {
                                 : result instanceof Number || result instanceof Boolean ? String.valueOf(result)
                                 : "<" + result.getClass().getName() + ", value not shown>";
                         Log.i(TAG, "ok call " + target.getName() + " -> " + shown);
+                        break;
+                    }
+                    case "countformat": {
+                        // One of TikTok's static count formatters run with a count the check
+                        // picks, and the text it wrote: -e class X.0EYv -e method LIZIZ -e count
+                        // 123456. One that takes (long) gets just the count, one that takes
+                        // (Aweme, long) the video on screen as well. A check can read what Show
+                        // exact counts makes of a big count whatever the feed serves. The class
+                        // is TikTok's obfuscated name, new with every build.
+                        Class<?> owner = loader.loadClass(required(intent, "class"));
+                        String name = required(intent, "method");
+                        Class<?> awemeClass = loader.loadClass("com.ss.android.ugc.aweme.feed.model.Aweme");
+                        Method target;
+                        Object[] arguments;
+                        long count = Long.parseLong(required(intent, "count"));
+                        try {
+                            target = owner.getDeclaredMethod(name, long.class);
+                            arguments = new Object[]{count};
+                        } catch (NoSuchMethodException notCountOnly) {
+                            target = owner.getDeclaredMethod(name, awemeClass, long.class);
+                            Object aweme = loader.loadClass("app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                    .getMethod("getAweme").invoke(null);
+                            if (aweme == null) throw new IllegalStateException("no current video");
+                            arguments = new Object[]{aweme, count};
+                        }
+                        if (!java.lang.reflect.Modifier.isStatic(target.getModifiers()) || target.getReturnType() != String.class) {
+                            throw new IllegalArgumentException("a static String count formatter only: " + target);
+                        }
+                        target.setAccessible(true);
+                        Log.i(TAG, "ok countformat " + owner.getSimpleName() + "." + target.getName() + " count=" + count
+                                + " -> " + target.invoke(null, arguments));
                         break;
                     }
                     case "tiktoktheme": {
@@ -4101,6 +4128,17 @@ public final class Probe extends Instrumentation {
 
         private static boolean blank(Object value) {
             return value == null || String.valueOf(value).trim().isEmpty();
+        }
+
+        /**
+         * A video count as a bucket. Below 10,000 TikTok writes a count out whole (2,447), so a
+         * check on abbreviated counts needs the top bucket. It still reads as over1000 to a
+         * pattern looking for that.
+         */
+        private static String countBucket(Object count) {
+            if (!(count instanceof Number)) return "unknown";
+            long value = ((Number) count).longValue();
+            return value <= 100 ? "100orFewer" : value <= 1000 ? "1000orFewer" : value < 10000 ? "over1000" : "over10000";
         }
 
         /** TikTok's caption strip shown, with the view that draws its cue visible at a height. */

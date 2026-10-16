@@ -160,6 +160,51 @@ public class CopyIdsTest {
         assertEquals(0, ((ViewGroup.MarginLayoutParams) actions.getLayoutParams()).bottomMargin);
     }
 
+    @Test public void aProfileSheetWithoutActionsGetsTheRowUnderItsApps() {
+        LinearLayout sheet = new LinearLayout(activity);
+        FrameLayout apps = frame("Copy link");
+        sheet.addView(apps);
+        activity.setContentView(sheet);
+
+        CopyIds.onSharePackage(profile("6812345678901234567", "nasa"));
+        CopyIds.onAppsPanel(apps);
+        idle();
+
+        assertEquals(2, apps.getChildCount());
+        LinearLayout row = (LinearLayout) apps.getChildAt(1);
+        assertEquals(View.VISIBLE, row.getVisibility());
+        assertEquals("Copy username", ((TextView) row.getChildAt(0)).getText().toString());
+        assertEquals("Copy user ID", ((TextView) row.getChildAt(1)).getText().toString());
+        assertTrue("the apps make room for the row",
+                ((ViewGroup.MarginLayoutParams) apps.getChildAt(0).getLayoutParams()).bottomMargin > 0);
+    }
+
+    @Test public void aSheetWithActionsKeepsTheRowThereEvenWhenTheAppsCameFirst() {
+        LinearLayout sheet = new LinearLayout(activity);
+        FrameLayout apps = frame("Copy link");
+        sheet.addView(apps);
+        activity.setContentView(sheet);
+        CopyIds.onSharePackage(video("7312345678901234567"));
+        CopyIds.onAppsPanel(apps);
+        idle();
+        assertEquals("no action panel yet, so the apps show it", View.VISIBLE, apps.getChildAt(1).getVisibility());
+
+        FrameLayout actions = frame("Report");
+        sheet.addView(actions);
+        CopyIds.onSharePanel(actions);
+        idle();
+        assertEquals(View.GONE, apps.getChildAt(1).getVisibility());
+        assertEquals(0, ((ViewGroup.MarginLayoutParams) apps.getChildAt(0).getLayoutParams()).bottomMargin);
+        assertEquals(2, actions.getChildCount());
+        assertEquals("Copy video ID", ((TextView) ((LinearLayout) actions.getChildAt(1)).getChildAt(0)).getText().toString());
+
+        // The apps panel attached again in the same sheet leaves the row to the actions.
+        CopyIds.onAppsPanel(apps);
+        idle();
+        assertEquals(View.GONE, apps.getChildAt(1).getVisibility());
+        assertEquals(View.VISIBLE, actions.getChildAt(1).getVisibility());
+    }
+
     @Test public void anOffSwitchAddsNoRow() {
         Settings.COPY_IDS.save(false);
         FrameLayout panel = panel();
@@ -233,12 +278,18 @@ public class CopyIdsTest {
     }
 
     private FrameLayout panel() {
-        FrameLayout panel = new FrameLayout(activity);
-        TextView actions = new TextView(activity);
-        actions.setText("Report");
-        panel.addView(actions, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        FrameLayout panel = frame("Report");
         activity.setContentView(panel);
+        return panel;
+    }
+
+    /** A panel holding one list, standing in for TikTok's action or apps list. */
+    private FrameLayout frame(String label) {
+        FrameLayout panel = new FrameLayout(activity);
+        TextView list = new TextView(activity);
+        list.setText(label);
+        panel.addView(list, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         return panel;
     }
 

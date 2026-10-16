@@ -387,8 +387,10 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting HIDE_CAPTCHA_POPUPS = new BooleanSetting("hide_browsing_captcha_popups", FALSE, true);
     public static final BooleanSetting HIDE_HOMEPAGE_COIN = new BooleanSetting("hide_homepage_coin", FALSE, true);
+    // A restart: the gift box is hidden when the profile header binds it, and a profile already
+    // drawn keeps it until TikTok starts again.
     public static final BooleanSetting HIDE_PROFILE_REWARDS_SHORTCUT =
-            new BooleanSetting("hide_profile_rewards_shortcut", FALSE);
+            new BooleanSetting("hide_profile_rewards_shortcut", FALSE, true);
     public static final StringSetting MIN_MAX_VIEWS = new StringSetting("min_max_views", "0-" + Long.MAX_VALUE, true);
     public static final StringSetting MIN_MAX_LIKES = new StringSetting("min_max_likes", "0-" + Long.MAX_VALUE, true);
     public static final StringSetting MIN_MAX_COMMENTS = new StringSetting("min_max_comments", "0-" + Long.MAX_VALUE, true);
@@ -897,8 +899,10 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_INBOX_SHOP = new BooleanSetting("hide_inbox_shop", FALSE);
     public static final BooleanSetting HIDE_INBOX_BULLETIN_BOARDS =
             new BooleanSetting("hide_inbox_bulletin_boards", FALSE);
+    // A restart: the Friends tab and a profile keep the suggestion cells they already drew, and
+    // only a new bind collapses one.
     public static final BooleanSetting HIDE_INBOX_SUGGESTED_ACCOUNTS =
-            new BooleanSetting("hide_inbox_suggested_accounts", FALSE);
+            new BooleanSetting("hide_inbox_suggested_accounts", FALSE, true);
     public static final BooleanSetting HIDE_INBOX_MESSAGE_REQUESTS =
             new BooleanSetting("hide_inbox_message_requests", FALSE);
     public static final BooleanSetting HIDE_INBOX_CONVERSATIONS =
