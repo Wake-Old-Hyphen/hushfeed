@@ -30,9 +30,9 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
 
-Hushfeed v0.74.0 contains 135 patches for TikTok 47.1.4. New in this one: TikTok's red buttons can take a color you pick, and the tab bar can float as a see-through pill. LIVEs keep the quality you chose after a restart, and Hushfeed can patch PineDrama too. It needs Morphe Manager 1.34.0 or newer.
+Hushfeed v0.75.0 contains 135 patches for TikTok 47.1.4. New in this one: the Profile tab opens again on the phones where it crashed, phones set to another language stay in it after patching, and See translation is back on videos. A comment's menu can block whoever wrote it, and Accent color can follow your wallpaper. It needs Morphe Manager 1.34.0 or newer.
 
-The main branch contains 135 patches, the same set as v0.74.0.
+The main branch contains 135 patches, the same set as v0.75.0.
 
 ## What it changes
 
