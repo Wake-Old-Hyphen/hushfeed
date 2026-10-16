@@ -81,6 +81,10 @@ internal fun stripVerifiedResources(
     versionName: String? = null,
 ): StripSummary {
     if (profiles.isEmpty()) throw PatchException("$patchName: no reviewed resource profiles were supplied.")
+    (standaloneFiles + profiles.flatMap { profile -> profile.files.map(ResourceFileContract::path) })
+        .firstOrNull(::isStartupDex)?.let { path ->
+            throw PatchException("$patchName: $path is a feature dex TikTok loads at start-up, so it can't be emptied.")
+        }
 
     val actual = linkedMapOf<String, File>()
     scanDirectories.forEach { path ->
@@ -137,6 +141,16 @@ internal fun stripVerifiedResources(
     actual.values.forEach { file -> file.writeBytes(byteArrayOf()) }
     return StripSummary(actual.size, originalBytes, alreadyStripped = false)
 }
+
+/**
+ * Whether [path] is one of TikTok's feature dexes (lib/<abi>/libdex_*.so, a zip holding a
+ * classes.dex). TikTok's native-library dex installer injects every one into its class loader at
+ * start-up, and an empty one leaves part of the start undone: with Pitaya's, live cast's or the
+ * camera's emptied, TikTok's own strings came up in English on a Spanish phone (emulator,
+ * 2026-10-16, #125).
+ */
+internal fun isStartupDex(path: String) =
+    path.startsWith("lib/") && path.substringAfterLast('/').startsWith("libdex_") && path.endsWith(".so")
 
 internal fun parseLanguageSelection(raw: String?, available: Set<String>): Set<String> {
     if ("en" !in available) throw PatchException("Language Pack Purger: the English fallback pack is missing.")

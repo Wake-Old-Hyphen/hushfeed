@@ -3,6 +3,7 @@ package app.morphe.extension.tiktok.foldable;
 import static org.junit.Assert.*;
 import android.content.res.Configuration;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.seen.SeenVideoHistory;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -55,6 +56,22 @@ public class FoldableSplitViewTest {
         Configuration configuration = new Configuration(activity.getResources().getConfiguration());
         configuration.screenWidthDp = dp;
         return configuration;
+    }
+
+    /** A report says whether TikTok asked at all, which a phone that never splits can't show. */
+    @Test public void everyAnswerTikTokGetsGoesIntoHookStatus() {
+        HookStatus.clear();
+        Settings.FOLDABLE_SPLIT_VIEW.save(true);
+        Settings.FOLDABLE_SPLIT_VIEW_MIN_WIDTH_DP.save(320);
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup()) {
+            TestActivity activity = owner.get();
+            Utils.setActivity(activity);
+            assertTrue(FoldableSplitView.shouldForceContainer());
+            assertTrue(FoldableSplitView.shouldForce(activity, width(activity, 700)));
+            assertTrue(String.join(" ", HookStatus.report()).contains(FoldableSplitView.FAMILY));
+        } finally {
+            HookStatus.clear();
+        }
     }
 
     /** Opened folded, then unfolded with TikTok still open: issue #26. */

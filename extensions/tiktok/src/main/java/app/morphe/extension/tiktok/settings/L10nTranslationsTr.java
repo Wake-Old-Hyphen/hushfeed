@@ -376,8 +376,8 @@ final class L10nTranslationsTr {
                 "Hushfeed hakkında");
         table.put("About overrides",
                 "Geçersiz kılmalar hakkında");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Çubuğun üstünde, ekranda yolunda bir şey olmadığı sürece süreyi çubuğun sol ucunun üstüne koyar, bir şey olduğunda çubuğun yanına koyar.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Çubuğun üstünde, ekranda yolunda bir şey olmadığı sürece süreyi çubuğun sağ ucunun üstüne koyar, bir şey olduğunda çubuğun yanına koyar.");
         table.put("Above the bar",
                 "Çubuğun üstünde");
         table.put("Account facts",

@@ -376,8 +376,8 @@ final class L10nTranslationsPt_rBR {
                 "Sobre o Hushfeed");
         table.put("About overrides",
                 "Sobre as substituições");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Acima da barra mostra o tempo sobre a ponta esquerda da barra enquanto nada na tela estiver no caminho, e ao lado da barra quando houver algo.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Acima da barra mostra o tempo sobre a ponta direita da barra enquanto nada na tela estiver no caminho, e ao lado da barra quando houver algo.");
         table.put("Above the bar",
                 "Acima da barra");
         table.put("Account facts",

@@ -50,9 +50,9 @@ val p2pRelayBlockerPatch = rawResourcePatch(
 @Suppress("unused")
 val coreAssetDebloatPatch = rawResourcePatch(
     name = "Remove content credential and card scanner assets",
-    description = "Removes TikTok's built-in AI model files, payment card scanner and content " +
-        "credential files, saving about 19 MB of storage. Anything in TikTok that needs them may " +
-        "stop working. Only patching again without it brings them back.",
+    description = "Removes TikTok's payment card scanner and content credential files, saving " +
+        "about 11 MB of storage. Anything in TikTok that needs them may stop working. Only " +
+        "patching again without it brings them back.",
     default = false,
 ) {
     category("Performance")
@@ -65,40 +65,17 @@ val coreAssetDebloatPatch = rawResourcePatch(
         // file size: 0 >= 0"), and TikTok's Librarian turns that into an uncaught error.
         // libbytemonitor is needed by libbytebench, which the whole video editor stack loads,
         // so emptying it killed the app the moment the Create tab opened (S22, 2026-09-17);
-        // libprofiler is needed by the crash handler's npth_ref_monitor and reschecker, and
-        // libAndroidPitayaCore by nine Pitaya modules. All three stay. The Python runtime's five
-        // libraries name only one another, and only Pitaya's feature dex, emptied here, loads them.
+        // libprofiler is needed by the crash handler's npth_ref_monitor and reschecker. Both stay.
+        // So do Pitaya (its feature dex, its libraries and the Python runtime it loads) and the
+        // live cast feature dex: every lib/*/libdex_*.so is injected at start-up, and an empty one
+        // left TikTok's own strings in English on a Spanish phone (#125).
         val nativeFiles = listOf(
             "lib/arm64-v8a/libtt_c2pa_sdk.so",
             "lib/arm64-v8a/libtt_c2pa_sdk_d.so",
             "lib/armeabi-v7a/libtt_c2pa_sdk.so",
             "lib/armeabi-v7a/libtt_c2pa_sdk_d.so",
-            "lib/arm64-v8a/libPitayaBdComponent.so",
-            "lib/arm64-v8a/libPitayaTTPPolicy.so",
-            "lib/arm64-v8a/libTTNativeML.so",
-            "lib/arm64-v8a/libclient_ai_impl_df_jni.so",
-            "lib/arm64-v8a/libclient_ai_impl_jni.so",
-            "lib/arm64-v8a/libdex_df_pitaya.so",
-            "lib/armeabi-v7a/libPitayaBdComponent.so",
-            "lib/armeabi-v7a/libPitayaTTPPolicy.so",
-            "lib/armeabi-v7a/libTTNativeML.so",
-            "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
-            "lib/armeabi-v7a/libclient_ai_impl_jni.so",
-            "lib/armeabi-v7a/libdex_df_pitaya.so",
-            "lib/arm64-v8a/libdex_df_live_cast.so",
-            "lib/armeabi-v7a/libdex_df_live_cast.so",
             "lib/arm64-v8a/libartlog_monitor.so",
             "lib/armeabi-v7a/libartlog_monitor.so",
-            "lib/arm64-v8a/libpythonA.so",
-            "lib/arm64-v8a/libBDPythonVM.so",
-            "lib/arm64-v8a/libBDMicroPythonVM.so",
-            "lib/arm64-v8a/libpy-numpy.so",
-            "lib/arm64-v8a/libpy-cv-numpycv.so",
-            "lib/armeabi-v7a/libpythonA.so",
-            "lib/armeabi-v7a/libBDPythonVM.so",
-            "lib/armeabi-v7a/libBDMicroPythonVM.so",
-            "lib/armeabi-v7a/libpy-numpy.so",
-            "lib/armeabi-v7a/libpy-cv-numpycv.so",
         )
         val result = stripVerifiedResources(
             get("."),
@@ -153,7 +130,7 @@ val languagePackPurgerPatch = rawResourcePatch(
 @Suppress("unused")
 val studioCreationDebloatPatch = rawResourcePatch(
     name = "Remove creation tools",
-    description = "Removes TikTok's camera, editing and effects files, saving about 40 MB of " +
+    description = "Removes TikTok's camera, editing and effects files, saving about 38 MB of " +
         "storage. The catch: the Create tab and every recording, editing and effects tool stop " +
         "working, and opening one, like effect search, can close TikTok. Leave it out if you " +
         "make videos.",
@@ -164,13 +141,13 @@ val studioCreationDebloatPatch = rawResourcePatch(
     dependsOn(buildChoicePatch(BuildChoice.CREATION))
 
     execute {
+        // The camera feature dex stays, like every lib/*/libdex_*.so: TikTok injects them all at
+        // start-up, and an empty one left its own strings in English on a Spanish phone (#125).
         val nativeFiles = listOf(
             "lib/arm64-v8a/libEffectCreatorJni.so",
-            "lib/arm64-v8a/libdex_df_camera_biz.so",
             "lib/arm64-v8a/libeffect_plugin.so",
             "lib/arm64-v8a/libttvesdk_plugin.so",
             "lib/armeabi-v7a/libEffectCreatorJni.so",
-            "lib/armeabi-v7a/libdex_df_camera_biz.so",
             "lib/armeabi-v7a/libeffect_plugin.so",
             "lib/armeabi-v7a/libttvesdk_plugin.so",
         )
@@ -251,8 +228,8 @@ private val microblinkFiles = listOf(
 )
 
 // One reviewed path set per strip for the declared build, read off its universal APK and its
-// split bundle. The Pitaya, live cast, log monitor, camera, relay and link mic libraries are
-// rebuilt from one TikTok build to the next, so a strip refuses any other build's files ("no
+// split bundle. The log monitor, camera, relay and link mic libraries are rebuilt from one
+// TikTok build to the next, so a strip refuses any other build's files ("no
 // reviewed path set matched"), and a build the bundle moves to needs its own sets read off its
 // fixtures. The C2PA and Microblink files have been byte-identical on every build read so far.
 private val c2paArm64Files = listOf(
@@ -265,55 +242,12 @@ private val c2paArmeabiFiles = listOf(
     file("lib/armeabi-v7a/libtt_c2pa_sdk_d.so", "a96af4a99de68503234e3ab658d9702ac436ae1e0650dc5551e4e29a89700b0c"),
 )
 
-// 47.1.4 (APKMirror's universal APK, read on 2026-09-30): 53 paths. Its split bundle holds the
-// universal APK's bytes for every file it carries.
-private val pitayaFiles = listOf(
-    file("lib/arm64-v8a/libPitayaBdComponent.so", "ae7cf15f60167939497dabfd2c0149d94d3b2b2ae8045a309287066ffcad4edd"),
-    file("lib/arm64-v8a/libPitayaTTPPolicy.so", "644c79287cb465a2bbba9f43887eca694f0c9561e46830154c0a57473c1d3694"),
-    file("lib/arm64-v8a/libTTNativeML.so", "3ee1f54531db56564834e2aa9ef39e8da71c176be8650569275e2038098ee35a"),
-    file("lib/arm64-v8a/libclient_ai_impl_df_jni.so", "2cd72b97eb873e0dcc652aee6fd83b2ae959e84346a4a73e05110f54b9cc4a03"),
-    file("lib/arm64-v8a/libclient_ai_impl_jni.so", "938f8a725842a9df0c8530b81896720abfa2dcb203f69faa9d374cc9d6488d96"),
-    file("lib/arm64-v8a/libdex_df_pitaya.so", "f9c97cdc3d7c5e0094c9111d539821a0c99a1128fbe92df557b2af983a66064b"),
-    file("lib/armeabi-v7a/libPitayaBdComponent.so", "5e2bf11472c65f754cf05cc9386309d1be8d85f66e797bc416a0ef12c28bdb18"),
-    file("lib/armeabi-v7a/libPitayaTTPPolicy.so", "2cc41a8339a8ac6c4cd64e96c0cc70e1b0e90d96d761a41dd6a1219511ac2e83"),
-    file("lib/armeabi-v7a/libTTNativeML.so", "48ab30a6114c2ce2fda2aa6222eff2313c0128dc8962175c1bb1cdfa61fbfeac"),
-    file("lib/armeabi-v7a/libclient_ai_impl_df_jni.so", "9efe835fa5f754ad14540f6246dcf7f7d01b2f18b3606af0fde5cf7f6b2d1d6b"),
-    file("lib/armeabi-v7a/libclient_ai_impl_jni.so", "b11f7872f1f0c9b51a7ec8c6a1add5500b76b8ae33dabbf41e5c97f966b52a96"),
-    file("lib/armeabi-v7a/libdex_df_pitaya.so", "f9c97cdc3d7c5e0094c9111d539821a0c99a1128fbe92df557b2af983a66064b"),
-)
-
+// 47.1.4 (APKMirror's universal APK, read on 2026-09-30). Its split bundle holds the universal
+// APK's bytes for every file it carries.
 private val monitorFiles = listOf(
     file("lib/arm64-v8a/libartlog_monitor.so", "58ef4dc22fbbfae9ed1099ceba0f9c8549bdf6ecdb46c7a52b92ad0102fb19d3"),
     file("lib/armeabi-v7a/libartlog_monitor.so", "2f5810cf024b209e0c6de883af8ca92325217571a39d4ad58035cb8c3ea0c251"),
 )
-
-private val liveCastFiles = listOf(
-    file("lib/arm64-v8a/libdex_df_live_cast.so", "c8320f1bb23d3d7b8b06edda0b8b9ce580bbbbfe73c5a238cad9b7e363e2e8d1"),
-    file("lib/armeabi-v7a/libdex_df_live_cast.so", "c8320f1bb23d3d7b8b06edda0b8b9ce580bbbbfe73c5a238cad9b7e363e2e8d1"),
-)
-
-// Pitaya's Python runtime, read off every fixture on 2026-10-08. The five libraries only link one
-// another, and the one thing that names them outside that set is libdex_df_pitaya's dex, which
-// this strip empties too (libreschecker lists two of them, as it lists TTNativeML). The split
-// bundle carries the arm64 set at these bytes and none of the armeabi-v7a one.
-private val pythonArm64Files = listOf(
-    file("lib/arm64-v8a/libpythonA.so", "b64a04f94b0af582c97489312627cf2452a254b8ef9f9aa82570c103554aa7e4"),
-    file("lib/arm64-v8a/libBDPythonVM.so", "dab0e910387292b1471329b92452013f4572fe15de8db9f5947b3b14cf9254c4"),
-    file("lib/arm64-v8a/libBDMicroPythonVM.so", "096c7a0dc264e67da014cec7d7d2fd18129040381bd934ac643d604f4410a29b"),
-    file("lib/arm64-v8a/libpy-numpy.so", "24927708429326db6fe3a932bc01ea7cece3df9fe10b2c05b3d7ebac1655f026"),
-    file("lib/arm64-v8a/libpy-cv-numpycv.so", "d8faa75b0b5acd7450182ecb3f8201a6783bdc834c18784d5e7ae15142fe1f2a"),
-)
-
-private val pythonArmeabiFiles = listOf(
-    file("lib/armeabi-v7a/libpythonA.so", "ab27865b2778888a3ea941c9bc9081ec9cb3c1ff4d27e7f8e745a642c9164e83"),
-    file("lib/armeabi-v7a/libBDPythonVM.so", "43ddecc4a35aaeca5107f044c5619f55ba2fa9e44b319510b167d0fda0bb8048"),
-    file("lib/armeabi-v7a/libBDMicroPythonVM.so", "d13e83b23c603b4f7079be7e0c6ddd147327f173d845f3dd935eb321e6f030da"),
-    file("lib/armeabi-v7a/libpy-numpy.so", "4fcd5dbdcd75d71d72d6300f0020686d7986bc89d95c8fba4fefc2980db4e35a"),
-    file("lib/armeabi-v7a/libpy-cv-numpycv.so", "c2f6a1648cb37e700f123d19dae30f5121e90bceafc75f12c9d039c3e810d284"),
-)
-
-/** The Python runtime's armeabi-v7a paths, none of which a split bundle carries. */
-private val pythonArmeabiPaths = pythonArmeabiFiles.map { it.path }.toTypedArray()
 
 // APKMirror also sells TikTok as a split bundle (tiktok-47-1-4, "arm64-v8a + armeabi-v7a",
 // 120-640dpi, read on 2026-09-30). Morphe Manager and the desktop CLI merge every split in one,
@@ -334,8 +268,7 @@ private fun bundleOf(profile: ResourceProfile, vararg absent: String): ResourceP
 
 private val coreAssets = ResourceProfile(
     "TikTok 47.1.4",
-    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + pitayaFiles + monitorFiles + liveCastFiles +
-        pythonArm64Files + pythonArmeabiFiles,
+    microblinkFiles + c2paArm64Files + c2paArmeabiFiles + monitorFiles,
 )
 
 internal val coreAssetProfiles = listOf(
@@ -344,13 +277,6 @@ internal val coreAssetProfiles = listOf(
         coreAssets,
         "lib/arm64-v8a/libtt_c2pa_sdk_d.so",
         "lib/armeabi-v7a/libtt_c2pa_sdk_d.so",
-        "lib/armeabi-v7a/libPitayaBdComponent.so",
-        "lib/armeabi-v7a/libPitayaTTPPolicy.so",
-        "lib/armeabi-v7a/libTTNativeML.so",
-        "lib/armeabi-v7a/libclient_ai_impl_df_jni.so",
-        "lib/armeabi-v7a/libdex_df_pitaya.so",
-        "lib/armeabi-v7a/libdex_df_live_cast.so",
-        *pythonArmeabiPaths,
     ),
 )
 
@@ -361,14 +287,11 @@ private val studioArm64Files = listOf(
     file("lib/arm64-v8a/libttvesdk_plugin.so", "0f1cc7737330f8a9b81e03f3ab15eecea197254c16c23b5492c5424aaf51d6c0"),
 )
 
-// The camera feature library is the same bytes for both ABIs.
 private val studioAssets = ResourceProfile(
     "TikTok 47.1.4",
     studioArm64Files +
-        file("lib/arm64-v8a/libdex_df_camera_biz.so", "00a381fc36185d3b3017b28b1f468be14106af36f94d4ec8a2874748dd36a870") +
         listOf(
             file("lib/armeabi-v7a/libEffectCreatorJni.so", "d3ae58712413c2d1d06dcf508eb7850452f58c93b9befd57867cd029421c9482"),
-            file("lib/armeabi-v7a/libdex_df_camera_biz.so", "00a381fc36185d3b3017b28b1f468be14106af36f94d4ec8a2874748dd36a870"),
             file("lib/armeabi-v7a/libeffect_plugin.so", "f89bd50e941392fee2e47d031711fdce3520dae7f3e531da59dd0afbbec9d91c"),
             file("lib/armeabi-v7a/libttvesdk_plugin.so", "42ab2be66f2b02622f52062fc3ff1b4862f44f0098faecfac3996afe3e7cf1f9"),
         ),
@@ -381,7 +304,6 @@ internal val studioAssetProfiles = listOf(
         "lib/arm64-v8a/libeffect_plugin.so",
         "lib/arm64-v8a/libttvesdk_plugin.so",
         "lib/armeabi-v7a/libEffectCreatorJni.so",
-        "lib/armeabi-v7a/libdex_df_camera_biz.so",
         "lib/armeabi-v7a/libeffect_plugin.so",
         "lib/armeabi-v7a/libttvesdk_plugin.so",
     ),

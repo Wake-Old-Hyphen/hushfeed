@@ -6,7 +6,9 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
-* **TikTok:** LIVE controls can open LIVE panels dark while TikTok is in dark mode. TikTok keeps a LIVE room's share menu, fan club sheet, first gift dialog and similar panels light even in a dark app, so they flashed white over the stream. Turn on Dark LIVE panels in dark mode in Hushfeed settings > Playback. Light mode doesn't change (#159).
+* **TikTok:** Remove content credential and card scanner assets and Remove creation tools no longer leave parts of TikTok in English on a phone set to another language. Both emptied small code packages that TikTok loads every time it starts, and when one was empty, buttons and other text of TikTok's own came up in English. Those packages now stay. Remove content credential and card scanner assets no longer takes out TikTok's on-device AI files either (Stop on-device AI profiling still keeps that AI from starting), so it now saves about 11 MB, and Remove creation tools about 38 MB. Patch again to get your language back (#125).
+
+* **TikTok:** LIVE controls can open LIVE panels dark while TikTok is in dark mode. TikTok keeps a LIVE room's fan club sheet, first gift dialog and similar panels light even in a dark app, so they flashed white over the stream. Turn on Dark LIVE panels in dark mode in Hushfeed settings > Playback. Light mode doesn't change (#159).
 
 * **TikTok:** The Video quality list in a LIVE room's Share menu no longer shows its qualities white on white in dark mode. Text in that list that can't be read against what's behind it now turns white on a dark row and dark on a light one, with or without Dark LIVE panels. Light mode doesn't change (#57).
 
@@ -16,7 +18,7 @@ Every Hushfeed release, newest first.
 
 * **TikTok:** Accent color has a new patch option, Follow the wallpaper. On Android 12 and up, TikTok's buttons and red text take the color of your wallpaper theme and change on their own when you change the wallpaper, with no new patch needed. Android 11 and older keep TikTok's red, and the color you pick above isn't used while the option is on (#163).
 
-* **TikTok:** Two new choices sit under Show the time beside the progress bar in Playback. Where the time goes can put the time above the bar, over its left end, and it drops back beside the bar whenever a caption or other text on screen would be under it. Full-width progress bar takes away the gap TikTok leaves at each end, so the bar runs from one screen edge to the other and dragging still seeks. The time stays beside the bar and the gap stays unless you change them, and turning them off or pausing Hushfeed puts the row back as TikTok built it (#173).
+* **TikTok:** Two new choices sit under Show the time beside the progress bar in Playback. Where the time goes can put the time above the bar, over its right end under the buttons, and it drops back beside the bar whenever a caption, a button or the music disc would be under it. Full-width progress bar takes away the gap TikTok leaves at each end, so the bar runs from one screen edge to the other and dragging still seeks. The time stays beside the bar and the gap stays unless you change them, and turning them off or pausing Hushfeed puts the row back as TikTok built it (#173).
 
 * **TikTok:** With Hide the Tako bubble on, tapping a caption (or its "more") no longer opens a sheet with "Discover more with Tako" and an "Ask Tako" box on some videos. The caption expands in place instead, the way it already did on videos without Tako content. Turn the switch off, or pause Hushfeed, and TikTok's sheet comes back (#162).
 
@@ -51,6 +53,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** Hide the unread badges on the bottom tabs also keeps down the bubble TikTok floats over Inbox when it opens, the one counting new likes, followers, comments and who's LIVE. It used to take only the red counts and dots off the tabs, so that bubble still came up every time (#170).
 
 * **TikTok:** Saving a big pick from a profile grid no longer gives up a few videos in with "the rest ran out of time". The whole save had two minutes for all its videos, so a pick of 50 always ran out. Each video now gets its own two minutes, and one that really stalls still stops the save (#27).
+
+* **TikTok:** Hide suggestions on the search page also hides the "You may like" list on accounts where TikTok 47.1.4 draws that list itself. On those accounts the list and its Refresh button stayed on the search page with the switch on, because none of the switch's hooks reached it. Your search history still shows, and turning the switch off brings the list back.
 
 ## 0.74.0 (2026-10-14)
 

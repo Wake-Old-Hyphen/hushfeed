@@ -152,6 +152,30 @@ private object LynxParameterFingerprint : Fingerprint(
     },
 )
 
+/**
+ * Whether the search page draws "You may like" itself instead of through the Lynx page the
+ * hooks above cover. 47.1.4 turned it on for some accounts, and its own list has a Refresh
+ * button that none of the Lynx hooks reach. The AB key defaults to false, so refusing keeps
+ * TikTok on its stock path. The class is renamed per build (0HAN on 47.1.4, 04wz in PineDrama),
+ * and one public static no-argument boolean reads the key in each.
+ */
+internal const val NATIVE_GUESS_KEY = "ttk_guess_use_native"
+
+internal fun isNativeGuessSearchGate(method: Method): Boolean =
+    AccessFlags.PUBLIC.isSet(method.accessFlags) && AccessFlags.STATIC.isSet(method.accessFlags) &&
+        method.parameterTypes.isEmpty() && method.returnType == "Z" &&
+        method.implementation?.instructions?.any {
+            it.getReference<StringReference>()?.string == NATIVE_GUESS_KEY
+        } == true
+
+private object NativeGuessSearchFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    parameters = emptyList(),
+    returnType = "Z",
+    strings = listOf(NATIVE_GUESS_KEY),
+    custom = { method, _ -> isNativeGuessSearchGate(method) },
+)
+
 private object SearchReentryFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/aweme/search/middle/DynamicSingleIntermediateFragmentNew;",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
@@ -181,6 +205,7 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         // rather than half applied.
         val rewards = SearchRewardsServiceFingerprint.method
         val rewardsGetters = searchRewardsGetters()
+        val nativeGuess = NativeGuessSearchFingerprint.method
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +
@@ -199,6 +224,7 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         rewardsGetters.forEach { (method, getter) -> method.askBeforeLoadingSearchRewards(getter) }
 
         IntermediatePreloadEnableFingerprint.method.guard("const/4 v0, 0x0\n                    return v0")
+        nativeGuess.guard("const/4 v0, 0x0\n                    return v0")
         SuggestWordsRequestFingerprint.method.guard("return-void")
         SuggestWordsPublishFingerprint.method.guard("return-void")
         LynxFirstScreenCacheFingerprint.method.hookFirstScreenCache()

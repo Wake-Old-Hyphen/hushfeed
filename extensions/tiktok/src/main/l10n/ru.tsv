@@ -2355,6 +2355,6 @@ Your Long press choice runs only on the left and right thirds of the video. A pr
 Where the time goes	Где показывать время
 Beside the bar	Рядом с полосой
 Above the bar	Над полосой
-Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.	Над полосой ставит время над левым краем полосы, пока ничто на экране не мешает, а рядом с полосой, когда что-то мешает.
+Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.	Над полосой ставит время над правым краем полосы, пока ничто на экране не мешает, а рядом с полосой, когда что-то мешает.
 Full-width progress bar	Полоса прогресса во всю ширину
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	Полоса прогресса идёт от одного края экрана до другого, без зазора, который TikTok оставляет с каждого конца.

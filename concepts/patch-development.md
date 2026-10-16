@@ -211,7 +211,7 @@ Treat a target update as a new reverse-engineering pass. TikTok can reuse short 
 3. Re-read the target's view tree and dynamic-module owners. Update patches/src/test/resources/view-id-anchors.txt with the owning class and the matching code. Replace stale resource names instead of retaining fallbacks that can resolve to a different view.
 4. Review resource optimizer inventories, language-pack files, and resource IDs against the new APK. Keep the path and digest checks version-specific.
 5. Set HUSHFEED_FIXTURE_DIR to the reviewed APKs, run the patch and runtime tests, then apply the complete patch set with scripts/verify-all-patches.ps1 and the Morphe desktop CLI. Tests do not invoke the patcher, so passing tests alone is not target approval.
-6. Check the changed behaviors on the supported TikTok build. Then update the README target details, changelog, generated catalog, and release facts as one reviewed target move.
+6. Run the [patch audit](#patch-audit) on a phone with the full catalog applied, fix what fails, and commit the new results file next to the old one. Then update the README target details, changelog, generated catalog, and release facts as one reviewed target move.
 
 ## Verification layers
 
@@ -224,11 +224,33 @@ Treat a target update as a new reverse-engineering pass. TikTok can reuse short 
 | :patches:buildAndroid plus :patches:verifyBundle | Bundle payloads, manifest version, checksum, compatibility description, and catalog match |
 | scripts/verify-all-patches.ps1 | Each patch applies through the Morphe desktop patcher to every declared APK fixture |
 | scripts/validate-release-facts.ps1 | README, catalog, bundle index, fixture results, and release facts agree |
+| audit/run-audit.ps1 | Every patch does what its description says on a phone running the full catalog |
 | Device acceptance | The injected runtime hook behaves in the real TikTok UI on the supported version |
 
 The APK fixtures are vendor files outside the repository. Set HUSHFEED_FIXTURE_DIR to their folder. Set HUSHFEED_DESKTOP_JAR to the Morphe desktop CLI jar for the apply-all verification. CONTRIBUTING.md documents the other script inputs and the pre-push checks.
 
 For traffic, background work and battery checks, follow the [runtime observation protocol](runtime-observation.md). It separates actual transfers from API attempts, whole-phone charge from per-app estimates, and paused runtime settings from static APK changes. Its source map identifies the controls that can change the workload. The [October 9 measurements](runtime-results-2026-10-09.md) add a physical-device example on TikTok 47.1.4 with Hushfeed 0.68.0 paused, including capture limits that future checks must handle.
+
+## Patch audit
+
+The verifier above proves each patch applies. The audit proves each one still works once TikTok runs. audit/catalog.json has one entry per patch: its settings with their defaults, where it shows, and the checks that prove it. A check is a list of steps the runner carries out in order. Some read the patched APK (an emptied library, a manifest line, a string in the dex). Others drive the phone through the verification probe: flip a Hushfeed setting, open the feed or a search, ask the probe what's on screen and hold the answer to a regex, wait for a log line, or save a screenshot with the exact thing a person should look for. Most checks compare the switch off with the switch on, so a hider that hides nothing fails instead of passing quietly.
+
+Results go to `audit/results/tiktok-<version>.json`, one file per TikTok version, with the APK hash, the Hushfeed commit, the phone, and each check's status (pass, fail, review, inconclusive, error or skipped), why it failed and which evidence it left. Inconclusive means a precondition never held, like no video with comments turning up in eight swipes, so it says nothing about the patch. The evidence (screenshots and probe answers) goes to `-OutDir`, a temp folder unless you pass one. The results file names each piece by its file name in that folder and never by a path on your machine, since it gets committed.
+
+To audit a new TikTok version:
+
+1. Patch the full catalog for the phone with scripts/patch-for-device.ps1, signed with the key of the TikTok already installed there.
+2. Build and install the probe with tools/verification-probe/build.ps1, signed with the same key.
+3. Run `audit/run-audit.ps1 -Apk <patched apk> -Serial <phone> -Install`. Add `-LeaseDir` when other tools share the phone, so the runner takes and gives back its lease. `-Only 'Patch name,category:Feed'` reruns a part, and `-NoDevice` runs just the APK checks.
+4. Look at every screenshot a review check saved, judged against its review text. Write the verdicts as `{"Patch name/check-id": {"status": "pass", "note": "..."}}` and merge them with `-ApplyVerdicts <file> -Results <results file>`.
+5. Fix each failing patch, add a test for what broke, and rerun that patch with `-Only` until it passes.
+6. Diff the new results file against the previous version's. A check that passed before and fails now is the first thing to look at.
+
+A patch whose screen moved or whose setting changed needs its catalog entry changed in the same commit as the fix. The runner restores every setting a patch's checks touched and turns Log diagnostics on only for the run. It never taps anything labeled Follow, Message, Send, Post or the like, so checks can't reach other people. Keep new checks inside the same limits: no posting, liking, following, messaging or going LIVE, and no strangers' stories.
+
+A `tap` step needs a uiautomator dump, and uiautomator can't dump a screen while a video plays behind it, which includes the comment sheet. Inside the sheet, press through the probe instead: a `findtext` probe step with `"match": "regex"` finds a label by pattern, `"click": "true"` clicks it, `"hold": "900"` holds a finger on it for a long-press menu, and `"sibling": "next"` moves to the view right after the label for an icon with no text (the sort glyph beside "189 comments"). An empty field matches by its hint. The probe drops the invisible direction marks TikTok puts around numbers, so a pattern can start at a digit. Ids are renamed every build, so a route by id is a last resort.
+
+A few habits keep checks honest on any phone. Match text sizes in sp (the probe's `textSizeSp` and `textSp`), never pixels, since pixels follow the screen's density. A settings list only builds the rows on screen, so a `findtext` for a row lower down takes `"retrySwipe": 4`, which scrolls and asks again. A `log` step only sees lines written after the step before it started, so a line logged at startup goes straight after the `restart`. A theme check switches the phone with `{"night": "yes"}` or `"no"`, and the runner puts the phone's own mode back when that patch is done. `{"open": "appinfo"}` shows Android's App info page, the same name and icon the launcher uses, on a page that looks the same on every phone.
 
 The test commands and their required order are maintained in [README.md](../README.md#building-from-source). The release procedure and fixture setup live in [CONTRIBUTING.md](../CONTRIBUTING.md). Update those instructions when the Gradle task graph or release gates change.
 

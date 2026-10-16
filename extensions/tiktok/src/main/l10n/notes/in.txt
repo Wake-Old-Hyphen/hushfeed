@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Sakelar baru membuka panel LIVE seperti Bagikan dan klub penggemar dalam warna gelap saat TikTok dalam mode gelap (#159).
+* **TikTok:** Hapus aset kredensial konten dan pemindai kartu serta Hapus alat kreasi tidak lagi membuat sebagian TikTok berbahasa Inggris di ponsel berbahasa lain. Patch ulang untuk mengembalikan bahasa Anda (#125).
+
+* **TikTok:** Sakelar baru membuka panel LIVE seperti klub penggemar dalam warna gelap saat TikTok dalam mode gelap (#159).
 
 * **TikTok:** Daftar Kualitas video LIVE tidak lagi menampilkan barisnya putih di atas putih dalam mode gelap (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Sakelar baru membatasi pilihan Tekan lama di sisi video, jadi tekan di tengah tetap membuka menu TikTok (#136).
 
 * **TikTok:** Sakelar baru menambahkan Blokir pengomentar ini ke menu yang terbuka saat komentar ditekan lama (#169).
+
+* **TikTok:** Sembunyikan saran di halaman pencarian kini juga menyembunyikan daftar pencarian yang disarankan yang masih terlihat di beberapa akun.
 
 ## 0.74.0 (2026-10-14)
 

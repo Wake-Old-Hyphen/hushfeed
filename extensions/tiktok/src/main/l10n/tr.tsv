@@ -2175,6 +2175,6 @@ Your Long press choice runs only on the left and right thirds of the video. A pr
 Where the time goes	Süre nerede görünsün
 Beside the bar	Çubuğun yanında
 Above the bar	Çubuğun üstünde
-Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.	Çubuğun üstünde, ekranda yolunda bir şey olmadığı sürece süreyi çubuğun sol ucunun üstüne koyar, bir şey olduğunda çubuğun yanına koyar.
+Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.	Çubuğun üstünde, ekranda yolunda bir şey olmadığı sürece süreyi çubuğun sağ ucunun üstüne koyar, bir şey olduğunda çubuğun yanına koyar.
 Full-width progress bar	Tam genişlikte ilerleme çubuğu
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	İlerleme çubuğu, TikTok'un her iki uçta bıraktığı boşluk olmadan ekranın bir kenarından diğerine uzanır.

@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,7 +20,7 @@ import java.util.List;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
- * Where the progress bar's time goes (#173): {@link #BESIDE} the bar, or {@link #ABOVE} its left
+ * Where the progress bar's time goes (#173): {@link #BESIDE} the bar, or {@link #ABOVE} its right
  * end, and the checks that decide whether the spot above is free.
  *
  * <p>Everything here works in window coordinates built from the views' own offsets, so it gives
@@ -67,17 +68,18 @@ final class SeekbarTimePlacement {
     }
 
     /**
-     * Whether any text on screen reaches into [spot]: a shown, visible TextView with something in
-     * it whose bounds overlap. The caption, the creator's name and a hashtag line are all text,
-     * so the time never goes where it would sit over one of them. The bar's own row is skipped.
+     * Whether any text or icon on screen reaches into [spot]: a shown, visible TextView with
+     * something in it, or an icon-sized ImageView with a picture, whose bounds overlap. The
+     * caption, the creator's name and a hashtag line are text, and over the bar's right end sit
+     * the Tako button and the music disc, so the time never goes where it would cover one of
+     * them. A picture wider or taller than a third of the screen is the video's cover, not an
+     * icon. The bar's own row is skipped.
      */
     static boolean textReaches(View root, Rect spot, View row) {
         if (root == row || root.getVisibility() != View.VISIBLE || root.getAlpha() <= 0.01f) {
             return false;
         }
-        if (root instanceof TextView && !(root instanceof SeekbarTimeLabel)
-                && ((TextView) root).length() > 0
-                && Rect.intersects(boundsInWindow(root), spot)) {
+        if (inTheWay(root) && Rect.intersects(boundsInWindow(root), spot)) {
             return true;
         }
         if (!(root instanceof ViewGroup)) return false;
@@ -86,6 +88,14 @@ final class SeekbarTimePlacement {
             if (textReaches(group.getChildAt(i), spot, row)) return true;
         }
         return false;
+    }
+
+    private static boolean inTheWay(View view) {
+        if (view instanceof SeekbarTimeLabel) return false;
+        if (view instanceof TextView) return ((TextView) view).length() > 0;
+        if (!(view instanceof ImageView) || ((ImageView) view).getDrawable() == null) return false;
+        int screen = view.getResources().getDisplayMetrics().widthPixels;
+        return view.getWidth() * 3 <= screen && view.getHeight() * 3 <= screen;
     }
 
     /**

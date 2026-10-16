@@ -258,6 +258,31 @@ class VerifiedResourceStripperTest {
     }
 
     @Test
+    fun `a feature dex TikTok loads at start-up is never emptied (#125)`() {
+        val root = temporary.newFolder("feature-dex")
+        val dex = root.write("lib/arm64-v8a/libdex_df_live_cast.so", "dex")
+        val library = root.write("lib/arm64-v8a/libother.so", "library")
+        val profile = ResourceProfile(
+            "fixture",
+            listOf(
+                ResourceFileContract("lib/arm64-v8a/libdex_df_live_cast.so", sha256("dex")),
+                ResourceFileContract("lib/arm64-v8a/libother.so", sha256("library")),
+            ),
+        )
+
+        val error = assertThrows(PatchException::class.java) {
+            stripVerifiedResources(root, "Test resources", emptyList(),
+                listOf("lib/arm64-v8a/libdex_df_live_cast.so", "lib/arm64-v8a/libother.so"), listOf(profile))
+        }
+        assertTrue(error.message.orEmpty(), error.message.orEmpty().contains("libdex_df_live_cast.so"))
+        assertArrayEquals("dex".toByteArray(), dex.readBytes())
+        assertArrayEquals("library".toByteArray(), library.readBytes())
+        assertTrue(isStartupDex("lib/armeabi-v7a/libdex_df_camera_biz.so"))
+        assertFalse(isStartupDex("lib/arm64-v8a/libdexguard.so"))
+        assertFalse(isStartupDex("assets/libdex_notes.so"))
+    }
+
+    @Test
     fun `blank or all selects the full reviewed language inventory`() {
         val available = setOf("en", "tr", "es")
         listOf(null, "", " , ", "all", "ALL", "en, all").forEach { raw ->

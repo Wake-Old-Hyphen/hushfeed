@@ -376,8 +376,8 @@ final class L10nTranslationsZh_Hans {
                 "关于Hushfeed");
         table.put("About overrides",
                 "关于覆盖");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "选择上方时，只要屏幕上没有东西挡着，时间就显示在进度条左端上方，有东西挡着时则显示在进度条旁边.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "选择上方时，只要屏幕上没有东西挡着，时间就显示在进度条右端上方，有东西挡着时则显示在进度条旁边.");
         table.put("Above the bar",
                 "在进度条上方");
         table.put("Account facts",

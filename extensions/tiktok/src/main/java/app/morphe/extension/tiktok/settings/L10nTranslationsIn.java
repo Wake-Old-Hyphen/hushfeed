@@ -376,8 +376,8 @@ final class L10nTranslationsIn {
                 "Tentang Hushfeed");
         table.put("About overrides",
                 "Tentang penggantian");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Di atas bilah menampilkan waktu di atas ujung kiri bilah selama tidak ada yang menghalangi di layar, dan di samping bilah saat ada yang menghalangi.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Di atas bilah menampilkan waktu di atas ujung kanan bilah selama tidak ada yang menghalangi di layar, dan di samping bilah saat ada yang menghalangi.");
         table.put("Above the bar",
                 "Di atas bilah");
         table.put("Account facts",

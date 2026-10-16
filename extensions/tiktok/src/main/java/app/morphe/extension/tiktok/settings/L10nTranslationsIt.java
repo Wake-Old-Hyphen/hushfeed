@@ -376,8 +376,8 @@ final class L10nTranslationsIt {
                 "Informazioni su Hushfeed");
         table.put("About overrides",
                 "Informazioni sulle sovrascritture");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Sopra la barra mostra il tempo sopra l'estremità sinistra della barra finché nulla sullo schermo lo ostacola, e accanto alla barra quando c'è qualcosa.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Sopra la barra mostra il tempo sopra l'estremità destra della barra finché nulla sullo schermo lo ostacola, e accanto alla barra quando c'è qualcosa.");
         table.put("Above the bar",
                 "Sopra la barra");
         table.put("Account facts",

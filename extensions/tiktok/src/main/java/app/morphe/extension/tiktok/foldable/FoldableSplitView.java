@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.seen.SeenVideoHistory;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -50,7 +51,16 @@ public final class FoldableSplitView {
 
     private FoldableSplitView() { }
 
+    /** Hook status says what TikTok was told each time it asked, so a report shows whether it asks. */
+    static final String FAMILY = "split view";
+
     public static boolean shouldForce(Activity activity, Configuration configuration) {
+        boolean force = decide(activity, configuration);
+        HookStatus.bound(FAMILY, force ? "comments beside the video" : "comments left to TikTok");
+        return force;
+    }
+
+    private static boolean decide(Activity activity, Configuration configuration) {
         if (!Settings.FOLDABLE_SPLIT_VIEW.get()) return false;
         if (activity == null) activity = Utils.getActivity();
         if (activity == null || activity.isFinishing() || activity.isDestroyed()) return false;
@@ -86,7 +96,8 @@ public final class FoldableSplitView {
 
     public static boolean shouldForceContainer() {
         Activity activity = Utils.getActivity();
-        boolean force = shouldForce(activity, null);
+        boolean force = decide(activity, null);
+        HookStatus.bound(FAMILY, force ? "split container" : "container left to TikTok");
         // Only an answer given with the switch on is a split decision. Off, the row says the
         // switch applies at the next start, and a record taken now would rebuild the feed on
         // the first configuration change after the switch is turned on, with no crossing at all.

@@ -2152,6 +2152,6 @@ Your Long press choice runs only on the left and right thirds of the video. A pr
 Where the time goes,时间显示位置
 Beside the bar,在进度条旁边
 Above the bar,在进度条上方
-"Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",选择上方时，只要屏幕上没有东西挡着，时间就显示在进度条左端上方，有东西挡着时则显示在进度条旁边.
+"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",选择上方时，只要屏幕上没有东西挡着，时间就显示在进度条右端上方，有东西挡着时则显示在进度条旁边.
 Full-width progress bar,全宽进度条
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",进度条从屏幕一侧延伸到另一侧，去掉 TikTok 在两端留下的空隙.

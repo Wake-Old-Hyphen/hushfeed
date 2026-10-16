@@ -33,7 +33,7 @@ import app.morphe.extension.tiktok.settings.Settings;
  * paused (every switch then answers off), the label comes out and the row is put back as it was.
  *
  * <p>Two choices sit beside the time (#173). {@link Settings#SEEKBAR_TIME_PLACEMENT} moves the
- * label over the bar's left end while nothing on screen reaches into that spot (see {@link
+ * label over the bar's right end while nothing on screen reaches into that spot (see {@link
  * SeekbarTimePlacement}), and {@link Settings#SEEKBAR_FULL_WIDTH} takes TikTok's side gap off
  * the bar's row ({@link SeekbarFullWidth}), with or without the time.
  */

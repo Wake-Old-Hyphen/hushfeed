@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie Teilen und den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
+* **TikTok:** Dateien für Inhaltsnachweise und Kartenscanner entfernen und Erstellungstools entfernen lassen Teile von TikTok auf einem Handy mit anderer Sprache nicht mehr auf Englisch. Patche neu, um deine Sprache zurückzubekommen (#125).
+
+* **TikTok:** Ein neuer Schalter öffnet LIVE-Fenster wie den Fanclub dunkel, solange TikTok im Dunkelmodus ist (#159).
 
 * **TikTok:** Die LIVE-Liste Videoqualität zeigt ihre Zeilen im Dunkelmodus nicht mehr weiß auf weiß (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Ein neuer Schalter beschränkt deine Auswahl bei Langes Drücken auf die Seiten des Videos, sodass ein Druck in der Mitte weiterhin TikToks Menü öffnet (#136).
 
 * **TikTok:** Ein neuer Schalter fügt „Diesen Kommentierenden blockieren“ zum Menü hinzu, das sich beim langen Drücken auf einen Kommentar öffnet (#169).
+
+* **TikTok:** „Vorschläge auf der Suchseite ausblenden“ blendet jetzt auch die Liste empfohlener Suchen aus, die manche Konten noch sahen.
 
 ## 0.74.0 (2026-10-14)
 

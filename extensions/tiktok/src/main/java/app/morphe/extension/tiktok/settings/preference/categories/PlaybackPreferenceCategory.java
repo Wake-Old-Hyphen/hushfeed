@@ -173,7 +173,7 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     Settings.SEEKBAR_TIME_PLACEMENT,
                     new String[]{"Beside the bar", "Above the bar"},
                     new String[]{"beside", "above"})
-                    .withNote("Above puts the time over the left end of the bar while nothing on "
+                    .withNote("Above puts the time over the right end of the bar while nothing on "
                             + "screen is in the way, and beside the bar when something is."));
             addPreference(new TogglePreference(
                     context,

@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda Paylaş və fan klubu kimi LIVE panellərini tünd açır (#159).
+* **TikTok:** Məzmun sertifikatı və kart skaneri fayllarını sil və Yaratma alətlərini silin artıq başqa dildə olan telefonda TikTok-un bəzi hissələrini ingiliscə qoymur. Dilinizi qaytarmaq üçün yenidən yamaqlayın (#125).
+
+* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda fan klubu kimi LIVE panellərini tünd açır (#159).
 
 * **TikTok:** LIVE-ın Video keyfiyyəti siyahısı qaranlıq rejimdə sətirlərini artıq ağ fonda ağ göstərmir (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Yeni açar Uzun basma seçimini videonun yanlarında saxlayır, beləliklə ortada basmaq yenə TikTok menyusunu açır (#136).
 
 * **TikTok:** Yeni açar şərhə basıb saxlayanda açılan menyuya Bu şərh yazanı bloklayın seçimini əlavə edir (#169).
+
+* **TikTok:** Axtarış səhifəsindəki təklifləri gizlədin indi bəzi hesabların hələ də gördüyü tövsiyə olunan axtarışlar siyahısını da gizlədir.
 
 ## 0.74.0 (2026-10-14)
 

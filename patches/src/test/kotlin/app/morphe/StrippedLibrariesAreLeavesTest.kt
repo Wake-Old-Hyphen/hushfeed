@@ -24,7 +24,8 @@ class StrippedLibrariesAreLeavesTest {
     fun `no emptied library is needed by one that stays`() {
         val apks = fixtures()
         val stripped = strippedLibraryNames()
-        assertTrue("the scan found too few emptied libraries to mean anything: $stripped", stripped.size > 10)
+        // Nine since the feature dexes stopped being emptied (#125); a scan that misreads the strips finds none.
+        assertTrue("the scan found too few emptied libraries to mean anything: $stripped", stripped.size > 5)
 
         // Every retained build, not only the declared target: the release receipt patches all
         // of them, and a library that is a leaf on 46.2.3 may have gained a dependent since.

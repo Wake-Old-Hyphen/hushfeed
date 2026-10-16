@@ -5368,7 +5368,7 @@
     },
     {
       "name": "Remove content credential and card scanner assets",
-      "description": "Removes TikTok's built-in AI model files, payment card scanner and content credential files, saving about 19 MB of storage. Anything in TikTok that needs them may stop working. Only patching again without it brings them back.",
+      "description": "Removes TikTok's payment card scanner and content credential files, saving about 11 MB of storage. Anything in TikTok that needs them may stop working. Only patching again without it brings them back.",
       "category": "Performance",
       "use": false,
       "dependencies": [
@@ -5406,7 +5406,7 @@
     },
     {
       "name": "Remove creation tools",
-      "description": "Removes TikTok's camera, editing and effects files, saving about 40 MB of storage. The catch: the Create tab and every recording, editing and effects tool stop working, and opening one, like effect search, can close TikTok. Leave it out if you make videos.",
+      "description": "Removes TikTok's camera, editing and effects files, saving about 38 MB of storage. The catch: the Create tab and every recording, editing and effects tool stop working, and opening one, like effect search, can close TikTok. Leave it out if you make videos.",
       "category": "Performance",
       "use": false,
       "dependencies": [

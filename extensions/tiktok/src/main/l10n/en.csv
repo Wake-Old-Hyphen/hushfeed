@@ -156,7 +156,7 @@ About,About
 About %1$s of storage at this limit,About %1$s of storage at this limit
 About Hushfeed,About Hushfeed
 About overrides,About overrides
-"Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.","Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is."
+"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.","Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is."
 Above the bar,Above the bar
 Account facts,Account facts
 Account facts copied,Account facts copied

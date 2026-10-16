@@ -152,7 +152,7 @@ public class SeekbarTimePlacementTest {
     }
 
     @Test
-    public void aboveGivesTheBarTheWholeRowAndLiftsTheTimeOverItsLeftEnd() {
+    public void aboveGivesTheBarTheWholeRowAndLiftsTheTimeOverItsRightEnd() {
         Settings.SEEKBAR_TIME.save(true);
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
         build();
@@ -162,9 +162,9 @@ public class SeekbarTimePlacementTest {
         assertTrue(label.isAbove());
         assertEquals(-params(label).width, params(label).getMarginStart());
         assertEquals("the bar runs the whole row", WIDTH, frame.getWidth());
-        assertEquals("over the bar's left end", frame.getLeft(), label.getLeft() + label.getTranslationX(), 0.5f);
+        assertEquals("over the bar's right end", frame.getRight(), label.getRight() + label.getTranslationX(), 0.5f);
         assertEquals("one row up", -ROW, label.getTranslationY(), 0.5f);
-        assertEquals(Gravity.START, label.getGravity() & Gravity.START);
+        assertEquals(Gravity.END, label.getGravity() & Gravity.END);
         assertEquals("0:30 / 1:00", label.getText().toString());
     }
 
@@ -180,6 +180,30 @@ public class SeekbarTimePlacementTest {
         assertFalse("the box around the row", inner.getClipChildren());
         assertTrue("the strip holds the spot and keeps clipping", container.getClipChildren());
         assertTrue(window.getClipChildren());
+        assertTrue("the box draws over the feed beside it", inner.getTranslationZ() > 0f);
+        assertNull("without a shadow", inner.getOutlineProvider());
+        assertEquals(0f, bar.getTranslationZ(), 0f);
+
+        Settings.SEEKBAR_TIME_PLACEMENT.save("beside");
+        tick();
+        assertEquals("its Z is given back", 0f, inner.getTranslationZ(), 0f);
+        assertNotNull("and its outline", inner.getOutlineProvider());
+    }
+
+    @Test
+    public void anIconInTheSpotKeepsTheTimeBesideTheBar() {
+        Settings.SEEKBAR_TIME.save(true);
+        Settings.SEEKBAR_TIME_PLACEMENT.save("above");
+        build();
+        // The Tako button over the bar's right end.
+        android.widget.ImageView tako = new android.widget.ImageView(context);
+        tako.setImageDrawable(new android.graphics.drawable.ColorDrawable(0xffffffff));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(95, 95, Gravity.TOP | Gravity.END);
+        params.topMargin = 1850;
+        window.addView(tako, params);
+        layoutAll();
+
+        assertFalse(tick().isAbove());
     }
 
     @Test
@@ -187,9 +211,9 @@ public class SeekbarTimePlacementTest {
         Settings.SEEKBAR_TIME.save(true);
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
         build();
-        // The caption's last line, right over the bar's left end: the strip's top is at 1800 and
-        // the row at 1930, so the spot is 1860 to 1930.
-        TextView caption = text("a long caption that reaches down", 1870, 40, 700);
+        // A line that runs the whole width, right over the bar's right end: the strip's top is at
+        // 1800 and the row at 1930, so the spot is 1860 to 1930.
+        TextView caption = text("a long caption that reaches down", 1870, 40, WIDTH);
 
         SeekbarTimeLabel label = tick();
         assertFalse("the caption is in the way", label.isAbove());
@@ -216,18 +240,16 @@ public class SeekbarTimePlacementTest {
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
         build();
         text("high up in the caption", 1500, 40, 700);
-        TextView hidden = text("hidden in the spot", 1870, 40, 700);
+        TextView hidden = text("hidden in the spot", 1870, 40, WIDTH);
         hidden.setVisibility(View.INVISIBLE);
-        TextView faded = text("faded in the spot", 1870, 40, 700);
+        TextView faded = text("faded in the spot", 1870, 40, WIDTH);
         faded.setAlpha(0f);
-        TextView right = text("on the far right", 1870, 40, 300);
-        FrameLayout.LayoutParams onTheRight = (FrameLayout.LayoutParams) right.getLayoutParams();
-        onTheRight.gravity = Gravity.TOP | Gravity.END;
-        right.setLayoutParams(onTheRight);
-        layoutAll();
-        assertEquals(WIDTH - 300, right.getLeft());
+        // TikTok's caption stops short of the rail, so its last line sits beside the spot (#173).
+        text("the caption's last line", 1870, 40, 700);
 
-        assertTrue(tick().isAbove());
+        SeekbarTimeLabel label = tick();
+        assertTrue(label.isAbove());
+        assertTrue("the label clears the caption", label.getLeft() + label.getTranslationX() >= 700);
     }
 
     @Test

@@ -583,8 +583,8 @@ final class L10nTranslationsRu {
                 "О Hushfeed");
         table.put("About overrides",
                 "О переопределениях");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Над полосой ставит время над левым краем полосы, пока ничто на экране не мешает, а рядом с полосой, когда что-то мешает.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Над полосой ставит время над правым краем полосы, пока ничто на экране не мешает, а рядом с полосой, когда что-то мешает.");
         table.put("Above the bar",
                 "Над полосой");
         table.put("Account facts",

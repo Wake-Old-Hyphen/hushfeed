@@ -45,7 +45,8 @@ public class FeatureSwitchesTest {
                 Settings.HIDE_FEED_FOLLOW_BUTTON, Settings.HIDE_FEED_SAVE_BUTTON,
                 Settings.HIDE_LIVE_ENTRANCE, Settings.HIDE_FEED_SEARCH_BUTTON,
                 Settings.HIDE_FEED_SIDEBAR_BUTTON,
-                Settings.HIDE_COMMENT_QUICK_REACTIONS, Settings.ENABLE_LONG_PRESS_SPEED_LOCK}) {
+                Settings.HIDE_COMMENT_QUICK_REACTIONS, Settings.ENABLE_LONG_PRESS_SPEED_LOCK,
+                Settings.ENABLE_NON_PERSONALIZED_SEARCH, Settings.ENABLE_LIVE_SEARCH}) {
             setting.save(setting.defaultValue);
         }
     }
@@ -185,6 +186,24 @@ public class FeatureSwitchesTest {
         PausedProcess.set(true);
         assertTrue("Pause Hushfeed leaves the button to TikTok",
                 FeatureControls.hideFeedSidebarButtonEnabled(true));
+    }
+
+    /**
+     * The search gates add to TikTok's answer, never take from it, and say in Hook status that
+     * TikTok asked. A gate recorder reads the settings value under the gate, which stays 0, so
+     * that line is how a device check sees the gate forced.
+     */
+    @Test public void theSearchGatesOpenWithTheirSwitchesAndSayTikTokAsked() {
+        assertFalse(FeatureControls.enableNonPersonalizedSearch(false));
+        assertTrue("TikTok's own yes still stands", FeatureControls.enableNonPersonalizedSearch(true));
+        assertFalse(FeatureControls.enableLiveSearch(false));
+        assertTrue(String.join(" ", HookStatus.report()).contains(FeatureControls.NON_PERSONALIZED_SEARCH_FAMILY));
+        assertTrue(String.join(" ", HookStatus.report()).contains(FeatureControls.LIVE_SEARCH_FAMILY));
+
+        Settings.ENABLE_NON_PERSONALIZED_SEARCH.save(true);
+        Settings.ENABLE_LIVE_SEARCH.save(true);
+        assertTrue(FeatureControls.enableNonPersonalizedSearch(false));
+        assertTrue(FeatureControls.enableLiveSearch(false));
     }
 
     @Test public void theSpeedLockKeepsTheHostsDistanceAndFillsInAMissingOne() {

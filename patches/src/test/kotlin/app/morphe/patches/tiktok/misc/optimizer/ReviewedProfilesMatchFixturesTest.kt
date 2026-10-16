@@ -74,6 +74,15 @@ class ReviewedProfilesMatchFixturesTest {
     }
 
     @Test
+    fun `no strip empties a feature dex TikTok loads at start-up`() {
+        // Emptying Pitaya's, live cast's or the camera's dex left TikTok's own strings in English (#125).
+        val dexes = groups.flatMap { (group, reviewed) ->
+            reviewed.flatMap { it.files }.map { it.path }.filter(::isStartupDex).map { "$group: $it" }
+        }.distinct()
+        assertEquals(emptyList<String>(), dexes)
+    }
+
+    @Test
     fun `every fixture's language packs match one reviewed inventory`() {
         val apks = fixtures()
         val problems = mutableListOf<String>()

@@ -376,8 +376,8 @@ final class L10nTranslationsDe {
                 "Über Hushfeed");
         table.put("About overrides",
                 "Über Überschreibungen");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Über dem Balken setzt die Zeit über das linke Ende des Balkens, solange nichts auf dem Bildschirm im Weg ist, und neben den Balken, wenn doch etwas im Weg ist.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Über dem Balken setzt die Zeit über das rechte Ende des Balkens, solange nichts auf dem Bildschirm im Weg ist, und neben den Balken, wenn doch etwas im Weg ist.");
         table.put("Above the bar",
                 "Über dem Balken");
         table.put("Account facts",

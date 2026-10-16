@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Un nuevo interruptor abre en oscuro los paneles de LIVE como Compartir y el club de fans cuando TikTok está en modo oscuro (#159).
+* **TikTok:** Quitar archivos de credenciales de contenido y escáner de tarjetas y Quitar las herramientas de creación ya no dejan partes de TikTok en inglés en un teléfono con otro idioma. Vuelve a parchear para recuperar el tuyo (#125).
+
+* **TikTok:** Un nuevo interruptor abre en oscuro los paneles de LIVE como el club de fans cuando TikTok está en modo oscuro (#159).
 
 * **TikTok:** La lista de Calidad de video de LIVE ya no muestra sus filas en blanco sobre blanco en modo oscuro (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Un nuevo interruptor limita tu elección de Pulsación larga a los lados del video, así que una pulsación en el centro sigue abriendo el menú de TikTok (#136).
 
 * **TikTok:** Un nuevo interruptor añade Bloquear a quien comenta al menú que se abre al mantener pulsado un comentario (#169).
+
+* **TikTok:** Ocultar sugerencias en la página de búsqueda ahora también oculta la lista de búsquedas recomendadas que algunas cuentas todavía veían.
 
 ## 0.74.0 (2026-10-14)
 

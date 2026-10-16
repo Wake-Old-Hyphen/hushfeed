@@ -12,6 +12,8 @@ import app.morphe.extension.tiktok.settings.Settings;
 public final class FeatureControls {
     private static final int DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP = 140;
     static final String SIDEBAR_BUTTON_FAMILY = "side menu button";
+    static final String NON_PERSONALIZED_SEARCH_FAMILY = "non-personalized search";
+    static final String LIVE_SEARCH_FAMILY = "LIVE search";
 
     private FeatureControls() {
     }
@@ -109,8 +111,15 @@ public final class FeatureControls {
         return Settings.DISABLE_LONG_PRESS_REPOST.get();
     }
 
+    /**
+     * TikTok's own "is non-personalized search on" gates, both of them. The settings read under
+     * them still answers TikTok's value, so a gate recorder shows 0 there even while this forces
+     * the gate. The Hook status line is the sign in a report that the gate was asked.
+     */
     public static boolean enableNonPersonalizedSearch(boolean original) {
-        return Settings.ENABLE_NON_PERSONALIZED_SEARCH.get() || original;
+        boolean on = Settings.ENABLE_NON_PERSONALIZED_SEARCH.get();
+        HookStatus.bound(NON_PERSONALIZED_SEARCH_FAMILY, on ? "gate forced" : "left to TikTok");
+        return on || original;
     }
 
     public static int forceNonPersonalizedSearchGate(String key, int value) {
@@ -118,7 +127,10 @@ public final class FeatureControls {
         return Settings.ENABLE_NON_PERSONALIZED_SEARCH.get() ? 1 : value;
     }
 
+    /** The LIVE drawer's "show search" setting, asked as the drawer builds its top bar. */
     public static boolean enableLiveSearch(boolean original) {
-        return Settings.ENABLE_LIVE_SEARCH.get() || original;
+        boolean on = Settings.ENABLE_LIVE_SEARCH.get();
+        HookStatus.bound(LIVE_SEARCH_FAMILY, on ? "search shown" : "left to TikTok");
+        return on || original;
     }
 }

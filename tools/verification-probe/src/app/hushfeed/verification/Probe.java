@@ -666,6 +666,7 @@ public final class Probe extends Instrumentation {
                                 + " following=" + (optional(creator, "getFollowStatus") instanceof Number
                                         ? ((Number) optional(creator, "getFollowStatus")).intValue() != 0 : "unknown")
                                 + " awemeType=" + awemeType
+                                + " ad=" + optional(aweme, "isAd")
                                 + " live=" + (liveId instanceof Number && ((Number) liveId).longValue() > 0)
                                 + " originalSound=" + originalSound
                                 // What the video says about duets and stitches, as its getters
@@ -696,6 +697,21 @@ public final class Probe extends Instrumentation {
                             break;
                         }
                         String report = String.valueOf(learn.getMethod("stopAndBuildReport").invoke(null));
+                        // -e key <name>: only that gate's entry, or read=false when the recording
+                        // never saw it. A whole report runs to 30 parts and more.
+                        String key = intent.getStringExtra("key");
+                        if (key != null) {
+                            int at = report.indexOf("\"key\": \"" + key + "\"");
+                            if (at < 0) {
+                                Log.i(TAG, "ok labreport key " + key + " read=false");
+                            } else {
+                                int open = report.lastIndexOf('{', at);
+                                int close = report.indexOf('}', at);
+                                Log.i(TAG, "ok labreport key " + key + " read=true "
+                                        + report.substring(open, close + 1).replaceAll("\\s+", " "));
+                            }
+                            break;
+                        }
                         int size = 3000;
                         int parts = Math.max(1, (report.length() + size - 1) / size);
                         for (int part = 0; part < parts; part++) {
@@ -912,6 +928,7 @@ public final class Probe extends Instrumentation {
                             out.append('\n').append(view.getClass().getName()).append(" at=").append(at[0]).append(',').append(at[1])
                                     .append(" size=").append(view.getWidth()).append('x').append(view.getHeight())
                                     .append(" textPx=").append(Math.round(layout.getPaint().getTextSize()))
+                                    .append(" textSp=").append(textSp(view, layout.getPaint().getTextSize()))
                                     .append(' ').append(layoutReport(layout));
                         }
                         // In pieces like the other reports: one line truncates near 4 KB and a
@@ -1025,7 +1042,7 @@ public final class Probe extends Instrumentation {
                             // the feed keeps the cells either side of the current one laid out, and
                             // the first match was the previous post's button.
                             CharSequence raw = view.getContentDescription();
-                            String described = raw == null ? null : raw.toString();
+                            String described = raw == null ? null : withoutFormatMarks(raw.toString());
                             if (described != null && view.isShown()
                                     && view.getGlobalVisibleRect(new android.graphics.Rect())
                                     && (contains ? described.contains(desc)
@@ -1053,23 +1070,48 @@ public final class Probe extends Instrumentation {
                         // printed.
                         String wanted = required(intent, "text");
                         boolean click = "true".equals(intent.getStringExtra("click"));
+                        // -e match regex: -e text is a pattern found anywhere in the text, for a
+                        // label that varies (a comment's time, "3d" or "10-07").
+                        java.util.regex.Pattern pattern = "regex".equals(intent.getStringExtra("match"))
+                                ? java.util.regex.Pattern.compile(wanted) : null;
+                        // -e hold N: a finger held N ms on the match, through its own window, for
+                        // a long-press menu. The comment sheet is a dialog with a window of its
+                        // own, and uiautomator can't dump it while the video plays behind it.
+                        String holdExtra = intent.getStringExtra("hold");
+                        long holdMs = holdExtra == null ? 0L : Long.parseLong(holdExtra);
                         // -e index N: the Nth match in tree order, for a label that repeats (a tab
                         // and the badges below it); every match's place is printed either way.
                         String indexExtra = intent.getStringExtra("index");
                         int index = indexExtra == null ? 1 : Integer.parseInt(indexExtra);
+                        // A click or a hold only goes to a match on the screen: the comment list
+                        // keeps rows laid out above and below what shows. Counting still takes
+                        // every match, so a "none" check can't pass on a row scrolled out of view.
+                        boolean pressing = click || holdMs > 0;
                         int matches = 0;
+                        int pressable = 0;
                         StringBuilder places = new StringBuilder();
                         android.view.View found = null;
                         java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
                         while (!queue.isEmpty()) {
                             android.view.View view = queue.removeFirst();
-                            if (view instanceof android.widget.TextView && view.isShown()
-                                    && wanted.contentEquals(String.valueOf(((android.widget.TextView) view).getText()))) {
+                            // An empty field shows its hint ("Add comment..."), which is the label a
+                            // person sees there.
+                            String shownText = null;
+                            if (view instanceof android.widget.TextView) {
+                                android.widget.TextView textView = (android.widget.TextView) view;
+                                CharSequence shown = textView.getText();
+                                if ((shown == null || shown.length() == 0) && textView.getHint() != null) shown = textView.getHint();
+                                shownText = withoutFormatMarks(String.valueOf(shown));
+                            }
+                            if (shownText != null && view.isShown()
+                                    && (pattern == null ? wanted.contentEquals(shownText) : pattern.matcher(shownText).find())) {
                                 matches++;
                                 int[] place = new int[2];
                                 view.getLocationOnScreen(place);
                                 places.append(" #").append(matches).append('=').append(place[0]).append(',').append(place[1]);
-                                if (matches == index) found = view;
+                                boolean onScreen = view.getGlobalVisibleRect(new android.graphics.Rect());
+                                if (!onScreen) places.append("(off screen)");
+                                if (found == null && (!pressing || onScreen) && ++pressable == index) found = view;
                             }
                             if (view instanceof android.view.ViewGroup) {
                                 android.view.ViewGroup group = (android.view.ViewGroup) view;
@@ -1079,6 +1121,24 @@ public final class Probe extends Instrumentation {
                         if (found == null) {
                             Log.i(TAG, "ok findtext none (" + matches + " matches" + places + ")");
                             break;
+                        }
+                        // -e sibling next: the view right after the match in its parent, for an
+                        // icon with no text or description beside a label (the comment sort glyph
+                        // after "189 comments"). Its id is renamed every build; its place isn't.
+                        String sibling = "";
+                        if ("next".equals(intent.getStringExtra("sibling"))) {
+                            android.view.View next = null;
+                            if (found.getParent() instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) found.getParent();
+                                int position = group.indexOfChild(found);
+                                if (position >= 0 && position + 1 < group.getChildCount()) next = group.getChildAt(position + 1);
+                            }
+                            if (next == null || !next.isShown()) {
+                                Log.i(TAG, "ok findtext none (no shown view after the match; " + matches + " matches" + places + ")");
+                                break;
+                            }
+                            found = next;
+                            sibling = " sibling=" + next.getClass().getSimpleName();
                         }
                         int[] at = new int[2];
                         found.getLocationOnScreen(at);
@@ -1090,7 +1150,19 @@ public final class Probe extends Instrumentation {
                             }
                             clicked = target == null ? " clicked=no clickable ancestor" : " clicked=" + target.performClick();
                         }
-                        Log.i(TAG, "ok findtext found at=" + at[0] + "," + at[1] + " size=" + found.getWidth() + "x" + found.getHeight() + clicked
+                        if (holdMs > 0) {
+                            android.view.View root = found.getRootView();
+                            int[] inWindow = new int[2];
+                            found.getLocationInWindow(inWindow);
+                            float x = inWindow[0] + found.getWidth() / 2f;
+                            float y = inWindow[1] + found.getHeight() / 2f;
+                            long down = android.os.SystemClock.uptimeMillis();
+                            touch(root, down, down, android.view.MotionEvent.ACTION_DOWN, x, y);
+                            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> touch(root, down,
+                                    android.os.SystemClock.uptimeMillis(), android.view.MotionEvent.ACTION_UP, x, y), holdMs);
+                            clicked += " held=" + holdMs + "ms";
+                        }
+                        Log.i(TAG, "ok findtext found at=" + at[0] + "," + at[1] + " size=" + found.getWidth() + "x" + found.getHeight() + sibling + clicked
                                 + " (" + matches + " matches" + places + ")");
                         break;
                     }
@@ -1156,6 +1228,16 @@ public final class Probe extends Instrumentation {
                         // did. Logcat is not: the release extension is minified and its Log calls
                         // do not reach the buffer, so this is how a device check reads it. The
                         // log takes about 4 KB a line, so a long export goes out in pieces.
+                        // Its list of registered switches is filled in when Hushfeed's settings
+                        // open, where a person exports the log. A check asks from any screen, so
+                        // the list is filled in here the same way first.
+                        Method registered = loader.loadClass(
+                                "app.morphe.extension.tiktok.settings.SettingsStatus")
+                                .getDeclaredMethod("registered");
+                        registered.setAccessible(true);
+                        loader.loadClass("app.morphe.extension.shared.diagnostics.BuildDetails")
+                                .getMethod("setRegisteredSwitches", java.util.Collection.class)
+                                .invoke(null, registered.invoke(null));
                         String text = String.valueOf(loader.loadClass(
                                 "app.morphe.extension.shared.settings.preference.LogBufferManager")
                                 .getMethod("buildExportText").invoke(null));
@@ -1605,6 +1687,7 @@ public final class Probe extends Instrumentation {
                                 if (view instanceof android.widget.TextView) {
                                     android.widget.TextView label = (android.widget.TextView) view;
                                     out.append(" textPx=").append(label.getTextSize())
+                                            .append(" textSp=").append(textSp(label, label.getTextSize()))
                                             .append(" lines=").append(label.getLineCount());
                                 }
                                 if (id == strip && view instanceof android.view.ViewGroup) {
@@ -1989,6 +2072,92 @@ public final class Probe extends Instrumentation {
                                 Log.e(TAG, "failed playerspeed", error);
                             }
                         }, gap);
+                        break;
+                    }
+                    case "startwatch": {
+                        // How each video starts, for a stall after it begins (#150): samples the
+                        // feed player's position on the main thread every 50 ms for a while and
+                        // logs, per video, when it became current, when its position first moved,
+                        // every hold of 250 ms or more after that, every jump the position made
+                        // that playing doesn't explain, and every sample the main thread was late
+                        // for. Same holder and getter extras as playerspeed (47.1.4: -e holder
+                        // X.037t -e getter LJIILIIL). No id, caption or creator leaves.
+                        Method getter = loader.loadClass(required(intent, "holder"))
+                                .getDeclaredMethod(required(intent, "getter"));
+                        getter.setAccessible(true);
+                        Method current = loader.loadClass("app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                .getMethod("getAweme");
+                        String secondsText = intent.getStringExtra("seconds");
+                        long until = android.os.SystemClock.uptimeMillis()
+                                + 1000L * (secondsText == null ? 25L : Long.parseLong(secondsText));
+                        long began = android.os.SystemClock.uptimeMillis();
+                        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+                        StringBuilder out = new StringBuilder();
+                        long[] state = {0L, -1L, -1L, -1L, -1L, 0L, 0L};
+                        // state: video identity, selected at, first move at, last position,
+                        // position unchanged since, last sample at, videos seen
+                        StringBuilder[] line = {null};
+                        Runnable sample = new Runnable() {
+                            @Override public void run() {
+                                long now = android.os.SystemClock.uptimeMillis();
+                                try {
+                                    if (state[5] > 0 && now - state[5] > 150 && line[0] != null) {
+                                        line[0].append(" late=").append(now - state[5]).append("ms@").append(now - began);
+                                    }
+                                    state[5] = now;
+                                    Object aweme = current.invoke(null);
+                                    long identity = aweme == null ? 0L : System.identityHashCode(aweme);
+                                    if (identity != state[0]) {
+                                        if (line[0] != null) out.append(line[0]).append('\n');
+                                        state[6]++;
+                                        line[0] = new StringBuilder("video ").append(state[6])
+                                                .append(" current@").append(now - began);
+                                        state[0] = identity;
+                                        state[1] = now;
+                                        state[2] = -1L;
+                                        state[3] = -1L;
+                                        state[4] = now;
+                                    }
+                                    Object player = getter.invoke(null);
+                                    if (player != null) {
+                                        Method position = player.getClass().getMethod("getCurrentPosition");
+                                        position.setAccessible(true);
+                                        long at = (Long) position.invoke(player);
+                                        if (state[3] >= 0 && at < state[3] && at < 500) {
+                                            // The next video starting over, or this one looping.
+                                            line[0].append(" restart@").append(now - began);
+                                            state[4] = now;
+                                        } else if (state[3] >= 0 && at != state[3]) {
+                                            if (state[2] < 0) {
+                                                state[2] = now;
+                                                line[0].append(" moved@").append(now - began)
+                                                        .append(" (+").append(now - state[1]).append(')');
+                                            } else if (now - state[4] >= 250) {
+                                                line[0].append(" held=").append(now - state[4]).append("ms@")
+                                                        .append(state[4] - began).append(" at ").append(state[3]);
+                                            }
+                                            long expected = now - state[4] + 150;
+                                            if (at < state[3] || at - state[3] > expected + 500) {
+                                                line[0].append(" jump ").append(state[3]).append("->").append(at)
+                                                        .append('@').append(now - began);
+                                            }
+                                            state[4] = now;
+                                        }
+                                        state[3] = at;
+                                    }
+                                } catch (Throwable error) {
+                                    if (line[0] != null) line[0].append(" err=").append(error.getClass().getSimpleName());
+                                }
+                                if (now < until) {
+                                    main.postDelayed(this, 50);
+                                } else {
+                                    if (line[0] != null) out.append(line[0]);
+                                    Log.i(TAG, "ok startwatch done\n" + out);
+                                }
+                            }
+                        };
+                        main.post(sample);
+                        Log.i(TAG, "ok startwatch until +" + (until - began) + "ms");
                         break;
                     }
                     case "holdslide": {
@@ -2396,6 +2565,51 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok livestream" + out);
                         break;
                     }
+                    case "click": {
+                        // Clicks one shown view by its id name (-e find bottom_tab_home), or by a
+                        // content description regex (-e desc "^Profile$"), through performClick on
+                        // its nearest clickable ancestor, so a scripted check moves between TikTok's
+                        // tabs and sheets without a coordinate guess. More than one match is
+                        // refused unless -e index picks one, and so is a match off screen.
+                        String find = intent.getStringExtra("find");
+                        String desc = intent.getStringExtra("desc");
+                        if (find == null && desc == null) throw new IllegalArgumentException("-e find or -e desc is required");
+                        java.util.regex.Pattern descPattern = desc == null ? null : java.util.regex.Pattern.compile(desc);
+                        android.content.res.Resources resources = app.getResources();
+                        List<android.view.View> matches = new ArrayList<>();
+                        java.util.ArrayDeque<android.view.View> queue = new java.util.ArrayDeque<>(windowRoots());
+                        while (!queue.isEmpty()) {
+                            android.view.View view = queue.removeFirst();
+                            if (!view.isShown()) continue;
+                            boolean match = find != null ? find.equals(idName(view, resources))
+                                    : view.getContentDescription() != null
+                                            && descPattern.matcher(view.getContentDescription()).find();
+                            android.graphics.Rect onScreen = new android.graphics.Rect();
+                            if (match && view.getGlobalVisibleRect(onScreen) && !onScreen.isEmpty()) matches.add(view);
+                            if (view instanceof android.view.ViewGroup) {
+                                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                                for (int i = 0; i < group.getChildCount(); i++) queue.add(group.getChildAt(i));
+                            }
+                        }
+                        String indexText = intent.getStringExtra("index");
+                        if (matches.isEmpty()) throw new IllegalStateException("no shown view matches");
+                        if (indexText == null && matches.size() > 1) {
+                            throw new IllegalStateException(matches.size() + " shown views match; pass -e index");
+                        }
+                        android.view.View target = matches.get(indexText == null ? 0 : Integer.parseInt(indexText));
+                        android.view.View clickable = target;
+                        while (clickable != null && !clickable.isClickable()) {
+                            clickable = clickable.getParent() instanceof android.view.View
+                                    ? (android.view.View) clickable.getParent() : null;
+                        }
+                        if (clickable == null) throw new IllegalStateException("nothing clickable holds the match");
+                        int[] where = new int[2];
+                        clickable.getLocationOnScreen(where);
+                        boolean handled = clickable.performClick();
+                        Log.i(TAG, "ok click " + idName(clickable, resources) + " at " + where[0] + ',' + where[1]
+                                + " size " + clickable.getWidth() + 'x' + clickable.getHeight() + " handled=" + handled);
+                        break;
+                    }
                     case "windowviews": {
                         // Dialogs and bottom sheets can live in a separate WindowManager root.
                         // TikTok 47.0.3's comment sheet leaves MainActivity's own content view
@@ -2536,12 +2750,42 @@ public final class Probe extends Instrumentation {
             if (view.getBackgroundTintList() != null) {
                 out.append(" tint=").append(Integer.toHexString(view.getBackgroundTintList().getDefaultColor()));
             }
+            if (view instanceof android.widget.ImageView) {
+                android.widget.ImageView image = (android.widget.ImageView) view;
+                android.graphics.drawable.Drawable source = image.getDrawable();
+                out.append(" src=").append(describeDrawable(source, 0));
+                if (source != null) {
+                    out.append(' ').append(source.getIntrinsicWidth()).append('x').append(source.getIntrinsicHeight())
+                            .append(' ').append(image.getScaleType());
+                }
+            }
+            if (view.getAlpha() < 1f) out.append(" alpha=").append(view.getAlpha());
+            // What this view and everything under it paints at the point, drawn again into a
+            // single pixel: the deepest view that gives the colour while its children don't is
+            // the one painting it, background or onDraw. A hardware bitmap can't be drawn this
+            // way and says so.
+            out.append(" draws=").append(drawnAt(view, x - where[0], y - where[1]));
             out.append('\n');
             if (view instanceof android.view.ViewGroup) {
                 android.view.ViewGroup group = (android.view.ViewGroup) view;
                 for (int i = 0; i < group.getChildCount(); i++) {
                     describeBackgroundsAt(group.getChildAt(i), x, y, depth + 1, out, resources);
                 }
+            }
+        }
+
+        /** The colour a view draws at a point in its own coordinates, or why it couldn't be drawn. */
+        private static String drawnAt(android.view.View view, int x, int y) {
+            try {
+                android.graphics.Bitmap pixel = android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888);
+                android.graphics.Canvas canvas = new android.graphics.Canvas(pixel);
+                canvas.translate(-x, -y);
+                view.draw(canvas);
+                int color = pixel.getPixel(0, 0);
+                pixel.recycle();
+                return Integer.toHexString(color);
+            } catch (Throwable error) {
+                return error.getClass().getSimpleName();
             }
         }
 
@@ -2678,6 +2922,7 @@ public final class Probe extends Instrumentation {
                         .append(" size=").append(view.getWidth()).append('x').append(view.getHeight())
                         .append(" textLength=").append(((android.widget.TextView) view).getText().length())
                         .append(" textSizePx=").append((int) ((android.widget.TextView) view).getTextSize())
+                        .append(" textSizeSp=").append(textSp(view, ((android.widget.TextView) view).getTextSize()))
                         .append(" parent=").append(parentName)
                         .append('\n');
             }
@@ -2921,6 +3166,28 @@ public final class Probe extends Instrumentation {
         }
 
         @SuppressWarnings("unchecked")
+        /**
+         * Text without invisible format characters. TikTok 47.1.4 wraps numbers in direction
+         * marks, so "189 comments" and a comment's "3d" each start with one and a pattern
+         * anchored at a digit never matched.
+         */
+        private static String withoutFormatMarks(String text) {
+            return text.replaceAll("\\p{Cf}", "");
+        }
+
+        /**
+         * A text size back in sp, the unit the size patches are set in. Pixels depend on the
+         * phone's density (24 sp is 72 px at 3.0 and 67 px on a 450 dpi S22), so a check
+         * written against pixels only passed on the screen it was written on.
+         */
+        private static long textSp(android.view.View view, float px) {
+            android.util.DisplayMetrics metrics = view.getResources().getDisplayMetrics();
+            if (android.os.Build.VERSION.SDK_INT >= 34) {
+                return Math.round(android.util.TypedValue.deriveDimension(android.util.TypedValue.COMPLEX_UNIT_SP, px, metrics));
+            }
+            return Math.round(px / metrics.scaledDensity);
+        }
+
         private static java.util.List<android.view.View> windowRoots() throws Exception {
             Class<?> globalClass = Class.forName("android.view.WindowManagerGlobal");
             java.lang.reflect.Method getInstance = globalClass.getDeclaredMethod("getInstance");

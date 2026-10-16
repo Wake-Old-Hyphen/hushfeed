@@ -527,7 +527,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SEEKBAR_TIME = new BooleanSetting("seekbar_time", FALSE);
     /**
      * Where that time goes: "beside" (the end of the bar's row, the default) or "above" (over the
-     * bar's left end, falling back to beside while text on screen reaches into that spot) (#173).
+     * bar's right end, falling back to beside while text on screen reaches into that spot) (#173).
      */
     public static final StringSetting SEEKBAR_TIME_PLACEMENT = new StringSetting(
             "seekbar_time_placement", "beside", Setting.parent(SEEKBAR_TIME));

@@ -376,8 +376,8 @@ final class L10nTranslationsAz {
                 "Hushfeed haqqında");
         table.put("About overrides",
                 "Əvəzləmələr haqqında");
-        table.put("Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.",
-                "Panelin üstündə seçimi ekranda heç nə mane olmadıqca vaxtı panelin sol ucunun üstündə, mane olan bir şey olanda isə panelin yanında göstərir.");
+        table.put("Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.",
+                "Panelin üstündə seçimi ekranda heç nə mane olmadıqca vaxtı panelin sağ ucunun üstündə, mane olan bir şey olanda isə panelin yanında göstərir.");
         table.put("Above the bar",
                 "Panelin üstündə");
         table.put("Account facts",

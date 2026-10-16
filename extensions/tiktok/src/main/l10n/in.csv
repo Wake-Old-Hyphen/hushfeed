@@ -2154,6 +2154,6 @@ Your Long press choice runs only on the left and right thirds of the video. A pr
 Where the time goes,Posisi waktu
 Beside the bar,Di samping bilah
 Above the bar,Di atas bilah
-"Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.","Di atas bilah menampilkan waktu di atas ujung kiri bilah selama tidak ada yang menghalangi di layar, dan di samping bilah saat ada yang menghalangi."
+"Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.","Di atas bilah menampilkan waktu di atas ujung kanan bilah selama tidak ada yang menghalangi di layar, dan di samping bilah saat ada yang menghalangi."
 Full-width progress bar,Bilah progres selebar layar
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Bilah progres membentang dari satu tepi layar ke tepi lainnya, tanpa celah yang disisakan TikTok di kedua ujung."

@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken Paylaş ve hayran kulübü gibi LIVE panellerini koyu açar (#159).
+* **TikTok:** İçerik kimlik bilgilerini ve kart tarayıcı kaynaklarını kaldır ile Oluşturma araçlarını kaldır, başka dile ayarlı bir telefonda TikTok'un bazı kısımlarını artık İngilizce bırakmıyor. Dilini geri almak için yeniden yamala (#125).
+
+* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken hayran kulübü gibi LIVE panellerini koyu açar (#159).
 
 * **TikTok:** LIVE Video kalitesi listesi karanlık modda satırlarını artık beyaz üstüne beyaz göstermiyor (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Yeni bir anahtar Uzun basma seçimini videonun kenarlarıyla sınırlar, böylece ortada basmak yine TikTok menüsünü açar (#136).
 
 * **TikTok:** Yeni bir anahtar, bir yoruma basılı tutunca açılan menüye Bu yorumu yazanı engelle seçeneğini ekler (#169).
+
+* **TikTok:** Arama sayfasındaki önerileri gizle artık bazı hesapların hâlâ gördüğü önerilen aramalar listesini de gizliyor.
 
 ## 0.74.0 (2026-10-14)
 

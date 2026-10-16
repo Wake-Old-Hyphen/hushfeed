@@ -2175,6 +2175,6 @@ Your Long press choice runs only on the left and right thirds of the video. A pr
 Where the time goes	Vaxt harada görünsün
 Beside the bar	Panelin yanında
 Above the bar	Panelin üstündə
-Above puts the time over the left end of the bar while nothing on screen is in the way, and beside the bar when something is.	Panelin üstündə seçimi ekranda heç nə mane olmadıqca vaxtı panelin sol ucunun üstündə, mane olan bir şey olanda isə panelin yanında göstərir.
+Above puts the time over the right end of the bar while nothing on screen is in the way, and beside the bar when something is.	Panelin üstündə seçimi ekranda heç nə mane olmadıqca vaxtı panelin sağ ucunun üstündə, mane olan bir şey olanda isə panelin yanında göstərir.
 Full-width progress bar	Tam enli irəliləyiş paneli
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	İrəliləyiş paneli TikTok-un hər iki ucda qoyduğu boşluq olmadan ekranın bir kənarından o birinə qədər uzanır.

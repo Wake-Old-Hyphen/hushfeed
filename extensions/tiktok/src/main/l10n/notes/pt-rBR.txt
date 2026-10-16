@@ -1,6 +1,8 @@
 ## Unreleased
 
-* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como Compartilhar e o fã-clube, quando o TikTok está no modo escuro (#159).
+* **TikTok:** Remover recursos de credenciais de conteúdo e leitor de cartões e Remover ferramentas de criação não deixam mais partes do TikTok em inglês num celular em outro idioma. Aplique o patch de novo para recuperar o seu (#125).
+
+* **TikTok:** Uma nova chave abre escuros os painéis de LIVE, como o fã-clube, quando o TikTok está no modo escuro (#159).
 
 * **TikTok:** A lista de Qualidade do vídeo da LIVE não mostra mais as linhas em branco sobre branco no modo escuro (#57).
 
@@ -13,6 +15,8 @@
 * **TikTok:** Uma nova chave limita sua escolha de Toque longo às laterais do vídeo, então um toque no meio continua abrindo o menu do TikTok (#136).
 
 * **TikTok:** Uma nova chave adiciona Bloquear quem comentou ao menu que abre ao tocar e segurar um comentário (#169).
+
+* **TikTok:** Ocultar sugestões na página de pesquisa agora também oculta a lista de pesquisas recomendadas que algumas contas ainda viam.
 
 ## 0.74.0 (2026-10-14)
 
