@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** A verificação de alinhamento nativo agora detecta sobreposições RELRO inseguras em páginas de 16 KB e aceita segmentos isolados.
+
+* **TikTok:** A auditoria de patches agora separa as evidências atuais verificadas dos testes antigos e rejeita avaliações de capturas desatualizadas.
+
+* **TikTok:** Compilações com acesso ao dispositivo e auditorias agora exigem uma reserva exclusiva do dispositivo. Compilações locais continuam funcionando sem ela.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, o número de curtidas não fica mais sobre a barra de progresso quando Curtir é o botão mais baixo que sobrou à direita (#145).

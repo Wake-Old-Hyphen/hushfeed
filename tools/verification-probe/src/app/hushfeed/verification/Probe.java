@@ -230,6 +230,10 @@ public final class Probe extends Instrumentation {
                         // disclosure text or the raw anchors JSON into device evidence.
                         Log.i(TAG, "ok ad-evidence\n" + adEvidence());
                         break;
+                    case "search-lynx-evidence":
+                        for (String line : SearchLynxSnapshot.read(loader)) Log.i(TAG, "search-lynx " + line);
+                        Log.i(TAG, "ok search-lynx-evidence");
+                        break;
                     case "ad-boundary":
                         Log.i(TAG, "ok ad-boundary\n" + adBoundary());
                         break;

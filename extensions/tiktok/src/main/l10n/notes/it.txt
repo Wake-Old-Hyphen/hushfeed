@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Il controllo dell'allineamento nativo ora rileva le sovrapposizioni RELRO non sicure nelle pagine da 16 KB e accetta i segmenti isolati.
+
+* **TikTok:** La verifica delle patch ora distingue le prove attuali verificate dai test precedenti e rifiuta le valutazioni di schermate non più valide.
+
+* **TikTok:** Le build con accesso al dispositivo e le verifiche ora richiedono una prenotazione esclusiva del dispositivo. Le build locali funzionano anche senza.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, il numero di Mi piace non sta più sopra la barra di avanzamento quando Mi piace è l'ultimo pulsante rimasto in basso a destra (#145).

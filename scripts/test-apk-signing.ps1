@@ -19,6 +19,7 @@ $javaDirectory = Split-Path -Parent (Get-Command $Java).Source
 $tools = Resolve-ApkSigningTools -Root $Root -Sdk $Sdk -KeystoreType BKS
 $temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
 $fixture = Resolve-WithinRoot -Root $temporaryRoot -Path (Join-Path $temporaryRoot ('hushfeed-signing-test-' + [Guid]::NewGuid().ToString('N')))
+$deviceLeaseDirectory = Join-Path $fixture 'device-leases'
 $previousEnvironment = @{}
 $storeSentinel = 'fixture-store-' + [Guid]::NewGuid().ToString('N')
 $entrySentinel = 'fixture-entry-' + [Guid]::NewGuid().ToString('N')
@@ -67,6 +68,7 @@ function Assert-SigningRejected {
     if (Test-Path -LiteralPath $adbLog) {
         Assert-Signing ((Get-Content -LiteralPath $adbLog -Raw) -notmatch '\b(install|uninstall)\b') 'A rejected build reached installation or uninstall.'
     }
+    Assert-Signing (-not (Test-Path -LiteralPath (Join-Path $deviceLeaseDirectory 'SIGNINGFIXTURE.json'))) 'A rejected build retained its device lease.'
 }
 
 try {
@@ -132,7 +134,7 @@ exit /b %errorlevel%
             'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox')) {
         New-Item -ItemType Directory -Path (Join-Path $fixtureProject $directory) -Force | Out-Null
     }
-    foreach ($leaf in @('patch-for-device.ps1', 'apk-signing.ps1', 'SigningCertificateCheck.java', 'common.ps1', 'Resolve-Java.ps1', 'patch-target.ps1', 'patch-report.ps1', 'device-install.ps1')) {
+    foreach ($leaf in @('patch-for-device.ps1', 'apk-signing.ps1', 'SigningCertificateCheck.java', 'common.ps1', 'Resolve-Java.ps1', 'patch-target.ps1', 'patch-report.ps1', 'device-install.ps1', 'device-lease.ps1', 'release-receipt.ps1')) {
         Copy-Item -LiteralPath (Join-Path $Root "scripts/$leaf") -Destination (Join-Path $fixtureProject "scripts/$leaf")
     }
     foreach ($leaf in @('libs.versions.toml', 'verification-metadata.xml')) {
@@ -144,7 +146,16 @@ exit /b %errorlevel%
     Copy-Item -LiteralPath (Join-Path $Root 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java') `
         -Destination (Join-Path $fixtureProject 'extensions/tiktok/src/main/java/app/morphe/extension/tiktok/inbox/InboxRenderedModels.java')
     [IO.File]::WriteAllText((Join-Path $fixtureProject 'gradle.properties'), 'version=0.0.1')
-    [IO.File]::WriteAllText((Join-Path $fixtureProject 'patches/build/release/patches-0.0.1.mpp'), 'fixture bundle')
+    $fixtureBundle = Join-Path $fixtureProject 'patches/build/release/patches-0.0.1.mpp'
+    $bundleZip = [IO.Compression.ZipFile]::Open($fixtureBundle, 'Create')
+    try {
+        $manifestWriter = [IO.StreamWriter]::new($bundleZip.CreateEntry('META-INF/MANIFEST.MF').Open())
+        try {
+            $manifestWriter.Write("Manifest-Version: 1.0`nVersion: 0.0.1`nTimestamp: 1000`nPatcher-Version: 1.15.1`n" +
+                "Hushfeed-Source-Commit: $('b' * 40)`nHushfeed-Source-Clean: true`n" +
+                "Hushfeed-Source-Start: $('c' * 64)`nHushfeed-Source-End: $('c' * 64)`n")
+        } finally { $manifestWriter.Dispose() }
+    } finally { $bundleZip.Dispose() }
     [IO.File]::WriteAllText((Join-Path $fixtureProject 'patches-list.json'), '{"patches":[{"name":"fixture","compatiblePackages":{"com.zhiliaoapp.musically":["1.0.0"]}}]}')
     $classes = Join-Path $fixture 'fixture-classes'
     New-Item -ItemType Directory -Path $classes | Out-Null
@@ -189,8 +200,10 @@ exit /b %errorlevel%
     $probeBuilder = Join-Path $fixtureProject 'tools/verification-probe/build.ps1'
     $patchOut = Join-Path $fixture 'device-output'
     $probeOut = Join-Path $fixture 'probe-output'
-    $patchArguments = @{ Java = $Java; Sdk = $fixtureSdk; DesktopJar = $desktopJar; Apk = $unsigned; AllowStaleBundle = $true; OutDir = $patchOut }
-    $probeArguments = @{ Java = $Java; Sdk = $fixtureSdk; OutDir = $probeOut }
+    $patchArguments = @{ Java = $Java; Sdk = $fixtureSdk; DesktopJar = $desktopJar; Apk = $unsigned; AllowStaleBundle = $true; OutDir = $patchOut
+        LeaseDir = $deviceLeaseDirectory; ChatIdentity = 'signing-fixture' }
+    $probeArguments = @{ Java = $Java; Sdk = $fixtureSdk; OutDir = $probeOut
+        LeaseDir = $deviceLeaseDirectory; ChatIdentity = 'signing-fixture' }
     # Existing cases omitted JVM startup diagnostics, so bounded build options rejected valid keys.
     Set-FixtureEnvironment JAVA_TOOL_OPTIONS '-Xmx512m -XX:ActiveProcessorCount=2'
     Set-FixtureEnvironment JDK_JAVA_OPTIONS '-Xms32m'
@@ -221,6 +234,11 @@ exit /b %errorlevel%
             Assert-Signing ($session.Certificate -eq $certificate) 'The fixture stores changed the signing certificate.'
             $signedDevice = Join-Path $patchOut 'hushfeed-0.0.1-signed.apk'
             $signedProbe = Join-Path $probeOut 'hushfeed-verification-probe.apk'
+            $buildReceipt = Get-Content -LiteralPath "$signedDevice.audit-build.json" -Raw | ConvertFrom-Json
+            Assert-Signing ($buildReceipt.kind -eq 'hushfeed-device-build') 'The device builder omitted its audit identity receipt.'
+            Assert-Signing ($buildReceipt.apk.sha256 -eq (Get-FileHash $signedDevice -Algorithm SHA256).Hash) 'The audit receipt names another signed APK.'
+            Assert-Signing ($buildReceipt.bundle.sha256 -eq (Get-FileHash $fixtureBundle -Algorithm SHA256).Hash) 'The audit receipt names another bundle.'
+            Assert-Signing ($buildReceipt.source.commit -eq ('b' * 40) -and $buildReceipt.source.clean) 'The audit receipt lost the bundle source identity.'
             foreach ($apk in @($signedDevice, $signedProbe)) {
                 Assert-Signing ((Get-ApkSigningCertificate -Session $session -Apk $apk) -eq $certificate) 'The builders produced different or unverified certificates.'
             }
@@ -616,6 +634,7 @@ exit /b %errorlevel%
         try { Invoke-ApkSigning -Session $other -InputApk $unsigned -OutputApk $differentApk }
         finally { Close-ApkSigningSession $other }
     } finally { Close-ApkSigningSession $session }
+    Assert-Signing (-not (Test-Path -LiteralPath $deviceLeaseDirectory)) 'Local-only builds or rejected signing keys acquired a device lease.'
     Set-FixtureEnvironment HUSHFEED_FIXTURE_TARGET_APK $differentApk
     Set-FixtureEnvironment HUSHFEED_FIXTURE_PROBE_APK $signedProbe
     foreach ($action in @(
@@ -647,6 +666,7 @@ exit /b %errorlevel%
     Assert-NoSecrets $output
     Assert-Signing (@(Get-Content -LiteralPath $adbLog | Where-Object { $_ -match '\binstall\b' }).Count -eq 2) 'Matching certificates did not reach both fake installations.'
     Assert-Signing ((Get-Content -LiteralPath $adbLog -Raw) -notmatch '\buninstall\b') 'An in-place fixture install uninstalled the package.'
+    Assert-Signing (-not (Test-Path -LiteralPath (Join-Path $deviceLeaseDirectory 'SIGNINGFIXTURE.json'))) 'A completed fixture install retained its device lease.'
     Assert-NoSigningReferences
 
     Remove-Item -LiteralPath $adbLog -Force

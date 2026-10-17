@@ -6,6 +6,8 @@ The [October 9 physical-device results](runtime-results-2026-10-09.md) apply thi
 
 ## Identity and reproducibility
 
+The patch audit follows this identity boundary with per-check definition hashes, execution receipts and installed-base-APK hashes. Supply the device builder's `.audit-build.json` and its exact `.mpp` to bind the source manifest. Run `audit/run-audit.ps1 -ValidateResults -Results <report> -OutDir <evidence folder>` before treating stored verdicts as current proof. Receipt integrity does not turn a partial or mixed-build report into a complete run.
+
 Record the app version and version code, APK and signer digests, Android build, active Android user, full package UID, patch version, and pause/settings state. Record the observation interval, screen state, charging state, battery level, temperature, network transport, signal conditions and VPN status. Keep account state and content conditions consistent when comparing runs.
 
 Resolve the package UID for the active Android user. Do not reuse an old UID, confuse an app ID with a full multiuser UID, or attribute every process by its name alone. Include the package's secondary processes. Treat isolated processes and shared system services as separate attribution questions.

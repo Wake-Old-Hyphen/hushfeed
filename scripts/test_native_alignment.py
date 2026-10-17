@@ -33,9 +33,10 @@ def elf_image(bits=64, endian="<", segments=None, stride=None):
     image = bytearray(ident + struct.pack(header_format, 3, 40 if bits == 32 else 183,
                                         1, 0, header_size, 0, 0, header_size,
                                         stride, len(segments), 0, 0, 0))
-    for kind, offset, vaddr, filesz, memsz, align in segments:
-        fields = ((kind, offset, vaddr, 0, filesz, memsz, 5, align) if bits == 32
-                  else (kind, 5, offset, vaddr, 0, filesz, memsz, align))
+    for kind, offset, vaddr, filesz, memsz, align, *permissions in segments:
+        flags = permissions[0] if permissions else 5
+        fields = ((kind, offset, vaddr, 0, filesz, memsz, flags, align) if bits == 32
+                  else (kind, flags, offset, vaddr, 0, filesz, memsz, align))
         image.extend(struct.pack(program_format, *fields) + bytes(stride - program_size))
     required_size = max([len(image)] + [segment[1] + segment[3] for segment in segments])
     image.extend(bytes(required_size - len(image)))
@@ -135,6 +136,126 @@ class NativeAlignmentTest(unittest.TestCase):
 
     def test_larger_header_stride_is_respected(self):
         self.assertTrue(self.inspect_elf(elf_image(stride=64))["passed"])
+
+    def test_relro_end_alignment_and_dedicated_load_in_all_elf_formats(self):
+        for bits in (32, 64):
+            for endian in ("<", ">"):
+                for case, relro_size, load_size, passed in (
+                    ("aligned", 0x3980, 0x4000, True),
+                    ("unsafe-shared", 0x980, 0x4000, False),
+                    ("safe-dedicated", 0x980, 0x980, True),
+                ):
+                    with self.subTest(bits=bits, endian=endian, case=case):
+                        # The dedicated layout matches the Android guidance example.
+                        image = elf_image(bits, endian, segments=[
+                            (1, 0, 0, 0x680, 0x680, 0x4000, 5),
+                            (1, 0x680, 0x4680, 0x1D8, load_size, 0x4000, 6),
+                            (0x6474E552, 0x680, 0x4680, 0x1D8, relro_size, 1, 4),
+                        ])
+                        report = self.inspect_elf(image)
+                        self.assertEqual(passed, report["passed"], report)
+                        self.assertEqual([], report["load_segments"][1]["errors"])
+                        self.assertEqual(6, report["load_segments"][1]["flags"])
+                        relro = report["relro_segments"][0]
+                        self.assertEqual(2, relro["index"])
+                        self.assertEqual(0x680, relro["offset"])
+                        self.assertEqual(0x1D8, relro["filesz"])
+                        self.assertEqual(0x4000, relro["protected_start"])
+                        self.assertEqual(0x8000, relro["protected_end"])
+                        self.assertEqual([1] if case == "safe-dedicated" else [],
+                                         relro["dedicated_load_segments"])
+                        if not passed:
+                            self.assertEqual([{"load_index": 1, "start": 0x5000, "end": 0x8000}],
+                                             relro["writable_overlaps"])
+                            self.assertIn("PT_GNU_RELRO[2]", " ".join(report["errors"]))
+                            self.assertIn("PT_LOAD[1]", " ".join(report["errors"]))
+
+    def test_dedicated_relro_still_checks_other_writable_loads_on_the_end_page(self):
+        for address, passed in ((0x5000, False), (0x7FFF, False), (0x8000, True)):
+            with self.subTest(address=address):
+                report = self.inspect_elf(elf_image(segments=[
+                    (1, 0x680, 0x4680, 0x1D8, 0x980, 0x4000, 6),
+                    (0x6474E552, 0x680, 0x4680, 0x1D8, 0x980, 1, 4),
+                    (1, address % 0x4000, address, 1, 1, 0x4000, 6),
+                ]))
+                self.assertEqual(passed, report["passed"], report)
+                self.assertEqual([0], report["relro_segments"][0]["dedicated_load_segments"])
+                if not passed:
+                    self.assertEqual([{"load_index": 2, "start": address, "end": address + 1}],
+                                     report["relro_segments"][0]["writable_overlaps"])
+
+    def test_relro_ignores_readonly_tail_but_checks_writable_zero_fill(self):
+        for flags, passed in ((4, True), (5, True), (6, False), (7, False)):
+            with self.subTest(flags=flags):
+                report = self.inspect_elf(elf_image(segments=[
+                    (0x6474E552, 0x680, 0x4680, 0x1D8, 0x980, 1, 4),
+                    (1, 0x680, 0x4680, 0x1D8, 0x980, 0x4000, 6),
+                    (1, 0x2000, 0x6000, 0, 0x100, 0x4000, flags),
+                ]))
+                self.assertEqual(passed, report["passed"], report)
+
+    def test_relro_checks_writable_data_before_its_unaligned_start(self):
+        report = self.inspect_elf(elf_image(segments=[
+            (1, 0, 0x4000, 0x680, 0x4000, 0x4000, 6),
+            (0x6474E552, 0x680, 0x4680, 0, 0x3980, 1, 4),
+        ]))
+        self.assertFalse(report["passed"], report)
+        self.assertEqual([{"load_index": 0, "start": 0x4000, "end": 0x4680}],
+                         report["relro_segments"][0]["writable_overlaps"])
+
+    def test_multiple_relro_ranges_are_not_treated_as_writable_data(self):
+        report = self.inspect_elf(elf_image(segments=[
+            (1, 0x680, 0x4680, 0x1D8, 0x980, 0x4000, 6),
+            (0x6474E552, 0x680, 0x4680, 0x1D8, 0x480, 1, 4),
+            (0x6474E552, 0x858, 0x4B00, 0, 0x500, 1, 4),
+        ]))
+        self.assertTrue(report["passed"], report)
+        self.assertEqual(2, len(report["relro_segments"]))
+        self.assertTrue(all(not segment["writable_overlaps"] for segment in report["relro_segments"]))
+
+    def test_absent_relro_does_not_invent_an_alignment_requirement(self):
+        report = self.inspect_elf(elf_image(segments=[
+            (1, 0x680, 0x4680, 0x1D8, 0x980, 0x4000, 6),
+        ]))
+        self.assertTrue(report["passed"], report)
+        self.assertEqual([], report["relro_segments"])
+
+    def test_relro_address_overflow_and_truncated_file_range_are_reported(self):
+        for bits in (32, 64):
+            with self.subTest(bits=bits):
+                report = self.inspect_elf(elf_image(bits, segments=[
+                    (1, 0, 0, 128, 128, 0x4000),
+                    (0x6474E552, 0, (1 << bits) - 1, 0, 2, 1, 4),
+                ]))
+                self.assertFalse(report["passed"], report)
+                self.assertIn("virtual address range", " ".join(report["errors"]))
+        image = elf_image(segments=[
+            (1, 0, 0, 128, 128, 0x4000),
+            (0x6474E552, 0x100, 0x100, 8, 8, 1, 4),
+        ])[:-1]
+        report = self.inspect_elf(image)
+        self.assertFalse(report["passed"], report)
+        self.assertIn("PT_GNU_RELRO[1]: PT_GNU_RELRO file range exceeds", " ".join(report["errors"]))
+
+    def test_relro_hazards_fail_cli_with_library_and_range_diagnostics(self):
+        self.apk.write_bytes(apk_image(elf_image(segments=[
+            (1, 0x680, 0x4680, 0x1D8, 0x4000, 0x4000, 6),
+            (0x6474E552, 0x680, 0x4680, 0x1D8, 0x980, 1, 4),
+        ]), stored=False, aligned=False))
+        for arguments in ([], ["--json"]):
+            with self.subTest(arguments=arguments):
+                completed = subprocess.run([sys.executable, str(SCRIPT), str(self.apk), *arguments],
+                                           capture_output=True, text=True, timeout=15, check=False)
+                self.assertEqual(1, completed.returncode, completed.stdout + completed.stderr)
+                self.assertIn("lib/arm64-v8a/libtest.so", completed.stdout)
+                self.assertIn("PT_LOAD[0]", completed.stdout)
+                self.assertIn("PT_GNU_RELRO[1]", completed.stdout)
+                self.assertIn("0x5000", completed.stdout)
+                self.assertIn("0x8000", completed.stdout)
+                if arguments:
+                    report = json.loads(completed.stdout)
+                    self.assertFalse(report["passed"])
+                    self.assertIsNone(report["libraries"][0]["zip_aligned"])
 
     def test_metadata_only_reads_are_bounded_even_with_a_huge_declared_offset(self):
         class GuardedStream(io.BytesIO):

@@ -411,7 +411,7 @@ try {
         $_ -eq 'README.md' -or $_ -eq 'NOTICE' -or $_ -eq 'patches-list.json' -or $_ -eq 'patches-bundle.json' -or
         $_ -eq 'patches-bundle.png' -or $_ -like 'assets/readme-*' -or $_ -like 'concepts/marketing/*'
     }).Count -gt 0
-    $touchesScripts = @($paths | Where-Object { $_ -like 'scripts/*' }).Count -gt 0
+    $touchesScripts = @($paths | Where-Object { $_ -like 'scripts/*' -or $_ -like 'audit/*.ps1' -or $_ -eq 'audit/catalog.json' }).Count -gt 0
     $touchesAttestation = @($paths | Where-Object {
         $_ -in @('scripts/release-attestation.ps1', 'scripts/test-release-attestation.ps1',
             'scripts/validate-release-facts.ps1')
@@ -423,7 +423,7 @@ try {
     $apkSigningPaths = @(
         'scripts/apk-signing.ps1', 'scripts/SigningCertificateCheck.java',
         'scripts/SigningKeyFixtures.java', 'scripts/test-apk-signing.ps1',
-        'scripts/patch-for-device.ps1', 'scripts/device-install.ps1',
+        'scripts/patch-for-device.ps1', 'scripts/device-install.ps1', 'scripts/device-lease.ps1',
         'scripts/common.ps1', 'scripts/Resolve-Java.ps1',
         'scripts/patch-target.ps1', 'scripts/patch-report.ps1',
         'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml',
@@ -435,6 +435,11 @@ try {
     # The probe's device scripts share a log-marker helper whose contracts live with the scripts'.
     $touchesProbeTests = @($paths | Where-Object {
         $_ -like 'tools/verification-probe/tests/*' -or $_ -like 'tools/verification-probe/*.ps1'
+    }).Count -gt 0
+    $touchesSearchLynxEvidence = @($paths | Where-Object {
+        $_ -like 'tools/verification-probe/src/app/hushfeed/verification/SearchLynx*' -or
+        $_ -like 'tools/verification-probe/tests/app/hushfeed/verification/SearchLynx*' -or
+        $_ -eq 'tools/verification-probe/test-search-lynx.ps1'
     }).Count -gt 0
     # Declarations, catalog generation and its consumed build pins can change the unnamed
     # dependency closure without changing a script. Check that closure before starting a build.
@@ -565,6 +570,10 @@ try {
         if ($touchesApkSigning) {
             $suites += , @('scripts/test-apk-signing.ps1', 'device builder inputs changed, running SDK signing and cleanup fixtures',
                 'The device builder signing and cleanup fixtures did not pass.')
+        }
+        if ($touchesSearchLynxEvidence) {
+            $suites += , @('tools/verification-probe/test-search-lynx.ps1', 'probe Search Lynx evidence changed, running its snapshot and redaction contracts',
+                'The probe Search Lynx contracts did not pass.')
         }
         if ($touchesInjectedRegisterVerifier) {
             $suites += , @('scripts/test-injected-registers.ps1', 'injected-register verifier changed, running its fixture tests',

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check 16 KB ELF load alignment and stored .so ZIP offsets in one explicit APK.
+"""Check 16 KB ELF load/RELRO safety and stored .so ZIP offsets in one explicit APK.
 
 Only ELF metadata is read, with an 8 MiB prefix limit per library. This checks
 static alignment, not complete ELF/ZIP integrity or Android runtime behavior.
@@ -22,6 +22,9 @@ from typing import BinaryIO
 
 PAGE_SIZE = 16_384
 MAX_METADATA_BYTES = 8 * 1024 * 1024
+PT_LOAD = 1
+PT_GNU_RELRO = 0x6474E552
+PF_W = 2
 
 
 class MetadataReader:
@@ -48,7 +51,8 @@ class MetadataReader:
 
 def inspect_elf(stream: BinaryIO, size: int) -> dict:
     """Inspect ELF32/ELF64 headers without reading segment bodies."""
-    report = {"elf_class": None, "byte_order": None, "load_segments": [], "errors": []}
+    report = {"elf_class": None, "byte_order": None, "load_segments": [],
+              "relro_segments": [], "errors": []}
     reader = MetadataReader(stream, size)
     try:
         ident = reader.read(0, 16)
@@ -80,29 +84,76 @@ def inspect_elf(stream: BinaryIO, size: int) -> dict:
         table = reader.read(phoff, phentsize * phnum)
         for index in range(phnum):
             values = struct.unpack_from(ph_format, table, index * phentsize)
-            if values[0] != 1:  # PT_LOAD
+            if values[0] not in (PT_LOAD, PT_GNU_RELRO):
                 continue
             if bits == 32:
-                _, offset, vaddr, _, filesz, memsz, _, align = values
+                kind, offset, vaddr, _, filesz, memsz, flags, align = values
             else:
-                _, _, offset, vaddr, _, filesz, memsz, align = values
+                kind, flags, offset, vaddr, _, filesz, memsz, align = values
+            label = "PT_LOAD" if kind == PT_LOAD else "PT_GNU_RELRO"
             errors = []
-            if align < PAGE_SIZE:
-                errors.append(f"p_align={align} is below {PAGE_SIZE}.")
-            if align and align & (align - 1):
-                errors.append(f"p_align={align} is not a power of two.")
-            if align > 1 and offset % align != vaddr % align:
-                errors.append("p_offset and p_vaddr are not congruent modulo p_align.")
-            if filesz > memsz:
-                errors.append("p_filesz exceeds p_memsz.")
+            if kind == PT_LOAD:
+                if align < PAGE_SIZE:
+                    errors.append(f"p_align={align} is below {PAGE_SIZE}.")
+                if align and align & (align - 1):
+                    errors.append(f"p_align={align} is not a power of two.")
+                if align > 1 and offset % align != vaddr % align:
+                    errors.append("p_offset and p_vaddr are not congruent modulo p_align.")
+                if filesz > memsz:
+                    errors.append("p_filesz exceeds p_memsz.")
             if offset > size or filesz > size - offset:
-                errors.append("PT_LOAD file range exceeds library size.")
+                errors.append(f"{label} file range exceeds library size.")
+            if vaddr + memsz > 1 << bits:
+                errors.append(f"{label} virtual address range exceeds ELF{bits} address space.")
             segment = {"index": index, "offset": offset, "vaddr": vaddr,
-                       "filesz": filesz, "memsz": memsz, "align": align, "errors": errors}
-            report["load_segments"].append(segment)
-            report["errors"].extend(f"PT_LOAD[{index}]: {error}" for error in errors)
+                       "filesz": filesz, "memsz": memsz, "align": align,
+                       "flags": flags, "errors": errors}
+            report["load_segments" if kind == PT_LOAD else "relro_segments"].append(segment)
+            report["errors"].extend(f"{label}[{index}]: {error}" for error in errors)
         if not report["load_segments"]:
             report["errors"].append("No PT_LOAD segments.")
+        relro_ranges = sorted((segment["vaddr"], segment["vaddr"] + segment["memsz"])
+                              for segment in report["relro_segments"] if not segment["errors"])
+        for relro in report["relro_segments"]:
+            start, end = relro["vaddr"], relro["vaddr"] + relro["memsz"]
+            page_start = start // PAGE_SIZE * PAGE_SIZE
+            page_end = (end + PAGE_SIZE - 1) // PAGE_SIZE * PAGE_SIZE
+            relro.update(protected_start=page_start, protected_end=page_end,
+                         dedicated_load_segments=[], writable_overlaps=[])
+            if relro["errors"]:
+                continue
+            # Android protects every touched page. Exclude declared RELRO bytes,
+            # including other RELRO headers, before looking for writable data.
+            extra_ranges = []
+            cursor = page_start
+            for covered_start, covered_end in relro_ranges:
+                if covered_end <= cursor:
+                    continue
+                if covered_start >= page_end:
+                    break
+                if covered_start > cursor:
+                    extra_ranges.append((cursor, covered_start))
+                cursor = max(cursor, covered_end)
+            if cursor < page_end:
+                extra_ranges.append((cursor, page_end))
+            for load in report["load_segments"]:
+                load_start, load_end = load["vaddr"], load["vaddr"] + load["memsz"]
+                if load_start == start and load_end == end:
+                    relro["dedicated_load_segments"].append(load["index"])
+                if not load["flags"] & PF_W:
+                    continue
+                for extra_start, extra_end in extra_ranges:
+                    overlap_start = max(extra_start, load_start)
+                    overlap_end = min(extra_end, load_end)
+                    if overlap_start >= overlap_end:
+                        continue
+                    relro["writable_overlaps"].append({"load_index": load["index"],
+                                                      "start": overlap_start, "end": overlap_end})
+                    error = (f"16 KB RELRO protection overlaps writable PT_LOAD[{load['index']}] "
+                             f"at [0x{overlap_start:x}, 0x{overlap_end:x}). "
+                             "Rebuild the library with 16 KB RELRO layout support.")
+                    relro["errors"].append(error)
+                    report["errors"].append(f"PT_GNU_RELRO[{relro['index']}]: {error}")
     except (ValueError, struct.error) as error:
         report["errors"].append(str(error))
     report["metadata_prefix_bytes"] = len(reader.prefix)
@@ -187,7 +238,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{status} {name}: {packaging}, data_offset={library['zip_data_offset']}")
             for segment in library.get("load_segments", []):
                 print(f"  PT_LOAD[{segment['index']}] off=0x{segment['offset']:x} "
-                      f"vaddr=0x{segment['vaddr']:x} p_align={segment['align']}")
+                      f"vaddr=0x{segment['vaddr']:x} filesz=0x{segment['filesz']:x} "
+                      f"memsz=0x{segment['memsz']:x} flags=0x{segment['flags']:x} "
+                      f"p_align={segment['align']}")
+            for segment in library.get("relro_segments", []):
+                print(f"  PT_GNU_RELRO[{segment['index']}] off=0x{segment['offset']:x} "
+                      f"vaddr=0x{segment['vaddr']:x} filesz=0x{segment['filesz']:x} "
+                      f"memsz=0x{segment['memsz']:x} "
+                      f"protect=[0x{segment['protected_start']:x}, 0x{segment['protected_end']:x}) "
+                      f"dedicated_loads={segment['dedicated_load_segments']}")
             for error in library["errors"]:
                 print(f"  {error}")
         for error in report["errors"]:

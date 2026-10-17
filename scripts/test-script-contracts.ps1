@@ -398,6 +398,7 @@ Assert-Throws { Get-PatchTarget -PatchList $missingTarget } '*has no compatible 
 $tempBase = [System.IO.Path]::GetFullPath([System.IO.Path]::GetTempPath())
 $caseRoot = [System.IO.Path]::GetFullPath((Join-Path $tempBase ("hushfeed-script-test-" + [guid]::NewGuid().ToString('N'))))
 $requiredPrefix = $tempBase.TrimEnd('\') + '\'
+$deviceLeases = @{}
 if (-not $caseRoot.StartsWith($requiredPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
     throw "Refusing to create test files outside the temporary directory: $caseRoot"
 }
@@ -517,9 +518,13 @@ exit /b 17
 exit /b 19
 '@
     [System.IO.File]::WriteAllText($fakeAdb, $fakeBody, [System.Text.Encoding]::ASCII)
+    foreach ($fixtureSerial in 'CLEAN', 'READY', 'BROKEN', 'LOCKED') {
+        $deviceLeases[$fixtureSerial] = New-DeviceLease -LeaseDir (Join-Path $caseRoot 'device-leases') `
+            -Serial $fixtureSerial -Project 'hushfeed' -ChatIdentity 'script-contracts' -Purpose 'fake replacement checks'
+    }
 
     [System.IO.File]::WriteAllText($mode, 'absent', [System.Text.Encoding]::ASCII)
-    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'CLEAN' -PackageName 'com.example.app'
+    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'CLEAN' -PackageName 'com.example.app' -Lease $deviceLeases.CLEAN
     $calls = @(Get-Content -LiteralPath $log)
     Assert-True (-not $removed) 'An absent package was reported as removed.'
     Assert-True ($calls.Count -eq 1 -and $calls[0] -like '*shell pm path com.example.app') `
@@ -528,7 +533,7 @@ exit /b 19
     # API 36's pm path exits 1 with nothing to say for a package that isn't there.
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'absent-silent', [System.Text.Encoding]::ASCII)
-    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'CLEAN' -PackageName 'com.example.app'
+    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'CLEAN' -PackageName 'com.example.app' -Lease $deviceLeases.CLEAN
     $calls = @(Get-Content -LiteralPath $log)
     Assert-True (-not $removed) 'A package API 36 reports absent was reported as removed.'
     Assert-True ($calls.Count -eq 2 -and $calls[1] -like '*get-state') `
@@ -536,7 +541,7 @@ exit /b 19
 
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'present', [System.Text.Encoding]::ASCII)
-    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'READY' -PackageName 'com.example.app'
+    $removed = Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'READY' -PackageName 'com.example.app' -Lease $deviceLeases.READY
     $calls = @(Get-Content -LiteralPath $log)
     Assert-True $removed 'An installed package was not removed.'
     Assert-True ($calls.Count -eq 2 -and $calls[0] -like '*shell pm path com.example.app' -and
@@ -545,7 +550,7 @@ exit /b 19
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'check-fail', [System.Text.Encoding]::ASCII)
     Assert-Throws {
-        Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'BROKEN' -PackageName 'com.example.app'
+        Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'BROKEN' -PackageName 'com.example.app' -Lease $deviceLeases.BROKEN
     } '*could not check*' 'An ADB transport failure was treated as an absent package.'
     $calls = @(Get-Content -LiteralPath $log)
     Assert-True ($calls.Count -eq 2 -and $calls[1] -like '*get-state') 'The check-failure path continued after ADB failed.'
@@ -553,10 +558,11 @@ exit /b 19
     Remove-Item -LiteralPath $log -Force
     [System.IO.File]::WriteAllText($mode, 'uninstall-fail', [System.Text.Encoding]::ASCII)
     Assert-Throws {
-        Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'LOCKED' -PackageName 'com.example.app'
+        Remove-AndroidPackageIfInstalled -Adb $fakeAdb -Serial 'LOCKED' -PackageName 'com.example.app' -Lease $deviceLeases.LOCKED
     } '*uninstall failed*' 'An uninstall failure was accepted.'
     $calls = @(Get-Content -LiteralPath $log)
     Assert-True ($calls.Count -eq 2) 'The uninstall-failure path did not perform exactly a check and uninstall.'
+    foreach ($context in $deviceLeases.Values) { Remove-DeviceLease -Lease $context }
 
     $emptyJdk = Join-Path $caseRoot 'empty-jdk'
     New-Item -ItemType Directory -Path $emptyJdk | Out-Null
@@ -633,6 +639,9 @@ exit /b 19
     Assert-True ($deviceScript -match '\[string\[\]\]\$Option' -and $deviceScript -match "\`$enable \+= '-O'") `
         'patch-for-device.ps1 has no way to pass a patch option to the CLI.'
 } finally {
+    foreach ($context in $deviceLeases.Values) {
+        if ($null -ne $context.Stream) { Remove-DeviceLease -Lease $context }
+    }
     if ($caseRoot.StartsWith($requiredPrefix, [System.StringComparison]::OrdinalIgnoreCase) -and
         (Test-Path -LiteralPath $caseRoot)) {
         Remove-Item -LiteralPath $caseRoot -Recurse -Force
@@ -726,8 +735,9 @@ if (Test-Path -LiteralPath $windowsPowerShell -PathType Leaf) {
         [IO.File]::WriteAllText($standInAdb, "@echo * daemon not running; starting now at tcp:5037 1>&2`r`n@exit /b 0`r`n")
         $installScript = Join-Path $PSScriptRoot 'device-install.ps1'
         $command = "`$ErrorActionPreference = 'Stop'; . '$installScript'; " +
-            "try { 'removed=' + (Remove-AndroidPackageIfInstalled -Adb '$standInAdb' -Serial 'serial' -PackageName 'com.example' 6> `$null) } " +
-            "catch { 'threw: ' + `$_.Exception.Message }"
+            "`$lease = New-DeviceLease -LeaseDir '$(Join-Path $nativeRoot 'device-leases')' -Serial 'serial' -Project 'hushfeed' -ChatIdentity 'ps51-fixture' -Purpose 'stderr fixture'; " +
+            "try { 'removed=' + (Remove-AndroidPackageIfInstalled -Adb '$standInAdb' -Serial 'serial' -PackageName 'com.example' -Lease `$lease 6> `$null) } " +
+            "catch { 'threw: ' + `$_.Exception.Message } finally { Remove-DeviceLease -Lease `$lease }"
         $answer = (& $windowsPowerShell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command $command 2>&1 |
             Out-String).Trim()
         $global:LASTEXITCODE = 0
@@ -1521,7 +1531,9 @@ try {
         $changelog = $changelog.Substring(0, $body.Index) + "`n$group`n`n" +
             $changelog.Substring($body.Index + $body.Length)
         Set-Content -LiteralPath $changelogPath -Value $changelog -Encoding UTF8 -NoNewline
-        $document.description += "`n`n$group"
+        $existing = [regex]::Match([string]$document.description, '(?m)^### ')
+        $facts = if ($existing.Success) { ([string]$document.description).Substring(0, $existing.Index).TrimEnd() } else { [string]$document.description }
+        $document.description = $facts + "`n`n$group"
         Set-Content -LiteralPath $indexPath -Value ($document | ConvertTo-Json -Depth 100) -Encoding UTF8 -NoNewline
     }
 
@@ -1545,11 +1557,22 @@ try {
     # this branch only ever ran on a real push; on 2026-09-26 it held two bugs the contracts passed:
     # one published target read as a string ("TikTok 4"), and a lookahead that refused "47.0.3." at
     # the end of a sentence.
+    $beforeLag = (Get-Content -LiteralPath (Join-Path $factsRoot 'patches-bundle.json') -Raw | ConvertFrom-Json).description
     Set-FactsFile 'patches-bundle.json' {
         param($text)
-        [regex]::Replace(($text -replace '\b\d+ patches\b', '90 patches'),
-            'TikTok\s+\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*', 'TikTok 47.0.3')
+        $document = $text | ConvertFrom-Json
+        $description = [string]$document.description
+        $groups = [regex]::Match($description, '(?m)^### ')
+        $facts = if ($groups.Success) { $description.Substring(0, $groups.Index) } else { $description }
+        $suffix = if ($groups.Success) { $description.Substring($groups.Index) } else { '' }
+        $document.description = [regex]::Replace(($facts -replace '\b\d+ patches\b', '90 patches'),
+            'TikTok\s+\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*', 'TikTok 47.0.3') + $suffix
+        $document | ConvertTo-Json -Depth 100
     }
+    $afterLag = (Get-Content -LiteralPath (Join-Path $factsRoot 'patches-bundle.json') -Raw | ConvertFrom-Json).description
+    $groupsBeforeLag = [regex]::Match($beforeLag, '(?ms)^### .*').Value
+    Assert-True ([regex]::Match($afterLag, '(?ms)^### .*').Value -ceq $groupsBeforeLag) `
+        'The lagging-index fixture changed published changelog evidence along with release facts.'
     Set-FactsFile $bugFormRelative {
         param($text) $text -replace ('Version ' + [regex]::Escape($catalogVersion) + ' for TikTok \d+(?:\.\d+)+'), "Version $catalogVersion for TikTok 47.0.3"
     }
@@ -2043,6 +2066,7 @@ try {
     $signingMarker = Join-Path $hookRoot 'signing-ran.txt'
     $attestationMarker = Join-Path $hookRoot 'attestation-ran.txt'
     $bundleSignatureMarker = Join-Path $hookRoot 'bundle-signature-ran.txt'
+    $searchLynxMarker = Join-Path $hookRoot 'search-lynx-ran.txt'
     $requireWrapper = Join-Path $hookRoot 'require-wrapper.txt'
     Set-Content -LiteralPath (Join-Path $hookRoot 'scripts/validate-release-facts.ps1') -Encoding UTF8 -Value @(
         'param([string]$Root, [switch]$SkipDescriptionTestCount, [switch]$AllowPublishedIndexLag,',
@@ -2065,10 +2089,13 @@ try {
         Set-Content -LiteralPath (Join-Path $hookRoot "scripts/$($suite[0])") -Encoding UTF8 -Value @(
             'param([string]$Root)', "Set-Content -LiteralPath '$($suite[1])' -Value 'ran'", 'exit 0')
     }
+    New-Item -ItemType Directory -Path (Join-Path $hookRoot 'tools/verification-probe') -Force | Out-Null
+    Set-Content -LiteralPath (Join-Path $hookRoot 'tools/verification-probe/test-search-lynx.ps1') -Encoding UTF8 -Value @(
+        'param([string]$Root)', "Set-Content -LiteralPath '$searchLynxMarker' -Value `"root=`$Root`"", 'exit 0')
 
     function Invoke-Hook {
         param([string[]]$Paths)
-        Remove-Item -LiteralPath $factsMarker, $contractsMarker, $signingMarker, $attestationMarker, $bundleSignatureMarker -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $factsMarker, $contractsMarker, $signingMarker, $attestationMarker, $bundleSignatureMarker, $searchLynxMarker -Force -ErrorAction SilentlyContinue
         $global:LASTEXITCODE = 0
         & $prePushScript -Root $hookRoot -ChangedPaths $Paths 6> $null
         if ($LASTEXITCODE -ne 0) { throw "pre-push exited $LASTEXITCODE for $($Paths -join ', ')" }
@@ -2097,7 +2124,7 @@ try {
     foreach ($signingInput in @(
         'scripts/apk-signing.ps1', 'scripts/SigningCertificateCheck.java',
         'scripts/SigningKeyFixtures.java', 'scripts/test-apk-signing.ps1',
-        'scripts/patch-for-device.ps1', 'scripts/device-install.ps1',
+        'scripts/patch-for-device.ps1', 'scripts/device-install.ps1', 'scripts/device-lease.ps1',
         'scripts/common.ps1', 'scripts/Resolve-Java.ps1',
         'scripts/patch-target.ps1', 'scripts/patch-report.ps1',
         'tools/verification-probe/build.ps1', 'tools/verification-probe/AndroidManifest.xml',
@@ -2118,12 +2145,29 @@ try {
     Invoke-Hook -Paths @('tools/verification-probe/tests/app/hushfeed/verification/StorageScanContract.java')
     Assert-True (Test-Path -LiteralPath $contractsMarker) 'A storage scanner test change skipped its contracts.'
     Assert-True (-not (Test-Path -LiteralPath $signingMarker)) 'A scanner JVM test selected SDK signing fixtures.'
+    Assert-True (-not (Test-Path -LiteralPath $searchLynxMarker)) 'A storage scanner test change selected the Search Lynx contracts.'
+
+    foreach ($searchLynxInput in @('tools/verification-probe/src/app/hushfeed/verification/SearchLynxEvidence.java',
+            'tools/verification-probe/src/app/hushfeed/verification/SearchLynxSnapshot.java',
+            'tools/verification-probe/tests/app/hushfeed/verification/SearchLynxEvidenceContract.java',
+            'tools/verification-probe/test-search-lynx.ps1')) {
+        Invoke-Hook -Paths @($searchLynxInput)
+        Assert-True ((Test-Path -LiteralPath $searchLynxMarker) -and
+            (Get-Content -LiteralPath $searchLynxMarker -Raw).Trim() -eq "root=$hookRoot") `
+            "Search Lynx input $searchLynxInput skipped its contracts or used another root."
+    }
 
     foreach ($probeTool in @('tools/verification-probe/probe-log.ps1', 'tools/verification-probe/strip-hunt.ps1',
             'tools/verification-probe/record-markers.ps1')) {
         Invoke-Hook -Paths @($probeTool)
         Assert-True (Test-Path -LiteralPath $contractsMarker) "A probe tool change $probeTool skipped its log-marker contracts."
         Assert-True (-not (Test-Path -LiteralPath $signingMarker)) "A probe tool change $probeTool selected SDK signing fixtures."
+    }
+
+    foreach ($auditInput in @('audit/run-audit.ps1', 'audit/evidence.ps1', 'audit/test-evidence.ps1', 'audit/catalog.json')) {
+        Invoke-Hook -Paths @($auditInput)
+        Assert-True (Test-Path -LiteralPath $contractsMarker) "Audit input $auditInput skipped its evidence contracts."
+        Assert-True (-not (Test-Path -LiteralPath $signingMarker)) "Audit-only input $auditInput selected SDK signing fixtures."
     }
 
     Invoke-Hook -Paths @('release-receipt-0.31.0.json')
@@ -3531,6 +3575,8 @@ Write-Host '[scripts] shared phone log contracts passed'
 & (Join-Path $Root 'scripts/test-storage-probe.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-fixture-jobs.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-release-publication.ps1') -Root $Root
+& (Join-Path $Root 'scripts/test-device-lease.ps1')
+& (Join-Path $Root 'audit/test-evidence.ps1')
 
 $global:LASTEXITCODE = 0
 Write-Host '[scripts] report, target, Java and guarded replacement contracts passed'

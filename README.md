@@ -374,9 +374,13 @@ pwsh -File scripts/validate-release-facts.ps1
 
 The patch tests read the stock TikTok APKs from the folder `HUSHFEED_FIXTURE_DIR` names, which [CONTRIBUTING.md](CONTRIBUTING.md) covers along with the release steps. The finished bundle is `patches/build/release/patches-<version>.mpp`, with `bundle.sha256` beside it. Publish that one. The copy in `patches/build/libs` gets turned back into a plain jar by later Gradle tasks, and Morphe Manager then shows zero patches. Two clean builds of the same commit give the same file and checksum.
 
-For Android 17 emulator checks, use Android SDK Command-line Tools 23 and inspect the new AVD's `.ini` target before launching it. Tools 12 can misread `android-37.1` as `android-0` even when creation succeeds. A 16 KB image still needs actual TikTok launch and playback checks. Aligned APK entries alone don't prove it runs.
+For Android 17 emulator checks, use Android SDK Command-line Tools 23 and inspect the new AVD's `.ini` target before launching it. Tools 12 can misread `android-37.1` as `android-0` even when creation succeeds. Run `python scripts/verify-native-alignment.py <apk>` to check native LOAD alignment, stored ZIP offsets and RELRO ranges that overlap writable data on 16 KB pages. Safely isolated RELRO LOAD segments are accepted. A 16 KB image still needs actual TikTok launch and playback checks. A static pass doesn't prove it runs.
 
 To add a language to the settings screen, copy one of the tables under `extensions/tiktok/src/main/l10n/` (the tab separated `de.tsv` or the Weblate style `in.csv`) to your language code, translate the right column, then run `python scripts/gen-l10n.py` and `./gradlew :extensions:tiktok:test`. Use the code Android reports, so `in` rather than `id`. The tests fail on any settings text that's missing from a table.
+
+The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, plus unchanged evidence files. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
+
+On Windows, device builds, probe installation and audit runs need `-LeaseDir <shared lease folder>` and `-ChatIdentity <task identifier>`, or `HUSHFEED_DEVICE_LEASE_DIR` and `HUSHFEED_CHAT_IDENTITY`. Every device command checks the exact serial and current ownership. Existing leases are never reclaimed automatically, including expired ones. Local builds and offline audit checks don't acquire a device lease.
 
 Where things live:
 

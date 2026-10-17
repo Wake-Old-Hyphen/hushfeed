@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Pemeriksa penyelarasan native kini mendeteksi tumpang tindih RELRO yang tidak aman pada halaman 16 KB dan menerima segmen terpisah.
+
+* **TikTok:** Audit patch kini memisahkan bukti terkini yang terverifikasi dari pengujian lama dan menolak penilaian tangkapan layar yang sudah tidak berlaku.
+
+* **TikTok:** Build dengan akses perangkat dan audit kini memerlukan reservasi perangkat eksklusif. Build lokal tetap bisa berjalan tanpa reservasi.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** Saat Sembunyikan bilah komentar di video yang dibuka aktif, jumlah suka tidak lagi menimpa bilah progres saat Suka adalah tombol terbawah yang tersisa di kanan (#145).

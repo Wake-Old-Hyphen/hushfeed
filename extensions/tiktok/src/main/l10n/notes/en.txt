@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** The native alignment checker now catches unsafe RELRO sharing on 16 KB pages and accepts isolated segments.
+
+* **TikTok:** The patch audit now separates current, verified evidence from older runs and rejects stale screenshot verdicts.
+
+* **TikTok:** Device builds and audits now require an exclusive device lease. Local builds still work without one.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** With Hide the comment bar on opened videos on, the like count no longer sits on the progress bar when Like is the lowest button left on the right (#145).

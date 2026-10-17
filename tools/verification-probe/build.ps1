@@ -38,6 +38,9 @@
 [CmdletBinding()]
 param(
     [string]$Serial,
+    [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
+    [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
+    [ValidateRange(1, 30)][int]$LeaseMinutes = 30,
     [switch]$Install,
     [switch]$Uninstall,
     [string]$Sdk = "$env:LOCALAPPDATA\Android\Sdk",
@@ -136,7 +139,14 @@ function Resolve-Adb {
 
 if ($Uninstall) {
     if (-not $Serial) { throw '-Uninstall needs -Serial.' }
-    & (Resolve-Adb) -s $Serial uninstall app.hushfeed.verification | Out-Host
+    $deviceLease = $null
+    try {
+        $adb = Resolve-Adb
+        $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+            -ChatIdentity $ChatIdentity -Purpose 'verification probe uninstall' -LeaseMinutes $LeaseMinutes
+        # pm path first: uninstalling a probe that isn't there fails with DELETE_FAILED_INTERNAL_ERROR.
+        [void](Remove-AndroidPackageIfInstalled -Adb $adb -Serial $Serial -PackageName 'app.hushfeed.verification' -Lease $deviceLease)
+    } finally { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
     return
 }
 
@@ -156,6 +166,7 @@ if (-not $javac -or -not (Test-Path $javac)) { throw 'No javac found. Set JAVA_H
 
 $OutDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutDir)
 $signingSession = $null
+$deviceLease = $null
 try {
 $signingSession = New-ApkSigningSession -BoundParameters $PSBoundParameters -Root $root -Sdk $Sdk `
     -Java $Java -Keystore $Keystore -KeyAlias $KeyAlias -KeystoreType $KeystoreType -OutputDirectory $OutDir
@@ -233,9 +244,12 @@ Write-Host "[probe] $signed"
 if ($Install) {
     if (-not $Serial) { throw '-Install needs -Serial.' }
     $adb = Resolve-Adb
-    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName 'app.hushfeed.verification' -SigningSession $signingSession
+    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+        -ChatIdentity $ChatIdentity -Purpose 'verification probe install' -LeaseMinutes $LeaseMinutes
+    Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName 'app.hushfeed.verification' -SigningSession $signingSession -Lease $deviceLease
     Assert-InstalledApkSigner -Adb $adb -Serial $Serial -PackageName 'com.zhiliaoapp.musically' `
-        -SigningSession $signingSession -RequireInstalled
+        -SigningSession $signingSession -RequireInstalled -Lease $deviceLease
+    Assert-DeviceLease -Lease $deviceLease -Serial $Serial
     & $adb -s $Serial install -r $signed | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "adb install failed on $Serial. The output above says why." }
     Write-Host '[probe] installed. Load it into TikTok, then send it work:'
@@ -243,4 +257,7 @@ if ($Install) {
     Write-Host "  adb -s $Serial shell am broadcast -a app.hushfeed.verification.PROBE -p com.zhiliaoapp.musically -e action dump"
     Write-Host "  adb -s $Serial logcat -d | Select-String HushfeedProbe"
 }
-} finally { Close-ApkSigningSession -Session $signingSession }
+} finally {
+    try { Remove-DeviceLease -Lease $deviceLease -WarnOnFailure }
+    finally { Close-ApkSigningSession -Session $signingSession }
+}

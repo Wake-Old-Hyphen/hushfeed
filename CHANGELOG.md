@@ -4,6 +4,14 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Verification
+
+* **TikTok:** The native alignment checker now catches RELRO ranges that would make writable data read-only on 16 KB devices. Safely isolated RELRO segments remain accepted.
+
+* **TikTok:** The patch audit now checks saved results against their definitions, tested APK and build receipt, including the actual evidence files. Older or incomplete runs stay marked historical. Screenshot verdicts can't be applied to a different run.
+
+* **TikTok:** Device builds and audits now require an exclusive lease before accessing a test device. An expired or lost lease stops device commands. Local builds still work without one.
+
 ## 0.75.0 (2026-10-16)
 
 ### Features and fixes

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Runs the patch audit: every check in audit/catalog.json against a patched APK and a phone.
+    Runs the patch audit against a patched APK and a leased emulator or test device.
 
 .DESCRIPTION
     The catalog holds one entry per patch with the checks that prove it does what its
@@ -15,6 +15,11 @@
     person to judge against the check's review text. A check whose decisions are all
     expectations is marked auto; one with a "shot" ends as "review" until a verdict is merged
     with -ApplyVerdicts.
+
+    -BuildReceipt and -Bundle verify the device builder's APK/source identity. Device checks
+    also require the installed base APK to match -Apk and a shared -LeaseDir (or its environment
+    variable). -ValidateResults checks saved definitions, receipts and evidence files without
+    rewriting results. Evidence without a verified build receipt remains explicitly unbound.
 
     Settings a patch's checks change are read first and written back after its last check,
     and TikTok is restarted then if any of its checks restarted it, so each patch starts from
@@ -41,7 +46,7 @@
     audit/run-audit.ps1 -Apk C:\scratch\hushfeed-0.74.0-signed.apk -Serial <serial> -Only 'Hide the LIVE button,category:Comments'
 
 .EXAMPLE
-    audit/run-audit.ps1 -ApplyVerdicts C:\scratch\verdicts.json -Results audit\results\tiktok-47.1.4.json
+    audit/run-audit.ps1 -ApplyVerdicts C:\scratch\verdicts.json -Results audit\results\tiktok-47.1.4.json -OutDir C:\scratch\evidence
 #>
 [CmdletBinding()]
 param(
@@ -56,8 +61,13 @@ param(
     [string]$Aapt2,
     [string]$Ffmpeg,
     [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
+    [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
+    [ValidateRange(1, 30)][int]$LeaseMinutes = 30,
     [switch]$NoDevice,
     [string]$ApplyVerdicts,
+    [switch]$ValidateResults,
+    [string]$BuildReceipt,
+    [string]$Bundle,
     [switch]$Validate
 )
 
@@ -65,6 +75,12 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $package = 'com.zhiliaoapp.musically'
 if (-not $Catalog) { $Catalog = Join-Path $PSScriptRoot 'catalog.json' }
+. (Join-Path $PSScriptRoot 'evidence.ps1')
+. (Join-Path $root 'scripts/device-lease.ps1')
+$allCatalogEntries = Get-Content -LiteralPath $Catalog -Raw -Encoding UTF8 | ConvertFrom-Json
+$allCatalogEntries = @($allCatalogEntries)
+$catalogKeyProblems = @(Get-AuditCatalogProblems $allCatalogEntries)
+if ($catalogKeyProblems.Count) { throw ($catalogKeyProblems -join '; ') }
 
 # Words on a control that reaches other people. A tap whose target starts with one of these is
 # refused. "Following" is on the list because on someone else's profile that button unfollows.
@@ -84,23 +100,32 @@ function Write-Summary {
 }
 
 if ($ApplyVerdicts) {
-    # Merge a person's verdicts on review checks: { "<patch name>/<check id>": { "status": "pass|fail", "note": "..." } }.
+    # Every review must name the exact execution receipt it reviewed.
     if (-not $Results) { throw '-ApplyVerdicts needs -Results.' }
-    $run = Get-Content -LiteralPath $Results -Raw | ConvertFrom-Json
-    $verdicts = Get-Content -LiteralPath $ApplyVerdicts -Raw | ConvertFrom-Json
-    $applied = 0
-    foreach ($property in $verdicts.PSObject.Properties) {
-        $patchName, $checkId = $property.Name -split '/', 2
-        $patch = $run.patches | Where-Object { $_.name -eq $patchName } | Select-Object -First 1
-        $check = if ($patch) { $patch.checks | Where-Object { $_.id -eq $checkId } | Select-Object -First 1 }
-        if (-not $check) { Write-Warning "no check $($property.Name) in the results"; continue }
-        $check.status = $property.Value.status
-        $check | Add-Member -NotePropertyName verdictNote -NotePropertyValue $property.Value.note -Force
-        $applied++
+    # Without the evidence folder every receipt's files are unreadable, so every verdict looked stale.
+    if (-not $OutDir) { throw '-ApplyVerdicts needs -OutDir, the evidence folder of the run it reviews.' }
+    $run = Get-Content -LiteralPath $Results -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($Apk -and (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() -cne [string]$run.apk.sha256) {
+        throw '-Results were recorded for a different APK than -Apk. No verdict was applied.'
     }
+    $verdicts = ConvertFrom-AuditVerdictJson (Get-Content -LiteralPath $ApplyVerdicts -Raw -Encoding UTF8)
+    Set-AuditVerdicts $allCatalogEntries $run $verdicts $OutDir
+    $applied = @($verdicts.PSObject.Properties).Count
     $counts = Write-Summary $run
+    $run | Add-Member -NotePropertyName qualification -NotePropertyValue (Get-AuditResultValidation $allCatalogEntries $run $OutDir) -Force
     $run | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $Results -Encoding utf8
     Write-Host "[audit] $applied verdicts merged: $(($counts.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join ', ')"
+    exit 0
+}
+
+if ($ValidateResults) {
+    if (-not $Results) { throw '-ValidateResults needs -Results.' }
+    if (-not $OutDir) { throw '-ValidateResults needs -OutDir, the evidence folder of the saved run.' }
+    $saved = Get-Content -LiteralPath $Results -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($Apk) { $saved.apk.sha256 = (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() }
+    $validation = Get-AuditResultValidation $allCatalogEntries $saved $OutDir
+    $validation | ConvertTo-Json -Depth 8
+    if ($validation.problems.Count) { exit 1 }
     exit 0
 }
 
@@ -108,7 +133,7 @@ if ($Validate) {
     # The catalog against the source it describes: every patch in patches-list.json has one entry,
     # every step is one the runner knows, and every probe action and setting key still exists.
     $problems = New-Object System.Collections.Generic.List[string]
-    $entries = @(Get-Content -LiteralPath $Catalog -Raw | ConvertFrom-Json)
+    $entries = $allCatalogEntries
     $declared = @((Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json).patches | ForEach-Object { [string]$_.name })
     $named = @($entries | ForEach-Object { [string]$_.name })
     foreach ($name in $declared) { if ($named -notcontains $name) { $problems.Add("no entry for the patch '$name'") } }
@@ -225,7 +250,7 @@ function Resolve-AuditAapt2 {
 }
 
 $aapt2Exe = Resolve-AuditAapt2
-$catalogEntries = @(Get-Content -LiteralPath $Catalog -Raw | ConvertFrom-Json)
+$catalogEntries = $allCatalogEntries
 $catalogOrder = @{}
 for ($i = 0; $i -lt $catalogEntries.Count; $i++) { $catalogOrder[[string]$catalogEntries[$i].name] = $i }
 if ($Only) {
@@ -313,37 +338,41 @@ $adbExe = $null
 $deviceUp = -not $NoDevice
 if ($deviceUp) {
     if (-not $Serial) { throw 'Pass -Serial (or set HUSHFEED_DEVICE_SERIAL), or -NoDevice for the APK checks only.' }
+    if (-not $LeaseDir) { throw 'Device checks require -LeaseDir or HUSHFEED_DEVICE_LEASE_DIR for the shared device pool.' }
+    if (-not $ChatIdentity) { throw 'Device checks require -ChatIdentity or HUSHFEED_CHAT_IDENTITY.' }
     $adbExe = Resolve-AuditAdb
 }
-$leaseFile = $null
-$leaseToken = [guid]::NewGuid().ToString('N')
+$auditLease = $null
 function Grant-AuditLease {
-    if (-not $LeaseDir) { return }
-    $script:leaseFile = Join-Path $LeaseDir "$Serial.json"
-    # Older lease writers call the token "token", newer ones "ownershipToken"; both are read.
-    $body = [ordered]@{ schemaVersion = 1; serial = $Serial; project = 'hushfeed'; purpose = 'patch audit'; ownershipToken = $leaseToken
-        acquiredUtc = [DateTime]::UtcNow.ToString('o'); expiresUtc = [DateTime]::UtcNow.AddMinutes(30).ToString('o') } | ConvertTo-Json
-    if (Test-Path -LiteralPath $script:leaseFile) {
-        $held = Get-Content -LiteralPath $script:leaseFile -Raw | ConvertFrom-Json
-        $mine = ($held.ownershipToken, $held.token) -contains $leaseToken
-        $expiry = [string]$held.expiresUtc
-        if (-not $mine -and $expiry -and [DateTimeOffset]::Parse($expiry) -gt [DateTimeOffset]::UtcNow) {
-            throw "The phone is leased by $($held.project) ($($held.purpose)) until $expiry."
-        }
-        Set-Content -LiteralPath $script:leaseFile -Value $body
-        return
+    if ($null -eq $script:auditLease) {
+        $script:auditLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+            -ChatIdentity $ChatIdentity -Purpose 'patch audit' -LeaseMinutes $LeaseMinutes
+    } else {
+        Assert-DeviceLease -Lease $script:auditLease -Serial $Serial
+        Update-DeviceLease -Lease $script:auditLease -LeaseMinutes $LeaseMinutes
     }
-    $stream = [IO.File]::Open($script:leaseFile, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write)
-    try { $bytes = [Text.Encoding]::UTF8.GetBytes($body); $stream.Write($bytes, 0, $bytes.Length) } finally { $stream.Dispose() }
 }
 function Revoke-AuditLease {
-    if ($script:leaseFile -and (Test-Path -LiteralPath $script:leaseFile)) {
-        $held = Get-Content -LiteralPath $script:leaseFile -Raw | ConvertFrom-Json
-        if ($held.ownershipToken -eq $leaseToken) { Remove-Item -LiteralPath $script:leaseFile -Force }
+    try {
+        Remove-DeviceLease -Lease $script:auditLease
+        $script:auditLease = $null
+    } catch {
+        # The helper closes our handle even on rejection, without deleting an unowned file.
+        Write-Warning "Device lease could not be released; confirmed recovery is required. $($_.Exception.Message)"
     }
 }
 
-function Invoke-AuditAdb { & $adbExe -s $Serial @args }
+function Test-AuditLeaseOwnership {
+    try {
+        Assert-DeviceLease -Lease $script:auditLease -Serial $Serial
+        return $true
+    } catch { return $false }
+}
+
+function Invoke-AuditAdb {
+    Assert-DeviceLease -Lease $script:auditLease -Serial $Serial
+    & $adbExe -s $Serial @args
+}
 function ConvertTo-DeviceQuoted([string]$Text) { "'" + ($Text -replace "'", "'\''") + "'" }
 function Invoke-DeviceShell([string]$Command) { Invoke-AuditAdb shell $Command }
 
@@ -528,11 +557,21 @@ function Open-Surface([string]$Where) {
 # The results file is committed, so it names evidence by file name inside -OutDir and never by
 # a path on the machine that ran it.
 function Save-Shot([string]$Name) {
-    $file = "$($Name -replace '[^\w.-]', '_').png"
-    Invoke-DeviceShell 'screencap -p /sdcard/hushfeed-audit.png' | Out-Null
-    Invoke-AuditAdb pull /sdcard/hushfeed-audit.png (Join-Path $OutDir $file) 2>&1 | Out-Null
-    Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.png' | Out-Null
-    return $file
+    $capture = [Guid]::NewGuid().ToString('N')
+    $file = "$($Name -replace '[^\w.-]', '_')-$capture.png"
+    $remote = "/sdcard/hushfeed-audit-$capture.png"
+    $local = Join-Path $OutDir $file
+    try {
+        Invoke-DeviceShell "screencap -p $remote" | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'screencap failed' }
+        Invoke-AuditAdb pull $remote $local 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $local) -or (Get-Item -LiteralPath $local).Length -eq 0) {
+            throw 'the screenshot could not be pulled'
+        }
+        return $file
+    } finally {
+        try { Invoke-DeviceShell "rm -f $remote" | Out-Null } catch { Write-Warning 'Could not remove the temporary device screenshot.' }
+    }
 }
 
 function Save-Evidence([string]$Name, [string]$Text) {
@@ -575,11 +614,12 @@ function Get-TikTokVibrations([string]$Since) {
 $script:recorder = $null
 $script:ffmpegExe = $null
 function Start-ScreenRecord([int]$Seconds) {
-    Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.mp4' | Out-Null
+    $script:recordingRemote = "/sdcard/hushfeed-audit-$([Guid]::NewGuid().ToString('N')).mp4"
     $start = [Diagnostics.ProcessStartInfo]::new($adbExe)
-    $start.Arguments = "-s $Serial shell screenrecord --time-limit $Seconds /sdcard/hushfeed-audit.mp4"
+    $start.Arguments = "-s $Serial shell screenrecord --time-limit $Seconds $script:recordingRemote"
     $start.UseShellExecute = $false
     $start.CreateNoWindow = $true
+    Assert-DeviceLease -Lease $script:auditLease -Serial $Serial
     $script:recorder = [Diagnostics.Process]::Start($start)
     # screenrecord takes a moment before its first frame.
     Start-Sleep -Milliseconds 1000
@@ -587,14 +627,36 @@ function Start-ScreenRecord([int]$Seconds) {
 
 function Stop-ScreenRecord([string]$Local) {
     if (-not $script:recorder) { throw 'a record stop with no record start before it' }
-    $finished = $script:recorder.WaitForExit(30000)
-    if (-not $finished) { $script:recorder.Kill() }
-    $script:recorder = $null
-    if (-not $finished) { throw 'screenrecord never finished' }
-    Start-Sleep -Milliseconds 500
-    Invoke-AuditAdb pull /sdcard/hushfeed-audit.mp4 $Local 2>&1 | Out-Null
-    Invoke-DeviceShell 'rm -f /sdcard/hushfeed-audit.mp4' | Out-Null
-    if (-not (Test-Path -LiteralPath $Local)) { throw 'the screen recording could not be pulled' }
+    try {
+        $finished = $script:recorder.WaitForExit(30000)
+        if (-not $finished) { throw 'screenrecord never finished' }
+        if ($script:recorder.ExitCode -ne 0) { throw 'screenrecord failed' }
+        if (Test-Path -LiteralPath $Local) { throw 'Refusing to replace existing recording evidence.' }
+        Start-Sleep -Milliseconds 500
+        Invoke-AuditAdb pull $script:recordingRemote $Local 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $Local) -or (Get-Item -LiteralPath $Local).Length -eq 0) {
+            throw 'the screen recording could not be pulled'
+        }
+    } finally {
+        Clear-ScreenRecord
+    }
+}
+
+function Clear-ScreenRecord {
+    if ($script:recorder) {
+        try { if (-not $script:recorder.HasExited) { $script:recorder.Kill() } } catch {
+            Write-Warning "Could not stop the local recorder: $($_.Exception.Message)"
+        } finally {
+            $script:recorder.Dispose()
+            $script:recorder = $null
+        }
+    }
+    if ($script:recordingRemote) {
+        if (Test-AuditLeaseOwnership) {
+            try { Invoke-DeviceShell "rm -f $script:recordingRemote" | Out-Null } catch { Write-Warning 'Could not remove the temporary device recording.' }
+        } else { Write-Warning 'Device lease was lost; the temporary recording could not be removed.' }
+        $script:recordingRemote = $null
+    }
 }
 
 # How each frame of a clip stands against its last one, the screen it settled on: a slide or a
@@ -818,7 +880,7 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
                     } else {
                         if (-not $script:ffmpegExe) { $script:ffmpegExe = Resolve-AuditFfmpeg }
                         if (-not $script:ffmpegExe) { throw 'a record step needs ffmpeg: pass -Ffmpeg or set HUSHFEED_FFMPEG' }
-                        $clipName = "$("$tag-$index-screen" -replace '[^\w.-]', '_').mp4"
+                        $clipName = "$("$tag-$index-screen" -replace '[^\w.-]', '_')-$([Guid]::NewGuid().ToString('N')).mp4"
                         Stop-ScreenRecord (Join-Path $OutDir $clipName)
                         $result.evidence += $clipName
                         $change = Measure-ScreenChange (Join-Path $OutDir $clipName)
@@ -832,8 +894,8 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
                     }
                 }
                 'back' { Invoke-DeviceShell 'input keyevent KEYCODE_BACK' | Out-Null; Start-Sleep -Milliseconds 1200 }
-                'tap' { $result.evidence += (Invoke-DumpTap $step.tap); Start-Sleep -Milliseconds 1500 }
-                'longpress' { $result.evidence += (Invoke-DumpTap $step.longpress 900); Start-Sleep -Milliseconds 1500 }
+                'tap' { $result.evidence += Save-Evidence "$tag-$index-tap" (Invoke-DumpTap $step.tap); Start-Sleep -Milliseconds 1500 }
+                'longpress' { $result.evidence += Save-Evidence "$tag-$index-longpress" (Invoke-DumpTap $step.longpress 900); Start-Sleep -Milliseconds 1500 }
                 'probe' {
                     $wait = if ($step.waitMs) { [int]$step.waitMs } else { 3000 }
                     # "retrySwipe": n moves the feed on to the next video up to n times until the
@@ -902,7 +964,9 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
         } catch {
             $result.status = if ($_.Exception.Message -like 'precondition: *') { 'inconclusive' } else { 'fail' }
             $result.failures += "step $index ($kind): $($_.Exception.Message)"
-            if ($script:recorder) { try { $script:recorder.Kill() } catch { }; $script:recorder = $null }
+            if ($script:recorder) {
+                try { Clear-ScreenRecord } catch { $result.failures += "recording cleanup: $($_.Exception.Message)" }
+            }
             if ($deviceUp -and $kind -ne 'apk') {
                 try { $result.evidence += Save-Shot "$tag-failed-step$index" } catch { }
                 # A lab rule outlives a restart, and the check's own labclear step comes after the
@@ -927,19 +991,21 @@ function Invoke-Check($Entry, $Check, [hashtable]$Originals, [ref]$Restarted) {
 $run = [ordered]@{
     app = [ordered]@{ package = $package; version = $versionName; versionCode = $versionCode }
     apk = [ordered]@{ file = (Split-Path -Leaf $Apk); sha256 = (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() }
-    hushfeed = [ordered]@{ commit = "$(git -C $root rev-parse --short HEAD 2>$null)"; catalog = (Get-FileHash -LiteralPath $Catalog -Algorithm SHA256).Hash.Substring(0, 16).ToLowerInvariant() }
+    runner = [ordered]@{ commit = "$(git -C $root rev-parse HEAD 2>$null)"; catalog = (Get-FileHash -LiteralPath $Catalog -Algorithm SHA256).Hash.ToLowerInvariant() }
+    build = Read-AuditBuildIdentity -ApkPath $Apk -ReceiptPath $BuildReceipt -BundlePath $Bundle
     device = $null
     startedUtc = [DateTime]::UtcNow.ToString('o')
     finishedUtc = $null
     evidence = (Split-Path -Leaf $OutDir)
     summary = $null
+    qualification = $null
     hooks = $null
     patches = @()
 }
 # A part rerun (-Only) keeps what the version's results file already says about the other
 # patches. Each patch's result names the APK it ran against, so a carried one stays honest.
 if ($Only -and (Test-Path -LiteralPath $Results)) {
-    $previous = Get-Content -LiteralPath $Results -Raw | ConvertFrom-Json
+    $previous = Get-Content -LiteralPath $Results -Raw -Encoding UTF8 | ConvertFrom-Json
     $rerun = @($catalogEntries | ForEach-Object { [string]$_.name })
     $run.patches = @($previous.patches | Where-Object { $rerun -notcontains $_.name })
     foreach ($kept in $run.patches) {
@@ -956,10 +1022,13 @@ function Save-Results {
     $run.patches = @($run.patches | Sort-Object { if ($catalogOrder.ContainsKey([string]$_.name)) { $catalogOrder[[string]$_.name] } else { 9999 } })
     $run.finishedUtc = [DateTime]::UtcNow.ToString('o')
     [void](Write-Summary $run)
+    $run.qualification = Get-AuditResultValidation $allCatalogEntries $run $OutDir
     $run | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $Results -Encoding utf8
 }
 
 $runOriginals = [ordered]@{}
+$installedApkHash = $null
+$deviceStarted = $false
 try {
     if ($deviceUp) {
         Grant-AuditLease
@@ -974,7 +1043,15 @@ try {
             if ($LASTEXITCODE -ne 0) { throw 'adb install failed; is the APK signed with the key of the TikTok on the phone?' }
         }
         $installed = "$(Invoke-DeviceShell "dumpsys package $package" | Select-String 'versionName=' | Select-Object -First 1)".Trim()
-        if ($installed -notmatch [regex]::Escape("versionName=$versionName")) { Write-Warning "the phone has $installed, the APK is $versionName" }
+        if ($installed -notmatch [regex]::Escape("versionName=$versionName")) { throw "The device has $installed, the APK is $versionName." }
+        $basePaths = @(Invoke-DeviceShell "pm path $package" | Where-Object { $_ -match '^package:.*[\/]base\.apk$' })
+        if ($LASTEXITCODE -ne 0 -or $basePaths.Count -ne 1) { throw 'Cannot identify exactly one installed base APK.' }
+        $basePath = ([string]$basePaths[0]).Substring(8).Trim()
+        $deviceHash = "$(Invoke-DeviceShell ("sha256sum " + (ConvertTo-DeviceQuoted $basePath)))".Trim()
+        if ($LASTEXITCODE -ne 0 -or $deviceHash -notmatch '^([a-fA-F0-9]{64})\s') { throw 'Cannot bind the installed base APK to the supplied artifact.' }
+        $installedApkHash = $Matches[1].ToLowerInvariant()
+        if ($installedApkHash -cne $run.apk.sha256) { throw 'Installed base APK hash differs from -Apk. No current-build device evidence can be collected.' }
+        $deviceStarted = $true
         Restart-TikTok
         # For the whole run: Hushfeed not paused, Log diagnostics on for the log steps, and no
         # error toasts over the screenshots. The phone's own values go back at the end.
@@ -1004,6 +1081,14 @@ try {
                 Restart-TikTok
             }
             $checkResult = Invoke-Check $entry $check $originals ([ref]$restarted)
+            $checkResult.definitionHash = Get-AuditDefinitionHash $entry $check
+            $checkResult.apkSha256 = $run.apk.sha256
+            $checkResult.installedApkSha256 = $installedApkHash
+            $checkResult.build = $run.build
+            try { Set-AuditCheckReceipt $checkResult $OutDir } catch {
+                $checkResult.status = 'error'
+                $checkResult.failures += "evidence receipt: $($_.Exception.Message)"
+            }
             Write-Host "  $($checkResult.status.PadRight(7)) $($check.id)$(if ($checkResult.failures) { ': ' + ($checkResult.failures -join '; ') })"
             $checks += [pscustomobject]$checkResult
         }
@@ -1040,8 +1125,10 @@ try {
         if ($run.hooks.missed.Count -gt 0) { Write-Host '[audit] hook families with misses:'; $run.hooks.missed | ForEach-Object { Write-Host "  $_" } }
     }
 } finally {
+    try {
     $apkZip.Dispose()
-    if ($deviceUp) {
+    if ($script:recorder) { Clear-ScreenRecord }
+    if ($deviceStarted -and (Test-AuditLeaseOwnership)) {
         [void](Restore-NightMode)
         [void](Restore-Animations)
         if ($null -ne $script:themeWas) {
@@ -1060,11 +1147,16 @@ try {
             }
         }
         try { Invoke-DeviceShell "am force-stop $package" | Out-Null } catch { }
-        Revoke-AuditLease
+    } elseif ($deviceStarted) {
+        Write-Warning 'Device lease was lost. No cleanup commands were sent; temporary settings may still need restoration.'
+    }
+    } finally {
+        if ($deviceUp) { Revoke-AuditLease }
     }
 }
 Save-Results
 $counts = $run.summary
 Write-Host "[audit] $(($counts.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join ', ')"
 Write-Host "[audit] results $Results, evidence $OutDir"
+Write-Host "[audit] $($run.qualification.state): $($run.qualification.currentChecks)/$($run.qualification.catalogChecks) current bound checks; $($run.qualification.currentPass) pass"
 if ($counts['fail'] -gt 0 -or $counts['error'] -gt 0) { exit 1 }

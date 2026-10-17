@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** La comprobación de alineación nativa ahora detecta solapamientos RELRO inseguros en páginas de 16 KB y acepta segmentos aislados.
+
+* **TikTok:** La auditoría de parches ahora distingue las pruebas actuales verificadas de las anteriores y rechaza evaluaciones de capturas desactualizadas.
+
+* **TikTok:** Las compilaciones con acceso al dispositivo y las auditorías ahora requieren una reserva exclusiva del dispositivo. Las compilaciones locales siguen funcionando sin ella.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, el número de me gusta ya no queda sobre la barra de progreso cuando Me gusta es el botón más bajo que queda a la derecha (#145).

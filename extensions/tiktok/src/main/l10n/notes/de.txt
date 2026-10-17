@@ -1,3 +1,11 @@
+## Unreleased
+
+* **TikTok:** Die Ausrichtungsprüfung erkennt jetzt unsichere RELRO-Überlappungen auf 16-KB-Seiten und akzeptiert getrennte Segmente.
+
+* **TikTok:** Die Patch-Prüfung trennt jetzt aktuelle, geprüfte Nachweise von älteren Durchläufen und lehnt veraltete Screenshot-Bewertungen ab.
+
+* **TikTok:** Builds mit Gerätezugriff und Prüfungen brauchen jetzt eine exklusive Gerätereservierung. Lokale Builds funktionieren weiterhin ohne sie.
+
 ## 0.75.0 (2026-10-16)
 
 * **TikTok:** Mit „Kommentarleiste bei geöffneten Videos ausblenden“ liegt die Like-Zahl nicht mehr auf dem Fortschrittsbalken, wenn Like der unterste verbliebene Button rechts ist (#145).
