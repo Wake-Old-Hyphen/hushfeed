@@ -61,7 +61,9 @@ public final class AccountFacts {
     /** The sheet's lines for {@code user}, in the order they show. */
     static List<Fact> of(Object user, Locale locale, TimeZone zone) {
         List<Fact> facts = new ArrayList<>();
-        Long joined = seconds(Reflect.readField(user, "createTime"));
+        // 47.4.3 renamed the boxed join time to _createTime.
+        Long joined = seconds(Reflect.readField(user, "_createTime"));
+        if (joined == null) joined = seconds(Reflect.readField(user, "createTime"));
         if (joined == null) joined = seconds(Reflect.readField(user, "registerTime"));
         facts.add(new Fact("Joined", date(joined, locale, zone)));
         String region = text(Reflect.readField(user, "region"));
@@ -76,8 +78,11 @@ public final class AccountFacts {
         facts.add(new Fact("Display name last changed",
                 date(seconds(Reflect.readField(user, "nickNameModifyTs")), locale, zone)));
         // Both are plain booleans on the model, so one the server left out reads false. Only a
-        // true one is a fact, and false leaves its line out.
-        if (Boolean.TRUE.equals(Reflect.readField(user, "secret"))) {
+        // true one is a fact, and false leaves its line out. 47.4.3 renamed secret to isSecret,
+        // and PineDrama 47.1.4 still has secret.
+        Object secret = Reflect.readField(user, "isSecret");
+        if (secret == null) secret = Reflect.readField(user, "secret");
+        if (Boolean.TRUE.equals(secret)) {
             facts.add(new Fact("Private account", L10n.t("Yes")));
         }
         if (Boolean.TRUE.equals(Reflect.readField(user, "hasOpenFavorite"))) {

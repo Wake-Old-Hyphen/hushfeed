@@ -35,16 +35,16 @@ internal data class InboxRequestSpec(val owner: String, val name: String, val pa
 }
 
 internal val loadedInboxRequestSpecs = listOf(
-    InboxRequestSpec("Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;", "LJJJIL", emptyList()),
-    InboxRequestSpec(INBOX_WIDGET, "LJJJIL", emptyList()),
-    InboxRequestSpec(INBOX_WIDGET, "Lq", listOf("LX/0Nen;")),
-    InboxRequestSpec(INBOX_REGULAR_VM, "A83", emptyList(), tracked = true),
-    InboxRequestSpec(INBOX_CREATOR_VM, "A83", emptyList(), tracked = true),
-    InboxRequestSpec(INBOX_REGULAR_VM, "B83", listOf("LX/0Nen;")),
-    InboxRequestSpec(INBOX_CREATOR_VM, "B83", listOf("LX/0Nen;")),
-    InboxRequestSpec("Lcom/ss/android/ugc/aweme/notification/v2/viewmodel/NotificationAllTabResultViewModel;", "B83", listOf("LX/0Nen;")),
-    InboxRequestSpec(INBOX_MERGED_CLOSURE, "invoke\$23", listOf(INBOX_MERGED_CLOSURE), tracked = true, closure = true),
-    InboxRequestSpec(INBOX_MERGED_CLOSURE, "invoke\$24", listOf(INBOX_MERGED_CLOSURE), tracked = true, closure = true),
+    InboxRequestSpec("Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;", "LJJIJIL", emptyList()),
+    InboxRequestSpec(INBOX_WIDGET, "LJJIJIL", emptyList()),
+    InboxRequestSpec(INBOX_WIDGET, "Rp", listOf("LX/0NZp;")),
+    InboxRequestSpec(INBOX_REGULAR_VM, "m33", emptyList(), tracked = true),
+    InboxRequestSpec(INBOX_CREATOR_VM, "m33", emptyList(), tracked = true),
+    InboxRequestSpec(INBOX_REGULAR_VM, "n33", listOf("LX/0NZp;")),
+    InboxRequestSpec(INBOX_CREATOR_VM, "n33", listOf("LX/0NZp;")),
+    InboxRequestSpec("Lcom/ss/android/ugc/aweme/notification/v2/viewmodel/NotificationAllTabResultViewModel;", "n33", listOf("LX/0NZp;")),
+    InboxRequestSpec(INBOX_MERGED_CLOSURE, "invoke\$45", listOf(INBOX_MERGED_CLOSURE), tracked = true, closure = true),
+    InboxRequestSpec(INBOX_MERGED_CLOSURE, "invoke\$46", listOf(INBOX_MERGED_CLOSURE), tracked = true, closure = true),
     InboxRequestSpec(INBOX_PAGE_LOADER, "LJII", listOf("Ljava/lang/Object;"), tracked = true),
     InboxRequestSpec(INBOX_PAGE_LOADER, "LJIIIIZZ", listOf("Ljava/lang/Object;"), tracked = true),
     InboxRequestSpec(INBOX_PAGE_LOADER, "LJIIIZ", emptyList(), tracked = true),
@@ -65,7 +65,7 @@ internal fun MutableMethod.loadedRequestHook(spec: InboxRequestSpec, checkOnly: 
     val returns = native.withIndex().filter { it.value.opcode == if (spec.closure) Opcode.RETURN_OBJECT else Opcode.RETURN_VOID }
     check(returns.isNotEmpty())
     val launches = native.withIndex().filter { it.value.getReference<MethodReference>()?.let { reference ->
-        reference.definingClass == "LX/03WP;" && reference.name == "LIZLLL" && reference.returnType == "LX/03Ww;" } == true }
+        reference.definingClass == "LX/03WS;" && reference.name == "LIZLLL" && reference.returnType == "LX/03Wz;" } == true }
     if (spec.tracked) check(launches.size == 1) { "Loaded Inbox request must launch exactly one reviewed native job" }
     if (spec.tracked) check(implementation!!.registerCount <= 16)
     if (checkOnly) return

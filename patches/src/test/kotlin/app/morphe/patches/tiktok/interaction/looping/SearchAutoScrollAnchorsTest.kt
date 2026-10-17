@@ -6,13 +6,14 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
  * What Auto-advance in search results rests on, held to each declared build: exactly one
- * no-argument boolean gate and one no-argument AbsSearchService method load the exact
+ * no-argument boolean gate and one no-argument search service method answering a state load the exact
  * search_auto_scroll key, each reads it once through an int settings call, and nothing else
  * that matches those fingerprints does. The longer keys that begin the same way don't count.
  */
@@ -28,8 +29,9 @@ class SearchAutoScrollAnchorsTest {
             assertEquals("$version: gates ${gates.map { it.second.name }}", 1, gates.size)
             assertEquals("$version: reads in the gate", listOf(1), gates.map { searchFlagReads(it.second).size })
 
-            val service = readers.filter { (owner, _) -> owner.type == SERVICE }
-            assertEquals("$version: service readers ${service.map { it.second.name }}", 1, service.size)
+            val service = readers.filter { (_, method) -> method.returnType.startsWith("L") && method.answersAState() }
+            assertEquals("$version: service readers ${service.map { "${it.first.type}->${it.second.name}" }}",
+                listOf(SERVICE), service.map { it.first.type })
             assertEquals("$version: reads in the service", listOf(1), service.map { searchFlagReads(it.second).size })
         }
     }
@@ -52,12 +54,17 @@ class SearchAutoScrollAnchorsTest {
 
     private companion object {
         const val KEY = "search_auto_scroll"
-        const val SERVICE = "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;"
+        // AbsSearchService held it until 47.4.3.
+        const val SERVICE = "Lcom/ss/android/ugc/aweme/search/common/communicate/SearchInnerFlowDetailServiceImpl;"
         const val COMPONENT = "Lcom/ss/android/ugc/feed/platform/panel/autoscroll/AutoScrollComponent;"
 
         fun Method.loadsExactKey() = implementation?.instructions?.any {
             (it.opcode == Opcode.CONST_STRING || it.opcode == Opcode.CONST_STRING_JUMBO) &&
                 ((it as ReferenceInstruction).reference as? StringReference)?.string == KEY
+        } == true
+
+        fun Method.answersAState() = implementation?.instructions?.any {
+            ((it as? ReferenceInstruction)?.reference as? FieldReference)?.name == "AUTO_SCROLL_STATE_STOP"
         } == true
 
         fun classesOf(apk: java.io.File): List<ClassDef> {

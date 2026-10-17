@@ -105,9 +105,9 @@ public class BuildDetailsTest {
         assertUnknown(record.replace("#121212", "#ff121212"));
         assertUnknown(record.replace("language_packs=stripped", "language_packs=not_selected"));
         assertUnknown(record.replace("source_end=A1234567890123456789B", "source_end=B1234567890123456789B"));
-        assertUnknown(record.replace("target_version_code=2024701040", "target_version_code=2147483647"));
+        assertUnknown(record.replace("target_version_code=2024704030", "target_version_code=2147483647"));
         assertUnknown(record.replace("target_package=com.zhiliaoapp.musically", "target_package=unknown"));
-        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024701040"));
+        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024704030"));
     }
 
     @Test public void unverifiedSelectionsAndUntickedChoicesRemainDifferent() throws Exception {
@@ -146,17 +146,20 @@ public class BuildDetailsTest {
             targets = new String(input.readAllBytes(), StandardCharsets.UTF_8).strip();
         }
         for (String line : targets.split("\\R")) {
-            String[] target = line.split("=");
-            String report = BuildDetails.report(record.replace("47.1.4", target[0]).replace("2024701040", target[1]));
+            String[] target = line.split("[/=]");
+            String report = BuildDetails.report(record.replace("com.zhiliaoapp.musically", target[0])
+                    .replace("47.4.3", target[1]).replace("2024704030", target[2]));
             assertTrue(report, report.contains("build_metadata: available\n"));
             assertTrue(report.contains("patch_time.native_locales_retained: " + locales + "\n"));
-            assertTrue(report.contains("target_version: " + target[0] + "\n"));
+            assertTrue(report.contains("target_package: " + target[0] + "\n"));
+            assertTrue(report.contains("target_version: " + target[1] + "\n"));
         }
-        // A build the bundle no longer declares is no target of this one.
-        assertUnknown(record.replace("47.1.4", "47.1.3").replace("2024701040", "2024701030"));
-        // PineDrama 47.1.4 is declared beside TikTok (#156); another package is not.
-        String pineDrama = BuildDetails.report(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video"));
-        assertTrue(pineDrama, pineDrama.contains("target_package: com.ss.android.ttmd.video\n"));
+        // A build the bundle no longer declares is no target of this one, even at another
+        // declared app's version and code.
+        assertUnknown(record.replace("47.4.3", "47.1.3").replace("2024704030", "2024701030"));
+        assertUnknown(record.replace("47.4.3", "47.1.4").replace("2024704030", "2024701040"));
+        // PineDrama is declared at its own build (#156), not at TikTok's; another package is not.
+        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video"));
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }
 

@@ -54,14 +54,14 @@ public class AccountFactsTest {
 
     @Test public void aFullProfileGetsEveryFactInThePhonesWords() {
         User user = new User();
-        user.createTime = 1_615_819_200L;
+        user._createTime = 1_615_819_200L;
         user.registerTime = 1_500_000_000L;
         user.region = "de";
         user.accountRegion = "DE";
         user.language = "de";
         user.uniqueIdModifyTime = 1_700_000_000_000L;
         user.nickNameModifyTs = 1_690_000_000;
-        user.secret = true;
+        user.isSecret = true;
         user.hasOpenFavorite = true;
 
         assertEquals(List.of(
@@ -88,12 +88,12 @@ public class AccountFactsTest {
 
     @Test public void onlyATrueFlagGetsALine() {
         User user = new User();
-        user.secret = true;
+        user.isSecret = true;
         List<String> lines = lines(user);
         assertTrue(lines.toString(), lines.contains("Private account=Yes"));
         assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Liked videos=")));
 
-        user.secret = false;
+        user.isSecret = false;
         user.hasOpenFavorite = true;
         lines = lines(user);
         assertFalse(lines.toString(), lines.stream().anyMatch(line -> line.startsWith("Private account=")));

@@ -88,7 +88,8 @@ private object BdTuringCaptchaPopupFingerprint : Fingerprint(
 
 /** What each callback is told when its request is dropped, checked before it is called. */
 private const val SEC_DISMISS = "LIZJ"
-private const val LIVE_DISMISS = "LIZIZ"
+// LIZIZ until 47.4.3, whose LIVE callback (`LX/1Uei`) dismisses through LIZLLL.
+private const val LIVE_DISMISS = "LIZLLL"
 
 /**
  * The whole `invoke-... {p3 .. p3}, type->name()V`, having checked that the class in this build

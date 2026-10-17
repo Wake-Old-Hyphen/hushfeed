@@ -27,7 +27,7 @@ import org.junit.rules.TemporaryFolder
 
 class BuildDetailsPatchTest {
     @get:Rule val temporary = TemporaryFolder()
-    private val target = packageMetadata("com.zhiliaoapp.musically", "47.1.4", "2024701040")
+    private val target = packageMetadata("com.zhiliaoapp.musically", "47.4.3", "2024704030")
     private val fingerprint = "A1234567890123456789B" + "c".repeat(43)
 
     @Test fun `bundle manifest paths preserve plus spaces percent and unicode and release the jar`() {
@@ -182,7 +182,9 @@ class BuildDetailsPatchTest {
     /** The extension validates targets from its own copy. This fixture ties that copy to the catalog. */
     @Test fun `runtime target fixture is exactly the declared builds`() {
         val declared = AppCompatibilities.tiktokAndPineDrama().flatMap { compatibility ->
-            compatibility.targets.flatMap { app -> app.versionCodes.orEmpty().values.distinct().map { "${app.version}=$it" } }
+            compatibility.targets.flatMap { app ->
+                app.versionCodes.orEmpty().values.distinct().map { "${compatibility.packageName}/${app.version}=$it" }
+            }
         }.distinct().sorted()
         val fixture = File("../extensions/tiktok/src/test/resources/build-details/targets.txt")
             .takeIf(File::isFile) ?: File("extensions/tiktok/src/test/resources/build-details/targets.txt")

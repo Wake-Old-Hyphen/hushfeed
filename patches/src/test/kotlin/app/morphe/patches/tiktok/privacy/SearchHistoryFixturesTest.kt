@@ -27,7 +27,7 @@ class SearchHistoryFixturesTest {
     @Test
     fun `each declared host has exactly one history recorder and one manual search log`() {
         val expected = mapOf(
-            "47.1.4" to "LX/0D1m;",
+            "47.4.3" to "LX/0CzL;",
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -45,10 +45,12 @@ class SearchHistoryFixturesTest {
 
             // Every caller reaches the manager through its interface, so a second concrete
             // (SearchHistory, String)V class would be a second manager this patch misses. The
-            // one this guards also has its delete method, which must stay unguarded.
+            // one this guards also has its delete method, which must stay unguarded. A writer whose
+            // body is a lone return-void records nothing (47.4.3's empty stand-in for the manager).
             val historyWriters = methods.filter {
                 it.implementation != null && it.returnType == "V" &&
-                    it.parameterTypes.map(CharSequence::toString) == listOf(SEARCH_HISTORY, "Ljava/lang/String;")
+                    it.parameterTypes.map(CharSequence::toString) == listOf(SEARCH_HISTORY, "Ljava/lang/String;") &&
+                    it.implementation!!.instructions.any { instruction -> instruction.opcode != Opcode.RETURN_VOID }
             }
             assertEquals("$version: every concrete history writer is on the manager",
                 setOf(recorder.definingClass), historyWriters.map { it.definingClass }.toSet())

@@ -38,7 +38,7 @@ class InboxQueryPublicationFixturesTest {
             original.forEachIndexed { index, instruction -> assertSame(instruction, after[index + 2]) }
             assertTrue(original.any { it.getReference<MethodReference>()?.name == "setValue" })
             assertTrue(original.any { it.getReference<MethodReference>()?.name == "postValue" })
-            assertTrue(original.any { it.getReference<MethodReference>()?.definingClass == "LX/0FaF;" })
+            assertTrue(original.any { it.getReference<MethodReference>()?.definingClass == "LX/0FXE;" })
         }
     }
 
@@ -54,13 +54,13 @@ class InboxQueryPublicationFixturesTest {
             val stubCode = mutableStub.implementation!!.instructions.toList()
             assertEquals(originalStub.size + 1, stubCode.size)
             val receipt = stubCode.indexOfFirst { it.extensionCall("onLoadedStubPublication") }
-            assertEquals("LX/0H29;", stubCode[receipt - 1].getReference<MethodReference>()!!.definingClass)
+            assertEquals("LX/0Gy2;", stubCode[receipt - 1].getReference<MethodReference>()!!.definingClass)
             assertEquals("<init>", stubCode[receipt - 1].getReference<MethodReference>()!!.name)
             val metadata = (stubCode[receipt - 1] as RegisterRangeInstruction).startRegister
             assertEquals(metadata, (stubCode[receipt] as FiveRegisterInstruction).registerE)
             assertEquals(originalStub, stubCode.filterNot { it.extensionCall("onLoadedStubPublication") })
 
-            val differ = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09Np;" }
+            val differ = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09Mk;" }
             val submit = differ.methods.single { it.name == "LJ" }
             assertTrue(InboxDiffSubmission.takes(submit, differ))
             val mutableSubmit = MutableMethod(submit)
@@ -78,13 +78,13 @@ class InboxQueryPublicationFixturesTest {
     @Test fun `diff acceptance follows real dispatch and every listener exit reaches it before native completions`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val owner = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09Np;" }
+            val owner = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09Mk;" }
             val native = owner.methods.single { it.name == "LIZIZ" }
             assertTrue(InboxDiffAcceptance.takes(native, owner))
             val mutable = MutableMethod(native)
             val original = mutable.implementation!!.instructions.toList()
             val completion = original.indexOfFirst { it.getReference<FieldReference>()?.let { field ->
-                field.definingClass == "LX/0H29;" && field.name == "LJ" } == true }
+                field.definingClass == "LX/0Gy2;" && field.name == "LJ" } == true }
             val exits = original.filterIsInstance<BuilderOffsetInstruction>().filter { it.target.location.index == completion }
             assertTrue("the native listener loop has a branch directly to completion delivery", exits.isNotEmpty())
             mutable.loadedDiffAcceptanceHook()
@@ -94,7 +94,7 @@ class InboxQueryPublicationFixturesTest {
             assertSame(original[completion], after[accepted + 1])
             exits.forEach { assertEquals(accepted, it.target.location.index) }
             val dispatched = after.indexOfFirst { it.getReference<MethodReference>()?.let { method ->
-                method.definingClass == "LX/00J7;" && method.name == "LIZIZ" } == true }
+                method.definingClass == "LX/00J8;" && method.name == "LIZIZ" } == true }
             val completed = after.indexOfFirst { it.getReference<MethodReference>()?.let { method ->
                 method.definingClass == "Ljava/lang/Runnable;" && method.name == "run" } == true }
             assertTrue(dispatched in 0 until accepted)
@@ -109,32 +109,32 @@ class InboxQueryPublicationFixturesTest {
     @Test fun `native async generation rejection happens before list acceptance or diff dispatch`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val native = dex.getEntry("classes33.dex")!!.dexFile.classes.single { it.type == "LX/18yv;" }
+            val native = dex.getEntry("classes31.dex")!!.dexFile.classes.single { it.type == "LX/14Uz;" }
                 .methods.single { it.name == "LIZ" }
             val code = MutableMethod(native).implementation!!.instructions.toList()
             val generation = code.indexOfFirst { it.getReference<FieldReference>()?.let { field ->
-                field.definingClass == "LX/09Np;" && field.name == "LJIIJ" } == true }
+                field.definingClass == "LX/09Mk;" && field.name == "LJIIJ" } == true }
             val rejection = code.filterIsInstance<BuilderOffsetInstruction>().single { it.opcode == Opcode.IF_NE }
             assertTrue(code.indexOf(rejection) > generation)
             assertEquals(Opcode.RETURN_VOID, rejection.target.location.instruction!!.opcode)
             val listWrite = code.indexOfFirst { it.opcode == Opcode.IPUT_OBJECT && it.getReference<FieldReference>()?.name == "LJIIJJI" }
             val dispatch = code.indexOfFirst { it.getReference<MethodReference>()?.let { method ->
-                method.definingClass == "LX/09Np;" && method.name == "LIZLLL" } == true }
+                method.definingClass == "LX/09Mk;" && method.name == "LIZLLL" } == true }
             assertTrue(listWrite > code.indexOf(rejection))
             assertTrue(dispatch > listWrite && dispatch < rejection.target.location.index)
         }
     }
 
-    @Test fun `indexed callbacks keep the native helper and pair while current row clicks keep x6`() {
+    @Test fun `indexed callbacks keep the native helper and pair while current row clicks keep c6`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val closureOwner = dex.getEntry("classes35.dex")!!.dexFile.classes.single { it.type == INBOX_MERGED_CLOSURE }
-            val closure = closureOwner.methods.single { it.name == "invoke\$21" }
+            val closureOwner = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == INBOX_MERGED_CLOSURE }
+            val closure = closureOwner.methods.single { it.name == "invoke\$43" }
             assertTrue(InboxIndexedCallback.takes(closure, closureOwner))
             val mutable = MutableMethod(closure)
             val original = mutable.implementation!!.instructions.toList()
             val index = original.indexOfFirst { it.getReference<MethodReference>()?.let { method ->
-                method.definingClass == "LX/0Nf9;" && method.name == "LJFF" } == true }
+                method.definingClass == "LX/0NaB;" && method.name == "LJFF" } == true }
             val call = original[index] as FiveRegisterInstruction
             mutable.loadedIndexedHook()
             val after = mutable.implementation!!.instructions.toList()
@@ -147,7 +147,7 @@ class InboxQueryPublicationFixturesTest {
             assertEquals(call.registerD, bridge.registerE)
             assertEquals(call.registerE, bridge.registerF)
 
-            val cell = dex.getEntry("classes35.dex")!!.dexFile.classes.single { it.type == TEMPLATE_NOTIFICATION_CELL }
+            val cell = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == TEMPLATE_NOTIFICATION_CELL }
             val click = cell.methods.single { it.name == "onClick" }
             val mutableClick = MutableMethod(click)
             val originalClick = mutableClick.implementation!!.instructions.toList()
@@ -155,7 +155,7 @@ class InboxQueryPublicationFixturesTest {
             val clickCode = mutableClick.implementation!!.instructions.toList()
             assertEquals(originalClick, clickCode.drop(4))
             assertTrue(clickCode.any { it.getReference<MethodReference>()?.let { method ->
-                method.definingClass == cell.type && method.name == "x6" } == true })
+                method.definingClass == cell.type && method.name == "c6" } == true })
             val entry = clickCode[2] as BuilderOffsetInstruction
             assertSame(originalClick[0], entry.target.location.instruction)
         }
@@ -164,8 +164,8 @@ class InboxQueryPublicationFixturesTest {
     @Test fun `both indexed live-data reads use the accepted aggregate without changing other native work`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val owner = dex.getEntry("classes35.dex")!!.dexFile.classes.single { it.type == INBOX_RESULT_FRAGMENT }
-            val native = owner.methods.single { it.name == "fY" }
+            val owner = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == INBOX_RESULT_FRAGMENT }
+            val native = owner.methods.single { it.name == "DX" }
             assertTrue(InboxVisibleIndices.takes(native, owner))
             val mutable = MutableMethod(native)
             val original = mutable.implementation!!.instructions.toList()
@@ -174,7 +174,7 @@ class InboxQueryPublicationFixturesTest {
             assertEquals(original.size + 8, after.size)
             assertTrue(after[0].extensionCall("allowLoadedVisibleIndices"))
             val reads = after.withIndex().filter { it.value.getReference<FieldReference>()?.let { field ->
-                field.definingClass == "LX/0FaF;" && field.name == "LIZ" } == true }
+                field.definingClass == "LX/0FXE;" && field.name == "LIZ" } == true }
             assertEquals(2, reads.size)
             reads.forEach { assertTrue(after[it.index + 1].extensionCall("onLoadedIndexedList")) }
             val originalCalls = original.mapNotNull { it.getReference<MethodReference>() }
@@ -186,7 +186,7 @@ class InboxQueryPublicationFixturesTest {
     @Test fun `pull and manual refresh entry guards precede every native flag listener and animation`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val spring = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09On;" }
+            val spring = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/09Ni;" }
             listOf(Triple("setRefreshing", InboxSpringRefresh, "allowLoadedRefresh"),
                 Triple("LJ", InboxSpringManualRefresh, "allowLoadedManualRefresh")).forEach { (name, fingerprint, hook) ->
                 val native = spring.methods.single { it.name == name }
@@ -203,23 +203,23 @@ class InboxQueryPublicationFixturesTest {
                 assertTrue(firstFlag > 3)
                 if (name == "LJ") {
                     val refreshCall = after.indexOfFirst { it.getReference<MethodReference>()?.name == "setRefreshing" }
-                    val manualFlag = after.indexOfFirst { it.getReference<FieldReference>()?.name == "LLLIIL" }
+                    val manualFlag = after.indexOfFirst { it.getReference<FieldReference>()?.name == "LLLIIIIL" }
                     val animation = after.indexOfFirst { it.getReference<MethodReference>()?.let { ref ->
                         ref.definingClass == "Landroid/animation/ValueAnimator;" && ref.name == "start" } == true }
                     assertTrue(refreshCall > 3 && manualFlag > refreshCall && animation > manualFlag)
                 } else {
-                    assertTrue(after.indexOfFirst { it.getReference<MethodReference>()?.name == "LJI" } > firstFlag)
+                    assertTrue(after.indexOfFirst { it.getReference<MethodReference>()?.name == "LJFF" } > firstFlag)
                     assertEquals(2, (after[0] as RegisterRangeInstruction).registerCount)
                 }
             }
         }
     }
 
-    @Test fun `synthetic index gate repeats the exact native getter and field without touching ZX`() {
+    @Test fun `synthetic index gate repeats the exact native getter and field without touching yX`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val owner = dex.getEntry("classes35.dex")!!.dexFile.classes.single { it.type == INBOX_MERGED_CLOSURE }
-            val native = owner.methods.single { it.name == "invoke\$21" }
+            val owner = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == INBOX_MERGED_CLOSURE }
+            val native = owner.methods.single { it.name == "invoke\$43" }
             val mutable = MutableMethod(native)
             val original = mutable.implementation!!.instructions.toList()
             val bridge = loadedIndicesGate(mutable)
@@ -233,7 +233,7 @@ class InboxQueryPublicationFixturesTest {
             assertEquals(original[0].getReference<MethodReference>(), gate[0].getReference<MethodReference>())
             assertEquals(original[2].getReference<FieldReference>(), gate[2].getReference<FieldReference>())
             assertEquals("enable", gate[2].getReference<FieldReference>()!!.name)
-            assertFalse(gate.any { it.getReference<MethodReference>()?.name == "ZX" })
+            assertFalse(gate.any { it.getReference<MethodReference>()?.name == "yX" })
             val disabled = original[3] as BuilderOffsetInstruction
             assertEquals(Opcode.IF_EQZ, disabled.opcode)
             assertEquals("Lkotlin/Unit;", disabled.target.location.instruction!!.getReference<FieldReference>()!!.definingClass)

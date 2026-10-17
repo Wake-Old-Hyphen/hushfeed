@@ -4,6 +4,7 @@ import app.morphe.Fixtures
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -16,7 +17,7 @@ import org.junit.Test
 /**
  * Which colors Accent color recolors, held to each declared build's fixture (#84).
  *
- * <p>TikTok's TUX token table (`X.0CKW.LIZ` on 47.1.4, a chain of `"Name".equals(token)` checks
+ * <p>TikTok's TUX token table (one obfuscated method, a chain of `"Name".equals(token)` checks
  * that each return an attr id) names the semantic attrs its views read. UIShapePrimary to
  * UIShapePrimary5, UITextPrimary and UITextPrimaryDisplay are the accent: the themes point each at
  * a palette token, one for the dark themes and one for the light ones, and the palette styles set
@@ -108,6 +109,76 @@ class AccentColorPaletteTest {
                 }
             }
         }
+    }
+
+    /**
+     * #163: with Follow the wallpaper the follow plus stayed TikTok's red, since a picture can't take
+     * a color the phone picks later. It splits into a white layer and a red one the phone tints, and
+     * the tinted layer drawn over the white one is the same picture the fixed colors make.
+     */
+    @Test
+    fun `each declared build's follow plus splits into layers that draw the tinted plus`() {
+        val tint = 0x2D7FF9
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val table = FixtureResourceTable(apk)
+            for (name in accentIcons(version)) {
+                // The layers come back as a layer list, which a Drawable loader takes and BitmapFactory doesn't.
+                val id = table.drawableIds[name] ?: error("$version: no drawable $name")
+                val decoders = methodsLoading(apk, id).filter { method ->
+                    method.implementation!!.instructions.any {
+                        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass == "Landroid/graphics/BitmapFactory;"
+                    }
+                }
+                assertTrue("$version: $name is decoded as a bitmap by $decoders", decoders.isEmpty())
+                ZipFile(apk).use { zip ->
+                    for (path in table.drawableFiles[name].orEmpty()) {
+                        val original = zip.getInputStream(zip.getEntry(path)).use { it.readBytes() }
+                        val (white, red) = splitRedPalette(original) ?: error("$version: $path didn't split")
+                        val expected = ImageIO.read(ByteArrayInputStream(recolorRedPalette(original, "#2D7FF9")!!))
+                        val under = ImageIO.read(ByteArrayInputStream(white))
+                        val over = ImageIO.read(ByteArrayInputStream(red))
+                        assertEquals("$version: $path layer width", expected.width, under.width)
+                        assertEquals("$version: $path layer height", expected.height, over.height)
+                        for (x in 0 until expected.width) for (y in 0 until expected.height) {
+                            val want = expected.getRGB(x, y)
+                            val b = under.getRGB(x, y)
+                            val a = over.getRGB(x, y)
+                            val top = (a ushr 24) / 255.0
+                            val bottom = (b ushr 24) / 255.0
+                            val alpha = top + bottom * (1 - top)
+                            assertEquals("$version: $path alpha at $x,$y", (want ushr 24).toDouble(), alpha * 255, 2.0)
+                            if (want ushr 24 < 32) continue
+                            for (shift in listOf(16, 8, 0)) {
+                                val drawn = ((tint shr shift and 0xff) * top + (b shr shift and 0xff) * bottom * (1 - top)) / alpha
+                                assertEquals("$version: $path channel $shift at $x,$y", (want shr shift and 0xff).toDouble(), drawn, 3.0)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `the wallpaper follow plus keeps its name and tints its red layer`() {
+        val xml = wallpaperIconDrawable("bty", "@color/hushfeed_accent_fe2c55")
+        val (white, tint) = wallpaperIconLayers("bty")
+        assertTrue(xml, "@drawable/$white" in xml)
+        assertTrue(xml, "android:src=\"@drawable/$tint\" android:tint=\"@color/hushfeed_accent_fe2c55\"" in xml)
+        assertTrue(xml, xml.indexOf(white) < xml.indexOf(tint))
+        assertEquals("@color/hushfeed_accent_fe2c55", wallpaperReference(TIKTOK_ACCENT))
+    }
+
+    /** The methods anywhere in the app that load [literal]. */
+    private fun methodsLoading(apk: File, literal: Int): List<com.android.tools.smali.dexlib2.iface.Method> {
+        val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+        return container.dexEntryNames.asSequence()
+            .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+            .flatMap { it.methods.asSequence() }
+            .filter { method ->
+                method.implementation?.instructions?.any { (it as? NarrowLiteralInstruction)?.narrowLiteral == literal } == true
+            }.toList()
     }
 
     /** Every 32-bit literal the methods of [descriptor] load. */

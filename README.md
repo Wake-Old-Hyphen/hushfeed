@@ -6,7 +6,7 @@
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
   <a href="https://github.com/SysAdminDoc/hushfeed/discussions"><img alt="Discussions" src="https://img.shields.io/github/discussions/SysAdminDoc/hushfeed?color=0969da" /></a>
-  <a href="https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/"><img alt="TikTok 47.1.4" src="https://img.shields.io/badge/TikTok-47.1.4-ff0050.svg" /></a>
+  <a href="https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/"><img alt="TikTok 47.4.3" src="https://img.shields.io/badge/TikTok-47.4.3-ff0050.svg" /></a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 **[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 135 source patches](#patches)
 
 > [!IMPORTANT]
-> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
+> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.75.0 contains 135 patches for TikTok 47.1.4. New in this one: the Profile tab opens again on the phones where it crashed, phones set to another language stay in it after patching, and See translation is back on videos. A comment's menu can block whoever wrote it, and Accent color can follow your wallpaper. It needs Morphe Manager 1.34.0 or newer.
 
@@ -52,7 +52,7 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 
 ## Install
 
-1. Get the TikTok 47.1.4 APK. Google Play only offers the newest build, so take it from APKMirror: [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
+1. Get the TikTok 47.4.3 APK. Google Play only offers the newest build, so take it from APKMirror: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
 2. Use Morphe Manager 1.34.0 or newer. This bundle is built against patcher 1.15.1, which Manager 1.34.0 was the first to ship, and older Managers won't load it. morphe-desktop works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
 4. Pick the patches. Simple mode in Morphe Manager selects 117 of the 135 Hushfeed patches. The other 18 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 135 Hushfeed patches in eleven categories you can expand or collapse. Give the manager 1,024 MB of memory under **Settings > Process runtime** before you start, since less makes patching slow or stall.
@@ -324,7 +324,7 @@ A bid from a patched TikTok can fail with "Bidding is temporarily unavailable", 
 
 ### Profile and Inbox are pure black, but I didn't pick AMOLED dark theme
 
-That's TikTok's own dark mode on 47.1.4. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well.
+That's TikTok's own dark mode. It paints Profile and Inbox black and leaves the comment, share and search sheets dark gray. AMOLED dark theme is what turns those sheets black as well.
 
 ### Coming from Kveld
 
@@ -339,10 +339,10 @@ Hushfeed includes the eight Kveld TikTok optimizers it didn't already have, and 
 ## Supported target
 
 - App: TikTok, the global package `com.zhiliaoapp.musically`
-- Version: [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/), on APKMirror since 2026-09-28.
-- Build: version code 2024701040, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
-- SHA-256 of the APK every patch was verified against: `4226ed5d3031b68208c29f62d80ac421b281fc74201bc4163d98e442d0991a40` (47.1.4)
-- Also PineDrama 47.1.4, TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024701040). It's built from the same code, and 90 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
+- Version: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/), on APKMirror since 2026-10-17.
+- Build: version code 2024704030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
+- SHA-256 of the APK every patch was verified against: `af7cbe2b00d33ff1339730f6abb8ed7e387a83b27ff2b16748b8f41e6fc87e0b` (47.4.3)
+- Also PineDrama 47.1.4, TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024701040). It's built from TikTok's code, and 90 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
 
 On Windows, check your download with `Get-FileHash -Algorithm SHA256 .\tiktok.apk`. On Linux or macOS it's `sha256sum tiktok.apk`.
 
@@ -350,9 +350,9 @@ Hushfeed declares one TikTok build at a time, the newest stable one it's been ch
 
 ### Why you have to fetch that APK yourself
 
-Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.1.4, and Play can't be asked for an older one. Take the APK from APKMirror ([47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/)) and patch that file, not the installed app.
+Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.4.3, and Play can't be asked for an older one. Take the APK from APKMirror ([47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/)) and patch that file, not the installed app.
 
-APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Morphe Manager merges one into a single APK and keeps TikTok's file paths, so everything works on it. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.1.4 APK instead.
+APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Morphe Manager merges one into a single APK and keeps TikTok's file paths, so everything works on it. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.4.3 APK instead.
 
 ## Verify a download
 

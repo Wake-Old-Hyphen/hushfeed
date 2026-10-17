@@ -58,8 +58,7 @@ private const val RELATIVE_LAYOUT = "Landroid/widget/RelativeLayout;"
 
 /** The optional banner factory already returns null when TikTok has no related search. */
 internal fun isCommentSearchHeaderFactory(method: Method): Boolean {
-    if (method.definingClass !=
-        "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;" ||
+    if (method.definingClass != COMMENT_SCENE_SERVICE_IMPL ||
         method.returnType != "Landroid/view/View;" ||
         method.parameterTypes.take(2).map(CharSequence::toString) != listOf(
             "Landroid/content/Context;", "Lcom/ss/android/ugc/aweme/feed/model/Aweme;",
@@ -91,39 +90,50 @@ internal fun MutableMethod.resolveCommentSearchSuggestions(): CommentToolsWrite 
     }
 }
 
-internal const val ABS_SEARCH_SERVICE = "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;"
-internal const val SEARCH_SERVICE = "Lcom/ss/android/ugc/aweme/search/ISearchService;"
+internal const val COMMENT_SCENE_SERVICE = "Lcom/ss/android/ugc/aweme/search/service/ISearchCommentSceneService;"
+internal const val COMMENT_SCENE_SERVICE_IMPL =
+    "Lcom/ss/android/ugc/aweme/search/common/communicate/SearchCommentSceneServiceImpl;"
 internal const val COMMENT_TOP_RELATED_SEARCH =
     "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/rs/core/refactor/SearchCommentTopRelatedImpl;"
 
 /**
- * The search service's own "no comment suggestions" check (#161), asked by every comment sheet
- * surface for the suggestion banner before it takes the header: the newer top bar's canShow
- * and the older header anchor's two checks. Guarding only the banner factory left the older
- * anchor's slot claimed with nothing in it, which TikTok then laid out as a 48 dp blank band
- * over the comment count. The check is renamed per build (`LLLZLL` on 47.1.4), so its name is
- * read off the one search service question the real-named top bar's canShow asks.
+ * The comment search service's own "no comment suggestions" check (#161), asked by every comment
+ * sheet surface for the suggestion banner before it takes the header: the newer top bar's canShow
+ * and the older header anchor's check. Guarding only the banner factory left the older anchor's
+ * slot claimed with nothing in it, which TikTok then laid out as a 48 dp blank band over the
+ * comment count. The check is renamed per build (`LLLZLL` on 47.1.4's AbsSearchService, `LJIIIZ`
+ * on 47.4.3's SearchCommentSceneServiceImpl), so its name is read off the one comment search
+ * service question the real-named top bar's canShow asks. 47.4.3 asks it through an obfuscated
+ * facade whose method of the same name forwards to the service, so a facade call is followed one
+ * step.
  */
 internal fun commentSuggestionGate(classOf: (String) -> ClassDef?): Method {
     fun fail(why: String): Nothing = throw PatchException("Comment tools: $why")
     val related = classOf(COMMENT_TOP_RELATED_SEARCH) ?: fail("$COMMENT_TOP_RELATED_SEARCH is not in the app")
     val canShow = related.methods.singleOrNull { it.name == "canShow" && it.returnType == "Z" }
         ?: fail("expected one canShow on $COMMENT_TOP_RELATED_SEARCH")
-    val names = canShow.implementation?.instructions?.toList().orEmpty()
-        .mapNotNull { it.getReference<MethodReference>() }
-        .filter { it.parameterTypes.isEmpty() && it.returnType == "Z" && isSearchService(it.definingClass, classOf) }
-        .map { it.name }
-        .distinct()
+    val names = canShow.questions().flatMap { ask ->
+        if (isCommentSceneService(ask.definingClass, classOf)) listOf(ask.name)
+        else classOf(ask.definingClass)?.methods
+            ?.singleOrNull { it.name == ask.name && it.parameterTypes.isEmpty() && it.returnType == "Z" }
+            ?.questions()?.filter { isCommentSceneService(it.definingClass, classOf) }?.map { it.name }
+            .orEmpty()
+    }.distinct()
     val name = names.singleOrNull()
-        ?: fail("expected the comment top bar to ask the search service one question, found ${names.size}")
-    val service = classOf(ABS_SEARCH_SERVICE) ?: fail("$ABS_SEARCH_SERVICE is not in the app")
+        ?: fail("expected the comment top bar to ask the comment search service one question, found ${names.size}")
+    val service = classOf(COMMENT_SCENE_SERVICE_IMPL)?.takeIf { COMMENT_SCENE_SERVICE in it.interfaces }
+        ?: fail("$COMMENT_SCENE_SERVICE_IMPL is not in the app")
     return service.methods.singleOrNull {
         it.name == name && it.parameterTypes.isEmpty() && it.returnType == "Z" && it.implementation != null
-    } ?: fail("$ABS_SEARCH_SERVICE has no $name()Z to close")
+    } ?: fail("$COMMENT_SCENE_SERVICE_IMPL has no $name()Z to close")
 }
 
-private fun isSearchService(type: String, classOf: (String) -> ClassDef?): Boolean =
-    type == SEARCH_SERVICE || classOf(type)?.interfaces?.contains(SEARCH_SERVICE) == true
+private fun Method.questions(): List<MethodReference> = implementation?.instructions?.toList().orEmpty()
+    .mapNotNull { it.getReference<MethodReference>() }
+    .filter { it.parameterTypes.isEmpty() && it.returnType == "Z" }
+
+private fun isCommentSceneService(type: String, classOf: (String) -> ClassDef?): Boolean =
+    type == COMMENT_SCENE_SERVICE || classOf(type)?.interfaces?.contains(COMMENT_SCENE_SERVICE) == true
 
 /** True closes the gate, which every asker already reads as "no suggestion for this video". */
 internal fun MutableMethod.resolveCommentSuggestionGate(): CommentToolsWrite {

@@ -26,11 +26,11 @@ class LocalProfileAppearanceBridgeTypesTest {
     private companion object {
         const val STRING = "Ljava/lang/String;"
         const val OBJECT = "Ljava/lang/Object;"
-        val getter: Method = ImmutableMethod(PROFILE_PROTOCOL, "LJIJJ", emptyList(), PROFILE_COMMON_INFO,
+        val getter: Method = ImmutableMethod(PROFILE_PROTOCOL, "LJIJI", emptyList(), PROFILE_COMMON_INFO,
             AccessFlags.PUBLIC.value, null, null, null)
-        val legacyGetter: Method = ImmutableMethod(BASE_UI_COMPONENT, "yr", emptyList(), PROFILE_COMMON_INFO,
+        val legacyGetter: Method = ImmutableMethod(BASE_UI_COMPONENT, "uq", emptyList(), PROFILE_COMMON_INFO,
             AccessFlags.PUBLIC.value, null, null, null)
-        val original = ImmutableMethodReference("Lkotlin/jvm/internal/Intrinsics;", "LJFF", listOf(OBJECT, OBJECT), "Z")
+        val original = ImmutableMethodReference("Lkotlin/jvm/internal/Intrinsics;", "LJI", listOf(OBJECT, OBJECT), "Z")
     }
 
     @Test fun `every owned bridge passes the verifier's argument and return typing`() {
@@ -67,7 +67,7 @@ class LocalProfileAppearanceBridgeTypesTest {
             ImmutableMethodImplementation(3, emptyList(), null, null))).apply {
             addInstructionsWithLabels(0, """
                 const/4 v0, 0x0
-                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJJ()$PROFILE_COMMON_INFO
+                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJI()$PROFILE_COMMON_INFO
                 move-result-object v0
                 if-eqz v0, :identity_ready
                 invoke-virtual { v0 }, $PROFILE_COMMON_INFO->getUserProfileInfo()$PROFILE_INFO
@@ -91,7 +91,7 @@ class LocalProfileAppearanceBridgeTypesTest {
             AccessFlags.PRIVATE.value or AccessFlags.SYNTHETIC.value, null, null,
             ImmutableMethodImplementation(2, emptyList(), null, null))).apply {
             addInstructionsWithLabels(0, """
-                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJJ()$PROFILE_COMMON_INFO
+                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJI()$PROFILE_COMMON_INFO
                 move-result-object v0
                 if-eqz v0, :none
                 invoke-virtual { v0 }, $PROFILE_COMMON_INFO->getUserProfileInfo()$PROFILE_INFO
@@ -109,7 +109,7 @@ class LocalProfileAppearanceBridgeTypesTest {
             ImmutableMethodImplementation(3, emptyList(), null, null))).apply {
             addInstructionsWithLabels(0, """
                 const/4 v0, 0x0
-                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJJ()$PROFILE_COMMON_INFO
+                invoke-virtual { p0 }, $PROFILE_PROTOCOL->LJIJI()$PROFILE_COMMON_INFO
                 move-result-object v1
                 if-eqz v1, :none
                 invoke-virtual { v1 }, $PROFILE_COMMON_INFO->getUserProfileInfo()$PROFILE_INFO

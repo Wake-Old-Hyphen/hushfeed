@@ -47,8 +47,8 @@ public final class CaptionStyle {
      * method, which loads dlr, and CLACaptionAssemV2, which loads dlk. 47.1.3 renamed them again,
      * the text dmb and the strip dm5, the names 47.1.4 keeps, so the names are written for the build.
      */
-    private static final String[] TEXT_IDS = {"47.1.4:dmb"};
-    private static final String[] BACKGROUND_IDS = {"47.1.4:dm5"};
+    private static final String[] TEXT_IDS = {"47.4.3:dm5"};
+    private static final String[] BACKGROUND_IDS = {"47.4.3:dly"};
     private static final String TEXT = String.join("|", TEXT_IDS);
     private static final String BACKGROUND = String.join("|", BACKGROUND_IDS);
     private static final ResourceIdCache RESOURCE_IDS = new ResourceIdCache();
@@ -188,7 +188,9 @@ public final class CaptionStyle {
      * color put in their place filled the strip edge to edge with square corners (#158), so the
      * chosen color goes into a copy of TikTok's own shape, and into a 4 dp rounded rectangle
      * when the strip had no shape to copy. The copy is mutated on its own, because the shape's
-     * state is shared with every other view drawn from that resource.
+     * state is shared with every other view drawn from that resource. On a reporter's phone the
+     * copied shape came out far rounder than TikTok's own captions (#158 again), so the copy
+     * gets the 4 dp corners too.
      */
     private static final Map<View, GradientDrawable> PAINTED = new WeakHashMap<>();
     private static final float TIKTOK_CORNER_DP = 4;
@@ -207,8 +209,7 @@ public final class CaptionStyle {
     private static GradientDrawable shapeOf(View strip, Drawable.ConstantState nativeState) {
         Drawable copy = nativeState == null ? null
                 : nativeState.newDrawable(strip.getResources(), strip.getContext().getTheme()).mutate();
-        if (copy instanceof GradientDrawable) return (GradientDrawable) copy;
-        GradientDrawable shape = new GradientDrawable();
+        GradientDrawable shape = copy instanceof GradientDrawable ? (GradientDrawable) copy : new GradientDrawable();
         shape.setCornerRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TIKTOK_CORNER_DP,
                 strip.getResources().getDisplayMetrics()));
         return shape;

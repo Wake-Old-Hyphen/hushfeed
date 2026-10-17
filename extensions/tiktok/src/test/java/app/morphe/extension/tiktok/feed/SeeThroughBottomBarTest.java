@@ -51,9 +51,9 @@ public class SeeThroughBottomBarTest {
         context = RuntimeEnvironment.getApplication();
         Utils.setContext(context);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:duh", SPACER_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:opp", BAR_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:bqv", ANCHOR_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:duc", SPACER_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:onp", BAR_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:bqr", ANCHOR_ID);
         SeeThroughBottomBar.reset();
     }
 
@@ -285,7 +285,7 @@ public class SeeThroughBottomBarTest {
      */
     @Test
     public void theMainFeedStripGoesAndTheCaptionStaysAboveTheBar() {
-        VideoOverlayHider.resolveForTests("47.1.4:cnk", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
@@ -338,7 +338,7 @@ public class SeeThroughBottomBarTest {
             assertEquals(View.VISIBLE, strip.getVisibility());
             assertEquals(0f, layer.getTranslationY(), 0f);
         } finally {
-            VideoOverlayHider.resolveForTests("47.1.4:cnk", 0);
+            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
             VideoOverlayHider.resolveForTests("viewpager_container", 0);
             VideoOverlayHider.resolveForTests("widget_container", 0);
         }

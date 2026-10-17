@@ -23,23 +23,16 @@ class DoubleTapRoutesTest {
                 "Lcom/ss/android/ugc/aweme/feed/panel/BaseListFragmentPanel;" to "handleDoubleClick",
                 "Lcom/ss/android/ugc/feed/platform/panel/digg/DiggPanelComponent;" to "handleDoubleClick",
                 "Lcom/ss/android/ugc/aweme/feed/landscape/LandscapeFragmentPanel;" to "handleDoubleClick",
-                "Lcom/ss/android/ugc/aweme/friendstab/ui/feed/cell/component/base/" +
-                    "FriendsV3GestureDetectorAssem;" to "onDoubleTap",
             ),
             doubleTapRouteMethods,
         )
     }
 
     @Test
-    fun theTwoClassesThatCannotLikeAreNotGuarded() {
-        // Both declare the same method on all three fixtures and neither can like anything:
-        // LX/0SPC returns immediately and FriendsV3LegacyCompatAssem throws "Not yet
-        // implemented". Guarding either would add an injection that can only ever be dead.
+    fun theClassThatCannotLikeIsNotGuarded() {
+        // LX/0SPC declares the same method and returns immediately. Guarding it would add an
+        // injection that can only ever be dead.
         val owners = doubleTapRouteMethods.map { it.first }
         assertEquals(emptyList<String>(), owners.filter { it == "LX/0SPC;" })
-        assertEquals(
-            emptyList<String>(),
-            owners.filter { it.endsWith("FriendsV3LegacyCompatAssem;") },
-        )
     }
 }

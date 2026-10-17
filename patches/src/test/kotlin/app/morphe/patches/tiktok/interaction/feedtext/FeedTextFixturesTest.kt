@@ -31,7 +31,7 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.1.4" to Triple("LX/09Ce;", "LX/07ZU;", 0x7f0a2075 to 0x7f0a8893),
+            "47.4.3" to Triple("LX/09Bg;", "LX/07Yl;", 0x7f0a206a to 0x7f0a882c),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -48,22 +48,22 @@ class FeedTextFixturesTest {
             assertEquals(listOf(ids.second), resources.getValue("title"))
             assertEquals(POST_TIME_IDS.toList(), resources.getValue("tv_post_time"))
             assertEquals(2, native.sizeInputs.size)
-            assertEquals(listOf(2, 6), native.sizeInputs.map { it.builderRegister })
-            assertEquals(listOf(109, 305), native.sizeInputs.map { it.index })
-            assertEquals(30, native.layoutFactory.implementation!!.registerCount)
+            assertEquals(listOf(2, 10), native.sizeInputs.map { it.builderRegister })
+            assertEquals(listOf(87, 277), native.sizeInputs.map { it.index })
+            assertEquals(29, native.layoutFactory.implementation!!.registerCount)
             assertEquals("LIZJ", native.builderPaint.name)
             assertEquals("LJIIJ", native.builderSize.name)
             assertEquals("LJFF", native.builderCache.name)
             assertEquals(6, native.layoutCaches.size)
-            assertEquals("LJLLLL", native.refreshOriginal.name)
-            assertEquals("LJLZ", native.refreshTranslated.name)
-            assertEquals("As", native.authorBind.name)
-            assertEquals("LLLLLILLIL", native.authorView.name)
+            assertEquals("LJLLL", native.refreshOriginal.name)
+            assertEquals("LJLLLLLL", native.refreshTranslated.name)
+            assertEquals("Oq", native.authorBind.name)
+            assertEquals("LLLIIIL", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
             })
             // The post date beside the name: the same owner loads it, as the same kind of text view.
-            assertEquals("LLLLLJIL", native.dateView.name)
+            assertEquals("LLLIIL", native.dateView.name)
             assertEquals(AUTHOR, native.dateView.definingClass)
             assertEquals(native.authorView.type, native.dateView.type)
             val loaderCode = native.authorLoader.implementation!!.instructions.toList()
@@ -83,7 +83,7 @@ class FeedTextFixturesTest {
             mutable.markDescriptionBuilders(native.sizeInputs)
             val after = mutable.implementation!!.instructions.toList()
             assertEquals(before.size + 4, after.size)
-            assertEquals(30, mutable.implementation!!.registerCount)
+            assertEquals(29, mutable.implementation!!.registerCount)
             assertEquals(2, after.count { it.getReference<MethodReference>()?.name == "descriptionBuilder" })
             branches.forEach { (branch, target) ->
                 val source = after.single { it === branch }
@@ -118,8 +118,9 @@ class FeedTextFixturesTest {
             rejects(byType, duplicate)
             val thirdInput = MutableClass(native.controller)
             val altered = thirdInput.methods.single { it.name == native.layoutFactory.name }
-            val font = native.layoutFactory.implementation!!.instructions.elementAt(108).getReference<MethodReference>()!!
-            altered.addInstruction(109, "invoke-virtual { v2, v3 }, $font")
+            val firstInput = native.sizeInputs.first().index
+            val font = native.layoutFactory.implementation!!.instructions.elementAt(firstInput - 1).getReference<MethodReference>()!!
+            altered.addInstruction(firstInput, "invoke-virtual { v2, v3 }, $font")
             rejects(byType, thirdInput)
             val missingFont = MutableClass(native.builder)
             missingFont.methods.removeAll { it.name == font.name }

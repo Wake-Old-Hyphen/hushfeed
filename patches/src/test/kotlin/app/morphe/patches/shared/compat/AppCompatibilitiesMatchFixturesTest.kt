@@ -64,9 +64,14 @@ class AppCompatibilitiesMatchFixturesTest {
     @Test
     fun `each declared target carries the version code of its vendor build`() {
         val targets = AppCompatibilities.tiktok().single().targets
-        val expected = mapOf("47.1.4" to AppCompatibilities.TIKTOK_4714_VERSION_CODE)
+        val expected = mapOf("47.4.3" to AppCompatibilities.TIKTOK_4743_VERSION_CODE)
         assertEquals("declared versions", expected.keys, targets.map { it.version }.toSet())
-        assertEquals("the codes the Play Store patch accepts", expected.values.toSet(), AppCompatibilities.TIKTOK_VERSION_CODES)
+        assertEquals("declared TikTok codes", expected.values.toSet(), AppCompatibilities.TIKTOK_VERSION_CODES)
+        assertEquals(
+            "the codes the Play Store patch accepts",
+            expected.values.toSet() + AppCompatibilities.PINEDRAMA_4714_VERSION_CODE,
+            AppCompatibilities.DECLARED_VERSION_CODES,
+        )
         for (target in targets) {
             val version = checkNotNull(target.version)
             val codes = checkNotNull(target.versionCodes) { "the $version target declares no version codes" }
@@ -84,17 +89,19 @@ class AppCompatibilitiesMatchFixturesTest {
         }
     }
 
-    /** PineDrama (#156) is declared at TikTok's own build, the same version and code, under its own key. */
+    /**
+     * PineDrama (#156) is declared at its own newest build under its own key. Its 47.1.4 is built
+     * from TikTok's 47.1.4 code and carries that build's version code.
+     */
     @Test
-    fun `PineDrama is declared at TikTok's build under its own key`() {
+    fun `PineDrama is declared at its newest build under its own key`() {
         val pineDrama = AppCompatibilities.pineDrama().single()
         assertEquals("com.ss.android.ttmd.video", pineDrama.packageName)
         assertEquals(setOf(AppCompatibilities.PINEDRAMA_SIGNER_SHA256), pineDrama.signatures)
-        val tiktok = AppCompatibilities.tiktok().single()
         assertEquals(
             "PineDrama's targets",
-            tiktok.targets.map { it.version to it.versionCodes },
-            pineDrama.targets.map { it.version to it.versionCodes },
+            listOf("47.1.4" to setOf(2024701040)),
+            pineDrama.targets.map { it.version to it.versionCodes?.values?.toSet() },
         )
         assertEquals(listOf("TikTok", "PineDrama"), AppCompatibilities.tiktokAndPineDrama().map { it.name })
     }

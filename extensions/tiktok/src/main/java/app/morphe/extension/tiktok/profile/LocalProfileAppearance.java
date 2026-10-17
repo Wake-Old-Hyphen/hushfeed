@@ -28,7 +28,8 @@ public final class LocalProfileAppearance {
     public static final String NAVBAR_NICKNAME = "nav_bar_center_nickname";
     public static final String RESTRICTION_NOTICE = "user_account_ags_warning";
     // The declared host's native blue verified icon, also used by its older nickname renderer.
-    public static final int VERIFIED_BADGE = 0x7f010269;
+    // LocalProfileAppearanceAnchorsTest holds it to the patch's NATIVE_BLUE_BADGE.
+    public static final int VERIFIED_BADGE = 0x7f01026c;
     private static final Map<Object, Binding> bindings = new WeakHashMap<>();
     private static final Map<Object, Binding> repaints = new WeakHashMap<>();
     private static final Map<Object, String> localTexts = new WeakHashMap<>();

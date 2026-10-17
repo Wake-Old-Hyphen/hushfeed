@@ -57,7 +57,7 @@ class CommentSearchSuggestionsPatchTest {
     }
 
     private fun factory(
-        owner: String = "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;",
+        owner: String = COMMENT_SCENE_SERVICE_IMPL,
         result: String = "Landroid/view/View;",
         context: String = "Landroid/content/Context;",
         scene: String = "comment_top",

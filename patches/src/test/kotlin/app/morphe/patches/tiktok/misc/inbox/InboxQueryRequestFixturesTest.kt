@@ -23,8 +23,8 @@ class InboxQueryRequestFixturesTest {
             loadedInboxRequestSpecs.forEach { spec ->
                 val entry = when (spec.owner) {
                     INBOX_PAGE_LOADER -> "classes8.dex"
-                    "Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;" -> "classes10.dex"
-                    else -> "classes35.dex"
+                    "Lcom/ss/android/ugc/aweme/inbox/widget/v2/InboxWidgetContainer;" -> "classes9.dex"
+                    else -> "classes39.dex"
                 }
                 val owner = dex.getEntry(entry)!!.dexFile.classes.single { it.type == spec.owner }
                 val native = owner.methods.single { it.name == spec.name && it.parameterTypes.map(CharSequence::toString) == spec.parameters }
@@ -58,7 +58,7 @@ class InboxQueryRequestFixturesTest {
                 }
                 if (spec.tracked) {
                     val launch = after.withIndex().single { it.value.getReference<MethodReference>()?.let { method ->
-                        method.definingClass == "LX/03WP;" && method.name == "LIZLLL" && method.returnType == "LX/03Ww;" } == true }
+                        method.definingClass == "LX/03WS;" && method.name == "LIZLLL" && method.returnType == "LX/03Wz;" } == true }
                     assertEquals(Opcode.MOVE_RESULT_OBJECT, after[launch.index + 1].opcode)
                     val nativeResult = (after[launch.index + 1] as OneRegisterInstruction).registerA
                     val observed = after[launch.index + 2]
@@ -76,18 +76,18 @@ class InboxQueryRequestFixturesTest {
     @Test fun `request completion observes real native jobs including the load-more sibling job`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val vmClasses = dex.getEntry("classes35.dex")!!.dexFile.classes
+            val vmClasses = dex.getEntry("classes39.dex")!!.dexFile.classes
             val regular = vmClasses.single { it.type == INBOX_REGULAR_VM }
             val creator = vmClasses.single { it.type == INBOX_CREATOR_VM }
-            listOf(regular to listOf("LLJLIL", "LLJLILLLLZIIL"), creator to listOf("LLJJLIIIJLLLLLLLZ", "LLJL")).forEach { (owner, fields) ->
-                fields.forEach { name -> assertEquals("LX/03Ww;", owner.fields.single { it.name == name }.type) }
+            listOf(regular to listOf("LLJJLIIIJLLLLLLLZ", "LLJL"), creator to listOf("LLJJJJLIIL", "LLJJL")).forEach { (owner, fields) ->
+                fields.forEach { name -> assertEquals("LX/03Wz;", owner.fields.single { it.name == name }.type) }
             }
             val jobSupport = dex.getEntry("classes2.dex")!!.dexFile.classes.single { it.type == "Lkotlinx/coroutines/JobSupport;" }
             val completion = jobSupport.methods.single { it.name == "LJIJ" && it.parameterTypes.map(CharSequence::toString) == listOf("Lkotlin/jvm/functions/Function1;") }
-            assertEquals("LX/03RA;", completion.returnType)
+            assertEquals("LX/03RD;", completion.returnType)
             assertEquals("Z", jobSupport.methods.single { it.name == "isCompleted" }.returnType)
             assertTrue(completion.implementation!!.instructions.any { it.getReference<MethodReference>()?.let { method ->
-                method.definingClass == jobSupport.type && method.name == "LJJJJLL" } == true })
+                method.definingClass == jobSupport.type && method.name == "LJJJJL" } == true })
             val unit = dex.getEntry("classes2.dex")!!.dexFile.classes.single { it.type == "Lkotlin/Unit;" }
             assertEquals("Lkotlin/Unit;", unit.fields.single { it.name == "LIZ" }.type)
         }

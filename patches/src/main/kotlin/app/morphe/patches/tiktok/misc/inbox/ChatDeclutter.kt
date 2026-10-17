@@ -16,14 +16,16 @@ import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
 /*
- * The chat screen's clutter, hidden one switch at a time. Every class here keeps its real
- * name on 47.0.3, 47.1.3 and 47.1.4, and so does every method the gates use, because the
- * message list protocols implement an interface and the title bar overrides a framework hook.
+ * The chat screen's clutter, hidden one switch at a time. The title bar and the gesture
+ * dispatcher keep their real names on 47.4.3. The three message list protocols with an enable
+ * check do not: R8 renamed them, so each is found by the MessageListProtocolEnum constant its
+ * constructor registers.
  */
 
 private const val CHAT_TITLE_BAR_EXTENSION = "Lapp/morphe/extension/tiktok/inbox/ChatTitleBar;"
@@ -37,28 +39,45 @@ internal object ChatTitleBarRightBindFingerprint : Fingerprint(
     parameters = listOf("Landroid/view/View;"),
 )
 
-/** The banner of sticker suggestions in a chat. Its enable check answers true. */
+internal const val MESSAGE_LIST_PROTOCOL = "Lcom/ss/android/ugc/aweme/im/messagelist/api/cell/IMMessageListProtocol;"
+
+/**
+ * Whether the class is the chat message list protocol that registers [constant], a
+ * MessageListProtocolEnum name its constructor stores. R8 renames the protocol classes from build
+ * to build, but the enum keeps its names.
+ */
+internal fun ClassDef.registersMessageListProtocol(constant: String): Boolean =
+    MESSAGE_LIST_PROTOCOL in interfaces && methods.any { method ->
+        method.name == "<init>" &&
+            method.implementation?.instructions?.any { it.getReference<FieldReference>()?.name == constant } == true
+    }
+
+/**
+ * The banner of sticker suggestions in a chat. Its enable check answers true. On 47.4.3 R8 renamed
+ * the protocol class (it was PreshownStickerBannerProtocol); it is the one IMMessageListProtocol
+ * whose constructor stores MessageListProtocolEnum.PRESHOWN_STICKER_BANNER_PROTOCOL.
+ */
 internal object ChatStickerBannerEnabledFingerprint : Fingerprint(
-    definingClass = "/PreshownStickerBannerProtocol;",
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),
+    custom = { _, classDef -> classDef.registersMessageListProtocol("PRESHOWN_STICKER_BANNER_PROTOCOL") },
 )
 
-/** The suggested reply cells in a chat's message list. */
+/** The suggested reply cells in a chat's message list. On 47.4.3 R8 renamed the class (IMUnifiedSuggestedReplyMsgProtocol); it registers UNIFIED_SUGGESTED_REPLY_MSG. */
 internal object ChatSuggestedReplyEnabledFingerprint : Fingerprint(
-    definingClass = "/IMUnifiedSuggestedReplyMsgProtocol;",
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),
+    custom = { _, classDef -> classDef.registersMessageListProtocol("UNIFIED_SUGGESTED_REPLY_MSG") },
 )
 
-/** The banner that introduces suggested replies. */
+/** The banner that introduces suggested replies. On 47.4.3 R8 renamed the class (SmartReplyIntroBannerProtocol); it registers SMART_REPLY_ENTRANCE_CARD. */
 internal object ChatSmartReplyIntroEnabledFingerprint : Fingerprint(
-    definingClass = "/SmartReplyIntroBannerProtocol;",
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),
+    custom = { _, classDef -> classDef.registersMessageListProtocol("SMART_REPLY_ENTRANCE_CARD") },
 )
 
 private const val CHAT_GESTURES_EXTENSION = "Lapp/morphe/extension/tiktok/inbox/ChatGestures;"

@@ -21,12 +21,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The native readers behind the scrolling comments and several-photos presets on TikTok 47.1.4
+ * The native readers behind the scrolling comments and several-photos presets on TikTok 47.4.3
  * (#98): which key each reads, through which AB read, and which values turn the feature on.
  */
 class FeatureGateRegionPresetFixturesTest {
     private val app by lazy {
-        val container = Fixtures.dexContainer(Fixtures.apkOf("47.1.4"), Opcodes.getDefault())
+        val container = Fixtures.dexContainer(Fixtures.apkOf("47.4.3"), Opcodes.getDefault())
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
             PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD,
@@ -44,7 +44,7 @@ class FeatureGateRegionPresetFixturesTest {
 
         val holder = method(DANMAKU_HOLDER, "<clinit>")
         assertTrue("the holder's lazy group and master", holder.created().containsAll(listOf(DANMAKU_READ, DANMAKU_MASTER)))
-        assertEquals("the master is read back as a boolean", listOf("$DANMAKU_HOLDER->LIZLLL:LX/02nr;"),
+        assertEquals("the master is read back as a boolean", listOf("$DANMAKU_HOLDER->LIZLLL:LX/02o5;"),
             method(DANMAKU_HOLDER, "LIZIZ").fields())
         assertEquals("the service asks the master", "$DANMAKU_HOLDER->LIZIZ()Z",
             method(DANMAKU_SERVICE, "LJIIIZ").calls().single().toString())
@@ -77,8 +77,8 @@ class FeatureGateRegionPresetFixturesTest {
         for (master in listOf(false, true)) for (value in -1..3) {
             assertEquals("master=$master value=$value", master && value == 1, run(read) { call, _ ->
                 when (call.toString()) {
-                    "LX/08mC;->LJIIIZ()Z" -> if (master) 1 else 0
-                    "LX/032I;->LJIIIZ()LX/032I;" -> Any()
+                    "LX/08lI;->LJIIIZ()Z" -> if (master) 1 else 0
+                    "LX/032O;->LJIIIZ()LX/032O;" -> Any()
                     AB_INT_READ -> value
                     "Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;" -> null
                     else -> error("Unexpected call: $call")
@@ -106,13 +106,13 @@ class FeatureGateRegionPresetFixturesTest {
         for (group in -1..4) {
             assertEquals("group $group", group == 2, run(gate) { call, _ ->
                 when (call.toString()) {
-                    "LX/02nr;->getValue()Ljava/lang/Object;" -> group
+                    "LX/02o5;->getValue()Ljava/lang/Object;" -> group
                     "Ljava/lang/Number;->intValue()I" -> group
                     else -> error("Unexpected call: $call")
                 }
             })
         }
-        for ((owner, name) in listOf(PUBLISH to "L83", KEYBOARD to "ot", KEYBOARD to "onViewCreated")) {
+        for ((owner, name) in listOf(PUBLISH to "F33", KEYBOARD to "TI", KEYBOARD to "onViewCreated")) {
             assertTrue("$owner $name reads the gate", app.getValue(owner).methods.filter { it.name == name }
                 .any { candidate -> candidate.calls().any { it.toString() == "$PHOTOS_GATE->LIZ()Z" } })
         }
@@ -194,16 +194,16 @@ class FeatureGateRegionPresetFixturesTest {
     }
 
     private companion object {
-        const val AB_INT_READ = "LX/032I;->LJIIJJI(IILjava/lang/String;Z)I"
-        const val DANMAKU_READ = "LX/0IL3;"
-        const val DANMAKU_HOLDER = "LX/0IL2;"
-        const val DANMAKU_MASTER = "LX/0IL6;"
-        const val LANDSCAPE_READ = "Lkotlin/jvm/internal/AFwS160S0000000_15_I1;"
-        const val LANDSCAPE_METHOD = "invoke\$664"
+        const val AB_INT_READ = "LX/032O;->LJIIJJI(IILjava/lang/String;Z)I"
+        const val DANMAKU_READ = "LX/0IGg;"
+        const val DANMAKU_HOLDER = "LX/0IGf;"
+        const val DANMAKU_MASTER = "LX/0IGj;"
+        const val LANDSCAPE_READ = "Lkotlin/jvm/internal/AFwS170S0000000_30_I1;"
+        const val LANDSCAPE_METHOD = "invoke\$550"
         const val DANMAKU_SERVICE = "Lcom/ss/android/ugc/aweme/service/DanmakuServiceImpl;"
         const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-        const val PHOTOS_READ = "LX/0HNw;"
-        const val PHOTOS_GATE = "LX/0HNv;"
+        const val PHOTOS_READ = "LX/0HJj;"
+        const val PHOTOS_GATE = "LX/0HJi;"
         const val PUBLISH = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/viewmodel/CommentPublishViewModel;"
         const val KEYBOARD = "Lcom/ss/android/ugc/aweme/comment/keyboard/keyboardv2/refactor/PortraitInputKeyboard;"
     }

@@ -7,7 +7,7 @@
 package app.morphe.extension.tiktok.featuregatelab;
 
 /**
- * Generated from TikTok 47.1.4 (version code 2024701040), from the player setting registry.
+ * Generated from TikTok 47.4.3 (version code 2024704030), from the player setting registry.
  * The rows every build has are stored once; each build's other rows follow, in
  * GeneratedGateCatalogBuilds.BUILDS order, and a build's rows are the shared ones then its own.
  * Do not edit: ./gradlew :patches:generateGateCatalog writes it again.

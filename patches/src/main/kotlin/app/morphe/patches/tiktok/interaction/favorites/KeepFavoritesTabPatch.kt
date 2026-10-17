@@ -22,6 +22,7 @@ import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/favorites/FavoritesTab;"
@@ -43,6 +44,29 @@ internal fun Method.isQuickFavoritePanelShow(): Boolean {
     return QUICK_FAVORITE_PANEL_TRACE in strings && "show" in strings
 }
 
+/** Whether [type] is a Dialog, following the app's own superclasses up to the framework's. */
+internal fun isDialog(type: String, classOf: (String) -> ClassDef?): Boolean {
+    var current = type
+    repeat(16) {
+        if (current == "Landroid/app/Dialog;") return true
+        current = classOf(current)?.superclass ?: return false
+    }
+    return false
+}
+
+/**
+ * Where a show that isn't the popup's own method finds the popup: 47.4.3 opens it from a
+ * QuickFavoriteManager lambda that keeps the one popup it builds in a static field. Null when
+ * the method touches no single static Dialog field.
+ */
+internal fun Method.quickFavoritePanelField(classOf: (String) -> ClassDef?): FieldReference? =
+    implementation?.instructions?.toList().orEmpty()
+        .filter { it.opcode == Opcode.SPUT_OBJECT || it.opcode == Opcode.SGET_OBJECT }
+        .mapNotNull { it.getReference<FieldReference>() }
+        .filter { isDialog(it.type, classOf) }
+        .distinctBy { it.toString() }
+        .singleOrNull()
+
 /**
  * The profile's Favorites tab builds its pages in `FavoritesFragmentV2.onCreate`, and two app
  * AB gates make it build none: `favorite_reverse` read as 1 and
@@ -51,9 +75,11 @@ internal fun Method.isQuickFavoritePanelShow(): Boolean {
  * class's typed getters, so the two boundary hooks see every read and answer those two.
  *
  * Holding the Favorites button opens a popup of your collections, drawn white in dark mode too
- * (issue #142). TikTok has a horizontal and a vertical version under one abstract base, each
- * with a method that shows the dialog and fades it in; the extension is handed the popup at
- * every return of both and paints it dark when TikTok is.
+ * (issue #142). Until 47.4.3 TikTok had a horizontal and a vertical version under one abstract
+ * base, each with a method that shows the dialog and fades it in. 47.4.3 picks the layout at
+ * run time and shows its one popup from a lambda that keeps it in a static field. The extension
+ * is handed the popup at every return of the show (read back from that field when the show
+ * isn't the popup's own method) and paints it dark when TikTok is.
  */
 @Suppress("unused")
 val keepFavoritesTabPatch = bytecodePatch(
@@ -82,25 +108,32 @@ val keepFavoritesTabPatch = bytecodePatch(
             if (classDef.type.startsWith("Lapp/morphe/")) return@classDefForEach
             classDef.methods.filter { it.isQuickFavoritePanelShow() }.forEach { shows += classDef to it }
         }
-        if (shows.size != 2) {
+        if (shows.size !in 1..2) {
             throw PatchException(
-                "Keep the Favorites tab: expected the horizontal and vertical quick favorites " +
-                    "popups' show, found ${shows.size}: ${shows.map { "${it.first.type}->${it.second.name}" }}.",
+                "Keep the Favorites tab: expected one or two quick favorites popup shows, " +
+                    "found ${shows.size}: ${shows.map { "${it.first.type}->${it.second.name}" }}.",
             )
         }
-        shows.forEach { (classDef, show) ->
-            val method = mutableClassDefBy(classDef.type).findMutableMethodOf(show)
-            val returns = method.implementation!!.instructions.withIndex()
+        // Resolve every popup before the first write, so a moved one leaves nothing half hooked.
+        val hooks = shows.map { (classDef, show) ->
+            val paint = if (isDialog(classDef.type) { classDefByOrNull(it) }) {
+                "invoke-static/range {p0 .. p0}, $QUICK_FAVORITES_DARK->paint(Ljava/lang/Object;)V"
+            } else {
+                val field = show.quickFavoritePanelField { classDefByOrNull(it) } ?: throw PatchException(
+                    "Keep the Favorites tab: ${classDef.type}->${show.name} keeps no single popup to paint.",
+                )
+                // Nothing is live at a return-void, so v0 is free there.
+                "sget-object v0, $field\ninvoke-static {v0}, $QUICK_FAVORITES_DARK->paint(Ljava/lang/Object;)V"
+            }
+            val returns = show.implementation!!.instructions.withIndex()
                 .filter { it.value.opcode == Opcode.RETURN_VOID }.map { it.index }
             if (returns.isEmpty()) {
                 throw PatchException("Keep the Favorites tab: ${classDef.type}->${show.name} has no return to hook.")
             }
-            returns.asReversed().forEach { index ->
-                method.addInstructionsAtControlFlowLabel(
-                    index,
-                    "invoke-static/range {p0 .. p0}, $QUICK_FAVORITES_DARK->paint(Ljava/lang/Object;)V",
-                )
-            }
+            Triple(mutableClassDefBy(classDef.type).findMutableMethodOf(show), returns, paint)
+        }
+        hooks.forEach { (method, returns, paint) ->
+            returns.asReversed().forEach { index -> method.addInstructionsAtControlFlowLabel(index, paint) }
         }
     }
 }

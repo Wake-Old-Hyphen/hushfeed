@@ -54,6 +54,7 @@ val amoledThemePatch = resourcePatch(
         // The dark token block's background grays under this build's own names. Read before any
         // file is touched: a build whose palette was never read is refused with nothing changed.
         val backgrounds = darkBackgroundColors(packageMetadata.versionName)
+        val surfaces = surfaceStyleItems(packageMetadata.versionName)
         val found = mutableSetOf<String>()
         val styleItemsFound = mutableSetOf<String>()
         val valuesDirectories = get("res").listFiles().orEmpty()
@@ -77,13 +78,13 @@ val amoledThemePatch = resourcePatch(
         // stays white.
         valuesDirectories.map { it.resolve("styles.xml") }.filter { it.exists() }.forEach { file ->
             document(file.relativeTo(get(".")).invariantSeparatorsPath).use { xml ->
-                styleItemsFound += rewriteDarkStyleItems(xml, SURFACE_STYLE_ITEMS, color)
+                styleItemsFound += rewriteDarkStyleItems(xml, surfaces, color)
             }
         }
         if (found != backgrounds) throw PatchException("Dark background palette is incomplete: $found")
         // The palette check above refuses every build whose names weren't read, so this is a
         // build whose surface names are known, and one missing means an identity is wrong.
-        if (styleItemsFound != SURFACE_STYLE_ITEMS) {
+        if (styleItemsFound != surfaces) {
             throw PatchException("Dark surface style items are incomplete: $styleItemsFound")
         }
         BuildDetails.amoled(get(BUILD_DETAILS_ASSET), color)
@@ -143,15 +144,15 @@ internal fun renamedPathCollisions(
 /**
  * The dark theme's background grays, per build: the opaque dark grays of the color token block
  * the dark app themes set, which the surfaces read. The names are each build's own and move:
- * 47.0.3 and 47.1.3 each added a color ahead of the block, so every gray moved one name along,
- * and an older build's names there are an accent and see-through white overlays, which the patch
- * painted black until this was read off the fixture (AmoledPaletteTest holds every fixture's
- * block to its entry here). Only the declared build is listed, so a build the bundle moves to
- * needs its own entry read off its fixture. The block's pure black is a token of its own and
- * stays.
+ * 47.0.3 and 47.1.3 each added a color ahead of the block, so every gray moved one name along
+ * (47.4.3 added two), and an older build's names there are an accent and see-through white
+ * overlays, which the patch painted black until this was read off the fixture (AmoledPaletteTest
+ * holds every fixture's block to its entry here). Only the declared build is listed, so a build
+ * the bundle moves to needs its own entry read off its fixture. The block's pure black is a token
+ * of its own and stays.
  */
 internal val DARK_BACKGROUND_COLORS: Map<String, Set<String>> = linkedMapOf(
-    "47.1.4" to setOf("a40", "a42", "a43", "a45", "a4c"),
+    "47.4.3" to setOf("a42", "a44", "a45", "a47", "a4e"),
 )
 
 /** This build's background grays, or a refusal: a name carried over from another build is a guess. */
@@ -172,26 +173,31 @@ internal fun declaredVersions(): Set<String> =
     AppCompatibilities.tiktok().flatMap { it.targets }.mapNotNull { it.version }.toSet()
 
 /**
- * The dark style literals behind TikTok's sheets and pages, named by TikTok's own token table
- * (AmoledSheetTokensTest):
- * - aia is UISheetFlat1's dark value (attr/a24), the fill of the comment panel, the share sheet
+ * The dark style literals behind TikTok's sheets and pages per build, named by TikTok's own token
+ * table (AmoledSheetTokensTest). On 47.4.3:
+ * - aic is UISheetFlat1's dark value (attr/a25), the fill of the comment panel, the share sheet
  *   and TikTok's other sheets, panels and modals.
- * - aig is UISheetGrouped1's (attr/a2_), the fill of the feed's long-press panel and the other
+ * - aii is UISheetGrouped1's (attr/a2a), the fill of the feed's long-press panel and the other
  *   sheets that group their rows into cards. The cards are UISheetGrouped2 and keep their gray.
  * - bx is BGPrimary, a literal of its own in the dark themes, which the Inbox Activity page, its
  *   rows and New followers fill with.
- * - agn is UIPageGrouped2's (attr/a0g), the cards of TikTok's own settings pages: a TuxCell off
+ * - agp is UIPageGrouped2's (attr/a0h), the cards of TikTok's own settings pages: a TuxCell off
  *   a sheet fills with it. The pages behind them are UIPageGrouped1, black in TikTok's own dark
  *   mode already, so those cards were the only gray left on Settings and privacy (#152). A
  *   TuxCell on a sheet (the profile menu panel) fills with UISheetGrouped2 instead and keeps its
  *   gray like the long-press panel's cards.
- * - agk and c3 were the comments and share sheets' own through 46.x and are dark surfaces of
- *   their own on 47.x.
- * 47.1.4 keeps every attr where 47.0.3 had it (TuxSheet's background attribute is 0x7f0609fb).
- * On 46.x aia was another surface tier, which is why only a build whose palette was read is
- * patched.
+ * - agm (UIPageFlat3Elevated) and c3 were the comments and share sheets' own through 46.x, under
+ *   other names, and are dark surfaces of their own on 47.x.
+ * The token names move a place or two with every build, and on 46.x a name these use now was
+ * another surface tier, which is why only a build whose names were read is patched.
  */
-internal val SURFACE_STYLE_ITEMS = setOf("agk", "c3", "aia", "aig", "bx", "agn")
+internal val SURFACE_STYLE_ITEMS: Map<String, Set<String>> = linkedMapOf(
+    "47.4.3" to setOf("agm", "c3", "aic", "aii", "bx", "agp"),
+)
+
+/** This build's surface style items, or a refusal like the palette's. */
+internal fun surfaceStyleItems(versionName: String?): Set<String> =
+    versionName?.let { SURFACE_STYLE_ITEMS[it] } ?: throw PatchException(unreadPaletteRefusal(versionName))
 
 /**
  * Sets every `<item name="...">` in the named set whose value is a dark opaque colour literal

@@ -7,14 +7,14 @@ public class User {
     public String nickname;
     public int followStatus;
     public int followerStatus;
-    public Long createTime;
+    public Long _createTime;
     public long registerTime;
     public String region;
     public String accountRegion;
     public String language;
     public long uniqueIdModifyTime;
     public int nickNameModifyTs;
-    public boolean secret;
+    public boolean isSecret;
     public boolean hasOpenFavorite;
     /** A UrlModel in TikTok; here anything with a urlList, which is all the avatar saver reads. */
     public Object avatar300;

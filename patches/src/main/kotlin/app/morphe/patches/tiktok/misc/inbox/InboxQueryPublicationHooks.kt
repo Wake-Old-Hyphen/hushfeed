@@ -29,7 +29,7 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 
 internal const val INBOX_QUERY_EXTENSION = "Lapp/morphe/extension/tiktok/inbox/InboxFilter;"
 internal const val INBOX_RESULT_FRAGMENT = "Lcom/ss/android/ugc/aweme/notification/v2/NotificationResultFragment;"
-internal const val INBOX_MERGED_CLOSURE = "Lkotlin/jvm/internal/AwS438S0200000_33_I1;"
+internal const val INBOX_MERGED_CLOSURE = "Lkotlin/jvm/internal/AwS439S0200000_37_I1;"
 internal const val INBOX_INDICES_GATE = "hushLoadedInboxIndicesEnabled"
 
 internal object InboxListPublication : Fingerprint(
@@ -41,30 +41,30 @@ internal object InboxStubPublication : Fingerprint(
     parameters = listOf("Ljava/lang/Object;"),
 )
 internal object InboxDiffSubmission : Fingerprint(
-    definingClass = "LX/09Np;", name = "LJ", returnType = "V",
-    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Ljava/util/List;", "LX/0H29;"),
+    definingClass = "LX/09Mk;", name = "LJ", returnType = "V",
+    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Ljava/util/List;", "LX/0Gy2;"),
 )
 internal object InboxDiffAcceptance : Fingerprint(
-    definingClass = "LX/09Np;", name = "LIZIZ", returnType = "V",
-    parameters = listOf("LX/00J7;", "LX/0H29;", "LX/00JX;"),
+    definingClass = "LX/09Mk;", name = "LIZIZ", returnType = "V",
+    parameters = listOf("LX/00J8;", "LX/0Gy2;", "LX/00JY;"),
 )
 internal object InboxFragmentPublication : Fingerprint(
-    definingClass = INBOX_RESULT_FRAGMENT, name = "Bb", returnType = "V", parameters = listOf("Ljava/util/List;"),
+    definingClass = INBOX_RESULT_FRAGMENT, name = "tb", returnType = "V", parameters = listOf("Ljava/util/List;"),
 )
 internal object InboxIndexedCallback : Fingerprint(
-    definingClass = INBOX_MERGED_CLOSURE, name = "invoke\$21", returnType = "Ljava/lang/Object;", parameters = listOf(INBOX_MERGED_CLOSURE),
+    definingClass = INBOX_MERGED_CLOSURE, name = "invoke\$43", returnType = "Ljava/lang/Object;", parameters = listOf(INBOX_MERGED_CLOSURE),
 )
 internal object InboxVisibleIndices : Fingerprint(
-    definingClass = INBOX_RESULT_FRAGMENT, name = "fY", returnType = "V", parameters = listOf("Z"),
+    definingClass = INBOX_RESULT_FRAGMENT, name = "DX", returnType = "V", parameters = listOf("Z"),
 )
 internal object InboxNotificationClick : Fingerprint(
     definingClass = TEMPLATE_NOTIFICATION_CELL, name = "onClick", returnType = "V", parameters = listOf("Landroid/view/View;"),
 )
 internal object InboxSpringRefresh : Fingerprint(
-    definingClass = "LX/09On;", name = "setRefreshing", returnType = "V", parameters = listOf("Z"),
+    definingClass = "LX/09Ni;", name = "setRefreshing", returnType = "V", parameters = listOf("Z"),
 )
 internal object InboxSpringManualRefresh : Fingerprint(
-    definingClass = "LX/09On;", name = "LJ", returnType = "V", parameters = emptyList(),
+    definingClass = "LX/09Ni;", name = "LJ", returnType = "V", parameters = emptyList(),
 )
 
 /** Resolve and validate the complete group before the patch writes any instruction. */
@@ -119,7 +119,7 @@ internal fun loadedIndicesGate(indexed: MutableMethod): MutableMethod {
     val code = indexed.implementation!!.instructions.toList()
     val getter = code[0].getReference<MethodReference>()
     val enabled = code[2].getReference<FieldReference>()
-    check(code[0].opcode == Opcode.INVOKE_STATIC && getter?.definingClass == "LX/0IXB;"
+    check(code[0].opcode == Opcode.INVOKE_STATIC && getter?.definingClass == "LX/0ISl;"
         && getter.name == "LIZ" && getter.parameterTypes.isEmpty()
         && getter.returnType == "Lcom/ss/android/ugc/aweme/inbox/widget/change/InboxListChangeConfigModel;")
     check(code[1].opcode == Opcode.MOVE_RESULT_OBJECT && code[2].opcode == Opcode.IGET_BOOLEAN
@@ -138,13 +138,13 @@ internal fun loadedIndicesGate(indexed: MutableMethod): MutableMethod {
 }
 
 internal fun MutableMethod.loadedRefreshHook(checkOnly: Boolean = false) {
-    check(definingClass == "LX/09On;" && returnType == "V")
+    check(definingClass == "LX/09Ni;" && returnType == "V")
     val manual = name == "LJ" && parameterTypes.isEmpty()
     check(manual || (name == "setRefreshing" && parameterTypes.map(CharSequence::toString) == listOf("Z")))
     requireLocals("Loaded Inbox refresh", 1)
     val code = implementation!!.instructions
     check(code.any { it.opcode == Opcode.IPUT_BOOLEAN && it.getReference<FieldReference>()?.let { field ->
-        field.definingClass == definingClass && field.name == if (manual) "LLLIIL" else "LLLJIL"
+        field.definingClass == definingClass && field.name == if (manual) "LLLIIIIL" else "LLLIZZ"
     } == true })
     if (checkOnly) return
     if (manual) loadedGuard("allowLoadedManualRefresh")
@@ -163,7 +163,7 @@ internal fun MutableMethod.loadedPublicationHook(checkOnly: Boolean = false) {
 
 internal fun MutableMethod.loadedStubHook(checkOnly: Boolean = false) {
     val constructors = implementation!!.instructions.withIndex().filter {
-        it.value.getReference<MethodReference>()?.let { ref -> ref.definingClass == "LX/0H29;" && ref.name == "<init>" } == true
+        it.value.getReference<MethodReference>()?.let { ref -> ref.definingClass == "LX/0Gy2;" && ref.name == "<init>" } == true
     }
     check(constructors.size == 1)
     val constructor = constructors.single()
@@ -176,7 +176,7 @@ internal fun MutableMethod.loadedStubHook(checkOnly: Boolean = false) {
 
 internal fun MutableMethod.loadedDiffSubmissionHook(checkOnly: Boolean = false) {
     val writes = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.IPUT &&
-        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/09Np;" && ref.name == "LJIIJ" && ref.type == "I" } == true }
+        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/09Mk;" && ref.name == "LJIIJ" && ref.type == "I" } == true }
     check(writes.size == 1 && parameterTypes.size == 4)
     if (checkOnly) return
     addInstruction(writes.single().index + 1, "invoke-static/range {p0 .. p4}, " +
@@ -185,10 +185,10 @@ internal fun MutableMethod.loadedDiffSubmissionHook(checkOnly: Boolean = false) 
 
 internal fun MutableMethod.loadedDiffAcceptanceHook(checkOnly: Boolean = false) {
     val completion = implementation!!.instructions.withIndex().filter { it.value.getReference<FieldReference>()?.let { ref ->
-        ref.definingClass == "LX/0H29;" && ref.name == "LJ" && ref.type == "Ljava/util/List;" } == true }
+        ref.definingClass == "LX/0Gy2;" && ref.name == "LJ" && ref.type == "Ljava/util/List;" } == true }
     check(completion.size == 1 && implementation!!.registerCount <= 16)
     val dispatch = implementation!!.instructions.indexOfFirst { it.getReference<MethodReference>()?.let { ref ->
-        ref.definingClass == "LX/00J7;" && ref.name == "LIZIZ" } == true }
+        ref.definingClass == "LX/00J8;" && ref.name == "LIZIZ" } == true }
     check(dispatch >= 0 && dispatch < completion.single().index)
     if (checkOnly) return
     val index = completion.single().index
@@ -200,7 +200,7 @@ internal fun MutableMethod.loadedDiffAcceptanceHook(checkOnly: Boolean = false) 
 
 internal fun MutableMethod.loadedIndexedHook(checkOnly: Boolean = false) {
     val calls = implementation!!.instructions.withIndex().filter { it.value.getReference<MethodReference>()?.let { ref ->
-        ref.definingClass == "LX/0Nf9;" && ref.name == "LJFF" && ref.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Lkotlin/Pair;") } == true }
+        ref.definingClass == "LX/0NaB;" && ref.name == "LJFF" && ref.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Lkotlin/Pair;") } == true }
     check(calls.size == 1 && implementation!!.registerCount <= 16)
     val call = calls.single()
     val registers = call.value as FiveRegisterInstruction
@@ -212,7 +212,7 @@ internal fun MutableMethod.loadedIndexedHook(checkOnly: Boolean = false) {
 
 internal fun MutableMethod.loadedVisibleHook(checkOnly: Boolean = false) {
     val reads = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.IGET_OBJECT &&
-        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/0FaF;" && ref.name == "LIZ" && ref.type == "Ljava/util/List;" } == true }
+        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/0FXE;" && ref.name == "LIZ" && ref.type == "Ljava/util/List;" } == true }
     check(reads.size == 2 && implementation!!.registerCount <= 16)
     requireLocals("Loaded Inbox search", 1)
     if (checkOnly) return

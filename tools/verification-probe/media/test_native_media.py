@@ -18,7 +18,7 @@ class NativeMediaTests(unittest.TestCase):
         self.receipt = {"schema": 1, "kind": "controlled-trackmuxer-art", "token": self.manifest["token"],
                         "manifestSha256": "b" * 64, "installedApkSha256": "e" * 64,
                         "sourceHashes": self.manifest["sourceHashes"].copy(),
-                        "package": "com.zhiliaoapp.musically", "version": "47.1.4", "vm": "Dalvik", "sdk": 23,
+                        "package": "com.zhiliaoapp.musically", "version": "47.4.3", "vm": "Dalvik", "sdk": 23,
                         "actualInstalledTrackMuxer": True, "accepted": True, "complete": True, "nativeDashBranchExercised": False,
                         "servedDashAcceptance": False, "compiledSourceQualified": False, "deadlineMs": 90000,
                         "elapsedMs": 1000, "restoration": {"inputsUnchanged": True, "productionDeadlineRestored": True,

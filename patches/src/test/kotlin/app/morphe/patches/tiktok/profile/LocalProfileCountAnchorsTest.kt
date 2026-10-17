@@ -38,19 +38,19 @@ class LocalProfileCountAnchorsTest {
         private const val STRING = "Ljava/lang/String;"
     }
 
-    @Test fun `47 1 4 has one older count bind and four formatter results delivered to profile TextViews`() {
+    @Test fun `47 4 3 has one older count bind and four formatter results delivered to profile TextViews`() {
         Fixtures.forEachDeclared { apk ->
-            assertEquals("47.1.4", Fixtures.versionOf(apk))
+            assertEquals("47.4.3", Fixtures.versionOf(apk))
             val found = find(apk)
-            assertEquals("vs", found.legacy.first.name)
+            assertEquals("gr", found.legacy.first.name)
             assertEquals("V", found.legacy.first.returnType)
             assertTrue(found.legacy.first.parameterTypes.isEmpty())
             assertEquals(mapOf(
-                ProfileCountMetric.FOLLOWERS to listOf("LJJLJLI(Z)V", "LJLJJLL(I)V"),
-                ProfileCountMetric.FOLLOWING to listOf("LJJLIIIJL()Z"),
-                ProfileCountMetric.LIKES to listOf("LJJLIIIJL()Z"),
+                ProfileCountMetric.FOLLOWERS to listOf("LJJLIL(Z)V", "LJLJJL(I)V"),
+                ProfileCountMetric.FOLLOWING to listOf("LJJLIIIJJI()Z"),
+                ProfileCountMetric.LIKES to listOf("LJJLIIIJJI()Z"),
             ), found.sites.mapValues { (_, sites) -> sites.map { (method, _) -> signature(method) }.sorted() })
-            assertEquals("LX/0OYA;->LIZ(I${NUMBER}${STRING})$TEXT", found.formatter.toString())
+            assertEquals("LX/0OSF;->LIZ(I${NUMBER}${STRING})$TEXT", found.formatter.toString())
             val formatter = found.classes.getValue(found.formatter.definingClass).methods.single {
                 it.name == found.formatter.name && it.parameterTypes.map(CharSequence::toString) == listOf("I", NUMBER, STRING) && it.returnType == TEXT
             }
@@ -67,19 +67,19 @@ class LocalProfileCountAnchorsTest {
                 assertEquals(STRING, getName.returnType)
                 assertEquals(listOf(metric.component), getName.implementation!!.instructions.mapNotNull { it.getReference<StringReference>()?.string })
             }
-            assertEquals("yr", found.classes.getValue(BASE_UI_COMPONENT).commonInfoGetter()!!.name)
-            assertEquals("LJIJJ", found.classes.getValue(PROFILE_PROTOCOL).commonInfoGetter()!!.name)
+            assertEquals("uq", found.classes.getValue(BASE_UI_COMPONENT).commonInfoGetter()!!.name)
+            assertEquals("LJIJI", found.classes.getValue(PROFILE_PROTOCOL).commonInfoGetter()!!.name)
             for ((owner, name, type) in listOf(Triple(PROFILE_COMMON_INFO, "getUserProfileInfo", PROFILE_INFO), Triple(PROFILE_INFO, "getUid", STRING))) {
                 val method = found.classes.getValue(owner).methods.single { it.name == name && it.parameterTypes.isEmpty() }
                 assertEquals(type, method.returnType)
                 assertTrue(AccessFlags.PUBLIC.isSet(method.accessFlags))
             }
             val identity = found.legacy.first.legacyCountIdentity()
-            assertEquals("LLLFF", identity.attached.name)
-            assertEquals("LX/0OT0;", identity.attached.type)
-            assertEquals("LLJJIJI", identity.holder.name)
+            assertEquals("LLL", identity.attached.name)
+            assertEquals("LX/0ON5;", identity.attached.type)
+            assertEquals("LLJJI", identity.holder.name)
             assertEquals("componentId", identity.key.name)
-            assertEquals("LLJZ", identity.fallback.name)
+            assertEquals("LLJLLIL", identity.fallback.name)
         }
     }
 
@@ -91,7 +91,7 @@ class LocalProfileCountAnchorsTest {
             }
             val code = method.implementation!!.instructions.toList()
             assertTrue(code.none { it.opcode.name.startsWith("IPUT") || it.opcode.name.startsWith("SPUT") })
-            assertEquals(setOf("Ljava/lang/Number;", "LX/01QS;", "LX/01OK;"),
+            assertEquals(setOf("Ljava/lang/Number;", "LX/01Qa;", "LX/01OU;"),
                 code.mapNotNull { it.getReference<MethodReference>()?.definingClass }.toSet())
             assertTrue(code.any { it.opcode == Opcode.NEW_INSTANCE })
         }

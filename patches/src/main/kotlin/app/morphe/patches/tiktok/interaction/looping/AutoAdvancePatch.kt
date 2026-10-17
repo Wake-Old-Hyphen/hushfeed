@@ -42,7 +42,6 @@ private const val COMPONENT = "Lcom/ss/android/ugc/feed/platform/panel/autoscrol
 private const val LAZY = "LAZY"
 private const val IMMEDIATE = "IMMEDIATE"
 private const val SEARCH_FLAG = "search_auto_scroll"
-private const val SEARCH_SERVICE = "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;"
 
 /** Where the panel records how the host should load one of its components. */
 private class Registration(
@@ -163,11 +162,18 @@ private object SearchGate : Fingerprint(
     strings = listOf(SEARCH_FLAG),
     custom = { method, _ -> loadsSearchFlag(method) },
 )
+// The starting state lived on AbsSearchService until 47.4.3 removed that class and moved it to
+// SearchInnerFlowDetailServiceImpl, so it's found by what it does: it reads the flag and answers
+// one of the auto scroll states. The Keva repo's invoke() loads the key too but answers no state.
 private object SearchStartState : Fingerprint(
-    definingClass = SEARCH_SERVICE,
+    returnType = "L",
     parameters = emptyList(),
     strings = listOf(SEARCH_FLAG),
-    custom = { method, _ -> loadsSearchFlag(method) },
+    custom = { method, _ ->
+        loadsSearchFlag(method) && method.implementation?.instructions?.any {
+            it.getReference<FieldReference>()?.name == "AUTO_SCROLL_STATE_STOP"
+        } == true
+    },
 )
 
 /**

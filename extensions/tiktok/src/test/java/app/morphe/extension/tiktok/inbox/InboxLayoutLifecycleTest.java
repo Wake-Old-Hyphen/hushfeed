@@ -42,9 +42,9 @@ public class InboxLayoutLifecycleTest {
      * 46.2.3 names are not registered, so this class would not notice one of them coming back;
      * RuntimeViewIdAnchorsTest's rule that a group looks up one name is what stops those.
      */
-    private static final String[] RESOURCE_NAMES = {"47.1.4:opi", "47.1.4:l91", "47.1.4:q6c", "47.1.4:u4x", "47.1.4:fyd", "47.1.4:wuh",
-            "user_name", "47.1.4:v1m", "47.1.4:brl", "47.1.4:w54", "tv_request_unread_count", "47.1.4:oom", "zci", "47.1.4:fhi",
-            "47.1.4:kqj", "47.1.4:l93", "v15", "vid"};
+    private static final String[] RESOURCE_NAMES = {"47.4.3:oni", "47.4.3:l92", "47.4.3:q4f", "47.4.3:u2n", "47.4.3:fy6", "47.4.3:wrv",
+            "user_name", "47.4.3:uyv", "47.4.3:brh", "47.4.3:w24", "tv_request_unread_count", "47.4.3:omm", "zci", "47.4.3:fhd",
+            "47.4.3:kp7", "47.4.3:l7j", "v15", "vid"};
     private final List<Inbox> inboxes = new ArrayList<>();
     private BooleanSetting[] switches;
 
@@ -62,7 +62,7 @@ public class InboxLayoutLifecycleTest {
         Settings.HIDE_INBOX_CUSTOM_TITLES.save("");
         String packageName = RuntimeEnvironment.getApplication().getPackageName();
         for (String name : RESOURCE_NAMES) InboxFilter.resolveForTests(packageName, name, id(name));
-        FeedVisibility.resolveForTests(packageName, "47.1.4:opi", id("47.1.4:opi"));
+        FeedVisibility.resolveForTests(packageName, "47.4.3:oni", id("47.4.3:oni"));
     }
 
     @After public void tearDown() {
@@ -108,7 +108,7 @@ public class InboxLayoutLifecycleTest {
         int[] dismissed = {0};
         LinearLayout account = new LinearLayout(inbox.activity);
         View remove = new View(inbox.activity);
-        remove.setId(id("47.1.4:fyd"));
+        remove.setId(id("47.4.3:fy6"));
         remove.setContentDescription("Remove current account from suggested accounts");
         remove.setOnClickListener(view -> { dismissed[0]++; inbox.rows.removeView(account); });
         account.addView(remove, new LinearLayout.LayoutParams(48, 48));
@@ -141,7 +141,7 @@ public class InboxLayoutLifecycleTest {
         LinearLayout row = new LinearLayout(inbox.activity);
         inbox.rows.addView(row, new LinearLayout.LayoutParams(-1, 72));
         Settings.HIDE_INBOX_ARCHIVE.save(true);
-        reshape(inbox, row, "47.1.4:v1m", "47.1.4:brl", "Archiv");
+        reshape(inbox, row, "47.4.3:uyv", "47.4.3:brh", "Archiv");
         InboxFilter.onRowBound(new Holder(row), 0, new Archive());
         inbox.layout();
         assertRow(row, true);
@@ -171,7 +171,7 @@ public class InboxLayoutLifecycleTest {
         // request count alone decides which of the two chat switches it answers to.
         Settings.HIDE_INBOX_ARCHIVE.save(true);
         Settings.HIDE_INBOX_CONVERSATIONS.save(true);
-        reshape(inbox, row, "47.1.4:w54", "user_name", "Archiv");
+        reshape(inbox, row, "47.4.3:w24", "user_name", "Archiv");
         InboxFilter.onRowBound(new Holder(row), 1, new Object());
         inbox.layout();
         assertRow(row, true);
@@ -186,12 +186,12 @@ public class InboxLayoutLifecycleTest {
         assertRow(row, true);
 
         Settings.HIDE_INBOX_STORIES.save(true);
-        reshape(inbox, row, null, "47.1.4:wuh", "Story account");
+        reshape(inbox, row, null, "47.4.3:wrv", "Story account");
         InboxFilter.onRowBound(new Holder(row), 2, new Object());
         inbox.layout();
         assertRow(row, true);
         Settings.HIDE_INBOX_SUGGESTED_ACCOUNTS.save(false);
-        reshape(inbox, row, null, "47.1.4:fyd", "Suggested account");
+        reshape(inbox, row, null, "47.4.3:fy6", "Suggested account");
         InboxFilter.onRowBound(new Holder(row), 3, new Object());
         inbox.layout();
         assertRow(row, false);
@@ -213,10 +213,10 @@ public class InboxLayoutLifecycleTest {
      */
     @Test public void chatRowsSortOnTheRequestCountAndSayHiRowsAreSuggestions() {
         Inbox inbox = openInbox();
-        LinearLayout single = chatRow(inbox, "47.1.4:w54", "Sam", true, false);
-        LinearLayout group = chatRow(inbox, "47.1.4:w54", "Weekend plans", false, false);
-        LinearLayout requests = chatRow(inbox, "47.1.4:w54", "Message requests", false, true);
-        LinearLayout sayHi = chatRow(inbox, "47.1.4:oom", "Andrew", false, false);
+        LinearLayout single = chatRow(inbox, "47.4.3:w24", "Sam", true, false);
+        LinearLayout group = chatRow(inbox, "47.4.3:w24", "Weekend plans", false, false);
+        LinearLayout requests = chatRow(inbox, "47.4.3:w24", "Message requests", false, true);
+        LinearLayout sayHi = chatRow(inbox, "47.4.3:omm", "Andrew", false, false);
 
         Settings.HIDE_INBOX_CONVERSATIONS.save(true);
         inbox.layout();
@@ -260,7 +260,7 @@ public class InboxLayoutLifecycleTest {
         LinearLayout row = new LinearLayout(inbox.activity);
         inbox.rows.addView(row, new LinearLayout.LayoutParams(-1, 72));
 
-        reshape(inbox, row, "47.1.4:v1m", "47.1.4:brl", "Bulletin board");
+        reshape(inbox, row, "47.4.3:uyv", "47.4.3:brh", "Bulletin board");
         InboxFilter.onRowBound(new Holder(row), 0, new Bulletin());
         inbox.layout();
         assertRow(row, false);
@@ -268,7 +268,7 @@ public class InboxLayoutLifecycleTest {
         inbox.layout();
         assertRow(row, true);
 
-        reshape(inbox, row, "47.1.4:w54", "user_name", "Bulletin board");
+        reshape(inbox, row, "47.4.3:w24", "user_name", "Bulletin board");
         InboxFilter.onRowBound(new Holder(row), 1, new Bulletin());
         inbox.layout();
         assertRow(row, true);
@@ -318,7 +318,7 @@ public class InboxLayoutLifecycleTest {
         Inbox inbox = openInbox();
 
         LinearLayout story = new LinearLayout(inbox.activity);
-        reshape(inbox, story, null, "47.1.4:wuh", "Story account");
+        reshape(inbox, story, null, "47.4.3:wrv", "Story account");
         inbox.rows.addView(story, new LinearLayout.LayoutParams(-1, 72));
 
         View nativeHidden = new View(inbox.activity);
@@ -349,7 +349,7 @@ public class InboxLayoutLifecycleTest {
         inbox.layout();
         assertRow(story, false);
 
-        reshape(inbox, story, null, "47.1.4:wuh", "Another story account");
+        reshape(inbox, story, null, "47.4.3:wrv", "Another story account");
         inbox.layout();
         assertRow(story, true);
         inbox.tab.setSelected(false);
@@ -363,7 +363,7 @@ public class InboxLayoutLifecycleTest {
         Settings.HIDE_INBOX_STORIES.save(true);
         Inbox restarted = openInbox();
         LinearLayout restartedStory = new LinearLayout(restarted.activity);
-        reshape(restarted, restartedStory, null, "47.1.4:wuh", "Story after restart");
+        reshape(restarted, restartedStory, null, "47.4.3:wrv", "Story after restart");
         restarted.rows.addView(restartedStory, new LinearLayout.LayoutParams(-1, 72));
         restarted.layout();
         assertRow(restartedStory, true);
@@ -505,10 +505,10 @@ public class InboxLayoutLifecycleTest {
     }
 
     private static TextView addHeading(Inbox inbox, ViewGroup header, int color) {
-        header.setId(id("47.1.4:q6c"));
+        header.setId(id("47.4.3:q4f"));
         LinearLayout titleWrapper = new LinearLayout(inbox.activity);
         TextView title = new TextView(inbox.activity);
-        title.setId(id("47.1.4:u4x"));
+        title.setId(id("47.4.3:u2n"));
         title.setText("Suggested accounts");
         title.setTextColor(color);
         titleWrapper.addView(title);
@@ -587,13 +587,13 @@ public class InboxLayoutLifecycleTest {
             status = new View(activity);
             LinearLayout root = new LinearLayout(activity);
             root.setOrientation(LinearLayout.VERTICAL);
-            tab.setId(id("47.1.4:opi"));
+            tab.setId(id("47.4.3:oni"));
             tab.setSelected(true);
-            addPeople.setId(id("47.1.4:fhi"));
-            search.setId(id("47.1.4:kqj"));
-            status.setId(id("47.1.4:l93"));
+            addPeople.setId(id("47.4.3:fhd"));
+            search.setId(id("47.4.3:kp7"));
+            status.setId(id("47.4.3:l7j"));
             for (View view : new View[]{tab, addPeople, search, status}) root.addView(view, new LinearLayout.LayoutParams(-1, 48));
-            rows.setId(id("47.1.4:l91"));
+            rows.setId(id("47.4.3:l92"));
             rows.setOrientation(LinearLayout.VERTICAL);
             root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
             activity.setContentView(root);

@@ -3,7 +3,6 @@ package app.morphe.patches.tiktok
 import app.morphe.Fixtures
 import app.morphe.takes
 import app.morphe.patches.tiktok.feedfilter.COMMENT_TOP_BAR_BRIDGE_BASE
-import app.morphe.patches.tiktok.feedfilter.FriendsV3FeedHandleResponseFingerprint
 import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_BRIDGE
 import app.morphe.patches.tiktok.feedfilter.TAKO_COMMENT_TOP_BAR_SERVICE
 import app.morphe.patches.tiktok.feedfilter.COLD_START_STORES
@@ -40,7 +39,9 @@ import app.morphe.patches.tiktok.interaction.engagement.gridCountSite
 import app.morphe.patches.tiktok.interaction.engagement.holderCountSites
 import app.morphe.patches.tiktok.interaction.feedtoolbar.SidebarIconViewFingerprint
 import app.morphe.patches.tiktok.interaction.feedtoolbar.isToolbarEnabledCheck
+import app.morphe.patches.tiktok.interaction.favorites.isDialog
 import app.morphe.patches.tiktok.interaction.favorites.isQuickFavoritePanelShow
+import app.morphe.patches.tiktok.interaction.favorites.quickFavoritePanelField
 import app.morphe.patches.tiktok.profile.BASE_UI_COMPONENT
 import app.morphe.patches.tiktok.profile.HEADER_TEXT_ITEM
 import app.morphe.patches.tiktok.profile.PROFILE_COMMON_INFO
@@ -50,9 +51,9 @@ import app.morphe.patches.tiktok.profile.REUSED_SLOT_ASSEM
 import app.morphe.patches.tiktok.profile.RelationCellBindFingerprint
 import app.morphe.patches.tiktok.profile.commonInfoGetter
 import app.morphe.patches.tiktok.profile.itemViewField
-import app.morphe.patches.tiktok.misc.commenttools.ABS_SEARCH_SERVICE
+import app.morphe.patches.tiktok.misc.commenttools.COMMENT_SCENE_SERVICE
+import app.morphe.patches.tiktok.misc.commenttools.COMMENT_SCENE_SERVICE_IMPL
 import app.morphe.patches.tiktok.misc.commenttools.COMMENT_TOP_RELATED_SEARCH
-import app.morphe.patches.tiktok.misc.commenttools.SEARCH_SERVICE
 import app.morphe.patches.tiktok.misc.commenttools.commentSuggestionGate
 import app.morphe.patches.tiktok.misc.commenttools.isCommentSearchHeaderFactory
 import app.morphe.patches.tiktok.misc.commenttools.resolveCommentSearchSuggestions
@@ -91,6 +92,8 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import java.io.File
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -303,31 +306,35 @@ class TikTokPatchAnchorsMatchFixturesTest {
     }
 
     /**
-     * Issue #142. The quick favorites popup comes in a horizontal and a vertical version under
-     * one abstract base, each with one renamed method that shows the dialog through TikTok's
-     * call interceptor (so it carries the base's name and "show") and returns normally, which is
-     * where the extension is handed the popup.
+     * Issue #142. The quick favorites popup is shown through TikTok's call interceptor, so its
+     * show carries the abstract base's name and "show", and returns normally, which is where the
+     * extension is handed the popup. 47.4.3 has one show, a lambda keeping the popup it builds
+     * in a static Dialog field. Older builds had a horizontal and a vertical popup, each showing
+     * itself.
      */
     @Test
-    fun `both quick favorites popups keep one traced show on every retained fixture`() {
+    fun `quick favorites popup show and its popup resolve on every retained fixture`() {
         val apks = fixtures()
         for (apk in apks) {
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val classes = container.dexEntryNames.asSequence()
                 .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }.toList()
+            val byType = classes.associateBy { it.type }
             val shows = classes.flatMap { classDef ->
                 classDef.methods.filter { it.isQuickFavoritePanelShow() }.map { classDef to it }
             }
-            assertEquals("${apk.name}: quick favorites shows ${shows.map { it.first.type }}", 2, shows.size)
-            assertEquals("${apk.name}: one show per popup", 2, shows.map { it.first.type }.toSet().size)
-            val bases = shows.map { it.first.superclass }.toSet()
-            assertEquals("${apk.name}: both popups share one base", 1, bases.size)
-            val base = classes.single { it.type == bases.single() }
-            assertTrue("${apk.name}: the shared base is abstract", AccessFlags.ABSTRACT.isSet(base.accessFlags))
-            for ((classDef, show) in shows) {
-                assertTrue("${apk.name}: ${classDef.type}->${show.name} never returns",
-                    show.implementation!!.instructions.any { it.opcode == Opcode.RETURN_VOID })
-            }
+            assertEquals("${apk.name}: quick favorites shows ${shows.map { it.first.type }}", 1, shows.size)
+            val (owner, show) = shows.single()
+            assertFalse("${apk.name}: the show is the lambda, not the popup", isDialog(owner.type) { byType[it] })
+            val field = show.quickFavoritePanelField { byType[it] }
+            assertNotNull("${apk.name}: ${owner.type}->${show.name} keeps one popup", field)
+            assertTrue("${apk.name}: the lambda stores the popup it builds",
+                show.implementation!!.instructions.any {
+                    it.opcode == Opcode.SPUT_OBJECT &&
+                        ((it as ReferenceInstruction).reference as? FieldReference)?.toString() == field!!.toString()
+                })
+            assertTrue("${apk.name}: ${owner.type}->${show.name} never returns",
+                show.implementation!!.instructions.any { it.opcode == Opcode.RETURN_VOID })
         }
     }
 
@@ -478,7 +485,7 @@ class TikTokPatchAnchorsMatchFixturesTest {
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             val matches = container.dexEntryNames.flatMap { entry ->
                 container.getEntry(entry)!!.dexFile.classes.filter {
-                    it.type == "Lcom/ss/android/ugc/aweme/search/common/communicate/AbsSearchService;"
+                    it.type == COMMENT_SCENE_SERVICE_IMPL
                 }.flatMap { it.methods.filter(::isCommentSearchHeaderFactory) }
             }
             assertEquals("${apk.name}: optional comment_top banner factory", 1, matches.size)
@@ -504,39 +511,54 @@ class TikTokPatchAnchorsMatchFixturesTest {
             val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }
                 .associateBy { it.type }
             val gate = commentSuggestionGate { classes[it] }
-            assertEquals(ABS_SEARCH_SERVICE, gate.definingClass)
-            fun asksGate(method: Method) = method.implementation?.instructions?.any {
-                val ref = (it as? ReferenceInstruction)?.reference as? MethodReference
-                ref != null && ref.name == gate.name && ref.parameterTypes.isEmpty() && ref.returnType == "Z" &&
-                    (ref.definingClass == SEARCH_SERVICE ||
-                        classes[ref.definingClass]?.interfaces?.contains(SEARCH_SERVICE) == true)
-            } == true
-            fun readsSuggestions(method: Method) = method.implementation?.instructions?.any {
-                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "getCommentSuggestWordList"
-            } == true
+            assertEquals(COMMENT_SCENE_SERVICE_IMPL, gate.definingClass)
+            fun Method.calls() = implementation?.instructions?.mapNotNull {
+                (it as? ReferenceInstruction)?.reference as? MethodReference
+            }.orEmpty()
+            fun isService(type: String) = type == COMMENT_SCENE_SERVICE ||
+                classes[type]?.interfaces?.contains(COMMENT_SCENE_SERVICE) == true
+            fun MethodReference.isGate() = name == gate.name && parameterTypes.isEmpty() && returnType == "Z"
+            // 47.4.3 asks through an obfuscated facade whose method of the gate's name forwards to the service.
+            val facades = classes.values.filter { owner ->
+                !isService(owner.type) && owner.methods.any { method ->
+                    method.name == gate.name && method.parameterTypes.isEmpty() && method.returnType == "Z" &&
+                        method.calls().any { it.isGate() && isService(it.definingClass) }
+                }
+            }.map { it.type }.toSet()
+            fun isAsked(type: String) = isService(type) || type in facades
+            fun asksGate(method: Method) = method.calls().any { it.isGate() && isAsked(it.definingClass) }
+            fun forwards(method: Method) = method.name == gate.name && method.parameterTypes.isEmpty() &&
+                isAsked(method.definingClass)
+            fun readsSuggestions(method: Method) = method.calls().any { it.name == "getCommentSuggestWordList" }
 
             // #161: the older header anchor's provider builds its banner through the guarded
-            // factory, and claims the header slot after its check says yes. Both its checks
-            // must ask the gate, so a closed gate leaves no slot claimed.
-            val factory = classes.getValue(ABS_SEARCH_SERVICE).methods.single(::isCommentSearchHeaderFactory)
+            // factory, and claims the header slot after its check says yes. That check must ask
+            // the gate, itself or through the service's header check that asks it first, so a
+            // closed gate leaves no slot claimed.
+            val impl = classes.getValue(COMMENT_SCENE_SERVICE_IMPL)
+            val factory = impl.methods.single(::isCommentSearchHeaderFactory)
+            val headerChecks = impl.methods.filter { method ->
+                method.returnType == "Z" && !forwards(method) &&
+                    method.calls().firstOrNull { it.returnType == "Z" }?.isGate() == true
+            }.map { it.name }.toSet()
+            assertTrue("${apk.name}: the service has a header check that asks the gate first", headerChecks.isNotEmpty())
             val providers = classes.values.filter { owner ->
-                owner.type != ABS_SEARCH_SERVICE && SEARCH_SERVICE !in owner.interfaces && owner.methods.any { method ->
-                    method.returnType == "Landroid/view/View;" && method.implementation?.instructions?.any {
-                        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { ref ->
-                            ref.definingClass == SEARCH_SERVICE && ref.name == factory.name
-                        } == true
-                    } == true
+                !isAsked(owner.type) && owner.methods.any { method ->
+                    method.returnType == "Landroid/view/View;" &&
+                        method.calls().any { it.name == factory.name && isAsked(it.definingClass) }
                 }
             }
             assertEquals("${apk.name}: one header anchor provider builds the banner", 1, providers.size)
-            val checks = providers.single().methods.filter { it.returnType == "Z" && asksGate(it) }
-            assertEquals("${apk.name}: both of the provider's checks ask the gate", 2, checks.size)
+            val checks = providers.single().methods.filter { method ->
+                method.returnType == "Z" && (asksGate(method) ||
+                    method.calls().any { it.name in headerChecks && it.returnType == "Z" && isAsked(it.definingClass) })
+            }
+            assertTrue("${apk.name}: the provider's check asks the gate", checks.isNotEmpty())
 
             // Every asker outside the service's own forwarding reads the comment suggestions, so
             // closing it reaches nothing else.
-            val askers = classes.values.flatMap { owner -> owner.methods.filter(::asksGate) }
-                .filterNot { it.name == gate.name && it.parameterTypes.isEmpty() }
-            assertTrue("${apk.name}: top bar and anchor checks", askers.size >= 3)
+            val askers = classes.values.flatMap { owner -> owner.methods.filter(::asksGate) }.filterNot(::forwards)
+            assertTrue("${apk.name}: top bar and anchor checks, $askers", askers.size >= 2)
             askers.forEach { assertTrue("${apk.name}: ${it.definingClass}->${it.name}", readsSuggestions(it)) }
             assertTrue(classes.getValue(COMMENT_TOP_RELATED_SEARCH).methods.single { it.name == "canShow" }
                 .let(::asksGate))
@@ -1028,44 +1050,6 @@ class TikTokPatchAnchorsMatchFixturesTest {
     }
 
     /**
-     * The Friends V3 feed is filtered as FriendsV3FeedNetworkSource starts handling a response:
-     * one public final instance method on every declared build, which walks the response's
-     * friendsV3Feeds list. Its entries keep the aweme, roomStruct and repostItem fields the
-     * filter reads, and a repost keeps its video in repostedAweme.
-     */
-    @Test
-    fun `Friends V3 response handler and entry fields resolve on every declared build`() {
-        val repo = "Lcom/ss/android/ugc/aweme/friendstab/repo/"
-        Fixtures.forEachDeclared { apk ->
-            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val classes = container.dexEntryNames.asSequence()
-                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
-                .filter { it.type.startsWith(repo) }
-                .toList()
-            val taken = classes.flatMap { classDef ->
-                classDef.methods.filter { FriendsV3FeedHandleResponseFingerprint.takes(it, classDef) }
-            }
-            assertEquals("the Friends V3 response handler", 1, taken.size)
-            val handler = taken.single()
-            assertEquals("${repo}FriendsV3FeedNetworkSource;", handler.definingClass)
-            assertTrue("the handler is an instance method", handler.accessFlags and AccessFlags.STATIC.value == 0)
-            assertTrue(
-                "the handler walks friendsV3Feeds",
-                handler.implementation!!.instructions.any {
-                    ((it as? ReferenceInstruction)?.reference as? FieldReference)?.name == "friendsV3Feeds"
-                },
-            )
-            fun fieldsOf(name: String) = classes.single { it.type == "$repo$name;" }.fields.associate { it.name to it.type }
-            val entry = fieldsOf("FriendsV3FeedModel")
-            assertEquals("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", entry["aweme"])
-            assertEquals("${repo}FriendsV3RepostModel;", entry["repostItem"])
-            assertTrue("roomStruct", entry.containsKey("roomStruct"))
-            assertEquals("Lcom/ss/android/ugc/aweme/feed/model/Aweme;", fieldsOf("FriendsV3RepostModel")["repostedAweme"])
-            assertEquals("Ljava/util/List;", fieldsOf("FriendsV3FeedResponse")["friendsV3Feeds"])
-        }
-    }
-
-    /**
      * Show follow status hooks the profile header's text item bind and the follow list cell bind.
      * The header hook reads the item's view and its profile's common info through the one
      * BaseUIComponent field and getter of those types, and the cell hook asks ReusedUISlotAssem for
@@ -1185,14 +1169,14 @@ class TikTokPatchAnchorsMatchFixturesTest {
             // Account facts reads these by their real names; a renamed or retyped one says Not sent.
             val accountFields = classes.getValue(user).fields.associate { it.name to it.type }
             for ((name, type) in listOf(
-                "createTime" to "Ljava/lang/Long;",
+                "_createTime" to "Ljava/lang/Long;",
                 "registerTime" to "J",
                 "region" to "Ljava/lang/String;",
                 "accountRegion" to "Ljava/lang/String;",
                 "language" to "Ljava/lang/String;",
                 "uniqueIdModifyTime" to "J",
                 "nickNameModifyTs" to "I",
-                "secret" to "Z",
+                "isSecret" to "Z",
                 "hasOpenFavorite" to "Z",
             )) {
                 assertEquals("the account's $name", type, accountFields[name])

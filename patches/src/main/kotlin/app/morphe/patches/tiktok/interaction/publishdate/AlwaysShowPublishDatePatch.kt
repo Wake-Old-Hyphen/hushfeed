@@ -33,6 +33,9 @@ private const val EXTENSION_CLASS_DESCRIPTOR =
     "Lapp/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch;"
 private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val WHAT = "Always show publish date"
+private val FORMATTER_CALLS = setOf(
+    Opcode.INVOKE_STATIC, Opcode.INVOKE_STATIC_RANGE, Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_VIRTUAL_RANGE,
+)
 
 @Suppress("unused")
 val alwaysShowPublishDatePatch = bytecodePatch(
@@ -94,8 +97,9 @@ internal data class PostTimeSite(
 
 /**
  * The row's post time runs `item.getCreateTime()`, times 1000, through one of a few static
- * (J...)String date formatters (the Following feed's, a short one and the default relative one),
- * and all of them meet at one `TextUtils.isEmpty` of the text. Past its `if-nez` the text is a
+ * (J...)String date formatters (the Following feed's, a short one and the default relative one;
+ * 47.4.3 inlines the relative one as a chain of `BDDateFormat` (J, Locale) and static (I, unit)
+ * formats), and all of them meet at one `TextUtils.isEmpty` of the text. Past its `if-nez` the text is a
  * date TikTok is about to show, which is where the hook goes. 47.1.x hands it to a small static
  * helper there and 47.0.3 builds the row text inline, so the anchor is the check, not what follows.
  *
@@ -137,7 +141,9 @@ internal fun Method.postTimeSite(): PostTimeSite {
         (flow.normal[from] + flow.exceptional[from]).forEach { predecessors[it] += from }
     }
 
-    // Each text the check can see was last written by a date formatter's result.
+    // Each text the check can see was last written by a date formatter's result: a static one taking
+    // the time, or since 47.4.3 the inlined relative-date chain's virtual (time, locale) format and
+    // static (count, unit) ones.
     val formatters = sortedSetOf<Int>()
     val seenBack = BitSet()
     val pendingBack = ArrayDeque(predecessors[emptyCheck])
@@ -150,9 +156,9 @@ internal fun Method.postTimeSite(): PostTimeSite {
             val call = instructions.getOrNull(at - 1)
             val formatter = call?.getReference<MethodReference>()
             val fromFormatter = instructions[at].opcode == Opcode.MOVE_RESULT_OBJECT &&
-                call != null && call.opcode in setOf(Opcode.INVOKE_STATIC, Opcode.INVOKE_STATIC_RANGE) &&
+                call != null && call.opcode in FORMATTER_CALLS &&
                 formatter != null && formatter.returnType == "Ljava/lang/String;" &&
-                formatter.parameterTypes.firstOrNull()?.toString() == "J"
+                formatter.parameterTypes.firstOrNull()?.toString() in setOf("J", "I")
             if (!fromFormatter) {
                 throw PatchException("$WHAT: instruction $at writes the post time text, and it isn't a date formatter.")
             }

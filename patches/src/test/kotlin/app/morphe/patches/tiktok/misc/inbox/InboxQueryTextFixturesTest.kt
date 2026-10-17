@@ -20,7 +20,7 @@ class InboxQueryTextFixturesTest {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
             fun type(entry: String, name: String) = dex.getEntry(entry)!!.dexFile.classes.single { it.type == name }
-            type("classes35.dex", "LX/1EH0;").field("LL", "${BEAN}MusNotice;")
+            type("classes39.dex", "LX/1Mmc;").field("LL", "${BEAN}MusNotice;")
             assertEquals("${BEAN}BaseNotice;", type("classes12.dex", "${BEAN}MusNotice;").superclass)
             type("classes12.dex", "${BEAN}BaseNotice;").field("templateNotice", "${BEAN}GeneralTemplateNotice;")
             type("classes12.dex", "${BEAN}GeneralTemplateNotice;").field("uiTemplate", "${TEMPLATE}NoticeUITemplate;")
@@ -37,8 +37,8 @@ class InboxQueryTextFixturesTest {
             val struct = type("classes9.dex", "${BEAN}NoticeTextStruct;")
             struct.field("content", "${BEAN}NoticeTextConfig;")
             struct.field("textConfigs", "Ljava/util/List;")
-            type("classes33.dex", "${BEAN}NoticeTextConfig;").field("text", "Ljava/lang/String;")
-            val formatter = type("classes35.dex", "LX/1EJR;")
+            type("classes36.dex", "${BEAN}NoticeTextConfig;").field("text", "Ljava/lang/String;")
+            val formatter = type("classes39.dex", "LX/1MmM;")
             val body = formatter.methods.single { it.name == "LJII" }
             val reads = body.implementation!!.instructions.mapNotNull { it.getReference<FieldReference>() }
             assertTrue(reads.any { it.definingClass == template.type && it.name == "content" })
@@ -49,7 +49,7 @@ class InboxQueryTextFixturesTest {
     @Test fun `native rich text uses single digit one-based text links and nickname remains a pure fallback`() {
         Fixtures.forEachDeclared { apk ->
             val dex = Fixtures.dexContainer(apk, Opcodes.getDefault())
-            val rich = dex.getEntry("classes34.dex")!!.dexFile.classes.single { it.type == "LX/1ByY;" }
+            val rich = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == "LX/1MmO;" }
                 .methods.single { it.name == "LIZ" }
             val code = rich.implementation!!.instructions.toList()
             assertTrue(code.any { it.getReference<StringReference>()?.string == "\\[\\[text_link_(\\d)\\]\\]" })
@@ -59,12 +59,12 @@ class InboxQueryTextFixturesTest {
             assertTrue(decrement >= 0 && decrement < indexedLink)
             assertTrue(code.any { it.getReference<FieldReference>()?.let { field ->
                 field.definingClass == "${TEMPLATE}TextLinkConfig;" && field.name == "text" } == true })
-            val aliases = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/0904;" }
+            val aliases = dex.getEntry("classes5.dex")!!.dexFile.classes.single { it.type == "LX/08z7;" }
             val name = aliases.methods.single { it.name == "LIZ" && it.parameterTypes.map(CharSequence::toString) ==
                 listOf("Lcom/ss/android/ugc/aweme/profile/model/User;", "Z") }
             assertTrue(name.references().any { it.definingClass == "Lcom/ss/android/ugc/aweme/profile/model/User;" && it.name == "getNickname" })
             // The expansion ability is not a generic formatter: its base methods return null.
-            val ability = dex.getEntry("classes35.dex")!!.dexFile.classes.single { it.type == "LX/1EJc;" }
+            val ability = dex.getEntry("classes39.dex")!!.dexFile.classes.single { it.type == "LX/1Mmd;" }
             listOf("LIZJ", "LJII").forEach { member ->
                 val native = ability.methods.single { it.name == member }
                 assertEquals(Opcode.RETURN_OBJECT, native.implementation!!.instructions.last().opcode)

@@ -68,6 +68,9 @@ class DuetStitchCallersTest {
             for (classDef in container.getEntry(entry)!!.dexFile.classes) {
                 if (!seen.add(classDef.type)) continue
                 for (method in classDef.methods) {
+                    // 47.4.3's User compares and hashes itself through its getters. Both sides of
+                    // that read the same answer, and nothing shows it to anyone.
+                    if (classDef.type == USER && method.name in setOf("equals", "hashCode")) continue
                     val instructions = method.implementation?.instructions ?: continue
                     for (instruction in instructions) {
                         if (instruction.opcode != Opcode.INVOKE_VIRTUAL && instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE) continue

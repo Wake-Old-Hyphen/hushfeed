@@ -239,7 +239,7 @@ public class CopyIdsTest {
         Utils.setActivity(activity);
         ProfilePackage nasa = profile("6812345678901234567", "nasa");
         nasa.user.region = "US";
-        nasa.user.secret = true;
+        nasa.user.isSecret = true;
         FrameLayout panel = panel();
         CopyIds.onSharePackage(nasa);
         CopyIds.onSharePanel(panel);

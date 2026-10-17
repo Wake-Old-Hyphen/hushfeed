@@ -66,11 +66,11 @@ public class TapThroughControlsTest {
     public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:llj", COLUMN_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:bqv", FRAME_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:mud", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:bqr", FRAME_ID);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", COVER_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:ll8", SEARCH_ID);
-        VideoOverlayHider.resolveForTests("47.1.4:v1c", PHOTO_EXIT_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:ljb", SEARCH_ID);
+        VideoOverlayHider.resolveForTests("47.4.3:uym", PHOTO_EXIT_ID);
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         overlays = SettingsStatus.videoOverlaysEnabled;
         SettingsStatus.videoOverlaysEnabled = true;
@@ -86,11 +86,11 @@ public class TapThroughControlsTest {
         Settings.HIDE_CLEAR_DISPLAY_CONTROLS.save(false);
         SettingsStatus.videoOverlaysEnabled = overlays;
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.1.4:llj", 0);
-        VideoOverlayHider.resolveForTests("47.1.4:bqv", 0);
+        VideoOverlayHider.resolveForTests("47.4.3:mud", 0);
+        VideoOverlayHider.resolveForTests("47.4.3:bqr", 0);
         VideoOverlayHider.resolveForTests("videomusiccoverblock", 0);
-        VideoOverlayHider.resolveForTests("47.1.4:ll8", 0);
-        VideoOverlayHider.resolveForTests("47.1.4:v1c", 0);
+        VideoOverlayHider.resolveForTests("47.4.3:ljb", 0);
+        VideoOverlayHider.resolveForTests("47.4.3:uym", 0);
         ClearDisplayShownControls.resetForTests();
     }
 

@@ -151,15 +151,24 @@ internal fun Method.reportRowIcon(): Int? {
     return icons.singleOrNull()?.takeIf { it ushr 24 == 0x7f }
 }
 
-/** The icon the getter returns for an account that isn't blocked yet. */
+/**
+ * The icon the getter returns for an account that isn't blocked yet. It reads the user's
+ * isBlock field, or asks isBlock() as 47.4.3 does, and branches on it straight away.
+ */
 internal fun Method.unblockedIcon(): Int? {
     val instructions = implementation?.instructions?.toList() ?: return null
-    val read = instructions.indexOfFirst {
-        it.opcode == Opcode.IGET_BOOLEAN && it.getReference<FieldReference>()?.let { field ->
-            field.definingClass == USER && field.name == "isBlock"
-        } == true
-    }
-    if (read < 0) return null
+    val read = instructions.indices.firstOrNull { index ->
+        val instruction = instructions[index]
+        when (instruction.opcode) {
+            Opcode.IGET_BOOLEAN -> instruction.getReference<FieldReference>()?.let { field ->
+                field.definingClass == USER && field.name == "isBlock"
+            } == true
+            Opcode.MOVE_RESULT -> instructions.getOrNull(index - 1)?.getReference<MethodReference>()?.let { call ->
+                call.definingClass == USER && call.name == "isBlock" && call.parameterTypes.isEmpty()
+            } == true
+            else -> false
+        }
+    } ?: return null
     val blocked = (instructions[read] as OneRegisterInstruction).registerA
     val test = instructions.getOrNull(read + 1) ?: return null
     if ((test.opcode != Opcode.IF_EQZ && test.opcode != Opcode.IF_NEZ) ||

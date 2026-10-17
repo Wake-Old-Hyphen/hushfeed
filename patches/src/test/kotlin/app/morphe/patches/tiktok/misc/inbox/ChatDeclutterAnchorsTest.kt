@@ -41,12 +41,6 @@ import org.junit.Test
 
 private const val TITLE_BAR = "Lcom/ss/android/ugc/aweme/im/chatroom/common/titlebar/BaseSingleChatTitleBarRightAssem;"
 private const val TUX = "Lcom/bytedance/tux/icon/TuxIconView;"
-private const val STICKER_BANNER =
-    "Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/base/assems/preshown/PreshownStickerBannerProtocol;"
-private const val SUGGESTED_REPLY =
-    "Lcom/ss/android/ugc/aweme/im/smartreply/impl/suggestedreply/protocol/IMUnifiedSuggestedReplyMsgProtocol;"
-private const val REPLY_INTRO =
-    "Lcom/ss/android/ugc/aweme/im/smartreply/impl/entrance/protocol/SmartReplyIntroBannerProtocol;"
 private const val CONTROLS = "Lapp/morphe/extension/tiktok/inbox/InboxControls;"
 private const val CHAT_TITLE_BAR = "Lapp/morphe/extension/tiktok/inbox/ChatTitleBar;"
 private const val CHAT_GESTURES = "Lapp/morphe/extension/tiktok/inbox/ChatGestures;"
@@ -59,21 +53,24 @@ private const val SKELETON = "Lcom/ss/android/ugc/aweme/im/sdk/chat/ui/base/asse
  */
 class ChatDeclutterAnchorsTest {
     private val gates = listOf(
-        Triple(ChatStickerBannerEnabledFingerprint, STICKER_BANNER, "shouldShowChatStickerBanner"),
-        Triple(ChatSuggestedReplyEnabledFingerprint, SUGGESTED_REPLY, "shouldShowChatAiReplies"),
-        Triple(ChatSmartReplyIntroEnabledFingerprint, REPLY_INTRO, "shouldShowChatAiReplies"),
+        Triple(ChatStickerBannerEnabledFingerprint, "PRESHOWN_STICKER_BANNER_PROTOCOL", "shouldShowChatStickerBanner"),
+        Triple(ChatSuggestedReplyEnabledFingerprint, "UNIFIED_SUGGESTED_REPLY_MSG", "shouldShowChatAiReplies"),
+        Triple(ChatSmartReplyIntroEnabledFingerprint, "SMART_REPLY_ENTRANCE_CARD", "shouldShowChatAiReplies"),
     )
 
     @Test
     fun `each enable check is one method that answers true, and the gate wraps it on every build`() {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
-            val classes = classesOf(apk, gates.map { it.second }.toSet())
+            val taken = gates.associate { it.first to mutableListOf<Method>() }
+            for (classDef in allClasses(apk)) {
+                for ((fingerprint) in gates) {
+                    classDef.methods.filterTo(taken.getValue(fingerprint)) { fingerprint.takes(it, classDef) }
+                }
+            }
             for ((fingerprint, owner, callback) in gates) {
-                val classDef = classes[owner] ?: error("$version: no $owner")
-                val taken = classDef.methods.filter { fingerprint.takes(it, classDef) }
-                assertEquals("$version: $owner enable checks matched", 1, taken.size)
-                val native = taken.single()
+                assertEquals("$version: $owner enable checks matched", 1, taken.getValue(fingerprint).size)
+                val native = taken.getValue(fingerprint).single()
                 assertTrue("$version: $owner is not a bare answer of true", answersTrue(native))
 
                 val gated = MutableMethod(native)
@@ -96,6 +93,20 @@ class ChatDeclutterAnchorsTest {
                 native.implementation!!.instructions.toList().forEachIndexed { index, original ->
                     assertEquals(original.opcode, code[index + 4].opcode)
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `each protocol constant is registered by exactly one message list protocol on every build`() {
+        val constants = gates.map { it.second }
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val protocols = allClasses(apk).filter { MESSAGE_LIST_PROTOCOL in it.interfaces }.toList()
+            assertTrue("$version: no message list protocols", protocols.size > constants.size)
+            for (constant in constants) {
+                val owners = protocols.filter { it.registersMessageListProtocol(constant) }.map { it.type }
+                assertEquals("$version: protocols registering $constant", 1, owners.size)
             }
         }
     }
@@ -344,6 +355,11 @@ class ChatDeclutterAnchorsTest {
         val register = (code[0] as OneRegisterInstruction).registerA
         return literal.narrowLiteral == 1 && code[1].opcode == Opcode.RETURN &&
             (code[1] as OneRegisterInstruction).registerA == register
+    }
+
+    private fun allClasses(apk: java.io.File): Sequence<ClassDef> {
+        val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+        return container.dexEntryNames.asSequence().flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
     }
 
     private fun classesOf(apk: java.io.File, names: Set<String>): Map<String, ClassDef> {

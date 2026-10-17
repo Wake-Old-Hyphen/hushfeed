@@ -27,7 +27,7 @@ internal const val PAGE_GROUPED_2_LABEL = ", UIPageGrouped2="
 /**
  * UIPageGrouped2 in TikTok's dark Compose palette: the gray of the cards on its Compose settings
  * pages, Settings and privacy among them (#152). The View pages read the same token through
- * attr/a0g, whose dark literal (agn) the resource side already rewrites.
+ * attr/a0h on 47.4.3, whose dark literal (agp) the resource side already rewrites.
  */
 internal const val DARK_CARD_GRAY = 0xff1e1e1eL
 
@@ -37,7 +37,7 @@ private const val LITERAL_REACH = 40
 /**
  * One write of the card color in a palette builder: [index] is the field write, [register] the
  * wide register it stores, and [conversion] the static `(J)J` that packed the value into a Compose
- * Color the instruction before (on 47.1.4 `LX/01LP;->LIZLLL(J)J`, a shift left by 32).
+ * Color the instruction before (a shift left by 32).
  */
 internal class CardWrite(val index: Int, val register: Int, val conversion: MethodReference, val argument: Int)
 

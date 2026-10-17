@@ -346,19 +346,19 @@ public class FeatureGateLabActionsTest {
 
     /** The rules a change of TikTok build turned off are counted when the Lab next opens. */
     @Test public void openingTheLabAfterABuildChangeSaysHowManyRulesWereTurnedOff() throws Exception {
-        // 47.1.3 is no longer in the catalog; 47.1.4, which replaced it, is.
-        app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.1.3");
+        // 47.1.4 is no longer in the catalog; 47.4.3, which replaced it, is.
+        app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.1.4");
         try {
             FeatureGateLabStore.resetAllLabData();
-            // A gate 47.1.4 carries, one under a type it doesn't, and one it dropped.
+            // A gate 47.4.3 carries, one under a type it doesn't, and one it dropped.
             FeatureGateLabStore.saveRule("abmock", "1005_max_limit_count_daily", "INT", "9", true);
             FeatureGateLabStore.saveRule("abmock", "1005_max_limit_count_daily", "LONG", "9", true);
             FeatureGateLabStore.saveRule("abmock", "comment_cell_badge_dedup", "BOOLEAN", "true", true);
-            app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.1.4");
+            app.morphe.extension.shared.BuildNames.setRunningBuildForTests("47.4.3");
             try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
                 attach(owner.get());
                 waitFor("2 overrides were turned off because the Lab couldn't confirm their gates are "
-                        + "unchanged in TikTok 47.1.4. Review them before turning them back on.");
+                        + "unchanged in TikTok 47.4.3. Review them before turning them back on.");
                 assertTrue(FeatureGateLabStore.rule("abmock", "1005_max_limit_count_daily", "INT").enabled);
             }
         } finally {

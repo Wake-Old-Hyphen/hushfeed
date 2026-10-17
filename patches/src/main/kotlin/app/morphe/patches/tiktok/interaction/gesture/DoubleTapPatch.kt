@@ -30,12 +30,12 @@ private const val COMMENT_CLASS = "Lcom/ss/android/ugc/aweme/feed/assem/videocom
  * report was about: `BaseListFragmentPanel` is reached through the `LX/0QfZ` interface from the
  * gesture detector, but the modern feed panel never goes through it. There, the detector holds
  * the digg component directly and calls `DiggPanelComponent.handleDoubleClick`, so the like
- * happened whatever the setting said. The landscape player and the Friends tab each carry a
- * third and fourth implementation of the same gesture.
+ * happened whatever the setting said. The landscape player carries a third implementation of
+ * the same gesture. The Friends tab had a fourth until 47.4.3 removed its V3 feed, and its feed
+ * now goes through the legacy panel.
  *
- * Two more classes declare the method and neither can like anything: `LX/0SPC` returns
- * immediately, and `FriendsV3LegacyCompatAssem` throws "Not yet implemented". They are left
- * alone deliberately rather than missed.
+ * One more class declares the method and can't like anything (`LX/0SPC` on 46.x returns
+ * immediately), so it's left alone deliberately rather than missed.
  */
 internal val doubleTapRouteMethods = listOf(
     // The legacy feed panel, reached through LX/0QfZ.handleDoubleClick.
@@ -45,9 +45,6 @@ internal val doubleTapRouteMethods = listOf(
     "Lcom/ss/android/ugc/feed/platform/panel/digg/DiggPanelComponent;" to "handleDoubleClick",
     // The landscape player, which builds its own click_double_like event.
     "Lcom/ss/android/ugc/aweme/feed/landscape/LandscapeFragmentPanel;" to "handleDoubleClick",
-    // The Friends tab, which likes through VideoViewModel rather than through a panel.
-    "Lcom/ss/android/ugc/aweme/friendstab/ui/feed/cell/component/base/FriendsV3GestureDetectorAssem;"
-        to "onDoubleTap",
 )
 
 private fun doubleTapRoute(owner: String, method: String) = Fingerprint(
