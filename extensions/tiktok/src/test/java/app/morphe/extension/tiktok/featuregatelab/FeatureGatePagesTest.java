@@ -1572,6 +1572,49 @@ public class FeatureGatePagesTest {
         failedStructuredSaveKeepsTheDraftAndAWorkingRetry();
     }
 
+    /** The rule cap is told to the reader and logged at info; any other failure stays a patch error. */
+    @Test public void aDetailChangePastTheRuleCapIsLoggedAsARefusal() throws Exception {
+        String limit = "The Lab keeps at most 1,024 rules. This change would make 1,025, so nothing was changed.";
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            FeatureGateDetailFragment detail = structuredDetail(activity, true);
+            EditText count = structuredInput(detail, "count");
+            View save = detail.getView().findViewWithTag("feature_gate_save_fields");
+            count.setText("17");
+            Exception[] next = {new FeatureGateLabStore.RuleLimitRefused(limit)};
+            FeatureGateDetailFragment.setDetailChangeTestHookForTests(
+                    new FeatureGateDetailFragment.DetailChangeTestHook() {
+                        @Override public void before(long generation) throws Exception {
+                            throw next[0];
+                        }
+                        @Override public void after(long generation) { }
+                    });
+            try {
+                app.morphe.extension.shared.settings.preference.LogBufferManager.clearLogBuffer();
+                save.performClick();
+                FeatureGateDetailFragment.awaitChangesForTests();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertEquals(limit, ShadowToast.getTextOfLatestToast());
+                FeatureGateLabActionsTest.assertLoggedOnce("INFO",
+                        "Feature Gate detail change refused", "Feature Gate detail change failed");
+
+                next[0] = new java.io.IOException("injected structured save failure");
+                app.morphe.extension.shared.settings.preference.LogBufferManager.clearLogBuffer();
+                save.performClick();
+                FeatureGateDetailFragment.awaitChangesForTests();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertEquals("Couldn't save this override. Try again.", ShadowToast.getTextOfLatestToast());
+                FeatureGateLabActionsTest.assertLoggedOnce("ERROR",
+                        "Feature Gate detail change failed", "Feature Gate detail change refused");
+            } finally {
+                FeatureGateDetailFragment.setDetailChangeTestHookForTests(null);
+            }
+            assertNull(FeatureGateLabStore.rule(
+                    FeatureGateLabStore.MANAGER_SETTINGS_MANAGER, "object_gate", "OBJECT"));
+        }
+    }
+
     private static void captureStructuredControls(FeatureGateDetailFragment detail, String name)
             throws Exception {
         View screen = detail.getView();

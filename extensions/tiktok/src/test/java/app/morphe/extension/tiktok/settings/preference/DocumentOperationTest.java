@@ -18,6 +18,7 @@ import android.preference.Preference;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.preference.AbstractPreferenceFragment;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.DocumentExportProvider;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -347,6 +348,7 @@ public class DocumentOperationTest {
         DocumentExportProvider provider = DocumentExportProvider.register(activity);
         provider.honorCancel = cooperative;
         CountDownLatch release = holdOpens(provider);
+        LogBufferManager.clearLogBuffer();
         fragment.onActivityResult(7311, Activity.RESULT_OK, new Intent().setData(provider.uri));
         assertTrue(provider.awaitOpening());
         stall();
@@ -377,6 +379,22 @@ public class DocumentOperationTest {
         }
         assertEquals(cooperative ? 0 : 1, provider.handedOut.size());
         assertResting(fragment);
+        assertStopLoggedAsInfo("Settings backup operation failed");
+    }
+
+    /**
+     * The stop that ended the work is the user's own choice, so its line is info. As a patch error
+     * it showed the debug error toast over the row's own answer and counted in the error report.
+     * The log is cleared before the run, so the one line is this run's.
+     */
+    public static void assertStopLoggedAsInfo(String message) {
+        int lines = 0;
+        for (String line : LogBufferManager.buildExportText().split("\n")) {
+            if (!line.contains(message)) continue;
+            lines++;
+            assertTrue("the stop was logged as a patch error: " + line, line.contains("| INFO | " + message));
+        }
+        assertEquals("the stop left no line in the log", 1, lines);
     }
 
     /**

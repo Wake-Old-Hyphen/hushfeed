@@ -6,7 +6,7 @@
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
   <a href="https://github.com/SysAdminDoc/hushfeed/discussions"><img alt="Discussions" src="https://img.shields.io/github/discussions/SysAdminDoc/hushfeed?color=0969da" /></a>
-  <a href="https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/"><img alt="TikTok 47.4.3" src="https://img.shields.io/badge/TikTok-47.4.3-ff0050.svg" /></a>
+  <a href="https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/"><img alt="TikTok 47.1.4" src="https://img.shields.io/badge/TikTok-47.1.4-ff0050.svg" /></a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 **[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 135 source patches](#patches)
 
 > [!IMPORTANT]
-> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
+> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.75.0 contains 135 patches for TikTok 47.1.4. New in this one: the Profile tab opens again on the phones where it crashed, phones set to another language stay in it after patching, and See translation is back on videos. A comment's menu can block whoever wrote it, and Accent color can follow your wallpaper. It needs Morphe Manager 1.34.0 or newer.
 
@@ -52,7 +52,7 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 
 ## Install
 
-1. Get the TikTok 47.4.3 APK. Google Play only offers the newest build, so take it from APKMirror: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
+1. Get the TikTok 47.1.4 APK. Google Play only offers the newest build, so take it from APKMirror: [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
 2. Use Morphe Manager 1.34.0 or newer. This bundle is built against patcher 1.15.1, which Manager 1.34.0 was the first to ship, and older Managers won't load it. morphe-desktop works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
 4. Pick the patches. Simple mode in Morphe Manager selects 117 of the 135 Hushfeed patches. The other 18 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 135 Hushfeed patches in eleven categories you can expand or collapse. Give the manager 1,024 MB of memory under **Settings > Process runtime** before you start, since less makes patching slow or stall.
@@ -155,7 +155,7 @@ Simple mode in Morphe Manager selects 117 of these patches. Each row says what t
 | `Copy comments without username` | When you copy a comment, you get just its text, without the username in front. On by default. Turn it off in Hushfeed settings > Comments. |
 | `Custom launcher icon` | Gives TikTok's home screen icon a themed version that takes your wallpaper's color on Android 13 and up. The options can also make it black, plain or your own picture. Only patching again without it puts the old icon back. |
 | `Custom offline videos limit` | Lets you pick how many videos TikTok saves for watching offline, from 1 to 10,000, and keep them until you delete them. Handy when you're often without internet. Starts off. Turn it on in Hushfeed settings > Downloads. |
-| `Device privacy guard` | Stops TikTok reading what you copied and gives it a blank advertising ID. Can also hide a VPN connection and root status with details about root tools. Each switch starts off in Hushfeed settings > Privacy. Changing Hide root needs a restart. |
+| `Device privacy guard` | Stops TikTok reading what you copied and gives it a blank advertising ID. Can also hide a VPN connection and root status with details about root tools, and give TikTok a new device identity. Each switch starts off in Hushfeed settings > Privacy. Changing Hide root needs a restart. |
 | `Diagnostic tools` | Adds logs and reports you can save or share when something goes wrong, so a problem is easier to report and fix. Starts off. Turn it on in Hushfeed settings > Diagnostics. |
 | `Disable login requirement` | Stops TikTok from forcing you to sign in before you can keep browsing. Works as soon as you patch it in, with no switch. |
 | `Disable screen capture detection` | Stops TikTok from noticing and reacting when you take a screenshot or record the screen. Works as soon as you patch it in, with no switch. |
@@ -205,7 +205,7 @@ Simple mode in Morphe Manager selects 117 of these patches. Each row says what t
 | `Keep the screen's refresh rate` | Stops TikTok slowing your screen down to the video's frame rate, so scrolling stays smooth on 90 or 120 Hz phones. Starts off. Turn it on in Hushfeed settings > App. |
 | `Lift text length limits` | Lets you write longer comments, repost notes and bios than the app normally allows. TikTok can still refuse one that's too long. Starts off. Turn it on in Hushfeed settings > Comments. |
 | `Limit background traffic` | Lets you stop TikTok loading upcoming videos ahead of time, which uses less data in the background, but videos may take a moment longer to start. Starts off. Turn it on in Hushfeed settings > App. |
-| `LIVE controls` | Stops a LIVE in the feed from opening by itself after a countdown. It can show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and clear screen in more LIVE rooms, open LIVE panels dark in dark mode, and keep your quality pick after TikTok restarts. Starts off. Turn it on in Hushfeed settings > Playback. It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, and can add a Record button to a LIVE room that saves what you watch from when you tap it. |
+| `LIVE controls` | Stops a LIVE in the feed from opening by itself after a countdown. It can show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. Starts off. Turn it on in Hushfeed settings > Playback. It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, and can add a Record button to a LIVE room that saves what you watch from when you tap it. |
 | `Location access governor` | Gives TikTok no location when it asks, so it can't see where you are from your phone's location services. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Long-press controls` | Lets a long press on a video like it, open the comments, copy the link, save the sound or the frame on screen, or set a sleep timer, and can give a creator's videos For You's full long-press menu. Starts off. Pick an action in Hushfeed settings > Feed screen. |
 | `Look like the store app` | Makes the patched app answer TikTok's checks as if it came from the Play Store, which can help when follows or likes undo themselves. TikTok has other checks, so it may not be enough. On once picked. Turn it off in Hushfeed settings > App. |
@@ -339,9 +339,10 @@ Hushfeed includes the eight Kveld TikTok optimizers it didn't already have, and 
 ## Supported target
 
 - App: TikTok, the global package `com.zhiliaoapp.musically`
-- Version: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/), on APKMirror since 2026-10-17.
-- Build: version code 2024704030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
-- SHA-256 of the APK every patch was verified against: `af7cbe2b00d33ff1339730f6abb8ed7e387a83b27ff2b16748b8f41e6fc87e0b` (47.4.3)
+- Version: [47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/), on APKMirror since 2026-09-28.
+- Build: version code 2024701040, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
+- SHA-256 of the APK every patch was verified against: `4226ed5d3031b68208c29f62d80ac421b281fc74201bc4163d98e442d0991a40` (47.1.4)
+- Next release: TikTok 47.4.3, [on APKMirror](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/) since 2026-10-17 (version code 2024704030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23), SHA-256 `af7cbe2b00d33ff1339730f6abb8ed7e387a83b27ff2b16748b8f41e6fc87e0b`. The patches on the main branch already target it, but the current release won't patch it, so use the build above until the next release is out.
 - Also PineDrama 47.1.4, TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024701040). It's built from TikTok's code, and 90 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
 
 On Windows, check your download with `Get-FileHash -Algorithm SHA256 .\tiktok.apk`. On Linux or macOS it's `sha256sum tiktok.apk`.
@@ -350,9 +351,9 @@ Hushfeed declares one TikTok build at a time, the newest stable one it's been ch
 
 ### Why you have to fetch that APK yourself
 
-Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.4.3, and Play can't be asked for an older one. Take the APK from APKMirror ([47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/)) and patch that file, not the installed app.
+Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.1.4, and Play can't be asked for an older one. Take the APK from APKMirror ([47.1.4](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-1-4-release/tiktok-47-1-4-2-android-apk-download/)) and patch that file, not the installed app.
 
-APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Morphe Manager merges one into a single APK and keeps TikTok's file paths, so everything works on it. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.4.3 APK instead.
+APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Morphe Manager merges one into a single APK and keeps TikTok's file paths, so everything works on it. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.1.4 APK instead.
 
 ## Verify a download
 

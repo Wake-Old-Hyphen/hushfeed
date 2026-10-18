@@ -235,6 +235,20 @@ public final class DocumentOperation {
         }
     }
 
+    /**
+     * Logs why file work ended without a result. Once stopped, the work ends on {@link Stopped} or
+     * on whatever the closed file throws at the write in progress. Either way that's the user's own
+     * stop, and the row has already said what it meant, so it goes in at info, never as a patch
+     * error with its debug toast. An Error is never a stop's doing.
+     */
+    public static void logFailure(DocumentOperation operation, Logger.LogMessage message, Throwable failure) {
+        if (operation != null && operation.isStopped() && failure instanceof Exception) {
+            Logger.printInfo(message, (Exception) failure);
+        } else {
+            Logger.printException(message, failure);
+        }
+    }
+
     /** Whether the file app says the document holds nothing. A size it doesn't give counts as something. */
     private static boolean reportsEmpty(ContentResolver resolver, Uri uri) {
         String[] size = {OpenableColumns.SIZE};
@@ -314,7 +328,7 @@ public final class DocumentOperation {
             work.run(this);
         } catch (Exception failure) {
             // The work reports its own outcome. This is only what it let through.
-            Logger.printException(() -> "File work for " + kind + " failed", failure);
+            logFailure(this, () -> "File work for " + kind + " failed", failure);
         } finally {
             // A stopped worker stays stopped. A CAS loop rather than updateAndGet, which is API 24.
             while (true) {

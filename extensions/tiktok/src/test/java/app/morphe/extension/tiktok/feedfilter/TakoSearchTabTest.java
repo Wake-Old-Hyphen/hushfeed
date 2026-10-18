@@ -10,9 +10,13 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.robolectric.Shadows.shadowOf;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -39,7 +44,8 @@ import org.robolectric.annotation.Config;
  * The Ask Tako surfaces on the search results page: the pill at the head of the tab strip, a view
  * of its own found by the real id name its text keeps and hidden with its column, and the served
  * tab list the strip is built from, filtered at its two reads for a build that serves the tab as
- * data. The tab keys met go into the export as a marker and, with logging on, a line.
+ * data. The tab keys met go into the export as a marker and, with logging on, a line. The "People
+ * also ask Tako" card further down the results goes with its row.
  *
  * <p>The export names a family with the count of what its hooks bound, never the markers'
  * names: for the list, the read, the keys met and the tab's fate make three, a strip without the
@@ -245,5 +251,154 @@ public class TakoSearchTabTest {
         TakoAiFilter.hideSearchTabEntrance(root);
         assertTrue(report(), report().contains(
                 "tako AI: 0 found, 1 missing. First missing: view id 'tv_tab_tako_entrance'"));
+    }
+
+    // The "People also ask Tako" card in the results.
+
+    /** Stands in for androidx's RecyclerView: the extension knows a list by that class name. */
+    public static class RecyclerView extends FrameLayout {
+        public RecyclerView(Context context) { super(context); }
+    }
+
+    /** TikTok's results grid, an R8-named subclass of the list. */
+    public static class Grid extends RecyclerView {
+        public Grid(Context context) { super(context); }
+    }
+
+    /** The results as 47.4.3 lays them out: the card's view in its full-width row, between video rows. */
+    private static final class Results {
+        final Grid grid = new Grid(context());
+        final View videosAbove = new View(context());
+        final FrameLayout row = new FrameLayout(context());
+        final LinearLayout card = new LinearLayout(context());
+        final View videosBelow = new View(context());
+
+        Results() {
+            card.addView(new View(context()));
+            card.addView(new View(context()));
+            row.addView(card, new FrameLayout.LayoutParams(720, 464));
+            grid.addView(videosAbove, new FrameLayout.LayoutParams(348, 725));
+            grid.addView(row, new FrameLayout.LayoutParams(720, 464));
+            grid.addView(videosBelow, new FrameLayout.LayoutParams(348, 725));
+        }
+    }
+
+    @Test public void theQuestionsCardAndItsRowGoToNothingAndTheVideosStay() {
+        Settings.HIDE_TAKO_AI.save(true);
+        Results results = new Results();
+        TakoAiFilter.hideSearchSugCard(results.card);
+        assertEquals("the card", View.GONE, results.card.getVisibility());
+        assertEquals("the card's height", 0, results.card.getLayoutParams().height);
+        // The row is collapsed once it is in the list, which the hook posts for.
+        TakoAiFilter.collapseSearchSugCardRow(results.card);
+        assertEquals("the row", View.GONE, results.row.getVisibility());
+        assertEquals("the row's height, which the list lays out whatever the visibility", 0, results.row.getLayoutParams().height);
+        assertEquals("the videos above", View.VISIBLE, results.videosAbove.getVisibility());
+        assertEquals(725, results.videosAbove.getLayoutParams().height);
+        assertEquals("the videos below", View.VISIBLE, results.videosBelow.getVisibility());
+        assertEquals("the list", View.VISIBLE, results.grid.getVisibility());
+        // Hidden, and its row collapsed.
+        assertTrue(report(), report().contains("tako AI: 2 found, 0 missing"));
+    }
+
+    @Test public void withTheSwitchOffTheQuestionsCardIsLeft() {
+        Results results = new Results();
+        TakoAiFilter.hideSearchSugCard(results.card);
+        assertEquals(View.VISIBLE, results.card.getVisibility());
+        assertEquals(464, results.card.getLayoutParams().height);
+        assertEquals(View.VISIBLE, results.row.getVisibility());
+        assertEquals(464, results.row.getLayoutParams().height);
+        assertTrue(report(), report().contains("tako AI: 1 found, 0 missing"));
+    }
+
+    @Test public void aCardLaidOutBeforeItsRowJoinsTheListTakesTheRowWithItOnceAttached() {
+        Settings.HIDE_TAKO_AI.save(true);
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Results results = new Results();
+            TakoAiFilter.hideSearchSugCard(results.card);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("the row, before the results are on screen", 464, results.row.getLayoutParams().height);
+
+            owner.get().setContentView(results.grid);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("the row", View.GONE, results.row.getVisibility());
+            assertEquals("the row's height", 0, results.row.getLayoutParams().height);
+            assertEquals("the videos above", View.VISIBLE, results.videosAbove.getVisibility());
+            assertEquals("the videos below", View.VISIBLE, results.videosBelow.getVisibility());
+            assertTrue(report(), report().contains("tako AI: 2 found, 0 missing"));
+        }
+    }
+
+    @Test public void aCardLaidOutInAListAlreadyOnScreenTakesItsRowWithIt() {
+        Settings.HIDE_TAKO_AI.save(true);
+        try (var owner = Robolectric.buildActivity(Activity.class).setup()) {
+            Results results = new Results();
+            owner.get().setContentView(results.grid);
+            TakoAiFilter.hideSearchSugCard(results.card);
+            shadowOf(Looper.getMainLooper()).idle();
+            assertEquals("the row", View.GONE, results.row.getVisibility());
+            assertEquals("the row's height", 0, results.row.getLayoutParams().height);
+            assertEquals("the videos above", View.VISIBLE, results.videosAbove.getVisibility());
+        }
+    }
+
+    @Test public void theRowIsTheViewUnderTheListAndNoListMeansNoRow() {
+        Results results = new Results();
+        assertSame("the card's own wrapper", results.row, TakoAiFilter.searchSugCardRow(results.card));
+        assertSame("a card handed in as the row itself", results.row, TakoAiFilter.searchSugCardRow(results.row));
+
+        FrameLayout page = new FrameLayout(context());
+        LinearLayout loose = new LinearLayout(context());
+        page.addView(loose);
+        assertNull("a card in no list", TakoAiFilter.searchSugCardRow(loose));
+        assertNull("a card in nothing at all", TakoAiFilter.searchSugCardRow(new LinearLayout(context())));
+        TakoAiFilter.collapseSearchSugCardRow(loose);
+        assertEquals("the card's wrapper, with no row to collapse", View.VISIBLE, loose.getVisibility());
+        assertEquals("the page around it", View.VISIBLE, page.getVisibility());
+        // Not found is a marker, not a miss.
+        assertTrue(report(), report().contains("tako AI: 1 found, 0 missing"));
+    }
+
+    @Test public void aRowHoldingMoreThanTheCardIsLeftStanding() {
+        Settings.HIDE_TAKO_AI.save(true);
+        Results results = new Results();
+        View neighbor = new View(context());
+        results.row.addView(neighbor, new FrameLayout.LayoutParams(720, 120));
+        assertNull("a wrapper with something else showing", TakoAiFilter.searchSugCardRow(results.card));
+
+        TakoAiFilter.hideSearchSugCard(results.card);
+        TakoAiFilter.collapseSearchSugCardRow(results.card);
+        assertEquals("the card", View.GONE, results.card.getVisibility());
+        assertEquals("the row", View.VISIBLE, results.row.getVisibility());
+        assertEquals("the row's height", 464, results.row.getLayoutParams().height);
+        assertEquals("what shares the row", View.VISIBLE, neighbor.getVisibility());
+
+        // Once that neighbor is gone itself, the row holds only the card again.
+        neighbor.setVisibility(View.GONE);
+        assertSame(results.row, TakoAiFilter.searchSugCardRow(results.card));
+    }
+
+    @Test public void theClimbToTheRowStopsAtItsCap() {
+        FrameLayout[] four = wrappers(4);
+        View card = new View(context());
+        four[3].addView(card);
+        assertSame("a row four wrappers up", four[0], TakoAiFilter.searchSugCardRow(card));
+
+        FrameLayout[] five = wrappers(5);
+        View deeper = new View(context());
+        five[4].addView(deeper);
+        assertNull("a list five wrappers up, past the climb", TakoAiFilter.searchSugCardRow(deeper));
+    }
+
+    /** Single-child wrappers nested from the top, the first one in a list. */
+    private static FrameLayout[] wrappers(int count) {
+        FrameLayout[] chain = new FrameLayout[count];
+        ViewGroup parent = new Grid(context());
+        for (int i = 0; i < count; i++) {
+            chain[i] = new FrameLayout(context());
+            parent.addView(chain[i]);
+            parent = chain[i];
+        }
+        return chain;
     }
 }

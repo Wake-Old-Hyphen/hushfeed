@@ -13,6 +13,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
+import app.morphe.extension.tiktok.settings.preference.DeviceIdentityPreference;
 import app.morphe.extension.tiktok.settings.preference.GhostModePreference;
 import app.morphe.extension.tiktok.settings.preference.HookStatusPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
@@ -196,6 +197,7 @@ public final class PrivacyPreferenceCategory extends ConditionalPreferenceCatego
                     "Hide root status and details about root tools from TikTok.",
                     Settings.HIDE_ROOT
             ));
+            addPreference(new DeviceIdentityPreference(context));
         }
         if (SettingsStatus.resourceGovernorEnabled) {
             addPreference(new TogglePreference(

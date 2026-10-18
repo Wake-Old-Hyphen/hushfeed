@@ -154,12 +154,43 @@ class ReadmePatchNamesTest {
         )
     }
 
+    /**
+     * People install the latest release, not main, so the install steps name the build the
+     * published index describes. When main already declares a newer one, a single "- Next
+     * release:" line names it, and tools/release_text.py index moves it into the install steps.
+     */
     @Test
-    fun `installation guidance and badge list every declared target`() {
+    fun `installation guidance and badge name the build the published release patches`() {
         val root = File("..").takeIf { File(it, "README.md").isFile } ?: File(".")
         val lines = File(root, "README.md").readLines()
-        val targets = Fixtures.declaredVersions().toSet()
         val version = Regex("""\b\d+\.\d+\.\d+\b""")
+        val description = JsonParser.parseString(File(root, "patches-bundle.json").readText())
+            .asJsonObject.get("description").asString
+        val published = Regex("""for global TikTok (.+?) \(""").find(description)
+        assertTrue("The published description names no TikTok build", published != null)
+        val targets = version.findAll(published!!.groupValues[1]).map { it.value }.toSet()
+        val declared = Fixtures.declaredVersions().toSet()
+        // APKMirror writes the build into its links with dashes, which the dotted scan never sees.
+        val linked = { text: String ->
+            Regex("""tiktok-(\d+)-(\d+)-(\d+)(?!\d)""").findAll(text)
+                .map { it.groupValues.drop(1).joinToString(".") }.toSet()
+        }
+        val upcoming = lines.filter { it.startsWith("- Next release: ") }
+        if (targets == declared) {
+            assertTrue("The published release already patches what the next release line names: $upcoming",
+                upcoming.isEmpty())
+        } else {
+            assertEquals("Main declares a build the published release doesn't, so one next release line names it",
+                1, upcoming.size)
+            assertTrue("The next release line doesn't read the way tools/release_text.py index folds it: ${upcoming.single()}",
+                Regex("""- Next release: TikTok \d+\.\d+\.\d+, \[on APKMirror\]\([^)\s]+\) since \d{4}-\d{2}-\d{2} """ +
+                    """\(version code [^)]+\), SHA-256 `[0-9a-f]{64}`\..*""").matches(upcoming.single()))
+            assertEquals("The next release line names another build than main declares",
+                declared, version.findAll(URLDecoder.decode(upcoming.single(), StandardCharsets.UTF_8))
+                    .map { it.value }.toSet())
+            assertEquals("The next release line links another build than main declares",
+                declared, linked(upcoming.single()))
+        }
         val badge = lines.single { it.contains("<img alt=\"TikTok ") }
         val claims = listOf(
             Regex("""alt="([^"]+)"""").find(badge)!!.groupValues[1],
@@ -167,6 +198,7 @@ class ReadmePatchNamesTest {
             lines.single { it.startsWith("> Hushfeed targets the global TikTok package") },
             lines.single { it.startsWith("1. Get the TikTok ") },
             lines.single { it.startsWith("- Version: ") },
+            lines.single { it.startsWith("- SHA-256 of the APK every patch was verified against: ") },
             lines.single { it.startsWith("Google Play only ever serves") },
             lines.single { it.startsWith("APKMirror also offers some TikTok releases") },
         )
@@ -174,6 +206,8 @@ class ReadmePatchNamesTest {
             assertEquals("Target guidance is missing or adds a host: $claim",
                 targets, version.findAll(URLDecoder.decode(claim, StandardCharsets.UTF_8))
                     .map { it.value }.toSet())
+            assertTrue("Target guidance links another build than it names: $claim",
+                targets.containsAll(linked(claim)))
         }
         val readme = lines.joinToString("\n")
         assertTrue("Install guidance must explain native-language recovery",

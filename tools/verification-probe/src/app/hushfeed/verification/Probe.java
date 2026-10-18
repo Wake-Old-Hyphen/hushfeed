@@ -2073,6 +2073,28 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok call " + target.getName() + " -> " + shown);
                         break;
                     }
+                    case "idreset": {
+                        // The device-ID reset experiment (ROADMAP "Reset the device identifiers
+                        // TikTok registers"), for a throwaway emulator install. Reads the ids TikTok
+                        // registered, asks AppLog.resetAndReInstall for a fresh register with
+                        // -e timeout <ms> (30000 by default), and reads them again once its callback
+                        // answers. -e read 1 only reads. -e where 1 only names the files in TikTok's
+                        // data that hold the device or install id. Ids are logged as short hashes,
+                        // enough to tell whether one changed. Its own thread: the callback comes on
+                        // the main looper, where this receiver runs.
+                        final long timeout = Long.parseLong(intent.getStringExtra("timeout") == null
+                                ? "30000" : intent.getStringExtra("timeout"));
+                        final boolean readOnly = "1".equals(intent.getStringExtra("read"));
+                        final boolean where = "1".equals(intent.getStringExtra("where"));
+                        final Context appContext = app;
+                        final ClassLoader appLoader = loader;
+                        new Thread(() -> {
+                            if (where) idFiles(appContext, appLoader);
+                            else idReset(appContext, appLoader, timeout, readOnly);
+                        }, "hushfeed-probe-idreset").start();
+                        Log.i(TAG, "ok idreset started");
+                        break;
+                    }
                     case "countformat": {
                         // One of TikTok's static count formatters run with a count the check
                         // picks, and the text it wrote: -e class X.0EYv -e method LIZIZ -e count
@@ -4248,6 +4270,132 @@ public final class Probe extends Instrumentation {
             if (id == null) return "null";
             String text = String.valueOf(id);
             return text.isEmpty() ? "empty" : text.length() <= 6 ? text : text.substring(text.length() - 6);
+        }
+
+        /** The idreset action: ids before, the reset and how it answered, ids after. */
+        private static void idReset(Context context, ClassLoader loader, long timeout, boolean readOnly) {
+            try {
+                Class<?> appLog = loader.loadClass("com.bytedance.applog.AppLog");
+                Class<?> register = loader.loadClass("com.ss.android.deviceregister.DeviceRegisterManager");
+                Log.i(TAG, "ok idreset before" + registeredIds(context, appLog, register));
+                if (readOnly) return;
+                // 47.4.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
+                // when new install info arrives.
+                Class<?> callbackType = loader.loadClass("X.0Ncl");
+                final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
+                final String[] outcome = {"no answer"};
+                Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},
+                        (self, method, args) -> {
+                            switch (method.getName()) {
+                                case "LIZ":
+                                    outcome[0] = "timeout";
+                                    answered.countDown();
+                                    return null;
+                                case "LIZIZ":
+                                    outcome[0] = "new install info";
+                                    answered.countDown();
+                                    return null;
+                                case "hashCode":
+                                    return System.identityHashCode(self);
+                                case "equals":
+                                    return self == args[0];
+                                case "toString":
+                                    return "HushfeedProbeIdReset";
+                                default:
+                                    return null;
+                            }
+                        });
+                long start = android.os.SystemClock.elapsedRealtime();
+                appLog.getMethod("resetAndReInstall", long.class, callbackType).invoke(null, timeout, callback);
+                long returned = android.os.SystemClock.elapsedRealtime() - start;
+                boolean came = answered.await(timeout + 10_000L, java.util.concurrent.TimeUnit.MILLISECONDS);
+                Log.i(TAG, "ok idreset returned after " + returned + " ms, "
+                        + (came ? outcome[0] : "callback never came") + " after "
+                        + (android.os.SystemClock.elapsedRealtime() - start) + " ms");
+                Log.i(TAG, "ok idreset after" + registeredIds(context, appLog, register));
+            } catch (Throwable error) {
+                Log.e(TAG, "idreset failed", error);
+            }
+        }
+
+        /** The idreset where step: each file under TikTok's data folder holding either id. */
+        private static void idFiles(Context context, ClassLoader loader) {
+            try {
+                Class<?> appLog = loader.loadClass("com.bytedance.applog.AppLog");
+                String did = String.valueOf(appLog.getMethod("getDid").invoke(null));
+                String iid = String.valueOf(appLog.getMethod("getIid").invoke(null));
+                if (did.length() < 8 || iid.length() < 8) {
+                    Log.i(TAG, "ok idreset where: no ids registered yet");
+                    return;
+                }
+                java.io.File root = context.getDataDir();
+                java.util.ArrayDeque<java.io.File> todo = new java.util.ArrayDeque<>();
+                todo.add(root);
+                int scanned = 0;
+                while (!todo.isEmpty()) {
+                    java.io.File file = todo.poll();
+                    java.io.File[] children = file.listFiles();
+                    if (children != null) {
+                        Collections.addAll(todo, children);
+                        continue;
+                    }
+                    if (!file.isFile() || file.length() > 8L * 1024 * 1024) continue;
+                    scanned++;
+                    byte[] bytes;
+                    try (java.io.FileInputStream in = new java.io.FileInputStream(file)) {
+                        bytes = new byte[(int) file.length()];
+                        int read = 0;
+                        while (read < bytes.length) {
+                            int n = in.read(bytes, read, bytes.length - read);
+                            if (n < 0) break;
+                            read += n;
+                        }
+                    } catch (java.io.IOException unreadable) {
+                        continue;
+                    }
+                    String text = new String(bytes, java.nio.charset.StandardCharsets.ISO_8859_1);
+                    boolean hasDid = text.contains(did), hasIid = text.contains(iid);
+                    if (hasDid || hasIid) {
+                        Log.i(TAG, "ok idreset holds" + (hasDid ? " did" : "") + (hasIid ? " iid" : "") + ": "
+                                + root.toURI().relativize(file.toURI()).getPath());
+                    }
+                }
+                Log.i(TAG, "ok idreset where done, " + scanned + " files read");
+            } catch (Throwable error) {
+                Log.e(TAG, "idreset where failed", error);
+            }
+        }
+
+        /** Each id TikTok registers, as a short hash ("-" when empty). */
+        private static String registeredIds(Context context, Class<?> appLog, Class<?> register) {
+            StringBuilder out = new StringBuilder();
+            String[][] getters = {
+                    {"did", "getDid"}, {"iid", "getIid"}, {"openudid", "getOpenUdid"},
+                    {"clientudid", "getClientUdid"},
+            };
+            for (String[] getter : getters) out.append(' ').append(getter[0]).append('=').append(idHash(appLog, getter[1]));
+            String[][] backups = {{"didBackup", "getDeviceIdWithBackup"}, {"iidBackup", "getInstallIdWithBackup"}};
+            for (String[] getter : backups) out.append(' ').append(getter[0]).append('=').append(idHash(register, getter[1]));
+            String cdid;
+            try {
+                cdid = idText(register.getMethod("getCdid", Context.class).invoke(null, context));
+            } catch (Throwable error) {
+                cdid = "<" + error.getClass().getSimpleName() + ">";
+            }
+            return out.append(" cdid=").append(cdid).toString();
+        }
+
+        private static String idHash(Class<?> owner, String getter) {
+            try {
+                return idText(owner.getMethod(getter).invoke(null));
+            } catch (Throwable error) {
+                return "<" + error.getClass().getSimpleName() + ">";
+            }
+        }
+
+        private static String idText(Object id) {
+            String text = id == null ? "" : String.valueOf(id);
+            return text.isEmpty() ? "-" : Integer.toHexString(text.hashCode() & 0xffff) + "/" + text.length();
         }
 
         /** A Kotlin two-argument callback's call, logged with what TikTok passed it. */

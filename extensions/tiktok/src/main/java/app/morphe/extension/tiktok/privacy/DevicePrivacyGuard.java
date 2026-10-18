@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.privacy;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.net.NetworkCapabilities;
 
 import app.morphe.extension.shared.Logger;
@@ -25,7 +26,8 @@ import java.util.Map;
 /**
  * The reads TikTok makes about this device, answered without handing it the real value while the
  * matching switch is on: what you copied, whether you're on a VPN, and the advertising id with
- * its limit ad tracking flag, and the reviewed root status and root-tool diagnostics.
+ * its limit ad tracking flag, and the reviewed root status and root-tool diagnostics. A new
+ * device identity ({@link DeviceIdentity}) also answers the Android ID and the advertising id.
  *
  * <p>One method per intercepted signature, each returning what the call site expects. A single
  * helper returning {@link ClipData} for all three clipboard reads handed a ClipData back where
@@ -35,7 +37,8 @@ import java.util.Map;
  *
  * <p>Each switch is read at the call and answers off while Hushfeed is paused. The clipboard,
  * VPN and advertising-id switches need no restart. Root collectors can retain an earlier answer,
- * so changing the root switch needs a restart.
+ * so changing the root switch needs a restart. A new device identity isn't a switch and holds
+ * through a pause too: the phone's own ids, handed over once, would tie it to the old identity.
  *
  * <p>TikTok checks its connection and its ad SDKs read the id early in startup. A read before
  * the settings context exists takes the switch straight from the saved file
@@ -140,17 +143,59 @@ public final class DevicePrivacyGuard {
      */
     public static String interceptAdvertisingId(Object info) {
         if (blocksAdvertisingId("answered the advertising id as blank")) return BLANK_ADVERTISING_ID;
-        return realAdvertisingId(info);
+        String identity = identityAdvertisingId();
+        return identity != null ? identity : realAdvertisingId(info);
     }
 
     /**
      * An id read without Info.getId: off the reply of Google's advertising id service, which two
      * SDKs inside TikTok ask directly, or off Info's id field. The blank id while the switch is on,
-     * the id the read produced otherwise.
+     * a new identity's own id while there is one, the id the read produced otherwise.
      */
     public static String interceptAdvertisingIdRead(String id) {
         if (blocksAdvertisingId("answered a direct advertising id read as blank")) return BLANK_ADVERTISING_ID;
-        return id;
+        String identity = identityAdvertisingId();
+        return identity != null ? identity : id;
+    }
+
+    /**
+     * A new device identity's advertising id. TikTok's server hands an old device id back for the
+     * phone's real advertising id, so with the switch off an identity still never shows it.
+     */
+    private static String identityAdvertisingId() {
+        String identity = DeviceIdentity.advertisingId();
+        if (identity != null) {
+            Logger.printDebug(() -> "Device privacy guard: answered the advertising id with the new identity's");
+        }
+        return identity;
+    }
+
+    // --- Android ID ---
+
+    /**
+     * TikTok's Settings.Secure reads, the Android ID among them, which every part of TikTok makes
+     * through one wrapper. A new device identity's Android ID while there is one; every other
+     * name, and the Android ID without an identity, comes straight from the system.
+     */
+    public static String interceptSecureString(ContentResolver resolver, String name) {
+        String identity = identityAndroidId(name);
+        return identity != null ? identity : android.provider.Settings.Secure.getString(resolver, name);
+    }
+
+    /** The same for Settings.System, where old Android versions also answered the Android ID. */
+    @SuppressWarnings("deprecation")
+    public static String interceptSystemString(ContentResolver resolver, String name) {
+        String identity = identityAndroidId(name);
+        return identity != null ? identity : android.provider.Settings.System.getString(resolver, name);
+    }
+
+    private static String identityAndroidId(String name) {
+        if (!android.provider.Settings.Secure.ANDROID_ID.equals(name)) return null;
+        String identity = DeviceIdentity.androidId();
+        if (identity != null) {
+            Logger.printDebug(() -> "Device privacy guard: answered the Android ID with the new identity's");
+        }
+        return identity;
     }
 
     /**

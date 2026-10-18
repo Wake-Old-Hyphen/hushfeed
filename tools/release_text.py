@@ -10,6 +10,10 @@
 Each command checks its inputs and changes nothing when a check fails. scripts/release/release.ps1
 runs them in order; they can also run alone. The indexed bundle description ends with the cut
 release's ### groups so Morphe Manager can show the current release's full change list.
+
+Between releases the README's install steps and the bug form name the TikTok build the published
+release patches, and a "- Next release:" line under Supported target names the one main declares.
+index moves both onto that build and drops the line.
 """
 
 import argparse
@@ -40,6 +44,21 @@ FOREIGN = {
 }
 # Every table writes decimals with a comma, so an English "10,000" or "6.7 MB" is untranslated.
 ENGLISH_NUMBER = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d+\.\d+ ?(?:MB|GB|KB|K|M|x|%)(?!\w)")
+# The README's Supported target lines, and the line naming the build the next release patches.
+SUPPORTED_VERSION = re.compile(
+    r"^- Version: \[(?P<version>\d+\.\d+\.\d+)\]\((?P<url>[^)\s]+)\), on APKMirror since (?P<date>\d{4}-\d{2}-\d{2})\.$",
+    re.MULTILINE)
+SUPPORTED_BUILD = re.compile(r"^- Build: version code .*$", re.MULTILINE)
+SUPPORTED_SHA = re.compile(r"^(- SHA-256 of the APK every patch was verified against: )`[0-9a-f]{64}` \(\d+\.\d+\.\d+\)$",
+                           re.MULTILINE)
+NEXT_RELEASE = re.compile(
+    r"^- Next release: TikTok (?P<version>\d+\.\d+\.\d+), \[on APKMirror\]\((?P<url>[^)\s]+)\) since "
+    r"(?P<date>\d{4}-\d{2}-\d{2}) \((?P<build>version code [^)]+)\), SHA-256 `(?P<sha>[0-9a-f]{64})`\..*\n",
+    re.MULTILINE)
+# The README lines that tell someone which TikTok build to patch: the badge, the Important box,
+# install step 1 and the two paragraphs on fetching the APK.
+INSTALL_CLAIMS = ('<img alt="TikTok ', "> Hushfeed targets the global TikTok package", "1. Get the TikTok ",
+                  "Google Play only ever serves", "APKMirror also offers some TikTok releases")
 
 
 def fail(message: str) -> NoReturn:
@@ -294,13 +313,23 @@ def catalog_patches() -> list:
 
 
 def catalog() -> tuple[int, list[str]]:
+    """The patch count and the TikTok versions of the package every patch declares, as
+    scripts/patch-target.ps1 reads them. PineDrama is declared only by the patches that apply
+    to it (#156), so its build never joins the targets the index and README name."""
     patches = catalog_patches()
-    versions = set()
+    versions: dict[str, set[str]] = {}
+    declared_by: dict[str, int] = {}
     for patch in patches:
         for app in patch.get("compatibility") or []:
-            versions.update(t["version"] for t in app.get("targets") or []
-                            if t.get("version") and not t.get("experimental"))
-    return len(patches), sorted(versions, key=lambda v: tuple(map(int, v.split("."))))
+            package = str(app.get("packageName") or "")
+            declared_by[package] = declared_by.get(package, 0) + 1
+            versions.setdefault(package, set()).update(
+                t["version"] for t in app.get("targets") or [] if t.get("version") and not t.get("experimental"))
+    everywhere = [package for package, count in declared_by.items() if count == len(patches)]
+    if len(everywhere) != 1:
+        fail(f"patches-list.json has {len(everywhere)} packages every patch declares, not one: "
+             f"{', '.join(sorted(declared_by)) or 'none'}")
+    return len(patches), sorted(versions[everywhere[0]], key=lambda v: tuple(map(int, v.split("."))))
 
 
 def spoken(items: list[str]) -> str:
@@ -353,6 +382,65 @@ def guide(args) -> None:
     print(f"[release] {GUIDE} reads source {version} with {count} patch entries")
 
 
+def fold_next_release(text: str, targets: list[str]) -> str:
+    """The README with its install steps moved onto the build the release being indexed patches.
+
+    A README with neither a Supported target '- Version:' line nor a '- Next release:' line (the
+    test fixtures) comes back as it was, and so does one that already installs the targets and has
+    no '- Next release:' line."""
+    supported = list(SUPPORTED_VERSION.finditer(text))
+    announced = re.findall(r"^- Next release:", text, re.MULTILINE)
+    if not supported and not announced and not re.search(r"^- Version: ", text, re.MULTILINE):
+        return text
+    if len(supported) != 1 or len(re.findall(r"^- Version: ", text, re.MULTILINE)) != 1:
+        fail("README.md needs one Supported target line reading '- Version: [X.Y.Z](url), on APKMirror since "
+             "YYYY-MM-DD.'")
+    current = supported[0]
+    upcoming = list(NEXT_RELEASE.finditer(text))
+    if len(upcoming) != len(announced):
+        fail("README.md has a '- Next release:' line that doesn't read 'TikTok X.Y.Z, [on APKMirror](url) since "
+             "YYYY-MM-DD (version code ...), SHA-256 `...`.'")
+    if not upcoming:
+        if [current["version"]] != targets:
+            fail(f"README.md installs TikTok {current['version']} and has no '- Next release:' line for TikTok "
+                 f"{spoken(targets)}, the build the patches declare")
+        return text
+    if len(upcoming) > 1:
+        fail("README.md has more than one '- Next release:' line")
+    upcoming = upcoming[0]
+    if [upcoming["version"]] != targets:
+        fail(f"README.md's '- Next release:' line names TikTok {upcoming['version']}, but the patches declare "
+             f"TikTok {spoken(targets)}")
+    if upcoming["version"] == current["version"]:
+        fail(f"README.md already installs TikTok {current['version']}, so its '- Next release:' line is left over")
+    folded = text[:upcoming.start()] + text[upcoming.end():]
+    folded = SUPPORTED_VERSION.sub(
+        lambda _: f"- Version: [{upcoming['version']}]({upcoming['url']}), on APKMirror since {upcoming['date']}.",
+        folded, count=1)
+    folded, builds = SUPPORTED_BUILD.subn(lambda _: f"- Build: {upcoming['build']}", folded)
+    folded, hashes = SUPPORTED_SHA.subn(lambda m: f"{m.group(1)}`{upcoming['sha']}` ({upcoming['version']})", folded)
+    if builds != 1 or hashes != 1:
+        fail("README.md needs one Supported target '- Build:' line and one '- SHA-256 of the APK' line")
+    old = re.compile(rf"(?<![\d.]){re.escape(current['version'])}(?!\.?\d)")
+    # APKMirror writes the version into its links with dashes, so a link the swap above missed shows as that.
+    old_link = re.compile(rf"tiktok-{re.escape(current['version'].replace('.', '-'))}(?![\d])")
+    lines, seen = [], set()
+    for line in folded.split("\n"):
+        claim = next((c for c in INSTALL_CLAIMS
+                      if (c in line if c == INSTALL_CLAIMS[0] else line.startswith(c))), None)
+        if claim:
+            seen.add(claim)
+            line = old.sub(lambda _: upcoming["version"], line.replace(current["url"], upcoming["url"]))
+            if old_link.search(line):
+                fail(f"README.md links TikTok {current['version']} somewhere other than its Supported target link: "
+                     f"{line[:80]}")
+        lines.append(line)
+    missing = [c for c in INSTALL_CLAIMS if c not in seen]
+    if missing:
+        fail(f"README.md has no install line with {missing[0]!r} to move onto TikTok {upcoming['version']}")
+    return "\n".join(lines)
+
+
 def index(args) -> None:
     count, targets = catalog()
     if not targets:
@@ -387,15 +475,16 @@ def index(args) -> None:
         "version": args.version,
     })
     readme = ROOT / "README.md"
-    edits = {}
+    edits = {readme: fold_next_release(read(readme), targets)}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",
          f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}. New in this one: "
          f"{readme_summary} It needs Morphe Manager {manager} or newer.")
     swap(edits, readme, r"^The main branch contains \d+ patches, .*$",
          f"The main branch contains {count} patches, the same set as v{args.version}.")
     swap(edits, readme, r"shows all \d+ Hushfeed patches", f"shows all {count} Hushfeed patches")
-    swap(edits, ROOT / ".github/ISSUE_TEMPLATE/bug_report.yml", r"placeholder: Version \d+\.\d+\.\d+ for TikTok",
-         f"placeholder: Version {args.version} for TikTok")
+    swap(edits, ROOT / ".github/ISSUE_TEMPLATE/bug_report.yml",
+         r"placeholder: Version \d+\.\d+\.\d+ for TikTok \d+\.\d+\.\d+(?!\.?\d)",
+         f"placeholder: Version {args.version} for TikTok {targets[-1]}")
     swap(edits, ROOT / GUIDE, r"^Published bundle: version \d+\.\d+\.\d+, \d+ patches\.",
          f"Published bundle: version {args.version}, {count} patches.")
     for path, text in edits.items():

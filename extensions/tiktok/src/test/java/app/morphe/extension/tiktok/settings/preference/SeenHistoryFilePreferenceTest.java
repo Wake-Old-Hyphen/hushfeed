@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.DocumentExportProvider;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.SignedInUser;
@@ -323,6 +324,7 @@ public class SeenHistoryFilePreferenceTest {
         seed("{\"id\":\"7555000000000000501\",\"seen\":1700000000100}");
         DocumentExportProvider provider = DocumentExportProvider.register(activity);
         SlowTransfers transfers = SlowTransfers.install(provider, hold());
+        LogBufferManager.clearLogBuffer();
         SeenHistoryFilePreference.pickFile(fragment, SeenHistoryFilePreference.REQUEST_SAVE);
         fragment.onActivityResult(SeenHistoryFilePreference.REQUEST_SAVE, Activity.RESULT_OK,
                 new Intent().setData(provider.uri));
@@ -336,6 +338,7 @@ public class SeenHistoryFilePreferenceTest {
                 bannerMessage());
         finishWorkers();
         assertEquals("The export wasn't saved. Export again when the file app is ready.", bannerMessage());
+        DocumentOperationTest.assertStopLoggedAsInfo("Could not save the seen-history file");
         assertEquals("the partly written file was left behind", 1, provider.deleteCalls);
         assertFalse(provider.exists);
         assertResting();

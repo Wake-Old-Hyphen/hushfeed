@@ -10,9 +10,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import app.morphe.extension.shared.BackgroundPoolSaturation;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.DocumentExportProvider;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
+import app.morphe.extension.tiktok.settings.preference.DocumentOperationTest;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 import java.io.ByteArrayOutputStream;
@@ -378,9 +380,28 @@ public class FeatureGateLabActionsTest {
             var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
             var provider = DocumentExportProvider.register(activity)
                     .contents(root.toString().getBytes(StandardCharsets.UTF_8));
+            LogBufferManager.clearLogBuffer();
             fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
             waitFor("These loaded values are for a different TikTok version.");
             assertTrue(FeatureGateLabStore.rules().isEmpty());
+            assertLoggedOnce("INFO", "Loaded-value file import refused", "Loaded-value file import failed");
+        }
+    }
+
+    /** A file the review can't name stays a patch error: that's how a real export the Lab should take shows up. */
+    @Test public void anUnreadableFileIsStillLoggedAsAPatchError() throws Exception {
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            action(fragment, 3);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            var provider = DocumentExportProvider.register(activity)
+                    .contents("{\"payload_kind\": \"loaded_values\", ".getBytes(StandardCharsets.UTF_8));
+            LogBufferManager.clearLogBuffer();
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
+            waitFor("That file isn't a loaded-values export, or it's larger than the Lab accepts");
+            assertTrue(FeatureGateLabStore.rules().isEmpty());
+            assertLoggedOnce("ERROR", "Loaded-value file import failed", "Loaded-value file import refused");
         }
     }
 
@@ -395,13 +416,85 @@ public class FeatureGateLabActionsTest {
         deep.append("{}");
         for (int i = 0; i < 30; i++) deep.append(']');
         assertLoadedJsonRejected(deep.toString().getBytes(StandardCharsets.UTF_8));
-        assertLoadedJsonRejected(new byte[8 * 1024 * 1024 + 1]);
+        assertLoadedJsonRejected(new byte[16 * 1024 * 1024 + 1]);
 
+        // An array longer than any export carries, and more values than one could hold.
         JSONArray many = new JSONArray();
-        for (int i = 0; i < 2000; i++) many.put(rule("gate" + i, "true"));
-        JSONObject root = new JSONObject().put("payload_kind", "loaded_values")
-                .put("tiktok_version", FeatureGateLabStore.targetVersion()).put("rules", many);
-        assertLoadedJsonRejected(root.toString().getBytes(StandardCharsets.UTF_8));
+        for (int i = 0; i <= 1 << 16; i++) many.put(0);
+        assertLoadedJsonRejected(loadedValues(many).toString().getBytes(StandardCharsets.UTF_8));
+        JSONArray wide = new JSONArray();
+        for (int row = 0; row < 17; row++) {
+            JSONArray part = new JSONArray();
+            for (int i = 0; i < 1 << 16; i++) part.put(0);
+            wide.put(part);
+        }
+        assertLoadedJsonRejected(loadedValues(new JSONArray())
+                .put("settings_manager_observations", wide).toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * A 47.4.3 export carries 14,747 loaded values and up to 2,048 settings-manager observations.
+     * The import's parse bounds were the Lab's own rule cap, so it refused every real export,
+     * the Lab's own included, as not an export or too large.
+     */
+    @Test public void aFullSizeExportImportsGzippedOrPlain() throws Exception {
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            JSONArray rules = new JSONArray().put(rule("gate", "true").put("force", false));
+            for (int i = 1; i < 15_000; i++) rules.put(rule("elsewhere_" + i, "true").put("force", false));
+            JSONArray observations = new JSONArray();
+            for (int i = 0; i < 2048; i++) observations.put(observation(i));
+            byte[] plain = loadedValues(rules).put("settings_manager_observations", observations)
+                    .toString().getBytes(StandardCharsets.UTF_8);
+            assertTrue("past the old 4 MB file cap", plain.length > 4 * 1024 * 1024);
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            try (var gzip = new GZIPOutputStream(bytes)) { gzip.write(plain); }
+
+            action(fragment, 3);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            var provider = DocumentExportProvider.register(activity).contents(bytes.toByteArray());
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
+            waitForImportDialog("Imported 1 values", "0 already matched", "14999 unavailable", "0 rejected");
+            assertEquals("true", FeatureGateLabStore.rule("abmock", "gate", "BOOLEAN").value);
+
+            // The same file, unpacked, as someone reading it in a text editor would leave it.
+            action(fragment, 3);
+            started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            provider = DocumentExportProvider.register(activity).contents(plain);
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
+            waitFor("Nothing new was imported. 1 already matched, 14999 unavailable, 0 rejected.");
+            assertEquals(1, FeatureGateLabStore.rules().size());
+        }
+    }
+
+    /** More differing values than the Lab keeps are refused by count, with nothing changed. */
+    @Test public void aFileWithMoreChangesThanTheLabKeepsSaysSoAndChangesNothing() throws Exception {
+        var entries = new ArrayList<FeatureGateCatalog.Entry>();
+        var byIdentity = new java.util.HashMap<String, FeatureGateCatalog.Entry>();
+        JSONArray rules = new JSONArray();
+        for (int i = 0; i < 1030; i++) {
+            var entry = entry("gate_" + i);
+            entries.add(entry);
+            byIdentity.put(entry.identity(), entry);
+            rules.put(rule("gate_" + i, "true"));
+        }
+        var cached = FeatureGateCatalog.class.getDeclaredField("cachedSnapshot");
+        cached.setAccessible(true);
+        cached.set(null, new FeatureGateCatalog.Snapshot(entries, byIdentity, entries.size(), 0, true));
+        try (var owner = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = owner.get();
+            var fragment = attach(activity);
+            action(fragment, 3);
+            var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
+            var provider = DocumentExportProvider.register(activity)
+                    .contents(loadedValues(rules).toString().getBytes(StandardCharsets.UTF_8));
+            LogBufferManager.clearLogBuffer();
+            fragment.onActivityResult(started.requestCode, Activity.RESULT_OK, new Intent().setData(provider.uri));
+            waitFor("The Lab keeps at most 1,024 rules. This change would make 1,030, so nothing was changed.");
+            assertTrue(FeatureGateLabStore.rules().isEmpty());
+            assertLoggedOnce("INFO", "Lab change refused", "Lab change failed");
+        }
     }
 
     @Test public void loadedValueReviewRejectsNonStringFieldsAndDuplicateRules() throws Exception {
@@ -609,6 +702,7 @@ public class FeatureGateLabActionsTest {
             var fragment = attach(activity);
             var provider = DocumentExportProvider.register(activity);
             var release = provider.holdOpens();
+            LogBufferManager.clearLogBuffer();
             try {
                 action(fragment, 2);
                 var started = Shadows.shadowOf(activity).getNextStartedActivityForResult();
@@ -632,6 +726,7 @@ public class FeatureGateLabActionsTest {
                 release.countDown();
             }
             assertEquals("The export wasn't saved. Export again when the file app is ready.", settledBanner(activity));
+            DocumentOperationTest.assertStopLoggedAsInfo("Loaded-value file export failed");
             assertFalse("the empty document the export never filled was left behind", provider.exists);
             assertFalse(DocumentOperation.busy(DocumentOperation.Kind.LAB_FILE));
         }
@@ -1260,6 +1355,23 @@ public class FeatureGateLabActionsTest {
             fail("Missing completion: " + toast);
         }
     }
+
+    /**
+     * The log holds exactly one line for {@code message}, at {@code level}, and none for
+     * {@code absent}. A refusal the reader is told is INFO; filed as a patch error, its debug
+     * toast covered the reason.
+     */
+    static void assertLoggedOnce(String level, String message, String absent) {
+        int lines = 0;
+        for (String line : LogBufferManager.buildExportText().split("\n")) {
+            assertFalse("logged as a failure: " + line, line.contains(absent));
+            if (!line.contains(message)) continue;
+            lines++;
+            assertTrue("logged at the wrong level: " + line, line.contains("| " + level + " | " + message));
+        }
+        assertEquals("no line for " + message, 1, lines);
+    }
+
     private static Switch findSwitch(View view) {
         if (view instanceof Switch) return (Switch) view;
         if (view instanceof ViewGroup) {
@@ -1338,6 +1450,25 @@ public class FeatureGateLabActionsTest {
     }
     private static JSONObject rule(String key, String value) throws Exception {
         return new JSONObject().put("manager", "abmock").put("key", key).put("type", "BOOLEAN").put("value", value);
+    }
+    private static JSONObject loadedValues(JSONArray rules) throws Exception {
+        return new JSONObject().put("payload_kind", "loaded_values")
+                .put("tiktok_version", FeatureGateLabStore.targetVersion()).put("rules", rules);
+    }
+    /** A settings-manager observation shaped like the ones a 47.4.3 export carries. */
+    private static JSONObject observation(int index) throws Exception {
+        JSONObject value = new JSONObject().put("__class", "com.bytedance.example.Config" + index);
+        JSONObject fieldTypes = new JSONObject();
+        for (int field = 0; field < 30; field++) {
+            value.put("enableField" + field, field % 2 == 0);
+            fieldTypes.put("enableField" + field, "boolean");
+        }
+        value.put("__field_types", fieldTypes);
+        return new JSONObject().put("title", "Config " + index).put("key", "config_" + index)
+                .put("manager", "live").put("source_type", "runtime_observed_live_settings_call")
+                .put("type", "JSON").put("loaded", true).put("runtime_only", true)
+                .put("default_value", value).put("current_value", new JSONObject(value.toString()))
+                .put("observed_at_ms", 1_760_000_000_000L + index);
     }
     private static void save(String key, String value, boolean enabled) {
         FeatureGateLabStore.saveRule("abmock", key, "BOOLEAN", value, enabled);

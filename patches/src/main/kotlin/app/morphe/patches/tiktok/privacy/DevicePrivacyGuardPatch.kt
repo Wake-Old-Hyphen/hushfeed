@@ -16,6 +16,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.string
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.extension.HostApplicationAttachBaseContextFingerprint
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -38,6 +39,10 @@ private const val NETWORK_INTERFACE = "Ljava/net/NetworkInterface;"
 private const val AD_ID_INFO = "Lcom/google/android/gms/ads/identifier/AdvertisingIdClient\$Info;"
 private const val STRING = "Ljava/lang/String;"
 private const val PARCEL = "Landroid/os/Parcel;"
+private const val DEVICE_IDENTITY = "Lapp/morphe/extension/tiktok/privacy/DeviceIdentity;"
+private const val CONTENT_RESOLVER = "Landroid/content/ContentResolver;"
+private const val SETTINGS_SECURE = "Landroid/provider/Settings\$Secure;"
+private const val SETTINGS_SYSTEM = "Landroid/provider/Settings\$System;"
 
 /** The interface token a client writes before asking Google's advertising id service anything. */
 internal const val AD_ID_SERVICE_TOKEN = "com.google.android.gms.ads.identifier.internal.IAdvertisingIdService"
@@ -190,7 +195,8 @@ private fun BytecodePatchContext.answerReads(
 val devicePrivacyGuardPatch = bytecodePatch(
     name = "Device privacy guard",
     description = "Stops TikTok reading what you copied and gives it a blank advertising ID. " +
-        "Can also hide a VPN connection and root status with details about root tools. " +
+        "Can also hide a VPN connection and root status with details about root tools, " +
+        "and give TikTok a new device identity. " +
         "Each switch starts off in Hushfeed settings > Privacy. Changing Hide root needs a restart.",
 ) {
     category("Privacy")
@@ -255,6 +261,30 @@ val devicePrivacyGuardPatch = bytecodePatch(
             "[Device privacy guard] Intercepted ${vpnAdSites.size} VPN and advertising-id sites " +
                 "and ${interfaceSites.size} network-interface sites.",
         )
+
+        // A new device identity. Its wipe runs before anything else in the application's
+        // attachBaseContext, ahead of TikTok's first read of a device id, and its Android ID
+        // answers TikTok's Settings.Secure reads, which every part of TikTok makes through one
+        // privacy wrapper (one call site on 47.4.3 and on PineDrama 47.1.4). Settings.System is
+        // where old Android versions answered it too; TikTok reads it there through the same
+        // wrapper, so it's answered when found and not required. The range form reaches p1 at any
+        // register count, which the four-bit form only does while p1 is v15 or lower.
+        HostApplicationAttachBaseContextFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p1 .. p1 }, $DEVICE_IDENTITY->start(Landroid/content/Context;)V",
+        )
+        val androidIdReads = mapOf(
+            "$SETTINGS_SECURE->getString(${CONTENT_RESOLVER}$STRING)$STRING" to
+                "$EXTENSION->interceptSecureString(${CONTENT_RESOLVER}$STRING)$STRING",
+            "$SETTINGS_SYSTEM->getString(${CONTENT_RESOLVER}$STRING)$STRING" to
+                "$EXTENSION->interceptSystemString(${CONTENT_RESOLVER}$STRING)$STRING",
+        )
+        val androidIdSites = invokeSitesOf(androidIdReads.keys, static = true)
+        if (androidIdSites.none { it.target.startsWith(SETTINGS_SECURE) }) {
+            throw PatchException("Device privacy guard: no Settings.Secure.getString call site was found.")
+        }
+        replaceSites(androidIdSites, androidIdReads)
+        println("[Device privacy guard] Intercepted ${androidIdSites.size} Settings string reads for a new device identity.")
 
         // The rest of the advertising id, the reads that never call Info.getId. Two SDKs ask
         // Google's service for the id and the limit flag themselves, and R8 inlined

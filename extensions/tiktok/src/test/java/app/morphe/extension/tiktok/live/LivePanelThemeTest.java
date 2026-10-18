@@ -10,6 +10,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.TypedValue;
@@ -23,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
@@ -31,7 +33,9 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter;
 /**
  * #159: a LIVE panel's views inflate through its own (dark) LIVE overlay, applied with force,
  * only while Dark LIVE panels is on and its context is in dark mode, and only for themed dialogs
- * and sheet pages. Everything else gets TikTok's inflater back untouched.
+ * and sheet pages. Everything else gets TikTok's inflater back untouched. Under the same
+ * conditions a LIVE room takes TikTok's dark app theme with force over its own light one, so
+ * TikTok's generic sheets over a room open dark too.
  */
 @RunWith(RobolectricTestRunner.class)
 public class LivePanelThemeTest {
@@ -114,6 +118,54 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", tiktok, LivePanelTheme.darkLivePanel(dialog(), tiktok));
+    }
+
+    /** A LIVE room with a light theme of its own, the way LivePlayActivity builds one. */
+    private static Activity room() {
+        Activity room = Robolectric.buildActivity(Activity.class).create().get();
+        room.setTheme(android.R.style.Theme_Light);
+        return room;
+    }
+
+    @Test public void aRoomTakesTikToksDarkAppThemeInDarkModeWithTheSwitch() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity room = room();
+        int stock = textColor(room);
+        LivePanelTheme.darkLiveRoom(room, android.R.style.Theme_Black);
+        assertEquals("the switch starts off", stock, textColor(room));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(room, android.R.style.Theme_Black);
+        // Applied with force, so it wins over the room's own light theme.
+        assertEquals(textColor(new ContextThemeWrapper(RuntimeEnvironment.getApplication(), android.R.style.Theme_Black)), textColor(room));
+        assertTrue(stock != textColor(room));
+    }
+
+    @Test public void lightModeAPauseAndNoKnownThemeLeaveTheRoomAlone() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        RuntimeEnvironment.setQualifiers("+notnight");
+        Activity day = room();
+        int stock = textColor(day);
+        LivePanelTheme.darkLiveRoom(day, android.R.style.Theme_Black);
+        assertEquals("light mode", stock, textColor(day));
+
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity night = room();
+        stock = textColor(night);
+        LivePanelTheme.darkLiveRoom(night);
+        assertEquals("without the patch the dark app theme is unknown", stock, textColor(night));
+        LivePanelTheme.darkLiveRoom(night, 0);
+        assertEquals("no theme", stock, textColor(night));
+        LivePanelTheme.darkLiveRoom(null);
+        LivePanelTheme.darkLiveRoom(null, android.R.style.Theme_Black);
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        LivePanelTheme.darkLiveRoom(night, android.R.style.Theme_Black);
+        assertEquals("paused", stock, textColor(night));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        LivePanelTheme.darkLiveRoom(night, android.R.style.Theme_Black);
+        assertEquals("without the patch", stock, textColor(night));
     }
 
     @Test public void panelsAreFoundByTikToksClassNames() {

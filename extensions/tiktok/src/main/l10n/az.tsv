@@ -1205,7 +1205,6 @@ These loaded values are for a different TikTok version.	Bu yüklənmiş dəyərl
 This catalog entry is no longer available. Refresh the Lab and try again.	Bu kataloq girişi artıq mövcud deyil. Lab-ı yeniləyin və yenidən cəhd edin.
 This change couldn't be saved. Try again.	Bu dəyişiklik saxlanıla bilmədi. Yenidən cəhd edin.
 This configuration has no fields that can be copied and changed safely on this build.	Bu konfiqurasiyada bu buildə təhlükəsiz kopyalanıb dəyişdirilə bilən sahə yoxdur.
-This file has more loaded values than the Lab takes at once.	Bu faylda Lab-ın bir dəfəyə qəbul etdiyindən çox yüklənmiş dəyər var.
 This file has no loaded values in it.	Bu faylda heç bir yüklənmiş dəyər yoxdur.
 This file isn't a loaded-values export from the Feature Gate Lab.	Bu fayl Feature Gate Lab-dan yüklənmiş dəyərlərin ixracı deyil.
 This gate type isn't supported.	Bu qapı növü dəstəklənmir.
@@ -2176,3 +2175,7 @@ Only on the sides of the video	Yalnız videonun yanlarında
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.	Uzun basma seçiminiz yalnız videonun sol və sağ üçdə birində işləyir. Ortada basmaq yenə də TikTok-un öz menyusunu açır. Bunun üçün Uzun basma seçimi TikTok defoltundan fərqli olmalıdır.
 Full-width progress bar	Tam enli irəliləyiş paneli
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	İrəliləyiş paneli TikTok-un hər iki ucda qoyduğu boşluq olmadan ekranın bir kənarından o birinə qədər uzanır.
+New device identity	Yeni cihaz kimliyi
+Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	TikTok-un məlumatlarını silir və növbəti açılışda ona yeni Android ID və reklam ID-si verir ki, tanımadığı telefon görsün. Hesabdan çıxış ediləcək və qaralamalarınız silinəcək. Hushfeed ayarları qalır.
+TikTok starts as a new phone after the restart. Tap again to cancel.	TikTok yenidən başladıqdan sonra yeni telefon kimi açılır. Ləğv etmək üçün yenidən toxunun.
+Couldn't set up a new device identity. Try again.	Yeni cihaz kimliyi qurmaq alınmadı. Yenidən cəhd edin.

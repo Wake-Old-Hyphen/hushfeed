@@ -1164,7 +1164,6 @@ These loaded values are for a different TikTok version.,Nilai yang dimuat ini un
 This catalog entry is no longer available. Refresh the Lab and try again.,Entri katalog ini sudah tidak tersedia. Segarkan Lab dan coba lagi.
 This change couldn't be saved. Try again.,Perubahan ini tidak dapat disimpan. Coba lagi.
 This configuration has no fields that can be copied and changed safely on this build.,Konfigurasi ini tidak punya bidang yang bisa disalin dan diubah dengan aman di build ini.
-This file has more loaded values than the Lab takes at once.,Berkas ini berisi lebih banyak nilai yang dimuat daripada yang bisa diterima Lab sekaligus.
 This file has no loaded values in it.,Berkas ini tidak berisi nilai yang dimuat.
 This file isn't a loaded-values export from the Feature Gate Lab.,Berkas ini bukan ekspor nilai yang dimuat dari Feature Gate Lab.
 This gate type isn't supported.,Tipe gate ini tidak didukung.
@@ -2155,3 +2154,7 @@ Only on the sides of the video,Hanya di sisi video
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,Pilihan Tekan lama hanya berjalan di sepertiga kiri dan kanan video. Tekan di tengah tetap membuka menu bawaan TikTok. Perlu pilihan Tekan lama selain Bawaan TikTok.
 Full-width progress bar,Bilah progres selebar layar
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.","Bilah progres membentang dari satu tepi layar ke tepi lainnya, tanpa celah yang disisakan TikTok di kedua ujung."
+New device identity,Identitas perangkat baru
+"Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Hapus data TikTok dan beri ID Android serta ID iklan baru saat mulai berikutnya, agar TikTok melihat ponsel yang belum pernah dikenalnya. Kamu akan keluar dari akun dan kehilangan draf. Pengaturan Hushfeed tetap ada."
+TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok mulai sebagai ponsel baru setelah dimulai ulang. Ketuk lagi untuk membatalkan.
+Couldn't set up a new device identity. Try again.,Tidak bisa menyiapkan identitas perangkat baru. Coba lagi.

@@ -56,6 +56,41 @@ The current catalog's 4 patches are grouped as follows:
 
 The [patch catalog](../patches-list.json) has the complete names.
 """
+OLD_APK = "https://www.apkmirror.com/apk/t/tiktok-1-0-0-release/"
+NEW_APK = "https://www.apkmirror.com/apk/t/tiktok-1-1-0-release/"
+INSTALL = f"""
+<a href="m"><img alt="TikTok 1.0.0" src="https://img.shields.io/badge/TikTok-1.0.0-ff0050.svg" /></a>
+
+> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [1.0.0]({OLD_APK}). Use that APK.
+
+1. Get the TikTok 1.0.0 APK from APKMirror: [1.0.0]({OLD_APK}).
+
+- Version: [1.0.0]({OLD_APK}), on APKMirror since 2026-01-01.
+- Build: version code 100, arm64-v8a, nodpi, minSdk 23
+- SHA-256 of the APK every patch was verified against: `{"a" * 64}` (1.0.0)
+- Next release: TikTok 1.1.0, [on APKMirror]({NEW_APK}) since 2026-02-02 (version code 110, arm64-v8a, nodpi, minSdk 24), SHA-256 `{"b" * 64}`. Use the build above until then.
+- Also PineDrama 1.0.0, which stays as it is.
+
+Google Play only ever serves the newest build, so yours may not be 1.0.0. Take [1.0.0]({OLD_APK}) from APKMirror.
+
+APKMirror also offers some TikTok releases as bundles, so patch the plain 1.0.0 APK. Not 21.0.0 or 1.0.01.
+"""
+FOLDED = f"""
+<a href="m"><img alt="TikTok 1.1.0" src="https://img.shields.io/badge/TikTok-1.1.0-ff0050.svg" /></a>
+
+> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [1.1.0]({NEW_APK}). Use that APK.
+
+1. Get the TikTok 1.1.0 APK from APKMirror: [1.1.0]({NEW_APK}).
+
+- Version: [1.1.0]({NEW_APK}), on APKMirror since 2026-02-02.
+- Build: version code 110, arm64-v8a, nodpi, minSdk 24
+- SHA-256 of the APK every patch was verified against: `{"b" * 64}` (1.1.0)
+- Also PineDrama 1.0.0, which stays as it is.
+
+Google Play only ever serves the newest build, so yours may not be 1.1.0. Take [1.1.0]({NEW_APK}) from APKMirror.
+
+APKMirror also offers some TikTok releases as bundles, so patch the plain 1.1.0 APK. Not 21.0.0 or 1.0.01.
+"""
 
 
 def catalog(*versions: str) -> str:
@@ -326,6 +361,91 @@ class ReleaseTextTest(unittest.TestCase):
                          readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
                          device_line="", runtime=1, patch=1)
         self.assertIn("applied to the supported APK", json.loads(self.read("patches-bundle.json"))["description"])
+
+    def test_index_names_tiktoks_targets_and_leaves_pinedramas_out(self):
+        self.cut_grouped_release()
+        data = json.loads(catalog("1.1.0"))
+        data["patches"][0]["compatibility"].append(
+            {"packageName": "com.ss.android.ttmd.video", "targets": [{"version": "1.0.0"}]})
+        self.write("patches-list.json", json.dumps(data))
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                         readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
+                         device_line="", runtime=1, patch=1)
+        description = json.loads(self.read("patches-bundle.json"))["description"]
+        self.assertIn("2 patches for global TikTok 1.1.0 (com.zhiliaoapp.musically)", description)
+        self.assertIn("applied to the supported APK", description)
+        self.assertIn("Hushfeed v0.2.0 contains 2 patches for TikTok 1.1.0. New in this one", self.read("README.md"))
+
+    def test_index_refuses_a_catalog_with_no_package_every_patch_declares(self):
+        self.cut_grouped_release()
+        data = json.loads(catalog("1.1.0"))
+        data["patches"][1]["compatibility"] = [{"packageName": "com.ss.android.ttmd.video", "targets": [{"version": "1.0.0"}]}]
+        self.write("patches-list.json", json.dumps(data))
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        before = {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()}
+        with self.assertRaises(SystemExit) as caught:
+            self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                             readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
+                             device_line="", runtime=1, patch=1)
+        self.assertIn("0 packages every patch declares", str(caught.exception))
+        self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob("*") if p.is_file()})
+
+    def index_with_install_steps(self, install: str) -> None:
+        self.cut_grouped_release()
+        self.write("patches-list.json", catalog("1.1.0"))
+        self.write("README.md", README + install)
+        self.write(".github/ISSUE_TEMPLATE/bug_report.yml", "      placeholder: Version 0.1.0 for TikTok 1.0.0\n")
+        for name in ("readme.txt", "bundle.txt"):
+            self.write(name, "x.\n")
+        self.run_command(release_text.index, version="0.2.0", created="2026-10-09T17:03:42",
+                         readme_summary=str(self.root / "readme.txt"), bundle_summary=str(self.root / "bundle.txt"),
+                         device_line="", runtime=1, patch=1)
+
+    def assert_index_refuses(self, install: str, message: str) -> None:
+        with self.assertRaises(SystemExit) as caught:
+            self.index_with_install_steps(install)
+        self.assertIn(message, str(caught.exception))
+        self.assertEqual(README + install, self.read("README.md"))
+        self.assertEqual("      placeholder: Version 0.1.0 for TikTok 1.0.0\n", self.read(".github/ISSUE_TEMPLATE/bug_report.yml"))
+        self.assertEqual("", json.loads(self.read("patches-bundle.json"))["description"])
+
+    def test_fold_moves_the_install_steps_onto_the_next_release(self):
+        self.assertEqual(FOLDED, release_text.fold_next_release(INSTALL, ["1.1.0"]))
+
+    def test_fold_leaves_a_readme_that_already_installs_the_targets(self):
+        self.assertEqual(FOLDED, release_text.fold_next_release(FOLDED, ["1.1.0"]))
+
+    def test_index_moves_the_install_steps_onto_the_build_it_describes(self):
+        self.index_with_install_steps(INSTALL)
+        self.assertTrue(self.read("README.md").endswith(FOLDED), self.read("README.md"))
+        self.assertIn("Hushfeed v0.2.0 contains 2 patches for TikTok 1.1.0. New in this one", self.read("README.md"))
+        self.assertIn("2 patches for global TikTok 1.1.0 (com.zhiliaoapp.musically)",
+                      json.loads(self.read("patches-bundle.json"))["description"])
+        self.assertEqual("      placeholder: Version 0.2.0 for TikTok 1.1.0\n", self.read(".github/ISSUE_TEMPLATE/bug_report.yml"))
+
+    def test_index_refuses_install_steps_with_no_next_release_for_the_targets(self):
+        install = "".join(line for line in INSTALL.splitlines(keepends=True) if not line.startswith("- Next release:"))
+        self.assert_index_refuses(install, "installs TikTok 1.0.0 and has no '- Next release:' line for TikTok 1.1.0")
+
+    def test_index_refuses_a_next_release_for_another_build(self):
+        self.assert_index_refuses(INSTALL.replace("Next release: TikTok 1.1.0", "Next release: TikTok 1.2.0"),
+                                  "names TikTok 1.2.0, but the patches declare TikTok 1.1.0")
+
+    def test_index_refuses_a_next_release_line_it_cannot_read(self):
+        self.assert_index_refuses(INSTALL.replace(" since 2026-02-02 (", " soon ("),
+                                  "has a '- Next release:' line that doesn't read")
+
+    def test_index_refuses_a_next_release_beside_a_version_line_it_cannot_read(self):
+        self.assert_index_refuses(INSTALL.replace("on APKMirror since 2026-01-01.", "on APKMirror since 2026-01-01. "),
+                                  "needs one Supported target line reading")
+
+    def test_index_refuses_install_steps_linking_the_old_build_elsewhere(self):
+        self.assert_index_refuses(
+            INSTALL.replace("Take [1.0.0](" + OLD_APK, "Take [1.0.0](https://www.apkmirror.com/apk/t/tiktok-1-0-0-other/"),
+            "links TikTok 1.0.0 somewhere other than its Supported target link")
 
 
 if __name__ == "__main__":

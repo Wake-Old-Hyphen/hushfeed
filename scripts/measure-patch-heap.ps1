@@ -54,10 +54,12 @@ $jar = if ($env:HUSHFEED_DESKTOP_JAR) { $env:HUSHFEED_DESKTOP_JAR } else {
 
 # There is no default APK. The one to measure against is the build README.md records with its
 # checksum, which lives outside the repo, and quietly patching some other file would report a
-# heap figure for a target nobody asked about.
+# heap figure for a target nobody asked about. Between releases that is the "Next release" line,
+# since the install steps keep naming the build the published release patches.
 $apk = $env:HUSHFEED_APK
 if (-not $apk) {
-    throw ('Set HUSHFEED_APK to the TikTok build README.md records under "Supported target". ' +
+    throw ('Set HUSHFEED_APK to the TikTok build the patches declare: README.md records it under ' +
+        '"Supported target", on the "Next release" line when there is one. ' +
         'The heap a patch needs depends on the APK, so there is no sensible default.')
 }
 $version = Get-BundleVersion -Root $root

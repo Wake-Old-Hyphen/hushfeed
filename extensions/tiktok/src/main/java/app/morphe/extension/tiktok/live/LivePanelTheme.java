@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.live;
 
 import app.morphe.extension.shared.Logger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -58,6 +59,41 @@ public final class LivePanelTheme {
             Logger.printException(() -> "Could not darken a LIVE panel", failure);
             return inflater;
         }
+    }
+
+    /**
+     * Called by the LIVE room activity's setTheme right after its last room theme. The room
+     * ignores the theme it's handed and builds its own out of light styles applied with force,
+     * each sitting on TikTok's light app theme, so TikTok's generic sheets over a room (Share, a
+     * business room's Contact sheet) open white in a dark app, and the panel overlay never
+     * reaches them (#159). While Dark LIVE panels is on and TikTok itself is in dark mode,
+     * TikTok's dark app theme goes on over them with force, as TikTok themes its other screens
+     * in dark mode. The room's color scheme styles still apply after it.
+     */
+    public static void darkLiveRoom(Activity room) {
+        darkLiveRoom(room, darkAppTheme());
+    }
+
+    static void darkLiveRoom(Activity room, int theme) {
+        if (room == null) {
+            return;
+        }
+        try {
+            if (theme == 0 || !LiveControls.darkLivePanels(room)) {
+                return;
+            }
+            room.getTheme().applyStyle(theme, true);
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not darken a LIVE room", failure);
+        }
+    }
+
+    /**
+     * The style TikTok gives its screens in dark mode, 0 when unknown. The patch rewrites this to
+     * return the style it read from TikTok's own dark mode code.
+     */
+    static int darkAppTheme() {
+        return 0;
     }
 
     /** True for a themed LIVE dialog or a LIVE sheet page, by TikTok's own class names. */

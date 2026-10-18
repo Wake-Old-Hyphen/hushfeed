@@ -257,7 +257,7 @@ public final class SeenHistoryFilePreference extends Preference {
                 DocumentOperation.removeUnsaved(resolver, uri, false);
                 return;
             }
-            Logger.printException(() -> "Could not save the seen-history file", failure);
+            DocumentOperation.logFailure(file, () -> "Could not save the seen-history file", failure);
             String message = failure instanceof SeenVideoHistory.AccountChanged
                     ? L10n.t(context, ACCOUNT_CHANGED)
                     : file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING

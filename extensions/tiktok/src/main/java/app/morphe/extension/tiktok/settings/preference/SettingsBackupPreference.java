@@ -351,7 +351,7 @@ public final class SettingsBackupPreference extends Preference
         } catch (Exception error) {
             // Stopped before the gate: nothing changed and the stop already said so.
             if (file != null && file.stage() == DocumentOperation.Stage.STOPPED) return;
-            Logger.printException(() -> "Settings backup operation failed", error);
+            DocumentOperation.logFailure(file, () -> "Settings backup operation failed", error);
             // Stopped while the file app had the backup, and this is how that ended.
             String failure = file != null && file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING
                     ? L10n.t("The backup wasn't saved. Back up again when the file app is ready.")

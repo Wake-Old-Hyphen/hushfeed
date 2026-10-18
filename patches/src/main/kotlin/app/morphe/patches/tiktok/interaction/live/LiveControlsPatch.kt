@@ -21,12 +21,14 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -244,6 +246,87 @@ internal fun hookPanelInflater(inflater: MutableMethod) {
             """,
         )
     }
+}
+
+/** The LIVE room activity, real-named on 47.4.3. */
+internal const val LIVE_PLAY_ACTIVITY = "Lcom/ss/android/ugc/aweme/live/LivePlayActivity;"
+
+/**
+ * The LIVE room activity's setTheme (#159). It ignores the theme it's handed and builds the
+ * room's own: a base room theme, then styles for how the room was entered and its color scheme,
+ * each applied with force and none of them dark. So TikTok's generic sheets over a room, Share
+ * among them, open white in a dark app, which the LIVE panel overlay can't reach.
+ */
+internal object LivePlayActivityThemeFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_ACTIVITY,
+    name = "setTheme",
+    returnType = "V",
+    parameters = listOf("I"),
+)
+
+/** The base of TikTok's screens, real-named on 47.4.3. */
+internal const val BASE_ACTIVITY = "Lcom/bytedance/ies/foundation/activity/BaseActivity;"
+
+/**
+ * TikTok's dark mode for its screens (X.060v.LIZ on 47.4.3): in dark mode, a screen that says it
+ * supports dark mode gets TikTok's dark app theme through setTheme. The room says no. The style
+ * is read from here at patch time.
+ */
+internal object AppDarkThemeFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(BASE_ACTIVITY),
+    custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) && appDarkTheme(method) != null },
+)
+
+/**
+ * The style [method] hands setTheme after it asks the screen isDarkModeSupported, read from the
+ * constant last written to setTheme's argument; null when [method] isn't TikTok's dark mode.
+ */
+internal fun appDarkTheme(method: Method): Int? {
+    val instructions = method.implementation?.instructions?.toList() ?: return null
+    fun calls(at: Int, name: String, parameters: List<String>, returnType: String): Boolean {
+        val call = (instructions[at] as? ReferenceInstruction)?.reference as? MethodReference ?: return false
+        return instructions[at].opcode == Opcode.INVOKE_VIRTUAL && call.name == name && call.returnType == returnType &&
+            call.parameterTypes.map(CharSequence::toString) == parameters
+    }
+    val asked = instructions.indices.firstOrNull { calls(it, "isDarkModeSupported", listOf(), "Z") } ?: return null
+    val set = (asked + 1 until instructions.size).firstOrNull { calls(it, "setTheme", listOf("I"), "V") } ?: return null
+    val argument = (instructions[set] as FiveRegisterInstruction).registerD
+    val written = (set - 1 downTo asked + 1).map { instructions[it] }
+        .firstOrNull { it is OneRegisterInstruction && it.registerA == argument && it.opcode.setsRegister() }
+    return (written as? NarrowLiteralInstruction)?.narrowLiteral?.takeIf { it ushr 24 == 0x7f }
+}
+
+/**
+ * Puts the room hook right after the room's last setTheme, at the branch join a skipped cold start
+ * style lands on too. Every room theme setTheme hands over sits on TikTok's light app theme and
+ * re-applies all of it, so the dark app theme has to come after the last of them. The room's color
+ * scheme styles still apply after the hook, so its own accents stay.
+ */
+internal fun hookRoomTheme(setTheme: MutableMethod) {
+    val instructions = setTheme.implementation?.instructions?.toList()
+        ?: throw PatchException("LIVE controls: the room's setTheme has no body")
+    val join = roomThemeJoin(instructions)
+    if (join < 0) throw PatchException("LIVE controls: the room's setTheme never sets a room theme")
+    setTheme.addInstructionsAtControlFlowLabel(
+        join,
+        "invoke-static/range {p0 .. p0}, $PANEL_THEME->darkLiveRoom(Landroid/app/Activity;)V",
+    )
+}
+
+/**
+ * Where the room's own themes are done: right after the last super setTheme the code falls
+ * through from. One room theme sits at the method's end and jumps back up (on 47.4.3 the one for
+ * a room entered without the smooth transition), so it reaches this point through the join.
+ */
+internal fun roomThemeJoin(instructions: List<Instruction>): Int {
+    val falls = instructions.indices.filter { at ->
+        val call = (instructions[at] as? ReferenceInstruction)?.reference as? MethodReference
+        instructions[at].opcode == Opcode.INVOKE_SUPER && call?.name == "setTheme" &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("I") &&
+            instructions.getOrNull(at + 1)?.opcode !in setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
+    }
+    return falls.lastOrNull()?.plus(1) ?: -1
 }
 
 /**
@@ -646,8 +729,7 @@ val liveControlsPatch = bytecodePatch(
     name = "LIVE controls",
     description = "Stops a LIVE in the feed from opening by itself after a countdown. It can " +
         "show a LIVE's exact viewer count instead of a rounded one, offer a quality choice and " +
-        "clear screen in more LIVE rooms, open LIVE panels dark in dark mode, and keep your quality " +
-        "pick after TikTok restarts. " +
+        "clear screen in more LIVE rooms, and keep your quality pick after TikTok restarts. " +
         "Starts off. Turn it on in Hushfeed settings > Playback. " +
         "It also keeps a LIVE in the feed from showing the Service+ row of the LIVE before it, " +
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
@@ -697,6 +779,17 @@ val liveControlsPatch = bytecodePatch(
         listOf(LiveThemedDialogInflaterFingerprint, LiveThemedFragmentInflaterFingerprint).forEach {
             hookPanelInflater(it.method)
         }
+        // TikTok's generic sheets over a room (Share) take the room activity's own light theme,
+        // which the overlay can't reach. The room's setTheme hands the activity to the extension
+        // after its last room theme, and the extension puts TikTok's dark app theme on it
+        // with force while the switch is on in dark mode. The style comes from TikTok's own dark
+        // mode code, so it follows each build's resource ids.
+        val darkTheme = appDarkTheme(AppDarkThemeFingerprint.method)
+            ?: throw PatchException("LIVE controls: TikTok's dark app theme wasn't found")
+        mutableClassDefBy(PANEL_THEME).methods.single {
+            it.name == "darkAppTheme" && it.returnType == "I" && it.parameterTypes.isEmpty()
+        }.returnEarly(darkTheme)
+        hookRoomTheme(LivePlayActivityThemeFingerprint.method)
         // The older quality list's rows can read white on white in dark mode, switch or no
         // switch; the extension gives poorly contrasted text a readable color there.
         hookQualityList(LiveDefinitionListFingerprint.method)

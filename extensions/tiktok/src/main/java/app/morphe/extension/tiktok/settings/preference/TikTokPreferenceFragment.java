@@ -293,6 +293,13 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (open != null) open.refreshRestartPending();
     }
 
+    /** Takes back a restart {@link #noteFileRestartPending} owed, once what needed it is undone. */
+    static void noteFileRestartSettled(String key) {
+        AbstractPreferenceFragment.restartPending.remove(key);
+        TikTokPreferenceFragment open = active();
+        if (open != null) open.refreshRestartPending();
+    }
+
     /** Save or Restore seen history, whose picker answers the page that asked. */
     public static void openSeenHistoryFilePicker(int request) {
         if (activeFragment != null && activeFragment.isAdded()) {

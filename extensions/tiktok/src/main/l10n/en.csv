@@ -439,6 +439,7 @@ Couldn't save the settings backup. Try again.,Couldn't save the settings backup.
 Couldn't save these choices. Try again.,Couldn't save these choices. Try again.
 Couldn't save this override. Try again.,Couldn't save this override. Try again.
 Couldn't send the feedback. Try again in a moment.,Couldn't send the feedback. Try again in a moment.
+Couldn't set up a new device identity. Try again.,Couldn't set up a new device identity. Try again.
 Couldn't start saving the feed capture. Try again in a moment.,Couldn't start saving the feed capture. Try again in a moment.
 Couldn't start the Lab change. Try again in a moment.,Couldn't start the Lab change. Try again in a moment.
 Couldn't start the export. Try again in a moment.,Couldn't start the export. Try again in a moment.
@@ -1034,6 +1035,7 @@ Nearby,Nearby
 Network proxy,Network proxy
 Never from these countries,Never from these countries
 New comment emoji,New comment emoji
+New device identity,New device identity
 New value,New value
 Next message: today at %1$s.,Next message: today at %1$s.
 Next message: tomorrow at %1$s.,Next message: tomorrow at %1$s.
@@ -1875,7 +1877,6 @@ This LIVE's stream can't be saved,This LIVE's stream can't be saved
 This catalog entry is no longer available. Refresh the Lab and try again.,This catalog entry is no longer available. Refresh the Lab and try again.
 This change couldn't be saved. Try again.,This change couldn't be saved. Try again.
 This configuration has no fields that can be copied and changed safely on this build.,This configuration has no fields that can be copied and changed safely on this build.
-This file has more loaded values than the Lab takes at once.,This file has more loaded values than the Lab takes at once.
 This file has no loaded values in it.,This file has no loaded values in it.
 This file isn't a loaded-values export from the Feature Gate Lab.,This file isn't a loaded-values export from the Feature Gate Lab.
 This gate type isn't supported.,This gate type isn't supported.
@@ -1941,6 +1942,7 @@ TikTok sees an empty contact list instead of yours. Find Friends and People you 
 TikTok slips the videos it saved for offline viewing back into For You when it can't load enough new ones. This takes them all out. Your offline list stays as it is.,TikTok slips the videos it saved for offline viewing back into For You when it can't load enough new ones. This takes them all out. Your offline list stays as it is.
 TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.,TikTok sometimes tests a change that empties the Favorites tab on your profile. This keeps the tab and your saved videos.
 TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.,TikTok sometimes tests your phone's speed in a background process that can use a lot of memory. This stops that test from starting. One already running ends when TikTok restarts.
+TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok starts as a new phone after the restart. Tap again to cancel.
 "TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app.","TikTok treats your phone as one without passkeys, so signing in asks for your password or a code by email or text instead. Password managers won't hand a passkey to a patched app."
 TikTok's background play and Auto scroll,TikTok's background play and Auto scroll
 TikTok's downloader: %1$s,TikTok's downloader: %1$s
@@ -2106,6 +2108,7 @@ When to send,When to send
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only."
 Who to message,Who to message
 Window width needed to enable the layout. Restart TikTok to apply this.,Window width needed to enable the layout. Restart TikTok to apply this.
+"Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay."
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.","With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100."
 "Word rules only, not every feed filter:","Word rules only, not every feed filter:"
 "Words, countries and languages","Words, countries and languages"

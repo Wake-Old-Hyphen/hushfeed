@@ -166,6 +166,54 @@ class DevicePrivacyGuardAnchorsTest {
         }
     }
 
+    /**
+     * A new device identity answers the Android ID at TikTok's Settings.Secure.getString and
+     * Settings.System.getString calls. Each declared build makes the Secure read, every one of
+     * both reads is the static call the replacement is emitted for, and nothing reads a String off
+     * Settings.Secure another way (getStringForUser, say) where the phone's own id would slip by.
+     */
+    @Test
+    fun `each declared build reads the Android ID only where a new identity answers it`() {
+        val secure = "Landroid/provider/Settings\$Secure;"
+        val system = "Landroid/provider/Settings\$System;"
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            var secureReads = 0
+            val wrongForm = mutableListOf<String>()
+            val otherReads = mutableListOf<String>()
+
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            container.dexEntryNames.forEach { entry ->
+                container.getEntry(entry)!!.dexFile.classes.forEach { classDef ->
+                    if (classDef.type.startsWith("Lapp/morphe/extension/")) return@forEach
+                    classDef.methods.forEach { method ->
+                        method.implementation?.instructions?.forEach { instruction ->
+                            val ref = reference(instruction) ?: return@forEach
+                            if (ref.definingClass != secure && ref.definingClass != system) return@forEach
+                            if (ref.returnType != "Ljava/lang/String;") return@forEach
+                            val replaced = ref.name == "getString" &&
+                                ref.parameterTypes.map { it.toString() } ==
+                                listOf("Landroid/content/ContentResolver;", "Ljava/lang/String;")
+                            when {
+                                !replaced && ref.definingClass == secure ->
+                                    otherReads += "${classDef.type}->${method.name} calls ${ref.name}"
+                                !replaced -> Unit
+                                instruction.opcode !in static ->
+                                    wrongForm += "${ref.definingClass} getString ${instruction.opcode}"
+                                ref.definingClass == secure -> secureReads++
+                            }
+                        }
+                    }
+                }
+            }
+
+            assertTrue("$version: no Settings.Secure.getString call site", secureReads > 0)
+            assertTrue("$version: a Settings read in a form the replacement can't match: $wrongForm",
+                wrongForm.isEmpty())
+            assertTrue("$version: Settings.Secure read some other way: $otherReads", otherReads.isEmpty())
+        }
+    }
+
     private fun reference(instruction: Instruction): MethodReference? =
         (instruction as? ReferenceInstruction)?.reference as? MethodReference
 }

@@ -17,10 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.DocumentExportProvider;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.preference.DocumentOperation;
+import app.morphe.extension.tiktok.settings.preference.DocumentOperationTest;
 import app.morphe.extension.tiktok.settings.preference.SettingsActionBanner;
 
 import org.json.JSONArray;
@@ -341,6 +343,7 @@ public class CommentExportTest {
             var provider = DocumentExportProvider.register(activity);
             provider.honorCancel = true;
             var release = provider.holdOpens();
+            LogBufferManager.clearLogBuffer();
             try {
                 json.performClick();
                 shadowOf(Looper.getMainLooper()).idle();
@@ -360,6 +363,7 @@ public class CommentExportTest {
                 // The write was at the file app's open, past the gate, so the stop can't say it was clean.
                 assertEquals("The export wasn't saved. Export again when the file app is ready.",
                         bannerText(activity));
+                DocumentOperationTest.assertStopLoggedAsInfo("Comment export failed");
             } finally {
                 release.countDown();
             }

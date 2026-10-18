@@ -1033,6 +1033,19 @@ internal object SearchContainerFragmentOnViewCreatedFingerprint : Fingerprint(
     parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
 )
 
+/**
+ * The "People also ask Tako" card in the search results on 47.4.3, a native card (not Lynx) with a
+ * Tako header over a list of questions, in a full-width row between the video rows. Its slot
+ * component finds the header and the question list in {@code onViewCreated}; real-named class and
+ * method, so the extension is handed the view at every return.
+ */
+internal object SearchTakoSugCardCreatedFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/tako/SearchTakoSugCardAssem;",
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;"),
+)
+
 internal object FollowFeedPresenterPostProcessFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;"),

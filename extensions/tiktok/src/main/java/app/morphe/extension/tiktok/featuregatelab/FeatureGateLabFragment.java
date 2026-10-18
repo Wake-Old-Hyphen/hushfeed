@@ -123,11 +123,16 @@ public final class FeatureGateLabFragment extends Fragment {
     private static volatile Runnable searchWorkHookForTests;
     private static final int REQUEST_EXPORT_LOADED = 0x6f10;
     private static final int REQUEST_IMPORT_LOADED = 0x6f11;
-    private static final int MAX_COMPRESSED_IMPORT_BYTES = 4 * 1024 * 1024;
-    private static final int MAX_JSON_IMPORT_BYTES = 8 * 1024 * 1024;
-    private static final int MAX_IMPORT_RULES = FeatureGateLabStore.MAX_RULES;
+    /*
+     * A loaded-values export holds every value TikTok loaded (14,747 on 47.4.3, 5.7 MB of JSON
+     * and 177,709 values counted the parser's way) plus up to 2,048 settings-manager
+     * observations. The import turns only the values that differ into rules, and the rule store
+     * refuses more than it keeps, so these bounds are for the file alone. Sized at the Lab's own
+     * rule cap, they refused every real export.
+     */
+    private static final int MAX_JSON_IMPORT_BYTES = 16 * 1024 * 1024;
     private static final SettingsJson.Limits IMPORT_JSON_LIMITS = new SettingsJson.Limits(
-            24, 8192, 64 * 1024, MAX_IMPORT_RULES, MAX_JSON_IMPORT_BYTES);
+            24, 1 << 20, 64 * 1024, 1 << 16, MAX_JSON_IMPORT_BYTES);
     private static final int FILTER_ALL = 0;
     private static final int FILTER_BOOLEAN = 1;
     private static final int FILTER_ENABLED = 2;
@@ -1522,7 +1527,7 @@ public final class FeatureGateLabFragment extends Fragment {
                 DocumentOperation.removeUnsaved(resolver, uri, false);
                 return;
             }
-            Logger.printException(() -> "Loaded-value file export failed", error);
+            DocumentOperation.logFailure(file, () -> "Loaded-value file export failed", error);
             String message = file.stage() == DocumentOperation.Stage.STOPPED_WHILE_PUBLISHING
                     ? L10n.t(context, "The export wasn't saved. Export again when the file app is ready.")
                     : L10n.t(context, "Loaded-value file export failed");
@@ -1542,7 +1547,7 @@ public final class FeatureGateLabFragment extends Fragment {
         try {
             byte[] encoded;
             try (InputStream input = file.openForRead(context.getContentResolver(), uri)) {
-                encoded = readLimited(input, MAX_COMPRESSED_IMPORT_BYTES);
+                encoded = readLimited(input, MAX_JSON_IMPORT_BYTES);
             }
             JSONObject imported = readLoadedJson(encoded);
             if (!file.commit()) return;
@@ -1553,7 +1558,13 @@ public final class FeatureGateLabFragment extends Fragment {
             lab.reviewLoadedImport(imported, current);
         } catch (Exception | OutOfMemoryError error) {
             if (file.stage() == DocumentOperation.Stage.STOPPED) return;
-            Logger.printException(() -> "Loaded-value file import failed", error);
+            // A file the review could name is told to the reader. Anything else stays a patch
+            // error: a parse failure is how an export the Lab should take shows up.
+            if (error instanceof Refused) {
+                Logger.printInfo(() -> "Loaded-value file import refused", (Refused) error);
+            } else {
+                Logger.printException(() -> "Loaded-value file import failed", error);
+            }
             // A refusal the review could name says what it was. A file from another build
             // used to be reported as invalid or too large, the same as a corrupt one.
             fileNotice(error instanceof Refused
@@ -1672,9 +1683,6 @@ public final class FeatureGateLabFragment extends Fragment {
         int unavailable = 0;
         int malformed = 0;
         if (sourceRules == null) throw new Refused(L10n.t(context, "This file has no loaded values in it."));
-        if (sourceRules.length() > MAX_IMPORT_RULES) {
-            throw new Refused(L10n.t(context, "This file has more loaded values than the Lab takes at once."));
-        }
         {
             for (int i = 0; i < sourceRules.length(); i++) {
                 JSONObject item = sourceRules.optJSONObject(i);
@@ -1960,10 +1968,15 @@ public final class FeatureGateLabFragment extends Fragment {
             try {
                 result = change.run();
             } catch (Exception error) {
-                Logger.printException(() -> "Lab change failed", error);
+                boolean refused = error instanceof Refused
+                        || error instanceof FeatureGateLabStore.RuleLimitRefused;
+                // A refusal is the Lab working, and the reader is told why. Filed as a patch
+                // error, its debug toast covered that reason.
+                if (refused) Logger.printInfo(() -> "Lab change refused", error);
+                else Logger.printException(() -> "Lab change failed", error);
                 // A refusal already carries its reason in the reader's words. Swapped for the
                 // retry line, the reader was told to try again what would fail the same way.
-                result = error instanceof Refused || error instanceof FeatureGateLabStore.RuleLimitRefused
+                result = refused
                         ? error.getMessage()
                         : L10n.t(Utils.getContext(), "Couldn't change the Lab settings. Try again.");
                 tell = Utils::showToastLong;

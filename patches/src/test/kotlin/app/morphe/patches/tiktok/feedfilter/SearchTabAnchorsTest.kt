@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.feedfilter
 
 import app.morphe.Fixtures
+import app.morphe.patches.tiktok.misc.navigation.writes
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
@@ -16,12 +17,14 @@ import java.io.File
  * its two list getters keep theirs, each opens with exactly one read of the tabList field and
  * nothing else on the response reads that field, the tab info keeps the key and name getters the
  * extension reads, and the fragment that inflates the strip keeps the onViewCreated the pill is
- * hidden from.
+ * hidden from. On each declared build the "People also ask Tako" card in the results keeps the
+ * onViewCreated it is hidden from.
  */
 class SearchTabAnchorsTest {
     private val tabList = "Lcom/ss/android/ugc/aweme/search/pages/result/common/tabs/core/model/SearchDynamicTabList;"
     private val tabInfo = "Lcom/ss/android/ugc/aweme/search/pages/result/common/tabs/core/model/SearchDynamicTabInfo;"
     private val containerFragment = "Lcom/ss/android/ugc/aweme/search/pages/core/ui/fragment/SearchContainerFragment;"
+    private val takoSugCard = "Lcom/ss/android/ugc/aweme/search/pages/result/topsearch/tako/SearchTakoSugCardAssem;"
 
     @Test
     fun `every retained fixture serves the search tab list through the two getters the patch filters`() {
@@ -75,6 +78,31 @@ class SearchTabAnchorsTest {
             assertTrue(
                 "${apk.name}: onViewCreated returns somewhere the pill hook can sit",
                 created.single().implementation!!.instructions.any { it.opcode == Opcode.RETURN_VOID },
+            )
+        }
+    }
+
+    @Test
+    fun `every declared build lays out the people also ask Tako card in an onViewCreated the hook can return through`() {
+        Fixtures.forEachDeclared { apk ->
+            val card = load(apk)[takoSugCard] ?: error("${apk.name}: no $takoSugCard")
+            val created = card.methods.filter {
+                it.name == "onViewCreated" &&
+                    it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;") &&
+                    it.returnType == "V" &&
+                    it.implementation != null
+            }
+            assertEquals("${apk.name}: onViewCreated(View) on the Tako questions card", 1, created.size)
+            val implementation = created.single().implementation!!
+            assertTrue(
+                "${apk.name}: onViewCreated returns somewhere the card hook can sit",
+                implementation.instructions.any { it.opcode == Opcode.RETURN_VOID },
+            )
+            // The hook hands p1 to the extension at each return, so nothing may write over it.
+            val view = implementation.registerCount - 1
+            assertTrue(
+                "${apk.name}: onViewCreated keeps the view in p1 (v$view) to its returns",
+                implementation.instructions.none { it.writes(view) },
             )
         }
     }

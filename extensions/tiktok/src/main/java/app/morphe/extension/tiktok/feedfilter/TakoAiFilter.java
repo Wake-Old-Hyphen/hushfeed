@@ -248,6 +248,87 @@ public final class TakoAiFilter {
         return true;
     }
 
+    private static final String SEARCH_QUESTIONS_CARD = "search questions card";
+    private static final int SEARCH_QUESTIONS_CARD_WRAPPERS = 4;
+
+    /**
+     * The "People also ask Tako" card in the search results (47.4.3, an Italian account's "Le
+     * persone chiedono anche a Tako" on a landmark search): a Tako header over a list of questions
+     * that each open Tako, in a full-width row of its own between the video rows. It is a native
+     * card, not a Lynx one, laid out by SearchTakoSugCardAssem, whose view is handed here once it
+     * is created. With the switch on the card goes, and so does its row once the row is in the
+     * results list. The switch takes effect on restart and a row of this kind holds only these
+     * cards, so nothing has to give the row back later.
+     */
+    public static void hideSearchSugCard(View view) {
+        try {
+            boolean enabled = Settings.HIDE_TAKO_AI.get();
+            HookStatus.bound(HOOK_FAMILY, SEARCH_QUESTIONS_CARD + (enabled ? " hidden" : " left"));
+            if (!enabled || view == null) return;
+            collapse(view);
+            // The view is created before its row joins the list, and a post on a detached view
+            // runs when it is attached, which is when the row can be found.
+            view.post(() -> {
+                try {
+                    collapseSearchSugCardRow(view);
+                } catch (Throwable failure) {
+                    HookStatus.threw(HOOK_FAMILY, SEARCH_QUESTIONS_CARD, failure);
+                }
+            });
+        } catch (Throwable failure) {
+            // A build whose card moved: leave it as TikTok laid it out and say so.
+            HookStatus.threw(HOOK_FAMILY, SEARCH_QUESTIONS_CARD, failure);
+        }
+    }
+
+    /**
+     * The card's row in the results list: a RecyclerView lays a row out at its own height whatever
+     * its visibility, so the row goes to no height as well.
+     */
+    static void collapseSearchSugCardRow(View view) {
+        View row = searchSugCardRow(view);
+        if (row == null) {
+            HookStatus.bound(HOOK_FAMILY, SEARCH_QUESTIONS_CARD + " row not found");
+            return;
+        }
+        collapse(row);
+        HookStatus.bound(HOOK_FAMILY, SEARCH_QUESTIONS_CARD + " row collapsed");
+    }
+
+    /**
+     * The view, or the wrapper holding it, whose parent is a RecyclerView (TikTok's subclasses
+     * included), within a few levels. Null when the card sits in no list, or when a wrapper on the
+     * way up holds something else visible, since that row is more than the card (the card itself
+     * is already gone at no height, which leaves the rest of such a row standing).
+     */
+    static View searchSugCardRow(View view) {
+        View current = view;
+        for (int level = 0; level <= SEARCH_QUESTIONS_CARD_WRAPPERS; level++) {
+            ViewParent parent = current.getParent();
+            if (!(parent instanceof ViewGroup)) return null;
+            if (isRecyclerView(parent.getClass())) return current;
+            if (!holdsOnly((ViewGroup) parent, current)) return null;
+            current = (View) parent;
+        }
+        return null;
+    }
+
+    private static boolean isRecyclerView(Class<?> type) {
+        for (Class<?> current = type; current != null && current != View.class; current = current.getSuperclass()) {
+            if ("RecyclerView".equals(current.getSimpleName())) return true;
+        }
+        return false;
+    }
+
+    private static void collapse(View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (params != null) {
+            params.height = 0;
+            view.setLayoutParams(params);
+        }
+        view.setVisibility(View.GONE);
+    }
+
     /**
      * The commentv2 bridge that hands the Tako service the comments sheet's top bar questions.
      * Its base class serves nine bridges, ads and shop among them, so the guard on that base

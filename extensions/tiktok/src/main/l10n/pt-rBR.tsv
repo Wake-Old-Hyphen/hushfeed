@@ -1167,7 +1167,6 @@ These loaded values are for a different TikTok version.	Estes valores carregados
 This catalog entry is no longer available. Refresh the Lab and try again.	Esta entrada do catálogo não está mais disponível. Atualize o Laboratório e tente de novo.
 This change couldn't be saved. Try again.	Não foi possível salvar esta alteração. Tente novamente.
 This configuration has no fields that can be copied and changed safely on this build.	Esta configuração não tem campos que dê para copiar e mudar com segurança nesta build.
-This file has more loaded values than the Lab takes at once.	Este arquivo tem mais valores carregados do que o Lab aceita de uma vez.
 This file has no loaded values in it.	Este arquivo não contém valores carregados.
 This file isn't a loaded-values export from the Feature Gate Lab.	Este arquivo não é uma exportação de valores carregados do Feature Gate Lab.
 This gate type isn't supported.	Este tipo de gate não é compatível.
@@ -2176,3 +2175,7 @@ Only on the sides of the video	Só nas laterais do vídeo
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.	Sua escolha de Toque longo vale só no terço esquerdo e direito do vídeo. Um toque no meio continua abrindo o menu do próprio TikTok. É preciso uma escolha de Toque longo diferente de Padrão do TikTok.
 Full-width progress bar	Barra de progresso em largura total
 Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.	A barra de progresso vai de uma borda da tela à outra, sem o espaço que o TikTok deixa em cada ponta.
+New device identity	Nova identidade do dispositivo
+Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Apaga os dados do TikTok e dá a ele um novo ID do Android e um novo ID de publicidade na próxima inicialização, para que ele veja um celular que não conhece. Você vai sair da conta e perder seus rascunhos. As configurações do Hushfeed ficam.
+TikTok starts as a new phone after the restart. Tap again to cancel.	O TikTok inicia como um celular novo depois de reiniciar. Toque de novo para cancelar.
+Couldn't set up a new device identity. Try again.	Não foi possível configurar uma nova identidade do dispositivo. Tente de novo.
