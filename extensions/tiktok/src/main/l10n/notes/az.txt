@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed indi TikTok 47.4.3-ü dəstəkləyir, yalnız bu versiyanı. APKMirror-dan 47.4.3 APK-nı yamaqlayın. PineDrama 47.1.4-də qalır.
+
+* **TikTok:** Dostlar bölməsində yalnız qarşılıqlı dostları göstərin yenidən videonu kimin repost etdiyinə baxır, lent filtrləri isə indi Dostlar bölməsindəki repost siyahısına da çatır.
+
+* **TikTok:** Yeni Profil şəbəkəsində video uzunluğunu göstərin açarı hər videonun uzunluğunu baxış sayının altına qoyur (#181).
+
+* **TikTok:** Videonun yanında şərhlər indi geniş pəncərədə şərhləri həqiqətən videonun yanında açır, PineDrama-da da (#26).
+
+* **TikTok:** Başlıq fonu Tünd və ya Qara olanda zolağın küncləri yenidən TikTok-un kiçik yuvarlaq küncləri olur (#158).
+
+* **TikTok:** Accent color-un Divar kağızını izlə seçimi ilə yaradıcının avatarının altındakı izləmə artısı da divar kağızının rəngini alır (#163).
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin qarşılıqlı dostun videosundakı Mesaj panelini də gizlədir (#153).
+
+* **TikTok:** Musiqi diski sağdakı son düymə olanda, şərh paneli gizlədiləndən sonra artıq irəliləmə zolağını örtmür (#153).
+
+* **TikTok:** Axtarış təkliflərini gizlədin axtarış qutusunun içində dəyişən trend axtarışı da dayandırır, PineDrama-da da.
+
+* **TikTok:** Tako qabarcığını gizlədin "People also ask Tako" blokunu da axtarış nəticələrindən çıxarır.
+
+* **TikTok:** Lent reklamlarını silin axtarış nəticələrindəki otel təklifləri blokunu da gizlədir.
+
+* **TikTok:** Vaxtı saniyəsinə qədər göstərin açıq olanda hekayənin başlığı onun nə vaxt paylaşıldığını dəqiqəsinə qədər göstərir.
+
+* **TikTok:** CAPTCHA pəncərələrini gizlədin indi TikTok açıldıqdan sonrakı ilk saniyələrdə də işləyir (#111, #87).
+
+* **TikTok:** Məxfilik səhifəsindəki Yeni cihaz kimliyi növbəti yenidən başlatmada TikTok-un məlumatlarını silir ki, serverlər yeni cihaz ID-si versin. Hesabdan çıxacaqsınız, PineDrama-da da bu sətir var.
+
+* **TikTok:** Fayl tətbiqi əlində saxlayarkən dayandırılan ehtiyat nüsxə və ya ixrac artıq Hushfeed xətası sayılmır, PineDrama-da da.
+
+* **TikTok:** Feature Gate Lab-ın Yüklənmiş dəyərləri idxal edin funksiyası yenidən həqiqi ixracı qəbul edir, açılmış .gz faylını da.
+
+* **TikTok:** Feature Gate Lab nəyisə rədd edib səbəbini deyəndə bu artıq Hushfeed xətası kimi qeyd olunmur.
+
+* **TikTok:** İstifadə olunmayan dil paketlərini silin TikTok-da olmayan dili bütün yamaqlamanı dayandırmaq əvəzinə ötürür (#196).
+
+* **TikTok:** Problem barədə bildirin nə səhv getdi qutusunu boş qoyur və sualları ipucu kimi göstərir (#197, #201).
+
+* **TikTok:** Hushfeed-in saxladığı foto paylaşımları indi Artıq saxlanılmış videoları yoxlayın üçün sayılır və Saxlanılmış videoları işarələyin işarəsini alır (#197).
+
+* **TikTok:** Profil şəbəkəsində seçilən foto paylaşımları Foto paylaşımlarını video kimi saxla açıq olanda bir video kimi saxlanılır (#197).
+
+* **TikTok:** Sağ sütundakı düymələri gizlədin ilə Bəyən gizlədiləndə sütun boşluq qoymaq əvəzinə yığılır (#190).
+
+* **TikTok:** Şərhlər səhifəsindəki yeni Cavab önizləmələrini gizlədin açarı TikTok-un bəzi şərhlərin altında açdığı bir cavabı gizlədir (#193).
+
+* **TikTok:** SIM ölkəsi üçün hazır ayar indi Serbiya, Xorvatiya, Bosniya və Herseqovina, Sloveniya, Monteneqro, Şimali Makedoniya, Albaniya və Bolqarıstanı da təklif edir (#198).
+
 * **TikTok:** Yerli kodun hizalanma yoxlayıcısı indi 16 KB səhifələrdə təhlükəli RELRO paylaşımını aşkarlayır və ayrı seqmentləri qəbul edir.
 
 * **TikTok:** Yamaq yoxlaması indi cari təsdiqlənmiş sübutları köhnə yoxlamalardan ayırır və köhnəlmiş ekran görüntüsü qərarlarını qəbul etmir.
 
 * **TikTok:** Cihaz üçün yığmalar və yoxlamalar indi cihazın eksklüziv rezervasiyasını tələb edir. Cihazsız yerli yığmalar üçün bu lazım deyil.
+
+* **TikTok:** Diaqnostikanı qeyd edin açıq olanda axtarış nəticələrindəki kartlar öz tip kodlarını da qeyd edir. Axtarış və kartın mətni loqa düşmür.
+
+* **TikTok:** scripts/phone.sh hər adb çağırışından əvvəl cihaz rezervasiyasını yoxlayır və rezervasiya olmadan imtina edir.
+
+* **TikTok:** Daxil edilmiş registr yoxlaması indi 47.4.3 APK ilə müqayisə edir.
 
 ## 0.75.0 (2026-10-16)
 

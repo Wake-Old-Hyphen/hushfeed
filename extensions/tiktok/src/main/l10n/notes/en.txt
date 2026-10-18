@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed now supports TikTok 47.4.3, and only that one. Patch the 47.4.3 APK from APKMirror. PineDrama stays on 47.1.4.
+
+* **TikTok:** Show only mutual friends on the Friends tab goes by who reposted a video again, and the feed filters reach the Reposts list on the Friends tab too.
+
+* **TikTok:** New Show video length on profile grids switch puts each video's length under its view count (#181).
+
+* **TikTok:** Comments beside the video now really opens the comments next to the video on a wide window, in PineDrama too (#26).
+
+* **TikTok:** With Caption background on Dark or Black, the strip's corners are TikTok's small rounded ones again (#158).
+
+* **TikTok:** With Accent color's Follow the wallpaper option, the follow plus under a creator's avatar takes the wallpaper color too (#163).
+
+* **TikTok:** Hide the comment bar on opened videos also hides the Message bar on a mutual friend's video (#153).
+
+* **TikTok:** When the music disc is the last button on the right, it no longer covers the progress bar once the comment bar is hidden (#153).
+
+* **TikTok:** Hide search suggestions also stops the trending search that rotates inside the search box, in PineDrama too.
+
+* **TikTok:** Hide the Tako bubble also takes the "People also ask Tako" block out of search results.
+
+* **TikTok:** Remove feed ads also hides the hotel deals block in search results.
+
+* **TikTok:** With Show the time to the second on, a story's header shows when it was posted to the minute.
+
+* **TikTok:** Hide CAPTCHA popups now works in the first seconds after TikTok opens (#111, #87).
+
+* **TikTok:** New device identity on the Privacy page wipes TikTok's data at the next restart so its servers hand out a new device ID. You'll be signed out, and PineDrama has it too.
+
+* **TikTok:** Stopping a backup or export while the file app had it no longer counts as a Hushfeed error, in PineDrama either.
+
+* **TikTok:** Feature Gate Lab's Import loaded values takes a real export again, and an unpacked .gz file too.
+
+* **TikTok:** When Feature Gate Lab turns something down and says why, that's no longer logged as a Hushfeed error.
+
+* **TikTok:** Remove unused language packs skips a language TikTok doesn't have instead of stopping the whole patch run (#196).
+
+* **TikTok:** Report a problem leaves the What went wrong box empty and shows the prompts as a hint (#197, #201).
+
+* **TikTok:** Photo posts Hushfeed saves now count for Check for already-saved videos and get the mark from Mark saved videos (#197).
+
+* **TikTok:** Photo posts picked on a profile grid are saved as one video when Save photo posts as a video is on (#197).
+
+* **TikTok:** Hiding Like in Hide buttons in the right column closes the column up instead of leaving a gap (#190).
+
+* **TikTok:** New Hide reply previews switch on the Comments page hides the one reply TikTok opens under some comments (#193).
+
+* **TikTok:** SIM country preset now lists Serbia, Croatia, Bosnia and Herzegovina, Slovenia, Montenegro, North Macedonia, Albania and Bulgaria (#198).
+
 * **TikTok:** The native alignment checker now catches unsafe RELRO sharing on 16 KB pages and accepts isolated segments.
 
 * **TikTok:** The patch audit now separates current, verified evidence from older runs and rejects stale screenshot verdicts.
 
 * **TikTok:** Device builds and audits now require an exclusive device lease. Local builds still work without one.
+
+* **TikTok:** With Log diagnostics on, search result cards also log their type codes. The search and the card's text stay out of the log.
+
+* **TikTok:** scripts/phone.sh checks the device lease before every adb call and refuses without one.
+
+* **TikTok:** The injected-register check compares against the 47.4.3 APK now.
 
 ## 0.75.0 (2026-10-16)
 

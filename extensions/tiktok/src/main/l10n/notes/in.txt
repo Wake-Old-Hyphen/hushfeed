@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed kini mendukung TikTok 47.4.3, dan hanya versi itu. Patch APK 47.4.3 dari APKMirror. PineDrama tetap di 47.1.4.
+
+* **TikTok:** Hanya tampilkan teman yang saling mengikuti di tab Teman kembali melihat siapa yang me-repost video, dan filter feed kini juga menjangkau daftar repost di tab Teman.
+
+* **TikTok:** Sakelar baru Tampilkan durasi video di kisi profil menaruh durasi tiap video di bawah jumlah tontonannya (#181).
+
+* **TikTok:** Komentar di samping video kini benar-benar membuka komentar di samping video pada jendela lebar, juga di PineDrama (#26).
+
+* **TikTok:** Dengan Latar keterangan di Gelap atau Hitam, sudut strip kembali menjadi sudut membulat kecil milik TikTok (#158).
+
+* **TikTok:** Dengan opsi Ikuti wallpaper dari Accent color, tanda plus ikuti di bawah avatar kreator juga mengambil warna wallpaper (#163).
+
+* **TikTok:** Sembunyikan bilah komentar di video yang dibuka juga menyembunyikan bilah Pesan di video teman yang saling mengikuti (#153).
+
+* **TikTok:** Saat piringan musik adalah tombol terakhir di kanan, piringan itu tidak lagi menutupi bilah progres setelah bilah komentar disembunyikan (#153).
+
+* **TikTok:** Sembunyikan saran pencarian juga menghentikan pencarian tren yang berganti-ganti di dalam kotak pencarian, juga di PineDrama.
+
+* **TikTok:** Sembunyikan gelembung Tako juga menghapus blok "People also ask Tako" dari hasil pencarian.
+
+* **TikTok:** Hapus iklan di feed juga menyembunyikan blok penawaran hotel di hasil pencarian.
+
+* **TikTok:** Dengan Tampilkan waktu hingga detik aktif, kepala story menampilkan kapan story itu diunggah hingga menit.
+
+* **TikTok:** Sembunyikan popup CAPTCHA kini bekerja di detik-detik pertama setelah TikTok dibuka (#111, #87).
+
+* **TikTok:** Identitas perangkat baru di halaman Privasi menghapus data TikTok saat mulai ulang berikutnya agar servernya memberi ID perangkat baru. Anda akan keluar dari akun, dan PineDrama juga punya baris ini.
+
+* **TikTok:** Menghentikan cadangan atau ekspor saat aplikasi file masih memegangnya tidak lagi dihitung sebagai error Hushfeed, juga di PineDrama.
+
+* **TikTok:** Impor nilai yang dimuat di Feature Gate Lab kembali menerima ekspor asli, juga file .gz yang sudah diekstrak.
+
+* **TikTok:** Saat Feature Gate Lab menolak sesuatu dan menjelaskan alasannya, itu tidak lagi dicatat sebagai error Hushfeed.
+
+* **TikTok:** Hapus paket bahasa yang tidak dipakai melewati bahasa yang tidak dimiliki TikTok alih-alih menghentikan seluruh proses patch (#196).
+
+* **TikTok:** Laporkan masalah membiarkan kotak apa yang salah tetap kosong dan menampilkan pertanyaannya sebagai petunjuk (#197, #201).
+
+* **TikTok:** Unggahan foto yang disimpan Hushfeed kini dihitung oleh Periksa video yang sudah disimpan dan mendapat tanda dari Tandai video tersimpan (#197).
+
+* **TikTok:** Unggahan foto yang dipilih di kisi profil disimpan sebagai satu video saat Simpan unggahan foto sebagai video aktif (#197).
+
+* **TikTok:** Menyembunyikan Suka lewat Sembunyikan tombol di kolom kanan kini merapatkan kolom alih-alih meninggalkan celah (#190).
+
+* **TikTok:** Sakelar baru Sembunyikan pratinjau balasan di halaman Komentar menyembunyikan satu balasan yang dibuka TikTok di bawah beberapa komentar (#193).
+
+* **TikTok:** Praset negara SIM kini juga berisi Serbia, Kroasia, Bosnia dan Herzegovina, Slovenia, Montenegro, Makedonia Utara, Albania, dan Bulgaria (#198).
+
 * **TikTok:** Pemeriksa penyelarasan native kini mendeteksi tumpang tindih RELRO yang tidak aman pada halaman 16 KB dan menerima segmen terpisah.
 
 * **TikTok:** Audit patch kini memisahkan bukti terkini yang terverifikasi dari pengujian lama dan menolak penilaian tangkapan layar yang sudah tidak berlaku.
 
 * **TikTok:** Build dengan akses perangkat dan audit kini memerlukan reservasi perangkat eksklusif. Build lokal tetap bisa berjalan tanpa reservasi.
+
+* **TikTok:** Dengan Catat diagnostik aktif, kartu di hasil pencarian juga mencatat kode jenisnya. Pencarian dan teks kartu tidak masuk ke log.
+
+* **TikTok:** scripts/phone.sh memeriksa reservasi perangkat sebelum setiap panggilan adb dan menolak tanpa reservasi.
+
+* **TikTok:** Pemeriksaan register yang disisipkan kini membandingkan dengan APK 47.4.3.
 
 ## 0.75.0 (2026-10-16)
 

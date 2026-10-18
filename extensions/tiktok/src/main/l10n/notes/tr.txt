@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed artık TikTok 47.4.3'ü destekliyor, yalnızca bu sürümü. APKMirror'dan 47.4.3 APK'sını yamala. PineDrama 47.1.4'te kalıyor.
+
+* **TikTok:** Arkadaşlar sekmesinde yalnızca karşılıklı arkadaşları göster yeniden videoyu kimin yeniden paylaştığına bakıyor, akış filtreleri de artık Arkadaşlar sekmesindeki yeniden paylaşımlar listesine ulaşıyor.
+
+* **TikTok:** Yeni Profil ızgarasında video süresini göster anahtarı her videonun süresini izlenme sayısının altına koyar (#181).
+
+* **TikTok:** Yorumlar videonun yanında artık geniş bir pencerede yorumları gerçekten videonun yanında açıyor, PineDrama'da da (#26).
+
+* **TikTok:** Altyazı arka planı Koyu veya Siyah olduğunda şeridin köşeleri yine TikTok'un küçük yuvarlak köşeleri oluyor (#158).
+
+* **TikTok:** Accent color'ın Duvar kağıdını takip et seçeneğiyle, bir içerik üreticinin avatarının altındaki takip artısı da duvar kağıdının rengini alıyor (#163).
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle, karşılıklı bir arkadaşın videosundaki Mesaj çubuğunu da gizliyor (#153).
+
+* **TikTok:** Müzik diski sağdaki son düğme olduğunda, yorum çubuğu gizlenince artık ilerleme çubuğunu örtmüyor (#153).
+
+* **TikTok:** Arama önerilerini gizle, arama kutusunun içinde dönen trend aramayı da durduruyor, PineDrama'da da.
+
+* **TikTok:** Tako balonunu gizle, "People also ask Tako" bloğunu da arama sonuçlarından kaldırıyor.
+
+* **TikTok:** Akış reklamlarını kaldır, arama sonuçlarındaki otel fırsatları bloğunu da gizliyor.
+
+* **TikTok:** Saati saniyesine kadar göster açıkken, bir hikâyenin başlığı ne zaman paylaşıldığını dakikasına kadar gösteriyor.
+
+* **TikTok:** CAPTCHA pencerelerini gizle artık TikTok açıldıktan sonraki ilk saniyelerde de çalışıyor (#111, #87).
+
+* **TikTok:** Gizlilik sayfasındaki Yeni cihaz kimliği, sunucuların yeni bir cihaz kimliği vermesi için bir sonraki yeniden başlatmada TikTok'un verilerini siler. Oturumun kapanır, PineDrama'da da bu satır var.
+
+* **TikTok:** Dosya uygulaması elindeyken durdurulan bir yedekleme veya dışa aktarma artık Hushfeed hatası sayılmıyor, PineDrama'da da.
+
+* **TikTok:** Feature Gate Lab'in Yüklenen değerleri içe aktar özelliği yeniden gerçek bir dışa aktarmayı kabul ediyor, açılmış bir .gz dosyasını da.
+
+* **TikTok:** Feature Gate Lab bir şeyi reddedip nedenini söylediğinde, bu artık Hushfeed hatası olarak kaydedilmiyor.
+
+* **TikTok:** Kullanılmayan dil paketlerini kaldır, TikTok'ta olmayan bir dili tüm yama işlemini durdurmak yerine atlıyor (#196).
+
+* **TikTok:** Sorun bildir, ne ters gitti kutusunu boş bırakıyor ve soruları ipucu olarak gösteriyor (#197, #201).
+
+* **TikTok:** Hushfeed'in kaydettiği fotoğraf gönderileri artık Önceden kaydedilen videoları kontrol et için sayılıyor ve Kaydedilen videoları işaretle işaretini alıyor (#197).
+
+* **TikTok:** Profil ızgarasında seçilen fotoğraf gönderileri, Fotoğraf gönderilerini video olarak kaydet açıkken tek bir video olarak kaydediliyor (#197).
+
+* **TikTok:** Sağ sütundaki düğmeleri gizle ile Beğen gizlenince sütun boşluk bırakmak yerine toparlanıyor (#190).
+
+* **TikTok:** Yorumlar sayfasındaki yeni Yanıt önizlemelerini gizle anahtarı, TikTok'un bazı yorumların altında açtığı tek yanıtı gizler (#193).
+
+* **TikTok:** SIM ülke hazır ayarı artık Sırbistan, Hırvatistan, Bosna-Hersek, Slovenya, Karadağ, Kuzey Makedonya, Arnavutluk ve Bulgaristan'ı da içeriyor (#198).
+
 * **TikTok:** Yerel hizalama denetimi artık 16 KB sayfalardaki güvensiz RELRO çakışmalarını yakalıyor ve yalıtılmış bölümleri kabul ediyor.
 
 * **TikTok:** Yama denetimi artık güncel, doğrulanmış kanıtları eski çalıştırmalardan ayırıyor ve eski ekran görüntüsü değerlendirmelerini reddediyor.
 
 * **TikTok:** Cihaza erişen derlemeler ve denetimler artık cihazın özel olarak ayrılmasını gerektiriyor. Yerel derlemeler buna gerek kalmadan çalışıyor.
+
+* **TikTok:** Tanılamayı günlüğe kaydet açıkken, arama sonuçlarındaki kartlar tür kodlarını da kaydediyor. Arama ve kartın metni günlüğe girmiyor.
+
+* **TikTok:** scripts/phone.sh her adb çağrısından önce cihaz rezervasyonunu kontrol ediyor ve rezervasyon olmadan reddediyor.
+
+* **TikTok:** Enjekte edilen yazmaç kontrolü artık 47.4.3 APK'sıyla karşılaştırıyor.
 
 ## 0.75.0 (2026-10-16)
 

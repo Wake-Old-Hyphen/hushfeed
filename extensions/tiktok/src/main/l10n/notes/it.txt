@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed ora supporta TikTok 47.4.3, e solo quella. Applica la patch all'APK 47.4.3 di APKMirror. PineDrama resta alla 47.1.4.
+
+* **TikTok:** Mostra solo gli amici reciproci nella scheda Amici torna a guardare chi ha ripubblicato un video, e i filtri del feed arrivano anche all'elenco dei repost nella scheda Amici.
+
+* **TikTok:** Il nuovo interruttore Mostra la durata nella griglia del profilo mette la durata di ogni video sotto le sue visualizzazioni (#181).
+
+* **TikTok:** Commenti accanto al video ora apre davvero i commenti accanto al video su una finestra larga, anche in PineDrama (#26).
+
+* **TikTok:** Con Sfondo dei sottotitoli su Scuro o Nero, gli angoli della striscia tornano quelli piccoli e arrotondati di TikTok (#158).
+
+* **TikTok:** Con l'opzione Segui lo sfondo di Accent color, anche il più per seguire sotto l'avatar di un creator prende il colore dello sfondo (#163).
+
+* **TikTok:** Nascondi la barra dei commenti nei video aperti nasconde anche la barra Messaggio sul video di un amico reciproco (#153).
+
+* **TikTok:** Quando il disco musicale è l'ultimo pulsante a destra, non copre più la barra di avanzamento una volta nascosta la barra dei commenti (#153).
+
+* **TikTok:** Nascondi i suggerimenti di ricerca ferma anche la ricerca di tendenza che scorre nella casella di ricerca, anche in PineDrama.
+
+* **TikTok:** Nascondi la bolla di Tako toglie anche il blocco "People also ask Tako" dai risultati di ricerca.
+
+* **TikTok:** Rimuovi gli annunci dal feed nasconde anche il blocco delle offerte di hotel nei risultati di ricerca.
+
+* **TikTok:** Con Mostra l'ora al secondo attivo, l'intestazione di una storia mostra quando è stata pubblicata, al minuto.
+
+* **TikTok:** Nascondi i popup CAPTCHA ora funziona nei primi secondi dopo l'apertura di TikTok (#111, #87).
+
+* **TikTok:** Nuova identità del dispositivo, nella pagina Privacy, cancella i dati di TikTok al prossimo riavvio così i suoi server assegnano un nuovo ID dispositivo. Verrai disconnesso, e c'è anche in PineDrama.
+
+* **TikTok:** Fermare un backup o un'esportazione mentre l'app dei file lo teneva non conta più come errore di Hushfeed, nemmeno in PineDrama.
+
+* **TikTok:** Importa i valori caricati del Feature Gate Lab accetta di nuovo un'esportazione vera, anche un file .gz già decompresso.
+
+* **TikTok:** Quando il Feature Gate Lab rifiuta qualcosa e spiega perché, non viene più registrato come errore di Hushfeed.
+
+* **TikTok:** Rimuovi i pacchetti di lingua inutilizzati salta una lingua che TikTok non ha invece di fermare tutta la patch (#196).
+
+* **TikTok:** Segnala un problema lascia vuota la casella su cosa è andato storto e mostra le domande come suggerimento (#197, #201).
+
+* **TikTok:** I post di foto salvati da Hushfeed ora contano per Controlla i video già salvati e ricevono il segno di Segna i video salvati (#197).
+
+* **TikTok:** I post di foto scelti nella griglia di un profilo vengono salvati come un solo video quando Salva i post di foto come video è attivo (#197).
+
+* **TikTok:** Nascondere Mi piace con Nascondi i pulsanti nella colonna di destra ora stringe la colonna invece di lasciare un vuoto (#190).
+
+* **TikTok:** Il nuovo interruttore Nascondi le anteprime delle risposte, nella pagina Commenti, nasconde la risposta che TikTok apre sotto alcuni commenti (#193).
+
+* **TikTok:** Preset del paese della SIM ora include Serbia, Croazia, Bosnia ed Erzegovina, Slovenia, Montenegro, Macedonia del Nord, Albania e Bulgaria (#198).
+
 * **TikTok:** Il controllo dell'allineamento nativo ora rileva le sovrapposizioni RELRO non sicure nelle pagine da 16 KB e accetta i segmenti isolati.
 
 * **TikTok:** La verifica delle patch ora distingue le prove attuali verificate dai test precedenti e rifiuta le valutazioni di schermate non più valide.
 
 * **TikTok:** Le build con accesso al dispositivo e le verifiche ora richiedono una prenotazione esclusiva del dispositivo. Le build locali funzionano anche senza.
+
+* **TikTok:** Con Registra la diagnostica attivo, le schede nei risultati di ricerca registrano anche i loro codici di tipo. La ricerca e il testo della scheda restano fuori dal log.
+
+* **TikTok:** scripts/phone.sh controlla la prenotazione del dispositivo prima di ogni chiamata adb e si rifiuta senza.
+
+* **TikTok:** Il controllo dei registri iniettati ora confronta con l'APK 47.4.3.
 
 ## 0.75.0 (2026-10-16)
 

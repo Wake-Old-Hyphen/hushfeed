@@ -1,10 +1,64 @@
 ## Unreleased
 
+* **TikTok:** Hushfeed unterstützt jetzt TikTok 47.4.3 und nur diese Version. Patche die 47.4.3-APK von APKMirror. PineDrama bleibt bei 47.1.4.
+
+* **TikTok:** „Im Tab ‚Freunde‘ nur gegenseitige Freunde zeigen“ richtet sich bei Reposts wieder danach, wer sie geteilt hat. Die Feed-Filter gelten jetzt auch für die Reposts im Freunde-Tab.
+
+* **TikTok:** Der neue Schalter „Videolänge im Profilraster anzeigen“ zeigt die Länge jedes Videos unter seiner Aufrufzahl (#181).
+
+* **TikTok:** „Kommentare neben dem Video“ öffnet die Kommentare in einem breiten Fenster jetzt wirklich neben dem Video, auch in PineDrama (#26).
+
+* **TikTok:** Mit „Untertitel-Hintergrund“ auf Dunkel oder Schwarz hat der Streifen wieder TikToks kleine abgerundete Ecken (#158).
+
+* **TikTok:** Mit der Option „Dem Hintergrundbild folgen“ von Accent color nimmt auch das Folgen-Plus unter dem Avatar eines Creators die Farbe des Hintergrundbilds an (#163).
+
+* **TikTok:** „Kommentarleiste bei geöffneten Videos ausblenden“ blendet auch die Nachrichtenleiste auf dem Video eines gegenseitigen Freundes aus (#153).
+
+* **TikTok:** Ist die Musik-Disc der letzte Button rechts, verdeckt sie den Fortschrittsbalken nicht mehr, wenn die Kommentarleiste ausgeblendet ist (#153).
+
+* **TikTok:** „Suchvorschläge ausblenden“ stoppt auch die wechselnde Trend-Suche im Suchfeld, auch in PineDrama.
+
+* **TikTok:** „Tako-Blase ausblenden“ entfernt auch den Block „People also ask Tako“ aus den Suchergebnissen.
+
+* **TikTok:** „Werbung im Feed entfernen“ blendet auch den Block mit Hotelangeboten in den Suchergebnissen aus.
+
+* **TikTok:** Mit „Uhrzeit sekundengenau anzeigen“ zeigt der Kopf einer Story minutengenau, wann sie gepostet wurde.
+
+* **TikTok:** „CAPTCHA-Popups ausblenden“ wirkt jetzt auch in den ersten Sekunden nach dem Start von TikTok (#111, #87).
+
+* **TikTok:** „Neue Geräteidentität“ auf der Seite Datenschutz löscht beim nächsten Neustart die Daten von TikTok, damit die Server eine neue Geräte-ID vergeben. Du wirst abgemeldet, und PineDrama hat die Zeile auch.
+
+* **TikTok:** Eine Sicherung oder ein Export, den du stoppst, während die Datei-App ihn noch hatte, zählt nicht mehr als Hushfeed-Fehler, auch in PineDrama nicht.
+
+* **TikTok:** „Geladene Werte importieren“ im Feature Gate Lab nimmt wieder einen echten Export an, auch eine entpackte .gz-Datei.
+
+* **TikTok:** Wenn das Feature Gate Lab etwas ablehnt und den Grund nennt, wird das nicht mehr als Hushfeed-Fehler protokolliert.
+
+* **TikTok:** „Ungenutzte Sprachpakete entfernen“ überspringt eine Sprache, die TikTok nicht hat, statt den ganzen Patch-Lauf zu stoppen (#196).
+
+* **TikTok:** „Problem melden“ lässt das Feld „Was ist schiefgelaufen“ leer und zeigt die Fragen als Hinweis (#197, #201).
+
+* **TikTok:** Fotobeiträge, die Hushfeed speichert, zählen jetzt für „Bereits gespeicherte Videos prüfen“ und bekommen die Markierung von „Gespeicherte Videos markieren“ (#197).
+
+* **TikTok:** Im Profilraster ausgewählte Fotobeiträge werden als ein Video gespeichert, wenn „Fotobeiträge als Video speichern“ an ist (#197).
+
+* **TikTok:** Wird Like über „Schaltflächen in der rechten Spalte ausblenden“ versteckt, rückt die Spalte zusammen, statt eine Lücke zu lassen (#190).
+
+* **TikTok:** Der neue Schalter „Antwortvorschauen ausblenden“ auf der Seite Kommentare blendet die eine Antwort aus, die TikTok unter manchen Kommentaren öffnet (#193).
+
+* **TikTok:** „SIM-Ländervorgabe“ bietet jetzt auch Serbien, Kroatien, Bosnien und Herzegowina, Slowenien, Montenegro, Nordmazedonien, Albanien und Bulgarien (#198).
+
 * **TikTok:** Die Ausrichtungsprüfung erkennt jetzt unsichere RELRO-Überlappungen auf 16-KB-Seiten und akzeptiert getrennte Segmente.
 
 * **TikTok:** Die Patch-Prüfung trennt jetzt aktuelle, geprüfte Nachweise von älteren Durchläufen und lehnt veraltete Screenshot-Bewertungen ab.
 
 * **TikTok:** Builds mit Gerätezugriff und Prüfungen brauchen jetzt eine exklusive Gerätereservierung. Lokale Builds funktionieren weiterhin ohne sie.
+
+* **TikTok:** Mit „Diagnose protokollieren“ protokollieren Karten in den Suchergebnissen auch ihre Typ-Codes. Die Suche und der Text der Karte bleiben aus dem Protokoll.
+
+* **TikTok:** scripts/phone.sh prüft vor jedem adb-Aufruf die Gerätereservierung und verweigert ohne sie.
+
+* **TikTok:** Die Prüfung der eingefügten Register vergleicht jetzt mit der 47.4.3-APK.
 
 ## 0.75.0 (2026-10-16)
 

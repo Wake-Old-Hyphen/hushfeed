@@ -32,6 +32,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** Photo posts picked on a profile grid are saved as one video when `Save photo posts as a video` is on, the same as Download does on a single post. The picker used to save their photos every time (#197).
 * **TikTok:** Hiding Like in `Hide buttons in the right column` closes the column up like the other buttons do. Its row stayed behind as an empty space between the avatar and the comments (#190).
 * **TikTok:** New `Hide reply previews` switch on the Comments page. TikTok opens one reply under some comments before you tap View replies, often the creator's. With the switch on, those comments show just View replies, and tapping it still loads every reply, that one included (#193).
+* **TikTok:** `SIM country preset` now lists Serbia, Croatia, Bosnia and Herzegovina, Slovenia, Montenegro, North Macedonia, Albania and Bulgaria too. Each one fills in a real carrier from that country, and with `Match locale and timezone to country` on, TikTok gets that country's time zone (#198).
 
 ### Verification
 
