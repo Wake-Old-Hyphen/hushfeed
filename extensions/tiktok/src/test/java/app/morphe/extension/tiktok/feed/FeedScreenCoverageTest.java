@@ -155,6 +155,7 @@ public class FeedScreenCoverageTest {
         put("publish_date_short_date", YES, YES, NONE);
         // Profile grids only.
         put("publish_date_on_grid", NONE, NONE, NONE);
+        put("video_length_on_grid", NONE, NONE, NONE);
         put("show_author_region", YES, YES, NONE);
         // Only how the region label shows its code, so it reaches where the label does (#157).
         put("region_as_flag", YES, YES, NONE);

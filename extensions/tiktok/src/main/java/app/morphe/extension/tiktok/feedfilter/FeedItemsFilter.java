@@ -857,27 +857,21 @@ public final class FeedItemsFilter {
         filterFriendsList(response, "friendFeedData", "FriendsFeedResponse", false);
     }
 
-    /** The Friends V3 feed's route in the filter report. */
-    static final String FRIENDS_V3_SOURCE = "FriendsV3FeedResponse";
-
     /**
-     * The Friends tab's V3 feed, as FriendsV3FeedNetworkSource starts handling a response off
-     * the wire. Its {@code friendsV3Feeds} entries are FriendsV3FeedModel, which has the same
-     * {@code aweme} and {@code roomStruct} fields as the older wrapper; a repost carries its
-     * video in {@code repostItem.repostedAweme} instead. The handler runs once per response,
-     * so this route is counted in the filter report.
+     * The Friends tab's Reposts list (RepostFeedResponse on 47.4.3), read through its getter
+     * once gson has filled the field. Each RepostFeed entry carries the reposted video in a
+     * real named {@code aweme} field, the same as a Friends card.
      */
-    public static void filterFriendsV3Feed(Object response) {
-        filterFriendsList(response, "friendsV3Feeds", FRIENDS_V3_SOURCE, true);
+    public static void filterRepostFeed(Object response) {
+        filterFriendsList(response, "repostFeedData", "RepostFeedResponse", true);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void filterFriendsList(Object response, String listField, String source, boolean count) {
+    private static void filterFriendsList(Object response, String listField, String source, boolean repostList) {
         try {
             if (response == null) return;
 
             Object raw = Reflect.readField(response, listField);
-            if (count) FeedFilterCounters.sawList(source, raw instanceof List ? ((List) raw).size() : 0);
 
             List<IFilter> activeFilters = getActiveFilters(CONTENT_FILTERS);
             boolean hideLive = Settings.HIDE_LIVE.get();
@@ -900,9 +894,8 @@ public final class FeedItemsFilter {
             String ownId = mutualsOnly ? SignedInUser.id() : null;
             ArrayList kept = new ArrayList(items.size());
             Map<String, Integer> reasonCounts = BaseSettings.DEBUG.get() ? new HashMap<>() : null;
-            String lastReason = null;
             for (Object entry : items) {
-                String reason = mutualsOnly && !FriendsMutuals.fromMutual(entry, ownId)
+                String reason = mutualsOnly && !FriendsMutuals.fromMutual(entry, ownId, repostList)
                         ? FriendsMutuals.REASON
                         : friendsFeedReason(entry, activeFilters, hideLive);
                 if (capture != null) {
@@ -914,7 +907,6 @@ public final class FeedItemsFilter {
                 if (reason == null) {
                     kept.add(entry);
                 } else {
-                    lastReason = reason;
                     incrementReason(reasonCounts, reason);
                     if (AI_REASON.equals(reason) && reasonCounts != null) {
                         Aweme aweme = friendsEntryAweme(entry);
@@ -940,7 +932,6 @@ public final class FeedItemsFilter {
             }
             field.set(response, kept);
             if (capture != null) capture.finish(kept.size());
-            if (count) FeedFilterCounters.removedItems(source, items.size() - kept.size(), lastReason);
 
             final int before = items.size();
             final int after = kept.size();
@@ -952,13 +943,10 @@ public final class FeedItemsFilter {
         }
     }
 
-    /** The video a Friends tab entry shows: its own, or the one a friend reposted. */
+    /** The video a Friends tab or Reposts entry shows, a repost's included. */
     static Aweme friendsEntryAweme(Object entry) {
         if (entry == null) return null;
         Object aweme = Reflect.readField(entry, "aweme");
-        if (aweme instanceof Aweme) return (Aweme) aweme;
-        Object repost = Reflect.readField(entry, "repostItem");
-        aweme = Reflect.readField(repost, "repostedAweme");
         return aweme instanceof Aweme ? (Aweme) aweme : null;
     }
 

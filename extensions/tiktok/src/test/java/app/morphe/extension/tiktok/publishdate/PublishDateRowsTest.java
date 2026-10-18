@@ -54,6 +54,7 @@ public class PublishDateRowsTest {
             assertNull(without.findPreference(Settings.PUBLISH_DATE_ON_GRID.key));
             assertNull(without.findPreference(Settings.PUBLISH_DATE_TIME_ZONE.key));
             assertNull(without.findPreference(Settings.PUBLISH_DATE_SHORT_DATE.key));
+            assertNull(without.findPreference(Settings.VIDEO_LENGTH_ON_GRID.key));
 
             SettingsStatus.alwaysShowPublishDateEnabled = true;
             PreferenceScreen with = activity.getPreferenceManager().createPreferenceScreen(activity);
@@ -63,9 +64,11 @@ public class PublishDateRowsTest {
             assertNotNull(with.findPreference(Settings.PUBLISH_DATE_ON_GRID.key));
             assertNotNull(with.findPreference(Settings.PUBLISH_DATE_TIME_ZONE.key));
             assertNotNull(with.findPreference(Settings.PUBLISH_DATE_SHORT_DATE.key));
+            assertNotNull(with.findPreference(Settings.VIDEO_LENGTH_ON_GRID.key));
             // They apply to the next video or grid shown, so none asks for a restart.
             assertFalse(Settings.PUBLISH_DATE_EXACT_TIME.rebootApp);
             assertFalse(Settings.PUBLISH_DATE_ON_GRID.rebootApp);
+            assertFalse(Settings.VIDEO_LENGTH_ON_GRID.rebootApp);
             assertFalse(Settings.PUBLISH_DATE_TIME_ZONE.rebootApp);
             assertFalse(Settings.PUBLISH_DATE_SHORT_DATE.rebootApp);
             // Both only shape the time to the second, so they follow its switch.

@@ -134,7 +134,9 @@ public final class CaptchaGate {
             HookStatus.bound(HOOK_FAMILY, REQUEST_RECORDER);
             if (!recorderReported) {
                 recorderReported = true;
-                String first = action;
+                // The path alone, never its query, which carries device and account ids.
+                int query = path.indexOf('?');
+                String first = action + " (" + (query < 0 ? path : path.substring(0, query)) + ")";
                 Logger.printInfo(() -> "CAPTCHA gate saw its first write go out: " + first);
             }
         }
@@ -226,10 +228,54 @@ public final class CaptchaGate {
                 || value.contains("/iap/pay")) {
             return "purchase";
         }
-        if (value.contains("/passport/") || value.contains("/user/mobile/")) {
+        if ((value.contains("/passport/") && !isPassportBackground(value)) || value.contains("/user/mobile/")) {
             return "sign-in change";
         }
         return null;
+    }
+
+    /**
+     * Account calls TikTok makes by itself, at every start and on a timer: the session heartbeat,
+     * the account info refresh, region, device, two-step and sign-in option lookups, and the sync
+     * of the account switcher's saved one-tap sign-in. None is something the user did, and
+     * holding the window on them kept every puzzle of a cold start's first 15 seconds on screen,
+     * which is when a link opened from another app meets one (Login2, 47.4.3, 2026-10-17: the
+     * first write after a start was always a sign-in change, and with the lookups left out it was
+     * the one-tap blob). A puzzle hidden over the blob sync leaves at most TikTok's saved copy stale. Any
+     * other passport path still holds the window. The paths are 47.4.3's.
+     */
+    private static final String[] PASSPORT_BACKGROUND = {
+            "/passport/token/beat/",
+            "/passport/account/info/",
+            "/passport/account/attributes/",
+            "/passport/user/basic_info/",
+            "/passport/user/device_record_status/get/",
+            "/passport/app/region",
+            "/passport/app/store_region/",
+            "/passport/auth/available_ways/",
+            "/passport/reauth_settings/state/",
+            "/passport/safe/login_device/list/",
+            "/passport/safe/recommend_device/list/",
+            "/passport/safe/get_user_worth/",
+            "/passport/safe/two_step_verification/get_",
+            "/passport/security_checkup/info/",
+            "/passport/device/trust_users/",
+            "/passport/identity/get_fields/",
+            "/passport/password/has_set",
+            "/passport/totp/status/",
+            "/passport/popup/configuration/",
+            "/passport/mobile/gsma/status",
+            "/passport/sotl/blobstore/",
+            "/passport/user/check_",
+            "/passport/login_name/check",
+            "/passport/mobile/can_send_voice_code",
+    };
+
+    private static boolean isPassportBackground(String lowerCasePath) {
+        for (String call : PASSPORT_BACKGROUND) {
+            if (lowerCasePath.contains(call)) return true;
+        }
+        return false;
     }
 
     /** The write still inside its window, or null when the app is only browsing. */

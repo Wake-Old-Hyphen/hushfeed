@@ -74,6 +74,24 @@ public class FoldableSplitViewTest {
         }
     }
 
+    /**
+     * TikTok's server sends 1, and the feed then registers its split container only on a
+     * tablet, so a wide phone window never split. With the switch off TikTok's value stands.
+     */
+    @Test public void theFeedRegistersItsContainerWhateverTheServerSaysOnlyWithTheSwitchOn() {
+        HookStatus.clear();
+        try {
+            assertEquals(1L, FoldableSplitView.splitContainerInit(1L));
+            assertEquals(-1L, FoldableSplitView.splitContainerInit(-1L));
+            Settings.FOLDABLE_SPLIT_VIEW.save(true);
+            assertEquals(-1L, FoldableSplitView.splitContainerInit(1L));
+            assertEquals(-1L, FoldableSplitView.splitContainerInit(0L));
+            assertTrue(String.join(" ", HookStatus.report()).contains(FoldableSplitView.FAMILY));
+        } finally {
+            HookStatus.clear();
+        }
+    }
+
     /** Opened folded, then unfolded with TikTok still open: issue #26. */
     @Test public void aWindowThatCrossesTheThresholdBuildsTheFeedAgainOncePerCrossing() {
         Settings.FOLDABLE_SPLIT_VIEW.save(true);

@@ -1884,6 +1884,8 @@ Show the time to the second	Uhrzeit sekundengenau anzeigen
 Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.	Sekundengenau und mit deiner Zeitzone anzeigen, wann ein Video gepostet wurde, statt TikToks kurzem Datum neben dem Namen des Creators.
 Show dates on profile grids	Datum im Profilraster anzeigen
 Show the day each video was posted under its view count on profile grids.	Im Profilraster unter der Aufrufzahl jedes Videos anzeigen, an welchem Tag es gepostet wurde.
+Show video length on profile grids	Videolänge im Profilraster anzeigen
+Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.	Im Profilraster unter der Aufrufzahl anzeigen, wie lange jedes Video läuft. Fotobeiträge und Videos, für die TikTok keine Länge geschickt hat, zeigen keine an.
 Fall back to the watermarked copy	Auf die Kopie mit Wasserzeichen ausweichen
 When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.	Wenn das Video ohne Wasserzeichen nicht geladen werden kann, wird stattdessen TikToks eigene Kopie mit Wasserzeichen gespeichert, mit Hinweis. Sie hat die Größe, die TikToks eigenes Speichern nutzt, und kann daher kleiner sein als die gewählte Qualität.
 The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.	Das Video ohne Wasserzeichen konnte nicht geladen werden, deshalb wurde TikToks Kopie mit Wasserzeichen unter %1$s gespeichert. Versuch es später noch einmal, um die saubere Kopie zu bekommen.

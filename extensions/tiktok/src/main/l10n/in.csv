@@ -1871,6 +1871,8 @@ Show the time to the second,Tampilkan waktu hingga detik
 "Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.","Tampilkan kapan video diposting hingga detiknya, beserta zona waktumu, sebagai ganti tanggal singkat TikTok di samping nama kreator."
 Show dates on profile grids,Tampilkan tanggal di kisi profil
 Show the day each video was posted under its view count on profile grids.,Tampilkan hari setiap video diposting di bawah jumlah tayangannya di kisi profil.
+Show video length on profile grids,Tampilkan durasi video di kisi profil
+Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,Tampilkan berapa lama setiap video berjalan di bawah jumlah tayangannya di kisi profil. Postingan foto dan video yang durasinya tidak dikirim TikTok tidak menampilkan apa pun.
 Fall back to the watermarked copy,Gunakan salinan bertanda air sebagai cadangan
 "When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.","Jika video tanpa tanda air tidak bisa diambil, simpan salinan bertanda air milik TikTok sebagai gantinya dan beri tahu. Ukurannya sama dengan yang dipakai penyimpanan TikTok sendiri, jadi bisa lebih kecil dari kualitas yang kamu pilih."
 "The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.","Video tanpa tanda air tidak bisa diambil, jadi salinan bertanda air TikTok disimpan di %1$s. Coba lagi nanti untuk mendapatkan salinan yang bersih."

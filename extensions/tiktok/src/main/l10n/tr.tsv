@@ -1881,6 +1881,8 @@ Show the time to the second	Saati saniyesine kadar göster
 Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.	Bir videonun ne zaman paylaşıldığını, içerik üreticisinin adının yanındaki TikTok'un kısa tarihi yerine saniyesine kadar ve saat diliminle göster.
 Show dates on profile grids	Profil ızgarasında tarihleri göster
 Show the day each video was posted under its view count on profile grids.	Profil ızgarasında her videonun paylaşıldığı günü görüntülenme sayısının altında göster.
+Show video length on profile grids	Profil ızgarasında video süresini göster
+Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.	Profil ızgarasında her videonun ne kadar sürdüğünü görüntülenme sayısının altında göster. Fotoğraf gönderilerinde ve TikTok'un süresini göndermediği videolarda süre gösterilmez.
 Fall back to the watermarked copy	Filigranlı kopyaya geri dön
 When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.	Filigransız video alınamazsa onun yerine TikTok'un kendi filigranlı kopyasını kaydet ve bunu söyle. Boyutu TikTok'un kendi kaydetmesinin kullandığı boyuttur, bu yüzden seçtiğin kaliteden küçük olabilir.
 The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.	Filigransız video alınamadı, bu yüzden TikTok'un filigranlı kopyası şuraya kaydedildi: %1$s. Temiz kopya için daha sonra yeniden dene.

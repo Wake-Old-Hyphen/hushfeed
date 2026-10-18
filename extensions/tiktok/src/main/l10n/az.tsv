@@ -1881,6 +1881,8 @@ Show the time to the second	Vaxtı saniyəsinə qədər göstərin
 Show when a video was posted down to the second, with your time zone, in place of TikTok's short date by the creator's name.	Videonun nə vaxt paylaşıldığını saniyəsinə qədər və saat qurşağınızla, yaradıcının adının yanındakı TikTok-un qısa tarixi əvəzinə göstərin.
 Show dates on profile grids	Profil şəbəkəsində tarixləri göstərin
 Show the day each video was posted under its view count on profile grids.	Profil şəbəkəsində hər videonun paylaşıldığı günü baxış sayının altında göstərin.
+Show video length on profile grids	Profil şəbəkəsində video uzunluğunu göstərin
+Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.	Profil şəbəkəsində hər videonun nə qədər davam etdiyini baxış sayının altında göstərin. Foto paylaşımlarında və TikTok-un uzunluğunu göndərmədiyi videolarda heç nə göstərilmir.
 Fall back to the watermarked copy	Su nişanlı nüsxəyə keçin
 When the video without the watermark can't be fetched, save TikTok's own watermarked copy instead and say so. It's the size TikTok's own save uses, so it may be smaller than the quality you picked.	Su nişanı olmayan video alına bilmədikdə, əvəzində TikTok-un öz su nişanlı nüsxəsini saxlayın və bunu bildirin. Ölçüsü TikTok-un öz saxlamasındakı kimidir, ona görə seçdiyiniz keyfiyyətdən kiçik ola bilər.
 The video without the watermark couldn't be fetched, so TikTok's watermarked copy was saved to %1$s. Try again later for the clean copy.	Su nişanı olmayan video alına bilmədi, ona görə TikTok-un su nişanlı nüsxəsi %1$s yerinə saxlanıldı. Təmiz nüsxə üçün sonra yenidən cəhd edin.

@@ -116,6 +116,19 @@ public final class FoldableSplitView {
     }
 
     /**
+     * The value TikTok's feed reads before it registers its split container, with -1 meaning the
+     * container is set up. TikTok's server sends 1 to phones, and the feed then registers a
+     * container only on a tablet, so on a wide phone window both checks above said yes and the
+     * comments still opened over the video. With the switch on the container is always
+     * registered, and {@link #shouldForceContainer} still decides by width whether it splits.
+     */
+    public static long splitContainerInit(long serverValue) {
+        boolean on = Settings.FOLDABLE_SPLIT_VIEW.get();
+        HookStatus.bound(FAMILY, on ? "feed container registered" : "feed container left to TikTok");
+        return on ? -1L : serverValue;
+    }
+
+    /**
      * First thing in the feed activity's configuration change (issue #26). An unfold reaches the
      * feed as a size change rather than as a new activity, so the comment containers TikTok built
      * for the folded width stayed until TikTok was started again. When the width crosses the

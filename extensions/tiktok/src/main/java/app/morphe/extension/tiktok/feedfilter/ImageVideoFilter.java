@@ -20,7 +20,7 @@ public class ImageVideoFilter implements IFilter {
         return isPhotoPost(item);
     }
 
-    static boolean isPhotoPost(Aweme item) {
+    public static boolean isPhotoPost(Aweme item) {
         // TikTok 43.6.2: Aweme no longer exposes isImage()/isPhotoMode().
         List imageInfos = item.getImageInfos();
         boolean isImage = imageInfos != null && !imageInfos.isEmpty();

@@ -1570,6 +1570,8 @@ Show the country a video was posted from next to the creator's name.,在创作�
 Show the country as a flag,将国家显示为国旗
 Show the current spoken caption while the other controls are hidden.,显示当前语音字幕，同时隐藏其他控件.
 Show the day each video was posted under its view count on profile grids.,在个人资料网格上的观看次数下显示每个视频的发布日期.
+Show video length on profile grids,在个人资料网格上显示视频时长
+Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.,在个人资料网格上的观看次数下显示每个视频的时长。图片作品和 TikTok 未提供时长的视频不显示.
 Show the handle instead of the name,显示句柄而不是名称
 Show the hide button on videos,在视频上显示隐藏按钮
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.",在漂浮在视频上方的圆形透明黑色药丸上显示主信息流的选项卡。需要透明底栏.

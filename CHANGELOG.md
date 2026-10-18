@@ -10,12 +10,17 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
+* **TikTok:** `Show only mutual friends on the Friends tab` goes by who reposted a repost again, not by whoever posted the video. 47.4.3 moved reposts into the ordinary Friends cards, so a friend's repost of a stranger's video was being hidden. The feed filters also reach the Reposts list on the Friends tab now.
+* **TikTok:** New `Show video length on profile grids` switch, beside `Show dates on profile grids`. It puts each video's length under its view count, on the same line as the date when that's on too. Photo posts and videos TikTok sent no length for get nothing added (#181).
+* **TikTok and PineDrama:** `Comments beside the video` now really opens the comments next to the video on a wide window. TikTok's server tells phones they aren't tablets, and the feed then skipped the side panel even with the switch on, so comments still slid up over the video (#26).
 * **TikTok:** With `Caption background` on Dark or Black, the strip's corners are TikTok's small rounded ones again. The last fix copied TikTok's shape, and on some phones that copy came out much rounder than TikTok's own captions (#158).
 * **TikTok:** With Accent color's Follow the wallpaper option, the follow plus under a creator's avatar takes the wallpaper color too. It's a picture with the red drawn in, so it used to stay red. Now the patch splits it into a white plus and a circle the phone colors (#163).
 * **TikTok:** `Hide the comment bar on opened videos` also hides the Message bar that shows up in that spot on a mutual friend's video. It used to stay behind and sit over the caption (#153).
 * **TikTok:** When the music disc is the last button on the right side, it no longer sits on top of the progress bar and the time after the comment bar is hidden. The buttons now move up far enough to clear the disc too (#153).
 * **TikTok and PineDrama:** `Hide search suggestions` also stops the trending search that rotates in the grey text inside the search box. The box keeps its plain "Search" placeholder, and tapping search on an empty box doesn't run TikTok's pick anymore.
 * **TikTok:** `Remove feed ads` also hides the hotel deals block in search results, the one with a cashback banner over hotels priced by booking sites. A landmark's place card and the Must Eat lists stay, and so do videos tagged with a hotel.
+* **TikTok:** With `Show the time to the second` on, a story's header shows when it was posted to the minute, like "3:04 PM", with the day in front when the story is from yesterday. Stories used to get the feed's long text with seconds and the time zone, which crowded the creator's name off the line.
+* **TikTok:** `Hide CAPTCHA popups` works in the first seconds after TikTok opens. TikTok checks in with its account servers by itself at every start, and the switch took that for you changing your sign-in, so a puzzle in those first seconds always showed. Real sign-in changes still let their puzzle through. With `Log diagnostics` on, the log also names the address of the first action that let a puzzle through (#111, #87).
 
 ### Verification
 

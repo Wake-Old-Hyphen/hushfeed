@@ -358,6 +358,11 @@ public class CaptchaGateTest {
                 {"/api/v1/shop/cart/add_item_to_cart", "purchase"},
                 {"/payment/v1/pay", "purchase"},
                 {"/passport/mobile/send_code/v1/", "sign-in change"},
+                {"/passport/user/device_record_status/set/", "sign-in change"},
+                {"/passport/user/logout/", "sign-in change"},
+                {"/passport/password/change/v2/", "sign-in change"},
+                {"/passport/safe/two_step_verification/add_auth_device/v2/", "sign-in change"},
+                {"/passport/sotl/app2web/confirm_auth_token/", "sign-in change"},
         };
         for (String[] each : cases) {
             assertEquals(each[0], each[1], CaptchaGate.heldActionFor(each[0]));
@@ -379,6 +384,39 @@ public class CaptchaGateTest {
                 "/tiktok/v1/activity_status/report", "/aweme/v1/aweme/listcollection/", null}) {
             assertNull(path, CaptchaGate.heldActionFor(path));
         }
+    }
+
+    /**
+     * The account calls TikTok sends by itself at every start (47.4.3) open nothing, or the
+     * puzzles of a cold start's first 15 seconds would always show.
+     */
+    @Test
+    public void backgroundAccountReadsHoldNoWindow() {
+        for (String path : new String[]{"/passport/token/beat/v2/", "/passport/token/beat/",
+                "/passport/account/info/v2/", "/passport/user/device_record_status/get/",
+                "/passport/app/region/", "/passport/app/region_alert/",
+                "/passport/app/store_region/", "/passport/auth/available_ways/",
+                "/passport/reauth_settings/state/", "/passport/safe/login_device/list/v2/",
+                "/passport/security_checkup/info/", "/passport/user/check_email_registered",
+                "/passport/login_name/check/", "/passport/mobile/can_send_voice_code/",
+                "/passport/sotl/blobstore/update/", "/passport/sotl/blobstore/get/",
+                "/passport/password/has_set/", "/passport/totp/status/",
+                "/passport/safe/two_step_verification/get_auth_device_list/",
+                "/passport/token/beat/v2/?device_id=1&iid=2"}) {
+            assertNull(path, CaptchaGate.heldActionFor(path));
+            CaptchaGate.recordRequest(new Request(path));
+            assertNull(path, CaptchaGate.pendingWriteAction());
+        }
+    }
+
+    /** The first write's log line names its path so an export says what opened the window. */
+    @Test
+    public void theFirstWriteLogNamesItsPathWithoutTheQuery() {
+        ShadowLog.clear();
+        CaptchaGate.recordRequest(new Request("/passport/mobile/send_code/v1/?device_id=123&iid=456"));
+        assertTrue(ShadowLog.getLogs().stream().anyMatch(log ->
+                log.msg.contains("first write go out: sign-in change (/passport/mobile/send_code/v1/)")));
+        assertFalse(ShadowLog.getLogs().stream().anyMatch(log -> log.msg.contains("device_id")));
     }
 
     /** The old key's saved true dates from when the row did nothing, so it can't turn this on. */

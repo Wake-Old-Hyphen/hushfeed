@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.download.SavedVideoMark;
+import app.morphe.extension.tiktok.download.StoryShareSave;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 
@@ -55,8 +56,9 @@ public final class AlwaysShowPublishDatePatch {
 
     /**
      * Called where the creator's row has its post time text ready ("2d ago", "10-7"). Returns
-     * that text, or the full date and time to the second with the time zone while the switch is on,
-     * with Mark saved videos' check before it for a video saved here.
+     * that text, or the full date and time to the second with the time zone while the switch is on
+     * (a story's header gets {@link #storyTime}), with Mark saved videos' check before it for a
+     * video saved here.
      */
     public static String postTime(String original, Object item) {
         return SavedVideoMark.rowText(exactOrOriginal(original, item), item);
@@ -67,9 +69,13 @@ public final class AlwaysShowPublishDatePatch {
             return original;
         }
         try {
-            long seconds = postedAt(item, System.currentTimeMillis());
+            long now = System.currentTimeMillis();
+            long seconds = postedAt(item, now);
             if (seconds <= 0) return original;
             Context context = Utils.getContext();
+            if (context != null && StoryShareSave.isStory(item)) {
+                return storyTime(context, seconds, now);
+            }
             // Without a context the language's own clock stands.
             boolean hour24 = context != null
                     ? android.text.format.DateFormat.is24HourFormat(context)
@@ -259,11 +265,33 @@ public final class AlwaysShowPublishDatePatch {
         return DateUtils.formatDateTime(context, millis, flags);
     }
 
+    /**
+     * A story's posting time to the minute ("3:04 PM", "15:04"), with the day before it ("Oct 7,
+     * 3:04 PM") only when it isn't from today. A story is at most a day old, and its header shares
+     * one line between the name, this time and the Follow button: the full text pushed the name
+     * out (Login2, 47.4.3, 2026-10-18).
+     */
+    static String storyTime(Context context, long seconds, long nowMillis) {
+        long millis = seconds * 1000L;
+        int flags = DateUtils.FORMAT_SHOW_TIME | (sameDay(millis, nowMillis) ? 0
+                : DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_NO_YEAR);
+        return DateUtils.formatDateTime(context, millis, flags);
+    }
+
     private static boolean sameYear(long millis, long nowMillis) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(millis);
         int year = calendar.get(Calendar.YEAR);
         calendar.setTimeInMillis(nowMillis);
         return year == calendar.get(Calendar.YEAR);
+    }
+
+    private static boolean sameDay(long millis, long nowMillis) {
+        Calendar then = Calendar.getInstance();
+        then.setTimeInMillis(millis);
+        Calendar now = Calendar.getInstance();
+        now.setTimeInMillis(nowMillis);
+        return then.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+                && then.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR);
     }
 }

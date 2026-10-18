@@ -146,14 +146,15 @@ public final class StoryShareSave {
         }
     }
 
-    static boolean isStory(Object value) {
+    public static boolean isStory(Object value) {
         if (!(value instanceof Aweme)) return false;
         Aweme aweme = (Aweme) value;
         try {
             if (aweme.getIsTikTokStory()) return true;
             int type = aweme.getAwemeType();
             return type == STORY_TYPE || type == STORY_TYPE_SHARED;
-        } catch (RuntimeException unreadable) {
+        } catch (RuntimeException | LinkageError unreadable) {
+            // A build that renamed either getter: the publish date's feed rows ask this too.
             return false;
         }
     }

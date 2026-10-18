@@ -158,47 +158,23 @@ public class FriendsFeedFilterTest {
         assertEquals(1, odd.friendFeedData.size());
     }
 
-    /** Stands in for FriendsV3RepostModel: a friend's repost of someone's video. */
-    public static final class Repost {
-        public Aweme repostedAweme;
-        public Object reposter;
-        Repost(Aweme aweme) { this.repostedAweme = aweme; }
+    /** Stands in for RepostFeedResponse, the Friends tab's Reposts list on 47.4.3. */
+    public static final class RepostResponse {
+        public List<Entry> repostFeedData;
+        RepostResponse(Entry... entries) { repostFeedData = new ArrayList<>(List.of(entries)); }
     }
 
-    /** Stands in for FriendsV3FeedModel: the older wrapper's fields plus a repost. */
-    public static final class V3Entry {
-        public Aweme aweme;
-        public Object roomStruct;
-        public Repost repostItem;
-        V3Entry(Aweme aweme) { this.aweme = aweme; }
-        static V3Entry repostOf(Aweme aweme) {
-            V3Entry entry = new V3Entry(null);
-            entry.repostItem = new Repost(aweme);
-            return entry;
-        }
-    }
-
-    /** Stands in for FriendsV3FeedResponse. */
-    public static final class V3Response {
-        public List<V3Entry> friendsV3Feeds;
-        V3Response(V3Entry... entries) { friendsV3Feeds = new ArrayList<>(List.of(entries)); }
-    }
-
-    @Test public void theV3FeedDropsAnAdvertWhetherPostedOrReposted() {
+    @Test public void theRepostsListDropsAnAdvertAndKeepsTheRest() {
         Settings.REMOVE_ADS.save(true);
         Settings.HIDE_LIVE.save(true);
-        V3Entry ordinary = new V3Entry(new Video(false));
-        V3Entry repostedOrdinary = V3Entry.repostOf(new Video(false));
-        V3Entry live = new V3Entry(null);
-        live.roomStruct = new Object();
-        V3Response response = new V3Response(ordinary, new V3Entry(new Video(true)), repostedOrdinary,
-                V3Entry.repostOf(new Video(true)), live);
+        Entry ordinary = new Entry(new Video(false));
+        RepostResponse response = new RepostResponse(ordinary, new Entry(new Video(true)));
 
-        FeedItemsFilter.filterFriendsV3Feed(response);
+        FeedItemsFilter.filterRepostFeed(response);
 
-        assertEquals(List.of(ordinary, repostedOrdinary), response.friendsV3Feeds);
-        FeedItemsFilter.filterFriendsV3Feed(null);
-        FeedItemsFilter.filterFriendsV3Feed(new Object());
+        assertEquals(List.of(ordinary), response.repostFeedData);
+        FeedItemsFilter.filterRepostFeed(null);
+        FeedItemsFilter.filterRepostFeed(new Object());
     }
 
     /** Stands in for TikTok's User: its uid and its follow status toward the reader. */
@@ -214,10 +190,16 @@ public class FriendsFeedFilterTest {
         Post(Person author) { super(false); this.author = author; }
     }
 
-    /** A V3 repost: whoever reposted it, and the video they reposted. */
-    static V3Entry repost(Person reposter, Person author) {
-        V3Entry entry = V3Entry.repostOf(new Post(author));
-        entry.repostItem.reposter = reposter;
+    /** A repost card: the video, naming whoever reposted it as 47.4.3's JSON reader does. */
+    static Entry repost(Person reposter, Person author) {
+        Post video = new Post(author);
+        video.repostUser = reposter;
+        return new Entry(video);
+    }
+
+    static Entry live(Person owner) {
+        Entry entry = Entry.live();
+        entry.roomStruct = new RoomCell(owner);
         return entry;
     }
 
@@ -243,34 +225,34 @@ public class FriendsFeedFilterTest {
             Person stranger = new Person("stranger", 0);
             Person me = new Person("me", 0);
 
-            V3Entry friendsPost = new V3Entry(new Post(friend));
-            V3Entry friendsRepost = repost(friend, stranger);
-            V3Entry ownPost = new V3Entry(new Post(me));
-            V3Entry ownRepost = repost(me, followed);
-            V3Entry friendsLive = new V3Entry(null);
-            friendsLive.roomStruct = new RoomCell(friend);
-            V3Entry unreadable = new V3Entry(new Video(false));
-            V3Entry strangersLive = new V3Entry(null);
-            strangersLive.roomStruct = new RoomCell(stranger);
-            V3Response response = new V3Response(friendsPost, new V3Entry(new Post(followed)),
-                    friendsRepost, repost(stranger, friend), new V3Entry(new Post(stranger)), ownPost,
-                    ownRepost, friendsLive, strangersLive, unreadable);
+            Entry friendsPost = new Entry(new Post(friend));
+            Entry friendsRepost = repost(friend, stranger);
+            Entry ownPost = new Entry(new Post(me));
+            Entry ownRepost = repost(me, followed);
+            Entry friendsLive = live(friend);
+            Entry unreadable = new Entry(new Video(false));
+            Response response = new Response(friendsPost, new Entry(new Post(followed)),
+                    friendsRepost, repost(stranger, friend), new Entry(new Post(stranger)), ownPost,
+                    ownRepost, friendsLive, live(stranger), unreadable);
 
-            FeedItemsFilter.filterFriendsV3Feed(response);
+            FeedItemsFilter.filterFriendsFeed(response);
 
             assertEquals(List.of(friendsPost, friendsRepost, ownPost, ownRepost, friendsLive, unreadable),
-                    response.friendsV3Feeds);
+                    response.friendFeedData);
 
-            Entry older = new Entry(new Post(friend));
-            Response v2 = new Response(older, new Entry(new Post(followed)), new Entry(new Post(stranger)));
-            FeedItemsFilter.filterFriendsFeed(v2);
-            assertEquals(List.of(older), v2.friendFeedData);
+            // The Reposts list holds only reposts, so one that doesn't name its reposter stays
+            // instead of being judged by the author of the video.
+            Entry unnamed = new Entry(new Post(stranger));
+            Entry friendsOnList = repost(friend, stranger);
+            RepostResponse reposts = new RepostResponse(friendsOnList, repost(followed, friend), unnamed);
+            FeedItemsFilter.filterRepostFeed(reposts);
+            assertEquals(List.of(friendsOnList, unnamed), reposts.repostFeedData);
 
             Settings.FRIENDS_MUTUALS_ONLY.save(false);
-            V3Response off = new V3Response(new V3Entry(new Post(stranger)));
-            List<V3Entry> before = off.friendsV3Feeds;
-            FeedItemsFilter.filterFriendsV3Feed(off);
-            assertSame("the switch off leaves the list alone", before, off.friendsV3Feeds);
+            Response off = new Response(new Entry(new Post(stranger)));
+            List<Entry> before = off.friendFeedData;
+            FeedItemsFilter.filterFriendsFeed(off);
+            assertSame("the switch off leaves the list alone", before, off.friendFeedData);
         } finally {
             app.morphe.extension.tiktok.SignedInUser.idForTests = null;
         }

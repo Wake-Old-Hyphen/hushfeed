@@ -12,6 +12,8 @@ import java.util.List;
 public class Aweme {
     /** Test fixture value used by the cache-delivery boundary tests. */
     public int cacheSourceType;
+    /** Test fixture value: the reposter {@link AwemeBizExtKt#getRepostUser} hands back. */
+    public Object repostUser;
 
     public String getAid() {
         throw new UnsupportedOperationException("Stub");

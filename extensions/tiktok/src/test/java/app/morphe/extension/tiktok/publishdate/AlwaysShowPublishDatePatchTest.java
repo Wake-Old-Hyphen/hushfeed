@@ -68,6 +68,41 @@ public class AlwaysShowPublishDatePatchTest {
         @Override public AwemeStatistics getStatistics() { return statistics; }
     }
 
+    /** A story, as its header hands it over: flagged as one, or only typed as one (40, 45). */
+    public static final class Story extends Aweme {
+        final long createTime;
+        final boolean flagged;
+        final int type;
+
+        Story(long createTime) {
+            this(createTime, true, 0);
+        }
+
+        Story(long createTime, boolean flagged, int type) {
+            this.createTime = createTime;
+            this.flagged = flagged;
+            this.type = type;
+        }
+
+        @Override public long getCreateTime() { return createTime; }
+        @Override public String getAid() { return POSTED_ID; }
+        @Override public boolean getIsTikTokStory() { return flagged; }
+        @Override public int getAwemeType() { return type; }
+    }
+
+    /** A video from a build that renamed the story getter: the call fails to link. */
+    public static final class RenamedStoryGetter extends Aweme {
+        final long createTime;
+
+        RenamedStoryGetter(long createTime) {
+            this.createTime = createTime;
+        }
+
+        @Override public long getCreateTime() { return createTime; }
+        @Override public String getAid() { return POSTED_ID; }
+        @Override public boolean getIsTikTokStory() { throw new NoSuchMethodError("getIsTikTokStory"); }
+    }
+
     /** A model whose createTime getter isn't there: the stub's throws, as a missing one would. */
     public static final class Untimed extends Aweme {
         final String aid;
@@ -228,6 +263,32 @@ public class AlwaysShowPublishDatePatchTest {
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", new Post(0, "not an id")));
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", "not a video"));
         assertEquals("2d ago", AlwaysShowPublishDatePatch.postTime("2d ago", null));
+    }
+
+    @Test
+    public void aStorysHeaderGetsItsTimeToTheMinute() {
+        // The same afternoon: the time alone, no seconds, no zone.
+        String today = AlwaysShowPublishDatePatch.storyTime(context(), POSTED, POSTED * 1000L + 3_600_000L);
+        assertTrue(today, Pattern.compile("^3:04\\s?PM$").matcher(today).matches());
+        // The next morning: the day goes in front.
+        String yesterday = AlwaysShowPublishDatePatch.storyTime(context(), POSTED, POSTED * 1000L + 12 * 3_600_000L);
+        assertTrue(yesterday, yesterday.startsWith("Oct 7"));
+        assertTrue(yesterday, Pattern.compile("\\b3:04\\s?PM$").matcher(yesterday).find());
+
+        Settings.PUBLISH_DATE_EXACT_TIME.save(true);
+        long recent = System.currentTimeMillis() / 1000L - 600L;
+        String header = AlwaysShowPublishDatePatch.postTime("10m ago", new Story(recent));
+        assertEquals(AlwaysShowPublishDatePatch.storyTime(context(), recent, System.currentTimeMillis()), header);
+        assertFalse(header, header.contains("UTC"));
+        // A story TikTok marks only by its type gets the same.
+        assertEquals(header, AlwaysShowPublishDatePatch.postTime("10m ago", new Story(recent, false, 40)));
+        // A feed video by the same creator keeps the full time.
+        assertTrue(AlwaysShowPublishDatePatch.postTime("2d ago", new Post(POSTED, POSTED_ID)).contains("3:04:05"));
+        assertTrue(AlwaysShowPublishDatePatch.postTime("10m ago", new Story(recent, false, 0)).contains("UTC"));
+        // A renamed story getter leaves feed rows on the full time, not TikTok's own text.
+        assertTrue(AlwaysShowPublishDatePatch.postTime("10m ago", new RenamedStoryGetter(recent)).contains("UTC"));
+        Settings.PUBLISH_DATE_EXACT_TIME.save(false);
+        assertEquals("10m ago", AlwaysShowPublishDatePatch.postTime("10m ago", new Story(recent)));
     }
 
     @Test

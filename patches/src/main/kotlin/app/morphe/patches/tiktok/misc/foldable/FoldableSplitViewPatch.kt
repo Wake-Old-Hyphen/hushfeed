@@ -7,8 +7,10 @@
 package app.morphe.patches.tiktok.misc.foldable
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
+import app.morphe.util.getReference
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -19,8 +21,13 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.requireLocals
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/foldable/FoldableSplitView;"
 private const val FEED_ACTIVITY = "Lcom/ss/android/ugc/aweme/main/MainActivity;"
@@ -31,6 +38,68 @@ private object LiveCheck : Fingerprint(
 private object ContainerCheck : Fingerprint(
     strings = listOf("isOptSplitContainer"), returnType = "Z", parameters = emptyList(),
 )
+
+internal const val SPLIT_CONTAINER_MANAGER = "Lcom/ss/android/ugc/aweme/tablet/impl/business/split/split/SplitContainerManager;"
+
+/**
+ * The feed fragment's view builder, which registers the feed's split container under a "HOME_"
+ * key. Its class is renamed on every build (06ws on 47.1.4, 06wG on 47.4.3, 0arO in PineDrama).
+ */
+internal object FeedSplitContainerFingerprint : Fingerprint(
+    returnType = "Landroid/view/View;",
+    parameters = listOf("Lcom/bytedance/ies/uikit/base/AbsFragment;", "Landroid/view/LayoutInflater;"),
+    strings = listOf("HOME_"),
+    custom = { method, _ -> method.registersSplitContainer() },
+)
+
+internal fun Method.registersSplitContainer(): Boolean = implementation?.instructions?.any { instruction ->
+    instruction.opcode == Opcode.INVOKE_STATIC && instruction.getReference<MethodReference>()?.let {
+        it.definingClass == SPLIT_CONTAINER_MANAGER && it.parameterTypes.firstOrNull()?.toString() == "Ljava/lang/String;"
+    } == true
+} == true
+
+/**
+ * The read of the server value the feed compares with -1 before it registers its split
+ * container: `sget-wide`, then `const-wide/16 -1`, then a `cmp-long` of the two. Anything other
+ * than one such read, ahead of the registration, fails the patch.
+ */
+internal fun Method.splitContainerInitRead(): Int {
+    val instructions = implementation?.instructions?.toList()
+        ?: throw PatchException("Split view: $definingClass->$name has no implementation.")
+    val reads = instructions.indices.filter { i ->
+        val read = instructions[i]
+        val minusOne = instructions.getOrNull(i + 1)
+        val compare = instructions.getOrNull(i + 2)
+        read.opcode == Opcode.SGET_WIDE &&
+            minusOne?.opcode == Opcode.CONST_WIDE_16 && (minusOne as WideLiteralInstruction).wideLiteral == -1L &&
+            compare?.opcode == Opcode.CMP_LONG && (compare as ThreeRegisterInstruction).let {
+                val value = (read as OneRegisterInstruction).registerA
+                val literal = (minusOne as OneRegisterInstruction).registerA
+                setOf(it.registerB, it.registerC) == setOf(value, literal)
+            }
+    }
+    val read = reads.singleOrNull() ?: throw PatchException(
+        "Split view: the feed compares ${reads.size} server values with -1 before its split container, not one.",
+    )
+    val registration = instructions.indexOfFirst {
+        it.opcode == Opcode.INVOKE_STATIC && it.getReference<MethodReference>()?.definingClass == SPLIT_CONTAINER_MANAGER
+    }
+    if (registration < read) throw PatchException("Split view: the feed registers no split container after it reads the server value.")
+    return read
+}
+
+/**
+ * Passes the server value through the extension right after it is read (#26). TikTok's server
+ * sends 1, and the feed then registers its split container only on a tablet, so on a wide phone
+ * window the comments opened over the video though both checks answered yes.
+ */
+internal fun MutableMethod.registerSplitContainerOnWideWindows(read: Int) {
+    val value = getInstruction<OneRegisterInstruction>(read).registerA
+    addInstructions(read + 1, """
+        invoke-static/range { v$value .. v${value + 1} }, $EXTENSION->splitContainerInit(J)J
+        move-result-wide v$value
+    """)
+}
 
 /** An instance method that takes a configuration change itself, rather than a declaration. */
 internal fun Method.isConfigurationChange(): Boolean =
@@ -79,6 +148,8 @@ val foldableSplitViewPatch = bytecodePatch(
         // Found before anything is written.
         val configurationChange = configurationChangeOf(FEED_ACTIVITY) { classDefByOrNull(it) }
             ?: throw PatchException("Split view: nothing between the feed activity and Activity takes configuration changes.")
+        val feedContainer = FeedSplitContainerFingerprint.method
+        val serverRead = feedContainer.splitContainerInitRead()
         listOf(LiveCheck.method to true, ContainerCheck.method to false).forEach { (method, live) ->
             check(AccessFlags.STATIC.isSet(method.accessFlags)) {
                 "Split view: ${method.name} is not static, so p0 is not its first argument."
@@ -95,6 +166,7 @@ val foldableSplitViewPatch = bytecodePatch(
                 nop
             """)
         }
+        feedContainer.registerSplitContainerOnWideWindows(serverRead)
         mutableClassDefBy(configurationChange.definingClass).methods
             .single { it.isConfigurationChange() }
             .handConfigurationChangesToSplitView()

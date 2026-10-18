@@ -286,6 +286,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show the day each video was posted under its view count on profile grids.",
                     Settings.PUBLISH_DATE_ON_GRID
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Show video length on profile grids",
+                    "Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.",
+                    Settings.VIDEO_LENGTH_ON_GRID
+            ));
         }
         if (SettingsStatus.authorRegionEnabled) {
             addPreference(new TogglePreference(
