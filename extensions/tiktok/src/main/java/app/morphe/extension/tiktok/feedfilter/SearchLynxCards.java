@@ -29,13 +29,14 @@ import java.util.WeakHashMap;
  * its row binds it instead: the Top results adapter hands each card to one of two holders (the
  * ten-parameter one, or DynamicViewHolder for the cards TikTok routes there), and both hand this
  * (holder, fragment, patch); the other lists' Lynx card cell hands (cell, item). A card Hide mini
- * dramas takes has its row collapsed to nothing, and the row comes back on the bind that hands it
- * another card, or on any bind once the switch is off.
+ * dramas takes, or a hotel deals block Remove ads takes, has its row collapsed to nothing, and the
+ * row comes back on the bind that hands it another card, or on any bind once the switch is off.
  */
 public final class SearchLynxCards {
     /** Route name for the diagnostic report. */
     static final String SOURCE = "SearchLynxCard";
     static final String DRAMA_REASON = "miniDramaCard";
+    static final String HOTEL_REASON = "hotelDealsCard";
 
     private static final Object LOCK = new Object();
     /** Rows this collapsed, with the height and visibility they had. */
@@ -75,7 +76,7 @@ public final class SearchLynxCards {
         }
     }
 
-    /** Collapses the row a drama card is bound into, and gives any other row its size back. */
+    /** Collapses the row a hidden card is bound into, and gives any other row its size back. */
     private static void judge(Object holder, Object patch) {
         Object itemView = Reflect.readField(holder, "itemView");
         if (!(itemView instanceof View)) return;
@@ -93,11 +94,16 @@ public final class SearchLynxCards {
         }
         if (BaseSettings.DEBUG.get()) {
             String shape = schemaShape(Reflect.readField(patch, "schema"));
-            Logger.printDebug(() -> "[Morphe TikTok FeedFilter] search lynx card: " + kind + " | " + shape);
+            String fields = patchFields(patch);
+            Logger.printDebug(() -> "[Morphe TikTok FeedFilter] search lynx card: " + kind + " | " + shape + " | " + fields);
         }
-        if (Settings.HIDE_MINI_DRAMAS.get() && isDrama(patch)) {
+        String reason = hideReason(patch);
+        if (reason != null) {
             collapse(row);
-            if (fresh) FeedFilterCounters.removedItems(SOURCE, 1, DRAMA_REASON);
+            if (fresh) {
+                FeedFilterCounters.removedItems(SOURCE, 1, reason);
+                if (HOTEL_REASON.equals(reason)) FeedFilterCounters.sawKind(AdsFilter.AD_SIGNALS_SOURCE, "hotel deals card");
+            }
             // TikTok's own bind runs after this and may size the row again, so once it has
             // returned the row is collapsed again, if it still holds this card. The pass runs on
             // the main looper, where nothing may escape either.
@@ -107,7 +113,7 @@ public final class SearchLynxCards {
                     synchronized (LOCK) {
                         current = BOUND.get(row);
                     }
-                    if (current == patch && Settings.HIDE_MINI_DRAMAS.get()) collapse(row);
+                    if (current == patch && hideReason(patch) != null) collapse(row);
                 } catch (Throwable failure) {
                     warnOnce(failure);
                 }
@@ -115,6 +121,39 @@ public final class SearchLynxCards {
         } else {
             restore(row);
         }
+    }
+
+    /** The removal reason when a switch that's on hides this card, or null when it stays. */
+    private static String hideReason(Object patch) {
+        if (Settings.HIDE_MINI_DRAMAS.get() && isDrama(patch)) return DRAMA_REASON;
+        if (Settings.REMOVE_ADS.get() && isHotelDeals(patch)) return HOTEL_REASON;
+        return null;
+    }
+
+    /**
+     * TikTok's hotel deals block (a cashback banner over hotels with prices quoted by booking
+     * sites). It carries no ad flag or ad key, so it is told by its raw data: 47.4.3 serves it as
+     * a nearby_poi object whose hotels each list the merchants quoting a price (ls_merchant_list).
+     * A landmark's place card (poi_content_card) and the Must Eat ranking
+     * (poi_must_eat_ranking_card) list no merchants and stay.
+     */
+    static boolean isHotelDeals(Object patch) {
+        if (patch == null) return false;
+        Object raw = Reflect.readField(patch, "rawData");
+        if (!(raw instanceof String) || !((String) raw).contains("ls_merchant_list")) return false;
+        try {
+            org.json.JSONObject nearby = new org.json.JSONObject((String) raw).optJSONObject("nearby_poi");
+            org.json.JSONArray hotels = nearby == null ? null : nearby.optJSONArray("poi_info_list");
+            if (hotels == null) return false;
+            for (int i = 0; i < hotels.length(); i++) {
+                org.json.JSONObject hotel = hotels.optJSONObject(i);
+                org.json.JSONArray merchants = hotel == null ? null : hotel.optJSONArray("ls_merchant_list");
+                if (merchants != null && merchants.length() > 0) return true;
+            }
+        } catch (org.json.JSONException notAnObject) {
+            // The raw data comes from the network; a card it can't read is ordinary content.
+        }
+        return false;
     }
 
     /**
@@ -238,6 +277,123 @@ public final class SearchLynxCards {
             }
         }
         return out.toString();
+    }
+
+    /**
+     * For the debug log only: the members that say what sort of card a patch is (its origin and
+     * token types, its popup type, whether it is commerce) and the key names of its extra info,
+     * global props and raw data, three levels deep (a list shows its length and its first entry's
+     * names). Codes are cut to identifier characters. Of the values, only the raw data's one-word
+     * type codes are shown, since the rest carry what the card says and the search.
+     */
+    static String patchFields(Object patch) {
+        if (patch == null) return "no patch";
+        StringBuilder out = new StringBuilder("originType=").append(Reflect.readField(patch, "originType"));
+        for (String name : new String[] {"tokenType", "popupType", "qrecVirtualEnable"}) {
+            String code = identifier(Reflect.readField(patch, name));
+            if (code != null) out.append(' ').append(name).append('=').append(code);
+        }
+        for (String name : new String[] {"isEcom", "needDynamicPatchVideos", "needGeneralSearchVideos"}) {
+            Object flag = Reflect.readField(patch, name);
+            if (flag instanceof Boolean) out.append(' ').append(name).append('=').append(flag);
+        }
+        Object videos = Reflect.readField(patch, "awemeList");
+        if (videos instanceof java.util.Collection) out.append(" videos=").append(((java.util.Collection<?>) videos).size());
+        if (Reflect.readField(patch, "nearByAuth") != null) out.append(" nearByAuth");
+        for (String name : new String[] {"extraInfo", "globalProps"}) {
+            Object map = Reflect.readField(patch, name);
+            if (!(map instanceof java.util.Map) || ((java.util.Map<?, ?>) map).isEmpty()) continue;
+            out.append(' ').append(name).append('{');
+            appendNames(out, ((java.util.Map<?, ?>) map).keySet().iterator());
+            out.append('}');
+        }
+        Object raw = Reflect.readField(patch, "rawData");
+        if (raw instanceof String && !((String) raw).isEmpty()) {
+            out.append(" rawData");
+            try {
+                appendJsonNames(out, new org.json.JSONObject((String) raw), 3);
+            } catch (Exception notAnObject) {
+                out.append(" not an object");
+            }
+        }
+        return out.toString();
+    }
+
+    private static final int MAX_NAMES = 40;
+
+    private static void appendNames(StringBuilder out, java.util.Iterator<?> names) {
+        int count = 0;
+        while (names.hasNext()) {
+            String name = identifier(names.next());
+            if (name == null) continue;
+            if (count == MAX_NAMES) {
+                out.append(" ...");
+                return;
+            }
+            if (count++ > 0) out.append(' ');
+            out.append(name);
+        }
+    }
+
+    private static void appendJsonNames(StringBuilder out, org.json.JSONObject object, int depth) {
+        out.append('{');
+        java.util.Iterator<String> names = object.keys();
+        int count = 0;
+        while (names.hasNext()) {
+            String key = names.next();
+            String name = identifier(key);
+            if (name == null) continue;
+            if (count == MAX_NAMES) {
+                out.append(" ...");
+                break;
+            }
+            if (count++ > 0) out.append(' ');
+            out.append(name);
+            Object value = object.opt(key);
+            if (CODE_KEYS.contains(key)) {
+                String code = code(value);
+                if (code != null) out.append('=').append(code);
+            }
+            if (depth > 1 && value instanceof org.json.JSONObject) {
+                appendJsonNames(out, (org.json.JSONObject) value, depth - 1);
+            } else if (value instanceof org.json.JSONArray) {
+                org.json.JSONArray array = (org.json.JSONArray) value;
+                out.append('[').append(array.length()).append(']');
+                Object first = array.opt(0);
+                if (depth > 1 && first instanceof org.json.JSONObject) {
+                    appendJsonNames(out, (org.json.JSONObject) first, depth - 1);
+                }
+            }
+        }
+        out.append('}');
+    }
+
+    /**
+     * Raw data keys whose value is a type code rather than text, so the debug line shows it: what
+     * tells a hotel deals card from a place card is in these, not in the key names.
+     */
+    private static final java.util.Set<String> CODE_KEYS = new java.util.HashSet<>(java.util.Arrays.asList(
+            "type", "doc_type", "card_type", "card_intent_type", "biz_type", "service_type",
+            "local_service_key_category", "local_service_key_category_enum", "poi_type", "poi_backend_type"));
+
+    /** A number, a flag or a one-word code as written; null for anything with spaces or other text. */
+    private static String code(Object value) {
+        if (value instanceof Number || value instanceof Boolean) return value.toString();
+        if (!(value instanceof String)) return null;
+        String text = (String) value;
+        String cut = identifier(text);
+        return cut != null && cut.equals(text) ? cut : null;
+    }
+
+    /** A name or type code cut to at most 40 identifier characters, or null when nothing is left. */
+    private static String identifier(Object value) {
+        if (value == null) return null;
+        StringBuilder out = new StringBuilder();
+        for (char c : value.toString().toCharArray()) {
+            if (out.length() == 40) break;
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '-') out.append(c);
+        }
+        return out.length() == 0 ? null : out.toString();
     }
 
     /** A schema parameter's decoded value, or null. */

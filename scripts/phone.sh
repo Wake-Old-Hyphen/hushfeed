@@ -22,6 +22,11 @@
 # PHONE_SERIAL selects the device; it must be the test phone, never the owner's own.
 # HUSHFEED_DEVICE_SERIAL names the one test phone this machine may drive, and PHONE_SERIAL has
 # to equal it, so a typo or another phone plugged in beside it is refused.
+#
+# The phones are shared, so every adb call also needs the device lease scripts/device-lease.ps1
+# took for that phone: HUSHFEED_LEASE_FILE is its file and HUSHFEED_LEASE_TOKEN its ownership
+# token. The file is read again before each call, and a missing file, another serial, another
+# token or a passed expiry refuses the call before adb runs.
 set -eu
 S="${PHONE_SERIAL:?set PHONE_SERIAL to the test phone serial}"
 ALLOWED="${HUSHFEED_DEVICE_SERIAL:?set HUSHFEED_DEVICE_SERIAL to the serial of the test phone this machine may drive}"
@@ -79,6 +84,36 @@ SP=$(normalise_path "${PHONE_SHOTS:-${TEMP:-/tmp}/hushfeed-device/shots}")
 PKG=com.zhiliaoapp.musically
 SCALE="${PHONE_SCALE:-1.15756}"
 mkdir -p "$SP"
+
+refuse_lease() { echo "REFUSED: no device lease for $S ($1). No device command was sent." >&2; exit 2; }
+# One string or number field of the lease's JSON, or nothing unless it appears exactly once.
+lease_field() {
+    local matches value
+    matches=$(printf '%s\n' "$2" | grep -oE "\"$1\"[[:space:]]*:[[:space:]]*(\"[^\"]*\"|[0-9]+)") || return 1
+    [[ "$matches" != *$'\n'* ]] || return 1
+    value=${matches#*:}
+    value=${value#"${value%%[![:space:]]*}"}
+    value=${value#\"}
+    printf '%s\n' "${value%\"}"
+}
+# Called inside a command substitution, the refusal ends that subshell with 2, and the caller's
+# `|| return` or set -e carries the 2 out. Either way adb never runs.
+require_lease() {
+    local file text expires ends
+    [[ -n "${HUSHFEED_LEASE_FILE:-}" && -n "${HUSHFEED_LEASE_TOKEN:-}" ]] ||
+        refuse_lease "set HUSHFEED_LEASE_FILE and HUSHFEED_LEASE_TOKEN"
+    file=$(normalise_path "$HUSHFEED_LEASE_FILE") || refuse_lease "its path could not be read"
+    text=$(cat -- "$file" 2>/dev/null) || refuse_lease "$file could not be read"
+    [[ "$(lease_field schemaVersion "$text")" == 1 ]] || refuse_lease "unknown lease format"
+    [[ "$(lease_field serial "$text")" == "$S" ]] || refuse_lease "the lease names another phone"
+    [[ "$(lease_field ownershipToken "$text")" == "$HUSHFEED_LEASE_TOKEN" ]] || refuse_lease "another task holds it"
+    expires=$(lease_field expiresUtc "$text") || refuse_lease "it has no expiry"
+    ends=$(date -u -d "$expires" +%s 2>/dev/null) || refuse_lease "its expiry is unreadable"
+    (( ends > $(date -u +%s) )) || refuse_lease "it expired at $expires"
+}
+adb_call() { local seconds="$1"; shift; require_lease; timeout "$seconds" "$ADB" -s "$S" "$@"; }
+# The same, with adb's stderr dropped. The refusal still reaches stderr.
+adb_quiet() { local seconds="$1"; shift; require_lease; timeout "$seconds" "$ADB" -s "$S" "$@" 2>/dev/null; }
 
 parse_top() {
     awk '
@@ -166,20 +201,20 @@ parse_popup_top() {
 }
 top() {
     local result
-    result=$(timeout 30 "$ADB" -s "$S" shell dumpsys window -a 2>/dev/null) || return $?
+    result=$(adb_quiet 30 shell dumpsys window -a) || return $?
     if printf '%s\n' "$result" | parse_top; then return 0; fi
     printf '%s\n' "$result" | parse_popup_top
 }
 # Written to a temporary name and moved into place only after a zero exit: the redirection
 # creates the file before adb runs, so a dropped device or a timeout left an empty .png where
 # a device check expected evidence.
-shot() { local activity tmp; tmp="$SP/$1.png.part"; if ! timeout 60 "$ADB" -s "$S" exec-out screencap -p > "$tmp" 2>/dev/null || [ ! -s "$tmp" ]; then rm -f "$tmp"; echo "screencap failed for $1" >&2; return 1; fi; mv -f "$tmp" "$SP/$1.png"; activity=$(top) || return $?; echo "shot $SP/$1.png top=$activity"; }
+shot() { local activity tmp; tmp="$SP/$1.png.part"; if ! adb_quiet 60 exec-out screencap -p > "$tmp" || [ ! -s "$tmp" ]; then rm -f "$tmp"; echo "screencap failed for $1" >&2; return 1; fi; mv -f "$tmp" "$SP/$1.png"; activity=$(top) || return $?; echo "shot $SP/$1.png top=$activity"; }
 guard() { local t; t=$(top); case "$t" in $PKG/*) ;; *) echo "REFUSED: foreground is $t"; exit 2;; esac; }
 px() { awk "BEGIN{printf \"%d\", $1*$SCALE}"; }
-tap() { guard; timeout 30 "$ADB" -s "$S" shell input -d 0 tap "$(px "$1")" "$(px "$2")"; sleep "${3:-2}"; }
-swipe() { guard; timeout 30 "$ADB" -s "$S" shell input -d 0 swipe "$(px "$1")" "$(px "$2")" "$(px "$3")" "$(px "$4")" "${5:-300}"; sleep "${6:-2}"; }
-key() { guard; timeout 30 "$ADB" -s "$S" shell input -d 0 keyevent "$1"; sleep "${2:-2}"; }
-text() { guard; timeout 30 "$ADB" -s "$S" shell input -d 0 text "$1"; sleep 1; }
+tap() { guard; adb_call 30 shell input -d 0 tap "$(px "$1")" "$(px "$2")"; sleep "${3:-2}"; }
+swipe() { guard; adb_call 30 shell input -d 0 swipe "$(px "$1")" "$(px "$2")" "$(px "$3")" "$(px "$4")" "${5:-300}"; sleep "${6:-2}"; }
+key() { guard; adb_call 30 shell input -d 0 keyevent "$1"; sleep "${2:-2}"; }
+text() { guard; adb_call 30 shell input -d 0 text "$1"; sleep 1; }
 # adb hands its arguments to the phone's shell as one command line, so the URL is held to path
 # characters: a ; & | $ quote or space would run there as a command instead of opening a page.
 open_url() {
@@ -189,9 +224,9 @@ open_url() {
         return 2
     fi
     guard
-    timeout 30 "$ADB" -s "$S" shell am start -W -a android.intent.action.VIEW -d "$url" -p "$PKG" >/dev/null
+    adb_call 30 shell am start -W -a android.intent.action.VIEW -d "$url" -p "$PKG" >/dev/null
     sleep "${2:-3}"
 }
-logcat() { local result pattern; pattern="${1:?logcat requires a filter}"; result=$(timeout 60 "$ADB" -s "$S" logcat -d 2>/dev/null) || return $?; printf '%s\n' "$result" | grep -iE "$pattern" | tail -"${2:-20}"; }
-gfx() { local result; result=$(timeout 60 "$ADB" -s "$S" shell dumpsys gfxinfo $PKG "${1:-}" 2>/dev/null) || return $?; printf '%s\n' "$result" | grep -E "Total frames|Janky|50th|90th|99th|Number Frame|Uptime" | head -12; }
+logcat() { local result pattern; pattern="${1:?logcat requires a filter}"; result=$(adb_quiet 60 logcat -d) || return $?; printf '%s\n' "$result" | grep -iE "$pattern" | tail -"${2:-20}"; }
+gfx() { local result; result=$(adb_quiet 60 shell dumpsys gfxinfo $PKG "${1:-}") || return $?; printf '%s\n' "$result" | grep -E "Total frames|Janky|50th|90th|99th|Number Frame|Uptime" | head -12; }
 "$@"

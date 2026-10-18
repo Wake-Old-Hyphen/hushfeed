@@ -38,7 +38,12 @@
 .EXAMPLE
     scripts/verify-injected-registers.ps1 -FromDevice -Serial $env:HUSHFEED_DEVICE_SERIAL
 
-    The clean APK defaults to the 47.1.4 vendor build in the folder HUSHFEED_FIXTURE_DIR names.
+    The clean APK defaults to the 47.4.3 vendor build in the folder HUSHFEED_FIXTURE_DIR names.
+
+    The phones are shared, so the pull and the device verifier each run under the device lease
+    (scripts/device-lease.ps1) on -Serial, taken right before and released right after, and the
+    script refuses the device half while another task holds that phone. Pass -LeaseDir and
+    -ChatIdentity, or set HUSHFEED_DEVICE_LEASE_DIR and HUSHFEED_CHAT_IDENTITY.
 #>
 [CmdletBinding()]
 param(
@@ -49,13 +54,17 @@ param(
     [string]$Adb,
     [string]$ReportPath,
     [string]$Java,
-    [string]$DesktopJar
+    [string]$DesktopJar,
+    [string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
+    [string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
+    [ValidateRange(1, 30)][int]$LeaseMinutes = 30
 )
 
 $ErrorActionPreference = 'Stop'
-# The vendor 47.1.4 build the README links, which is the only clean side this comparison means.
-$CleanApkSha256 = '4226ed5d3031b68208c29f62d80ac421b281fc74201bc4163d98e442d0991a40'
+# The vendor 47.4.3 build the README links, which is the only clean side this comparison means.
+$CleanApkSha256 = 'af7cbe2b00d33ff1339730f6abb8ed7e387a83b27ff2b16748b8f41e6fc87e0b'
 . (Join-Path $PSScriptRoot 'Resolve-Java.ps1')
+. (Join-Path $PSScriptRoot 'device-lease.ps1')
 . (Join-Path $PSScriptRoot 'injected-register-contracts.ps1')
 . (Join-Path $PSScriptRoot 'injected-register-device.ps1')
 $Java = Resolve-Java -Explicit $Java
@@ -81,7 +90,7 @@ function Resolve-Adb {
 }
 
 if (-not $CleanApk -and $env:HUSHFEED_FIXTURE_DIR) {
-    $fixture = Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter '*47.1.4*.apk' -File -ErrorAction SilentlyContinue |
+    $fixture = Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter '*47.4.3*.apk' -File -ErrorAction SilentlyContinue |
         Select-Object -First 1
     if ($fixture) { $CleanApk = $fixture.FullName }
 }
@@ -94,7 +103,7 @@ if (-not $CleanApk -or -not (Test-Path -LiteralPath $CleanApk -PathType Leaf)) {
 # report differences, and the run passes while comparing nothing against a clean baseline.
 $cleanHash = (Get-FileHash -LiteralPath $CleanApk -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($cleanHash -ne $CleanApkSha256) {
-    throw "The clean APK at $CleanApk hashes to $cleanHash, not the vendor 47.1.4 build ($CleanApkSha256)."
+    throw "The clean APK at $CleanApk hashes to $cleanHash, not the vendor 47.4.3 build ($CleanApkSha256)."
 }
 
 $work = Join-Path ([System.IO.Path]::GetTempPath()) ("hushfeed-regs-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
@@ -112,23 +121,37 @@ $completed = $false
 try {
 
 $adbPath = $null
-if ($FromDevice -or $Serial) { $adbPath = Resolve-Adb -Explicit $Adb }
+if ($FromDevice -or $Serial) {
+    # Checked here so a missing setting fails now, not after the minutes-long dex comparison.
+    if (-not $LeaseDir) { throw 'Device checks require -LeaseDir or HUSHFEED_DEVICE_LEASE_DIR for the shared device pool.' }
+    if (-not $ChatIdentity) { throw 'Device checks require -ChatIdentity or HUSHFEED_CHAT_IDENTITY.' }
+    $adbPath = Resolve-Adb -Explicit $Adb
+}
 
 if ($FromDevice) {
     if (-not $Serial) { throw '-FromDevice needs -Serial so it cannot pull from somebody else''s phone.' }
-    $paths = @(& $adbPath -s $Serial shell pm path com.zhiliaoapp.musically 2>&1 |
-        ForEach-Object { "$_" } | Where-Object { $_ -match '^package:' })
-    if ($paths.Count -eq 0) { throw "The target is not installed on $Serial." }
-    if ($paths.Count -ne 1) {
-        # A split install has no single APK to compare, and quietly taking the first would
-        # compare the base against a whole clean build and call the rest missing.
-        throw "The install on $Serial is split across $($paths.Count) APKs; pass -PatchedApk instead."
+    # Released right after the pull, so the dex comparison doesn't hold the phone for minutes.
+    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+        -ChatIdentity $ChatIdentity -Purpose 'injected-register check pull' -LeaseMinutes $LeaseMinutes
+    try {
+        Assert-DeviceLease -Lease $deviceLease -Serial $Serial
+        $paths = @(& $adbPath -s $Serial shell pm path com.zhiliaoapp.musically 2>&1 |
+            ForEach-Object { "$_" } | Where-Object { $_ -match '^package:' })
+        if ($paths.Count -eq 0) { throw "The target is not installed on $Serial." }
+        if ($paths.Count -ne 1) {
+            # A split install has no single APK to compare, and quietly taking the first would
+            # compare the base against a whole clean build and call the rest missing.
+            throw "The install on $Serial is split across $($paths.Count) APKs; pass -PatchedApk instead."
+        }
+        $onDevice = ($paths[0] -replace '^package:', '').Trim()
+        $PatchedApk = Join-Path $work 'patched-installed.apk'
+        Write-Host "[registers] pulling $onDevice"
+        Assert-DeviceLease -Lease $deviceLease -Serial $Serial
+        & $adbPath -s $Serial pull $onDevice $PatchedApk | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "Could not pull the installed APK from $Serial." }
+    } finally {
+        Remove-DeviceLease -Lease $deviceLease -WarnOnFailure
     }
-    $onDevice = ($paths[0] -replace '^package:', '').Trim()
-    $PatchedApk = Join-Path $work 'patched-installed.apk'
-    Write-Host "[registers] pulling $onDevice"
-    & $adbPath -s $Serial pull $onDevice $PatchedApk | Out-Null
-    if ($LASTEXITCODE -ne 0) { throw "Could not pull the installed APK from $Serial." }
 }
 
 if (-not $PatchedApk -or -not (Test-Path -LiteralPath $PatchedApk -PathType Leaf)) {
@@ -153,10 +176,18 @@ if ($diffExit -ne 0) {
 
 if ($Serial) {
     Write-Host "[registers] running the device verifier on $Serial"
-    $cleanTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
-        -Local $CleanApk -Label 'clean'
-    $patchedTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
-        -Local $PatchedApk -Label 'patched'
+    $deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $Serial -Project 'hushfeed' `
+        -ChatIdentity $ChatIdentity -Purpose 'injected-register device verifier' -LeaseMinutes $LeaseMinutes
+    try {
+        $cleanTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
+            -Local $CleanApk -Label 'clean' -Lease $deviceLease
+        # Each tally pushes and compiles a whole APK, so the patched one starts on a fresh lease.
+        Update-DeviceLease -Lease $deviceLease -LeaseMinutes $LeaseMinutes
+        $patchedTally = Invoke-AndroidVerifierTally -Adb $adbPath -Serial $Serial `
+            -Local $PatchedApk -Label 'patched' -Lease $deviceLease
+    } finally {
+        Remove-DeviceLease -Lease $deviceLease -WarnOnFailure
+    }
     $comparison = Compare-VerifierTallies -Clean $cleanTally -Patched $patchedTally
     Write-Host "[registers] verifier messages: clean $($comparison.CleanTotal), patched $($comparison.PatchedTotal)"
 

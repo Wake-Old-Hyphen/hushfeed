@@ -380,7 +380,7 @@ To add a language to the settings screen, copy one of the tables under `extensio
 
 The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, plus unchanged evidence files. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
 
-On Windows, device builds, probe installation and audit runs need `-LeaseDir <shared lease folder>` and `-ChatIdentity <task identifier>`, or `HUSHFEED_DEVICE_LEASE_DIR` and `HUSHFEED_CHAT_IDENTITY`. Every device command checks the exact serial and current ownership. Existing leases are never reclaimed automatically, including expired ones. Local builds and offline audit checks don't acquire a device lease.
+On Windows, device builds, probe installation, the probe tools, the injected-register check and audit runs need `-LeaseDir <shared lease folder>` and `-ChatIdentity <task identifier>`, or `HUSHFEED_DEVICE_LEASE_DIR` and `HUSHFEED_CHAT_IDENTITY`. Every device command checks the exact serial and current ownership. Existing leases are never reclaimed automatically, including expired ones. Local builds and offline audit checks don't acquire a device lease.
 
 Where things live:
 

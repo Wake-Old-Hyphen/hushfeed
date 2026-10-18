@@ -1,11 +1,22 @@
+# The phones are shared, so every command here runs under the caller's lease on that exact serial
+# (scripts/device-lease.ps1), checked again before each one.
+. (Join-Path $PSScriptRoot 'device-lease.ps1')
+
 function Invoke-HushfeedAdbCommand {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)][string]$Adb,
         [Parameter(Mandatory = $true)][string[]]$Arguments,
+        [Parameter(Mandatory = $true)][AllowNull()]$Lease,
+        [Parameter(Mandatory = $true)][string]$Serial,
         [scriptblock]$Invoker
     )
 
+    Assert-DeviceLease -Lease $Lease -Serial $Serial
+    # The lease covers one phone, so the command has to name that same one.
+    if ($Arguments.Count -lt 2 -or $Arguments[0] -cne '-s' -or $Arguments[1] -cne $Serial) {
+        throw "The ADB command doesn't target the leased serial. No device command was sent."
+    }
     if ($Invoker) {
         $result = & $Invoker $Adb $Arguments
         if ($null -eq $result -or $null -eq $result.ExitCode) {
@@ -37,24 +48,26 @@ function Invoke-AndroidVerifierTally {
         [Parameter(Mandatory = $true)][string]$Serial,
         [Parameter(Mandatory = $true)][string]$Local,
         [Parameter(Mandatory = $true)][string]$Label,
+        [Parameter(Mandatory = $true)][AllowNull()]$Lease,
         [scriptblock]$AdbInvoker
     )
 
     if ($Label -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$') {
         throw "Invalid verifier label: $Label"
     }
+    $device = @{ Adb = $Adb; Invoker = $AdbInvoker; Lease = $Lease; Serial = $Serial }
 
     $remote = "/data/local/tmp/hushfeed-verify-$Label.apk"
     $directory = "/data/local/tmp/hushfeed-verify-$Label"
     $primaryFailure = $null
     try {
-        $push = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+        $push = Invoke-HushfeedAdbCommand @device `
             -Arguments @('-s', $Serial, 'push', $Local, $remote)
         if ($push.ExitCode -ne 0) {
             throw (Format-HushfeedAdbFailure -Message "Could not push $Label to $Serial" -Result $push)
         }
 
-        $setup = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+        $setup = Invoke-HushfeedAdbCommand @device `
             -Arguments @('-s', $Serial, 'shell', "rm -rf $directory && mkdir -p $directory")
         if ($setup.ExitCode -ne 0) {
             throw (Format-HushfeedAdbFailure `
@@ -65,7 +78,7 @@ function Invoke-AndroidVerifierTally {
         # The phones are shared, so the log buffer is never cleared. A unique marker line starts
         # this run's part of it, and only the lines after it are read.
         $marker = "hushfeed-verify-$Label-$([guid]::NewGuid().ToString('N'))"
-        $mark = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+        $mark = Invoke-HushfeedAdbCommand @device `
             -Arguments @('-s', $Serial, 'shell', "log -t HushfeedVerify $marker")
         if ($mark.ExitCode -ne 0) {
             throw (Format-HushfeedAdbFailure `
@@ -76,7 +89,7 @@ function Invoke-AndroidVerifierTally {
         $dexCommand = "dex2oat64 --dex-file=$remote --oat-file=$directory/out.oat " +
             "--output-vdex=$directory/out.vdex --instruction-set=arm64 " +
             '--compiler-filter=verify --runtime-arg -Xmx1024m -j4; echo exit=$?'
-        $dex = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+        $dex = Invoke-HushfeedAdbCommand @device `
             -Arguments @('-s', $Serial, 'shell', $dexCommand)
         if ($dex.ExitCode -ne 0) {
             throw (Format-HushfeedAdbFailure `
@@ -91,7 +104,7 @@ function Invoke-AndroidVerifierTally {
         }
         if ($dexExit -ne 0) { throw "dex2oat on $Label exited $dexExit." }
 
-        $logResult = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+        $logResult = Invoke-HushfeedAdbCommand @device `
             -Arguments @('-s', $Serial, 'logcat', '-d')
         if ($logResult.ExitCode -ne 0) {
             throw (Format-HushfeedAdbFailure `
@@ -128,7 +141,7 @@ function Invoke-AndroidVerifierTally {
         $cleanupFailures = [System.Collections.Generic.List[string]]::new()
         foreach ($remotePath in @($directory, $remote)) {
             try {
-                $cleanup = Invoke-HushfeedAdbCommand -Adb $Adb -Invoker $AdbInvoker `
+                $cleanup = Invoke-HushfeedAdbCommand @device `
                     -Arguments @('-s', $Serial, 'shell', "rm -rf $remotePath")
                 if ($cleanup.ExitCode -ne 0) {
                     $cleanupFailures.Add((Format-HushfeedAdbFailure `

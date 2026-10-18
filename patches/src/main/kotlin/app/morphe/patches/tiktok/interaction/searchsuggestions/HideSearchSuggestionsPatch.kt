@@ -21,7 +21,10 @@ import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.callThroughLocals
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.patches.tiktok.shared.objectIn
+import app.morphe.patches.tiktok.shared.requireLocals
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.util.addInstructionsAtControlFlowLabel
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -29,8 +32,10 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/search/SearchSuggestions;"
 private const val SUGGEST_WORDS_VIEW_MODEL =
@@ -183,6 +188,80 @@ private object SearchReentryFingerprint : Fingerprint(
     strings = listOf("show_suggest_search_words", "searchTransferEnter"),
 )
 
+private const val SUGGEST_WORD = "Lcom/ss/android/ugc/aweme/discover/model/suggest/Word;"
+
+/**
+ * The observer that writes TikTok's trending word into the search box placeholder ("costco
+ * finds") and stores it as what an empty submit searches for. It sits in a renamed class on each
+ * build: an instance `onChanged` in `0EcI` on 47.4.3, and a static `onChanged$42` that PineDrama
+ * merged into a shared observer class. What names it is its content: it is the one method in the
+ * app that reads `Word.checkAndResetIsFromRefresh` and calls a `setSearchHint(String)`.
+ */
+internal fun isSearchHintObserver(method: Method): Boolean =
+    method.returnType == "V" && method.implementation?.instructions?.let { instructions ->
+        instructions.any {
+            it.getReference<MethodReference>()?.let { reference ->
+                reference.definingClass == SUGGEST_WORD && reference.name == "checkAndResetIsFromRefresh"
+            } == true
+        } && instructions.any {
+            it.getReference<MethodReference>()?.let { reference ->
+                reference.name == "setSearchHint" &&
+                    reference.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;")
+            } == true
+        }
+    } == true
+
+private object SearchHintObserverFingerprint : Fingerprint(
+    returnType = "V",
+    custom = { method, _ -> isSearchHintObserver(method) },
+)
+
+private const val SEARCH_FRAGMENT = "Lcom/ss/android/ugc/aweme/search/middle/BaseDiscoverAndSearchFragmentNew;"
+
+/**
+ * Where the search page writes a word into the box placeholder and keeps it as the `Word` an
+ * empty submit searches for. Every word reaches the box through here: the one the feed hands the
+ * page as it opens (the observer above only fills the box when that is empty) and the ones the
+ * page's own observers pass in. `iZ` on 47.4.3, `Yw` in PineDrama. It is the one method in the
+ * fragment that takes one argument, builds a `Word` and sets the box hint.
+ */
+internal fun isSearchHintApplier(method: Method): Boolean =
+    method.definingClass == SEARCH_FRAGMENT && method.returnType == "V" && method.parameterTypes.size == 1 &&
+        method.implementation?.instructions?.let { instructions ->
+            instructions.any {
+                it.opcode == Opcode.NEW_INSTANCE && it.getReference<TypeReference>()?.type == SUGGEST_WORD
+            } && instructions.any {
+                it.getReference<MethodReference>()?.let { reference ->
+                    reference.definingClass == "Landroid/widget/TextView;" && reference.name == "setHint"
+                } == true
+            }
+        } == true
+
+/**
+ * TikTok's own placeholder ("Search"), which the page passes to the method above whenever it has
+ * no word. `IX` on 47.4.3, `ev` in PineDrama: the fragment's one no-argument string method that
+ * reads the shop's `defaultHintWord` before falling back to the string resource.
+ */
+internal fun isDefaultSearchHint(method: Method): Boolean =
+    method.definingClass == SEARCH_FRAGMENT && method.returnType == "Ljava/lang/String;" &&
+        method.parameterTypes.isEmpty() &&
+        method.implementation?.instructions?.any {
+            it.getReference<FieldReference>()?.name == "defaultHintWord"
+        } == true
+
+private object SearchHintApplierFingerprint : Fingerprint(
+    definingClass = SEARCH_FRAGMENT,
+    returnType = "V",
+    custom = { method, _ -> isSearchHintApplier(method) },
+)
+
+private object DefaultSearchHintFingerprint : Fingerprint(
+    definingClass = SEARCH_FRAGMENT,
+    returnType = "Ljava/lang/String;",
+    parameters = emptyList(),
+    custom = { method, _ -> isDefaultSearchHint(method) },
+)
+
 /**
  * Stops the search page filling itself with things to search for. TikTok asks for suggested
  * words before you have typed anything and shows them as "You might be interested in" and
@@ -206,6 +285,16 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         val rewards = SearchRewardsServiceFingerprint.method
         val rewardsGetters = searchRewardsGetters()
         val nativeGuess = NativeGuessSearchFingerprint.method
+        val searchHint = SearchHintObserverFingerprint.method
+        val hintApplier = SearchHintApplierFingerprint.method
+        val defaultHint = DefaultSearchHintFingerprint.method
+        val hintModel = hintApplier.parameterTypes.single().toString()
+        if (classDefBy(hintModel).methods.none {
+                it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("Ljava/lang/String;")
+            }
+        ) {
+            throw PatchException("Hide search suggestions: the search hint $hintModel has no one-word constructor.")
+        }
         SettingsStatusLoadFingerprint.method.addInstruction(
             0,
             "invoke-static {}, " +
@@ -227,6 +316,9 @@ val hideSearchSuggestionsPatch = bytecodePatch(
         nativeGuess.guard("const/4 v0, 0x0\n                    return v0")
         SuggestWordsRequestFingerprint.method.guard("return-void")
         SuggestWordsPublishFingerprint.method.guard("return-void")
+        // The box keeps TikTok's own "Search" placeholder, and an empty submit has no word to run.
+        searchHint.guard("return-void")
+        hintApplier.keepDefaultSearchHint(defaultHint)
         LynxFirstScreenCacheFingerprint.method.hookFirstScreenCache()
         LynxParameterFingerprint.method.hookInitialLynxParameter()
         SearchReentryFingerprint.method.hookReentryVisibility()
@@ -289,6 +381,30 @@ internal fun MutableMethod.hookReentryVisibility() {
         keyIndex + 3,
         "invoke-static/range {v$register .. v$register}, $EXTENSION->filterReentryVisibility(I)I\n" +
             "move-result v$register",
+    )
+}
+
+/**
+ * Swaps the word the page hands the box for TikTok's own placeholder, the same hint the page
+ * builds itself when it has no word, so the empty submit has nothing of TikTok's to search either.
+ */
+internal fun MutableMethod.keepDefaultSearchHint(defaultHint: Method) {
+    requireLocals("Hide search suggestions", 2)
+    val hintModel = parameterTypes.single().toString()
+    val readDefault = if (AccessFlags.PRIVATE.isSet(defaultHint.accessFlags)) "invoke-direct/range" else "invoke-virtual/range"
+    addInstructionsWithLabels(
+        0,
+        """
+            invoke-static {}, $EXTENSION->shouldHide()Z
+            move-result v0
+            if-eqz v0, :morphe_keep_search_hint
+            $readDefault {p0 .. p0}, $SEARCH_FRAGMENT->${defaultHint.name}()Ljava/lang/String;
+            move-result-object v1
+            new-instance v0, $hintModel
+            invoke-direct/range {v0 .. v1}, $hintModel-><init>(Ljava/lang/String;)V
+            move-object/from16 p1, v0
+        """,
+        ExternalLabel("morphe_keep_search_hint", getInstruction(0)),
     )
 }
 

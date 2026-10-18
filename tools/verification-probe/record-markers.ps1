@@ -14,6 +14,10 @@
     are dropped. Before the first round it snapshots what is already bound and leaves that out:
     Hushfeed's recent-binds cache still holds up to 16 videos of the screen you came from.
 
+    The phones are shared, so recording takes the device lease (scripts/device-lease.ps1) on that
+    serial before its first command, checks it before every one, and releases it at the end. It
+    refuses to start while another task holds that phone. -Write never touches a phone.
+
     -Write turns the four broad-route recordings and four labelled-route recordings into
     extensions/tiktok/src/test/resources/feed-markers/<route>-<version>.json. The key comes off
     every line, and every value is checked to be a shape token and never content: booleans,
@@ -51,6 +55,9 @@ param(
     # Keep the currently bound video for a deliberately opened labelled example.
     [Parameter(ParameterSetName = 'Record')][switch]$IncludeCurrent,
     [Parameter(ParameterSetName = 'Record')][int]$SettleMs = 2000,
+    [Parameter(ParameterSetName = 'Record')][string]$LeaseDir = $env:HUSHFEED_DEVICE_LEASE_DIR,
+    [Parameter(ParameterSetName = 'Record')][string]$ChatIdentity = $env:HUSHFEED_CHAT_IDENTITY,
+    [Parameter(ParameterSetName = 'Record')][ValidateRange(1, 30)][int]$LeaseMinutes = 30,
     [Parameter(Mandatory = $true, ParameterSetName = 'Write')][switch]$Write,
     [Parameter(Mandatory = $true, ParameterSetName = 'Write')][string]$TikTokVersion,
     # The Hushfeed build installed on the phone while recording; its filters gave the verdicts.
@@ -60,8 +67,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot 'probe-log.ps1')
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+. (Join-Path $root 'scripts/device-lease.ps1')
+. (Join-Path $PSScriptRoot 'probe-log.ps1')
 $workDir = Join-Path $root 'work/marker-corpus'
 $routes = @('for-you', 'profile', 'following', 'search', 'paid', 'series', 'playlist', 'drama')
 
@@ -117,12 +125,13 @@ if ($Write) {
 
 $serial = $env:HUSHFEED_DEVICE_SERIAL
 if (-not $serial) { throw 'Set HUSHFEED_DEVICE_SERIAL to the serial of the test phone this machine may drive.' }
+if (-not $LeaseDir) { throw 'Recording requires -LeaseDir or HUSHFEED_DEVICE_LEASE_DIR for the shared device pool.' }
+if (-not $ChatIdentity) { throw 'Recording requires -ChatIdentity or HUSHFEED_CHAT_IDENTITY.' }
 $swipePoints = @($Swipe -split ',' | ForEach-Object { [int]$_.Trim() })
 if ($swipePoints.Count -ne 4) { throw "-Swipe needs four numbers, x1,y1,x2,y2: $Swipe" }
 $tapPoint = if ($FirstTap) { @($FirstTap -split ',' | ForEach-Object { [int]$_.Trim() }) } else { @() }
 if ($FirstTap -and $tapPoint.Count -ne 2) { throw "-FirstTap needs two numbers, x,y: $FirstTap" }
 
-New-Item -ItemType Directory -Force $workDir | Out-Null
 $out = Join-Path $workDir "$Route.jsonl"
 $keys = New-Object System.Collections.Generic.HashSet[string]
 if (Test-Path -LiteralPath $out) {
@@ -131,54 +140,67 @@ if (Test-Path -LiteralPath $out) {
 $start = $keys.Count
 
 function Assert-TikTok {
+    Assert-DeviceLease -Lease $deviceLease -Serial $serial
     $top = [string](& adb -s $serial shell dumpsys activity activities | Select-String 'topResumedActivity' | Select-Object -First 1)
     if ($top -notmatch 'com\.zhiliaoapp\.musically') { throw "TikTok is not in front: $top" }
 }
 
 function Invoke-Phone([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments) {
+    Assert-DeviceLease -Lease $deviceLease -Serial $serial
     $windowsScript = [IO.Path]::GetFullPath((Join-Path $root 'scripts/phone.sh')).Replace('\', '/')
     if ($windowsScript -notmatch '^([A-Za-z]):/(.+)$') {
         throw "Could not translate scripts/phone.sh for the guarded input: $windowsScript"
     }
     $script = '/mnt/' + $Matches[1].ToLowerInvariant() + '/' + $Matches[2]
+    # phone.sh rereads the lease before each adb call it makes.
     & wsl.exe env "PHONE_SERIAL=$serial" "HUSHFEED_DEVICE_SERIAL=$serial" PHONE_SCALE=1 `
+        "HUSHFEED_LEASE_FILE=$($deviceLease.Path)" "HUSHFEED_LEASE_TOKEN=$($deviceLease.OwnershipToken)" `
         bash $script @Arguments
     if ($LASTEXITCODE -ne 0) { throw "Guarded phone input failed: $($Arguments -join ' ')" }
 }
 
 function Get-Bound {
     $prefix = "corpus`t$Route`t"
-    foreach ($line in @(Invoke-ProbeAction -Serial $serial -Action marker-corpus -WaitMs 1500 -Extras @('-e', 'route', $Route))) {
+    foreach ($line in @(Invoke-ProbeAction -Serial $serial -Action marker-corpus -Lease $deviceLease -WaitMs 1500 -Extras @('-e', 'route', $Route))) {
         if ($line.StartsWith($prefix)) { $line.Substring($prefix.Length) }
     }
 }
 
-Assert-TikTok
-$exclude = New-Object System.Collections.Generic.HashSet[string]
-if ($IncludeCurrent) {
-    'including videos already bound for this directed labelled capture'
-} else {
-    foreach ($json in @(Get-Bound)) { [void]$exclude.Add(($json | ConvertFrom-Json).key) }
-    "left out $($exclude.Count) videos already bound before this route started"
-}
-if ($tapPoint.Count -eq 2) {
-    Invoke-Phone tap $tapPoint[0] $tapPoint[1] 0
-    Start-Sleep -Milliseconds 3000
-}
-
-for ($round = 1; $round -le $Rounds; $round++) {
+$deviceLease = New-DeviceLease -LeaseDir $LeaseDir -Serial $serial -Project 'hushfeed' `
+    -ChatIdentity $ChatIdentity -Purpose "verification probe marker recording ($Route)" -LeaseMinutes $LeaseMinutes
+try {
     Assert-TikTok
-    $new = 0
-    foreach ($json in @(Get-Bound)) {
-        $key = ($json | ConvertFrom-Json).key
-        if ($exclude.Contains($key) -or -not $keys.Add($key)) { continue }
-        Add-Content -LiteralPath $out -Value $json
-        $new++
+    New-Item -ItemType Directory -Force $workDir | Out-Null
+    $exclude = New-Object System.Collections.Generic.HashSet[string]
+    if ($IncludeCurrent) {
+        'including videos already bound for this directed labelled capture'
+    } else {
+        foreach ($json in @(Get-Bound)) { [void]$exclude.Add(($json | ConvertFrom-Json).key) }
+        "left out $($exclude.Count) videos already bound before this route started"
     }
-    "round ${round}: $new new, $($keys.Count) recorded"
-    if ($round -lt $Rounds) {
-        Invoke-Phone swipe $swipePoints[0] $swipePoints[1] $swipePoints[2] $swipePoints[3] 350 0
-        Start-Sleep -Milliseconds $SettleMs
+    if ($tapPoint.Count -eq 2) {
+        Invoke-Phone tap $tapPoint[0] $tapPoint[1] 0
+        Start-Sleep -Milliseconds 3000
     }
+
+    for ($round = 1; $round -le $Rounds; $round++) {
+        # A long recording outlasts one lease term, so each round extends it (after checking it's ours).
+        Update-DeviceLease -Lease $deviceLease -LeaseMinutes $LeaseMinutes
+        Assert-TikTok
+        $new = 0
+        foreach ($json in @(Get-Bound)) {
+            $key = ($json | ConvertFrom-Json).key
+            if ($exclude.Contains($key) -or -not $keys.Add($key)) { continue }
+            Add-Content -LiteralPath $out -Value $json
+            $new++
+        }
+        "round ${round}: $new new, $($keys.Count) recorded"
+        if ($round -lt $Rounds) {
+            Invoke-Phone swipe $swipePoints[0] $swipePoints[1] $swipePoints[2] $swipePoints[3] 350 0
+            Start-Sleep -Milliseconds $SettleMs
+        }
+    }
+    "${Route}: $($keys.Count - $start) new this run, $($keys.Count) in $out"
+} finally {
+    Remove-DeviceLease -Lease $deviceLease -WarnOnFailure
 }
-"${Route}: $($keys.Count - $start) new this run, $($keys.Count) in $out"

@@ -7589,7 +7589,7 @@
    },
    {
     "id": "search-page",
-    "what": "Search page before typing: TikTok's own 'You may like' list shows with the switch off (47.1.4 draws it natively for some accounts) and is gone with it on; history stays.",
+    "what": "Search page before typing: TikTok's own 'You may like' list and the trending word in the search box show with the switch off (47.1.4 draws the list natively for some accounts) and are gone with it on; the box keeps its plain 'Search' placeholder and history stays.",
     "steps": [
      {
       "set": {
@@ -7663,7 +7663,7 @@
      },
      {
       "shot": "search-no-suggestions",
-      "review": "Search page just opened, nothing typed and nothing submitted: no list of suggested words (the 'Trending' / 'You may like' style entries). The person's own search history rows may remain. Failing looks like a suggestion list. Back out without searching."
+      "review": "Search page just opened, nothing typed and nothing submitted: no list of suggested words (the 'Trending' / 'You may like' style entries), and the grey placeholder inside the search box reads plain 'Search', not a suggested search like 'funny dog videos'. The person's own search history rows may remain. Failing looks like a suggestion list or a suggested word in the box. Back out without searching."
      },
      {
       "back": true
@@ -7688,7 +7688,7 @@
     "auto": true
    }
   ],
-  "notes": "The call results include the patch-applied flag (SettingsStatus.hideSearchSuggestionsEnabled), so 'true' proves both the patch and the setting. Suggestions come from a server request and a cached list; the patch withholds the request parameters (show_suggest_search_words, is_lynx_request_suggest), the cache and the re-entry panel. The search icon is found by its English description 'Search' (the probe clicks it; a uiautomator tap cannot run on a playing feed), which also needs Hide feed search button to be off. Rewards (the banner under the box) are served only to accounts in the rewards programme."
+  "notes": "The call results include the patch-applied flag (SettingsStatus.hideSearchSuggestionsEnabled), so 'true' proves both the patch and the setting. Suggestions come from a server request and a cached list; the patch withholds the request parameters (show_suggest_search_words, is_lynx_request_suggest), the cache and the re-entry panel. The trending word in the box arrives with the page's enter params from the feed, not from the suggestion request, so the patch swaps whatever word reaches the box (BaseDiscoverAndSearchFragmentNew's one-argument hint applier) for TikTok's own default placeholder. The search icon is found by its English description 'Search' (the probe clicks it; a uiautomator tap cannot run on a playing feed), which also needs Hide feed search button to be off. Rewards (the banner under the box) are served only to accounts in the rewards programme."
  },
  {
   "name": "Hide suggested accounts",

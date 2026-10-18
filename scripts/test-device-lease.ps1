@@ -365,12 +365,18 @@ namespace HushfeedFixture {
     $fakeAdb = Join-Path $fakeBin 'adb.cmd'
     $fakeLog = Join-Path $fakeBin 'adb.log'
     # pm path exits 1 with no output for a missing package (API 36), and get-state still says device.
+    # With a front file TikTok is the top activity, and a probe action's marker comes back in the
+    # log ahead of one answer. Redirects go first, since "echo x3>>log" redirects handle 3.
     [IO.File]::WriteAllLines($fakeAdb, [string[]]@(
-        '@echo off', 'echo %*>>"%~dp0adb.log"', 'if exist "%~dp0fail" exit /b 19',
-        'if "%3"=="get-state" (echo device& exit /b 0)', 'if not "%3"=="shell" exit /b 0',
-        'if exist "%~dp0absent" exit /b 1', 'echo package:/data/app/probe/base.apk', 'exit /b 0'))
+        '@echo off', '>>"%~dp0adb.log" echo %*', 'if exist "%~dp0fail" exit /b 19',
+        'if "%3"=="get-state" (echo device& exit /b 0)', 'if "%3"=="logcat" goto logcat',
+        'if not "%3"=="shell" exit /b 0', 'if "%4"=="dumpsys" goto dumpsys',
+        'if "%4"=="log" (>"%~dp0marker" echo %7& exit /b 0)', 'if "%4"=="am" exit /b 0',
+        'if exist "%~dp0absent" exit /b 1', 'echo package:/data/app/probe/base.apk', 'exit /b 0',
+        ':dumpsys', 'if exist "%~dp0front" echo   topResumedActivity=ActivityRecord{1 u0 com.zhiliaoapp.musically/.MainActivity t1}', 'exit /b 0',
+        ':logcat', 'if exist "%~dp0marker" type "%~dp0marker"', 'echo ok stripkeys anchors=[fixture_anchor/1] banners=[]', 'exit /b 0'))
     $environmentBefore = @{}
-    foreach ($name in 'PATH', 'HUSHFEED_DEVICE_LEASE_DIR', 'HUSHFEED_CHAT_IDENTITY') {
+    foreach ($name in 'PATH', 'HUSHFEED_DEVICE_LEASE_DIR', 'HUSHFEED_CHAT_IDENTITY', 'HUSHFEED_DEVICE_SERIAL') {
         $environmentBefore[$name] = [Environment]::GetEnvironmentVariable($name, 'Process')
     }
     try {
@@ -402,6 +408,95 @@ namespace HushfeedFixture {
         [IO.File]::WriteAllText((Join-Path $fakeBin 'fail'), 'fixture failure')
         Assert-LeaseRejected { & $probeBuilder -Uninstall -Serial 'probe-fixture' } 'Failed probe uninstall reported success.'
         Assert-Lease (-not [IO.File]::Exists($probePath)) 'Failed probe uninstall retained its lease.'
+        [IO.File]::Delete((Join-Path $fakeBin 'fail'))
+        [IO.File]::Delete($fakeLog)
+
+        # A probe action checks the caller's lease on that exact serial before every command.
+        . (Join-Path (Split-Path -Parent $PSScriptRoot) 'tools/verification-probe/probe-log.ps1')
+        $script:probeCalls = @()
+        $script:probeExpire = $null
+        function Invoke-FixtureProbeCommand {
+            $script:probeCalls += ($args -join ' ')
+            $global:LASTEXITCODE = 0
+            if ($args[3] -eq 'log') { $script:probeMarker = $args[-1] }
+            if ($null -ne $script:probeExpire) {
+                $held = Read-DeviceLeaseRecord $script:probeExpire
+                $held.expiresUtc = [DateTime]::UtcNow.AddMinutes(-1).ToString('o')
+                Write-DeviceLeaseRecord $script:probeExpire $held
+            }
+            if ($args[2] -eq 'logcat') { 'ok stripkeys anchors=[earlier] banners=[]'; $script:probeMarker; 'ok stripkeys anchors=[ours] banners=[]' }
+        }
+        $probeAction = @{ Serial = 'probe-action'; Action = 'stripkeys'; WaitMs = 0; Adb = 'Invoke-FixtureProbeCommand' }
+        $probeLease = New-FixtureLease 'probe-action'
+        $answer = @(Invoke-ProbeAction @probeAction -Lease $probeLease)
+        Assert-Lease ($answer.Count -eq 1 -and $answer[0] -ceq 'ok stripkeys anchors=[ours] banners=[]') "An owned probe action lost its answer: $($answer -join ' | ')"
+        Assert-Lease ($script:probeCalls.Count -eq 3 -and $script:probeCalls[0] -clike '-s probe-action shell log -t HushfeedProbe hushfeed-probe-*' -and
+            $script:probeCalls[1] -clike '-s probe-action shell am broadcast * -e action stripkeys' -and
+            $script:probeCalls[2] -ceq '-s probe-action logcat -d -s HushfeedProbe:V -v raw') "An owned probe action sent the wrong commands: $($script:probeCalls -join ' | ')"
+        $otherProbeLease = New-FixtureLease 'probe-other'
+        $forgedProbeLease = [pscustomobject]@{
+            Path = $probeLease.Path; Serial = $probeLease.Serial; Stream = $probeLease.Stream
+            OwnershipToken = [guid]::NewGuid().ToString('N')
+        }
+        foreach ($refusedLease in $null, $otherProbeLease, $forgedProbeLease) {
+            $script:probeCalls = @()
+            Assert-LeaseRejected { Invoke-ProbeAction @probeAction -Lease $refusedLease } 'A probe action ran without owning its serial.'
+            Assert-Lease ($script:probeCalls.Count -eq 0) "A probe action without ownership reached the device: $($script:probeCalls -join ' | ')"
+        }
+        Remove-DeviceLease $otherProbeLease
+        $script:probeCalls = @()
+        $script:probeExpire = $probeLease
+        Assert-LeaseRejected { Invoke-ProbeAction @probeAction -Lease $probeLease } 'A probe action carried on after its lease expired.'
+        Assert-Lease ($script:probeCalls.Count -eq 1) "Probe commands after expiry reached the device: $($script:probeCalls -join ' | ')"
+        $script:probeExpire = $null
+        Assert-LeaseRejected { Remove-DeviceLease $probeLease } 'An expired probe lease authorized cleanup.'
+        [IO.File]::Delete($probeLease.Path)
+
+        # The probe scripts refuse a phone another task holds, and otherwise take its lease right
+        # before their first command and give it back when they stop.
+        $env:HUSHFEED_DEVICE_SERIAL = 'probe-tool'
+        $toolLeasePath = Join-Path $pool 'probe-tool.json'
+        $front = '-s probe-tool shell dumpsys activity activities'
+        $mark = '-s probe-tool shell log -t HushfeedProbe hushfeed-probe-*'
+        $read = '-s probe-tool logcat -d -s HushfeedProbe:V -v raw'
+        $broadcast = '-s probe-tool shell am broadcast -a app.hushfeed.verification.PROBE -p com.zhiliaoapp.musically -e action'
+        foreach ($tool in @(
+                @{ Name = 'strip-hunt.ps1'; Arguments = @{ Rounds = 1 }; Output = 'round 1: first anchor fixture_anchor/1'
+                    Commands = @($front, $front, $mark, "$broadcast stripkeys", $read) },
+                @{ Name = 'record-markers.ps1'; Arguments = @{ Route = 'for-you'; Rounds = 1 }; Output = 'round 1: 0 new, *'
+                    Commands = @($front, $mark, "$broadcast marker-corpus -e route for-you", $read,
+                        $front, $mark, "$broadcast marker-corpus -e route for-you", $read) })) {
+            $toolScript = Join-Path (Split-Path -Parent $PSScriptRoot) "tools/verification-probe/$($tool.Name)"
+            $toolArguments = $tool.Arguments
+            $otherTask = New-DeviceLease -LeaseDir $pool -Serial 'probe-tool' -Project 'fixture-project' `
+                -ChatIdentity 'other-chat' -Purpose 'another test' -LeaseMinutes 1
+            $contexts.Add($otherTask)
+            Assert-LeaseRejected { & $toolScript @toolArguments } "$($tool.Name) ran while another task held the phone."
+            Assert-Lease (-not [IO.File]::Exists($fakeLog) -and (Test-DeviceLease $otherTask)) "$($tool.Name) reached the phone or disturbed another task's lease."
+            Remove-DeviceLease $otherTask
+            $toolFailure = $null
+            try { & $toolScript @toolArguments } catch { $toolFailure = $_.Exception.Message }
+            Assert-Lease ($toolFailure -clike 'TikTok is not in front*') "$($tool.Name) did not reach its first command on a free phone: $toolFailure"
+            $toolCommands = @([IO.File]::ReadAllLines($fakeLog) | ForEach-Object { $_.Trim() }) -join '|'
+            Assert-Lease ($toolCommands -ceq '-s probe-tool shell dumpsys activity activities') "$($tool.Name) sent the wrong first command: $toolCommands"
+            Assert-Lease (-not [IO.File]::Exists($toolLeasePath)) "$($tool.Name) kept its lease after stopping."
+            [IO.File]::Delete($fakeLog)
+
+            # With TikTok in front a round finishes: the probe answer comes back under the
+            # script's own lease, which it renews each round and releases at the end.
+            $frontFile = Join-Path $fakeBin 'front'
+            [IO.File]::WriteAllText($frontFile, 'tiktok')
+            try { $toolOutput = @(& $toolScript @toolArguments) }
+            finally { [IO.File]::Delete($frontFile); [IO.File]::Delete((Join-Path $fakeBin 'marker')) }
+            $sent = @([IO.File]::ReadAllLines($fakeLog) | ForEach-Object { $_.Trim() })
+            $expected = @($tool.Commands)
+            $sentInOrder = $sent.Count -eq $expected.Count
+            for ($i = 0; $sentInOrder -and $i -lt $expected.Count; $i++) { $sentInOrder = $sent[$i] -clike $expected[$i] }
+            Assert-Lease $sentInOrder "$($tool.Name) sent the wrong commands for one round: $($sent -join ' | ')"
+            Assert-Lease (@($toolOutput | Where-Object { "$_" -clike $tool.Output }).Count -eq 1) "$($tool.Name) lost the probe answer: $($toolOutput -join ' | ')"
+            Assert-Lease (-not [IO.File]::Exists($toolLeasePath)) "$($tool.Name) kept its lease after a full round."
+            [IO.File]::Delete($fakeLog)
+        }
     } finally {
         foreach ($name in $environmentBefore.Keys) {
             $value = $environmentBefore[$name]
