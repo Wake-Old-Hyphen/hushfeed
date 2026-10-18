@@ -118,6 +118,12 @@ val languagePackPurgerPatch = rawResourcePatch(
             println("[Language Pack Purger] Kept every language pack. This APK's set isn't a reviewed one, so none could be removed.")
         } else {
             BuildDetails.languages(get(BUILD_DETAILS_ASSET), result)
+            if (result.missingLocales.isNotEmpty()) {
+                println(
+                    "[Language Pack Purger] This TikTok has no pack for " +
+                        "${result.missingLocales.sorted().joinToString()}, so there was nothing to keep for it.",
+                )
+            }
             if (result.files == 0) {
                 println("[Language Pack Purger] Kept every reviewed language pack.")
             } else {

@@ -508,6 +508,7 @@ Do nothing,Do nothing
 Doesn't follow you back,Doesn't follow you back
 Don't auto translate these languages,Don't auto translate these languages
 Don't decode animated frames ahead,Don't decode animated frames ahead
+Don't open a reply under each comment. View replies still shows all of them.,Don't open a reply under each comment. View replies still shows all of them.
 Don't save new searches,Don't save new searches
 Don't start the feed on returning,Don't start the feed on returning
 Don't start the first video,Don't start the first video
@@ -718,6 +719,7 @@ Hide profile views,Hide profile views
 Hide promotional music,Hide promotional music
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.,Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.
 Hide recorded LIVE broadcasts from the feed.,Hide recorded LIVE broadcasts from the feed.
+Hide reply previews,Hide reply previews
 Hide root,Hide root
 Hide root status and details about root tools from TikTok.,Hide root status and details about root tools from TikTok.
 Hide rows by title,Hide rows by title
@@ -1272,7 +1274,7 @@ Put back the settings saved before the last restore or reset.,Put back the setti
 Put every setting back to its default straight away. Your current settings are kept for Undo.,Put every setting back to its default straight away. Your current settings are kept for Undo.
 "Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel.","Puts a circle on each video in a profile, Liked or Favorites grid. Pick up to %1$s, then tap Save to save them one after another, with a count and Cancel."
 "Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it.","Puts a save button in the sheet a story's Share button opens. It saves the story you're watching, and holding a story still pauses it."
-"Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.","Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked."
+"Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.","Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on."
 "Puts your time zone after the time to the second, like EDT.","Puts your time zone after the time to the second, like EDT."
 Putting seen videos back,Putting seen videos back
 Putting the saved videos back,Putting the saved videos back

@@ -33,7 +33,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A bounded local record of successful video saves, checked off the UI thread.
+ * A bounded local record of successful video saves, checked off the UI thread. A photo post saved
+ * here is recorded too, under its aweme id like a video: as the video Save photo posts as a video
+ * makes, or for a post saved as photos as the first photo that landed, which is what Open shows.
  *
  * <p>The reader can forget it from settings. Forgetting takes every row out at once, keeps them in
  * memory for the settings banner's Undo and nowhere else, and moves the record to a new
@@ -99,7 +101,37 @@ public final class SavedVideoArchive {
         }
     }
 
+    /** What {@link #check} found. */
+    enum Check { NEW, OFFERED, FAILED }
+
     private SavedVideoArchive() {}
+
+    /**
+     * For a photo post's save, off the main thread: offers Open or Save again when the post is
+     * recorded, as a video's save does. {@code OFFERED} means the offer owns the save and calls
+     * {@code release} when it's done with it; {@code FAILED} has said so and nothing is saved.
+     */
+    static Check check(Context context, String id, Runnable saveAgain, Runnable release) {
+        try {
+            MediaFileWriter.Saved previous = find(context, id);
+            if (previous == null) return Check.NEW;
+            offer(previous, saveAgain, release);
+            return Check.OFFERED;
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Could not check for an already-saved post", failure);
+            Utils.showToastLong(L10n.t("The already-saved check failed. Try again."));
+            return Check.FAILED;
+        }
+    }
+
+    /** {@link #remember} for a save that must not fail because the record did. */
+    static void rememberQuietly(Context context, String id, MediaFileWriter.Saved saved, long startedIn) {
+        try {
+            remember(context, id, saved, startedIn);
+        } catch (RuntimeException failure) {
+            Logger.printException(() -> "Could not remember the saved post", failure);
+        }
+    }
 
     /** The generation a save starts in, read as the save is accepted. */
     static long generation() {

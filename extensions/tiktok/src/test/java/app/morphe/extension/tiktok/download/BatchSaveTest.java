@@ -15,6 +15,7 @@ import android.os.Looper;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +63,11 @@ public class BatchSaveTest {
         Settings.DOWNLOAD_VIDEO_QUALITY.resetToDefault();
         Settings.DOWNLOAD_WITHOUT_SOUND.resetToDefault();
         Settings.REMOVE_DOWNLOAD_WATERMARK.resetToDefault();
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.resetToDefault();
+        Settings.CHECK_SAVED_VIDEOS.resetToDefault();
+        SettingsStatus.advancedDownloadsEnabled = false;
+        SlideshowVideo.makerForTests = null;
+        SavedVideoArchiveAccess.reset(context);
     }
 
     private static void idle() {
@@ -224,5 +230,32 @@ public class BatchSaveTest {
 
         gear.videoExtra = "{\"audio_file_id\":\"missing\"}";
         assertTrue("a silent video was offered as a complete one", BatchSave.source(video, "highest", false).video.isEmpty());
+    }
+
+    /** #197: with Save photo posts as a video on, a picked photo post comes out as that video. */
+    @Test public void aPickedPhotoPostIsSavedAsAVideoWhenThatSwitchIsOn() throws Exception {
+        SettingsStatus.advancedDownloadsEnabled = true;
+        Settings.DOWNLOAD_PHOTOS_AS_VIDEO.save(true);
+        Settings.CHECK_SAVED_VIDEOS.save(true);
+        List<String> made = new ArrayList<>();
+        SlideshowVideo.makerForTests = name -> {
+            made.add(name);
+            java.io.File file = new java.io.File(context.getCacheDir(), "batch-photo-video.mp4");
+            java.nio.file.Files.write(file.toPath(), new byte[]{1, 2, 3, 4});
+            return new MediaFileWriter.Saved(name, null, file);
+        };
+        Object post = new AdvancedDownloadsTest.PhotoPost("batch-photo-post", List.of(
+                new AdvancedDownloadsTest.Photo("https://example.com/batch/0"),
+                new AdvancedDownloadsTest.Photo("https://example.com/batch/1")));
+        MediaFileWriter.Saved[] last = {null};
+
+        assertEquals(BatchSave.Result.SAVED, BatchSave.saveOne(context, post, last));
+        assertEquals("the photo post wasn't made into a video", 1, made.size());
+        assertNotNull(last[0]);
+        assertTrue("the video isn't in the record of saved posts",
+                SavedVideoArchiveAccess.isRecorded(context, "batch-photo-post"));
+        assertEquals("a second pick of the same post made another video", BatchSave.Result.ALREADY_SAVED,
+                BatchSave.saveOne(context, post, last));
+        assertEquals(1, made.size());
     }
 }

@@ -175,15 +175,17 @@ public final class OriginalPhotos {
                 SystemClock.elapsedRealtime());
         // The scheduler already reports a refusal. A requested image save must not become a
         // native converted video merely because the image queue is full.
-        return queue(context.getApplicationContext(), run) || owned;
+        return queue(context.getApplicationContext(), run, true) || owned;
     }
 
     /**
      * Queues the save of {@code run}'s photos, in the post's order. False only when the media
      * queue refused it, which the queue has already said; a save of the same post still running
-     * says so and counts as taken.
+     * says so and counts as taken. With Check for already-saved videos on, a post saved here
+     * before is offered Open or Save again first ({@code check}, false for Save again and Retry),
+     * and the first photo that lands is recorded under the post's id.
      */
-    private static boolean queue(Context app, Retry run) {
+    private static boolean queue(Context app, Retry run, boolean check) {
         String key = jobKey(run.id);
         if (!ACTIVE.add(run.id)) {
             Utils.showToastShort(MediaJobScheduler.busyMessage(key));
@@ -192,15 +194,40 @@ public final class OriginalPhotos {
         List<Integer> chosen = run.positions;
         // Every original-photo save has a file count and Cancel, including one chosen still.
         SaveProgress progress = SaveProgress.queuedFiles(chosen.size());
+        boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
+        // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
+        long archiveGeneration = SavedVideoArchive.generation();
+        AtomicBoolean asking = new AtomicBoolean();
         MediaJobScheduler.Job job = progress.submit("original photos", key, () -> {
             // The banner's Open lands on the newest photo, which is where the gallery puts the rest.
             MediaFileWriter.Saved[] last = {null};
+            // The record's Open goes to the first photo that landed.
+            MediaFileWriter.Saved[] first = {null};
             try {
+                if (checkSaved && check) {
+                    Runnable saveAgain = () -> {
+                        ACTIVE.remove(run.id);
+                        if (!queue(app, run, false)) Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
+                    };
+                    asking.set(true);
+                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, run.id, saveAgain,
+                            () -> ACTIVE.remove(run.id));
+                    if (found == SavedVideoArchive.Check.OFFERED) {
+                        progress.dismiss();
+                        return;
+                    }
+                    asking.set(false);
+                    if (found == SavedVideoArchive.Check.FAILED) return;
+                }
                 // A photo that fails is skipped and the rest still land, and the result says what did.
                 SaveProgress.Outcome outcome = progress.run(index -> {
                     MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);
                     last[0] = savePhoto(app, run, chosen.get(index));
+                    if (first[0] == null) first[0] = last[0];
                 });
+                if (checkSaved && first[0] != null) {
+                    SavedVideoArchive.rememberQuietly(app, run.id, first[0], archiveGeneration);
+                }
                 if (outcome.saved == 0 && outcome.cancelled == 0) {
                     Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
                 } else {
@@ -213,7 +240,9 @@ public final class OriginalPhotos {
                 Logger.printException(() -> "Original photo download failed", exception);
                 Utils.showToastLong(L10n.t("None of the photos could be saved. Try again."));
             }
-        }, () -> ACTIVE.remove(run.id));
+        }, () -> {
+            if (!asking.get()) ACTIVE.remove(run.id);
+        });
         if (job == null) return false;
         String saying = L10n.quantity(app, chosen.size(), "Saving one original photo", "Saving %1$s original photos");
         progress.acknowledge(saying, saying);
@@ -255,7 +284,7 @@ public final class OriginalPhotos {
             return;
         }
         Context context = Utils.getContext();
-        if (context == null || !queue(context.getApplicationContext(), failed)) failed.giveBack();
+        if (context == null || !queue(context.getApplicationContext(), failed, false)) failed.giveBack();
     }
 
     /** The media queue's key for a post's photo save. A key, never text the reader sees. */

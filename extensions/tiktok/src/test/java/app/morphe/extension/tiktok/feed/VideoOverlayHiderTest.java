@@ -846,6 +846,83 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    /**
+     * The like button's row goes with it, so the rail closes up (#190).
+     *
+     * <p>47.4.3 stacks each button in a slot, and the like button alone sits inside a 120 px row
+     * (g8m) with its count. Hiding the heart and the count left that row standing, a hole
+     * between the avatar and the comments (Login2, 2026-10-18). A button that is its slot's own
+     * child needs nothing more, and the slot itself is never touched.
+     */
+    @Test
+    public void theLikeButtonsRowGoesWithItSoTheRailClosesUp() {
+        VideoOverlayHider.resolveForTests("47.4.3:exj", 0x7f0a0340);
+        VideoOverlayHider.resolveForTests("47.4.3:g8a", 0x7f0a0341);
+        VideoOverlayHider.resolveForTests("47.4.3:g8c", 0x7f0a0342);
+        VideoOverlayHider.resolveForTests("47.4.3:eq2", 0x7f0a0343);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setOrientation(LinearLayout.VERTICAL);
+
+            FrameLayout likeSlot = new FrameLayout(activity);
+            likeSlot.setId(0x7f0a0340);
+            LinearLayout likeRow = new LinearLayout(activity);
+            View heart = new View(activity);
+            heart.setId(0x7f0a0341);
+            LinearLayout count = new LinearLayout(activity);
+            count.setId(0x7f0a0342);
+            count.addView(new TextView(activity));
+            likeRow.addView(heart);
+            likeRow.addView(count);
+            likeSlot.addView(likeRow, new FrameLayout.LayoutParams(128, 120));
+            column.addView(likeSlot);
+
+            FrameLayout commentSlot = new FrameLayout(activity);
+            commentSlot.setId(0x7f0a0340);
+            View comment = new View(activity);
+            comment.setId(0x7f0a0343);
+            commentSlot.addView(comment, new FrameLayout.LayoutParams(128, 120));
+            column.addView(commentSlot);
+            activity.setContentView(column);
+
+            Settings.HIDE_RAIL_LIKE.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, heart.getVisibility());
+            assertEquals(View.GONE, count.getVisibility());
+            assertEquals("the empty row kept its 120 px in the rail", View.GONE, likeRow.getVisibility());
+            assertEquals("the slot is TikTok's to show", View.VISIBLE, likeSlot.getVisibility());
+            assertEquals(View.VISIBLE, comment.getVisibility());
+
+            Settings.HIDE_RAIL_LIKE.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, heart.getVisibility());
+            assertEquals("the row didn't come back with the heart", View.VISIBLE, likeRow.getVisibility());
+
+            Settings.HIDE_RAIL_COMMENTS.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, comment.getVisibility());
+            assertEquals("a button's own slot was hidden", View.VISIBLE, commentSlot.getVisibility());
+            assertEquals(View.VISIBLE, likeRow.getVisibility());
+
+            // A row that still holds something showing stays.
+            View other = new View(activity);
+            likeRow.addView(other);
+            heart.setVisibility(View.GONE);
+            count.setVisibility(View.GONE);
+            VideoOverlayHider.collapseWrappers(heart, true, 0x7f0a0340);
+            assertEquals(View.VISIBLE, likeRow.getVisibility());
+        } finally {
+            Settings.HIDE_RAIL_LIKE.save(false);
+            Settings.HIDE_RAIL_COMMENTS.save(false);
+            VideoOverlayHider.resolveForTests("47.4.3:exj", 0);
+            VideoOverlayHider.resolveForTests("47.4.3:g8a", 0);
+            VideoOverlayHider.resolveForTests("47.4.3:g8c", 0);
+            VideoOverlayHider.resolveForTests("47.4.3:eq2", 0);
+        }
+    }
+
     @Test
     public void countRowsAndTheirInnerTextAnchorsGoWithoutTheButtons() {
         String[] rowNames = {"47.4.3:g8c", "47.4.3:ek4", "47.4.3:i8a", "47.4.3:w70"};

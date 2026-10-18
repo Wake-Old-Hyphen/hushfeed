@@ -615,6 +615,8 @@ Hide paid partnerships	Скрывать платные партнёрства
 Hide people and options by name	Скрывать людей и варианты по названию
 Hide photo posts	Скрывать фотопубликации
 Hide picture comments	Скрывать комментарии-картинки
+Hide reply previews	Скрывать превью ответов
+Don't open a reply under each comment. View replies still shows all of them.	Не раскрывать ответ под каждым комментарием. Кнопка просмотра ответов по-прежнему показывает все.
 Hide playlist videos	Скрывать видео из плейлистов
 Hide promotional music	Скрывать рекламную музыку
 Hide comment typing suggestions	Скрывать подсказки при наборе комментария
@@ -2080,7 +2082,7 @@ Copy the full link for short links	Копировать полную ссылк�
 When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.	Когда «Копировать ссылку» даёт короткую ссылку vt.tiktok.com или vm.tiktok.com, Hushfeed один раз открывает её в фоне, находит полную ссылку на видео и копирует её. TikTok видит это открытие, и оно идёт напрямую, даже если включён прокси. Ссылки, которые вы отправляете в другое приложение, уходят как есть.
 Full link copied	Полная ссылка скопирована
 Mark saved videos	Отмечать сохранённые видео
-Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.	Ставит ✓ у видео, сохранённых через Hushfeed, в сетках профилей и рядом со временем в ленте. Работает только при включённом параметре «Проверять уже сохранённые видео». Фотопосты не отмечаются.
+Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.	Ставит ✓ у видео и фотопостов, сохранённых через Hushfeed, в сетках профилей и рядом со временем в ленте. Работает только при включённом параметре «Проверять уже сохранённые видео».
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.	Также подменяет сохранённый регион и код страны, которые TikTok отправляет с каждым запросом. При входе по-прежнему отправляется ваш настоящий регион. IP-адрес и собственные правила вашего аккаунта продолжают действовать.
 Turn off double tap to react	Отключить двойное касание для реакции
 A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.	Двойное касание сообщения больше не ставит на него сердечко. Одиночное касание и долгое нажатие работают как раньше.

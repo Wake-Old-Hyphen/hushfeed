@@ -367,6 +367,30 @@ class VerifiedResourceStripperTest {
     }
 
     @Test
+    fun `a real language TikTok has no pack for is skipped while a typo still refuses`() {
+        // #196: "en, sr" stopped the whole run because no TikTok build carries Serbian.
+        val available = setOf("en", "es", "tr")
+        assertEquals(setOf("en"), parseLanguageSelection("en, sr", available))
+        assertEquals("sr alone still removes the rest", setOf("en"), parseLanguageSelection("sr", available))
+        assertEquals(setOf("en", "tr"), parseLanguageSelection("SR, tr", available))
+        assertEquals(available, parseLanguageSelection("all, sr", available))
+        assertEquals(setOf("sr"), languagesNotShipped("en, sr, tr, xx", available))
+        val typo = assertThrows(PatchException::class.java) { parseLanguageSelection("sr, xx", available) }
+        assertTrue(typo.message.orEmpty(), typo.message.orEmpty().contains("xx isn't a language code"))
+        assertTrue(typo.message.orEmpty(), typo.message.orEmpty().contains("This TikTok has: en, es, tr."))
+        assertFalse(typo.message.orEmpty(), typo.message.orEmpty().contains("sr"))
+
+        val root = temporary.newFolder("missing-language")
+        val english = root.write("assets/strings#lang_en/en.xrsc", "english")
+        val spanish = root.write("assets/strings#lang_es/es.xrsc", "spanish")
+        val result = stripVerifiedLanguagePacks(root, "en, sr", listOf(languageContract(root, setOf("en", "es"))))
+        assertEquals(setOf("sr"), result.missingLocales)
+        assertEquals(setOf("en"), result.retainedLocales)
+        assertArrayEquals("english".toByteArray(), english.readBytes())
+        assertTrue(spanish.readBytes().isEmpty())
+    }
+
+    @Test
     fun `language inventory is verified before selected packs are emptied`() {
         val root = temporary.newFolder("languages")
         root.write("assets/strings#lang_en/en.xrsc", "english")

@@ -29,11 +29,14 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.SwitchPayload
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveControls;"
 private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRecordChip;"
@@ -337,6 +340,95 @@ internal fun hookQualityList(viewCreated: MutableMethod) {
     viewCreated.addInstruction(
         0,
         "invoke-static/range {p1 .. p1}, $QUALITY_LIST_COLORS->readableQualityList(Landroid/view/View;)V",
+    )
+}
+
+/** The LIVE profile card's header cell, the bio among it, real-named on 47.4.3. */
+internal const val LIVE_PROFILE_HEADER = "Lcom/bytedance/android/livesdk/profile/cell/HeaderCell;"
+
+private const val COLOR_SPAN = "Landroid/text/style/ForegroundColorSpan;"
+
+/**
+ * The profile card's bio being shown (HeaderCell.LJIJJLI on 47.4.3, #159). A translated bio ends
+ * in a "See original" link. Its ForegroundColorSpan gets the right color from the card's theme,
+ * but the link also carries a replacement span (X.0Y3Y), which Android draws without color spans,
+ * in the view's own text color: the light theme's dark one, on the dark card.
+ */
+internal object LiveProfileBioFingerprint : Fingerprint(
+    definingClass = LIVE_PROFILE_HEADER,
+    returnType = "V",
+    parameters = listOf(),
+    custom = { method, _ -> bioLinkColor(method) != null },
+)
+
+/** The link color call at [call], the register its result moves into, and the one holding the bio view. */
+internal class BioLinkColor(val call: Int, val color: Int, val view: Int)
+
+/**
+ * In [method], the static (int, Context) color call feeding the bio link's ForegroundColorSpan, the
+ * register its result moves into and the span takes, and the register holding the bio view: the
+ * receiver of the setSuffixText the link text goes through, read from a field of the view's type
+ * before the call and written by nothing up to setSuffixText, with no branch, switch case or
+ * handler landing between the read and the instruction after the result, where one would skip
+ * the hook or reach it with other registers. Null when [method] isn't the bio.
+ */
+internal fun bioLinkColor(method: Method): BioLinkColor? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    fun ref(at: Int) = (code[at] as? ReferenceInstruction)?.reference
+    fun params(at: Int) = (ref(at) as? MethodReference)?.parameterTypes?.map(CharSequence::toString)
+    fun writes(at: Int, register: Int): Boolean {
+        val written = code[at] as? OneRegisterInstruction ?: return false
+        return (code[at].opcode.setsRegister() && written.registerA == register) ||
+            (code[at].opcode.setsWideRegister() && written.registerA + 1 == register)
+    }
+    val span = code.indices.firstOrNull {
+        code[it].opcode == Opcode.NEW_INSTANCE && (ref(it) as? TypeReference)?.type == COLOR_SPAN
+    } ?: return null
+    val made = (span + 1 until code.size).firstOrNull {
+        code[it].opcode == Opcode.INVOKE_DIRECT && (ref(it) as? MethodReference)?.definingClass == COLOR_SPAN
+    } ?: return null
+    val call = (made - 1 downTo span + 1).firstOrNull {
+        code[it].opcode == Opcode.INVOKE_STATIC && (ref(it) as? MethodReference)?.returnType == "I" &&
+            params(it) == listOf("I", "Landroid/content/Context;")
+    } ?: return null
+    val suffix = (made + 1 until code.size).firstOrNull {
+        code[it].opcode == Opcode.INVOKE_VIRTUAL && (ref(it) as? MethodReference)?.name == "setSuffixText" &&
+            params(it) == listOf("Ljava/lang/CharSequence;")
+    } ?: return null
+    if (code.getOrNull(call + 1)?.opcode != Opcode.MOVE_RESULT) return null
+    val color = (code[call + 1] as OneRegisterInstruction).registerA
+    val init = code[made] as? FiveRegisterInstruction ?: return null
+    if (init.registerCount != 2 || init.registerD != color || (call + 2 until made).any { writes(it, color) }) return null
+    val view = (code[suffix] as? FiveRegisterInstruction)?.registerC ?: return null
+    val read = (call - 1 downTo 0).firstOrNull { writes(it, view) } ?: return null
+    if (code[read].opcode != Opcode.IGET_OBJECT ||
+        (ref(read) as? FieldReference)?.type != (ref(suffix) as MethodReference).definingClass
+    ) return null
+    if ((call + 1 until suffix).any { writes(it, view) }) return null
+    val addresses = code.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    val byAddress = code.indices.associateBy { addresses[it] }
+    // A switch's offset points at its payload, whose cases are offsets from the switch itself.
+    val targets = code.indices.flatMap { at ->
+        val target = (code[at] as? OffsetInstruction)?.let { addresses[at] + it.codeOffset } ?: return@flatMap emptyList()
+        val payload = byAddress[target]?.let { code[it] as? SwitchPayload }
+        payload?.switchElements?.map { addresses[at] + it.offset } ?: listOf(target)
+    }.toSet() + method.implementation!!.tryBlocks.flatMap { block -> block.exceptionHandlers.map { it.handlerCodeAddress } }
+    if ((read + 1..call + 2).any { addresses[it] in targets }) return null
+    return BioLinkColor(call, color, view)
+}
+
+/**
+ * Hands the bio link's color and the bio view to the extension right after the color is picked.
+ * While Dark LIVE panels is on in dark mode, the extension makes it the view's text color, which
+ * the link's replacement span draws with. The hook writes no register. The color and the view
+ * are both named by non-range invokes (the span's init and setSuffixText), so they're v0..v15
+ * and fit the hook's call.
+ */
+internal fun hookBioLink(bio: MutableMethod) {
+    val link = bioLinkColor(bio) ?: throw PatchException("LIVE controls: the profile card's bio link color wasn't found")
+    bio.addInstructions(
+        link.call + 2,
+        "invoke-static {v${link.color}, v${link.view}}, $PANEL_THEME->bioLinkColor(ILjava/lang/Object;)V",
     )
 }
 
@@ -790,6 +882,11 @@ val liveControlsPatch = bytecodePatch(
             it.name == "darkAppTheme" && it.returnType == "I" && it.parameterTypes.isEmpty()
         }.returnEarly(darkTheme)
         hookRoomTheme(LivePlayActivityThemeFingerprint.method)
+        // A translated bio's "See original" link read dark on the dark profile card (Login2,
+        // 2026-10-18): its replacement span draws it in the bio view's own light-theme text
+        // color, skipping the link color. The extension makes the link color the view's text
+        // color while the switch is on in dark mode.
+        hookBioLink(LiveProfileBioFingerprint.method)
         // The older quality list's rows can read white on white in dark mode, switch or no
         // switch; the extension gives poorly contrasted text a readable color there.
         hookQualityList(LiveDefinitionListFingerprint.method)

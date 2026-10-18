@@ -234,6 +234,17 @@ public final class VideoOverlayHider {
      * The column keeps this name on every build so far.
      */
     private static final String PAGER_COLUMN_ID = "viewpager_container";
+    /**
+     * The slot the action column stacks each rail button in. The like button sits one wrapper
+     * deeper than the rest: slot, then a 120 px row holding the heart and its count. Hiding both
+     * left that row standing as a hole between the avatar and the comments (Login2, 2026-10-18,
+     * #190), so collapseRailWrappers takes the row away once it holds nothing that shows.
+     */
+    private static final String RAIL_SLOT_ID = "47.4.3:exj";
+    /** How far up from a button the slot may be; a button with no slot that close is left alone. */
+    private static final int RAIL_SLOT_DEPTH = 3;
+    /** Wrappers collapseWrappers hid, so the pass keeps looking them up until they're back. */
+    private static final Map<View, Boolean> RAIL_WRAPPERS_HIDDEN = new WeakHashMap<>();
     /** Whether the last pass left the rail buttons scaled, so the next one can put them back. */
     private static boolean scaledLastPass;
     /** The index of the music row in {@link #RAIL_BUTTON_IDS}; it spans the width and is not scaled. */
@@ -731,6 +742,8 @@ public final class VideoOverlayHider {
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
                             touchScale != 1f, detailPager);
+                    // After every target, so the like count is already gone when its row is weighed.
+                    collapseRailWrappers(activity, found, TRAVERSAL.selected, hidden);
                     settleStripColumns(strips);
                     if (detailPager && detailCommentBar) noteColumnChildren(strips);
                     alignBarRows(found, TRAVERSAL.selected, hidden, cellId);
@@ -1428,6 +1441,60 @@ public final class VideoOverlayHider {
     private static List<View> selectedViews(List<List<View>> found, int[] selected, int target) {
         int at = selected[target];
         return at >= 0 ? found.get(at) : new ArrayList<>();
+    }
+
+    /**
+     * Hides the wrappers between each hidden rail button and its slot once nothing in them
+     * shows, and puts back the ones this class hid when the button comes back; see
+     * {@link #RAIL_SLOT_ID}. The slot id is looked up only while a button is wanted hidden or a
+     * wrapper hidden here may need putting back.
+     */
+    private static void collapseRailWrappers(Activity activity, List<List<View>> found,
+            int[] selected, boolean[] hidden) {
+        boolean anyWanted = false;
+        for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
+            anyWanted |= hidden[firstCandidate(RAIL_TARGET_START + i)];
+        }
+        if (!anyWanted && RAIL_WRAPPERS_HIDDEN.isEmpty()) return;
+        int slotId = identifier(activity, activity.getPackageName(), RAIL_SLOT_ID);
+        if (slotId == 0) return;
+        for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
+            int target = RAIL_TARGET_START + i;
+            boolean wanted = hidden[firstCandidate(target)];
+            for (View button : selectedViews(found, selected, target)) {
+                collapseWrappers(button, wanted, slotId);
+            }
+        }
+    }
+
+    /**
+     * The wrappers from {@code button} up to (not including) the slot with {@code slotId},
+     * innermost first, each hidden only once all its children are gone. Nothing is touched when
+     * the slot isn't within {@link #RAIL_SLOT_DEPTH} levels, or when the button is the slot's
+     * own child, since the slot then wraps to nothing on its own.
+     */
+    static void collapseWrappers(View button, boolean hidden, int slotId) {
+        List<ViewGroup> wrappers = new ArrayList<>(RAIL_SLOT_DEPTH);
+        android.view.ViewParent parent = button.getParent();
+        while (parent instanceof ViewGroup && ((ViewGroup) parent).getId() != slotId) {
+            if (wrappers.size() == RAIL_SLOT_DEPTH) return;
+            wrappers.add((ViewGroup) parent);
+            parent = parent.getParent();
+        }
+        if (!(parent instanceof ViewGroup)) return;
+        for (ViewGroup wrapper : wrappers) {
+            if (hidden && !allChildrenGone(wrapper)) return;
+            setHidden(wrapper, hidden);
+            if (hidden) RAIL_WRAPPERS_HIDDEN.put(wrapper, Boolean.TRUE);
+            else RAIL_WRAPPERS_HIDDEN.remove(wrapper);
+        }
+    }
+
+    private static boolean allChildrenGone(ViewGroup group) {
+        for (int i = 0; i < group.getChildCount(); i++) {
+            if (group.getChildAt(i).getVisibility() != View.GONE) return false;
+        }
+        return true;
     }
 
     /**

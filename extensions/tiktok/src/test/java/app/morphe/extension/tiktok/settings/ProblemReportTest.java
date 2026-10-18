@@ -37,7 +37,8 @@ public class ProblemReportTest {
         assertTrue(url, url.startsWith("https://github.com/SysAdminDoc/HushFeed/issues/new?template=bug_report.yml&title=bug%3A%20&"));
         assertTrue(url, url.contains("&versions=Version%200.72.0%20for%20TikTok%2047.1.4%20%28version%20code%202024701040%29&"));
         assertTrue(url, url.contains("&device=samsung%20SM-S901U%2C%20Android%2015%20%28SDK%2035%29&"));
-        assertTrue(url, url.contains("&bug_description=What%20happened%3A%0A%0AWhat%20I%20expected%3A%0A&"));
+        // #197, #201: a filled What went wrong box came back untouched every time.
+        assertFalse(url, url.contains("bug_description"));
         assertFalse("a raw space, newline or plus slipped into the link",
                 url.contains(" ") || url.contains("\n") || url.contains("+"));
         String context = url.substring(url.indexOf("&additional_context=") + "&additional_context=".length());

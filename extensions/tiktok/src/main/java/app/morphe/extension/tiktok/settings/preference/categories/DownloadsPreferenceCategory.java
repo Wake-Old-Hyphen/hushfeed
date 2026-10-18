@@ -174,9 +174,9 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                             java.text.NumberFormat.getIntegerInstance().format(SavedVideoArchive.LIMIT)),
                     Settings.CHECK_SAVED_VIDEOS));
             addPreference(new TogglePreference(context, "Mark saved videos",
-                    "Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to "
-                            + "the time in the feed. Works only while Check for already-saved "
-                            + "videos is on. Photo posts aren't marked.",
+                    "Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile "
+                            + "grids and next to the time in the feed. Works only while Check "
+                            + "for already-saved videos is on.",
                     Settings.MARK_SAVED_VIDEOS));
             addPreference(new ForgetSavedVideosPreference(context));
         }

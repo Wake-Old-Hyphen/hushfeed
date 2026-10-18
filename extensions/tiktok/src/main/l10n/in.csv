@@ -550,6 +550,8 @@ Hide paid partnerships,Sembunyikan kemitraan berbayar
 Hide people and options by name,Sembunyikan orang dan opsi berdasarkan nama
 Hide photo posts,Sembunyikan publikasi foto
 Hide picture comments,Sembunyikan komentar bergambar
+Hide reply previews,Sembunyikan pratinjau balasan
+Don't open a reply under each comment. View replies still shows all of them.,Jangan buka satu balasan di bawah setiap komentar. Lihat balasan tetap menampilkan semuanya.
 Hide playlist videos,Sembunyikan video playlist
 Hide promotional music,Sembunyikan musik promosi
 Hide comment typing suggestions,Sembunyikan saran saat mengetik komentar
@@ -1902,7 +1904,7 @@ Copy the full link for short links,Salin tautan lengkap untuk tautan pendek
 "When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.","Saat Salin tautan memberi tautan pendek vt.tiktok.com atau vm.tiktok.com, Hushfeed membukanya sekali di latar belakang untuk menemukan tautan video lengkap, lalu menyalin yang itu. TikTok melihat kunjungan itu, dan terhubung langsung meskipun proxy aktif. Tautan yang kamu kirim ke aplikasi lain tetap seperti semula."
 Full link copied,Tautan lengkap disalin
 Mark saved videos,Tandai video tersimpan
-"Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.","Menaruh ✓ pada video yang kamu simpan dengan Hushfeed, di grid profil dan di samping waktu di feed. Hanya berfungsi saat Periksa video yang sudah disimpan menyala. Kiriman foto tidak ditandai."
+"Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.","Menaruh ✓ pada video dan kiriman foto yang kamu simpan dengan Hushfeed, di grid profil dan di samping waktu di feed. Hanya berfungsi saat Periksa video yang sudah disimpan menyala."
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.,"Juga mengganti wilayah tersimpan dan kode negara yang dikirim TikTok di setiap permintaan. Saat masuk, wilayah aslimu tetap dikirim. Alamat IP dan aturan akunmu sendiri tetap berlaku."
 Turn off double tap to react,Matikan ketuk dua kali untuk bereaksi
 A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.,Ketuk dua kali pada pesan tidak lagi menambahkan hati ke pesan itu. Ketuk sekali dan tekan lama tetap berfungsi seperti biasa.

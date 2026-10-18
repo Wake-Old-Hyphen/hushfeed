@@ -1099,6 +1099,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_LINKS = new BooleanSetting("comment_links", FALSE);
     public static final BooleanSetting HIDE_COMMENT_MEDIA = new BooleanSetting("hide_comment_media", FALSE);
     public static final BooleanSetting HIDE_COMMENT_POLLS = new BooleanSetting("hide_comment_polls", FALSE);
+    /** Drops the reply TikTok opens under a comment before View replies is tapped (#193). */
+    public static final BooleanSetting HIDE_COMMENT_REPLY_PREVIEWS = new BooleanSetting("hide_comment_reply_previews", FALSE);
     /** Answers no survey from TikTok's comment survey config, so a comment list carries none. */
     public static final BooleanSetting HIDE_COMMENT_SURVEYS = new BooleanSetting("hide_comment_surveys", FALSE);
     /** Keeps the photo, @ and gift buttons in the comment box gone. Emoji and sending stay. */

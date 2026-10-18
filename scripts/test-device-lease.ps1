@@ -300,6 +300,7 @@ namespace HushfeedFixture {
             }
             get-state { 'device' }
             pull {
+                if ($script:packageMode -eq 'pull-refused') { 'adb: error: fixture refusal'; $global:LASTEXITCODE = 1; return }
                 $script:pulledFixture = $args[4]
                 [IO.File]::WriteAllText($script:pulledFixture, 'fake package bytes')
             }
@@ -341,6 +342,11 @@ namespace HushfeedFixture {
     Assert-InstalledApkSigner @packageArguments -SigningSession $signingFixture
     Assert-Lease ($script:packageCalls.Count -eq 2 -and $script:packageCalls[1] -like '*pull*') 'Signer check did not query then pull.'
     Assert-Lease (-not [IO.File]::Exists($script:pulledFixture)) 'Signer check left its local temporary file.'
+    $script:packageMode = 'pull-refused'
+    $refusal = $null
+    try { Assert-InstalledApkSigner @packageArguments -SigningSession $signingFixture } catch { $refusal = $_.Exception.Message }
+    Assert-Lease ($refusal -like '*fixture.package: adb: error: fixture refusal') "A refused pull hid adb's reason: $refusal"
+    $script:packageMode = 'present'
     Remove-DeviceLease $script:packageLease
     foreach ($mode in 'expire-state', 'expire-pull', 'expire-uninstall') {
         $script:packageLease = New-FixtureLease

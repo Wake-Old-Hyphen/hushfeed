@@ -109,7 +109,12 @@ public final class ProblemReport {
         return model + ", Android " + facts.androidRelease + " (SDK " + facts.sdk + ")";
     }
 
-    /** The two lines the reporter fills in. */
+    /**
+     * The two lines the reporter fills in, at the end of the body. The link leaves the form's
+     * What went wrong box empty, where the form shows them as a hint: every report sent with them
+     * filled in came back with nothing typed under them (four by 2026-10-18), and two reporters
+     * said the box wouldn't take their text (#197, #201).
+     */
     static String whatHappened() {
         return WHAT_HAPPENED + "\n\n" + WHAT_EXPECTED + "\n";
     }
@@ -130,7 +135,6 @@ public final class ProblemReport {
                 + "&title=" + encode(TITLE)
                 + "&versions=" + encode(versions(facts))
                 + "&device=" + encode(device(facts))
-                + "&bug_description=" + encode(whatHappened())
                 + "&additional_context=";
         int fits = 0;
         int tooLong = BODY_LIMIT - head(facts).length() - tail().length() + 1;

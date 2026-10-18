@@ -555,6 +555,8 @@ Hide paid partnerships	Esconder as parcerias pagas
 Hide people and options by name	Esconder pessoas e opções por nome
 Hide photo posts	Esconder as publicações de fotos
 Hide picture comments	Esconder os comentários com imagem
+Hide reply previews	Esconder prévias de respostas
+Don't open a reply under each comment. View replies still shows all of them.	Não abrir uma resposta embaixo de cada comentário. Ver respostas ainda mostra todas.
 Hide playlist videos	Esconder os vídeos de playlists
 Hide promotional music	Esconder a música promocional
 Hide comment typing suggestions	Ocultar sugestões ao digitar comentários
@@ -1912,7 +1914,7 @@ Copy the full link for short links	Copiar o link completo nos links curtos
 When Copy link gives a short vt.tiktok.com or vm.tiktok.com link, Hushfeed opens it once in the background to find the full video link and copies that instead. TikTok sees that visit, and it connects directly even when a proxy is on. Links you send to another app go out as they were.	Quando Copiar link dá um link curto vt.tiktok.com ou vm.tiktok.com, o Hushfeed o abre uma vez em segundo plano para achar o link completo do vídeo e copia esse. O TikTok vê essa visita, e ela conecta direto mesmo com um proxy ativo. Os links que você envia para outro app saem como estavam.
 Full link copied	Link completo copiado
 Mark saved videos	Marcar vídeos salvos
-Puts a ✓ by videos you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on. Photo posts aren't marked.	Coloca um ✓ nos vídeos que você salvou com o Hushfeed, nas grades de perfil e ao lado da hora no feed. Só funciona enquanto Verificar vídeos já salvos estiver ligado. Publicações de fotos não são marcadas.
+Puts a ✓ by videos and photo posts you saved with Hushfeed, on profile grids and next to the time in the feed. Works only while Check for already-saved videos is on.	Coloca um ✓ nos vídeos e nas publicações de fotos que você salvou com o Hushfeed, nas grades de perfil e ao lado da hora no feed. Só funciona enquanto Verificar vídeos já salvos estiver ligado.
 Also replaces the saved region and country code TikTok sends with every request. Signing in still sends your real region. Your IP address and your account's own rules still apply.	Também substitui a região salva e o código de país que o TikTok envia a cada solicitação. Ao entrar, a sua região real ainda é enviada. Seu endereço IP e as regras da sua conta continuam valendo.
 Turn off double tap to react	Desativar toque duplo para reagir
 A double tap on a message no longer adds a heart to it. A single tap and a long press work as before.	Um toque duplo numa mensagem não adiciona mais um coração a ela. O toque simples e o toque longo funcionam como antes.

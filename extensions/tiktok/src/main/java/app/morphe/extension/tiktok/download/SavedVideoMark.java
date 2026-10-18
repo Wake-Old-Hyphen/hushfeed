@@ -18,8 +18,8 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * keeps. That record only takes saves made while the check is on, so the mark needs the check
  * too: with it off a save leaves no trace, and a mark that covered only the saves from before
  * would pass for one that covers them all. It's the same record the check offers Open or Save
- * again from, so a video deleted since keeps its mark until the record is forgotten, and photo
- * posts, which the record never takes, are never marked.
+ * again from, so a video deleted since keeps its mark until the record is forgotten. Photo posts
+ * saved here are in the record too, under their aweme id, so they're marked the same way.
  *
  * <p>The grid binds its cells on the main thread, many in a frame, so this never reads the
  * database: the archive answers from the ids it holds in memory. They're read off the main

@@ -391,13 +391,17 @@ public final class CommentTools {
         boolean byWord = Settings.COMMENT_KEYWORD_FILTER.get();
         boolean media = Settings.HIDE_COMMENT_MEDIA.get();
         boolean polls = Settings.HIDE_COMMENT_POLLS.get();
-        if ((!byWord && !media && !polls) || commentItemList == null) {
+        boolean previews = Settings.HIDE_COMMENT_REPLY_PREVIEWS.get();
+        if ((!byWord && !media && !polls && !previews) || commentItemList == null) {
             return;
         }
 
         try {
             if (polls) {
                 clearPoll(commentItemList);
+            }
+            if (previews) {
+                clearReplyPreviews(commentItemList);
             }
             if (!byWord && !media) {
                 return;
@@ -450,6 +454,38 @@ public final class CommentTools {
             HookStatus.missingMember(
                     POLL_HOOK_FAMILY, "writable field", type.getName(), "pollInfo");
             Logger.printException(() -> "Could not hide the comment poll", ex);
+        }
+    }
+
+    /**
+     * TikTok sends the reply it opens under a comment inside that comment, as its reply list.
+     * Emptying the list leaves only View replies, which loads every reply from the server,
+     * the one that was opened included (#193). A reply page has no replies inside its
+     * replies, so it goes through here untouched.
+     */
+    private static void clearReplyPreviews(Object commentItemList) {
+        Object items = Reflect.readField(commentItemList, "items");
+        if (!(items instanceof List)) {
+            return;
+        }
+        int cleared = 0;
+        for (Object comment : (List<?>) items) {
+            Object replies = comment == null ? null
+                    : Reflect.property(comment, "getReplyComments", "replyComments");
+            if (!(replies instanceof List) || ((List<?>) replies).isEmpty()) {
+                continue;
+            }
+            try {
+                ((List<?>) replies).clear();
+                cleared++;
+            } catch (UnsupportedOperationException ex) {
+                Logger.printInfo(() -> "A reply preview list is immutable; it stays open");
+                return;
+            }
+        }
+        if (cleared > 0) {
+            final int count = cleared;
+            Logger.printDebug(() -> "Closed the reply preview under " + count + " comment(s)");
         }
     }
 

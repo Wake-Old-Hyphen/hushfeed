@@ -10,9 +10,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.widget.TextView;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** The theme LIVE panels inflate with while Dark LIVE panels is on in dark mode (#159). */
@@ -22,6 +26,11 @@ public final class LivePanelTheme {
     static final String THEMED_DIALOG = "com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment";
     /** The base of LIVE's sheet pages: the fan club sheets and most newer LIVE panels. */
     static final String SHEET = "com.bytedance.android.live.design.view.sheet.LiveSheetFragment";
+    /** The daily ranking, whose sheet backgrounds are fixed light drawables it sets itself. */
+    static final String RANK_LIST = "com.bytedance.android.live.rank.impl.list.RankListDialog";
+    /** The trending ranking's first-time guide over the daily ranking, drawn on a fixed light image. */
+    static final String RANK_GUIDE = "com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog";
+    private static final Set<String> STOCK_PANELS = new HashSet<>(Arrays.asList(RANK_LIST, RANK_GUIDE));
 
     private static final Map<Class<?>, Boolean> PANEL_TYPES = new ConcurrentHashMap<>();
     private static volatile boolean overlayFailureLogged;
@@ -96,7 +105,29 @@ public final class LivePanelTheme {
         return 0;
     }
 
-    /** True for a themed LIVE dialog or a LIVE sheet page, by TikTok's own class names. */
+    /**
+     * Called by the LIVE profile card with the color it picked for a translated bio's "See
+     * original" link and the bio's view. The card's theme already gives the dark theme's light
+     * link color, but the link is drawn through a replacement span, which skips color spans and
+     * paints with the view's own text color, the light theme's dark one, so the link read dark
+     * on the dark card (#159). While Dark LIVE panels is on in dark mode, the view's text color
+     * becomes the link color. The bio's own text keeps the color its span gives it.
+     */
+    public static void bioLinkColor(int color, Object bio) {
+        try {
+            if (bio instanceof TextView && LiveControls.darkLivePanels(((TextView) bio).getContext())) {
+                ((TextView) bio).setTextColor(color);
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not color a LIVE bio's link", failure);
+        }
+    }
+
+    /**
+     * True for a themed LIVE dialog or a LIVE sheet page, by TikTok's own class names. A panel
+     * that paints its own fixed light backgrounds stays stock, subclasses included, or the
+     * overlay's light text lands on white: the daily ranking's title and its guide's text (#159).
+     */
     static boolean isPanel(Class<?> type) {
         Boolean known = PANEL_TYPES.get(type);
         if (known != null) {
@@ -105,6 +136,9 @@ public final class LivePanelTheme {
         boolean panel = false;
         for (Class<?> current = type; current != null; current = current.getSuperclass()) {
             String name = current.getName();
+            if (STOCK_PANELS.contains(name)) {
+                break;
+            }
             if (THEMED_DIALOG.equals(name) || SHEET.equals(name)) {
                 panel = true;
                 break;

@@ -64,7 +64,11 @@ function Assert-InstalledApkSigner {
         $pullOutput = @(& $Adb -s $Serial pull $base[0] $installedApk 2>&1)
         $status = $LASTEXITCODE
         $ErrorActionPreference = $preference
-        if ($status -ne 0) { throw "adb could not read the installed base APK for $PackageName." }
+        if ($status -ne 0) {
+            $detail = (@($pullOutput | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ }) -join ' ')
+            if (-not $detail) { $detail = "exit $status" }
+            throw "adb could not read the installed base APK for ${PackageName}: $detail"
+        }
         if ((Get-ApkSigningCertificate -Session $SigningSession -Apk $installedApk) -ne $SigningSession.Certificate) {
             throw "The installed $PackageName has a different signing certificate. Export its signing key before an in-place update."
         }

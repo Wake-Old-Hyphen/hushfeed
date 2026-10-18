@@ -13,12 +13,16 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.widget.TextView;
 
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment;
 import com.bytedance.android.live.design.view.sheet.LiveSheetFragment;
+import com.bytedance.android.live.rank.impl.list.RankListDialog;
+import com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,9 +37,11 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter;
 /**
  * #159: a LIVE panel's views inflate through its own (dark) LIVE overlay, applied with force,
  * only while Dark LIVE panels is on and its context is in dark mode, and only for themed dialogs
- * and sheet pages. Everything else gets TikTok's inflater back untouched. Under the same
- * conditions a LIVE room takes TikTok's dark app theme with force over its own light one, so
- * TikTok's generic sheets over a room open dark too.
+ * and sheet pages, the daily ranking and its guide aside. Everything else gets TikTok's inflater
+ * back untouched.
+ * Under the same conditions a LIVE room takes TikTok's dark app theme with force over its own light
+ * one, so TikTok's generic sheets over a room open dark too, and the profile card's bio view takes
+ * the link color, since its link is drawn in the view's own text color.
  */
 @RunWith(RobolectricTestRunner.class)
 public class LivePanelThemeTest {
@@ -168,10 +174,60 @@ public class LivePanelThemeTest {
         assertEquals("without the patch", stock, textColor(night));
     }
 
+    @Test public void theDailyRankingStaysStock() {
+        Settings.DARK_LIVE_PANELS.save(true);
+        RankListDialog ranking = new RankListDialog();
+        ranking.overlay = OVERLAY;
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        assertSame(tiktok, LivePanelTheme.darkLivePanel(ranking, tiktok));
+        PopularityRankingEducationDialog guide = new PopularityRankingEducationDialog();
+        guide.overlay = OVERLAY;
+        assertSame("its first-time guide", tiktok, LivePanelTheme.darkLivePanel(guide, tiktok));
+        // The same overlay on an ordinary themed dialog does wrap, so it's the ranking that's left out.
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(dialog(), tiktok));
+    }
+
+    @Test public void aBiosViewTakesTheLinkColorInDarkModeWithTheSwitch() {
+        int link = 0xe6ffffff;
+        TextView bio = new TextView(dark);
+        bio.setTextColor(Color.BLACK);
+        LivePanelTheme.bioLinkColor(link, bio);
+        assertEquals("the switch starts off", Color.BLACK, bio.getCurrentTextColor());
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.bioLinkColor(link, bio);
+        assertEquals(link, bio.getCurrentTextColor());
+
+        TextView lightBio = new TextView(light);
+        lightBio.setTextColor(Color.BLACK);
+        LivePanelTheme.bioLinkColor(link, lightBio);
+        assertEquals("light mode", Color.BLACK, lightBio.getCurrentTextColor());
+        LivePanelTheme.bioLinkColor(link, "bio");
+        LivePanelTheme.bioLinkColor(link, null);
+
+        TextView paused = new TextView(dark);
+        paused.setTextColor(Color.BLACK);
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        LivePanelTheme.bioLinkColor(link, paused);
+        assertEquals("paused", Color.BLACK, paused.getCurrentTextColor());
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        LivePanelTheme.bioLinkColor(link, paused);
+        assertEquals("without the patch", Color.BLACK, paused.getCurrentTextColor());
+    }
+
     @Test public void panelsAreFoundByTikToksClassNames() {
         assertEquals(LiveThemeAwareDialogFragment.class.getName(), LivePanelTheme.THEMED_DIALOG);
         assertEquals(LiveSheetFragment.class.getName(), LivePanelTheme.SHEET);
+        assertEquals(RankListDialog.class.getName(), LivePanelTheme.RANK_LIST);
+        assertEquals(PopularityRankingEducationDialog.class.getName(), LivePanelTheme.RANK_GUIDE);
         assertTrue(LivePanelTheme.isPanel(ShareDialog.class));
         assertTrue(!LivePanelTheme.isPanel(RoomFragment.class));
+        assertTrue(!LivePanelTheme.isPanel(RankListDialog.class));
+        assertTrue(!LivePanelTheme.isPanel(PopularityRankingEducationDialog.class));
+        assertTrue("a ranking subclass stays stock too", !LivePanelTheme.isPanel(HourlyRanking.class));
     }
+
+    /** A ranking built on the daily one, the way TikTok splits its list dialogs into variants. */
+    static class HourlyRanking extends RankListDialog { }
 }

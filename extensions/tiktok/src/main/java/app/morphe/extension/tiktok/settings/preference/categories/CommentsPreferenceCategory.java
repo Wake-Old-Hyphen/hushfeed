@@ -272,6 +272,12 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide reply previews",
+                    "Don't open a reply under each comment. View replies still shows all of them.",
+                    Settings.HIDE_COMMENT_REPLY_PREVIEWS
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Hide comment surveys",
                     "Hide the question cards TikTok sometimes puts in a comment list to ask what you think.",
                     Settings.HIDE_COMMENT_SURVEYS

@@ -84,6 +84,7 @@ public class CommentMediaFilterTest {
         Utils.setContext(RuntimeEnvironment.getApplication());
         Settings.HIDE_COMMENT_MEDIA.save(false);
         Settings.HIDE_COMMENT_POLLS.save(false);
+        Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(false);
         Settings.COMMENT_KEYWORD_FILTER.save(false);
         Settings.COMMENT_BLOCKED_KEYWORDS.save("");
         Settings.COMMENT_BLOCKED_USERS.save("");
@@ -95,6 +96,7 @@ public class CommentMediaFilterTest {
     public void tearDown() {
         CommentTools.signedInUserIdForTests = null;
         Settings.HIDE_COMMENT_POLLS.save(false);
+        Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(false);
         HookStatus.clear();
     }
 
@@ -188,6 +190,31 @@ public class CommentMediaFilterTest {
 
         assertEquals(Collections.singletonList(parent), page.items);
         assertEquals(Collections.singletonList(keptReply), parent.replyComments);
+    }
+
+    @Test
+    public void hidingReplyPreviewsEmptiesEachParentsRepliesAndKeepsTheComments() {
+        Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(true);
+
+        Comment parent = words("what do you think");
+        parent.replyComments = new ArrayList<>(Collections.singletonList(words("agreed")));
+        Comment quiet = words("nobody answered");
+        Comment frozen = words("immutable replies");
+        frozen.replyComments = Collections.singletonList(words("stays"));
+
+        ItemList page = new ItemList(new ArrayList<>(Arrays.asList(parent, quiet, frozen)));
+        CommentTools.onCommentListLoaded(page);
+
+        assertEquals(Arrays.asList(parent, quiet, frozen), page.items);
+        assertEquals(Collections.emptyList(), parent.replyComments);
+        assertNull(quiet.replyComments);
+        assertEquals(1, frozen.replyComments.size());
+
+        Settings.HIDE_COMMENT_REPLY_PREVIEWS.save(false);
+        Comment open = words("off again");
+        open.replyComments = new ArrayList<>(Collections.singletonList(words("shown")));
+        CommentTools.onCommentListLoaded(new ItemList(new ArrayList<>(Collections.singletonList(open))));
+        assertEquals(1, open.replyComments.size());
     }
 
     @Test

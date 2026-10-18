@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A photo post saved as one MP4: each photo held on screen for the chosen time, the post's sound
@@ -110,6 +111,15 @@ public final class SlideshowVideo {
      * video's path, so a failure says so itself instead of falling back.
      */
     static boolean start(Object aweme, Set<?> indices) {
+        return start(aweme, indices, true);
+    }
+
+    /**
+     * With Check for already-saved videos on, a post saved here before is offered Open or Save
+     * again first ({@code check}, false for Save again), and the video that's made is recorded
+     * under the post's id.
+     */
+    private static boolean start(Object aweme, Set<?> indices, boolean check) {
         Context context = Utils.getContext();
         if (context == null) return failed();
         if (android.os.Build.VERSION.SDK_INT < 29
@@ -142,10 +152,29 @@ public final class SlideshowVideo {
         }
         Context app = context.getApplicationContext();
         SaveProgress progress = SaveProgress.queued(1, Settings.DOWNLOAD_PROGRESS.get());
+        boolean checkSaved = Settings.CHECK_SAVED_VIDEOS.get();
+        // Read as the save is accepted: a forget in settings while it runs leaves it unrecorded.
+        long archiveGeneration = SavedVideoArchive.generation();
+        AtomicBoolean asking = new AtomicBoolean();
         MediaJobScheduler.Job job = progress.submit("photo video", key, () -> {
             MediaFileWriter.Saved[] saved = {null};
             boolean[] silent = {false};
             try {
+                if (checkSaved && check) {
+                    Runnable saveAgain = () -> {
+                        ACTIVE.remove(id);
+                        start(aweme, indices, false);
+                    };
+                    asking.set(true);
+                    SavedVideoArchive.Check found = SavedVideoArchive.check(app, id, saveAgain,
+                            () -> ACTIVE.remove(id));
+                    if (found == SavedVideoArchive.Check.OFFERED) {
+                        progress.dismiss();
+                        return;
+                    }
+                    asking.set(false);
+                    if (found == SavedVideoArchive.Check.FAILED) return;
+                }
                 SaveProgress.Outcome outcome = progress.run(index ->
                         saved[0] = make(app, sources, sound, seconds, name, path, progress, silent));
                 if (saved[0] == null) {
@@ -153,6 +182,7 @@ public final class SlideshowVideo {
                             ? SaveProgress.message(outcome, "")
                             : L10n.t("The video couldn't be made from these photos. Try again."));
                 } else {
+                    if (checkSaved) SavedVideoArchive.rememberQuietly(app, id, saved[0], archiveGeneration);
                     SaveNotice.saved(silent[0]
                             ? L10n.f("Saved the photos as a video in %1$s. The sound couldn't be added, so it's silent.", path)
                             : L10n.f("Saved the photos as a video in %1$s", path), saved[0]);
@@ -161,10 +191,38 @@ public final class SlideshowVideo {
                 Logger.printException(() -> "Photo video failed", exception);
                 Utils.showToastLong(L10n.t("The video couldn't be made from these photos. Try again."));
             }
-        }, () -> ACTIVE.remove(id));
+        }, () -> {
+            if (!asking.get()) ACTIVE.remove(id);
+        });
         if (job == null) return true;
         progress.acknowledge(L10n.t("Making a video of the photos"), L10n.t("Waiting to save video"));
         return true;
+    }
+
+    /** For the tests: stands in for drawing, muxing and publishing the video. */
+    interface Maker {
+        MediaFileWriter.Saved make(String name) throws IOException;
+    }
+
+    static volatile Maker makerForTests;
+
+    /**
+     * The video of all of a post's photos, made now on the media worker that's calling, for a run
+     * of picked posts (#197). It is the single save without its queue slot, its progress row and
+     * its banner: the run has its own.
+     */
+    static MediaFileWriter.Saved makeForRun(Context app, Object aweme) throws IOException {
+        List<List<String>> photos = OriginalPhotos.sources(aweme);
+        if (photos.isEmpty()) throw new IOException("The original photos aren't available");
+        String name = DownloadFilenameFormatter.formatSelectedVideoName(aweme);
+        String path = DownloadFilenameFormatter.destinationPath(aweme, false);
+        return make(app, photos, soundSources(aweme), seconds(Settings.PHOTO_VIDEO_SECONDS.get()), name, path,
+                SaveProgress.begin(1), new boolean[]{false});
+    }
+
+    /** Whether a save of this post's video holds it. */
+    static boolean saving(String id) {
+        return ACTIVE.contains(id);
     }
 
     private static boolean failed() {
@@ -179,6 +237,8 @@ public final class SlideshowVideo {
      */
     private static MediaFileWriter.Saved make(Context app, List<List<String>> photos, List<String> sound,
             int seconds, String name, String path, SaveProgress progress, boolean[] silent) throws IOException {
+        Maker stand = makerForTests;
+        if (stand != null) return stand.make(name);
         List<File> temporary = new ArrayList<>();
         try {
             MediaBudget.checkDiskSpace(app.getCacheDir(), -1L);

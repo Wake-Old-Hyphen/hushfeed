@@ -55,6 +55,7 @@ internal data class StripSummary(
     val bytes: Long,
     val alreadyStripped: Boolean,
     val retainedLocales: Set<String>? = null,
+    val missingLocales: Set<String> = emptySet(),
 )
 
 internal data class LanguageInventoryContract(
@@ -154,17 +155,20 @@ internal fun isStartupDex(path: String) =
 
 internal fun parseLanguageSelection(raw: String?, available: Set<String>): Set<String> {
     if ("en" !in available) throw PatchException("Language Pack Purger: the English fallback pack is missing.")
-    val selected = raw.orEmpty()
-        .split(',')
-        .map { it.trim().lowercase(Locale.ROOT) }
-        .filter(String::isNotEmpty)
-        .toMutableSet()
+    val selected = requestedLanguages(raw).toMutableSet()
+    // A real language this APK has no pack for (Serbian on every build, #196) has nothing to keep,
+    // and refusing would end the whole Manager run. Only a code that is no language at all is
+    // treated as a typo.
+    val missing = languagesNotShipped(raw, available)
+    selected.removeAll(missing)
     val unknown = selected - available - "all"
     if (unknown.isNotEmpty()) {
         throw PatchException(
-            "Language Pack Purger: unknown language code(s): ${unknown.sorted().joinToString()}.",
+            "Language Pack Purger: ${unknown.sorted().joinToString()} isn't a language code. " +
+                "This TikTok has: ${available.sorted().joinToString()}.",
         )
     }
+    if (missing.isNotEmpty() && selected.isEmpty()) selected.add("en")
 
     // Validate even a mixed "all, ..." list before keeping the full reviewed inventory.
     if (selected.isEmpty() || "all" in selected) return available.toSet()
@@ -175,6 +179,15 @@ internal fun parseLanguageSelection(raw: String?, available: Set<String>): Set<S
     if ("id" in selected || "in" in selected) selected.addAll(setOf("id", "in").filter { it in available })
     return selected
 }
+
+/** The ISO 639-1 languages in [raw] that [available] has no pack for, so there's nothing to keep. */
+internal fun languagesNotShipped(raw: String?, available: Set<String>): Set<String> =
+    requestedLanguages(raw).filter { it !in available && it in isoLanguages }.toSet()
+
+private fun requestedLanguages(raw: String?) =
+    raw.orEmpty().split(',').map { it.trim().lowercase(Locale.ROOT) }.filter(String::isNotEmpty)
+
+private val isoLanguages = Locale.getISOLanguages().toSet()
 
 /**
  * Verify the complete language inventory before emptying every unselected pack.
@@ -224,6 +237,7 @@ internal fun stripVerifiedLanguagePacks(
     }
 
     val selected = parseLanguageSelection(targetLocales, contract.directories)
+    val missing = languagesNotShipped(targetLocales, contract.directories)
     val targets = byCode.filterKeys { it !in selected }.values.flatMap { directory ->
         directory.walkTopDown().filter(File::isFile).toList()
     }
@@ -235,7 +249,7 @@ internal fun stripVerifiedLanguagePacks(
         if (kept.any { it.length() == 0L }) {
             throw PatchException("$patchName: a requested retained language has already been emptied.")
         }
-        return StripSummary(targets.size, 0L, alreadyStripped = true, retainedLocales = selected.toSet())
+        return StripSummary(targets.size, 0L, alreadyStripped = true, retainedLocales = selected.toSet(), missingLocales = missing)
     }
     if (targets.any { it.length() == 0L }) {
         throw PatchException("$patchName: the selected language resource set is only partly stripped.")
@@ -255,13 +269,12 @@ internal fun stripVerifiedLanguagePacks(
 
     val originalBytes = targets.sumOf(File::length)
     targets.forEach { it.writeBytes(byteArrayOf()) }
-    return StripSummary(targets.size, originalBytes, alreadyStripped = false, retainedLocales = selected.toSet())
+    return StripSummary(targets.size, originalBytes, alreadyStripped = false, retainedLocales = selected.toSet(), missingLocales = missing)
 }
 
 private const val LANGUAGE_DIRECTORY_PREFIX = "strings#lang_"
 
-private fun keepsEveryLanguage(raw: String?) =
-    raw.orEmpty().split(',').map { it.trim().lowercase(Locale.ROOT) }.filter(String::isNotEmpty).all { it == "all" }
+private fun keepsEveryLanguage(raw: String?) = requestedLanguages(raw).all { it == "all" }
 
 /**
  * What a person patching needs after any "not a build we know" refusal, which Manager shows as
