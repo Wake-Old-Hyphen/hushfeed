@@ -38,6 +38,10 @@ object BridgeTypeFlow {
     private const val CLASH = "!"
     private const val NEUTRAL = "*"
     private const val OBJECT = "Ljava/lang/Object;"
+    /** A 32-bit literal: dex constants are untyped, so it's an int or a float, whichever reads it. */
+    private const val CONST32 = "#"
+    /** A 64-bit literal: a long or a double, whichever reads it. */
+    private const val CONST64 = "##"
 
     data class Problem(val index: Int, val message: String) {
         override fun toString() = "[$index] $message"
@@ -81,9 +85,9 @@ object BridgeTypeFlow {
                 name.startsWith("const-string") -> set(state, instruction, "Ljava/lang/String;")
                 instruction.opcode == Opcode.CONST_CLASS -> set(state, instruction, "Ljava/lang/Class;")
                 name.startsWith("const") -> set(state, instruction, when {
+                    name.contains("wide") -> CONST64
                     (instruction as WideLiteralInstruction).wideLiteral == 0L -> ZERO
-                    name.contains("wide") -> "J"
-                    else -> "I"
+                    else -> CONST32
                 })
                 name.startsWith("move-result") -> set(state, instruction, returnTypeBefore(code, at))
                 instruction.opcode == Opcode.MOVE_EXCEPTION -> set(state, instruction, "Ljava/lang/Throwable;")
@@ -120,18 +124,26 @@ object BridgeTypeFlow {
 
     private fun isReference(type: String) = type.startsWith("L") || type.startsWith("[")
 
+    /** What a literal of [literal]'s kind can be read as. */
+    private fun reads(literal: String, type: String) = when (literal) {
+        ZERO -> isReference(type) || type == "I" || type == "F" || type == CONST32
+        CONST32 -> type == "I" || type == "F"
+        CONST64 -> type == "J" || type == "D"
+        else -> false
+    }
+
     private fun set(state: Array<String>, instruction: Instruction, type: String) {
         val register = (instruction as OneRegisterInstruction).registerA
         state[register] = type
-        if (type == "J" || type == "D") state[register + 1] = type
+        if (type == "J" || type == "D" || type == CONST64) state[register + 1] = type
     }
 
     private fun join(a: String, b: String): String = when {
         a == b -> a
         a == UNSET || b == UNSET || a == CLASH || b == CLASH -> CLASH
         a == NEUTRAL || b == NEUTRAL -> NEUTRAL
-        a == ZERO -> if (isReference(b) || b == "I") b else CLASH
-        b == ZERO -> if (isReference(a) || a == "I") a else CLASH
+        reads(a, b) -> b
+        reads(b, a) -> a
         isReference(a) && isReference(b) -> OBJECT
         else -> CLASH
     }
@@ -169,12 +181,12 @@ object BridgeTypeFlow {
             actual == UNSET -> "register v$register is not set on every path into $what"
             actual == CLASH -> "register v$register holds different kinds on the paths into $what"
             isReference(expected) -> when {
-                actual == ZERO || expected == OBJECT -> return
+                actual == ZERO || (expected == OBJECT && isReference(actual)) -> return
                 actual == OBJECT -> "register v$register has type $actual but expected $expected: two references met at a label"
                 isReference(actual) -> return
                 else -> "register v$register holds $actual but expected $expected"
             }
-            actual == ZERO && expected == "I" -> return
+            reads(actual, expected) -> return
             actual == expected -> return
             else -> "register v$register holds $actual but expected $expected"
         }

@@ -32,7 +32,9 @@ import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstructio
 import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.SwitchPayload
+import com.android.tools.smali.dexlib2.iface.instruction.ThreeRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -201,10 +203,29 @@ internal object LiveThemedDialogInflaterFingerprint : Fingerprint(
     parameters = listOf("Landroid/os/Bundle;"),
 )
 
-/** [LiveThemedDialogInflaterFingerprint] for LIVE's fragments; the extension only touches sheet pages. */
+/**
+ * [LiveThemedDialogInflaterFingerprint] for LIVE's fragments; the extension touches sheet pages
+ * and the pages under the daily ranking, and leaves the room's own fragments alone.
+ */
 internal object LiveThemedFragmentInflaterFingerprint : Fingerprint(
     definingClass = LIVE_THEMED_FRAGMENT,
     name = "onGetLayoutInflater",
+    returnType = "Landroid/view/LayoutInflater;",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/** The androidx fragment base every fragment builds on, real-named on 47.4.3. */
+internal const val ANDROIDX_FRAGMENT = "Landroidx/fragment/app/Fragment;"
+
+/**
+ * Where every fragment gets its layout inflater: onGetLayoutInflater's answer, stored and returned
+ * (#159). A plain fragment takes the room activity's inflater even under a LIVE panel, so the
+ * daily ranking's lists (GiftListFragment, a plain androidx fragment under each ranking page)
+ * took the room's dark app theme and read white on the ranking's white sheet.
+ */
+internal object FragmentInflaterFingerprint : Fingerprint(
+    definingClass = ANDROIDX_FRAGMENT,
+    name = "performGetLayoutInflater",
     returnType = "Landroid/view/LayoutInflater;",
     parameters = listOf("Landroid/os/Bundle;"),
 )
@@ -249,6 +270,172 @@ internal fun hookPanelInflater(inflater: MutableMethod) {
             """,
         )
     }
+}
+
+/**
+ * Hands the inflater onGetLayoutInflater answers to the extension right after the call, before
+ * the fragment stores it, so the stored copy its views inflate with is the same one. A shape
+ * that doesn't fit the four-bit call is refused instead of written.
+ */
+internal fun hookFragmentInflater(method: MutableMethod) {
+    val body = method.implementation ?: throw PatchException("LIVE controls: the fragment inflater has no body")
+    val code = body.instructions.toList()
+    val call = code.indexOfFirst {
+        it.opcode == Opcode.INVOKE_VIRTUAL &&
+            ((it as ReferenceInstruction).reference as MethodReference).name == "onGetLayoutInflater"
+    }
+    val result = code.getOrNull(call + 1) as? OneRegisterInstruction
+    if (call < 0 || code[call + 1].opcode != Opcode.MOVE_RESULT_OBJECT || result == null ||
+        result.registerA > 15 || body.registerCount - 2 > 15
+    ) {
+        throw PatchException("LIVE controls: the fragment inflater's shape changed")
+    }
+    method.addInstructions(
+        call + 2,
+        """
+            invoke-static {p0, v${result.registerA}}, $PANEL_THEME->darkLivePage(Ljava/lang/Object;Landroid/view/LayoutInflater;)Landroid/view/LayoutInflater;
+            move-result-object v${result.registerA}
+        """,
+    )
+}
+
+/** The daily ranking's tab model, real-named on 47.4.3. */
+internal const val SUB_RANK_TAB = "Lcom/bytedance/android/livesdk/rank/model/SubRankTabInfo;"
+
+/**
+ * The daily ranking's tab strip coloring a tab (#159, the anonymous X.1GYJ on 47.4.3): the picked
+ * tab when [field] is selectedTextColor, the others for defaultTextColor. The colors the server
+ * leaves out come from LIVE's color lookup on the ranking page's getContext(), the room activity,
+ * so over the room the switch darkened the unpicked tab's gray pill took the dark theme's white
+ * on the ranking's white sheet (Login2, 2026-10-19).
+ */
+internal class RankTabColorFingerprint(field: String) : Fingerprint(
+    returnType = "V",
+    parameters = listOf("L"),
+    custom = { method, _ -> rankTabContext(method, field) != null },
+)
+
+internal val RankTabPickedFingerprint = RankTabColorFingerprint("selectedTextColor")
+internal val RankTabUnpickedFingerprint = RankTabColorFingerprint("defaultTextColor")
+
+/** The page's getContext() at [call], the register holding the page and the one its context moves into. */
+internal class RankTabContext(val call: Int, val page: Int, val context: Int)
+
+/**
+ * In [method], the one getContext() it asks of a page read from a field of its own class, with
+ * the register holding the page and the one the context moves into, when [method] reads the
+ * tab's [field] and hands that context to a static (int, Context) color call. Null when [method]
+ * isn't the tab strip's, and null too for a shape the hook can't take safely: the context moved
+ * over the page's own register (the hook would hand the extension the context as the page), or
+ * any later read of the context that isn't a null test or a Context parameter (a cast to Activity
+ * would throw on the wrapper the extension hands back).
+ */
+internal fun rankTabContext(method: Method, field: String): RankTabContext? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    fun ref(at: Int) = (code[at] as? ReferenceInstruction)?.reference
+    val reads = code.indices.any { at ->
+        val read = ref(at) as? FieldReference
+        code[at].opcode == Opcode.IGET_OBJECT && read?.definingClass == SUB_RANK_TAB && read.name == field
+    }
+    if (!reads) return null
+    val call = code.indices.filter { at ->
+        val asked = ref(at) as? MethodReference
+        code[at].opcode == Opcode.INVOKE_VIRTUAL && asked?.name == "getContext" && asked.parameterTypes.isEmpty() &&
+            asked.returnType == "Landroid/content/Context;"
+    }.singleOrNull() ?: return null
+    if (code.getOrNull(call + 1)?.opcode != Opcode.MOVE_RESULT_OBJECT) return null
+    val page = (code[call] as FiveRegisterInstruction).registerC
+    val context = (code[call + 1] as OneRegisterInstruction).registerA
+    if (page == context) return null
+    if (!(call + 2 until code.size).all { contextReadIsSafe(code[it], context) }) return null
+    val read = (call - 1 downTo 0).firstOrNull {
+        code[it].opcode.setsRegister() && (code[it] as? OneRegisterInstruction)?.registerA == page
+    } ?: return null
+    if (code[read].opcode != Opcode.IGET_OBJECT || (ref(read) as FieldReference).definingClass != method.definingClass) return null
+    val colors = code.indices.any { at ->
+        val color = ref(at) as? MethodReference
+        code[at].opcode == Opcode.INVOKE_STATIC && color?.returnType == "I" &&
+            color.parameterTypes.map(CharSequence::toString) == listOf("I", "Landroid/content/Context;") &&
+            (code[at] as FiveRegisterInstruction).registerD == context
+    }
+    return if (colors) RankTabContext(call, page, context) else null
+}
+
+/**
+ * Whether [instruction] leaves [register] alone, tests it for null, or hands it on only where a
+ * Context is declared. Asked of every instruction after the getContext() to the method's end,
+ * past any later write too, so a branch around a write can't hide a read.
+ */
+private fun contextReadIsSafe(instruction: Instruction, register: Int): Boolean {
+    if (register !in registersRead(instruction)) return true
+    if (instruction.opcode == Opcode.IF_EQZ || instruction.opcode == Opcode.IF_NEZ) return true
+    val called = (instruction as? ReferenceInstruction)?.reference as? MethodReference ?: return false
+    val arguments = when (instruction) {
+        is FiveRegisterInstruction -> listOf(instruction.registerC, instruction.registerD, instruction.registerE,
+            instruction.registerF, instruction.registerG).take(instruction.registerCount)
+        is RegisterRangeInstruction -> (instruction.startRegister until instruction.startRegister + instruction.registerCount).toList()
+        else -> return false
+    }
+    val static = instruction.opcode == Opcode.INVOKE_STATIC || instruction.opcode == Opcode.INVOKE_STATIC_RANGE
+    val slots = (if (static) emptyList() else listOf(called.definingClass)) +
+        called.parameterTypes.map(CharSequence::toString)
+    var slot = 0
+    for (type in slots) {
+        val width = if (type == "J" || type == "D") 2 else 1
+        if (register in arguments.subList(minOf(slot, arguments.size), minOf(slot + width, arguments.size)) &&
+            type != "Landroid/content/Context;"
+        ) {
+            return false
+        }
+        slot += width
+    }
+    return true
+}
+
+/** The registers [instruction] reads, wide halves included only as their first register. */
+private fun registersRead(instruction: Instruction): List<Int> = when (instruction) {
+    is FiveRegisterInstruction -> listOf(instruction.registerC, instruction.registerD, instruction.registerE,
+        instruction.registerF, instruction.registerG).take(instruction.registerCount)
+    is RegisterRangeInstruction -> (instruction.startRegister until instruction.startRegister + instruction.registerCount).toList()
+    is ThreeRegisterInstruction -> if (instruction.opcode.setsRegister()) {
+        listOf(instruction.registerB, instruction.registerC)
+    } else {
+        listOf(instruction.registerA, instruction.registerB, instruction.registerC)
+    }
+    is TwoRegisterInstruction -> if (instruction.opcode.setsRegister()) {
+        listOf(instruction.registerB)
+    } else {
+        listOf(instruction.registerA, instruction.registerB)
+    }
+    is OneRegisterInstruction -> when {
+        // check-cast reads the register it narrows; the rest that write one read nothing.
+        instruction.opcode == Opcode.CHECK_CAST -> listOf(instruction.registerA)
+        instruction.opcode.setsRegister() -> emptyList()
+        else -> listOf(instruction.registerA)
+    }
+    else -> emptyList()
+}
+
+/**
+ * Hands the page and its context to the extension right after the tab strip asks for it, so every
+ * color the tab reads resolves through the context the extension hands back. A branch landing
+ * after the call would skip the hook, and registers above v15 don't fit its four-bit call, so
+ * either shape is refused instead of written.
+ */
+internal fun hookRankTab(method: MutableMethod, field: String) {
+    val tab = rankTabContext(method, field)
+        ?: throw PatchException("LIVE controls: the ranking tab's context for $field wasn't found")
+    val next = method.implementation!!.instructions[tab.call + 2]
+    if (tab.page > 15 || tab.context > 15 || next.location.labels.isNotEmpty()) {
+        throw PatchException("LIVE controls: the ranking tab's context for $field doesn't fit the hook")
+    }
+    method.addInstructions(
+        tab.call + 2,
+        """
+            invoke-static {v${tab.page}, v${tab.context}}, $PANEL_THEME->stockContext(Ljava/lang/Object;Landroid/content/Context;)Landroid/content/Context;
+            move-result-object v${tab.context}
+        """,
+    )
 }
 
 /** The LIVE room activity, real-named on 47.4.3. */
@@ -406,13 +593,7 @@ internal fun bioLinkColor(method: Method): BioLinkColor? {
     ) return null
     if ((call + 1 until suffix).any { writes(it, view) }) return null
     val addresses = code.runningFold(0) { at, instruction -> at + instruction.codeUnits }
-    val byAddress = code.indices.associateBy { addresses[it] }
-    // A switch's offset points at its payload, whose cases are offsets from the switch itself.
-    val targets = code.indices.flatMap { at ->
-        val target = (code[at] as? OffsetInstruction)?.let { addresses[at] + it.codeOffset } ?: return@flatMap emptyList()
-        val payload = byAddress[target]?.let { code[it] as? SwitchPayload }
-        payload?.switchElements?.map { addresses[at] + it.offset } ?: listOf(target)
-    }.toSet() + method.implementation!!.tryBlocks.flatMap { block -> block.exceptionHandlers.map { it.handlerCodeAddress } }
+    val targets = landings(method, code, addresses)
     if ((read + 1..call + 2).any { addresses[it] in targets }) return null
     return BioLinkColor(call, color, view)
 }
@@ -429,6 +610,98 @@ internal fun hookBioLink(bio: MutableMethod) {
     bio.addInstructions(
         link.call + 2,
         "invoke-static {v${link.color}, v${link.view}}, $PANEL_THEME->bioLinkColor(ILjava/lang/Object;)V",
+    )
+}
+
+/** The profile card's label model, real-named on 47.4.3. */
+internal const val PROFILE_CARD_LABEL = "Lcom/bytedance/android/livesdkapi/depend/model/live/ProfileCardLabel;"
+
+/**
+ * The profile card setting up its labels, the shop rating and sold count chips among them
+ * (HeaderCell.LJIIJ on 47.4.3, #159). The server sends each label's colors as they look on the
+ * light card, a faint see-through chip under dark text and a dark icon, so they read dark on the
+ * dark card (Login2, 2026-10-19).
+ */
+internal object LiveProfileLabelsFingerprint : Fingerprint(
+    definingClass = LIVE_PROFILE_HEADER,
+    returnType = "Z",
+    custom = { method, _ -> cardLabels(method) != null },
+)
+
+/** The labels' iterator() at [call], the register holding the label list and the one holding the label strip. */
+internal class CardLabels(val call: Int, val labels: Int, val strip: Int)
+
+/**
+ * In [method], the iterator() over the list whose items it casts to the card's label model, the
+ * register holding that list, and the register holding the view whose getContext() it asks last
+ * before the iterator(): the strip that draws the labels. Null when [method] isn't the card's
+ * labels or the iterator() isn't the one whose next() feeds the cast, and null too for a shape
+ * the hook can't take safely: the strip's register written between its getContext() and the
+ * iterator(), or a branch, switch case or handler landing after the getContext() up to the
+ * iterator(), where one would skip the hook or reach it with the strip's register holding
+ * something else, or either call in the range form. Both take the non-range form, so both
+ * registers fit the hook's four-bit call.
+ */
+internal fun cardLabels(method: Method): CardLabels? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    fun ref(at: Int) = (code[at] as? ReferenceInstruction)?.reference
+    val cast = code.indices.firstOrNull {
+        code[it].opcode == Opcode.CHECK_CAST && (ref(it) as? TypeReference)?.type == PROFILE_CARD_LABEL
+    } ?: return null
+    fun asks(at: Int, type: String, name: String) = (ref(at) as? MethodReference)?.let {
+        it.definingClass == type && it.name == name && it.parameterTypes.isEmpty()
+    } == true
+    // Found in either form and then held to the non-range one, so a range call is refused rather
+    // than passed over for an earlier call on some other list or view.
+    val call = (cast - 1 downTo 0).firstOrNull { asks(it, "Ljava/lang/Iterable;", "iterator") } ?: return null
+    val context = (call - 1 downTo 0).firstOrNull { asks(it, "Landroid/view/View;", "getContext") } ?: return null
+    if (code[call].opcode != Opcode.INVOKE_INTERFACE || code[context].opcode != Opcode.INVOKE_VIRTUAL) return null
+    val labels = (code[call] as FiveRegisterInstruction).registerC
+    val strip = (code[context] as FiveRegisterInstruction).registerC
+    // The iterator() has to be the one the cast's loop walks, not some other list's: its result
+    // taken straight off, and the last next() before the cast asked of that iterator.
+    val walker = code.getOrNull(call + 1)?.takeIf { it.opcode == Opcode.MOVE_RESULT_OBJECT }
+        ?.let { (it as OneRegisterInstruction).registerA } ?: return null
+    val next = (cast - 1 downTo call + 2).firstOrNull { asks(it, "Ljava/util/Iterator;", "next") } ?: return null
+    val walked = (code[next] as? FiveRegisterInstruction)?.registerC ?: (code[next] as? RegisterRangeInstruction)?.startRegister
+    if (walked != walker) return null
+    val written = (context + 1 until call).any {
+        val write = code[it] as? OneRegisterInstruction ?: return@any false
+        (code[it].opcode.setsRegister() && write.registerA == strip) ||
+            (code[it].opcode.setsWideRegister() && write.registerA + 1 == strip)
+    }
+    if (written) return null
+    val addresses = code.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    val targets = landings(method, code, addresses)
+    if ((context + 1..call).any { addresses[it] in targets }) return null
+    return CardLabels(call, labels, strip)
+}
+
+/**
+ * Every code address a branch, switch case or exception handler in [method] lands on, from its
+ * [code] and the [addresses] each instruction starts at.
+ */
+private fun landings(method: Method, code: List<Instruction>, addresses: List<Int>): Set<Int> {
+    val byAddress = code.indices.associateBy { addresses[it] }
+    // A switch's offset points at its payload, whose cases are offsets from the switch itself.
+    return code.indices.flatMap { at ->
+        val target = (code[at] as? OffsetInstruction)?.let { addresses[at] + it.codeOffset } ?: return@flatMap emptyList()
+        val payload = byAddress[target]?.let { code[it] as? SwitchPayload }
+        payload?.switchElements?.map { addresses[at] + it.offset } ?: listOf(target)
+    }.toSet() + method.implementation!!.tryBlocks.flatMap { block -> block.exceptionHandlers.map { it.handlerCodeAddress } }
+}
+
+/**
+ * Hands the card's labels and their strip to the extension right before the card walks them.
+ * While Dark LIVE panels is on in dark mode, the extension gives each label drawn on a color that
+ * color as it shows over the light card, so the server's dark text and icon stay readable on
+ * it. The hook writes no register.
+ */
+internal fun hookCardLabels(header: MutableMethod) {
+    val labels = cardLabels(header) ?: throw PatchException("LIVE controls: the profile card's labels weren't found")
+    header.addInstructions(
+        labels.call,
+        "invoke-static {v${labels.labels}, v${labels.strip}}, $PANEL_THEME->cardLabels(Ljava/lang/Object;Ljava/lang/Object;)V",
     )
 }
 
@@ -871,6 +1144,16 @@ val liveControlsPatch = bytecodePatch(
         listOf(LiveThemedDialogInflaterFingerprint, LiveThemedFragmentInflaterFingerprint).forEach {
             hookPanelInflater(it.method)
         }
+        // A plain fragment under a LIVE panel skips both: it takes the room activity's inflater,
+        // so the daily ranking's lists read white on its white sheet (Login2, 2026-10-19). Every
+        // fragment's inflater passes the extension once, which only wraps one under the ranking.
+        hookFragmentInflater(FragmentInflaterFingerprint.method)
+        // Its tab strip reads the colors the server leaves out through the page's getContext(),
+        // the room activity, so the unpicked tab's gray pill read white on white (Login2,
+        // 2026-10-19). Both tab states hand that context to the extension, which gives back the
+        // page's light one under the ranking.
+        hookRankTab(RankTabPickedFingerprint.method, "selectedTextColor")
+        hookRankTab(RankTabUnpickedFingerprint.method, "defaultTextColor")
         // TikTok's generic sheets over a room (Share) take the room activity's own light theme,
         // which the overlay can't reach. The room's setTheme hands the activity to the extension
         // after its last room theme, and the extension puts TikTok's dark app theme on it
@@ -887,6 +1170,11 @@ val liveControlsPatch = bytecodePatch(
         // color, skipping the link color. The extension makes the link color the view's text
         // color while the switch is on in dark mode.
         hookBioLink(LiveProfileBioFingerprint.method)
+        // Its labels, the shop rating and sold count chips among them, come with the server's
+        // colors for the light card: dark text and icons on a faint see-through chip, dark on
+        // the dark card (Login2, 2026-10-19). The extension makes each chip's color what it is
+        // over the light card while the switch is on in dark mode.
+        hookCardLabels(LiveProfileLabelsFingerprint.method)
         // The older quality list's rows can read white on white in dark mode, switch or no
         // switch; the extension gives poorly contrasted text a readable color there.
         hookQualityList(LiveDefinitionListFingerprint.method)

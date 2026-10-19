@@ -5,18 +5,28 @@
 package app.morphe.extension.tiktok.live;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.blockauthor.Reflect;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** The theme LIVE panels inflate with while Dark LIVE panels is on in dark mode (#159). */
@@ -26,13 +36,33 @@ public final class LivePanelTheme {
     static final String THEMED_DIALOG = "com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment";
     /** The base of LIVE's sheet pages: the fan club sheets and most newer LIVE panels. */
     static final String SHEET = "com.bytedance.android.live.design.view.sheet.LiveSheetFragment";
+    /** The base of every themed LIVE fragment: sheet pages, the room's own and the ranking's pages. */
+    static final String THEMED_FRAGMENT = "com.bytedance.android.live.design.resource.theme.LiveThemeAwareFragment";
     /** The daily ranking, whose sheet backgrounds are fixed light drawables it sets itself. */
     static final String RANK_LIST = "com.bytedance.android.live.rank.impl.list.RankListDialog";
     /** The trending ranking's first-time guide over the daily ranking, drawn on a fixed light image. */
     static final String RANK_GUIDE = "com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog";
     private static final Set<String> STOCK_PANELS = new HashSet<>(Arrays.asList(RANK_LIST, RANK_GUIDE));
 
-    private static final Map<Class<?>, Boolean> PANEL_TYPES = new ConcurrentHashMap<>();
+    private static final int OTHER = 0;
+    private static final int PANEL = 1;
+    private static final int STOCK = 2;
+    /** A themed LIVE fragment that isn't a panel, which its own inflater hook already sees. */
+    private static final int THEMED = 3;
+    /** How far up a page's parent fragments the walk looks for a stock panel. */
+    private static final int MAX_PARENTS = 8;
+    private static final Map<Class<?>, Integer> PANEL_TYPES = new ConcurrentHashMap<>();
+    /** Set while a stock panel asks TikTok's own provider answer for its overlay. */
+    private static final ThreadLocal<Boolean> STOCK_ANSWER = new ThreadLocal<>();
+    /**
+     * Set once a stock panel has inflated with the switch on. Until then no fragment can sit under
+     * one, so the fragments the rest of the app inflates skip the walk up their parents.
+     */
+    static volatile boolean stockSeen;
+    /** Each darkened room's theme as it was before TikTok's dark app theme went on. */
+    private static final Map<Activity, Resources.Theme> LIGHT_ROOMS = Collections.synchronizedMap(new WeakHashMap<>());
+    /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
+    private static final int LABEL_DEFAULT = 0x0F161823;
     private static volatile boolean overlayFailureLogged;
 
     private LivePanelTheme() {
@@ -49,6 +79,11 @@ public final class LivePanelTheme {
      * makes TikTok's dark LIVE theme, applied with force the way TikTok applies the light one. A
      * room's own fragments aren't panels and keep TikTok's inflater, and anything that fails
      * hands TikTok's back.
+     * A stock panel, and any fragment under one, inflates through the overlay TikTok's own
+     * provider answer gives the stock panel instead, its light LIVE theme in a room, applied with
+     * force the way TikTok applies it in a dark app. Left with TikTok's inflater, the provider
+     * hook's dark answer kept TikTok from adding any LIVE theme, so the room's dark app theme
+     * turned the daily ranking's tab titles white on its fixed white sheet (Login2, 2026-10-18).
      */
     public static LayoutInflater darkLivePanel(Object panel, LayoutInflater inflater) {
         if (panel == null || inflater == null) {
@@ -56,7 +91,15 @@ public final class LivePanelTheme {
         }
         try {
             Context context = inflater.getContext();
-            if (!LiveControls.darkLivePanels(context) || !isPanel(panel.getClass())) {
+            if (!LiveControls.darkLivePanels(context)) {
+                return inflater;
+            }
+            Object stock = stockPanel(panel);
+            if (stock != null) {
+                stockSeen = true;
+                return stockInflater(inflater, context, stockOverlay(stock, context));
+            }
+            if (!isPanel(panel.getClass())) {
                 return inflater;
             }
             int overlay = themeOverlay(panel, context);
@@ -66,6 +109,28 @@ public final class LivePanelTheme {
             return inflater.cloneInContext(new ContextThemeWrapper(context, overlay));
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not darken a LIVE panel", failure);
+            return inflater;
+        }
+    }
+
+    /**
+     * Called with the layout inflater every fragment takes from its host, with the fragment. A
+     * plain fragment takes the room activity's inflater even under a LIVE panel, so the daily
+     * ranking's lists took the room's dark app theme and their rows read white on the ranking's
+     * white sheet (Login2, 2026-10-19). While Dark LIVE panels is on in dark mode, a plain
+     * fragment under a stock panel inflates through the overlay that panel gets. LIVE's themed
+     * fragments and dialogs have their own hook, and every other fragment keeps TikTok's inflater.
+     * Every fragment in the app comes through here, so nothing is looked up before a stock panel
+     * has inflated.
+     */
+    public static LayoutInflater darkLivePage(Object fragment, LayoutInflater inflater) {
+        try {
+            if (!stockSeen || fragment == null || panelType(fragment.getClass()) != OTHER) {
+                return inflater;
+            }
+            return darkLivePanel(fragment, inflater);
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not check a fragment for a LIVE panel", failure);
             return inflater;
         }
     }
@@ -90,6 +155,15 @@ public final class LivePanelTheme {
         try {
             if (theme == 0 || !LiveControls.darkLivePanels(room)) {
                 return;
+            }
+            // Only the first pass is light: a later setTheme puts the room's styles back over the
+            // dark theme, so a second copy would keep whatever they leave alone dark.
+            synchronized (LIGHT_ROOMS) {
+                if (!LIGHT_ROOMS.containsKey(room)) {
+                    Resources.Theme light = room.getResources().newTheme();
+                    light.setTo(room.getTheme());
+                    LIGHT_ROOMS.put(room, light);
+                }
             }
             room.getTheme().applyStyle(theme, true);
         } catch (Throwable failure) {
@@ -124,28 +198,237 @@ public final class LivePanelTheme {
     }
 
     /**
+     * Called by the LIVE profile card with its labels and the strip that draws them, before it
+     * builds them: the shop rating and sold count chips among them. The server sends each label's
+     * colors as they look on the light card, a faint see-through chip under dark text and a dark
+     * icon, so on the dark card they read dark on dark (Login2, 2026-10-19). While Dark LIVE
+     * panels is on in dark mode, each label drawn on a color gets that color as it shows over the
+     * light card, so it stays the light chip its own text and icon were picked for. A label drawn
+     * on an image keeps it. Only the card's own labels are touched, by TikTok's class name.
+     */
+    public static void cardLabels(Object labels, Object strip) {
+        try {
+            if (!(labels instanceof Iterable) || !(strip instanceof View)
+                    || !LiveControls.darkLivePanels(((View) strip).getContext())) {
+                return;
+            }
+            for (Object label : (Iterable<?>) labels) {
+                if (label != null && "ProfileCardLabel".equals(label.getClass().getSimpleName())) {
+                    lightLabel(label);
+                }
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not keep a LIVE profile card's labels readable", failure);
+        }
+    }
+
+    /** Gives the label's background its color as it shows over the light card, a new one when it has none. */
+    static void lightLabel(Object label) throws ReflectiveOperationException {
+        if (label == null) {
+            return;
+        }
+        Field field = Reflect.field(label.getClass(), "background");
+        if (field == null) {
+            return;
+        }
+        Object background = field.get(label);
+        if (background == null) {
+            Constructor<?> make = field.getType().getDeclaredConstructor();
+            make.setAccessible(true);
+            background = make.newInstance();
+            field.set(label, background);
+        }
+        // TikTok draws backgroundDarkMode's image instead only in a right-to-left layout, which
+        // this doesn't check: a label with no image of its own there keeps the color it gets here.
+        if (Reflect.readField(background, "image") != null) {
+            return;
+        }
+        Field color = Reflect.field(background.getClass(), "colorCode");
+        if (color != null) {
+            color.set(background, onLightCard((String) color.get(background)));
+        }
+    }
+
+    /**
+     * The label color as it shows over the light card's white, opaque, the way TikTok's color
+     * parse reads it. Missing or unreadable, TikTok keeps its own default for the card's labels,
+     * color/aj on 47.4.3, which has no night variant.
+     */
+    static String onLightCard(String code) {
+        int color = LABEL_DEFAULT;
+        if (code != null && !code.isEmpty()) {
+            try {
+                color = Color.parseColor(code);
+            } catch (IllegalArgumentException unreadable) {
+                color = LABEL_DEFAULT;
+            }
+        }
+        int alpha = Color.alpha(color);
+        int red = (Color.red(color) * alpha + 255 * (255 - alpha)) / 255;
+        int green = (Color.green(color) * alpha + 255 * (255 - alpha)) / 255;
+        int blue = (Color.blue(color) * alpha + 255 * (255 - alpha)) / 255;
+        return String.format(Locale.ROOT, "#FF%02X%02X%02X", red, green, blue);
+    }
+
+    /**
      * True for a themed LIVE dialog or a LIVE sheet page, by TikTok's own class names. A panel
-     * that paints its own fixed light backgrounds stays stock, subclasses included, or the
+     * that paints its own fixed light backgrounds isn't one, subclasses included, or the dark
      * overlay's light text lands on white: the daily ranking's title and its guide's text (#159).
      */
     static boolean isPanel(Class<?> type) {
-        Boolean known = PANEL_TYPES.get(type);
+        return panelType(type) == PANEL;
+    }
+
+    /**
+     * The panel itself when it paints its own fixed light backgrounds, else the one it sits under
+     * by its parent fragments, or null. The daily ranking's pages and lists are fragments of their
+     * own, which take their inflater from the room, not from the ranking's. The walk stops at an
+     * ordinary panel, so a dialog opened from the ranking's pages keeps its dark overlay.
+     */
+    static Object stockPanel(Object panel) {
+        Object current = panel;
+        for (int depth = 0; current != null && depth <= MAX_PARENTS; depth++) {
+            int kind = panelType(current.getClass());
+            if (kind == STOCK) {
+                return current;
+            }
+            if (kind == PANEL) {
+                return null;
+            }
+            current = Reflect.invoke(current, "getParentFragment");
+        }
+        return null;
+    }
+
+    private static int panelType(Class<?> type) {
+        Integer known = PANEL_TYPES.get(type);
         if (known != null) {
             return known;
         }
-        boolean panel = false;
+        int kind = OTHER;
         for (Class<?> current = type; current != null; current = current.getSuperclass()) {
             String name = current.getName();
             if (STOCK_PANELS.contains(name)) {
+                kind = STOCK;
                 break;
             }
             if (THEMED_DIALOG.equals(name) || SHEET.equals(name)) {
-                panel = true;
+                kind = PANEL;
+                break;
+            }
+            if (THEMED_FRAGMENT.equals(name)) {
+                kind = THEMED;
                 break;
             }
         }
-        PANEL_TYPES.put(type, panel);
-        return panel;
+        PANEL_TYPES.put(type, kind);
+        return kind;
+    }
+
+    /**
+     * The overlay TikTok's own provider answer gives a stock panel, asked with the panel's own
+     * context the way TikTok asks it, while the provider hook stands down. It's 0 when TikTok's
+     * answer is the hook's dark one too, so a ranking opened outside a room keeps TikTok's
+     * inflater as before.
+     */
+    static int stockOverlay(Object stock, Context fallback) {
+        Object own = Reflect.invoke(stock, "getContext");
+        Context context = own instanceof Context ? (Context) own : fallback;
+        int overlay;
+        STOCK_ANSWER.set(Boolean.TRUE);
+        try {
+            overlay = themeOverlay(stock, context);
+        } finally {
+            STOCK_ANSWER.remove();
+        }
+        return overlay == themeOverlay(stock, context) ? 0 : overlay;
+    }
+
+    /**
+     * A stock panel's inflater: its light overlay, applied with force over the room's theme as it
+     * was before the room hook put TikTok's dark app theme on. Over the darkened room, whatever the
+     * overlay leaves alone kept its dark value, so the daily ranking's gray league pill turned
+     * white on white (Login2, 2026-10-19). A room the hook never darkened has no light theme
+     * kept, and the overlay goes over its own.
+     */
+    private static LayoutInflater stockInflater(LayoutInflater inflater, Context context, int overlay) {
+        Context themed = stockThemed(context, overlay);
+        return themed == null ? inflater : inflater.cloneInContext(themed);
+    }
+
+    /** The context under a stock panel's light overlay, the one its inflater takes; null with no overlay. */
+    private static Context stockThemed(Context context, int overlay) {
+        if (overlay == 0) {
+            return null;
+        }
+        Resources.Theme light = lightRoom(context);
+        if (light == null) {
+            return new ContextThemeWrapper(context, overlay);
+        }
+        Resources.Theme theme = context.getResources().newTheme();
+        theme.setTo(light);
+        theme.applyStyle(overlay, true);
+        return new ContextThemeWrapper(context, theme);
+    }
+
+    /**
+     * Called by the daily ranking's tab strip with its page and the page's getContext(), which it
+     * reads the tabs' fallback colors through. That context is the room activity, and TikTok's LIVE
+     * color lookup resolves against its theme, so over the darkened room the unpicked tab's gray
+     * pill took the dark theme's white on the ranking's white sheet (Login2, 2026-10-19). While
+     * Dark LIVE panels is on in dark mode, a page under a stock panel gets the context its own
+     * views inflated with, the light one its inflater hook gave it, or one built the same way
+     * before it has a view. Everything else gets its context back untouched, a ranking with no
+     * light overlay to put back (outside a room, where TikTok's own answer is already dark)
+     * included.
+     */
+    public static Context stockContext(Object page, Context context) {
+        try {
+            if (!stockSeen || page == null || context == null || !LiveControls.darkLivePanels(context)) {
+                return context;
+            }
+            Object stock = stockPanel(page);
+            if (stock == null) {
+                return context;
+            }
+            int overlay = stockOverlay(stock, context);
+            if (overlay == 0) {
+                return context;
+            }
+            Object view = Reflect.invoke(page, "getView");
+            if (view instanceof View) {
+                return ((View) view).getContext();
+            }
+            Context themed = stockThemed(context, overlay);
+            return themed == null ? context : themed;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not give a LIVE ranking's tabs their light theme", failure);
+            return context;
+        }
+    }
+
+    /** The light theme kept for the room activity under the context, or null. */
+    static Resources.Theme lightRoom(Context context) {
+        Context current = context;
+        while (current != null) {
+            if (current instanceof Activity) {
+                return LIGHT_ROOMS.get(current);
+            }
+            if (!(current instanceof ContextWrapper)) {
+                return null;
+            }
+            Context base = ((ContextWrapper) current).getBaseContext();
+            if (base == current) {
+                return null;
+            }
+            current = base;
+        }
+        return null;
+    }
+
+    /** True while a stock panel asks TikTok's own provider answer, which the hook then leaves alone. */
+    static boolean askingStock() {
+        return STOCK_ANSWER.get() != null;
     }
 
     /**

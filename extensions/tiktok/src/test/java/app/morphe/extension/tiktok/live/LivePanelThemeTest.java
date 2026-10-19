@@ -17,9 +17,11 @@ import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment;
+import com.bytedance.android.live.design.resource.theme.LiveThemeAwareFragment;
 import com.bytedance.android.live.design.view.sheet.LiveSheetFragment;
 import com.bytedance.android.live.rank.impl.list.RankListDialog;
 import com.bytedance.android.live.rank.impl.list.view.PopularityRankingEducationDialog;
@@ -34,14 +36,20 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
 
+import java.util.Arrays;
+
 /**
  * #159: a LIVE panel's views inflate through its own (dark) LIVE overlay, applied with force,
  * only while Dark LIVE panels is on and its context is in dark mode, and only for themed dialogs
- * and sheet pages, the daily ranking and its guide aside. Everything else gets TikTok's inflater
- * back untouched.
+ * and sheet pages. The daily ranking, its guide and every fragment under them inflate through the
+ * light overlay TikTok's own answer gives the ranking, also with force, the ranking's plain list
+ * fragments included, and over a room the switch darkened that overlay goes over the room's theme
+ * as it was before the dark app theme, which the ranking's tab strip reads its colors through
+ * too. Everything else gets TikTok's inflater back untouched.
  * Under the same conditions a LIVE room takes TikTok's dark app theme with force over its own light
  * one, so TikTok's generic sheets over a room open dark too, and the profile card's bio view takes
- * the link color, since its link is drawn in the view's own text color.
+ * the link color, since its link is drawn in the view's own text color, and the card's labels
+ * take their chip color as it shows over the light card their text and icon were picked for.
  */
 @RunWith(RobolectricTestRunner.class)
 public class LivePanelThemeTest {
@@ -77,6 +85,7 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         Settings.DARK_LIVE_PANELS.save(Settings.DARK_LIVE_PANELS.defaultValue);
+        LivePanelTheme.stockSeen = false;
     }
 
     private static int textColor(Context context) {
@@ -174,17 +183,240 @@ public class LivePanelThemeTest {
         assertEquals("without the patch", stock, textColor(night));
     }
 
-    @Test public void theDailyRankingStaysStock() {
-        Settings.DARK_LIVE_PANELS.save(true);
-        RankListDialog ranking = new RankListDialog();
-        ranking.overlay = OVERLAY;
+    /** A page fragment, the way the daily ranking's RankPageFragment sits in its view pager. */
+    public static final class RankPage extends LiveThemeAwareFragment {
+    }
+
+    /** A plain androidx fragment under a page, the way the ranking's GiftListFragment holds its rows. */
+    public static final class GiftList {
+        Object parent;
+        int asked;
+
+        public Object getParentFragment() {
+            asked++;
+            return parent;
+        }
+    }
+
+    private static final int DARK_OVERLAY = android.R.style.Theme_Black_NoTitleBar;
+
+    /** The room the ranking opens over: in dark mode too, but not the inflater's own context. */
+    private Context room;
+
+    private <T extends LiveThemeAwareDialogFragment> T stock(T panel) {
+        panel.overlay = DARK_OVERLAY;
+        panel.lightOverlay = OVERLAY;
+        if (room == null) {
+            room = new ContextThemeWrapper(dark, android.R.style.Theme_Black);
+        }
+        panel.context = room;
+        return panel;
+    }
+
+    private static RankPage page(Object parent) {
+        RankPage page = new RankPage();
+        page.parent = parent;
+        return page;
+    }
+
+    @Test public void theDailyRankingKeepsTikToksLightLiveTheme() {
         LayoutInflater tiktok = LayoutInflater.from(dark);
-        assertSame(tiktok, LivePanelTheme.darkLivePanel(ranking, tiktok));
-        PopularityRankingEducationDialog guide = new PopularityRankingEducationDialog();
-        guide.overlay = OVERLAY;
-        assertSame("its first-time guide", tiktok, LivePanelTheme.darkLivePanel(guide, tiktok));
-        // The same overlay on an ordinary themed dialog does wrap, so it's the ranking that's left out.
-        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(dialog(), tiktok));
+        assertSame("the switch starts off", tiktok, LivePanelTheme.darkLivePanel(stock(new RankListDialog()), tiktok));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        int lightText = textColor(new ContextThemeWrapper(dark, OVERLAY));
+        RankListDialog daily = stock(new RankListDialog());
+        LayoutInflater ranking = LivePanelTheme.darkLivePanel(daily, tiktok);
+        // TikTok's own answer picks the light overlay, which wins over the room's dark theme.
+        assertNotSame(tiktok, ranking);
+        assertEquals(lightText, textColor(ranking.getContext()));
+        assertTrue(textColor(dark) != textColor(ranking.getContext()));
+        assertSame("asked with the ranking's own context", room, daily.asked);
+        assertTrue("the provider hook answers again afterwards", LiveControls.darkLivePanels(dark));
+        assertEquals("its first-time guide", lightText,
+            textColor(LivePanelTheme.darkLivePanel(stock(new PopularityRankingEducationDialog()), tiktok).getContext()));
+        assertEquals("a ranking subclass", lightText,
+            textColor(LivePanelTheme.darkLivePanel(stock(new HourlyRanking()), tiktok).getContext()));
+
+        // Its pages take their inflater from the room, so they're found by their parent fragment,
+        // and the ranking is what's asked.
+        RankListDialog parent = stock(new RankListDialog());
+        assertEquals("a ranking page", lightText,
+            textColor(LivePanelTheme.darkLivePanel(page(parent), tiktok).getContext()));
+        assertSame("the page asks its ranking", room, parent.asked);
+        assertSame("a page under an ordinary panel", tiktok, LivePanelTheme.darkLivePanel(page(dialog()), tiktok));
+        assertSame("a page on its own", tiktok, LivePanelTheme.darkLivePanel(page(null), tiktok));
+
+        // A dialog opened from a ranking page is an ordinary panel and keeps its own overlay.
+        ShareDialog share = dialog();
+        share.overlay = DARK_OVERLAY;
+        share.parent = page(stock(new RankListDialog()));
+        assertEquals("a dialog over the ranking's pages keeps its dark overlay, not the ranking's light one",
+            textColor(new ContextThemeWrapper(dark, DARK_OVERLAY)), textColor(LivePanelTheme.darkLivePanel(share, tiktok).getContext()));
+
+        RankListDialog detached = stock(new RankListDialog());
+        detached.context = null;
+        assertEquals("no context of its own", lightText, textColor(LivePanelTheme.darkLivePanel(detached, tiktok).getContext()));
+        assertSame("asks with the inflater's", dark, detached.asked);
+        RankListDialog none = new RankListDialog();
+        none.context = room;
+        assertSame("no overlay", tiktok, LivePanelTheme.darkLivePanel(none, tiktok));
+        RankListDialog outside = stock(new RankListDialog());
+        outside.lightOverlay = DARK_OVERLAY;
+        assertSame("TikTok answering dark itself keeps its inflater", tiktok, LivePanelTheme.darkLivePanel(outside, tiktok));
+        LayoutInflater day = LayoutInflater.from(light);
+        assertSame("light mode", day, LivePanelTheme.darkLivePanel(stock(new RankListDialog()), day));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", tiktok, LivePanelTheme.darkLivePanel(stock(new RankListDialog()), tiktok));
+        assertSame("a page, paused", tiktok, LivePanelTheme.darkLivePanel(page(stock(new RankListDialog())), tiktok));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", tiktok, LivePanelTheme.darkLivePanel(stock(new RankListDialog()), tiktok));
+    }
+
+    @Test public void aPlainFragmentUnderTheRankingTakesItsLightTheme() {
+        LayoutInflater tiktok = LayoutInflater.from(dark);
+        GiftList list = new GiftList();
+        list.parent = page(stock(new RankListDialog()));
+        assertSame("the switch starts off", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        // Every fragment in the app passes here, so none looks at its parents before a ranking inflated.
+        LivePanelTheme.stockSeen = false;
+        assertSame("before any ranking", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+        assertEquals("no walk before any ranking", 0, list.asked);
+        assertNotSame(tiktok, LivePanelTheme.darkLivePanel(stock(new RankListDialog()), tiktok));
+        assertTrue("a ranking inflated", LivePanelTheme.stockSeen);
+        // A plain fragment takes the room's inflater, so it's found by its parents too.
+        LayoutInflater rows = LivePanelTheme.darkLivePage(list, tiktok);
+        assertEquals(1, list.asked);
+        assertNotSame(tiktok, rows);
+        assertEquals(textColor(new ContextThemeWrapper(dark, OVERLAY)), textColor(rows.getContext()));
+        GiftList direct = new GiftList();
+        direct.parent = stock(new RankListDialog());
+        assertNotSame("right under the ranking", tiktok, LivePanelTheme.darkLivePage(direct, tiktok));
+
+        // LIVE's themed fragments and dialogs have their own hook, so this one leaves them alone.
+        assertSame("a ranking page", tiktok, LivePanelTheme.darkLivePage(page(stock(new RankListDialog())), tiktok));
+        assertSame("the ranking", tiktok, LivePanelTheme.darkLivePage(stock(new RankListDialog()), tiktok));
+        assertSame("an ordinary panel", tiktok, LivePanelTheme.darkLivePage(dialog(), tiktok));
+
+        GiftList elsewhere = new GiftList();
+        assertSame("a fragment under no panel", tiktok, LivePanelTheme.darkLivePage(elsewhere, tiktok));
+        elsewhere.parent = dialog();
+        assertSame("a fragment under an ordinary panel", tiktok, LivePanelTheme.darkLivePage(elsewhere, tiktok));
+        assertSame("a fragment without parents", tiktok, LivePanelTheme.darkLivePage(new RoomFragment(), tiktok));
+        assertSame("no fragment", tiktok, LivePanelTheme.darkLivePage(null, tiktok));
+        assertSame(null, LivePanelTheme.darkLivePage(list, null));
+        LayoutInflater day = LayoutInflater.from(light);
+        assertSame("light mode", day, LivePanelTheme.darkLivePage(list, day));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", tiktok, LivePanelTheme.darkLivePage(list, tiktok));
+    }
+
+    /** Sets only the window animations, the way TikTok's light LIVE overlay leaves most of a theme alone. */
+    private static final int PARTIAL_OVERLAY = android.R.style.Animation_Dialog;
+
+    private static boolean hasOverlay(Context context) {
+        return context.getTheme().resolveAttribute(android.R.attr.windowEnterAnimation, new TypedValue(), true);
+    }
+
+    @Test public void theRankingOverADarkenedRoomStartsFromTheRoomsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Settings.DARK_LIVE_PANELS.save(true);
+        Activity live = room();
+        int roomText = textColor(live);
+        assertTrue("the room has no window animation of its own", !hasOverlay(live));
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room went dark", roomText != textColor(live));
+        // The room's setTheme can run again on the same activity; the copy from before the first pass stays.
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+
+        RankListDialog daily = stock(new RankListDialog());
+        daily.lightOverlay = PARTIAL_OVERLAY;
+        daily.context = live;
+        Context ranking = LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(live)).getContext();
+        assertTrue("the light overlay is on", hasOverlay(ranking));
+        assertEquals("what the overlay leaves alone keeps the room's light value", roomText, textColor(ranking));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        GiftList list = new GiftList();
+        list.parent = page(daily);
+        Context rows = LivePanelTheme.darkLivePage(list, LayoutInflater.from(live)).getContext();
+        assertTrue(hasOverlay(rows));
+        assertEquals("a list under the ranking too", roomText, textColor(rows));
+        Context wrapped = LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(new ContextThemeWrapper(live, OVERLAY))).getContext();
+        assertEquals("found through a wrapped room context", roomText, textColor(wrapped));
+
+        // An ordinary panel keeps the darkened room under its own overlay.
+        ShareDialog share = dialog();
+        share.overlay = PARTIAL_OVERLAY;
+        assertEquals(textColor(live), textColor(LivePanelTheme.darkLivePanel(share, LayoutInflater.from(live)).getContext()));
+
+        // A room the switch never darkened has nothing kept, so the overlay goes over its own theme.
+        Activity other = room();
+        assertSame(null, LivePanelTheme.lightRoom(other));
+        assertSame(null, LivePanelTheme.lightRoom(RuntimeEnvironment.getApplication()));
+        assertSame(null, LivePanelTheme.lightRoom(null));
+        daily.context = other;
+        Context plain = LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(other)).getContext();
+        assertTrue(hasOverlay(plain));
+        assertEquals(textColor(other), textColor(plain));
+    }
+
+    @Test public void theRankingsTabsReadTheirColorsThroughItsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        RankListDialog daily = stock(new RankListDialog());
+        daily.lightOverlay = PARTIAL_OVERLAY;
+        daily.context = live;
+        RankPage page = page(daily);
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room went dark", roomText != textColor(live));
+        assertSame("before any ranking inflated", live, LivePanelTheme.stockContext(page, live));
+        LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(live));
+        Settings.DARK_LIVE_PANELS.save(false);
+        assertSame("the switch off", live, LivePanelTheme.stockContext(page, live));
+        Settings.DARK_LIVE_PANELS.save(true);
+        // The tab strip hands over the page's getContext(), the room; before the page has a view
+        // its tabs get the ranking's light overlay over the room's light theme.
+        Context tabs = LivePanelTheme.stockContext(page, live);
+        assertTrue("the light overlay is on", hasOverlay(tabs));
+        assertEquals("the tabs' colors resolve to the room's light values", roomText, textColor(tabs));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        // Once it has one, the context its views inflated with.
+        Context inflated = LivePanelTheme.darkLivePanel(page, LayoutInflater.from(live)).getContext();
+        page.view = new View(inflated);
+        assertSame(inflated, LivePanelTheme.stockContext(page, live));
+
+        // Outside a room TikTok's own answer is already dark: no light overlay to put back, so even
+        // a page with a view keeps the context it handed over.
+        RankListDialog outside = stock(new RankListDialog());
+        outside.lightOverlay = DARK_OVERLAY;
+        RankPage outsidePage = page(outside);
+        outsidePage.view = new View(new ContextThemeWrapper(live, OVERLAY));
+        assertSame("TikTok answering dark itself", live, LivePanelTheme.stockContext(outsidePage, live));
+
+        RankPage elsewhere = page(dialog());
+        elsewhere.view = new View(live);
+        assertSame("a page under an ordinary panel", live, LivePanelTheme.stockContext(elsewhere, live));
+        assertSame("a page on its own", live, LivePanelTheme.stockContext(page(null), live));
+        assertSame("no page", live, LivePanelTheme.stockContext(null, live));
+        assertSame("no context", null, LivePanelTheme.stockContext(page, null));
+        assertSame("light mode", light, LivePanelTheme.stockContext(page, light));
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", live, LivePanelTheme.stockContext(page, live));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", live, LivePanelTheme.stockContext(page, live));
     }
 
     @Test public void aBiosViewTakesTheLinkColorInDarkModeWithTheSwitch() {
@@ -216,9 +448,89 @@ public class LivePanelThemeTest {
         assertEquals("without the patch", Color.BLACK, paused.getCurrentTextColor());
     }
 
+    /** ProfileCardLabel's shape and simple name: the background the extension colors. */
+    static final class ProfileCardLabel {
+        private LabelBackground background;
+
+        ProfileCardLabel(LabelBackground background) {
+            this.background = background;
+        }
+    }
+
+    /** Some other model with the same shape, which the extension leaves alone. */
+    static final class Sticker {
+        private LabelBackground background;
+
+        Sticker(LabelBackground background) {
+            this.background = background;
+        }
+    }
+
+    /** LabelBackground's shape, made by the extension through its no-argument constructor. */
+    static final class LabelBackground {
+        private String colorCode;
+        private Object image;
+
+        private LabelBackground() {
+        }
+
+        static LabelBackground of(String colorCode) {
+            LabelBackground background = new LabelBackground();
+            background.colorCode = colorCode;
+            return background;
+        }
+    }
+
+    @Test public void aCardsLabelsTakeTheirColorAsItShowsOverTheLightCardInDarkModeWithTheSwitch() {
+        View strip = new View(dark);
+        ProfileCardLabel faint = new ProfileCardLabel(LabelBackground.of("#0A161823"));
+        LivePanelTheme.cardLabels(Arrays.asList(faint), strip);
+        assertEquals("the switch starts off", "#0A161823", faint.background.colorCode);
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        ProfileCardLabel opaque = new ProfileCardLabel(LabelBackground.of("#2A2A2A"));
+        ProfileCardLabel none = new ProfileCardLabel(LabelBackground.of(null));
+        ProfileCardLabel empty = new ProfileCardLabel(LabelBackground.of(""));
+        ProfileCardLabel unreadable = new ProfileCardLabel(LabelBackground.of("nope"));
+        ProfileCardLabel pictured = new ProfileCardLabel(LabelBackground.of("#0A161823"));
+        pictured.background.image = new Object();
+        ProfileCardLabel bare = new ProfileCardLabel(null);
+        Sticker sticker = new Sticker(LabelBackground.of("#0A161823"));
+        LivePanelTheme.cardLabels(Arrays.asList(faint, null, opaque, none, empty, unreadable, pictured, bare, sticker), strip);
+        assertEquals("over white", "#FFF5F5F6", faint.background.colorCode);
+        assertEquals("#FF2A2A2A", opaque.background.colorCode);
+        assertEquals("TikTok's default over white", "#FFF1F1F2", none.background.colorCode);
+        assertEquals("#FFF1F1F2", empty.background.colorCode);
+        assertEquals("#FFF1F1F2", unreadable.background.colorCode);
+        assertEquals("an image stays", "#0A161823", pictured.background.colorCode);
+        assertEquals("a label without one gets one", "#FFF1F1F2", bare.background.colorCode);
+        assertEquals("not a card label", "#0A161823", sticker.background.colorCode);
+        LivePanelTheme.cardLabels(Arrays.asList(faint), strip);
+        assertEquals("twice is the same", "#FFF5F5F6", faint.background.colorCode);
+
+        ProfileCardLabel lightLabel = new ProfileCardLabel(LabelBackground.of("#0A161823"));
+        LivePanelTheme.cardLabels(Arrays.asList(lightLabel), new View(light));
+        assertEquals("light mode", "#0A161823", lightLabel.background.colorCode);
+        LivePanelTheme.cardLabels(Arrays.asList(lightLabel), "strip");
+        LivePanelTheme.cardLabels(Arrays.asList(lightLabel), null);
+        LivePanelTheme.cardLabels(lightLabel, strip);
+        LivePanelTheme.cardLabels(null, strip);
+        LivePanelTheme.cardLabels(Arrays.asList("label", 7), strip);
+        assertEquals("#0A161823", lightLabel.background.colorCode);
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        LivePanelTheme.cardLabels(Arrays.asList(lightLabel), strip);
+        assertEquals("paused", "#0A161823", lightLabel.background.colorCode);
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        LivePanelTheme.cardLabels(Arrays.asList(lightLabel), strip);
+        assertEquals("without the patch", "#0A161823", lightLabel.background.colorCode);
+    }
+
     @Test public void panelsAreFoundByTikToksClassNames() {
         assertEquals(LiveThemeAwareDialogFragment.class.getName(), LivePanelTheme.THEMED_DIALOG);
         assertEquals(LiveSheetFragment.class.getName(), LivePanelTheme.SHEET);
+        assertEquals(LiveThemeAwareFragment.class.getName(), LivePanelTheme.THEMED_FRAGMENT);
         assertEquals(RankListDialog.class.getName(), LivePanelTheme.RANK_LIST);
         assertEquals(PopularityRankingEducationDialog.class.getName(), LivePanelTheme.RANK_GUIDE);
         assertTrue(LivePanelTheme.isPanel(ShareDialog.class));
@@ -226,6 +538,21 @@ public class LivePanelThemeTest {
         assertTrue(!LivePanelTheme.isPanel(RankListDialog.class));
         assertTrue(!LivePanelTheme.isPanel(PopularityRankingEducationDialog.class));
         assertTrue("a ranking subclass stays stock too", !LivePanelTheme.isPanel(HourlyRanking.class));
+        assertTrue("a sheet page is a panel, not a themed page", LivePanelTheme.isPanel(LiveSheetFragment.class));
+        assertTrue("a themed page isn't a panel", !LivePanelTheme.isPanel(RankPage.class));
+        RankListDialog ranking = new RankListDialog();
+        assertSame(ranking, LivePanelTheme.stockPanel(ranking));
+        HourlyRanking hourly = new HourlyRanking();
+        assertSame(hourly, LivePanelTheme.stockPanel(hourly));
+        assertSame("a page finds its ranking", ranking, LivePanelTheme.stockPanel(page(ranking)));
+        assertSame(null, LivePanelTheme.stockPanel(dialog()));
+        assertSame(null, LivePanelTheme.stockPanel(new RoomFragment()));
+        ShareDialog share = dialog();
+        share.parent = ranking;
+        assertSame("an ordinary panel over the ranking ends the walk", null, LivePanelTheme.stockPanel(share));
+        RankPage loop = page(null);
+        loop.parent = loop;
+        assertSame("a parent loop ends", null, LivePanelTheme.stockPanel(loop));
     }
 
     /** A ranking built on the daily one, the way TikTok splits its list dialogs into variants. */

@@ -59,10 +59,12 @@ public final class LiveControls {
      * context. TikTok answers no in every LIVE room even in dark mode, so the share menu, the fan
      * club and the first gift dialog opened white over a dark room (#159). True while the switch is
      * on and that context is in dark mode, which gives the panel the dark theme; false leaves
-     * TikTok's answer, so light mode stays light. Paused, the switch answers off.
+     * TikTok's answer, so light mode stays light. Paused, the switch answers off. It answers
+     * false too while a stock panel asks for TikTok's own answer ({@link LivePanelTheme#stockOverlay}).
      */
     public static boolean darkLivePanels(Context context) {
-        if (context == null || !SettingsStatus.liveControlsEnabled || !Settings.DARK_LIVE_PANELS.get()) {
+        if (context == null || !SettingsStatus.liveControlsEnabled || !Settings.DARK_LIVE_PANELS.get()
+                || LivePanelTheme.askingStock()) {
             return false;
         }
         int night = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
