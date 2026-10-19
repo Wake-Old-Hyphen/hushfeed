@@ -128,7 +128,29 @@ class SystemFontAnchorsTest {
         }
     }
 
+    /**
+     * Activity center and Watch history are TikTok web pages (#7). The patch styles them from the
+     * page-finished and page-visible callbacks of TikTok's WebViewClients, so this holds that the
+     * patch's rule finds callbacks on each build, among them the hybrid kit's web clients, which
+     * every Spark web page passes through (on 47.4.3 its script injector and TTP client, beside
+     * 17 obfuscated clients).
+     */
+    @Test
+    fun `TikTok's web pages reach a page callback the font patch hooks on each build`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val callbacks = webPageCallbacks(classesOf(apk))
+            val owners = callbacks.map { "${it.definingClass}->${it.name}" }
+            assertTrue("$version: no onPageFinished among $owners", callbacks.any { it.name == "onPageFinished" })
+            assertTrue(
+                "$version: no hybrid kit web client callback among $owners",
+                callbacks.any { it.definingClass.startsWith(HYBRID_WEB_KIT) },
+            )
+        }
+    }
+
     private companion object {
+        const val HYBRID_WEB_KIT = "Lcom/ss/android/ugc/aweme/hybridkit/web/"
         const val TYPEFACE = "Landroid/graphics/Typeface;"
         const val VARIATION = "[Landroid/graphics/fonts/FontVariationAxis;IZ"
         const val ASSET = "Ljava/lang/String;"

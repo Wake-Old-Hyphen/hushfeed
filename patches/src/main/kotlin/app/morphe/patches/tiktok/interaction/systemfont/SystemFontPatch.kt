@@ -18,6 +18,7 @@ import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
@@ -76,7 +77,9 @@ val systemFontPatch = bytecodePatch(
         // classes are walked once for both.
         val engines = mutableListOf<ClassDef>()
         val glyphChecks = mutableListOf<Method>()
+        val allClasses = mutableListOf<ClassDef>()
         classDefForEach { classDef ->
+            allClasses += classDef
             if (isFontEngine(classDef)) engines += classDef
             if (!classDef.type.startsWith(EXTENSION_ROOT)) {
                 classDef.methods.filterTo(glyphChecks, ::isEmojiGlyphCheck)
@@ -98,6 +101,23 @@ val systemFontPatch = bytecodePatch(
                         .first { it.name == method.name && it.parameterTypes == method.parameterTypes }
                         .systemizeReturns()
                 }
+        }
+
+        // Activity center, Watch history and the other history pages are TikTok web pages in a
+        // WebView, drawn in TikTok's web font, so the engine never sees them (#7). Every
+        // page-finished and page-visible callback of TikTok's WebViewClients hands the page to
+        // the extension, which styles TikTok's own pages and leaves every other site alone.
+        val pageCallbacks = webPageCallbacks(allClasses)
+        if (pageCallbacks.isEmpty()) {
+            throw PatchException(
+                "$PATCH: no WebViewClient onPageFinished or onPageCommitVisible implementation found.",
+            )
+        }
+        pageCallbacks.forEach { callback ->
+            mutableClassDefBy(callback.definingClass).findMutableMethodOf(callback).addInstruction(
+                0,
+                "invoke-static/range { p1 .. p2 }, $WEB_FONT_CLASS_DESCRIPTOR->onPageFinished($WEB_VIEW$STRING)V",
+            )
         }
 
         // Use system emoji. TikTok's fonts carry no emoji, so an emoji already falls through to
@@ -125,6 +145,40 @@ val systemFontPatch = bytecodePatch(
 
 private const val EXTENSION_ROOT = "Lapp/morphe/extension/"
 private const val PAINT_HAS_GLYPH = "$PAINT->hasGlyph(Ljava/lang/String;)Z"
+private const val WEB_FONT_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/font/WebFont;"
+private const val WEB_VIEW = "Landroid/webkit/WebView;"
+private const val WEB_VIEW_CLIENT = "Landroid/webkit/WebViewClient;"
+private const val STRING = "Ljava/lang/String;"
+private val PAGE_CALLBACK_NAMES = setOf("onPageFinished", "onPageCommitVisible")
+
+/**
+ * The `onPageFinished(WebView, String)` and `onPageCommitVisible(WebView, String)` methods with
+ * code in every app class descended from WebViewClient, through any number of TikTok's own
+ * subclasses. Shared with the fixture test, so the test holds the patch's own rule to each build.
+ */
+internal fun webPageCallbacks(classes: Iterable<ClassDef>): List<Method> {
+    val superOf = classes.associate { it.type to it.superclass }
+    fun isClient(type: String): Boolean {
+        var current = superOf[type]
+        // A bound instead of a seen-set: a real hierarchy is a few levels deep.
+        repeat(32) {
+            val parent = current ?: return false
+            if (parent == WEB_VIEW_CLIENT) return true
+            current = superOf[parent]
+        }
+        return false
+    }
+    return classes
+        .filter { !it.type.startsWith(EXTENSION_ROOT) && isClient(it.type) }
+        .flatMap { classDef ->
+            classDef.methods.filter { method ->
+                method.name in PAGE_CALLBACK_NAMES && method.returnType == "V" &&
+                    method.implementation != null &&
+                    !AccessFlags.STATIC.isSet(method.accessFlags) &&
+                    method.parameterTypes.map { it.toString() } == listOf(WEB_VIEW, STRING)
+            }
+        }
+}
 
 /**
  * Whether [method] is androidx EmojiCompat's glyph check: it answers a boolean from a

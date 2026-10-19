@@ -1,3 +1,9 @@
+## Unreleased
+
+* **TikTok:** „Fortschrittsbalken anzeigen“ zeigt den Balken jetzt auch bei Videos hinter einer Warnung vor sensiblen Inhalten (#208).
+
+* **TikTok:** „Systemschrift verwenden“ und „Importierte Schrift verwenden“ wirken jetzt auch im Aktivitätscenter, im Wiedergabeverlauf und auf den anderen Webseiten von TikTok (#7).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed unterstützt jetzt TikTok 47.4.3 und nur diese Version. Patche die 47.4.3-APK von APKMirror. PineDrama bleibt bei 47.1.4.

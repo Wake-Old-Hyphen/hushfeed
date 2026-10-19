@@ -120,11 +120,13 @@ val showSeekbarPatch = bytecodePatch(
 
         // TikTok's reasons for keeping the bar off a video run before the show type is asked.
         // Two of them are experiments; both are found from their log line and answered here.
+        // A third, a sensitive content warning on the video, is answered inside the list (#208).
         val gates = SeekbarGateLogFingerprint.method
         val inverse = gates.gateBefore(INVERSE_EXPERIMENT_LOG)
         val drag = gates.gateBefore(CANNOT_DRAG_LOG)
         mutableClassDefBy(inverse.definingClass).methods.named(inverse).answerInverseExperiment()
         mutableClassDefBy(drag.definingClass).methods.named(drag).answerDraggable()
+        gates.answerVideoMask()
 
         // Both extras below are held to every declared build by their anchors tests, so a miss
         // there fails the patch. A build the patch is forced onto keeps the bar without them.

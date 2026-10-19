@@ -1,3 +1,9 @@
+## Unreleased
+
+* **TikTok:** İrəliləyiş panelini göstərin indi həssas məzmun xəbərdarlığının arxasındakı videolarda da paneli göstərir (#208).
+
+* **TikTok:** Sistem şriftindən istifadə edin və İdxal edilmiş şriftdən istifadə edin indi Fəaliyyət mərkəzində, Baxış tarixçəsində və TikTok-un digər veb səhifələrində də işləyir (#7).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed indi TikTok 47.4.3-ü dəstəkləyir, yalnız bu versiyanı. APKMirror-dan 47.4.3 APK-nı yamaqlayın. PineDrama 47.1.4-də qalır.

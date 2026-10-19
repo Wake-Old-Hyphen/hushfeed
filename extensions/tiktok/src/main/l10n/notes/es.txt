@@ -1,3 +1,9 @@
+## Unreleased
+
+* **TikTok:** Mostrar la barra de progreso ahora también muestra la barra en los vídeos que tienen delante un aviso de contenido sensible (#208).
+
+* **TikTok:** Usar la fuente del sistema y Usar una fuente importada ahora llegan al Centro de actividad, al Historial de visualización y a las demás páginas web de TikTok (#7).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed ahora es compatible con TikTok 47.4.3, y solo con esa versión. Parchea el APK 47.4.3 de APKMirror. PineDrama sigue en 47.1.4.

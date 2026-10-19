@@ -1,6 +1,7 @@
 package app.morphe.patches.tiktok.interaction.seekbar
 
 import app.morphe.Fixtures
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
@@ -19,8 +20,8 @@ import org.junit.Test
 /**
  * TikTok's reasons for keeping the seek bar off a video, held to every fixture: one method logs
  * them, its two experiment lines each sit under a static gate that takes the video, the gates
- * are two different methods, and the gate the patch guards at its entry has a local to guard
- * with. 47.0.3 is also held to the shape the fix was written from: the inverse gate excepts paid
+ * are two different methods, the gate the patch guards at its entry has a local to guard
+ * with, and the mask line's check takes the wrap at its call site. 47.0.3 is also held to the shape the fix was written from: the inverse gate excepts paid
  * content, and the can-drag gate reads the draggable flag exactly once.
  */
 class SeekbarGatesAnchorsTest {
@@ -39,6 +40,14 @@ class SeekbarGatesAnchorsTest {
             assertTrue("${apk.name}: the inverse gate is not static", AccessFlags.STATIC.isSet(inverseGate.accessFlags))
             val locals = inverseGate.implementation!!.registerCount - inverseGate.parameterTypes.size
             assertTrue("${apk.name}: the inverse gate has $locals local registers, the guard writes one", locals >= 1)
+
+            // The mask reason (#208) is answered inside the list, so its call site has to take the
+            // wrap: the shared check, its move-result and an if-eqz on that result.
+            val masked = MutableMethod(reasons).apply { answerVideoMask() }
+            assertTrue(
+                "${apk.name}: the mask answer was not wrapped",
+                masked.implementation!!.instructions.any { it.getReference<MethodReference>()?.name == "overrideVideoMask" },
+            )
 
             val dragGate = build.method(drag)
             val reads = dragGate.implementation!!.instructions.count {
@@ -61,6 +70,7 @@ class SeekbarGatesAnchorsTest {
         val source = File(root, "app/morphe/patches/tiktok/interaction/seekbar/ShowSeekbarPatch.kt").readText()
         assertTrue("the inverse experiment is not answered", source.contains(".named(inverse).answerInverseExperiment()"))
         assertTrue("the draggable flag is not answered", source.contains(".named(drag).answerDraggable()"))
+        assertTrue("the mask reason is not answered", source.contains("gates.answerVideoMask()"))
     }
 
     private fun key(reference: MethodReference) =

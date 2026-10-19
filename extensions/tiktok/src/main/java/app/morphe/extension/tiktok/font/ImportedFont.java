@@ -180,10 +180,15 @@ public final class ImportedFont {
 
     /** The imported font's file name, or null when there is none. */
     public static String name(Context context) {
+        File file = file(context);
+        return file == null ? null : file.getName();
+    }
+
+    /** The imported font's file, or null when there is none. */
+    static File file(Context context) {
         if (context == null) return null;
         synchronized (LOCK) {
-            File file = storedFile(context);
-            return file == null ? null : file.getName();
+            return storedFile(context);
         }
     }
 

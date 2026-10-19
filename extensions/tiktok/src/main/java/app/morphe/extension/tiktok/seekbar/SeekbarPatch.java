@@ -59,6 +59,16 @@ public final class SeekbarPatch {
         return value != 0 ? value : 1;
     }
 
+    /**
+     * TikTok's "video has mask" answer, as its list of reasons for keeping the bar off reads it.
+     * A video with a sensitive content warning keeps that answer after it's tapped through, so
+     * the bar never showed on it (#208). Only this one read changes: the warning screen and the
+     * rest of TikTok ask the same check on their own.
+     */
+    public static boolean overrideVideoMask(boolean hasMask) {
+        return hasMask && !Settings.SHOW_SEEKBAR.get();
+    }
+
     public static int overrideThumbnailGate(String key, int value) {
         if (!"seekbar_show_thumbnail_when_drag".equals(key)) return value;
         return Settings.SHOW_SEEKBAR_THUMBNAIL.get() ? 1 : value;

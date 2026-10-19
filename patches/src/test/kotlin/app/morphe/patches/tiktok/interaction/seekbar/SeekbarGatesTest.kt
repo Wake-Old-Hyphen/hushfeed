@@ -55,6 +55,48 @@ class SeekbarGatesTest {
             return v0
         """)
 
+    /** The mask reason as 47.4.3 writes it: the shared check, its result, and an if-eqz past the line. */
+    private fun maskedReasons(branch: String = "if-eqz") = method("LX/06qw;", "LJI", listOf(AWEME), "Z", 7, """
+        invoke-static {p0}, LX/08Ut;->LJIIJJI($AWEME)Z
+        move-result v0
+        $branch v0, :unmasked
+        const-string v0, "$VIDEO_MASK_LOG"
+        const/4 v3, 0x0
+        return v3
+        :unmasked
+        const/4 v3, 0x1
+        return v3
+    """)
+
+    @Test
+    fun `the mask answer is wrapped where the list reads it and the shared check is left alone`() {
+        val reasons = maskedReasons()
+        val before = reasons.implementation!!.instructions.toList()
+
+        reasons.answerVideoMask()
+
+        val after = reasons.implementation!!.instructions.toList()
+        assertEquals(before.size + 2, after.size)
+        assertEquals("LX/08Ut;", after[0].getReference<MethodReference>()!!.definingClass)
+        assertEquals(Opcode.MOVE_RESULT, after[1].opcode)
+        val call = after[2]
+        assertEquals(Opcode.INVOKE_STATIC_RANGE, call.opcode)
+        val reference = call.getReference<MethodReference>()!!
+        assertEquals(EXTENSION, reference.definingClass)
+        assertEquals("overrideVideoMask", reference.name)
+        assertEquals(listOf("Z"), reference.parameterTypes.map(CharSequence::toString))
+        assertEquals("Z", reference.returnType)
+        assertEquals(0, (call as RegisterRangeInstruction).startRegister)
+        assertEquals(Opcode.MOVE_RESULT, after[3].opcode)
+        assertEquals(0, (after[3] as OneRegisterInstruction).registerA)
+        assertEquals(Opcode.IF_EQZ, after[4].opcode)
+    }
+
+    @Test
+    fun `a mask check whose true answer would let the bar through is refused`() {
+        assertThrows(PatchException::class.java) { maskedReasons(branch = "if-nez").answerVideoMask() }
+    }
+
     @Test
     fun `each log line names the static (Aweme)Z call above it`() {
         val reasons = reasons()

@@ -1,3 +1,9 @@
+## Unreleased
+
+* **TikTok:** Tampilkan bilah progres kini juga menampilkan bilah di video yang ada di balik peringatan konten sensitif (#208).
+
+* **TikTok:** Gunakan font sistem dan Gunakan font yang diimpor kini juga berlaku di Pusat aktivitas, Riwayat tontonan, dan halaman web TikTok lainnya (#7).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed kini mendukung TikTok 47.4.3, dan hanya versi itu. Patch APK 47.4.3 dari APKMirror. PineDrama tetap di 47.1.4.

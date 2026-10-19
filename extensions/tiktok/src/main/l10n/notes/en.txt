@@ -1,3 +1,9 @@
+## Unreleased
+
+* **TikTok:** Show the progress bar also shows the bar on videos behind a sensitive content warning (#208).
+
+* **TikTok:** Use system font and Use an imported font now reach Activity center, Watch history and TikTok's other web pages (#7).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed now supports TikTok 47.4.3, and only that one. Patch the 47.4.3 APK from APKMirror. PineDrama stays on 47.1.4.

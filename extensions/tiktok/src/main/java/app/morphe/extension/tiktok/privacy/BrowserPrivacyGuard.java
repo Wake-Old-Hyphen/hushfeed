@@ -238,7 +238,8 @@ public final class BrowserPrivacyGuard {
         return Utils.getContext() != null && Settings.BLOCK_WEBVIEW_JS_INTERFACES.get();
     }
 
-    static boolean isTrustedAppPage(String url) {
+    /** Whether {@code url} is one of TikTok's own pages. Use system font reads it too. */
+    public static boolean isTrustedAppPage(String url) {
         if (url == null) return false;
         final Uri parsed;
         try {

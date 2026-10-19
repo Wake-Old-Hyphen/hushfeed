@@ -69,6 +69,15 @@ public class SeekbarPatchTest {
     }
 
     @Test
+    public void aWarningMaskStopsKeepingTheBarOffOnlyWhileEnabled() {
+        assertTrue(SeekbarPatch.overrideVideoMask(true));
+        assertFalse(SeekbarPatch.overrideVideoMask(false));
+        Settings.SHOW_SEEKBAR.save(true);
+        assertFalse(SeekbarPatch.overrideVideoMask(true));
+        assertFalse(SeekbarPatch.overrideVideoMask(false));
+    }
+
+    @Test
     public void refreshDefeatsStaledZeroEqualityWhenEnabled() {
         Settings.SHOW_SEEKBAR.save(true);
         assertEquals(Integer.MIN_VALUE, SeekbarPatch.forceSeekbarRefresh(0, 0));

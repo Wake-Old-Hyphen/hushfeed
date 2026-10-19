@@ -12,6 +12,7 @@ import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -23,6 +24,7 @@ private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 
 internal const val INVERSE_EXPERIMENT_LOG = "can not show seekbar, state: 6, hit inverse expriment"
 internal const val CANNOT_DRAG_LOG = "can not show seekbar, state: 2, can not drag"
+internal const val VIDEO_MASK_LOG = "can not show seekbar, state: 7, video has mask"
 internal const val DRAFT_PROGRESS_BAR = "draftProgressBar"
 
 /**
@@ -51,7 +53,10 @@ internal object SeekbarGateLogFingerprint : Fingerprint(
  * static call rather than the nearest one of the right shape, because the check before it also
  * has the right shape and is not far away.
  */
-internal fun Method.gateBefore(log: String): MethodReference {
+internal fun Method.gateBefore(log: String): MethodReference = gateCallBefore(log).second
+
+/** Where [gateBefore]'s call sits in this method, with the method it names. */
+private fun Method.gateCallBefore(log: String): Pair<Int, MethodReference> {
     val instructions = implementation?.instructions?.toList()
         ?: throw PatchException("$PATCH: $definingClass->$name has no implementation")
     val at = instructions.indexOfFirst { it.getReference<StringReference>()?.string == log }
@@ -67,7 +72,7 @@ internal fun Method.gateBefore(log: String): MethodReference {
                 "$PATCH: the call above \"$log\" in $definingClass->$name is ${reference.name}$shape, not a (Aweme)Z gate",
             )
         }
-        return reference
+        return index to reference
     }
     throw PatchException(
         "$PATCH: no static call within twelve instructions above \"$log\" in $definingClass->$name",
@@ -81,6 +86,35 @@ internal fun Iterable<MutableMethod>.named(reference: MethodReference): MutableM
             it.returnType == reference.returnType &&
             it.parameterTypes.map(CharSequence::toString) == reference.parameterTypes.map(CharSequence::toString)
     } ?: throw PatchException("$PATCH: ${reference.definingClass} has no ${reference.name}")
+
+/**
+ * Lets the bar past the "video has mask" reason (#208): a video with a sensitive content warning
+ * keeps that answer after it's tapped through, so the bar never showed on it. The mask check is
+ * TikTok's shared one, asked from about thirty places on 47.4.3 including the warning screen
+ * itself, so it's answered here at its call site in the reasons method rather than at its entry.
+ * The call is followed by its move-result and an if-eqz past the log line, so true refuses.
+ */
+internal fun MutableMethod.answerVideoMask() {
+    val (call, _) = gateCallBefore(VIDEO_MASK_LOG)
+    val instructions = implementation!!.instructions.toList()
+    val result = instructions.getOrNull(call + 1)
+    val branch = instructions.getOrNull(call + 2)
+    if (result?.opcode != Opcode.MOVE_RESULT || branch?.opcode != Opcode.IF_EQZ ||
+        (branch as OneRegisterInstruction).registerA != (result as OneRegisterInstruction).registerA
+    ) {
+        throw PatchException(
+            "$PATCH: the mask check in $definingClass->$name isn't a call, its move-result and an if-eqz on it",
+        )
+    }
+    val register = result.registerA
+    addInstructions(
+        call + 2,
+        """
+            invoke-static/range {v$register .. v$register}, $EXTENSION->overrideVideoMask(Z)Z
+            move-result v$register
+        """,
+    )
+}
 
 /** Makes the inverse experiment answer that the bar may show, whenever the switch is on. */
 internal fun MutableMethod.answerInverseExperiment() {

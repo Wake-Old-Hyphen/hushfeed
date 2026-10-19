@@ -4,6 +4,11 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features and fixes
+
+* **TikTok:** `Show the progress bar` also shows the bar on videos that open behind a sensitive content warning. TikTok kept treating them as covered after you tapped through, so the bar stayed off on those videos even with the switch on (#208).
+* **TikTok:** `Use system font` and `Use an imported font` now reach Activity center, Watch history, Comment history and TikTok's other web pages. Those screens are web pages inside the app, so they kept TikTok's font. Websites you open in TikTok's browser keep their own fonts. An imported font over 2 MB shows up there as your phone's font instead (#7).
+
 ## 0.76.0 (2026-10-18)
 
 ### Supported apps
