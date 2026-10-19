@@ -40,6 +40,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * button, not from a page, so the rules start with the room after it. And a page with every room
  * hidden makes TikTok load the next at once, so after a run of those one room goes through (see
  * {@link #HIDDEN_PAGES_BEFORE_ONE_SHOWS}); a blocked creator or a blocked word never does.
+ *
+ * <p>The same handler fills the LIVE rows outside the feed: the Following tab's row of creators
+ * who are LIVE, the Inbox's LIVE line and the feed behind it, a push's room (#212). Those are
+ * people the viewer follows or asked about, so the rules about a LIVE's kind, labels and numbers
+ * stay off them and only a blocked creator is hidden there. The provider names each page with
+ * its request type, which the patch passes along (see {@link #FOLLOW_ROWS}).
  */
 public final class LiveFeedFilter {
     private LiveFeedFilter() {
@@ -80,6 +86,18 @@ public final class LiveFeedFilter {
     private static final AtomicInteger HIDDEN_PAGES_IN_A_ROW = new AtomicInteger();
     private static final AtomicLong SHOWN_TO_KEEP_LOADING = new AtomicLong();
 
+    /**
+     * How the provider names a request for the LIVE rows outside the feed, by its start: the
+     * Following tab's row and the avatars over its feed, the Inbox's LIVE line and the feed behind
+     * it, a push's room, the Friends tab and Watch later. A page of the LIVE feed is toplive_*, the
+     * explore drawers tikcast_*, and those get every rule.
+     */
+    static final String[] FOLLOW_ROWS = {
+            "following_", "homepage_follow_", "message_live_cell", "tiktok_message_inner",
+            "inner_push", "push_push", "friends_feed", "live_watch_later",
+    };
+    private static final AtomicLong FOLLOW_ROW_PAGES = new AtomicLong();
+
     /** Called once at start-up by the patch, which only does so when it found the handler. */
     public static void installed() {
         SettingsStatus.enableLiveFeedFilter();
@@ -91,11 +109,22 @@ public final class LiveFeedFilter {
      * list comes back when nothing is hidden, with the filter off, and on any failure.
      */
     public static List<?> filter(List<?> items) {
+        return filter(items, null);
+    }
+
+    /**
+     * As above, where {@code requestType} is the provider's name for what it asked /webcast/feed/
+     * for. A row outside the feed (see {@link #FOLLOW_ROWS}) loses blocked creators and nothing
+     * else; null is a page of the feed, as the patch called this before it knew the type.
+     */
+    public static List<?> filter(List<?> items, @Nullable String requestType) {
         if (items == null || items.isEmpty()) return items;
         PAGES.incrementAndGet();
+        boolean followRow = isFollowRow(requestType);
+        if (followRow) FOLLOW_ROW_PAGES.incrementAndGet();
         if (!Settings.LIVE_FEED_FILTER.get()) return items;
         try {
-            Rules rules = Rules.fromSettings();
+            Rules rules = followRow ? Rules.blockedCreatorsOnly() : Rules.fromSettings();
             String[] reasons = new String[items.size()];
             int rooms = 0;
             int roomsKept = 0;
@@ -112,7 +141,10 @@ public final class LiveFeedFilter {
                 if (reason == null) roomsKept++;
                 else if (standIn < 0 && mayStandIn(reason)) standIn = index;
             }
-            if (rooms > 0 && roomsKept == 0) {
+            // The run of hidden pages is the feed's: a row outside it loads no next page.
+            if (followRow) {
+                // Nothing to count.
+            } else if (rooms > 0 && roomsKept == 0) {
                 if (HIDDEN_PAGES_IN_A_ROW.incrementAndGet() > HIDDEN_PAGES_BEFORE_ONE_SHOWS && standIn >= 0) {
                     HIDDEN_PAGES_IN_A_ROW.set(0);
                     reasons[standIn] = null;
@@ -137,7 +169,8 @@ public final class LiveFeedFilter {
             }
             if (kept == null) return items;
             int hidden = items.size() - kept.size();
-            Logger.printDebug(() -> "LIVE feed page: kept " + (items.size() - hidden) + " of " + items.size());
+            Logger.printDebug(() -> "LIVE feed page (" + (requestType == null ? "feed" : requestType) + "): kept "
+                    + (items.size() - hidden) + " of " + items.size());
             return kept;
         } catch (RuntimeException failure) {
             if (FAILURES.getAndIncrement() < 3) {
@@ -165,6 +198,15 @@ public final class LiveFeedFilter {
         long type = number(item, "type");
         if (type != 1 && type != 2 && type != 19) return null;
         return Reflect.invoke(item, "getRoom");
+    }
+
+    /** Whether {@code requestType} names a LIVE row outside the feed (see {@link #FOLLOW_ROWS}). */
+    static boolean isFollowRow(@Nullable String requestType) {
+        if (requestType == null) return false;
+        for (String row : FOLLOW_ROWS) {
+            if (requestType.startsWith(row)) return true;
+        }
+        return false;
     }
 
     /** Whether a room hidden for {@code reason} may be the one that keeps the feed loading. */
@@ -235,6 +277,14 @@ public final class LiveFeedFilter {
             long[] followers = Utils.parseMinMax(Settings.LIVE_MIN_MAX_FOLLOWERS);
             rules.minFollowers = followers[0];
             rules.maxFollowers = followers[1];
+            return rules;
+        }
+
+        /** The block list alone, for a LIVE row outside the feed (#212). */
+        static Rules blockedCreatorsOnly() {
+            Rules rules = new Rules();
+            rules.creators = !Settings.BLOCKED_CREATORS.get().trim().isEmpty()
+                    || !Settings.LOCAL_HIDDEN_CREATORS.get().trim().isEmpty();
             return rules;
         }
 
@@ -398,6 +448,7 @@ public final class LiveFeedFilter {
             lines.add("Filter the LIVE feed: " + (saved ? "on" : "off"));
             if (saved && !Settings.LIVE_FEED_FILTER.get()) lines.add("Hushfeed is paused, so the LIVE feed is as TikTok sends it");
             lines.add("LIVE feed pages since TikTok started: " + PAGES.get());
+            lines.add("Of them, LIVE rows outside the feed (Following, Inbox, pushes), blocked creators only: " + FOLLOW_ROW_PAGES.get());
             lines.add("Rooms checked: " + ROOMS.get() + ", hidden: " + HIDDEN.get());
             if (!HIDDEN_BY.isEmpty()) {
                 StringBuilder by = new StringBuilder("Hidden by rule:");
@@ -425,5 +476,6 @@ public final class LiveFeedFilter {
         HIDDEN_TO_DESCRIBE.set(50);
         HIDDEN_PAGES_IN_A_ROW.set(0);
         SHOWN_TO_KEEP_LOADING.set(0);
+        FOLLOW_ROW_PAGES.set(0);
     }
 }

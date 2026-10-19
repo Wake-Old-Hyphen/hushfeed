@@ -121,6 +121,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private boolean arrived;
     private PreferenceScreen searchScreen;
     private List<SearchResult> searchIndex;
+    /** Set when the search page goes behind another, where a result's setting may change. */
+    private boolean searchIndexStale;
     private final List<Preference> searchRows = new ArrayList<>();
     private SettingsSearchInputPreference searchInput;
     private SettingsHeaderPreference masterHeader;
@@ -1978,6 +1980,14 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         refreshStatusCard();
         // Back from a section onto the master menu: whatever was changed there is owed here.
         refreshRestartPending();
+        // Back from a result's page onto the search: the index copied each row's summary when it
+        // was built, so a list, number or text setting changed there still read its old value
+        // (Caption background said Dark after it was set to TikTok default, S25 2026-10-18).
+        if (searchIndexStale && searchScreen != null) {
+            searchIndexStale = false;
+            searchIndex = buildSearchIndex(getActivity(), FeatureGateLabRuntime.isInstalled());
+            updateSearchResults(searchInput == null ? "" : searchInput.getQuery());
+        }
         // A phone asleep over the day's start pauses this screen, so coming back is when the
         // Screen time rows are most likely to be out of date.
         budgetTicks.removeCallbacks(budgetTick);
@@ -1987,6 +1997,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     @Override
     public void onPause() {
         budgetTicks.removeCallbacks(budgetTick);
+        searchIndexStale = searchScreen != null;
         super.onPause();
     }
 

@@ -2,13 +2,16 @@ package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.addInstructionsWithLabels
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
+import com.android.tools.smali.dexlib2.builder.BuilderOffsetInstruction
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -24,6 +27,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -46,7 +50,11 @@ import org.junit.Test
  * take the room's inflater, so androidx's fragment inflater takes a hook of its own, and the
  * extension finds them by the public getParentFragment and getContext it calls by name. The
  * ranking's tab strip reads its colors through its page's getContext(), the room, so both tab
- * states hand that context and the page to the extension first.
+ * states hand that context and the page to the extension first, and the team list's bottom bar,
+ * the page's reach_top20 chevron and every list's bar tag icon do the same with their own. A
+ * list's bottom row tints its info icon through the context the list hands it, so that context
+ * and the row's text go to the extension before the row runs. LIVE's list rows skip the list's
+ * inflater, so the row binders' base asks the extension for each row before TikTok's code runs.
  */
 class LiveDarkPanelsAnchorsTest {
     private fun classes(apk: java.io.File): Map<String, ClassDef> {
@@ -338,6 +346,275 @@ class LiveDarkPanelsAnchorsTest {
                 assertEquals(tab.context, (written[tab.call + 3] as OneRegisterInstruction).registerA)
                 assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
             }
+        }
+    }
+
+    @Test
+    fun `each declared build keeps the team list's bottom bar contexts the page hook redirects`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val team = classes[TEAM_RANK_LIST] ?: throw AssertionError("${apk.name}: $TEAM_RANK_LIST is gone")
+            // The extension walks up from it by the fragment's getParentFragment.
+            assertTrue("${apk.name}: the team list isn't a fragment",
+                ANDROIDX_FRAGMENT in generateSequence(TEAM_RANK_LIST) { classes[it]?.superclass }.toList())
+            val found = team.methods.filter { TeamRankListViewFingerprint.takes(it, team) }
+            assertEquals("${apk.name}: the team list's onViewCreated", 1, found.size)
+            assertPageHooked(apk.name, found.single(), if ("47.4.3" in apk.name) 3 else null)
+        }
+    }
+
+    @Test
+    fun `each declared build keeps the ranking lists' bottom bar tag icon the page hook redirects`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val list = classes[RANK_LIST] ?: throw AssertionError("${apk.name}: $RANK_LIST is gone")
+            // The team list builds on it, so the trending tab's bar is drawn through it.
+            assertTrue("${apk.name}: the team list left the ranking lists' base",
+                RANK_LIST in generateSequence(TEAM_RANK_LIST) { classes[it]?.superclass }.toList())
+            val found = list.methods.filter { RankListBottomTagFingerprint.takes(it, list) }
+            assertEquals("${apk.name}: the bottom bar's tag", 1, found.size)
+            // The icon's drawable and its tint, each through its own getContext().
+            assertPageHooked(apk.name, found.single(), if ("47.4.3" in apk.name) 2 else null)
+        }
+    }
+
+    @Test
+    fun `each declared build keeps the ranking page's reach_top20 chevron the page hook redirects`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val page = classes[RANK_PAGE] ?: throw AssertionError("${apk.name}: $RANK_PAGE is gone")
+            // The extension walks up from it by the fragment's getParentFragment.
+            assertTrue("${apk.name}: the ranking page isn't a fragment",
+                ANDROIDX_FRAGMENT in generateSequence(RANK_PAGE) { classes[it]?.superclass }.toList())
+            val found = page.methods.filter { RankPageReachTopFingerprint.takes(it, page) }
+            assertEquals("${apk.name}: the reach_top20 row", 1, found.size)
+            // The chevron's drawable and its tint, asked of the copy of p0 in v7 since p0 is past v15.
+            val known = "47.4.3" in apk.name
+            assertPageHooked(apk.name, found.single(), if (known) 2 else null, if (known) 7 else null)
+        }
+    }
+
+    @Test
+    fun `each declared build keeps the ranking row's info icon the gap hook redirects`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val found = classes.values.flatMap { owner -> owner.methods.filter { RankGapInfoIconFingerprint.takes(it, owner) } }
+            assertEquals("${apk.name}: the bottom row's info icon", 1, found.size)
+            val method = found.single()
+            val (context, text) = gapInfoIcon(method)!!
+            if ("47.4.3" in apk.name) assertEquals("${apk.name}: p1 and p4", 14 to 17, context to text)
+            // The extension takes the row text as a View.
+            assertTrue("${apk.name}: the row text isn't a TextView", "Landroid/widget/TextView;" in
+                generateSequence(method.parameterTypes[3].toString()) { classes[it]?.superclass }.toList())
+            assertGapHooked(apk.name, method, context, text)
+        }
+    }
+
+    /**
+     * [method] hooked as the patch writes it: before anything else, the row text is copied into v0
+     * and handed to the extension with the context, whose answer goes back into the context's own
+     * register.
+     */
+    private fun assertGapHooked(apk: String, method: Method, context: Int, text: Int) {
+        val hooked = MutableMethod(method)
+        hookGapInfoIcon(hooked)
+        val written = hooked.implementation!!.instructions.toList()
+        val copy = written[0] as TwoRegisterInstruction
+        assertEquals("$apk: the text's copy", Opcode.MOVE_OBJECT_FROM16, copy.opcode)
+        assertEquals(listOf(0, text), listOf(copy.registerA, copy.registerB))
+        val hook = written[1] as FiveRegisterInstruction
+        assertEquals("stockViewContext", ((hook as ReferenceInstruction).reference as MethodReference).name)
+        assertEquals(listOf(0, context), listOf(hook.registerC, hook.registerD))
+        assertEquals(Opcode.MOVE_RESULT_OBJECT, written[2].opcode)
+        assertEquals(context, (written[2] as OneRegisterInstruction).registerA)
+        assertEquals(apk, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+    }
+
+    /**
+     * A bottom row shaped like 47.4.3's in [registers] registers: it reads the gap's FAQ, asks a
+     * copy of the row text (p4) what it shows and tints the icon through the context (p1) with
+     * [lookup], with [after] past the tint.
+     */
+    private fun gapRow(
+        registers: Int = 19,
+        lookup: String = "const v0, 0x7f061f39\ninvoke-static { v0, p1 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I",
+        after: String = "",
+    ) = MutableMethod(ImmutableMethod("Lapp/morphe/Gap;", "LJII",
+        listOf("Landroid/content/Context;", "Lcom/bytedance/ies/sdk/datachannel/DataChannel;",
+            "Lcom/bytedance/android/live/rank/impl/list/controller/RankListController;", "Landroidx/appcompat/widget/AppCompatTextView;",
+            RANK_GAP).map { ImmutableMethodParameter(it, null, null) },
+        "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        null, null, ImmutableMethodImplementation(registers, emptyList(), null, null))).apply {
+        addInstructionsWithLabels(0, """
+            move-object/from16 v11, p5
+            iget-object v1, v11, $RANK_GAP->bottomBarFaq:Ljava/lang/Object;
+            if-eqz v1, :done
+            move-object/from16 v5, p4
+            invoke-virtual { v5 }, Landroidx/appcompat/widget/AppCompatTextView;->getText()Ljava/lang/CharSequence;
+            $lookup
+            $after
+            :done
+            return-void
+        """)
+    }
+
+    @Test
+    fun `the gap hook takes only a row text and context it can hand over safely`() {
+        assertEquals(14 to 17, gapInfoIcon(gapRow()))
+        assertGapHooked("a row", gapRow(), 14, 17)
+        assertNotNull("Context methods take the wrapper", gapInfoIcon(gapRow(after =
+            "invoke-virtual { p1 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;")))
+        assertNull("no lookup", gapInfoIcon(gapRow(lookup = "")))
+        assertNull("a call that takes the context alone", gapInfoIcon(gapRow(lookup =
+            "invoke-static { p1 }, Lapp/morphe/Gap;->tint(Landroid/content/Context;)I")))
+
+        // In 21 registers p1 is v16, which the hook's four-bit call can't take.
+        val wide = "const v15, 0x7f061f39\ninvoke-static/range { v15 .. v16 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I"
+        assertNull("a context past v15", gapInfoIcon(gapRow(registers = 21, lookup = wide)))
+        for (after in listOf(
+            "check-cast p1, Landroid/app/Activity;",
+            "move-object v4, p1",
+            "invoke-static { p1 }, Lapp/morphe/Gap;->keep(Ljava/lang/Object;)V",
+            "const/4 p1, 0x0",
+            // The copy the text call is asked of holds something else too.
+            "new-instance v5, Ljava/lang/Object;",
+            "const/4 v1, 0x0\nmove-object/from16 p4, v1",
+        )) {
+            assertNull(after, gapInfoIcon(gapRow(after = after)))
+        }
+    }
+
+    /**
+     * [method]'s contexts as [pageContexts] finds them, [expected] of them when given, hooked as the
+     * patch writes it: right after each move-result, the extension's answer goes back into the
+     * same register, each earlier hook two instructions long, handed the register its getContext()
+     * asked, p0 or a copy of it ([page] when given).
+     */
+    private fun assertPageHooked(apk: String, method: Method, expected: Int?, page: Int? = null) {
+        val contexts = pageContexts(method)
+        if (expected != null) assertEquals("$apk: ${method.name}'s contexts", expected, contexts.size)
+        val code = method.implementation!!.instructions.toList()
+        val self = method.implementation!!.registerCount - method.parameterTypes.size - 1
+        val hooked = MutableMethod(method)
+        hookPageContexts(hooked)
+        val written = hooked.implementation!!.instructions.toList()
+        contexts.forEachIndexed { done, (result, context) ->
+            val asked = (code[result - 1] as FiveRegisterInstruction).registerC
+            if (page != null) assertEquals("$apk: context $done's page", page, asked)
+            assertTrue("$apk: context $done is asked of v$asked, not this", asked == self || code.any {
+                it.opcode == Opcode.MOVE_OBJECT_FROM16 && (it as TwoRegisterInstruction).registerA == asked && it.registerB == self
+            })
+            val at = result + 2 * done
+            assertEquals("$apk: context $done", Opcode.MOVE_RESULT_OBJECT, written[at].opcode)
+            val hook = written[at + 1] as FiveRegisterInstruction
+            assertEquals("stockContext", ((hook as ReferenceInstruction).reference as MethodReference).name)
+            assertEquals(listOf(asked, context), listOf(hook.registerC, hook.registerD))
+            assertEquals(Opcode.MOVE_RESULT_OBJECT, written[at + 2].opcode)
+            assertEquals(context, (written[at + 2] as OneRegisterInstruction).registerA)
+        }
+        assertEquals(apk, emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+    }
+
+    /** A page in 20 registers, p0 being v19, that copies p0 into v7 and asks v7 for its context. */
+    private fun copiedPageMethod(after: String = "") = MutableMethod(ImmutableMethod("Lapp/morphe/Page;", "Nd",
+        emptyList(), "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        null, null, ImmutableMethodImplementation(20, emptyList(), null, null))).apply {
+        addInstructionsWithLabels(0, """
+            move-object/from16 v7, p0
+            invoke-virtual { v7 }, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;
+            move-result-object v1
+            const v0, 0x7f061dd8
+            invoke-static { v0, v1 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I
+            $after
+            return-void
+        """)
+    }
+
+    @Test
+    fun `the page hook hands a copy of this past v15 along with its context`() {
+        val page = copiedPageMethod()
+        assertEquals(listOf(2 to 1), pageContexts(page))
+        hookPageContexts(page)
+        val hook = page.implementation!!.instructions.toList()[3] as FiveRegisterInstruction
+        assertEquals("stockContext", ((hook as ReferenceInstruction).reference as MethodReference).name)
+        assertEquals(listOf(7, 1), listOf(hook.registerC, hook.registerD))
+        assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(page))
+    }
+
+    @Test
+    fun `a register that holds something else too isn't taken for this`() {
+        // v7 also gets a plain object, so the context asked of it may not be the page's own.
+        assertThrows(PatchException::class.java) {
+            pageContexts(copiedPageMethod(after = "new-instance v7, Ljava/lang/Object;"))
+        }
+    }
+
+    /** A page method asking its own context once and handing it to [lookup] with a resource id. */
+    private fun pageMethod(lookup: String) = MutableMethod(ImmutableMethod("Lapp/morphe/Page;", "RX",
+        emptyList(), "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        null, null, ImmutableMethodImplementation(3, emptyList(), null, null))).apply {
+        addInstructionsWithLabels(0, """
+            invoke-virtual { p0 }, $ANDROIDX_FRAGMENT->getContext()Landroid/content/Context;
+            move-result-object v1
+            const v0, 0x7f061f40
+            invoke-static { v0, v1 }, $lookup
+            return-void
+        """)
+    }
+
+    @Test
+    fun `the page hook takes a context handed to a color or drawable lookup`() {
+        assertEquals("a color", listOf(1 to 1), pageContexts(pageMethod("LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I")))
+        assertEquals("a drawable", listOf(1 to 1), pageContexts(pageMethod("LX/0Jvn;->LIZLLL(ILandroid/content/Context;)LX/0Jvv;")))
+        for (lookup in listOf(
+            "LX/0Jvn;->keep(ILandroid/content/Context;)V",
+            "LX/0Jvn;->pick(ILandroid/content/Context;)Z",
+            "LX/0Jvn;->tint(Landroid/content/Context;I)I",
+        )) {
+            assertThrows(lookup, PatchException::class.java) { pageContexts(pageMethod(lookup)) }
+        }
+    }
+
+    @Test
+    fun `each declared build keeps the LIVE row binders' base the row hook asks first`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val found = classes.values.flatMap { owner ->
+                owner.methods.filter { LiveRowBinderFingerprint.takes(it, owner) }.map { owner to it }
+            }
+            assertEquals("${apk.name}: the row binders' base", 1, found.size)
+            val (owner, make) = found.single()
+            val binder = rowBinder(make, owner)!!
+            if ("47.4.3" in apk.name) {
+                assertEquals("${apk.name}: the row binders' base", "LX/136J;", owner.type)
+                assertEquals(listOf("LIZIZ", "LIZJ", "LJIIIIZZ"),
+                    listOf(binder.layout.name, binder.attach.name, binder.holder.name))
+                // The trending tab's rows come from the ranking's row binder, which builds on it.
+                assertTrue("${apk.name}: the ranking's row binder left the base",
+                    owner.type in generateSequence("LX/1GYT;") { classes[it]?.superclass }.toList())
+            }
+
+            // The hook as the patch writes it: the extension asked first, its row handed to the
+            // binder's own holder call and returned, and a null answer landing on TikTok's code.
+            val hooked = MutableMethod(make)
+            hookRowBinder(hooked, owner)
+            val code = hooked.implementation!!.instructions.toList()
+            val self = hooked.implementation!!.registerCount - 3
+            assertEquals("${apk.name}: the hook",
+                listOf(Opcode.IGET, Opcode.IGET_OBJECT, Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT_OBJECT, Opcode.IF_EQZ,
+                    Opcode.INVOKE_VIRTUAL, Opcode.MOVE_RESULT_OBJECT, Opcode.RETURN_OBJECT),
+                code.take(8).map { it.opcode })
+            assertEquals(binder.layout, (code[0] as ReferenceInstruction).reference)
+            assertEquals(binder.attach, (code[1] as ReferenceInstruction).reference)
+            val ask = code[2] as FiveRegisterInstruction
+            assertEquals("stockRow", ((ask as ReferenceInstruction).reference as MethodReference).name)
+            assertEquals(listOf(self + 2, 0, 1), listOf(ask.registerC, ask.registerD, ask.registerE))
+            val holder = code[5] as FiveRegisterInstruction
+            assertEquals(binder.holder, (holder as ReferenceInstruction).reference)
+            assertEquals(listOf(self, 0, self + 2), listOf(holder.registerC, holder.registerD, holder.registerE))
+            assertEquals(8, (code[4] as BuilderOffsetInstruction).target.location.index)
+            assertEquals(make.implementation!!.instructions.first().opcode, code[8].opcode)
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
         }
     }
 

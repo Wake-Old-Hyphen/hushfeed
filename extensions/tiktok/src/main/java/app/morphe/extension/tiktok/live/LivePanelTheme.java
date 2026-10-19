@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.reflect.Constructor;
@@ -64,6 +65,7 @@ public final class LivePanelTheme {
     /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
     private static final int LABEL_DEFAULT = 0x0F161823;
     private static volatile boolean overlayFailureLogged;
+    private static volatile boolean rowFailureLogged;
 
     private LivePanelTheme() {
     }
@@ -363,12 +365,68 @@ public final class LivePanelTheme {
         }
         Resources.Theme light = lightRoom(context);
         if (light == null) {
-            return new ContextThemeWrapper(context, overlay);
+            return new StockContext(context, overlay);
         }
         Resources.Theme theme = context.getResources().newTheme();
         theme.setTo(light);
         theme.applyStyle(overlay, true);
-        return new ContextThemeWrapper(context, theme);
+        return new StockContext(context, theme);
+    }
+
+    /** The light context a stock panel's views inflate with, which the rows of its lists look for. */
+    static final class StockContext extends ContextThemeWrapper {
+        StockContext(Context base, int theme) {
+            super(base, theme);
+        }
+
+        StockContext(Context base, Resources.Theme theme) {
+            super(base, theme);
+        }
+    }
+
+    /** True when the context is a stock panel's light one, or one a view wrapped around it. */
+    static boolean isStockContext(Context context) {
+        Context current = context;
+        while (current instanceof ContextWrapper) {
+            if (current instanceof StockContext) {
+                return true;
+            }
+            Context base = ((ContextWrapper) current).getBaseContext();
+            if (base == current) {
+                return false;
+            }
+            current = base;
+        }
+        return false;
+    }
+
+    /**
+     * Called by LIVE's list row binders before they make a row, with the list, the row's layout and
+     * whether it goes straight into the list. The binders skip the inflater their list hands them
+     * and inflate rows through LIVE's shared inflater, whose context is the app or the room, so over
+     * the darkened room the daily ranking's trending rows took the room's dark app theme and their
+     * names read white on the ranking's white sheet (Login2, 2026-10-19). While Dark LIVE panels is
+     * on in dark mode, a row for a list a stock panel's light context inflated comes from that
+     * context, and the binder makes its holder from it. Every other row gets null and TikTok's own,
+     * one TikTok attaches as it inflates included.
+     */
+    public static View stockRow(ViewGroup list, int layout, Boolean attach) {
+        try {
+            if (!stockSeen || list == null || layout == 0 || Boolean.TRUE.equals(attach)) {
+                return null;
+            }
+            Context context = list.getContext();
+            if (!isStockContext(context) || !LiveControls.darkLivePanels(context)) {
+                return null;
+            }
+            return LayoutInflater.from(context).inflate(layout, list, false);
+        } catch (Throwable failure) {
+            if (!rowFailureLogged) {
+                rowFailureLogged = true;
+                Logger.printException(() -> "Could not give a LIVE ranking's row its light theme", failure);
+            }
+            return null;
+        }
     }
 
     /**
@@ -403,6 +461,27 @@ public final class LivePanelTheme {
             return themed == null ? context : themed;
         } catch (Throwable failure) {
             Logger.printException(() -> "Could not give a LIVE ranking's tabs their light theme", failure);
+            return context;
+        }
+    }
+
+    /**
+     * Called by a ranking list's bottom row as it puts the info icon after a host's gap text, with
+     * the row's text and the context the list handed it, which it loads and tints the icon through.
+     * That context is the room activity, so over the darkened room the icon after the trending
+     * tab's "99+" row took the dark theme's white on the ranking's white sheet (Login2, 2026-10-19).
+     * While Dark LIVE panels is on in dark mode, a row a stock panel's light context inflated gets
+     * that context. Every other row gets its context back untouched.
+     */
+    public static Context stockViewContext(View view, Context context) {
+        try {
+            if (!stockSeen || view == null || context == null || !LiveControls.darkLivePanels(context)) {
+                return context;
+            }
+            Context own = view.getContext();
+            return isStockContext(own) ? own : context;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not give a LIVE ranking's info icon its light theme", failure);
             return context;
         }
     }

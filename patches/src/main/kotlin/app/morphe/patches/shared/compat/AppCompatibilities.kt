@@ -48,21 +48,21 @@ internal object AppCompatibilities {
 
     /**
      * SHA-256 of PineDrama's signing certificate (CN=TikTok Drama), as `apksigner verify
-     * --print-certs` prints it for the APKMirror 47.1.4 bundle.
+     * --print-certs` prints it for the APKMirror 47.1.4 and 47.4.3 bundles.
      */
     const val PINEDRAMA_SIGNER_SHA256 = "e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18"
 
     /**
-     * PineDrama 47.1.4's version code, the same as TikTok 47.1.4's. It is PineDrama's newest stable
-     * build on APKMirror, so PineDrama stays there while TikTok moves on.
+     * PineDrama 47.4.3's version code, the same as TikTok 47.4.3's. It is PineDrama's newest stable
+     * build on APKMirror (2026-10-19), and like TikTok's it is the only one declared.
      */
-    const val PINEDRAMA_4714_VERSION_CODE = 2024701040
+    const val PINEDRAMA_4743_VERSION_CODE = 2024704030
 
     /** The version codes of every declared build of either app, for the patches that read one off the manifest. */
-    val DECLARED_VERSION_CODES = TIKTOK_VERSION_CODES + PINEDRAMA_4714_VERSION_CODE
+    val DECLARED_VERSION_CODES = TIKTOK_VERSION_CODES + PINEDRAMA_4743_VERSION_CODE
 
     /**
-     * PineDrama 47.1.4 (#156). It's built from TikTok's 47.1.4 code, so the patches whose anchors it
+     * PineDrama 47.4.3 (#156). It's built from TikTok's 47.4.3 code, so the patches whose anchors it
      * keeps apply to it. Only those declare it: the rest anchor on TikTok's feed, LIVE, inbox or
      * resources, which PineDrama changed or dropped. Each of those patches has to match both
      * TikTok's declared build and this one.
@@ -74,7 +74,7 @@ internal object AppCompatibilities {
             appIconColor = TIKTOK_COLOR,
             signatures = setOf(PINEDRAMA_SIGNER_SHA256),
             targets = listOf(
-                AppTarget(version = "47.1.4", versionCode = PINEDRAMA_4714_VERSION_CODE),
+                AppTarget(version = "47.4.3", versionCode = PINEDRAMA_4743_VERSION_CODE),
             ),
         ),
     )

@@ -30,7 +30,9 @@ import com.android.tools.smali.dexlib2.iface.reference.TypeReference
  * Reference: java.lang.String" in a bridge every fixture test had passed.
  *
  * Class hierarchies are not known here, so two named classes are never judged against each
- * other. The checks are exactly the ones a merge or a stray primitive can fail.
+ * other. The checks are exactly the ones a merge or a stray primitive can fail. ART's verifier
+ * lets any reference into an interface parameter and only checks it when an interface method
+ * is invoked on it, so the framework interfaces in [INTERFACES] take the Object a merge leaves too.
  */
 object BridgeTypeFlow {
     private const val ZERO = "0"
@@ -42,6 +44,8 @@ object BridgeTypeFlow {
     private const val CONST32 = "#"
     /** A 64-bit literal: a long or a double, whichever reads it. */
     private const val CONST64 = "##"
+    private val INTERFACES = setOf("Ljava/lang/CharSequence;", "Ljava/lang/Runnable;", "Ljava/lang/Iterable;",
+        "Ljava/util/Collection;", "Ljava/util/List;", "Ljava/util/Map;", "Ljava/util/Set;", "Landroid/text/Spanned;")
 
     data class Problem(val index: Int, val message: String) {
         override fun toString() = "[$index] $message"
@@ -181,7 +185,7 @@ object BridgeTypeFlow {
             actual == UNSET -> "register v$register is not set on every path into $what"
             actual == CLASH -> "register v$register holds different kinds on the paths into $what"
             isReference(expected) -> when {
-                actual == ZERO || (expected == OBJECT && isReference(actual)) -> return
+                actual == ZERO || ((expected == OBJECT || expected in INTERFACES) && isReference(actual)) -> return
                 actual == OBJECT -> "register v$register has type $actual but expected $expected: two references met at a label"
                 isReference(actual) -> return
                 else -> "register v$register holds $actual but expected $expected"

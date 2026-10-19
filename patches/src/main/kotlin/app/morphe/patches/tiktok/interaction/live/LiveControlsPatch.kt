@@ -21,6 +21,7 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.findMutableMethodOf
+import app.morphe.util.literalReads
 import app.morphe.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -417,6 +418,29 @@ private fun registersRead(instruction: Instruction): List<Int> = when (instructi
 }
 
 /**
+ * [parameter] and every local below [locals] that only ever holds a copy of it, or nothing when the
+ * method writes [parameter] itself. A local starts unset, so the verifier proves each read of one
+ * written only by these copies holds what the parameter came in with.
+ */
+private fun holdersOf(code: List<Instruction>, parameter: Int, locals: Int): Set<Int> {
+    if (code.any { writesRegister(it, parameter) }) return emptySet()
+    val copies = { instruction: Instruction, register: Int ->
+        instruction.opcode in setOf(Opcode.MOVE_OBJECT, Opcode.MOVE_OBJECT_FROM16, Opcode.MOVE_OBJECT_16) &&
+            (instruction as TwoRegisterInstruction).registerA == register && instruction.registerB == parameter
+    }
+    return setOf(parameter) + (0 until locals).filter { register ->
+        code.any { copies(it, register) } && code.all { !writesRegister(it, register) || copies(it, register) }
+    }
+}
+
+/** Whether [instruction] writes [register], as itself or as the high half of a wide pair. */
+private fun writesRegister(instruction: Instruction, register: Int): Boolean {
+    val target = (instruction as? OneRegisterInstruction)?.registerA ?: return false
+    return (instruction.opcode.setsRegister() && target == register) ||
+        (instruction.opcode.setsWideRegister() && target + 1 == register)
+}
+
+/**
  * Hands the page and its context to the extension right after the tab strip asks for it, so every
  * color the tab reads resolves through the context the extension hands back. A branch landing
  * after the call would skip the hook, and registers above v15 don't fit its four-bit call, so
@@ -435,6 +459,288 @@ internal fun hookRankTab(method: MutableMethod, field: String) {
             invoke-static {v${tab.page}, v${tab.context}}, $PANEL_THEME->stockContext(Ljava/lang/Object;Landroid/content/Context;)Landroid/content/Context;
             move-result-object v${tab.context}
         """,
+    )
+}
+
+/** The daily ranking's team list, the trending tab among its lists, real-named on 47.4.3. */
+internal const val TEAM_RANK_LIST = "Lcom/bytedance/android/live/rank/impl/list/fragment/list/TeamRankListFragment;"
+
+/** The base every ranking list builds on, the team list included, real-named on 47.4.3. */
+internal const val RANK_LIST = "Lcom/bytedance/android/live/rank/impl/list/fragment/list/RankListFragment;"
+
+/**
+ * The team list's view being set up (#159). It colors its bottom bar's texts through LIVE's color
+ * lookup on its own getContext(), the room activity, so over the room the switch darkened the
+ * bar's name and count took the dark theme's light colors on the ranking's white sheet (Login2,
+ * 2026-10-19).
+ */
+internal object TeamRankListViewFingerprint : Fingerprint(
+    definingClass = TEAM_RANK_LIST,
+    name = "onViewCreated",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+)
+
+/**
+ * The list's bottom bar getting its tag (#159, RX on 47.4.3). Every ranking list builds on it, the
+ * team list included, and it tints the tag's icon through LIVE's color lookup on its own
+ * getContext(), the room activity, so over the room the switch darkened the icon would take the
+ * dark theme's white on the ranking's white sheet.
+ */
+internal object RankListBottomTagFingerprint : Fingerprint(
+    definingClass = RANK_LIST,
+    returnType = "V",
+    parameters = listOf("Lcom/bytedance/android/livesdk/rank/list/model/RankListV2Response\$BottomBarTag;"),
+)
+
+/** The page holding the daily ranking's tabs and lists, real-named on 47.4.3. */
+internal const val RANK_PAGE = "Lcom/bytedance/android/live/rank/impl/list/fragment/page/RankPageFragment;"
+
+/**
+ * The page filling its bottom row for a host outside the top 20 (#159, Nd on 47.4.3, the one
+ * method naming "reach_top20"). It loads and tints the chevron after the row's text through LIVE's
+ * lookups on its own getContext(), the room activity, so over the room the switch darkened the
+ * chevron would take the dark theme's white on the ranking's white sheet.
+ */
+internal object RankPageReachTopFingerprint : Fingerprint(
+    definingClass = RANK_PAGE,
+    returnType = "V",
+    strings = listOf("reach_top20"),
+)
+
+/** A ranking list's gap, the bottom row's word on how far the host is from the next place, real-named on 47.4.3. */
+internal const val RANK_GAP = "Lcom/bytedance/android/livesdk/rank/list/model/RankListV2Response\$Gap;"
+
+/** The text view LIVE's ranking rows show their text in, as TikTok's own code names it. */
+private const val APPCOMPAT_TEXT_VIEW = "Landroidx/appcompat/widget/AppCompatTextView;"
+
+/**
+ * A ranking list's bottom row putting the info icon after a host's gap text (#159, the anonymous
+ * X.1GYD.LJII on 47.4.3, handed the list's context, its controller, the row's text and the gap).
+ * It loads and tints the icon through LIVE's lookups on that context, the room activity, so over
+ * the room the switch darkened the icon after the trending tab's "99+" row went white on the
+ * ranking's white sheet (Login2, 2026-10-19).
+ */
+internal object RankGapInfoIconFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/content/Context;",
+        "Lcom/bytedance/ies/sdk/datachannel/DataChannel;",
+        "Lcom/bytedance/android/live/rank/impl/list/controller/RankListController;",
+        "L",
+        RANK_GAP,
+    ),
+    custom = { method, _ -> gapInfoIcon(method) != null },
+)
+
+/**
+ * In [method], the registers of its Context parameter and of the row text it's handed, when it
+ * reads the gap's FAQ, asks that text what it shows, and hands the context to a static (int,
+ * Context) lookup. Null for any other method, and for a shape the hook can't take safely: no local
+ * to copy the text through, a context above v15 or written again, or the context read anywhere it
+ * isn't a null test or a Context parameter (a cast to Activity would throw on the wrapper the
+ * extension hands back). The text call proves to the verifier that the row text is a View.
+ */
+internal fun gapInfoIcon(method: Method): Pair<Int, Int>? {
+    val body = method.implementation ?: return null
+    if (method.parameterTypes.size != 5) return null
+    val code = body.instructions.toList()
+    val self = body.registerCount - 6
+    val context = self + 1
+    val text = self + 4
+    fun ref(at: Int) = (code[at] as? ReferenceInstruction)?.reference
+    val faq = code.indices.any { at ->
+        val read = ref(at) as? FieldReference
+        code[at].opcode == Opcode.IGET_OBJECT && read?.definingClass == RANK_GAP && read.name == "bottomBarFaq"
+    }
+    val texts = holdersOf(code, text, self)
+    val shown = code.indices.any { at ->
+        val asked = ref(at) as? MethodReference
+        code[at].opcode == Opcode.INVOKE_VIRTUAL && asked?.definingClass == APPCOMPAT_TEXT_VIEW &&
+            asked.name == "getText" && (code[at] as FiveRegisterInstruction).registerC in texts
+    }
+    val lookups = code.indices.any { at ->
+        val lookup = ref(at) as? MethodReference
+        code[at].opcode in setOf(Opcode.INVOKE_STATIC, Opcode.INVOKE_STATIC_RANGE) && lookup != null &&
+            lookup.parameterTypes.map(CharSequence::toString) == listOf("I", "Landroid/content/Context;") &&
+            registersRead(code[at]).getOrNull(1) == context
+    }
+    val fits = self >= 1 && context <= 15 && code.none { writesRegister(it, context) } &&
+        code.all { contextReadIsSafe(it, context) }
+    return if (faq && shown && lookups && fits) context to text else null
+}
+
+/**
+ * Hands the row's text and the context its list handed over to the extension before anything
+ * else runs, so the icon loads and tints through the context the extension hands back: the row
+ * text's own light one under the ranking, the list's anywhere else. The text goes through v0,
+ * still unset at the start, since it sits above v15.
+ */
+internal fun hookGapInfoIcon(method: MutableMethod) {
+    val (context, text) = gapInfoIcon(method)
+        ?: throw PatchException("LIVE controls: the ranking row's info icon context wasn't found")
+    method.addInstructions(
+        0,
+        """
+            move-object/from16 v0, v$text
+            invoke-static {v0, v$context}, $PANEL_THEME->stockViewContext(Landroid/view/View;Landroid/content/Context;)Landroid/content/Context;
+            move-result-object v$context
+        """,
+    )
+}
+
+/**
+ * Every getContext() [method] asks of its own `this` and hands to a static (int, Context) lookup
+ * of a color or a drawable, as the index of each call's move-result and the register it moves
+ * into. `this` is p0 or a local that only ever holds a copy of it: with p0 above v15 the page's
+ * reach_top20 row moves it into v7 first and asks v7. Refused instead of hooked: none at all, a
+ * context that moves into `this` or above v15, a `this` above v15, or a context read anywhere it
+ * isn't a null test or a Context parameter, on any path before it's written again (a cast to
+ * Activity would throw on the wrapper the extension hands back).
+ */
+internal fun pageContexts(method: Method): List<Pair<Int, Int>> {
+    val body = method.implementation ?: throw PatchException("LIVE controls: ${method.definingClass}.${method.name} has no body")
+    val code = body.instructions.toList()
+    val self = body.registerCount - method.parameterTypes.size - 1
+    val pages = holdersOf(code, self, self)
+    val calls = code.indices.filter { at ->
+        val asked = (code[at] as? ReferenceInstruction)?.reference as? MethodReference
+        code[at].opcode == Opcode.INVOKE_VIRTUAL && asked?.name == "getContext" && asked.parameterTypes.isEmpty() &&
+            asked.returnType == "Landroid/content/Context;" && (code[at] as FiveRegisterInstruction).registerC in pages
+    }
+    val contexts = calls.map { call ->
+        val result = code.getOrNull(call + 1)
+        if (result?.opcode != Opcode.MOVE_RESULT_OBJECT) {
+            throw PatchException("LIVE controls: ${method.definingClass}'s getContext() at $call keeps no result")
+        }
+        call + 1 to (result as OneRegisterInstruction).registerA
+    }
+    val fits = contexts.isNotEmpty() && calls.all { (code[it] as FiveRegisterInstruction).registerC <= 15 } &&
+        contexts.all { (result, context) ->
+            val reads = method.literalReads(result)
+            context !in pages && context <= 15 && result + 1 < code.size &&
+                reads.all { contextReadIsSafe(code[it], context) } &&
+                reads.any { at ->
+                    val lookup = (code[at] as? ReferenceInstruction)?.reference as? MethodReference
+                    code[at].opcode == Opcode.INVOKE_STATIC && lookup != null &&
+                        (lookup.returnType == "I" || lookup.returnType.startsWith("L")) &&
+                        lookup.parameterTypes.map(CharSequence::toString) == listOf("I", "Landroid/content/Context;")
+                }
+        }
+    if (!fits) throw PatchException("LIVE controls: ${method.definingClass}'s contexts don't fit the hook: $contexts")
+    return contexts
+}
+
+/**
+ * Hands `this` and each context [pageContexts] finds to the extension right after its move-result,
+ * the same answer the ranking's tab strip gets: the page's light context under the ranking, its
+ * own context anywhere else. `this` goes as the register the call asked, p0 or its copy. A branch
+ * landing right after a move-result would skip its hook, so that shape is refused. Written last
+ * first, so each index still points at its move-result and the call before it.
+ */
+internal fun hookPageContexts(method: MutableMethod) {
+    val contexts = pageContexts(method)
+    if (contexts.any { (result, _) -> method.implementation!!.instructions[result + 1].location.labels.isNotEmpty() }) {
+        throw PatchException("LIVE controls: a branch lands after one of ${method.definingClass}'s contexts")
+    }
+    contexts.reversed().forEach { (result, context) ->
+        val page = (method.implementation!!.instructions[result - 1] as FiveRegisterInstruction).registerC
+        method.addInstructions(
+            result + 1,
+            """
+                invoke-static {v$page, v$context}, $PANEL_THEME->stockContext(Ljava/lang/Object;Landroid/content/Context;)Landroid/content/Context;
+                move-result-object v$context
+            """,
+        )
+    }
+}
+
+/**
+ * The base of LIVE's list row binders making a row (#159, the anonymous X.136J on 47.4.3). It
+ * skips the inflater its list hands it and inflates the row through LIVE's shared inflater, whose
+ * context is the app or the room, so over the room the switch darkened the daily ranking's trending
+ * rows took the dark theme and their names read white on its white sheet (Login2, 2026-10-19). Its
+ * one (int, Boolean) constructor keeps the row's layout and whether it attaches, and every way it
+ * makes the row ends in its own (View, ViewGroup) holder call on the list.
+ */
+internal object LiveRowBinderFingerprint : Fingerprint(
+    returnType = "Landroidx/recyclerview/widget/RecyclerView\$ViewHolder;",
+    parameters = listOf("Landroid/view/LayoutInflater;", "Landroid/view/ViewGroup;"),
+    custom = { method, classDef -> rowBinder(method, classDef) != null },
+)
+
+/** A row binder's layout and attach fields and the holder call it makes rows with. */
+internal class RowBinder(val layout: FieldReference, val attach: FieldReference, val holder: MethodReference)
+
+/** LIVE's list performance settings, whose row preload switch the row binders' base reads; real-named on 47.4.3. */
+internal const val LIVE_ROW_PRELOAD = "Lcom/bytedance/android/livesdk/livesetting/performance/LiveRecyclerviewPerformanceOptSwitchSetting;"
+
+/**
+ * [method]'s row binder parts: the int and Boolean fields its class's one (int, Boolean)
+ * constructor stores its arguments in, when [method] reads that layout field and LIVE's row
+ * preload settings too, and the one (View, ViewGroup) holder method of its own class it calls on
+ * `this` and the list. Null for anything else, a lookalike base outside LIVE included.
+ */
+internal fun rowBinder(method: Method, classDef: ClassDef): RowBinder? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    val made = classDef.directMethods.singleOrNull {
+        it.name == "<init>" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "Ljava/lang/Boolean;")
+    }?.implementation ?: return null
+    val madeThis = made.registerCount - 3
+    fun stored(opcode: Opcode, argument: Int, type: String) = made.instructions.mapNotNull {
+        val field = (it as? ReferenceInstruction)?.reference as? FieldReference
+        val store = it as? TwoRegisterInstruction
+        if (it.opcode == opcode && store?.registerA == madeThis + argument && store.registerB == madeThis &&
+            field?.definingClass == classDef.type && field.type == type
+        ) field else null
+    }.singleOrNull()
+    val layout = stored(Opcode.IPUT, 1, "I") ?: return null
+    val attach = stored(Opcode.IPUT_OBJECT, 2, "Ljava/lang/Boolean;") ?: return null
+    val reads = code.any {
+        val field = (it as? ReferenceInstruction)?.reference as? FieldReference
+        it.opcode == Opcode.IGET && field?.definingClass == layout.definingClass && field.name == layout.name &&
+            field.type == layout.type
+    }
+    val live = code.any { ((it as? ReferenceInstruction)?.reference as? FieldReference)?.definingClass == LIVE_ROW_PRELOAD }
+    if (!reads || !live) return null
+    val self = method.implementation!!.registerCount - 3
+    val holder = code.filter {
+        val call = (it as? ReferenceInstruction)?.reference as? MethodReference
+        it.opcode == Opcode.INVOKE_VIRTUAL && call?.definingClass == classDef.type &&
+            call.parameterTypes.map(CharSequence::toString) == listOf("Landroid/view/View;", "Landroid/view/ViewGroup;") &&
+            call.returnType == method.returnType && (it as FiveRegisterInstruction).registerCount == 3 &&
+            it.registerC == self && it.registerE == self + 2
+    }.map { (it as ReferenceInstruction).reference as MethodReference }.distinct().singleOrNull() ?: return null
+    return RowBinder(layout, attach, holder)
+}
+
+/**
+ * Asks the extension for the row first, with the list and the binder's layout and attach fields:
+ * a row it inflates through the list's own light context goes straight to the binder's holder call
+ * and back, and null runs TikTok's code untouched. The added code takes v0 and v1 before TikTok
+ * writes anything, and the list must fit its four-bit calls, so a shape where either doesn't hold
+ * is refused instead of written.
+ */
+internal fun hookRowBinder(method: MutableMethod, classDef: ClassDef) {
+    val binder = rowBinder(method, classDef)
+        ?: throw PatchException("LIVE controls: the LIVE row binder's parts weren't found")
+    val registers = method.implementation!!.registerCount
+    if (registers - 1 > 15 || registers - 3 < 2) {
+        throw PatchException("LIVE controls: the LIVE row binder's registers don't fit the hook")
+    }
+    method.addInstructionsWithLabels(
+        0,
+        """
+            iget v0, p0, ${binder.layout}
+            iget-object v1, p0, ${binder.attach}
+            invoke-static {p2, v0, v1}, $PANEL_THEME->stockRow(Landroid/view/ViewGroup;ILjava/lang/Boolean;)Landroid/view/View;
+            move-result-object v0
+            if-eqz v0, :morphe_tiktok_row
+            invoke-virtual {p0, v0, p2}, ${binder.holder}
+            move-result-object v0
+            return-object v0
+        """,
+        ExternalLabel("morphe_tiktok_row", method.getInstruction(0)),
     )
 }
 
@@ -1154,6 +1460,24 @@ val liveControlsPatch = bytecodePatch(
         // page's light one under the ranking.
         hookRankTab(RankTabPickedFingerprint.method, "selectedTextColor")
         hookRankTab(RankTabUnpickedFingerprint.method, "defaultTextColor")
+        // Its team list colors the bottom bar the same way, so the bar's name and count read faint
+        // on the white sheet (Login2, 2026-10-19), and each of those contexts gets the same answer.
+        hookPageContexts(TeamRankListViewFingerprint.method)
+        // The page tints the chevron after its reach_top20 row that way too, and every list's bar
+        // tints its tag's icon the same way.
+        hookPageContexts(RankPageReachTopFingerprint.method)
+        hookPageContexts(RankListBottomTagFingerprint.method)
+        // A list's bottom row tints the info icon after a host's gap text through the context the
+        // list hands it, so on the trending tab's "99+" row it went white on white (Login2,
+        // 2026-10-19). The row asks the extension first, which hands back the row text's own light
+        // context under the ranking.
+        hookGapInfoIcon(RankGapInfoIconFingerprint.method)
+        // LIVE's list rows don't take the list's inflater at all: every row binder inflates through
+        // LIVE's shared inflater, the app's or the room's, so the trending tab's rows took the dark
+        // theme on that sheet too (Login2, 2026-10-19). The binders' base asks the extension for
+        // the row first, which inflates one for a list under the ranking through the list's own
+        // light context and leaves every other list to TikTok.
+        hookRowBinder(LiveRowBinderFingerprint.method, LiveRowBinderFingerprint.originalClassDef)
         // TikTok's generic sheets over a room (Share) take the room activity's own light theme,
         // which the overlay can't reach. The room's setTheme hands the activity to the extension
         // after its last room theme, and the extension puts TikTok's dark app theme on it

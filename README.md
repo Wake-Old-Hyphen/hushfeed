@@ -342,7 +342,7 @@ Hushfeed includes the eight Kveld TikTok optimizers it didn't already have, and 
 - Version: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/), on APKMirror since 2026-10-17.
 - Build: version code 2024704030, arm64-v8a and armeabi-v7a, nodpi, minSdk 23
 - SHA-256 of the APK every patch was verified against: `af7cbe2b00d33ff1339730f6abb8ed7e387a83b27ff2b16748b8f41e6fc87e0b` (47.4.3)
-- Also PineDrama 47.1.4, TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024701040). It's built from TikTok's code, and 90 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
+- Also [PineDrama 47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/pinedrama-short-dramas/pinedrama-short-dramas-47-4-3-release/), TikTok's drama app (`com.ss.android.ttmd.video`, version code 2024704030). It's built from TikTok's code, and 90 of the patches apply to it. Morphe Manager lists only those. APKMirror has it as an `.apkm` bundle, which Manager merges for you.
 
 On Windows, check your download with `Get-FileHash -Algorithm SHA256 .\tiktok.apk`. On Linux or macOS it's `sha256sum tiktok.apk`.
 

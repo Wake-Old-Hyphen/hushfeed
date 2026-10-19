@@ -57,7 +57,9 @@ val coreAssetDebloatPatch = rawResourcePatch(
 ) {
     category("Performance")
     compatibleWith(*AppCompatibilities.tiktok())
-    dependsOn(buildChoicePatch(BuildChoice.CORE))
+    // The guard keeps the content credential service from loading the emptied C2PA library
+    // when a comment reply opens the photo picker (#211).
+    dependsOn(buildChoicePatch(BuildChoice.CORE), c2paInitGuardPatch)
 
     execute {
         // Only libraries nothing else in the APK links against. An emptied .so that another
@@ -344,9 +346,9 @@ internal val p2pRelayProfiles = listOf(
     // 47.4.3: another build without these files has renamed or moved them, and the strip must
     // refuse it.
     ResourceProfile("TikTok 47.4.3 split bundle", emptyList(), onlyVersion = "47.4.3"),
-    // PineDrama 47.1.4 (APKMirror's bundle, read on 2026-10-17) ships no relay library in its base
+    // PineDrama 47.4.3 (APKMirror's bundle, read on 2026-10-19) ships no relay library in its base
     // or any ABI split, so the strip has nothing to empty there either.
-    ResourceProfile("PineDrama 47.1.4", emptyList(), onlyVersion = "47.1.4"),
+    ResourceProfile("PineDrama 47.4.3", emptyList(), onlyVersion = "47.4.3"),
 )
 
 internal val languageInventories = listOf(

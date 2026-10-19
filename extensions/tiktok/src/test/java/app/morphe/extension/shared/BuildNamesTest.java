@@ -59,6 +59,19 @@ public class BuildNamesTest {
         assertEquals("g8a", BuildNames.entryName("47.4.3:g8a"));
     }
 
+    /**
+     * Run beside the store app runs a copy that Morphe's Clone app renamed, and the build asset
+     * still names TikTok, since the patcher reads the manifest before any patch changes it. The
+     * copy's resource table is TikTok's, so TikTok's names resolve there (#209). PineDrama's
+     * record names PineDrama, and a copy with no record is whatever its package says.
+     */
+    @Test
+    public void aRenamedCopyResolvesTheNamesOfTheAppItWasPatchedFrom() {
+        assertEquals(PACKAGE, BuildNames.namedApp("com.zhiliaoapp.musically.morphe", PACKAGE));
+        assertEquals(PINEDRAMA, BuildNames.namedApp(PINEDRAMA, PINEDRAMA));
+        assertEquals("com.zhiliaoapp.musically.morphe", BuildNames.namedApp("com.zhiliaoapp.musically.morphe", null));
+    }
+
     @Test
     public void theCacheLooksUpOnlyTheRunningBuildsName() {
         Resources base = RuntimeEnvironment.getApplication().getResources();

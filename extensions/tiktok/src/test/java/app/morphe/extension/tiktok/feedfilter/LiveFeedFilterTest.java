@@ -311,6 +311,51 @@ public class LiveFeedFilterTest {
         }
     }
 
+    /**
+     * The handler that fills the LIVE feed also fills the Following tab's LIVE row and the Inbox's
+     * LIVE line, named by the provider's request type (#212: two of six live friends left in the
+     * Inbox). Those are creators the viewer follows, so the rules about a LIVE's kind and numbers
+     * stay off them and only a block hides one. A page of the feed, named or not, gets every rule.
+     */
+    @Test
+    public void theFollowingAndInboxRowsLoseBlockedCreatorsAndNothingElse() {
+        Settings.LIVE_HIDE_GAMING.save(true);
+        Settings.LIVE_MIN_MAX_VIEWERS.save("1000-" + Long.MAX_VALUE);
+        Settings.BLOCKED_CREATORS.save("@blocked");
+        Room big = room("big");
+        big.userCount = 5000L;
+        for (String row : new String[]{
+                "following_window_live_cell_refresh", "homepage_follow_video_head_load_more",
+                "message_live_cell_refresh", "tiktok_message_inner_loadmore",
+                "push_push_refresh", "inner_push_inner_push_refresh", "friends_feed_refresh", "live_watch_later_refresh"}) {
+            assertEquals(row, Arrays.asList("friend", "small"),
+                    handles(LiveFeedFilter.filter(page(gaming("friend"), room("blocked"), room("small")), row)));
+        }
+        assertEquals("a page of the feed", Arrays.asList("big"),
+                handles(LiveFeedFilter.filter(page(gaming("friend"), room("blocked"), room("small"), big), "toplive_user_host_room_loadmore")));
+        assertEquals("a page the patch didn't name", Arrays.asList("big"),
+                handles(LiveFeedFilter.filter(page(gaming("friend"), room("blocked"), room("small"), big), null)));
+        assertEquals("the explore drawer", Arrays.asList("big"),
+                handles(LiveFeedFilter.filter(page(gaming("friend"), big), "tikcast_game_drawer_inner_sub_feed_refresh")));
+    }
+
+    /** A Following row of only blocked creators is not a hidden page of the feed, which loads the next one. */
+    @Test
+    public void aFollowingRowNeverCountsTowardTheFeedsRunOfHiddenPages() {
+        Settings.LIVE_HIDE_GAMING.save(true);
+        Settings.BLOCKED_CREATORS.save("@blocked");
+        for (int run = 0; run <= LiveFeedFilter.HIDDEN_PAGES_BEFORE_ONE_SHOWS + 2; run++) {
+            assertEquals(0, LiveFeedFilter.filter(page(room("blocked")), "message_live_cell_refresh").size());
+        }
+        // A Following row keeping its room between two hidden feed pages doesn't end the run either.
+        for (int run = 1; run <= LiveFeedFilter.HIDDEN_PAGES_BEFORE_ONE_SHOWS; run++) {
+            assertEquals("feed page " + run, 0, LiveFeedFilter.filter(page(gaming("a" + run))).size());
+            assertEquals("the row keeps a gaming LIVE", 1,
+                    LiveFeedFilter.filter(page(gaming("row" + run)), "following_window_live_cell_loadmore").size());
+        }
+        assertEquals("the fifth hidden feed page gives up one room", 1, LiveFeedFilter.filter(page(gaming("next"))).size());
+    }
+
     @Test
     public void theReportCountsPagesRoomsAndRules() {
         Settings.LIVE_HIDE_GAMING.save(true);
@@ -318,10 +363,12 @@ public class LiveFeedFilterTest {
         Room shop = room("shop");
         shop.hasCommerceGoods = true;
         LiveFeedFilter.filter(page(gaming("a"), shop, room("plain")));
+        LiveFeedFilter.filter(page(gaming("b")), "message_live_cell_refresh");
         String report = String.join("\n", LiveFeedFilter.Report.INSTANCE.lines());
         assertTrue(report, report.contains("Filter the LIVE feed: on"));
-        assertTrue(report, report.contains("LIVE feed pages since TikTok started: 1"));
-        assertTrue(report, report.contains("Rooms checked: 3, hidden: 2"));
+        assertTrue(report, report.contains("LIVE feed pages since TikTok started: 2"));
+        assertTrue(report, report.contains("LIVE rows outside the feed (Following, Inbox, pushes), blocked creators only: 1"));
+        assertTrue(report, report.contains("Rooms checked: 4, hidden: 2"));
         assertTrue(report, report.contains("Hidden by rule: gaming 1, shopping 1"));
     }
 }

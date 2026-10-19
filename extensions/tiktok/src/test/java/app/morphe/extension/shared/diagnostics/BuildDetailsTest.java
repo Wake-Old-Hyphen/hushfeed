@@ -110,6 +110,15 @@ public class BuildDetailsTest {
         assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024704030"));
     }
 
+    /** The target package stands on its own for a renamed copy's name lookups (#209): the record's, or nothing. */
+    @Test public void theTargetPackageIsTheRecordsOrNothing() throws Exception {
+        String record = metadata();
+        assertEquals("com.zhiliaoapp.musically", BuildDetails.targetPackage(record));
+        assertNull(BuildDetails.targetPackage(record.replace("target_package=com.zhiliaoapp.musically", "target_package=unknown")));
+        assertNull("an invalid record names no target", BuildDetails.targetPackage(record.replace("amoled=applied", "amoled=not_selected")));
+        assertNull("no record, no target", BuildDetails.targetPackage(""));
+    }
+
     @Test public void unverifiedSelectionsAndUntickedChoicesRemainDifferent() throws Exception {
         String record = metadata().replace("amoled=applied", "amoled=unverified")
                 .replace("amoled_color=#121212", "amoled_color=unknown")
@@ -154,12 +163,12 @@ public class BuildDetailsTest {
             assertTrue(report.contains("target_package: " + target[0] + "\n"));
             assertTrue(report.contains("target_version: " + target[1] + "\n"));
         }
-        // A build the bundle no longer declares is no target of this one, even at another
-        // declared app's version and code.
+        // A build the bundle no longer declares is no target of this one, for either app.
         assertUnknown(record.replace("47.4.3", "47.1.3").replace("2024704030", "2024701030"));
         assertUnknown(record.replace("47.4.3", "47.1.4").replace("2024704030", "2024701040"));
-        // PineDrama is declared at its own build (#156), not at TikTok's; another package is not.
-        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video"));
+        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video")
+                .replace("47.4.3", "47.1.4").replace("2024704030", "2024701040"));
+        // PineDrama (#156) shares TikTok's 47.4.3 version and code under its own package; another package is not declared.
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }
 

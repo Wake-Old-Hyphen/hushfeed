@@ -237,7 +237,7 @@ class BuildDetailsPatchTest {
     }
 
     @Test fun `resource choices add only raw metadata dependencies and live retains its existing bytecode`() {
-        listOf(accentColorPatch, p2pRelayBlockerPatch, coreAssetDebloatPatch, languagePackPurgerPatch,
+        listOf(accentColorPatch, p2pRelayBlockerPatch, languagePackPurgerPatch,
             studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
             trustUserCertificatesPatch).forEach { patch ->
             val closure = dependencies(patch)
@@ -252,6 +252,13 @@ class BuildDetailsPatchTest {
         assertEquals("AMOLED's bytecode is the palette repaint alone", 1, amoledBytecode.size)
         assertEquals(null, amoledBytecode.single().name)
         assertTrue("AMOLED unexpectedly injects runtime hooks", sharedExtensionPatch !in amoled)
+        // The core asset strip returns out of the content credential service's start before it
+        // loads the emptied library (#211). Bytecode too, and just as free of Hushfeed's own code.
+        val core = dependencies(coreAssetDebloatPatch)
+        assertTrue("the asset strip has no metadata dependency", buildDetailsPatch in core)
+        assertEquals("the asset strip's bytecode is the C2PA guard alone",
+            setOf(c2paInitGuardPatch), core.filterIsInstance<BytecodePatch>().toSet())
+        assertTrue("the asset strip unexpectedly injects runtime hooks", sharedExtensionPatch !in core)
         assertEquals(setOf(liveGiftEffectOptimizerPatch),
             dependencies(liveStreamSuiteOptimizerPatch).filterIsInstance<BytecodePatch>().toSet())
         assertTrue(buildDetailsPatch in dependencies(sharedExtensionPatch))

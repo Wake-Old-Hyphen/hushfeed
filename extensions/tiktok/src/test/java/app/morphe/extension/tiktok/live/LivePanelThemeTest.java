@@ -1,7 +1,9 @@
 package app.morphe.extension.tiktok.live;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +20,8 @@ import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bytedance.android.live.design.resource.theme.LiveThemeAwareDialogFragment;
@@ -45,7 +49,9 @@ import java.util.Arrays;
  * light overlay TikTok's own answer gives the ranking, also with force, the ranking's plain list
  * fragments included, and over a room the switch darkened that overlay goes over the room's theme
  * as it was before the dark app theme, which the ranking's tab strip reads its colors through
- * too. Everything else gets TikTok's inflater back untouched.
+ * too, and the rows LIVE's list binders make for a list there come from the list's own light
+ * context, as does the info icon a list's bottom row tints. Everything else gets TikTok's
+ * inflater back untouched.
  * Under the same conditions a LIVE room takes TikTok's dark app theme with force over its own light
  * one, so TikTok's generic sheets over a room open dark too, and the profile card's bio view takes
  * the link color, since its link is drawn in the view's own text color, and the card's labels
@@ -417,6 +423,111 @@ public class LivePanelThemeTest {
         ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
         SettingsStatus.liveControlsEnabled = false;
         assertSame("without the patch", live, LivePanelTheme.stockContext(page, live));
+    }
+
+    @Test public void aListUnderTheRankingMakesItsRowsThroughItsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        RankListDialog daily = stock(new RankListDialog());
+        daily.lightOverlay = PARTIAL_OVERLAY;
+        daily.context = live;
+        GiftList list = new GiftList();
+        list.parent = page(daily);
+        int layout = android.R.layout.simple_list_item_1;
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertNull("before any ranking inflated", LivePanelTheme.stockRow(new FrameLayout(live), layout, Boolean.FALSE));
+        LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(live));
+        // The list's own view inflated through its fragment's light inflater, so it carries that context.
+        Context rows = LivePanelTheme.darkLivePage(list, LayoutInflater.from(live)).getContext();
+        ViewGroup recycler = new FrameLayout(rows);
+        View row = LivePanelTheme.stockRow(recycler, layout, Boolean.FALSE);
+        assertSame("inflated through the list's own context", rows, row.getContext());
+        assertEquals("the row's colors resolve to the room's light values", roomText, textColor(row.getContext()));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        assertNull("left for the binder's holder call to place", row.getParent());
+        assertNotNull("a list context a view wrapped in its own theme",
+            LivePanelTheme.stockRow(new FrameLayout(new ContextThemeWrapper(rows, OVERLAY)), layout, Boolean.FALSE));
+        assertNotNull("no attach flag", LivePanelTheme.stockRow(recycler, layout, null));
+        // A room the switch never darkened keeps no light theme, so its ranking takes the overlay alone, still stock.
+        Activity plainRoom = room();
+        RankListDialog plain = stock(new RankListDialog());
+        plain.lightOverlay = PARTIAL_OVERLAY;
+        plain.context = plainRoom;
+        GiftList plainList = new GiftList();
+        plainList.parent = page(plain);
+        LivePanelTheme.darkLivePanel(plain, LayoutInflater.from(plainRoom));
+        Context plainRows = LivePanelTheme.darkLivePage(plainList, LayoutInflater.from(plainRoom)).getContext();
+        assertNotNull("a ranking over a room the switch never darkened",
+            LivePanelTheme.stockRow(new FrameLayout(plainRows), layout, Boolean.FALSE));
+
+        // Every other row is TikTok's.
+        assertNull("a row TikTok attaches as it inflates", LivePanelTheme.stockRow(recycler, layout, Boolean.TRUE));
+        assertNull("a list in the room", LivePanelTheme.stockRow(new FrameLayout(live), layout, Boolean.FALSE));
+        ShareDialog share = dialog();
+        share.overlay = PARTIAL_OVERLAY;
+        Context panel = LivePanelTheme.darkLivePanel(share, LayoutInflater.from(live)).getContext();
+        assertNull("a list in an ordinary panel", LivePanelTheme.stockRow(new FrameLayout(panel), layout, Boolean.FALSE));
+        assertNull("no list", LivePanelTheme.stockRow(null, layout, Boolean.FALSE));
+        assertNull("no layout", LivePanelTheme.stockRow(recycler, 0, Boolean.FALSE));
+        assertNull("a layout that doesn't inflate", LivePanelTheme.stockRow(recycler, -1, Boolean.FALSE));
+        assertNull("light mode", LivePanelTheme.stockRow(new FrameLayout(new LivePanelTheme.StockContext(light, OVERLAY)), layout, Boolean.FALSE));
+        Settings.DARK_LIVE_PANELS.save(false);
+        assertNull("the switch off", LivePanelTheme.stockRow(recycler, layout, Boolean.FALSE));
+        Settings.DARK_LIVE_PANELS.save(true);
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertNull("paused", LivePanelTheme.stockRow(recycler, layout, Boolean.FALSE));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertNull("without the patch", LivePanelTheme.stockRow(recycler, layout, Boolean.FALSE));
+    }
+
+    @Test public void aListsBottomRowTintsItsInfoIconThroughTheRowsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        RankListDialog daily = stock(new RankListDialog());
+        daily.lightOverlay = PARTIAL_OVERLAY;
+        daily.context = live;
+        GiftList list = new GiftList();
+        list.parent = page(daily);
+
+        Settings.DARK_LIVE_PANELS.save(true);
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        TextView early = new TextView(new LivePanelTheme.StockContext(live, OVERLAY));
+        assertSame("before any ranking inflated", live, LivePanelTheme.stockViewContext(early, live));
+        LivePanelTheme.darkLivePanel(daily, LayoutInflater.from(live));
+        // The bar's text inflated with the list's own view, through its fragment's light inflater.
+        Context bar = LivePanelTheme.darkLivePage(list, LayoutInflater.from(live)).getContext();
+        TextView gap = new TextView(bar);
+        Context icon = LivePanelTheme.stockViewContext(gap, live);
+        assertSame("the row's own context", gap.getContext(), icon);
+        assertEquals("the icon's tint resolves to the room's light value", roomText, textColor(icon));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        TextView wrapped = new TextView(new ContextThemeWrapper(bar, OVERLAY));
+        assertSame("a row a view wrapped in its own theme", wrapped.getContext(), LivePanelTheme.stockViewContext(wrapped, live));
+
+        // Every other row keeps the context it handed over.
+        assertSame("a row in the room", live, LivePanelTheme.stockViewContext(new TextView(live), live));
+        ShareDialog share = dialog();
+        share.overlay = PARTIAL_OVERLAY;
+        Context panel = LivePanelTheme.darkLivePanel(share, LayoutInflater.from(live)).getContext();
+        assertSame("a row in an ordinary panel", live, LivePanelTheme.stockViewContext(new TextView(panel), live));
+        assertSame("no row", live, LivePanelTheme.stockViewContext(null, live));
+        assertNull("no context", LivePanelTheme.stockViewContext(gap, null));
+        assertSame("light mode", light, LivePanelTheme.stockViewContext(new TextView(new LivePanelTheme.StockContext(light, OVERLAY)), light));
+        Settings.DARK_LIVE_PANELS.save(false);
+        assertSame("the switch off", live, LivePanelTheme.stockViewContext(gap, live));
+        Settings.DARK_LIVE_PANELS.save(true);
+
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", live, LivePanelTheme.stockViewContext(gap, live));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", live, LivePanelTheme.stockViewContext(gap, live));
     }
 
     @Test public void aBiosViewTakesTheLinkColorInDarkModeWithTheSwitch() {

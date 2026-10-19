@@ -42,6 +42,7 @@ import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
@@ -324,14 +325,28 @@ val feedFilterPatch = bytecodePatch(
         // and adds them to the pager, so the page is swapped for its filtered copy at the top of
         // it. The list is p1 in a frame of 41 to 44 registers, hence the range form. Required on a
         // declared build like the search binds above; elsewhere the LIVE rows stay hidden.
+        //
+        // The same handler fills the LIVE rows outside the feed: the Following tab's row of
+        // creators who are LIVE, the Inbox's LIVE line and the feed behind it, a push's room
+        // (#212). The provider (p0) names which with its request type, through the getter the
+        // handler calls right after loading following_window_live_cell_loadmore to compare the
+        // two, so the filter gets the type as well and leaves those rows to the block list. At
+        // index 0 no local holds anything yet, so v1 and v2 carry the arguments into reach.
         val livePage = if (declaredBuild) LiveDrawRoomPageFingerprint.method else LiveDrawRoomPageFingerprint.methodOrNull
-        livePage?.addInstructions(
-            0,
-            """
-                invoke-static/range { p1 .. p1 }, $LIVE_FEED_FILTER_CLASS_DESCRIPTOR->filter(Ljava/util/List;)Ljava/util/List;
-                move-result-object p1
-            """,
-        )
+        livePage?.apply {
+            val requestType = liveRequestTypeGetter()
+            requireLocals("Feed filter", 3)
+            addInstructions(
+                0,
+                """
+                    move-object/from16 v1, p1
+                    invoke-virtual/range { p0 .. p0 }, $requestType
+                    move-result-object v2
+                    invoke-static { v1, v2 }, $LIVE_FEED_FILTER_CLASS_DESCRIPTOR->filter(Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
+                    move-result-object p1
+                """,
+            )
+        }
         if (livePage != null) {
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
@@ -1216,6 +1231,35 @@ internal fun MutableMethod.insertionPayloadKeyRegister(): String {
     var register = if (AccessFlags.STATIC.value and accessFlags != 0) 0 else 1
     parameterTypes.take(keyIndex).forEach { register += if (it == "J" || it == "D") 2 else 1 }
     return "p$register"
+}
+
+/**
+ * The provider's request-type getter, as the LIVE page handler calls it, written for an invoke.
+ *
+ * <p>The handler loads `following_window_live_cell_loadmore`, asks the provider (its first
+ * parameter, p0) for the request type through a no-argument String getter, and compares the two,
+ * so the first such virtual call after that load is the getter (#212). It has to be the
+ * provider's own, since the hook calls it on p0 without a cast. The strings sit in the handler's
+ * fingerprint, so a build that renames them never gets this far.
+ */
+internal fun MutableMethod.liveRequestTypeGetter(): String {
+    val load = indexOfFirstInstructionOrThrow {
+        (opcode == Opcode.CONST_STRING || opcode == Opcode.CONST_STRING_JUMBO) &&
+            getReference<StringReference>()?.string == "following_window_live_cell_loadmore"
+    }
+    val call = indexOfFirstInstructionOrThrow(load) {
+        (opcode == Opcode.INVOKE_VIRTUAL || opcode == Opcode.INVOKE_VIRTUAL_RANGE) &&
+            getReference<MethodReference>()?.let { it.returnType == "Ljava/lang/String;" && it.parameterTypes.isEmpty() } == true
+    }
+    val getter = getInstruction<ReferenceInstruction>(call).getReference<MethodReference>()!!
+    val provider = parameterTypes.firstOrNull()?.toString()
+    if (getter.definingClass != provider) {
+        throw PatchException(
+            "Feed filter: the LIVE page handler's request-type getter ${getter.definingClass}->${getter.name} " +
+                "is not the provider's ($provider)",
+        )
+    }
+    return "${getter.definingClass}->${getter.name}()Ljava/lang/String;"
 }
 
 private fun MutableMethod.filterLateInsertedAds(payloadType: String) {

@@ -84,6 +84,16 @@ public final class BuildDetails {
         }
     }
 
+    /**
+     * The package the bundle patched, as the patcher read it from the manifest before any patch
+     * changed it: TikTok's for a copy that Morphe's Clone app renamed, PineDrama's for PineDrama.
+     * Null when the record is missing, invalid or names no declared build.
+     */
+    public static String targetPackage(String metadata) {
+        String name = parse(metadata).get("target_package");
+        return name.equals("unknown") ? null : name;
+    }
+
     public static String report() { return report(Utils.getBuildMetadata()); }
 
     public static String report(String metadata) {
@@ -193,12 +203,12 @@ public final class BuildDetails {
         return names.equals(sorted);
     }
 
-    /** The builds the bundle declares: TikTok 47.4.3 and PineDrama 47.1.4 (#156), each with its own code. */
+    /** The builds the bundle declares: TikTok 47.4.3 and PineDrama 47.4.3 (#156), each under its own package. */
     private static boolean validTarget(Map<String, String> facts) {
         String name = facts.get("target_package"), version = facts.get("target_version"), code = facts.get("target_version_code");
         if (name.equals("unknown")) return version.equals("unknown") && code.equals("unknown");
         return oneOf(name + "/" + version + "=" + code,
-                "com.zhiliaoapp.musically/47.4.3=2024704030", "com.ss.android.ttmd.video/47.1.4=2024701040");
+                "com.zhiliaoapp.musically/47.4.3=2024704030", "com.ss.android.ttmd.video/47.4.3=2024704030");
     }
 
     private static boolean matches(String value, String pattern, int max) {

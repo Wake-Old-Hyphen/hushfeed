@@ -5,6 +5,7 @@
 package app.morphe.extension.shared;
 
 import android.content.Context;
+import app.morphe.extension.shared.diagnostics.BuildDetails;
 
 /**
  * Resource names written for one build of the host app.
@@ -19,6 +20,10 @@ import android.content.Context;
  * <p>The builds are TikTok's. PineDrama reports TikTok's version names, but its resource table is
  * its own and hands the same short names to unrelated views, so a build's name never resolves
  * there (#156).
+ *
+ * <p>A copy of TikTok that Morphe's Clone app renamed for Run beside the store app runs under
+ * another package with TikTok's resource table, so the build asset's target package, which the
+ * patcher read before any patch changed the manifest, says whose names resolve (#209).
  */
 public final class BuildNames {
     /** The app whose builds the names are written for. */
@@ -62,10 +67,19 @@ public final class BuildNames {
         }
         if (build != null) {
             // The app first: a reader that sees the build sees its app.
-            runningApp = app;
+            runningApp = namedApp(app, BuildDetails.targetPackage(BuildDetails.readMetadata(context)));
             runningBuild = build;
         }
         return build;
+    }
+
+    /**
+     * The app whose names the running package resolves: the package the bundle patched when the
+     * build asset names one, since a renamed copy keeps that app's resource table (#209), and the
+     * running package when there's no record to go on.
+     */
+    static String namedApp(String runningPackage, String targetPackage) {
+        return targetPackage != null ? targetPackage : runningPackage;
     }
 
     /** Stands in for TikTok's version name in a test; null reads it again. */

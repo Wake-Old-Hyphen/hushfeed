@@ -69,6 +69,16 @@ class BridgeTypeFlowTest {
         assertEquals(BridgeTypeFlow.check(wrong).toString(), 1, BridgeTypeFlow.check(wrong).size)
     }
 
+    @Test fun `an interface parameter takes the Object two references met as`() {
+        // TikTok's ranking row on 47.4.3 hands a TextView's text, or "" when that's null, to
+        // SpannableStringBuilder(CharSequence). ART lets any reference into an interface.
+        val text = "invoke-static { }, Lapp/morphe/Example;->text()Ljava/lang/CharSequence;\n        move-result-object v0"
+        assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(merged(text, "const-string v0, \"\"",
+            "invoke-static { v0 }, Lapp/morphe/Example;->show(Ljava/lang/CharSequence;)V")))
+        val wrong = merged(text, "const-string v0, \"\"", "invoke-static { v0 }, Lapp/morphe/Example;->name(Ljava/lang/String;)V")
+        assertEquals(BridgeTypeFlow.check(wrong).toString(), 1, BridgeTypeFlow.check(wrong).size)
+    }
+
     @Test fun `an Object parameter takes references only`() {
         val wrong = method(1, """
             const/16 v0, 0xe

@@ -4,10 +4,18 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Supported apps
+
+* **TikTok:** PineDrama moves to 47.4.3, the build APKMirror got on 2026-10-19, and 47.1.4 is dropped. The same 90 patches apply to it (#156).
+
 ### Features and fixes
 
+* **TikTok:** `Filter the LIVE feed` leaves the LIVE row in your Inbox and the Following tab's LIVE row alone, apart from blocked creators. TikTok fills those rows through the same page handler as the LIVE feed, so the viewers, followers, gaming and category rules were thinning out the creators you follow too (#212).
+* **TikTok:** A copy made with `Run beside the store app` gets its bottom navigation, share sheet and video control tweaks back. The renamed copy didn't count as TikTok, so every view name written for 47.4.3 came up missing in it (#209).
+* **TikTok:** `Remove content credential and card scanner assets` no longer crashes TikTok when you tap the gallery icon while replying to a comment. The photo picker started TikTok's content credential service, which loaded the emptied library and took the app down into safe mode. The service now stays unstarted, and a photo you pick carries no content credential (#211).
 * **TikTok:** `Show the progress bar` also shows the bar on videos that open behind a sensitive content warning. TikTok kept treating them as covered after you tapped through, so the bar stayed off on those videos even with the switch on (#208).
 * **TikTok:** `Use system font` and `Use an imported font` now reach Activity center, Watch history, Comment history and TikTok's other web pages. Those screens are web pages inside the app, so they kept TikTok's font. Websites you open in TikTok's browser keep their own fonts. An imported font over 2 MB shows up there as your phone's font instead (#7).
+* **Hushfeed settings:** Search results show a setting's new value when you change it from a result and come back. They used to keep the old one, so `Caption background` still read Dark after you'd picked TikTok default.
 
 ## 0.76.0 (2026-10-18)
 
