@@ -45,7 +45,8 @@ import app.morphe.extension.shared.Logger;
  * backup never carries it to another phone and a settings reset never drops it.
  */
 public final class DeviceIdentity {
-    static final String PREFERENCES = "hushfeed_device_identity";
+    /** Kept through TikTok's launch-crash cleanup, which would hand TikTok the phone's own ids. */
+    public static final String PREFERENCES = "hushfeed_device_identity";
     static final String ARMED_KEY = "armed";
     static final String ANDROID_ID_KEY = "android_id";
     static final String ADVERTISING_ID_KEY = "advertising_id";

@@ -103,55 +103,6 @@ function Require-Match {
     }
 }
 
-function Get-ManagerChangelogGroups {
-    param(
-        [string]$Text,
-        [string]$Version
-    )
-
-    $release = [regex]::Match($Text,
-        "(?ms)^## $([regex]::Escape($Version)) \([^\r\n)]+\)\r?\n(?<Body>.*?)(?=^## |\z)")
-    if (-not $release.Success) {
-        throw "CHANGELOG.md has no dated $Version section for the indexed Manager changelog."
-    }
-
-    $output = New-Object System.Collections.Generic.List[string]
-    $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-    $heading = $null
-    $items = 0
-    foreach ($line in @($release.Groups['Body'].Value -split '\r?\n' | Where-Object { $_.Trim() })) {
-        if ($line -match '^### (.+)$') {
-            if ($null -ne $heading -and $items -eq 0) {
-                throw "CHANGELOG.md $Version has an empty ### $heading group."
-            }
-            $heading = $Matches[1].Trim()
-            if (-not $heading -or -not $seen.Add($heading)) {
-                throw "CHANGELOG.md $Version has an empty or duplicate ### group."
-            }
-            if ($output.Count -gt 0) { $output.Add('') }
-            $output.Add("### $heading")
-            $output.Add('')
-            $items = 0
-            continue
-        }
-        if ($line -notmatch '^\* \*\*TikTok:\*\* ') {
-            throw "CHANGELOG.md $Version has text outside a TikTok-scoped ### group: $line"
-        }
-        if ($null -eq $heading) {
-            throw "CHANGELOG.md $Version has a loose bullet before its first ### group."
-        }
-        $output.Add($line)
-        $items++
-    }
-    if ($null -eq $heading) {
-        throw "CHANGELOG.md $Version has no ### groups for the indexed Manager changelog."
-    }
-    if ($items -eq 0) {
-        throw "CHANGELOG.md $Version has an empty ### $heading group."
-    }
-    return ($output -join "`n")
-}
-
 function Assert-UrlReachable {
     param(
         [Uri]$Uri,

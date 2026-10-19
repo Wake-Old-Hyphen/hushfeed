@@ -50,6 +50,7 @@ $assets = Join-Path $root "build/release-assets/$Version"
 $bundleName = "patches-$Version.mpp"
 $receiptName = "release-receipt-$Version.json"
 . (Join-Path $root 'scripts/common.ps1')
+. (Join-Path $root 'scripts/patch-target.ps1')
 . (Join-Path $root 'scripts/release-attestation.ps1')
 if ($RequireImmutableRelease -and $Stage -notin @('publish', 'index')) {
     throw '-RequireImmutableRelease applies to publish or index.'
@@ -537,11 +538,11 @@ switch ($Stage) {
         if ($stamp -ne "${seconds}000") { throw "The bundle's Timestamp $stamp isn't pinned to the release commit ($seconds)." }
         if (-not $hasDex) { throw 'The bundle has no classes.dex, so Manager would load no patches.' }
         Step 'receipt over every declared fixture'
-        $declared = @((Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json).patches |
-            ForEach-Object { $_.compatibility.targets } | Where-Object { -not $_.experimental } |
-            ForEach-Object { $_.version } | Sort-Object -Unique)
-        $fixtures = foreach ($v in $declared) {
-            $match = @(Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter "com.zhiliaoapp.musically_$v-*.apk" -File)
+        # The bundle's own target, the builds the gate applied: PineDrama (#156) declares its own
+        # version beside it, and no TikTok APK of that version exists.
+        $target = Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json)
+        $fixtures = foreach ($v in @($target.PackageVersions)) {
+            $match = @(Get-ChildItem -LiteralPath $env:HUSHFEED_FIXTURE_DIR -Filter "$($target.PackageName)_$v-*.apk" -File)
             if ($match.Count -ne 1) { throw "Expected one $v APK in $env:HUSHFEED_FIXTURE_DIR, found $($match.Count)." }
             $match[0].FullName
         }

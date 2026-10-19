@@ -12,6 +12,7 @@ import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.diagnostics.JavaCrashCapture;
 import app.morphe.extension.tiktok.featuregatelab.FeatureGateLabStore;
+import app.morphe.extension.tiktok.privacy.DeviceIdentity;
 import app.morphe.extension.tiktok.settings.preference.ReleaseNotes;
 
 import org.junit.Rule;
@@ -64,7 +65,7 @@ public class LaunchCrashCleanupTest {
         assertArrayEquals("TikTok's own names moved or went", TIKTOK_KEEPS,
                 Arrays.copyOf(kept, TIKTOK_KEEPS.length));
         assertEquals(Arrays.asList("morphe_prefs", "morphe_feature_gate_lab", "hushfeed-calm-feed-preset",
-                        "hushfeed_release_notes"),
+                        "hushfeed_release_notes", "hushfeed_device_identity"),
                 Arrays.asList(kept).subList(TIKTOK_KEEPS.length, kept.length));
         assertArrayEquals(LaunchCrashCleanup.HUSHFEED_FILES, LaunchCrashCleanup.keepHushfeedFiles(null));
     }
@@ -78,6 +79,7 @@ public class LaunchCrashCleanupTest {
         expected.put("settings/preference/ReleaseNotes.java", Arrays.asList(
                 "PREFS_NAME", "PREFS_NAME", "PREFS_NAME"));
         expected.put("settings/CalmFeedPreset.java", Arrays.asList("PREFERENCES"));
+        expected.put("privacy/DeviceIdentity.java", Arrays.asList("PREFERENCES", "PREFERENCES"));
         expected.put("translation/DmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("translation/ReceivedDmTranslationPreview.java", Arrays.asList("Setting.preferences.name"));
         expected.put("shared/settings/EarlySwitch.java", Arrays.asList("Setting.PREFERENCES_NAME"));
@@ -94,6 +96,7 @@ public class LaunchCrashCleanupTest {
         assertTrue(kept.contains(FeatureGateLabStore.PREFS_NAME));
         assertTrue(kept.contains(CalmFeedPreset.PREFERENCES));
         assertTrue(kept.contains(ReleaseNotes.PREFS_NAME));
+        assertTrue(kept.contains(DeviceIdentity.PREFERENCES));
     }
 
     private static String constant(Class<?> owner, String name) throws ReflectiveOperationException {

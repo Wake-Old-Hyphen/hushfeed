@@ -83,6 +83,7 @@ feed/VideoOverlayHider.java|COMMENT_BUTTON_IDS|47.4.3:eq2|app|com.ss.android.ugc
 feed/VideoOverlayHider.java|FAVORITE_BUTTON_IDS|47.4.3:i9a|app|com.ss.android.ugc.aweme.feed.favorite.VideoFavoriteAssem|to:ScrollHardwareLayerDelegateKt
 feed/VideoOverlayHider.java|MUSIC_BUTTON_IDS|47.4.3:pop|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicCoverAssem|on:RelativeLayout
 feed/VideoOverlayHider.java|SHARE_BUTTON_IDS|47.4.3:w_s|app|com.ss.android.ugc.aweme.feed.assem.share.VideoShareAssem|to:ScrollHardwareLayerDelegateKt
+feed/VideoOverlayHider.java|RAIL_SLOT_ID|47.4.3:exj|app|com.ss.android.ugc.feed.platform.cell.RootCellComponent|at:1
 feed/FeedOverlayControls.java|inline|view_rootview|app|com.ss.android.ugc.aweme.feed.adapter.VideoViewCell|at:3
 feed/FeedOverlayControls.java|inline|feed_multi_tag_layout|app|com.ss.android.ugc.aweme.fcpanchor.access.VideoFeedMultiTagAssem|at:1
 feed/AuthorRegion.java|NAME_ID|title|app|com.by.andInflater.common_feed_layout_video_title|at:4

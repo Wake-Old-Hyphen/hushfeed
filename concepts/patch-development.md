@@ -1,14 +1,14 @@
 # App and patch development map
 
-This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-16, and `scripts/validate-release-facts.ps1` fails when they drift. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
+This guide maps the TikTok app Hushfeed modifies to the code and release checks that make a patch. Its version and patch counts were last synced with the source on 2026-10-18, and `scripts/validate-release-facts.ps1` fails when they drift. The generated [patch catalog](../patches-list.json) is the current source of truth for patch names and compatibility.
 
 ## What Hushfeed ships
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-Source snapshot: version 0.75.0, 135 patch entries. Those come from gradle.properties and patches-list.json.
+Source snapshot: version 0.76.0, 135 patch entries. Those come from gradle.properties and patches-list.json.
 
-Published bundle: version 0.75.0, 135 patches. Those come from patches-bundle.json and the release it names.
+Published bundle: version 0.76.0, 135 patches. Those come from patches-bundle.json and the release it names.
 
 The source runs ahead of the published bundle until the next release ships. The index moves only after a new bundle is published and verified, which is the release sequence described in CONTRIBUTING.md. Do not hand-edit the index to make the two match.
 

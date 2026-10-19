@@ -1173,7 +1173,8 @@ public class SettingsPagesTest {
             TikTokPreferenceFragment page = (TikTokPreferenceFragment) activity.getFragmentManager()
                     .findFragmentById(android.R.id.content);
             EditText input = (EditText) page.getView().findViewWithTag("settings_search_input");
-            input.setText("video length");
+            // Not just "video length": Show video length on profile grids matches that, and its patch is present here.
+            input.setText("maximum video length");
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertNull(findPreference(page.getPreferenceScreen(), "Maximum video length"));
             assertNotNull(findPreference(page.getPreferenceScreen(), "No matching settings"));

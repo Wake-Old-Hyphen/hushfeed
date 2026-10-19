@@ -63,7 +63,8 @@ public final class StorageScanContract {
                 equal(StorageScan.Bucket.DIAGNOSTICS, StorageScan.bucket("files/" + name + suffix, StorageScan.Kind.FILE));
         }
         for (String suffix : new String[] {"", ".bak"}) {
-            for (String name : new String[] {"morphe_prefs", "hushfeed-calm-feed-preset", "hushfeed_release_notes"})
+            for (String name : new String[] {"morphe_prefs", "hushfeed-calm-feed-preset", "hushfeed_release_notes",
+                    "hushfeed_device_identity"})
                 equal(StorageScan.Bucket.SETTINGS,
                         StorageScan.bucket("shared_prefs/" + name + ".xml" + suffix, StorageScan.Kind.FILE));
             equal(StorageScan.Bucket.FEATURE_LAB,

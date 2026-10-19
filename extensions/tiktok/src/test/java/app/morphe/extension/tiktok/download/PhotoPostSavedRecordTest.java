@@ -186,10 +186,16 @@ public class PhotoPostSavedRecordTest {
         return new AdvancedDownloadsTest.PhotoPost(id, images);
     }
 
+    /**
+     * Until neither the media pool nor the main looper has work left. A dialog button's click
+     * runs on the looper, so Save again queues its job only once the looper idles.
+     */
     private void finish() throws Exception {
-        drainPool();
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
-        idle();
+        do {
+            drainPool();
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(SaveNotice.SHEET_SETTLE_MS + 1, TimeUnit.MILLISECONDS);
+            idle();
+        } while (!MediaJobScheduler.idle());
     }
 
     private static void idle() {

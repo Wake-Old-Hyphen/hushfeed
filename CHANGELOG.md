@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.76.0 (2026-10-18)
+
 ### Supported apps
 
 * **TikTok:** Hushfeed now supports TikTok 47.4.3, and only that one. 47.1.4 isn't supported anymore, so grab the 47.4.3 APK from APKMirror and patch that. PineDrama stays on 47.1.4.
@@ -37,15 +39,10 @@ Every Hushfeed release, newest first.
 ### Verification
 
 * **TikTok:** The native alignment checker now catches RELRO ranges that would make writable data read-only on 16 KB devices. Safely isolated RELRO segments remain accepted.
-
 * **TikTok:** The patch audit now checks saved results against their definitions, tested APK and build receipt, including the actual evidence files. Older or incomplete runs stay marked historical. Screenshot verdicts can't be applied to a different run.
-
 * **TikTok:** Device builds and audits now require an exclusive lease before accessing a test device. An expired or lost lease stops device commands. Local builds still work without one. The probe tools (strip-hunt, record-markers and every probe action) and the injected-register check take the same lease now, and they won't start while another task holds the phone.
-
 * **TikTok:** With `Log diagnostics` on, each card in the search results also logs its type codes (origin and token type, whether it's shopping, its popup type) and the names of the keys in its data. Of what those keys hold, only one-word type codes get logged, so the search and the card's text stay out of the log. That's what it takes to tell a hotel price card or a leaked search ad apart from a normal place card.
-
 * **TikTok:** `scripts/phone.sh` checks the device lease itself now, before every adb call. Run on its own without the lease file and token, or with someone else's or an expired one, it refuses and sends nothing to the phone. strip-hunt and record-markers hand it theirs.
-
 * **TikTok:** The injected-register check compares against the 47.4.3 APK. It still expected 47.1.4 and refused every current build.
 
 ## 0.75.0 (2026-10-16)

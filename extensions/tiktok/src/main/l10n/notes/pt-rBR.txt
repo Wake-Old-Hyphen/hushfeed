@@ -1,4 +1,4 @@
-## Unreleased
+## 0.76.0 (2026-10-18)
 
 * **TikTok:** O Hushfeed agora é compatível com o TikTok 47.4.3, e só com essa versão. Aplique o patch no APK 47.4.3 do APKMirror. O PineDrama continua no 47.1.4.
 
