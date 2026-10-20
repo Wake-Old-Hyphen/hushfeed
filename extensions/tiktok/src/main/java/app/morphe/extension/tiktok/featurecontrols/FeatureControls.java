@@ -103,6 +103,17 @@ public final class FeatureControls {
         return !hide && originalEnabled;
     }
 
+    /**
+     * The same switch asked by the side menu button's view method, where true makes the view
+     * null and the top bar skips the button. TikTok's tab filter rules can put the button in
+     * without asking the enabled check above, so this is the path that holds on every account.
+     */
+    public static boolean hideFeedSidebarButtonView() {
+        boolean hide = Settings.HIDE_FEED_SIDEBAR_BUTTON.get();
+        HookStatus.bound(SIDEBAR_BUTTON_FAMILY, hide ? "hidden" : "left to TikTok");
+        return hide;
+    }
+
     public static int overrideLongPressQuickShare(int originalMode) {
         return Settings.DISABLE_LONG_PRESS_QUICK_SHARE.get() ? 0 : originalMode;
     }

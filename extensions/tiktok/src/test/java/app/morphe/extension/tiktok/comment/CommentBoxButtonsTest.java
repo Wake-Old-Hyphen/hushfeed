@@ -111,6 +111,80 @@ public class CommentBoxButtonsTest {
         assertEquals(View.GONE, slot.getVisibility());
     }
 
+    @Test public void turningTheSwitchOffShowsWhatItHidAtTheNextLayout() {
+        // TikTok keeps the comment box and never sets the buttons again on its own (Login2, 2026-10-20).
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        View photo = button();
+        View mention = button();
+        View gift = button();
+        gift.setVisibility(View.INVISIBLE);
+        CommentBoxButtons.photo(photo);
+        CommentBoxButtons.mention(mention);
+        CommentBoxButtons.gift(gift);
+        layOut();
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(false);
+        layOut();
+        assertEquals(View.VISIBLE, photo.getVisibility());
+        assertEquals(View.VISIBLE, mention.getVisibility());
+        assertEquals(View.INVISIBLE, gift.getVisibility());
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        layOut();
+        assertEquals(View.GONE, photo.getVisibility());
+        assertEquals(View.GONE, mention.getVisibility());
+        assertEquals(View.GONE, gift.getVisibility());
+    }
+
+    @Test public void aButtonTikTokLeftGoneStaysGoneWhenTheSwitchGoesOff() {
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        View mention = button();
+        mention.setVisibility(View.GONE);
+        CommentBoxButtons.mention(mention);
+        layOut();
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(false);
+        layOut();
+        assertEquals(View.GONE, mention.getVisibility());
+    }
+
+    @Test public void thePhotoSlotComesBackWithThePhotoButton() {
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        FrameLayout slot = new FrameLayout(box.getContext());
+        slot.setClickable(true);
+        View photo = new View(box.getContext());
+        slot.addView(photo);
+        box.addView(slot);
+        CommentBoxButtons.photo(photo);
+        layOut();
+        assertEquals(View.GONE, slot.getVisibility());
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(false);
+        layOut();
+        assertEquals(View.VISIBLE, photo.getVisibility());
+        assertEquals(View.VISIBLE, slot.getVisibility());
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        layOut();
+        assertEquals(View.GONE, photo.getVisibility());
+        assertEquals(View.GONE, slot.getVisibility());
+    }
+
+    @Test public void onlyTheSlotHiddenHereComesBack() {
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
+        FrameLayout slot = new FrameLayout(box.getContext());
+        slot.setClickable(true);
+        View photo = new View(box.getContext());
+        slot.addView(photo);
+        box.addView(slot);
+        CommentBoxButtons.photo(photo);
+        layOut();
+        FrameLayout other = new FrameLayout(box.getContext());
+        other.setVisibility(View.GONE);
+        box.addView(other);
+        slot.removeView(photo);
+        other.addView(photo);
+        Settings.HIDE_COMMENT_BOX_BUTTONS.save(false);
+        layOut();
+        assertEquals(View.VISIBLE, slot.getVisibility());
+        assertEquals(View.GONE, other.getVisibility());
+    }
+
     @Test public void aRowWithOtherButtonsShowingStays() {
         Settings.HIDE_COMMENT_BOX_BUTTONS.save(true);
         FrameLayout row = new FrameLayout(box.getContext());

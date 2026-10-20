@@ -9,6 +9,7 @@ package app.morphe.patches.tiktok.interaction.feedtoolbar
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
@@ -39,4 +40,20 @@ internal fun MutableMethod.overrideToolbarButtonEnabled(extensionMethodName: Str
                 """,
             )
         }
+}
+
+/**
+ * A toolbar icon generator's view method answers null when [extensionMethodName] says hide.
+ * Every top bar builder skips an icon whose view is null, including the ones that add a
+ * generator without asking its enabled check first.
+ */
+internal fun MutableMethod.hideToolbarButtonView(patch: String, extensionMethodName: String) {
+    guardAtEntry(
+        patch,
+        "invoke-static {}, $FEATURE_CONTROLS_DESCRIPTOR->$extensionMethodName()Z",
+        """
+            const/4 v0, 0x0
+            return-object v0
+        """,
+    )
 }

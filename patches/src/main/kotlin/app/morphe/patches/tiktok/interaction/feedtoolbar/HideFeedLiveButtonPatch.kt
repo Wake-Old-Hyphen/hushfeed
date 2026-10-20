@@ -107,7 +107,7 @@ internal fun BytecodePatchContext.hookSidebarButtonOn(versionName: String): Bool
     return true
 }
 
-private fun BytecodePatchContext.hookSidebarButton() {
+internal fun BytecodePatchContext.hookSidebarButton() {
     val sidebarGenerators = SidebarIconViewFingerprint.matchAllOrNull().orEmpty()
     if (sidebarGenerators.size != 1) {
         throw PatchException(
@@ -121,4 +121,9 @@ private fun BytecodePatchContext.hookSidebarButton() {
         )
     }
     sidebarEnabled.single().overrideToolbarButtonEnabled("hideFeedSidebarButtonEnabled")
+    // With TikTok's tab filter rules on (some accounts on 47.4.3), the top bar takes the button
+    // from its rules and never asks enabled(), so its view answers too.
+    SidebarIconViewFingerprint.method.hideToolbarButtonView(
+        "Hide feed LIVE button", "hideFeedSidebarButtonView",
+    )
 }

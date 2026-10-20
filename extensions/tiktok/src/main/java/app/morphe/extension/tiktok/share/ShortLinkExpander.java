@@ -4,16 +4,20 @@
  */
 package app.morphe.extension.tiktok.share;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +49,11 @@ import app.morphe.extension.tiktok.settings.Settings;
  * <p>Nothing is opened before the link is copied. TikTok makes its share link once for every
  * channel as the sheet opens, so each link made only starts a wait of {@link #WATCH_MS} for Copy
  * link, one per link, and a link sent straight to another app goes out as TikTok made it,
- * unopened. A short link is opened once at a time, and one that couldn't be opened is left for
- * {@link #RETRY_AFTER_MS}. The link is opened through the media transport, with its checks on
+ * unopened. Every wait ends as soon as one of TikTok's screens leaves the front: Android holds
+ * back the news of a clip copied in another app, Android's own share sheet included, and hands it
+ * to TikTok once it's back in front, and reading that clip shows Android's "pasted from your
+ * clipboard" notice. A short link is opened once at a time, and one that couldn't be opened is
+ * left for {@link #RETRY_AFTER_MS}. The link is opened through the media transport, with its checks on
  * every redirect, and the page it lands on is never read; only a landing on a video or photo
  * page on TikTok's own site over HTTPS is taken.
  */
@@ -91,6 +98,8 @@ public final class ShortLinkExpander {
 
     /** Each copied text being waited for, with its listener. Main thread. */
     private static final Map<String, ClipboardManager.OnPrimaryClipChangedListener> WATCHING = new HashMap<>();
+    /** The app whose screens leaving the front end the waits. Main thread. */
+    private static WeakReference<Application> followed = new WeakReference<>(null);
     /** Short links being opened now. */
     private static final Set<String> OPENING = new HashSet<>();
     /** The latest short links opened, oldest first, each with where it led and when. */
@@ -167,11 +176,12 @@ public final class ShortLinkExpander {
         }
         ClipboardManager.OnPrimaryClipChangedListener[] listener = new ClipboardManager.OnPrimaryClipChangedListener[1];
         listener[0] = () -> {
-            if (!holds(clipboard, copied)) return;
+            if (ended(clipboard, copied, listener[0]) || !holds(clipboard, copied)) return;
             // Off before the swap, whose own change would otherwise come back here.
             stopWatching(clipboard, copied, listener[0]);
             open(shortLink, resolver, swapIn);
         };
+        followPauses(context);
         WATCHING.put(copied, listener[0]);
         clipboard.addPrimaryClipChangedListener(listener[0]);
         Utils.runOnMainThreadDelayed(() -> stopWatching(clipboard, copied, listener[0]), WATCH_MS);
@@ -184,6 +194,8 @@ public final class ShortLinkExpander {
     static void laterShortened() {
         Context context = Utils.getContext();
         long before = clipStamp(context);
+        Logger.printDebug(() -> "Short link watch for a link TikTok shortens, clip stamp " + before
+                + " on " + Thread.currentThread().getName());
         Utils.runOnMainThreadNowOrLater(() -> watchShortened(context, before, NETWORK));
     }
 
@@ -201,6 +213,7 @@ public final class ShortLinkExpander {
         // A copy that came before this ran; the clip that was there when the link was made is
         // never read.
         if (changedSince(clipboard, before)) {
+            Logger.printDebug(() -> "The clip changed before the short link watch started, reading it");
             String copiedShort = shortLinkOn(clipboard);
             if (copiedShort != null) {
                 open(copiedShort, resolver, full -> swap(clipboard, copiedShort, full));
@@ -209,12 +222,15 @@ public final class ShortLinkExpander {
         }
         ClipboardManager.OnPrimaryClipChangedListener[] listener = new ClipboardManager.OnPrimaryClipChangedListener[1];
         listener[0] = () -> {
+            if (ended(clipboard, SHORTENED_LATER, listener[0])) return;
+            Logger.printDebug(() -> "The clip changed during the short link watch, reading it");
             String copiedShort = shortLinkOn(clipboard);
             if (copiedShort == null) return;
             // Off before the swap, whose own change would otherwise come back here.
             stopWatching(clipboard, SHORTENED_LATER, listener[0]);
             open(copiedShort, resolver, full -> swap(clipboard, copiedShort, full));
         };
+        followPauses(context);
         WATCHING.put(SHORTENED_LATER, listener[0]);
         clipboard.addPrimaryClipChangedListener(listener[0]);
         Utils.runOnMainThreadDelayed(() -> stopWatching(clipboard, SHORTENED_LATER, listener[0]), WATCH_MS);
@@ -243,6 +259,45 @@ public final class ShortLinkExpander {
         clipboard.removePrimaryClipChangedListener(listener);
         // A later wait for the same text has its own listener, which stays.
         if (WATCHING.get(copied) == listener) WATCHING.remove(copied);
+    }
+
+    /**
+     * True for a listener whose wait has ended, which is then taken off the clipboard it was put
+     * on without reading the clip. Each listener does this itself because Utils' context, and the
+     * clipboard manager it gives, can change between waits (a new MainActivity with Hushfeed's
+     * language set), and a manager only takes off listeners it was given.
+     */
+    private static boolean ended(ClipboardManager clipboard, String copied,
+                                 ClipboardManager.OnPrimaryClipChangedListener listener) {
+        if (WATCHING.get(copied) == listener) return false;
+        clipboard.removePrimaryClipChangedListener(listener);
+        return true;
+    }
+
+    /**
+     * Ends every wait when one of TikTok's screens leaves the front, such as for Android's share
+     * sheet after More (Login2, Android 13, 2026-10-20: that sheet's Copy reached the wait once
+     * TikTok was back, and Android showed its notice). TikTok's own share sheet is a dialog, so
+     * its Copy link leaves nothing. Each listener left behind goes at its next call ({@link
+     * #ended}) or its time limit. Main thread.
+     */
+    private static void followPauses(Context context) {
+        Context app = context.getApplicationContext();
+        if (!(app instanceof Application) || followed.get() == app) return;
+        followed = new WeakReference<>((Application) app);
+        ((Application) app).registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override public void onActivityPaused(Activity paused) {
+                if (WATCHING.isEmpty()) return;
+                WATCHING.clear();
+                Logger.printDebug(() -> "TikTok left the front, so the short link watch ended");
+            }
+            @Override public void onActivityCreated(Activity created, Bundle state) { }
+            @Override public void onActivityStarted(Activity started) { }
+            @Override public void onActivityResumed(Activity resumed) { }
+            @Override public void onActivityStopped(Activity stopped) { }
+            @Override public void onActivitySaveInstanceState(Activity saved, Bundle state) { }
+            @Override public void onActivityDestroyed(Activity destroyed) { }
+        });
     }
 
     /**

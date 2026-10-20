@@ -11,6 +11,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import kotlinx.coroutines.runBlocking
@@ -67,6 +68,38 @@ class SidebarButtonOptionalTest {
             // A fingerprint keeps its last match across runs in one JVM (BackgroundPushSetupTest).
             SidebarIconViewFingerprint.clearMatch()
             SettingsStatusLoadFingerprint.clearMatch()
+            Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
+                patcher += setOf(probe)
+                runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }
+            }
+            assertTrue("${apk.name}: the probe never ran", checked)
+        }
+    }
+
+    /**
+     * 47.4.3 with TikTok's tab filter rules on adds the button without asking its enabled check,
+     * so the view method asks the switch first and leaves with no view, which every top bar
+     * builder skips.
+     */
+    @Test
+    fun `the side menu button's view asks the switch first and leaves with no view`() {
+        Fixtures.forEachDeclared { apk ->
+            var checked = false
+            val probe = bytecodePatch(name = "side menu view probe") {
+                execute {
+                    hookSidebarButton()
+                    val instructions = SidebarIconViewFingerprint.method.implementation!!.instructions.toList()
+                    val ask = (instructions[0] as ReferenceInstruction).reference as MethodReference
+                    assertEquals("${apk.name}: first call in the view method",
+                        "Lapp/morphe/extension/tiktok/featurecontrols/FeatureControls;->hideFeedSidebarButtonView()Z",
+                        "${ask.definingClass}->${ask.name}()${ask.returnType}")
+                    assertEquals("${apk.name}: the guard's way out",
+                        listOf(Opcode.MOVE_RESULT, Opcode.IF_EQZ, Opcode.CONST_4, Opcode.RETURN_OBJECT),
+                        instructions.subList(1, 5).map { it.opcode })
+                    checked = true
+                }
+            }
+            SidebarIconViewFingerprint.clearMatch()
             Patcher(PatcherConfig(apk, temporary.newFolder())).use { patcher ->
                 patcher += setOf(probe)
                 runBlocking { patcher().collect { result -> result.exception?.let { throw it } } }

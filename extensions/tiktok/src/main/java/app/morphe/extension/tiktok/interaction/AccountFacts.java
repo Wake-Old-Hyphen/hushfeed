@@ -6,14 +6,21 @@ package app.morphe.extension.tiktok.interaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
+import java.lang.reflect.Field;
 import java.text.DateFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import app.morphe.extension.shared.Logger;
@@ -31,7 +38,9 @@ import app.morphe.extension.tiktok.settings.preference.SettingsUi;
  * unique_id_modify_time, nick_name_modify_ts, secret and has_open_favorite, the last being what
  * the profile's own tab pager reads to show the liked videos tab) and read by their real names.
  * A date or name the server didn't send says so rather than guessing. secret and
- * has_open_favorite can't say that, so they only get a line when they're true.
+ * has_open_favorite can't say that, so they only get a line when they're true. When the
+ * profile's model lacks the join date, region or language, the same account's author model on
+ * one of the videos behind the sheet gives it.
  */
 public final class AccountFacts {
     static final String SHOW_FACTS = "Account facts";
@@ -39,6 +48,9 @@ public final class AccountFacts {
     static final String NOT_SENT = "Not sent";
     /** A seconds value past this is really milliseconds; it's the year 5138 in seconds. */
     private static final long LARGEST_SECONDS = 100_000_000_000L;
+    static final String AWEME = "com.ss.android.ugc.aweme.feed.model.Aweme";
+    /** Enough other models of one account, about two pages of its grid; the first that holds a fact gives it. */
+    private static final int MOST_COPIES = 64;
 
     private AccountFacts() {
     }
@@ -60,19 +72,31 @@ public final class AccountFacts {
 
     /** The sheet's lines for {@code user}, in the order they show. */
     static List<Fact> of(Object user, Locale locale, TimeZone zone) {
+        return of(user, Collections.emptyList(), locale, zone);
+    }
+
+    /**
+     * The sheet's lines for {@code user}, with a join date, region or language it lacks taken
+     * from the first of {@code copies} that has it. Copies are other models of the same account.
+     */
+    static List<Fact> of(Object user, List<Object> copies, Locale locale, TimeZone zone) {
+        List<Object> sources = new ArrayList<>(copies.size() + 1);
+        sources.add(user);
+        sources.addAll(copies);
         List<Fact> facts = new ArrayList<>();
         // 47.4.3 renamed the boxed join time to _createTime.
-        Long joined = seconds(Reflect.readField(user, "_createTime"));
-        if (joined == null) joined = seconds(Reflect.readField(user, "createTime"));
-        if (joined == null) joined = seconds(Reflect.readField(user, "registerTime"));
+        Long joined = seconds(sources, "_createTime", "createTime", "registerTime");
         facts.add(new Fact("Joined", date(joined, locale, zone)));
-        String region = text(Reflect.readField(user, "region"));
+        String region = text(sources, "region");
         facts.add(new Fact("Region", country(region, locale)));
-        String accountRegion = text(Reflect.readField(user, "accountRegion"));
+        String accountRegion = text(sources, "accountRegion");
         if (accountRegion != null && !accountRegion.equalsIgnoreCase(region)) {
             facts.add(new Fact("Account region", country(accountRegion, locale)));
         }
-        facts.add(new Fact("Language", language(text(Reflect.readField(user, "language")), locale)));
+        facts.add(new Fact("Language", language(text(sources, "language"), locale)));
+        // A video's author model has unique_id_modify_time set to when the response was made
+        // (Login2 47.4.3: 73 models of different accounts shared one second), so the change
+        // dates come from the profile's own model only.
         facts.add(new Fact("Username last changed",
                 date(seconds(Reflect.readField(user, "uniqueIdModifyTime")), locale, zone)));
         facts.add(new Fact("Display name last changed",
@@ -106,7 +130,8 @@ public final class AccountFacts {
         try {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
-            String text = format(of(user, Locale.getDefault(), TimeZone.getDefault()));
+            List<Object> copies = copiesOnScreen(activity.getWindow().getDecorView(), user);
+            String text = format(of(user, copies, Locale.getDefault(), TimeZone.getDefault()));
             String handle = Reflect.string(user, "getUniqueId", "uniqueId");
             SettingsUi.syncDarkMode(activity);
             AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -167,5 +192,104 @@ public final class AccountFacts {
         if (value == null) return null;
         String text = value.toString().trim();
         return text.isEmpty() ? null : text;
+    }
+
+    /** The first time any source holds under any of the names, the names tried in order. */
+    @Nullable
+    private static Long seconds(List<Object> sources, String... names) {
+        for (String name : names) {
+            for (Object source : sources) {
+                Long seconds = seconds(Reflect.readField(source, name));
+                if (seconds != null) return seconds;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static String text(List<Object> sources, String name) {
+        for (Object source : sources) {
+            String text = text(Reflect.readField(source, name));
+            if (text != null) return text;
+        }
+        return null;
+    }
+
+    /**
+     * Other models of {@code user}'s account on the screen behind the share sheet: the authors of
+     * the videos in its lists, matched by uid. On 47.4.3 the profile response leaves out
+     * create_time, region and language, so the profile's own model (the one the share sheet
+     * holds) has none of them, while the author model on each video in the profile's grid has
+     * the language, and a feed video's author also has the region (Login2 heap, 2026-10-20).
+     */
+    static List<Object> copiesOnScreen(@Nullable View root, Object user) {
+        List<Object> copies = new ArrayList<>();
+        String uid = Reflect.string(user, "getUid", "uid");
+        if (root == null || uid == null) return copies;
+        Set<Object> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        seen.add(user);
+        ArrayDeque<View> views = new ArrayDeque<>();
+        views.add(root);
+        while (!views.isEmpty() && copies.size() < MOST_COPIES) {
+            View view = views.poll();
+            if (view instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) view;
+                for (int i = 0; i < group.getChildCount(); i++) views.add(group.getChildAt(i));
+                // RecyclerView's adapter, read by name so nothing here needs RecyclerView itself.
+                Object adapter = Reflect.readField(view, "mAdapter");
+                if (adapter != null) addAuthors(adapter, uid, seen, copies);
+            }
+        }
+        return copies;
+    }
+
+    private static boolean isVideo(Class<?> type) {
+        for (; type != null && type != Object.class; type = type.getSuperclass()) {
+            if (AWEME.equals(type.getName())) return true;
+        }
+        return false;
+    }
+
+    /** The authors matching {@code uid} in every list of videos the adapter holds. */
+    private static void addAuthors(Object adapter, String uid, Set<Object> seen, List<Object> copies) {
+        for (Class<?> type = adapter.getClass(); type != null && type != Object.class;
+             type = type.getSuperclass()) {
+            Field[] fields;
+            try {
+                fields = type.getDeclaredFields();
+            } catch (Throwable error) {
+                continue;
+            }
+            for (Field field : fields) {
+                if (!List.class.isAssignableFrom(field.getType())) continue;
+                List<Object> items = snapshot(adapter, field, seen);
+                if (items == null) continue;
+                for (Object item : items) {
+                    if (item == null || !isVideo(item.getClass())) continue;
+                    Object author = Reflect.property(item, "getAuthor", "author");
+                    if (author != null && seen.add(author)
+                            && uid.equals(Reflect.string(author, "getUid", "uid"))) {
+                        copies.add(author);
+                        if (copies.size() >= MOST_COPIES) return;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * A copy of the list a field holds, or null when it holds none, can't be read or was already
+     * read through another adapter or field.
+     */
+    @Nullable
+    private static List<Object> snapshot(Object owner, Field field, Set<Object> seen) {
+        try {
+            field.setAccessible(true);
+            Object list = field.get(owner);
+            return list instanceof List && seen.add(list) ? new ArrayList<>((List<?>) list) : null;
+        } catch (Throwable error) {
+            Logger.printDebug(() -> "Account facts could not read " + field + ": " + error);
+            return null;
+        }
     }
 }

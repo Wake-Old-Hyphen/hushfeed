@@ -189,6 +189,26 @@ public class FeatureSwitchesTest {
     }
 
     /**
+     * #128 on 47.4.3: TikTok's tab filter rules add the side menu button without asking its
+     * enabled check, so the button's view method asks the same switch and Pause wins there too.
+     */
+    @Test public void theSideMenuButtonViewFollowsTheSameSwitchAndPause() {
+        assertFalse("the switch starts off", FeatureControls.hideFeedSidebarButtonView());
+        assertTrue(String.join(" ", HookStatus.report()).contains(FeatureControls.SIDEBAR_BUTTON_FAMILY));
+
+        Settings.HIDE_LIVE_ENTRANCE.save(true);
+        assertFalse("the LIVE switch must not take the side menu button too",
+                FeatureControls.hideFeedSidebarButtonView());
+
+        Settings.HIDE_FEED_SIDEBAR_BUTTON.save(true);
+        assertTrue(FeatureControls.hideFeedSidebarButtonView());
+
+        PausedProcess.set(true);
+        assertFalse("Pause Hushfeed leaves the button to TikTok",
+                FeatureControls.hideFeedSidebarButtonView());
+    }
+
+    /**
      * The search gates add to TikTok's answer, never take from it, and say in Hook status that
      * TikTok asked. A gate recorder reads the settings value under the gate, which stays 0, so
      * that line is how a device check sees the gate forced.

@@ -64,9 +64,13 @@ public final class CommentBoxButtons {
         HookStatus.bound(FAMILY, which);
         if (!Settings.HIDE_COMMENT_BOX_BUTTONS.get()) return;
         try {
-            button.setVisibility(View.GONE);
-            if (KEEPERS.containsKey(button)) return;
-            Keeper keeper = new Keeper(button, withSlot);
+            Keeper keeper = KEEPERS.get(button);
+            if (keeper != null) {
+                keeper.hold(button);
+                return;
+            }
+            keeper = new Keeper(button, withSlot);
+            keeper.hold(button);
             KEEPERS.put(button, keeper);
             button.addOnAttachStateChangeListener(keeper);
             if (button.isAttachedToWindow()) keeper.onViewAttachedToWindow(button);
@@ -90,12 +94,24 @@ public final class CommentBoxButtons {
         return true;
     }
 
-    /** Puts the button, and its slot when it has one, back to gone whenever a layout pass finds it showing. */
+    /**
+     * Puts the button, and its slot when it has one, back to gone whenever a layout pass finds it showing.
+     * TikTok keeps the comment box and sets these buttons only when its own state changes, so with the
+     * switch turned off the first layout pass shows what was hidden here, as TikTok last showed it
+     * (Login2, 2026-10-20: photo and @ stayed gone on every video until a restart). A button TikTok
+     * left gone itself was never held, so it stays gone.
+     */
     private static final class Keeper implements View.OnAttachStateChangeListener,
             ViewTreeObserver.OnGlobalLayoutListener {
         private final WeakReference<View> button;
         private final boolean withSlot;
         private ViewTreeObserver observer;
+        /** What TikTok last showed the button and its slot as before they were hidden here. */
+        private int shown = View.VISIBLE;
+        private int slotShown = View.VISIBLE;
+        private boolean held;
+        /** The slot hidden here, so the one given back is that slot even if the button moved since. */
+        private WeakReference<View> slot;
 
         Keeper(View button, boolean withSlot) {
             this.button = new WeakReference<>(button);
@@ -114,14 +130,38 @@ public final class CommentBoxButtons {
             observer = null;
         }
 
+        void hold(View view) {
+            int now = view.getVisibility();
+            if (now == View.GONE) return;
+            shown = now;
+            held = true;
+            view.setVisibility(View.GONE);
+        }
+
         @Override public void onGlobalLayout() {
             View view = button.get();
-            if (view == null || !Settings.HIDE_COMMENT_BOX_BUTTONS.get()) return;
-            if (view.getVisibility() != View.GONE) view.setVisibility(View.GONE);
+            if (view == null) return;
+            if (!Settings.HIDE_COMMENT_BOX_BUTTONS.get()) {
+                release(view);
+                return;
+            }
+            hold(view);
             ViewParent parent = view.getParent();
             if (withSlot && isSlotOf(parent, view) && ((View) parent).getVisibility() != View.GONE) {
+                slotShown = ((View) parent).getVisibility();
+                slot = new WeakReference<>((View) parent);
                 ((View) parent).setVisibility(View.GONE);
             }
+        }
+
+        private void release(View view) {
+            if (held) {
+                held = false;
+                if (view.getVisibility() == View.GONE) view.setVisibility(shown);
+            }
+            View hidden = slot == null ? null : slot.get();
+            slot = null;
+            if (hidden != null && hidden.getVisibility() == View.GONE) hidden.setVisibility(slotShown);
         }
     }
 }

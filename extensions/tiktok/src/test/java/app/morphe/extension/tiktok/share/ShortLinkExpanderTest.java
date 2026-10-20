@@ -6,9 +6,11 @@ package app.morphe.extension.tiktok.share;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -16,7 +18,9 @@ import android.os.Looper;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
@@ -31,10 +35,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
+import org.robolectric.shadows.ShadowClipboardManager;
 import org.robolectric.shadows.ShadowToast;
 
 @RunWith(RobolectricTestRunner.class)
@@ -273,6 +282,87 @@ public class ShortLinkExpanderTest {
         idle();
         assertEquals(SHORT, text());
         assertEquals(0, opens.get());
+    }
+
+    @Test public void aLinkSentToAnotherAppEndsTheWait() {
+        ActivityController<Activity> tiktok = Robolectric.buildActivity(Activity.class).setup();
+        copy("hello");
+        ShortLinkExpander.watchShortened(context, ShortLinkExpander.clipStamp(context), resolver);
+        ShortLinkExpander.watch(context, SHORT, SHORT, ShortLinkExpander.clipStamp(context), resolver);
+        idle();
+        // Android's share sheet takes the front, and its own Copy puts the link there.
+        tiktok.pause();
+        copy(SHORT);
+        idle();
+        tiktok.resume();
+        idle();
+        assertEquals(SHORT, text());
+        assertEquals(0, opens.get());
+        assertFalse(ShortLinkExpander.watchingShortenedForTests());
+
+        // TikTok's own Copy link on the next share still gets the full link.
+        ShortLinkExpander.watch(context, OTHER, OTHER, ShortLinkExpander.clipStamp(context), resolver);
+        copy(OTHER);
+        idle();
+        assertEquals(1, opens.get());
+        assertEquals(PHOTO, text());
+    }
+
+    /**
+     * Android's clipboard manager keeps its own listeners and takes off only those, where
+     * Robolectric's keeps one list for every manager.
+     */
+    @Implements(ClipboardManager.class)
+    public static class ClipboardWithItsOwnListeners extends ShadowClipboardManager {
+        private final List<ClipboardManager.OnPrimaryClipChangedListener> listeners = new ArrayList<>();
+
+        @Implementation @Override
+        protected void addPrimaryClipChangedListener(ClipboardManager.OnPrimaryClipChangedListener listener) {
+            listeners.add(listener);
+        }
+
+        @Implementation @Override
+        protected void removePrimaryClipChangedListener(ClipboardManager.OnPrimaryClipChangedListener listener) {
+            listeners.remove(listener);
+        }
+
+        @Implementation @Override
+        protected void setPrimaryClip(ClipData clip) {
+            super.setPrimaryClip(clip);
+            for (ClipboardManager.OnPrimaryClipChangedListener listener : new ArrayList<>(listeners)) {
+                listener.onPrimaryClipChanged();
+            }
+        }
+    }
+
+    @Config(shadows = ClipboardWithItsOwnListeners.class)
+    @Test public void aWaitFromANewerContextEndsToo() {
+        ActivityController<Activity> tiktok = Robolectric.buildActivity(Activity.class).setup();
+        // Hushfeed's language set: each new MainActivity hands out a context of its own, with a
+        // clipboard manager of its own.
+        Context relocalized = context.createConfigurationContext(context.getResources().getConfiguration());
+        ClipboardManager itsClipboard = (ClipboardManager) relocalized.getSystemService(Context.CLIPBOARD_SERVICE);
+        assertNotSame(clipboard, itsClipboard);
+        copy("hello");
+        ShortLinkExpander.watch(context, OTHER, OTHER, ShortLinkExpander.clipStamp(context), resolver);
+        ShortLinkExpander.watchShortened(relocalized, ShortLinkExpander.clipStamp(relocalized), resolver);
+        idle();
+        tiktok.pause();
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1));
+        itsClipboard.setPrimaryClip(ClipData.newPlainText("link", SHORT));
+        idle();
+        tiktok.resume();
+        idle();
+        assertEquals(SHORT, text());
+        assertEquals(0, opens.get());
+
+        // The same waits with TikTok in front still work through each manager.
+        ShortLinkExpander.watchShortened(relocalized, ShortLinkExpander.clipStamp(relocalized), resolver);
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1));
+        itsClipboard.setPrimaryClip(ClipData.newPlainText("link", OTHER));
+        idle();
+        assertEquals(1, opens.get());
+        assertEquals(PHOTO, text());
     }
 
     @Test public void aLinkThatCouldntBeOpenedIsLeftForAWhile() {
