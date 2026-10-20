@@ -4,6 +4,8 @@
 
 * **TikTok:** Usa il carattere di sistema e Usa un carattere importato ora arrivano anche al Centro attività, alla Cronologia visualizzazioni e alle altre pagine web di TikTok (#7).
 
+* **TikTok:** Un nuovo interruttore apre scuri il menu di condivisione, le classifiche degli spettatori, il fan club e le schede profilo di una stanza LIVE quando TikTok è in modalità scura (#159).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed ora supporta TikTok 47.4.3, e solo quella. Applica la patch all'APK 47.4.3 di APKMirror. PineDrama resta alla 47.1.4.

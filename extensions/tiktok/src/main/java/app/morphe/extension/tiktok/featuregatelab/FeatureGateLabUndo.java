@@ -306,13 +306,71 @@ final class FeatureGateLabUndo {
     /**
      * A settings restore, reset or undo rewrote the Lab. This copy still held the rules from
      * before the Lab's own last change, and pressed after the restore it took back every rule
-     * the restore had written. The settings Undo carries the Lab half instead.
+     * the restore had written. The settings Undo carries the Lab half instead, and gives this
+     * copy back from the one {@link #holdForSettingsUndo} kept.
      */
     static synchronized void discardAfterSettingsChange() {
         try {
             file().delete();
         } catch (Exception error) {
             Logger.printException(() -> "Could not discard the Lab undo a settings change replaced", error);
+        }
+    }
+
+    /**
+     * Keeps this copy beside the settings' undo copy, written with it, so the two belong to the
+     * same moment. A restore that goes on to rewrite the Lab discards this copy, and the settings'
+     * Undo that puts the Lab back gives it back through {@link #swapWithSettingsUndo}.
+     */
+    static synchronized void holdForSettingsUndo() {
+        try {
+            String current = readIfPresent(file());
+            AtomicFile held = heldFile();
+            if (current == null) held.delete();
+            else writeUndo(held, current);
+        } catch (Exception error) {
+            Logger.printException(() -> "Could not keep the Lab undo for the settings Undo", error);
+            // A held copy left from an earlier restore would come back with this one's Undo.
+            discardHeld();
+        }
+    }
+
+    /**
+     * After the settings' Undo put the Lab back: the copy held with it comes back, and the one it
+     * replaces waits beside the new settings undo copy, so a second Undo swaps them again.
+     */
+    static synchronized void swapWithSettingsUndo() {
+        try {
+            AtomicFile current = file();
+            AtomicFile held = heldFile();
+            String now = readIfPresent(current);
+            String kept = readIfPresent(held);
+            if (now == null) held.delete();
+            else writeUndo(held, now);
+            if (kept == null) current.delete();
+            else writeUndo(current, kept);
+        } catch (Exception error) {
+            Logger.printException(() -> "Could not bring the Lab undo back with the settings Undo", error);
+            // Half swapped, either copy may belong to the other side of the Undo.
+            discardAfterSettingsChange();
+            discardHeld();
+        }
+    }
+
+    private static void discardHeld() {
+        try {
+            heldFile().delete();
+        } catch (Exception error) {
+            Logger.printException(() -> "Could not discard the held Lab undo", error);
+        }
+    }
+
+    private static String readIfPresent(AtomicFile file) throws Exception {
+        if (!file.getBaseFile().isFile() && !new File(file.getBaseFile().getPath() + ".bak").isFile()) {
+            return null;
+        }
+        try (var input = file.openRead()) {
+            return SettingsBackup.read(input);
         }
     }
 
@@ -346,11 +404,19 @@ final class FeatureGateLabUndo {
     }
 
     private static AtomicFile file() throws IOException {
+        return file("feature-gate-lab-undo.json");
+    }
+
+    private static AtomicFile heldFile() throws IOException {
+        return file("feature-gate-lab-undo-held.json");
+    }
+
+    private static AtomicFile file(String name) throws IOException {
         if (Utils.getContext() == null) throw new IOException("Lab storage unavailable");
         File directory = Utils.getContext().getFilesDir();
         if (directory == null || !directory.isDirectory()) {
             throw new IOException("Lab storage directory is unavailable");
         }
-        return new AtomicFile(new File(directory, "feature-gate-lab-undo.json"));
+        return new AtomicFile(new File(directory, name));
     }
 }

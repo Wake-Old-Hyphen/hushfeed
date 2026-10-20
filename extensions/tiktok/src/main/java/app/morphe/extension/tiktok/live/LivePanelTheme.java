@@ -12,6 +12,9 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +68,13 @@ public final class LivePanelTheme {
     private static final Map<Activity, Resources.Theme> LIGHT_ROOMS = Collections.synchronizedMap(new WeakHashMap<>());
     /** The profile card's label color when the server's is missing or unreadable: color/aj, #0F161823, on 47.4.3. */
     private static final int LABEL_DEFAULT = 0x0F161823;
+    /**
+     * The event box's fill on the dark card: white at 16%, about the card's own tiles there
+     * (#47484E over its #262626, Login2, 2026-10-20).
+     */
+    private static final int EVENT_BOX = 0x29FFFFFF;
+    /** How far into the event box the light text check looks. */
+    private static final int MAX_BOX_DEPTH = 3;
     private static volatile boolean overlayFailureLogged;
     private static volatile boolean rowFailureLogged;
     private static volatile boolean viewContextFailureLogged;
@@ -274,6 +284,81 @@ public final class LivePanelTheme {
         int green = (Color.green(color) * alpha + 255 * (255 - alpha)) / 255;
         int blue = (Color.blue(color) * alpha + 255 * (255 - alpha)) / 255;
         return String.format(Locale.ROOT, "#FF%02X%02X%02X", red, green, blue);
+    }
+
+    /**
+     * Called by the LIVE profile card's upcoming event module with its box as it binds the host's
+     * next event. The box is a fixed white rounded shape with no night variant, while its title,
+     * time and chevron take their colors from the card's theme, so on the dark card the "LIVE
+     * event" line read light on white (Login2, 2026-10-20). While Dark LIVE panels is on in dark
+     * mode and the box's own text came out light, its shape gets a see-through light fill like the
+     * card's own tiles, corners kept. A box whose text is still dark keeps its white. The group
+     * chat row ("Chat di gruppo") calls it too, right after it puts the same kind of white shape
+     * on itself.
+     */
+    public static void eventBox(Object box) {
+        try {
+            if (!(box instanceof ViewGroup) || !LiveControls.darkLivePanels(((View) box).getContext())) {
+                return;
+            }
+            Drawable background = ((View) box).getBackground();
+            if (background instanceof GradientDrawable && hasLightText((ViewGroup) box, 0)) {
+                // The shape's state is shared with every other view drawn from it, so it's copied first.
+                ((GradientDrawable) background.mutate()).setColor(EVENT_BOX);
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not keep a LIVE profile card's event box readable", failure);
+        }
+    }
+
+    /**
+     * Called by the LIVE profile card's badge tiles (the level tile and the ones beside it) in
+     * place of each setBackground TikTok gives a tile. The server draws a tile's art and text for
+     * the white card and often see-through: the low levels' "Lv." tile is a pale lavender at
+     * about a fifth of full strength with gray text at about a third, so on the dark card both
+     * went dark gray and the text sank into the tile (Login2, 2026-10-20). While Dark LIVE panels
+     * is on in dark mode, a white copy of the tile's own rounded shape goes under it, so the art
+     * draws over white the way it does on the stock card. A solid tile looks the same either way.
+     */
+    public static void badgeTile(View tile, Drawable background) {
+        Drawable shown = background;
+        try {
+            if (background instanceof GradientDrawable && LiveControls.darkLivePanels(tile.getContext())) {
+                Drawable.ConstantState shape = background.getConstantState();
+                if (shape != null) {
+                    // A copy with its own state, so the tile's shape keeps its fill and border.
+                    GradientDrawable base = (GradientDrawable) shape.newDrawable().mutate();
+                    base.setColor(Color.WHITE);
+                    base.setStroke(0, Color.TRANSPARENT);
+                    LayerDrawable layers = new LayerDrawable(new Drawable[]{base, background});
+                    // Both layers carry the shape's padding, which nesting would count twice.
+                    layers.setPaddingMode(LayerDrawable.PADDING_MODE_STACK);
+                    shown = layers;
+                }
+            }
+        } catch (Throwable failure) {
+            Logger.printException(() -> "Could not lay a LIVE profile card badge over white", failure);
+        }
+        tile.setBackground(shown);
+    }
+
+    /** True when a text in the box, at most a few levels down, is drawn in a light color. */
+    static boolean hasLightText(ViewGroup box, int depth) {
+        for (int i = 0; i < box.getChildCount(); i++) {
+            View child = box.getChildAt(i);
+            if (child instanceof TextView && isLight(((TextView) child).getCurrentTextColor())) {
+                return true;
+            }
+            if (child instanceof ViewGroup && depth < MAX_BOX_DEPTH && hasLightText((ViewGroup) child, depth + 1)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** True for a color brighter than mid gray, by its perceived brightness. */
+    static boolean isLight(int color) {
+        return Color.red(color) * 299 + Color.green(color) * 587 + Color.blue(color) * 114 > 127_500;
     }
 
     /**

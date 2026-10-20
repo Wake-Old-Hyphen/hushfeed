@@ -121,8 +121,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. "
                             + "TikTok puts it in the menu of only some rooms. This adds it to the others.",
                     Settings.OFFER_LIVE_CLEAR_SCREEN));
-            // Dark LIVE panels in dark mode (Settings.DARK_LIVE_PANELS) has no row until a LIVE
-            // panel is seen dark with it on (#159).
+            addPreference(new TogglePreference(context, "Dark LIVE panels in dark mode",
+                    "With TikTok in dark mode, a LIVE room still opens its share menu, fan club "
+                            + "and other panels in light colors. This opens them dark.",
+                    Settings.DARK_LIVE_PANELS));
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));

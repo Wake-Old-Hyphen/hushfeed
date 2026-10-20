@@ -223,7 +223,7 @@ public final class SettingsBackup {
             throw RestoreException.rejected(error);
         }
         SettingsOperationJournal.Operation operation = SettingsOperationJournal.acquire(context);
-        restoreWithOperation(context, text, saveUndo, next, operation);
+        restoreWithOperation(context, text, saveUndo, !holdRuleLists, next, operation);
     }
 
     public static void reset(Context context) throws Exception {
@@ -236,7 +236,7 @@ public final class SettingsBackup {
             } catch (Exception error) {
                 throw RestoreException.rejected(error);
             }
-            restoreWithOperation(context, text, true, next, operation);
+            restoreWithOperation(context, text, true, false, next, operation);
         } catch (Exception error) {
             operation.abort();
             throw error;
@@ -247,8 +247,10 @@ public final class SettingsBackup {
         Settings.NETWORK_PROXY_PASSWORD.resetToDefault();
     }
 
+    /** @param undoCopy the text is the device's own undo copy, put back by {@link #undo}. */
     private static void restoreWithOperation(Context context, String text, boolean saveUndo,
-            Snapshot next, SettingsOperationJournal.Operation operation) throws Exception {
+            boolean undoCopy, Snapshot next, SettingsOperationJournal.Operation operation)
+            throws Exception {
         boolean closed = false;
         try {
             // A budget change already due is applied before anything is read, so it is part of
@@ -264,6 +266,7 @@ public final class SettingsBackup {
             if (saveUndo) {
                 writeUndo(context, previousText);
                 CalmFeedPreset.holdForUndo(context);
+                FeatureGateLabStore.holdLabUndo();
             }
             BudgetChanges.Split budget = BudgetChanges.forRestore(next.values, SessionBudget.now());
             Map<Setting<?>, Object> updates = budget.withWaiting();
@@ -287,7 +290,13 @@ public final class SettingsBackup {
                 }
                 operation.complete();
                 closed = true;
-                if (next.labIncluded) FeatureGateLabStore.discardLabUndo();
+                // The Lab's own undo held the rules from before its last change, which a restore
+                // just replaced. It went aside with the undo copy, so the Undo brings it back
+                // with the Lab it belongs to, and a second Undo sets it aside again.
+                if (next.labIncluded) {
+                    if (undoCopy) FeatureGateLabStore.swapLabUndoWithHeld();
+                    else FeatureGateLabStore.discardLabUndo();
+                }
                 // The Calm feed card offered "Restore setup" from before a reset or an import,
                 // which would have put back values it had just replaced. Its copy went aside
                 // with the undo copy above, so the Undo below brings both back.

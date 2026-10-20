@@ -5,6 +5,8 @@
 package app.morphe.extension.tiktok.comment;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.diagnostics.HookStatus;
@@ -18,7 +20,8 @@ import java.util.WeakHashMap;
  * <p>Each comment input stores its icon buttons as it sets up its views, and the patch hands each
  * of the three here at that moment. TikTok writes their visibility again from a dozen places (the
  * text typed, the account, the keyboard opening), so a hidden button is held at gone on every
- * layout pass instead of once. The emoji button and sending stay as they are.
+ * layout pass instead of once. The emoji button and sending stay as they are. The comment "+"
+ * panel builds its tiles from a config of the same buttons, which {@link #plusTile} filters.
  */
 public final class CommentBoxButtons {
     static final String FAMILY = "comment box buttons";
@@ -27,20 +30,43 @@ public final class CommentBoxButtons {
     private CommentBoxButtons() {
     }
 
-    public static void photo(View button) { hide(button, "photo"); }
+    /**
+     * The photo icon sits in its own tappable slot beside a badge that's usually gone, and over the
+     * keyboard the slot's padding and tap area stayed once the icon went (Login2, 2026-10-20), so
+     * that slot goes with it.
+     */
+    public static void photo(View button) { hide(button, "photo", true); }
 
-    public static void mention(View button) { hide(button, "mention"); }
+    public static void mention(View button) { hide(button, "mention", false); }
 
-    public static void gift(View button) { hide(button, "gift"); }
+    public static void gift(View button) { hide(button, "gift", false); }
 
-    private static void hide(View button, String which) {
+    /**
+     * A button TikTok's comment "+" panel config names, on its way into the panel's tiles or the row's
+     * check for "+". The photo, @ and gift buttons come back as null, which TikTok treats as an id it
+     * doesn't know and skips, so their tiles never show and "+" goes once nothing's left for it.
+     */
+    public static Object plusTile(Object button) {
+        HookStatus.bound(FAMILY, "plus panel");
+        if (!(button instanceof Enum) || !Settings.HIDE_COMMENT_BOX_BUTTONS.get()) return button;
+        switch (((Enum<?>) button).name()) {
+            case "PHOTO":
+            case "MENTION":
+            case "GIFT":
+                return null;
+            default:
+                return button;
+        }
+    }
+
+    private static void hide(View button, String which, boolean withSlot) {
         if (button == null) return;
         HookStatus.bound(FAMILY, which);
         if (!Settings.HIDE_COMMENT_BOX_BUTTONS.get()) return;
         try {
             button.setVisibility(View.GONE);
             if (KEEPERS.containsKey(button)) return;
-            Keeper keeper = new Keeper(button);
+            Keeper keeper = new Keeper(button, withSlot);
             KEEPERS.put(button, keeper);
             button.addOnAttachStateChangeListener(keeper);
             if (button.isAttachedToWindow()) keeper.onViewAttachedToWindow(button);
@@ -49,14 +75,31 @@ public final class CommentBoxButtons {
         }
     }
 
-    /** Puts the button back to gone whenever a layout pass finds it showing. */
+    /**
+     * Whether {@code parent} is a slot holding only {@code child}: tappable, with everything else in it gone.
+     * The row the buttons sit in isn't tappable, and the text box has its text showing.
+     */
+    static boolean isSlotOf(ViewParent parent, View child) {
+        if (!(parent instanceof ViewGroup)) return false;
+        ViewGroup group = (ViewGroup) parent;
+        if (!group.isClickable()) return false;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View other = group.getChildAt(i);
+            if (other != child && other.getVisibility() != View.GONE) return false;
+        }
+        return true;
+    }
+
+    /** Puts the button, and its slot when it has one, back to gone whenever a layout pass finds it showing. */
     private static final class Keeper implements View.OnAttachStateChangeListener,
             ViewTreeObserver.OnGlobalLayoutListener {
         private final WeakReference<View> button;
+        private final boolean withSlot;
         private ViewTreeObserver observer;
 
-        Keeper(View button) {
+        Keeper(View button, boolean withSlot) {
             this.button = new WeakReference<>(button);
+            this.withSlot = withSlot;
         }
 
         @Override public void onViewAttachedToWindow(View view) {
@@ -75,6 +118,10 @@ public final class CommentBoxButtons {
             View view = button.get();
             if (view == null || !Settings.HIDE_COMMENT_BOX_BUTTONS.get()) return;
             if (view.getVisibility() != View.GONE) view.setVisibility(View.GONE);
+            ViewParent parent = view.getParent();
+            if (withSlot && isSlotOf(parent, view) && ((View) parent).getVisibility() != View.GONE) {
+                ((View) parent).setVisibility(View.GONE);
+            }
         }
     }
 }

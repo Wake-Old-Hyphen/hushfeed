@@ -30,12 +30,20 @@ final class RemoteMedia {
         void copied(long bytes, long expected);
     }
 
+    /** The network a test runs a whole save against, in place of TikTok's servers. */
+    static volatile MediaTransport.Client transportForTests;
+
     static String fetch(List<String> urls, File target, Kind kind, Progress progress) throws IOException {
-        return fetch(urls, target, kind, MediaTransport.DEFAULT, progress);
+        return fetch(urls, target, kind, transport(), progress);
     }
 
     static String fetch(List<String> urls, File target, Kind kind) throws IOException {
-        return fetch(urls, target, kind, MediaTransport.DEFAULT);
+        return fetch(urls, target, kind, transport());
+    }
+
+    private static MediaTransport.Client transport() {
+        MediaTransport.Client stand = transportForTests;
+        return stand != null ? stand : MediaTransport.DEFAULT;
     }
 
     static String fetch(

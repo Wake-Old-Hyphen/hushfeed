@@ -18,7 +18,13 @@ Every Hushfeed release, newest first.
 * **TikTok:** Hushfeed's downloads work again behind a proxy app running in fake-IP mode, the way Clash, mihomo, sing-box and Xray often run. Those apps answer TikTok's video and photo servers with stand-in addresses from 198.18.0.0/15 or fc00::/18, and Hushfeed turned every save down as a local address, while TikTok's own save still worked (#145).
 * **TikTok:** Holding a verified account's profile picture saves it again. TikTok 47.4.3 puts the blue check inside the @handle's text, so Hushfeed read the handle as somebody else's and asked you to open the profile again every time.
 * **TikTok:** `Hide suggested accounts` also takes away the "Suggested accounts" title on Profile > Find people. The suggestions under it were already hidden, so the title sat over an empty list.
+* **TikTok:** New `Dark LIVE panels in dark mode` switch under Hushfeed settings > Playback opens a LIVE room's panels dark while TikTok is in dark mode. TikTok kept the share menu, viewer rankings, the fan club sheet and a host's profile card white even in a dark app, so they lit up over the stream. The daily ranking keeps TikTok's own look, and light mode doesn't change (#159).
+* **TikTok:** `Hide comment box buttons` also takes the photo, @ and gift buttons out of the row over the keyboard. On 47.4.3 that row is built apart from the "Add comment..." bar, so they came back as soon as you started typing, and the photo button's empty spot stayed even after it went. The gift tile in that row's "+" panel goes too, and "+" itself goes when nothing's left in it.
+* **TikTok:** With `Show the time zone` on, a language that has no short name for your zone writes it as "GMT-4" instead of "GMT-04:00". The longer form pushed the creator's name off the row in Italian on a narrow phone and cut the time short.
 * **Hushfeed settings:** Search results show a setting's new value when you change it from a result and come back. They used to keep the old one, so `Caption background` still read Dark after you'd picked TikTok default.
+* **Hushfeed settings:** The Likes field in `Own profile counts` is translated now. It was the only English word in that editor on a phone set to another language.
+* **Hushfeed settings:** `Undo last restore or reset` also gives the Feature Gate Lab its own Undo back. A restore that carried Lab rules threw that away, so after undoing the restore you couldn't take back the Lab change you'd made just before it.
+* **TikTok:** Tests now run a whole `Save videos without sound` save of a DASH video against a stand-in server. The saved file has to be TikTok's picture stream exactly as it arrived, with no sound track, the same rotation and length, and nothing left behind in the cache.
 
 ## 0.76.0 (2026-10-18)
 

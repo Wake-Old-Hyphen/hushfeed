@@ -480,6 +480,7 @@ Daily time budget,每日时间预算
 Daily video budget,每日视频预算
 Dark,黑暗
 Dark Favorites popup,深色收藏夹弹出窗口
+Dark LIVE panels in dark mode,深色模式下的深色 LIVE 面板
 Days to remember a video. Zero removes the age limit. History keeps at most %1$s videos.,记住视频的日子。零消除了年龄限制。历史最多保留 %1$s 个视频.
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.",天。零保留着每个年龄。没有可用时间戳的帖子（包括未来的帖子）保持可见.
 Default,默认
@@ -595,6 +596,7 @@ Floating bottom bar,浮动底栏
 Focus,焦点
 Follow probe,跟随探头
 Followers,追随者
+Likes,获赞
 Following,正在关注
 Follows you,跟着你
 "For OLED screens. After 5 seconds without a touch, the buttons, caption and tabs over the video dim to a quarter, and your next touch brings them back. Shift also moves everything on the feed a few pixels every 2 minutes.",对于OLED屏幕。 5 秒没有触摸后，视频上的按钮、标题和选项卡会变暗四分之一，您的下一次触摸会将它们恢复。 Shift 还会每 2 分钟将信息流上的所有内容移动几个像素.
@@ -2104,6 +2106,7 @@ When to send,何时发送
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.",当诊断日志记录打开时，一条消息会指出 Hushfeed 失败的部分。关闭仅在报告中保留失败.
 Who to message,给谁发消息
 Window width needed to enable the layout. Restart TikTok to apply this.,启用布局所需的窗口宽度。重新启动 TikTok 以应用此操作.
+"With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.",TikTok 处于深色模式时，LIVE 房间仍会以浅色打开分享菜单、粉丝团和其他面板。开启后它们会以深色打开.
 "With the fade below 100, the buttons and caption stay on screen at that level in Clear display, and taps go through them to the video. Off, Clear display hides them the way it does at 100.",当淡入度低于 100 时，按钮和标题会以清晰显示的方式保留在屏幕上，点击即可浏览它们并观看视频。关闭时，清除显示会像 100 时那样隐藏它们.
 "Word rules only, not every feed filter:",仅单词规则，并非每个信息流过滤器:
 "Words, countries and languages",单词、国家和语言

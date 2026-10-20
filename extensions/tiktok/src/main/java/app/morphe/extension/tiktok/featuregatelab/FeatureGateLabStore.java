@@ -291,6 +291,16 @@ public final class FeatureGateLabStore {
         FeatureGateLabUndo.discardAfterSettingsChange();
     }
 
+    /** For a settings restore about to write its undo copy: the Lab's own undo is kept with it. */
+    public static void holdLabUndo() {
+        FeatureGateLabUndo.holdForSettingsUndo();
+    }
+
+    /** For the settings' Undo that put the Lab back: the Lab's own undo held with it returns. */
+    public static void swapLabUndoWithHeld() {
+        FeatureGateLabUndo.swapWithSettingsUndo();
+    }
+
     static String ruleLimitMessage(int resultingCount) {
         NumberFormat numbers = NumberFormat.getIntegerInstance(Locale.getDefault());
         return L10n.f("The Lab keeps at most %1$s rules. This change would make %2$s, so nothing was changed.",

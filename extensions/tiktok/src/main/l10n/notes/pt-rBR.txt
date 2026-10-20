@@ -4,6 +4,8 @@
 
 * **TikTok:** Usar a fonte do sistema e Usar uma fonte importada agora chegam à Central de atividades, ao Histórico de exibição e às outras páginas web do TikTok (#7).
 
+* **TikTok:** Uma nova chave abre escuros o menu de compartilhar, os rankings de espectadores, o fã-clube e os cartões de perfil de uma sala de LIVE quando o TikTok está no modo escuro (#159).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** O Hushfeed agora é compatível com o TikTok 47.4.3, e só com essa versão. Aplique o patch no APK 47.4.3 do APKMirror. O PineDrama continua no 47.1.4.

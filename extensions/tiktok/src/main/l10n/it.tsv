@@ -1739,6 +1739,8 @@ Keep the LIVE quality after TikTok restarts	Mantieni la qualità LIVE dopo il ri
 TikTok forgets the LIVE quality you picked when it closes. This starts rooms at that quality again after a restart. A room whose stream doesn't have it opens at TikTok's choice.	TikTok dimentica la qualità LIVE che hai scelto quando si chiude. Questo fa ripartire le stanze con quella qualità dopo un riavvio. Una stanza il cui stream non ce l'ha si apre con la scelta di TikTok.
 Offer clear screen in every LIVE room	Offri lo schermo pulito in ogni stanza LIVE
 Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.	Lo schermo pulito nasconde chat, regali e pulsanti di una LIVE così si vede solo la diretta. TikTok lo mette nel menu solo di alcune stanze. Questo lo aggiunge alle altre.
+Dark LIVE panels in dark mode	Pannelli LIVE scuri in modalità scura
+With TikTok in dark mode, a LIVE room still opens its share menu, fan club and other panels in light colors. This opens them dark.	Con TikTok in modalità scura, una stanza LIVE apre comunque il menu di condivisione, il fan club e altri pannelli con colori chiari. Così si aprono scuri.
 Keep watching in a small window	Continua a guardare in una piccola finestra
 When you leave TikTok while a video plays, it keeps playing in a small window over your other apps, with a button to pause it. Works in the feed and on videos you open from a profile, search or a sound. Needs Android 8 or later.	Quando esci da TikTok mentre un video è in riproduzione, continua in una piccola finestra sopra le altre app, con un pulsante per metterlo in pausa. Funziona nel feed e nei video aperti da un profilo, dalla ricerca o da un suono. Richiede Android 8 o versioni successive.
 Play	Riproduci
@@ -1983,6 +1985,7 @@ Search loaded activity	Cerca nelle attività caricate
 Wait for loading to finish	Attendi il completamento del caricamento
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.	Scegli i conteggi per questo account. Lascia un campo vuoto per usare il conteggio di TikTok. Zero mostra zero. Le scelte restano su questo telefono.
 Followers	Follower
+Likes	Mi piace
 Local profile counts	Conteggi locali del profilo
 Own profile counts	Conteggi del tuo profilo
 Show chosen counts on your own profile on this phone. Other people see the real counts.	Mostra i conteggi scelti sul tuo profilo in questo telefono. Gli altri vedono quelli reali.

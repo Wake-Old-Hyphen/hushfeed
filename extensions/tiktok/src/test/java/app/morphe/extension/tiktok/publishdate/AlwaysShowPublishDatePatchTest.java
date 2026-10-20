@@ -209,6 +209,20 @@ public class AlwaysShowPublishDatePatchTest {
     }
 
     @Test
+    public void aPaddedZoneOffsetIsWrittenShort() {
+        // Italian on Login2 wrote "20 ott 2026 07:11:54 GMT-04:00" and the name went to "…".
+        String italian = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.ITALY, TimeZone.getTimeZone("GMT-04:00"), true);
+        assertTrue(italian, italian.endsWith("GMT-4"));
+        assertTrue(italian, italian.contains("11:04:05"));
+        assertEquals("15:04:05 GMT+5:30", AlwaysShowPublishDatePatch.compactOffset("15:04:05 GMT+05:30"));
+        assertEquals("15:04:05 UTC-10", AlwaysShowPublishDatePatch.compactOffset("15:04:05 UTC-1000"));
+        assertEquals("3:04:05 PM EDT", AlwaysShowPublishDatePatch.compactOffset("3:04:05 PM EDT"));
+        assertEquals("15:04:05 GMT", AlwaysShowPublishDatePatch.compactOffset("15:04:05 GMT"));
+        String noZone = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.ITALY, TimeZone.getTimeZone("GMT-04:00"), true, false, false);
+        assertFalse(noZone, noZone.contains("GMT"));
+    }
+
+    @Test
     public void theExactTimeIsWrittenTheWayThePhonesLanguageWritesIt() {
         String german = AlwaysShowPublishDatePatch.exactTime(POSTED, Locale.GERMANY, TimeZone.getTimeZone("UTC"), true);
         assertTrue(german, german.contains("07.10.2025"));

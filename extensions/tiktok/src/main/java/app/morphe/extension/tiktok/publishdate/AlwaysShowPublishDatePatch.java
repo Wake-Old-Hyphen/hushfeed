@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -180,7 +182,31 @@ public final class AlwaysShowPublishDatePatch {
             if (!clock.equals(pattern)) simple.applyPattern(clock);
         }
         format.setTimeZone(zone);
-        return format.format(new Date(seconds * 1000L));
+        String text = format.format(new Date(seconds * 1000L));
+        return showZone ? compactOffset(text) : text;
+    }
+
+    /** A zone written as a padded offset ("GMT-04:00", "UTC+0530"). */
+    private static final Pattern PADDED_OFFSET =
+            Pattern.compile("(GMT|UTC)([+\\-\\x{2212}])0?(\\d{1,2}):?(\\d{2})");
+
+    /**
+     * The zone's offset written short ("GMT-4", "GMT+5:30"). A language with no short name for
+     * the phone's zone writes the padded offset, and in Italian at 360dp that pushed the creator's
+     * name out of the row and cut the time (Login2, 47.4.3, 2026-10-20). Names ("EDT", "MESZ")
+     * are left alone.
+     */
+    static String compactOffset(String text) {
+        Matcher offset = PADDED_OFFSET.matcher(text);
+        if (!offset.find()) return text;
+        StringBuffer out = new StringBuffer(text.length());
+        do {
+            String minutes = offset.group(4);
+            offset.appendReplacement(out, Matcher.quoteReplacement(offset.group(1) + offset.group(2)
+                    + offset.group(3) + ("00".equals(minutes) ? "" : ":" + minutes)));
+        } while (offset.find());
+        offset.appendTail(out);
+        return out.toString();
     }
 
     /**

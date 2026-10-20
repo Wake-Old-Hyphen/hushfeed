@@ -4,6 +4,8 @@
 
 * **TikTok:** Sistem yazı tipini kullan ve İçe aktarılan yazı tipini kullan artık Etkinlik merkezi, İzleme geçmişi ve TikTok'un diğer web sayfalarında da geçerli (#7).
 
+* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken bir LIVE odasının paylaşım menüsünü, izleyici sıralamalarını, hayran kulübünü ve profil kartlarını koyu açar (#159).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed artık TikTok 47.4.3'ü destekliyor, yalnızca bu sürümü. APKMirror'dan 47.4.3 APK'sını yamala. PineDrama 47.1.4'te kalıyor.

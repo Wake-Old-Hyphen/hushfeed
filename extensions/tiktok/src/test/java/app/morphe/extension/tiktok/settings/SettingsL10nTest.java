@@ -1419,6 +1419,23 @@ public class SettingsL10nTest {
                 0, missing.size());
     }
 
+    @Test
+    public void everyProfileCountLabelHasAnEntryInEveryTable() {
+        // The count editor hands L10n each Metric's title, a field rather than a literal, so the
+        // scan above can't read it. "Likes" showed in English beside a translated "Follower" and
+        // "Seguiti" on an Italian phone that way.
+        List<String> missing = new ArrayList<>();
+        for (String language : L10nTranslations.LANGUAGES) {
+            for (app.morphe.extension.tiktok.profile.LocalProfileCounts.Metric metric
+                    : app.morphe.extension.tiktok.profile.LocalProfileCounts.Metric.values()) {
+                if (!L10nTranslations.of(language).containsKey(metric.title)) {
+                    missing.add(language + ": " + metric.title);
+                }
+            }
+        }
+        assertEquals("profile count labels with no entry in the tsv files: " + missing, 0, missing.size());
+    }
+
     /**
      * Every word a settings row is built with is a key, read from the source rather than from
      * the screen.

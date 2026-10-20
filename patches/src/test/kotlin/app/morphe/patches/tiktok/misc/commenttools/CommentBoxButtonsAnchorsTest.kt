@@ -6,9 +6,12 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import java.io.File
 import org.junit.Assert.assertEquals
@@ -42,6 +45,85 @@ class CommentBoxButtonsAnchorsTest {
                     ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.name == "findViewById"
                 })
             }
+        }
+    }
+
+    @Test
+    fun `the row over the keyboard wires and stores its own photo, @ and gift buttons, each once`() {
+        // 47.4.3's KeyboardIconGroupAssem isn't a BaseInputAssem, so the bar's fields never reached it.
+        Fixtures.forEachDeclared { apk ->
+            val build = Build(apk)
+            val setup = build.single(KeyboardIconGroupViewCreatedFingerprint)
+            val fields = commentBoxButtonFields(setup, KEYBOARD_ICON_GROUP_ASSEM) { build.byType[it] }
+            assertEquals(CommentBoxButton.entries.toSet(), fields.keys)
+            assertEquals("two buttons share a field: $fields", 3, fields.values.map { it.name }.toSet().size)
+            val instructions = setup.implementation!!.instructions.toList()
+            fields.forEach { (button, field) ->
+                assertEquals("$button", KEYBOARD_ICON_GROUP_ASSEM, field.definingClass)
+                val index = commentBoxButtonStore(setup, field)
+                val before = instructions.subList(maxOf(0, index - 6), index)
+                assertTrue("$button: the stored button isn't one the setup just found by id", before.any { instruction ->
+                    ((instruction as? ReferenceInstruction)?.reference as? MethodReference)?.name == "findViewById"
+                })
+                // Each listener carries its own button's mark and none of the others', and none opens the emoji panel.
+                val listener = listenerOf(instructions, field, build)
+                val marks = marksOf(listener)
+                val own = when (button) {
+                    CommentBoxButton.PHOTO -> "photo"
+                    CommentBoxButton.MENTION -> "mention"
+                    CommentBoxButton.GIFT -> "gift"
+                }
+                assertEquals("$button: ${listener.type} carries $marks", setOf(own), marks)
+            }
+        }
+    }
+
+    @Test
+    fun `the plus panel's tiles and the row's plus check each look a button up once and skip a null`() {
+        Fixtures.forEachDeclared { apk ->
+            val build = Build(apk)
+            listOf(CommentPlusPanelRefreshFingerprint, KeyboardIconGroupPlusFingerprint).forEach { fingerprint ->
+                val method = build.single(fingerprint)
+                val instructions = method.implementation!!.instructions.toList()
+                val (index, register) = plusPanelLookups(method).single()
+                // The enum's constant names are what the extension reads, so they must still be its names.
+                val map = instructions[index - 2].let { ((it as ReferenceInstruction).reference as FieldReference) }
+                val buttons = build.byType.getValue(map.definingClass)
+                val names = buttons.fields.filter { it.type == buttons.type }.map { it.name }.toSet()
+                assertTrue("$fingerprint: ${buttons.type} has $names", names.containsAll(setOf("PHOTO", "MENTION", "GIFT", "EMOJI")))
+                val constructed = buttons.methods.single { it.name == "<clinit>" }.implementation!!.instructions
+                    .mapNotNull { ((it as? ReferenceInstruction)?.reference as? StringReference)?.string }.toSet()
+                assertTrue("$fingerprint: the enum names its constants $constructed", constructed.containsAll(setOf("PHOTO", "MENTION", "GIFT")))
+                val after = instructions.subList(index + 1, minOf(index + 3, instructions.size))
+                assertTrue("$fingerprint: a null button isn't skipped right after the lookup: ${after.map { it.opcode }}", after.any {
+                    it.opcode == Opcode.IF_EQZ && (it as OneRegisterInstruction).registerA == register
+                })
+            }
+        }
+    }
+
+    private fun listenerOf(instructions: List<Instruction>, field: FieldReference, build: Build): ClassDef {
+        val read = instructions.indices.first { index ->
+            instructions[index].opcode == Opcode.IGET_OBJECT &&
+                ((instructions[index] as ReferenceInstruction).reference as FieldReference).name == field.name &&
+                instructions.subList(index + 1, minOf(index + 4, instructions.size)).any { it.opcode == Opcode.NEW_INSTANCE }
+        }
+        val created = instructions.subList(read + 1, minOf(read + 4, instructions.size)).first { it.opcode == Opcode.NEW_INSTANCE }
+        return build.byType.getValue(((created as ReferenceInstruction).reference as TypeReference).type)
+    }
+
+    private fun marksOf(listener: ClassDef): Set<String> {
+        val references = listener.methods.flatMap { it.implementation?.instructions ?: emptyList() }
+            .mapNotNull { (it as? ReferenceInstruction)?.reference }
+        val strings = references.filterIsInstance<StringReference>().map { it.string }
+        val panels = references.filterIsInstance<FieldReference>().filter { it.type == it.definingClass }.map { it.name }
+        return buildSet {
+            if ("click_comment_photo" in strings) add("photo")
+            if ("click_comment_at" in strings || "MENTION" in panels) add("mention")
+            if ("GIFT" in panels || references.any {
+                    (it as? FieldReference)?.definingClass == GIFT_VIEW_MODEL || (it as? MethodReference)?.returnType == GIFT_VIEW_MODEL
+                }) add("gift")
+            if ("EMOJI" in panels) add("emoji")
         }
     }
 
@@ -87,6 +169,12 @@ class CommentBoxButtonsAnchorsTest {
             "commentBoxButtonFields(FakeInputViewCreatedFingerprint.method) { classDefByOrNull(it) }"))
         assertTrue("the input's setup is not hooked", patch.contains(
             "CommentInputViewCreatedFingerprint.method.resolveCommentBoxButtons(fields)"))
+        assertTrue("the row over the keyboard is not hooked", patch.contains(
+            "commentBoxButtonFields(setup, KEYBOARD_ICON_GROUP_ASSEM) { classDefByOrNull(it) }"))
+        assertTrue("the plus panel's tiles are not filtered", patch.contains(
+            "CommentPlusPanelRefreshFingerprint.method.resolvePlusPanelTiles()"))
+        assertTrue("the row's plus check is not filtered", patch.contains(
+            "KeyboardIconGroupPlusFingerprint.method.resolvePlusPanelTiles()"))
         val hook = File(root, "app/morphe/patches/tiktok/misc/commenttools/CommentBoxButtons.kt").readText()
         assertTrue("the hook does not go after the store", hook.contains("addInstruction(\n                index + 1,"))
     }

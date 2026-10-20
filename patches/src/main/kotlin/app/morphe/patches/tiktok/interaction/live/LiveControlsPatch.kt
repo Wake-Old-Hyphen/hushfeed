@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -16,6 +17,7 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
+import app.morphe.util.ControlFlow
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -40,6 +42,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import java.util.BitSet
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveControls;"
 private const val RECORD_EXTENSION = "Lapp/morphe/extension/tiktok/live/LiveRecordChip;"
@@ -1026,6 +1029,228 @@ internal fun hookCardLabels(header: MutableMethod) {
     )
 }
 
+internal const val LIVE_USER = "Lcom/bytedance/android/live/base/model/user/User;"
+
+/**
+ * The profile card's upcoming event module binding the host's next event (X.0wEX.LJIIJ on 47.4.3,
+ * #159). Its box (id/hwn) is a fixed white rounded shape with no night variant (drawable/e9l over
+ * color/ao), while its title, time and chevron take the card theme's colors, so on the dark card
+ * the "LIVE event" line read light on white (Login2, 2026-10-20).
+ */
+internal object LiveProfileEventFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(LIVE_USER, "Ljava/lang/Object;"),
+    strings = listOf("livesdk_live_event_user_entrance_show"),
+    custom = { method, _ -> eventBox(method) != null },
+)
+
+/** Where the event box hook goes, right after the box's read, and the register holding the box. */
+internal class EventBox(val at: Int, val box: Int)
+
+/**
+ * In [method], the read of the event box: the first read of a ViewGroup field of [method]'s own
+ * class, in a method that reads the host's upcoming events. Null when [method] reads no events or
+ * no such field, when the read isn't followed straight by the null check of its register (the box
+ * the module goes on to bind), or when a branch, switch case or handler lands on that check, which
+ * would skip the hook. The read names its register in four bits, so it fits the hook's call.
+ */
+internal fun eventBox(method: Method): EventBox? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    fun field(at: Int) = (code[at] as? ReferenceInstruction)?.reference as? FieldReference
+    val events = code.indices.any {
+        code[it].opcode == Opcode.IGET_OBJECT && field(it)?.let { read ->
+            read.definingClass == LIVE_USER && read.name == "upcomingEventList"
+        } == true
+    }
+    if (!events) return null
+    val read = code.indices.firstOrNull {
+        code[it].opcode == Opcode.IGET_OBJECT && field(it)?.let { box ->
+            box.definingClass == method.definingClass && box.type == "Landroid/view/ViewGroup;"
+        } == true
+    } ?: return null
+    val box = (code[read] as TwoRegisterInstruction).registerA
+    val check = code.getOrNull(read + 1) ?: return null
+    if (check.opcode != Opcode.IF_EQZ || (check as OneRegisterInstruction).registerA != box) return null
+    val addresses = code.runningFold(0) { at, instruction -> at + instruction.codeUnits }
+    if (addresses[read + 1] in landings(method, code, addresses)) return null
+    return EventBox(read + 1, box)
+}
+
+/**
+ * Hands the event box to the extension right after the module reads it, before its null check.
+ * While Dark LIVE panels is on in dark mode and the box's text came out light, the extension
+ * gives the box's shape a see-through light fill, so its text reads on the dark card. The hook
+ * writes no register.
+ */
+internal fun hookEventBox(bind: MutableMethod) {
+    val event = eventBox(bind) ?: throw PatchException("LIVE controls: the profile card's event box wasn't found")
+    bind.addInstructions(event.at, "invoke-static {v${event.box}}, $PANEL_THEME->eventBox(Ljava/lang/Object;)V")
+}
+
+internal const val LIVE_BADGE = "Lcom/bytedance/android/live/base/model/user/BadgeStruct;"
+private const val COMBINE_BADGE = "Lcom/bytedance/android/live/base/model/user/CombineBadgeStruct;"
+private const val SET_BACKGROUND = "Landroid/view/View;->setBackground(Landroid/graphics/drawable/Drawable;)V"
+
+/**
+ * The profile card's badge tile bind (X.0wLz.LJIJI on 47.4.3, #159): it reads its tile, an image
+ * view, from a lazy field and gives it a rounded shape drawn from the badge's server background
+ * (a border around the server's art, a server color, or a border alone). The server draws that
+ * art and the text over it for the white card, the low levels' "Lv." tile see-through, so on the
+ * dark card the tile and its text went dark gray together (Login2, 2026-10-20).
+ */
+internal object LiveProfileBadgeFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(LIVE_BADGE),
+    custom = { method, _ -> badgeTileCalls(method) != null },
+)
+
+/**
+ * In [method], every `setBackground` on the badge tile: the tile is the one value cast to View
+ * right after a lazy field of [method]'s own class hands it over, with the combined badge's
+ * background read next. Each call has to take that value as its receiver on every path that
+ * reaches it, so a register the method reuses for another view is never handed over as the
+ * tile. Null when there's no such tile or no call, or when any call on the tile's register
+ * could see another value there. The calls are replaced where they stand, so a branch landing on
+ * one still runs the hook.
+ */
+internal fun badgeTileCalls(method: Method): List<Int>? {
+    val code = method.implementation?.instructions?.toList() ?: return null
+    fun reference(at: Int) = (code.getOrNull(at) as? ReferenceInstruction)?.reference
+    val casts = (3 until code.size - 1).filter { at ->
+        if (code[at].opcode != Opcode.CHECK_CAST || (reference(at) as? TypeReference)?.type != "Landroid/view/View;") {
+            return@filter false
+        }
+        val tile = (code[at] as OneRegisterInstruction).registerA
+        val lazy = reference(at - 3) as? FieldReference
+        val value = reference(at - 2) as? MethodReference
+        val background = reference(at + 1) as? FieldReference
+        code[at - 1].opcode == Opcode.MOVE_RESULT_OBJECT && (code[at - 1] as OneRegisterInstruction).registerA == tile &&
+            code[at - 2].opcode == Opcode.INVOKE_INTERFACE && value?.name == "getValue" && value.returnType == "Ljava/lang/Object;" &&
+            code[at - 3].opcode == Opcode.IGET_OBJECT && lazy?.definingClass == method.definingClass &&
+            code[at + 1].opcode == Opcode.IGET_OBJECT && background?.definingClass == COMBINE_BADGE && background.name == "background"
+    }
+    val cast = casts.singleOrNull() ?: return null
+    val tile = (code[cast] as OneRegisterInstruction).registerA
+    fun receiver(at: Int) = when (val call = code[at]) {
+        is FiveRegisterInstruction -> call.registerC
+        is RegisterRangeInstruction -> call.startRegister
+        else -> null
+    }
+    val calls = method.literalReads(cast).filter { at ->
+        code[at].opcode in setOf(Opcode.INVOKE_VIRTUAL, Opcode.INVOKE_VIRTUAL_RANGE) && (reference(at) as? MethodReference)?.let {
+            "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}" == SET_BACKGROUND
+        } == true && receiver(at) == tile
+    }
+    if (calls.isEmpty() || calls.any { code[it].opcode != Opcode.INVOKE_VIRTUAL || !onlyReaches(method, cast, it, tile) }) return null
+    return calls
+}
+
+/**
+ * Whether [register] can hold only what the instruction at [definition] wrote when the
+ * instruction at [use] runs: walking back from [use] along every path, the first write to
+ * [register] on each is [definition], and no path gets back to the method's start without one.
+ * An instruction that throws never writes its destination, so a handler's path walks on past it.
+ */
+private fun onlyReaches(method: Method, definition: Int, use: Int, register: Int): Boolean {
+    val flow = ControlFlow.of(method)
+    val code = flow.instructions
+    val normal = Array(code.size) { mutableListOf<Int>() }
+    val exceptional = Array(code.size) { mutableListOf<Int>() }
+    code.indices.forEach { from ->
+        flow.normal[from].forEach { normal[it] += from }
+        flow.exceptional[from].forEach { exceptional[it] += from }
+    }
+    val seen = BitSet()
+    val pending = ArrayDeque(listOf(use))
+    while (pending.isNotEmpty()) {
+        val at = pending.removeFirst()
+        if (at == 0) return false
+        normal[at].forEach { from ->
+            if (writesRegister(code[from], register)) {
+                if (from != definition) return false
+            } else if (!seen[from]) {
+                seen.set(from)
+                pending += from
+            }
+        }
+        exceptional[at].forEach { from -> if (!seen[from]) { seen.set(from); pending += from } }
+    }
+    return true
+}
+
+/**
+ * Hands each of the badge tile's backgrounds to the extension in place of TikTok's own call. While
+ * Dark LIVE panels is on in dark mode, the extension lays a white copy of the tile's shape under
+ * it, so the server's see-through art and text draw over white the way they do on the stock card.
+ * The call takes the same two registers, so nothing else in the method moves.
+ */
+internal fun hookBadgeTiles(bind: MutableMethod) {
+    val calls = badgeTileCalls(bind) ?: throw PatchException("LIVE controls: the profile card's badge tile wasn't found")
+    calls.forEach { at ->
+        val call = bind.getInstruction<FiveRegisterInstruction>(at)
+        bind.replaceInstruction(
+            at,
+            "invoke-static {v${call.registerC}, v${call.registerD}}, " +
+                "$PANEL_THEME->badgeTile(Landroid/view/View;Landroid/graphics/drawable/Drawable;)V",
+        )
+    }
+}
+
+private const val SET_BACKGROUND_RESOURCE = "Landroid/view/View;->setBackgroundResource(I)V"
+
+/**
+ * The profile card's group chat row bind (X.0wJT.LJIIJ on 47.4.3, #159): the row puts a fixed
+ * white shape on itself, in the bind for a host with no group yet and in a helper for the rest,
+ * under a title and count in the card theme's colors, light on white on the dark card (Login2,
+ * 2026-10-20).
+ */
+internal object LiveProfileGroupChatFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf(LIVE_USER, "Ljava/lang/Object;"),
+    strings = listOf("group_chat", "profile_card_entrance_click"),
+    custom = { _, classDef -> classDef.methods.any { groupChatBackgrounds(it).isNotEmpty() } },
+)
+
+/**
+ * In [method], every `setBackgroundResource` on a ViewGroup field of [method]'s own class: the
+ * call's receiver has to hold that field's read on every path that reaches it, so a register the
+ * method reuses for another view is never handed over as the row.
+ */
+internal fun groupChatBackgrounds(method: Method): List<Int> {
+    val code = method.implementation?.instructions?.toList() ?: return emptyList()
+    fun reference(at: Int) = (code[at] as? ReferenceInstruction)?.reference
+    val reads = code.indices.filter { at ->
+        code[at].opcode == Opcode.IGET_OBJECT && (reference(at) as? FieldReference)?.let {
+            it.definingClass == method.definingClass && it.type == "Landroid/view/ViewGroup;"
+        } == true
+    }
+    return code.indices.filter { at ->
+        code[at].opcode == Opcode.INVOKE_VIRTUAL && (reference(at) as? MethodReference)?.let {
+            "${it.definingClass}->${it.name}(${it.parameterTypes.joinToString("")})${it.returnType}" == SET_BACKGROUND_RESOURCE
+        } == true && (code[at] as FiveRegisterInstruction).registerC.let { row ->
+            reads.any { read -> (code[read] as TwoRegisterInstruction).registerA == row && onlyReaches(method, read, at, row) }
+        }
+    }
+}
+
+/**
+ * Hands the group chat row to the extension right after each white shape goes on it, in every
+ * method of the bind's class. While Dark LIVE panels is on in dark mode and the row's text came out
+ * light, the extension gives the shape the event box's see-through light fill. The hook goes
+ * after the call, so a branch over the call skips it with the call, and it writes no register.
+ */
+internal fun hookGroupChat(methods: Iterable<MutableMethod>) {
+    var hooked = 0
+    methods.forEach { method ->
+        groupChatBackgrounds(method).asReversed().forEach { at ->
+            val row = method.getInstruction<FiveRegisterInstruction>(at).registerC
+            method.addInstructions(at + 1, "invoke-static {v$row}, $PANEL_THEME->eventBox(Ljava/lang/Object;)V")
+            hooked++
+        }
+    }
+    if (hooked == 0) throw PatchException("LIVE controls: the profile card's group chat row wasn't found")
+}
+
 internal const val PULL_STREAM_SERVICE ="Lcom/bytedance/android/live/livepullstream/PullStreamService;"
 private const val LIVE_MODE = "Lcom/bytedance/android/livesdkapi/depend/model/live/LiveMode;"
 
@@ -1514,6 +1739,18 @@ val liveControlsPatch = bytecodePatch(
         // the dark card (Login2, 2026-10-19). The extension makes each chip's color what it is
         // over the light card while the switch is on in dark mode.
         hookCardLabels(LiveProfileLabelsFingerprint.method)
+        // Its upcoming event box is a fixed white shape under text in the card theme's colors,
+        // light on white on the dark card (Login2, 2026-10-20). The extension gives the box a
+        // see-through light fill while the switch is on in dark mode and its text came out light.
+        hookEventBox(LiveProfileEventFingerprint.method)
+        // Its badge tiles carry server art and text drawn for the white card, the low levels'
+        // tile see-through, so both went dark gray on the dark card (Login2, 2026-10-20). The
+        // extension lays a white copy of each tile's shape under it while the switch is on in
+        // dark mode.
+        hookBadgeTiles(LiveProfileBadgeFingerprint.method)
+        // Its group chat row is the same kind of fixed white shape under text in the card theme's
+        // colors (Login2, 2026-10-20), so the extension gives it the event box's fill.
+        hookGroupChat(mutableClassDefBy(LiveProfileGroupChatFingerprint.method.definingClass).methods)
         // The older quality list's rows can read white on white in dark mode, switch or no
         // switch; the extension gives poorly contrasted text a readable color there.
         hookQualityList(LiveDefinitionListFingerprint.method)

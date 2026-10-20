@@ -4,6 +4,8 @@
 
 * **TikTok:** Sistem şriftindən istifadə edin və İdxal edilmiş şriftdən istifadə edin indi Fəaliyyət mərkəzində, Baxış tarixçəsində və TikTok-un digər veb səhifələrində də işləyir (#7).
 
+* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda LIVE otağının paylaşma menyusunu, izləyici reytinqlərini, fan klubunu və profil kartlarını tünd açır (#159).
+
 ## 0.76.0 (2026-10-18)
 
 * **TikTok:** Hushfeed indi TikTok 47.4.3-ü dəstəkləyir, yalnız bu versiyanı. APKMirror-dan 47.4.3 APK-nı yamaqlayın. PineDrama 47.1.4-də qalır.
