@@ -26,7 +26,8 @@ import java.util.WeakHashMap;
  * through, and this is called at the end of it with the cell, after TikTok has laid the cell
  * out: the Rect cells write their own top margin inside the bind, so a hook ahead of it would
  * have been undone. The cell is a RecyclerView ViewHolder, so its view is the real-named
- * {@code itemView}.
+ * {@code itemView}. The list's {@code TitleAreaCell} comes through here too, so its
+ * "Suggested accounts" title goes with the cells it heads.
  *
  * <p>The cell is collapsed to nothing rather than only hidden: a GONE child of a horizontal
  * list still holds its width in some layouts, and its margins hold space in every layout.
@@ -45,7 +46,7 @@ public final class SuggestedAccountCells {
     private SuggestedAccountCells() {
     }
 
-    /** Called at the end of every suggestion cell's bind, with the cell. */
+    /** Called at the end of every suggestion cell's bind and its list title's, with the cell. */
     public static void onBind(Object cell) {
         try {
             Object view = Reflect.readField(cell, "itemView");

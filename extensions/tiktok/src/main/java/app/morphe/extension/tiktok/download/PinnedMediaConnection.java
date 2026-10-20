@@ -27,7 +27,7 @@ final class PinnedMediaConnection {
     private PinnedMediaConnection() { }
 
     static HttpsURLConnection open(URL original, InetAddress address) throws IOException {
-        if (!"https".equalsIgnoreCase(original.getProtocol()) || !MediaTransport.isPublicAddress(address)) {
+        if (!"https".equalsIgnoreCase(original.getProtocol()) || !MediaTransport.isMediaAddress(address)) {
             throw new IOException("Media connection requires a checked public HTTPS address");
         }
         String host = original.getHost();

@@ -2832,6 +2832,18 @@ exit 0
                     'A multi-ref runtime push did not apply both commits to every declared host.'
             } finally {
                 $env:HUSHFEED_BUILD_WRAPPER = $wrapperStub
+                # The hook keeps a warm gate worktree per checkout in the temp folder. This checkout
+                # goes away here, so its gate worktree goes too, or every run leaves one behind.
+                if (Test-Path -LiteralPath (Join-Path $firstPatchRoot '.git')) {
+                    foreach ($line in @(& git -C $firstPatchRoot worktree list --porcelain)) {
+                        if ($line -like 'worktree *') {
+                            $listed = $line.Substring('worktree '.Length)
+                            if ([IO.Path]::GetFullPath($listed).TrimEnd('\', '/') -ine [IO.Path]::GetFullPath($firstPatchRoot).TrimEnd('\', '/')) {
+                                & git -C $firstPatchRoot worktree remove --force $listed
+                            }
+                        }
+                    }
+                }
                 Remove-Item -LiteralPath $firstPatchRoot, $firstPatchWrapper -Recurse -Force -ErrorAction SilentlyContinue
             }
 

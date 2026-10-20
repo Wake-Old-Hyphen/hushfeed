@@ -215,6 +215,28 @@ final class MediaTransport {
         return false;
     }
 
+    /**
+     * The synthetic answers a fake-IP resolver hands out: 198.18.0.0/15 and fc00::/18, the pools
+     * Clash and mihomo (198.18.0.1/16), Xray and sing-box use. Proxy apps that run in fake-IP mode
+     * answer every proxied hostname from that pool and map each address back to its hostname when
+     * the connection reaches them, so a TikTok CDN host comes back as 198.18.x.x on those phones
+     * (#145). Neither pool is a LAN or device address, and TLS still authenticates the hostname.
+     */
+    static boolean isProxyMappedAddress(InetAddress address) {
+        if (address == null) return false;
+        byte[] bytes = address.getAddress();
+        if (bytes.length == 4) return (bytes[0] & 255) == 198 && (bytes[1] & 0xfe) == 18;
+        if (bytes.length == 16) {
+            return (bytes[0] & 255) == 0xfc && bytes[1] == 0 && (bytes[2] & 0xc0) == 0;
+        }
+        return false;
+    }
+
+    /** An address a checked media connection may open: public, or from a fake-IP pool. */
+    static boolean isMediaAddress(InetAddress address) {
+        return isPublicAddress(address) || isProxyMappedAddress(address);
+    }
+
     private static boolean isGlobalV4(int address) {
         for (int[] block : NOT_GLOBAL_V4) {
             int mask = -1 << (32 - block[1]);
@@ -270,6 +292,11 @@ final class MediaTransport {
         }
         // Validate the same snapshot that connection attempts will consume.
         addresses = addresses.clone();
+        // A fake-IP resolver answers a proxied hostname from its pool alone. An answer from the
+        // pool beside a real one isn't that, so a mixed set is judged address by address below.
+        boolean proxyMapped = true;
+        for (InetAddress address : addresses) proxyMapped &= isProxyMappedAddress(address);
+        if (proxyMapped) return addresses;
         for (InetAddress address : addresses) {
             if (!isPublicAddress(address)) {
                 throw new IOException("Media URL resolves to a non-public address");

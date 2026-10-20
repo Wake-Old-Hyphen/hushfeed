@@ -539,7 +539,8 @@ internal object RankGapInfoIconFingerprint : Fingerprint(
  * Context) lookup. Null for any other method, and for a shape the hook can't take safely: no local
  * to copy the text through, a context above v15 or written again, or the context read anywhere it
  * isn't a null test or a Context parameter (a cast to Activity would throw on the wrapper the
- * extension hands back). The text call proves to the verifier that the row text is a View.
+ * extension hands back). The text call only anchors the row text: the hook hands it on as an
+ * Object, and the extension tests it's a View itself.
  */
 internal fun gapInfoIcon(method: Method): Pair<Int, Int>? {
     val body = method.implementation ?: return null
@@ -583,7 +584,7 @@ internal fun hookGapInfoIcon(method: MutableMethod) {
         0,
         """
             move-object/from16 v0, v$text
-            invoke-static {v0, v$context}, $PANEL_THEME->stockViewContext(Landroid/view/View;Landroid/content/Context;)Landroid/content/Context;
+            invoke-static {v0, v$context}, $PANEL_THEME->stockViewContext(Ljava/lang/Object;Landroid/content/Context;)Landroid/content/Context;
             move-result-object v$context
         """,
     )
@@ -719,7 +720,9 @@ internal fun rowBinder(method: Method, classDef: ClassDef): RowBinder? {
  * a row it inflates through the list's own light context goes straight to the binder's holder call
  * and back, and null runs TikTok's code untouched. The added code takes v0 and v1 before TikTok
  * writes anything, and the list must fit its four-bit calls, so a shape where either doesn't hold
- * is refused instead of written.
+ * is refused instead of written. [rowBinder]'s four-bit holder call on the list already keeps the
+ * list under v16; the check stays for a shape that loosens it. So does a binder that does anything
+ * to the holder before handing it back, which the hook would skip.
  */
 internal fun hookRowBinder(method: MutableMethod, classDef: ClassDef) {
     val binder = rowBinder(method, classDef)
@@ -727,6 +730,18 @@ internal fun hookRowBinder(method: MutableMethod, classDef: ClassDef) {
     val registers = method.implementation!!.registerCount
     if (registers - 1 > 15 || registers - 3 < 2) {
         throw PatchException("LIVE controls: the LIVE row binder's registers don't fit the hook")
+    }
+    val code = method.implementation!!.instructions.toList()
+    val handedBack = code.indices.filter {
+        code[it].opcode == Opcode.INVOKE_VIRTUAL && (code[it] as ReferenceInstruction).reference == binder.holder
+    }.all {
+        val result = code.getOrNull(it + 1)
+        val back = code.getOrNull(it + 2)
+        result?.opcode == Opcode.MOVE_RESULT_OBJECT && back?.opcode == Opcode.RETURN_OBJECT &&
+            (result as OneRegisterInstruction).registerA == (back as OneRegisterInstruction).registerA
+    }
+    if (!handedBack) {
+        throw PatchException("LIVE controls: the LIVE row binder does more with its holder than hand it back")
     }
     method.addInstructionsWithLabels(
         0,

@@ -171,6 +171,56 @@ public class MediaTransportSecurityTest {
         assertEquals(0, opened.get());
     }
 
+    /** Proxy apps in fake-IP mode answer TikTok's CDN hosts from 198.18.0.0/15 and fc00::/18 (#145). */
+    @Test public void aFakeIpProxyAnswerStillDownloads() throws Exception {
+        AtomicInteger opened = new AtomicInteger();
+        MediaTransport.Client client = new MediaTransport.Client(host -> new InetAddress[]{
+                InetAddress.getByName("198.18.0.7"), InetAddress.getByName("fc00::7")
+        }, (url, address) -> {
+            opened.incrementAndGet();
+            assertEquals("198.18.0.7", address.getHostAddress());
+            assertEquals("v16-webapp-prime.tiktokcdn.com", url.getHost());
+            return new FakeConnection(url, HTTP_OK, null, PNG);
+        });
+        File target = File.createTempFile("fake-ip-media", ".tmp");
+        try {
+            assertEquals("png", RemoteMedia.fetch(
+                    List.of("https://v16-webapp-prime.tiktokcdn.com/media"), target,
+                    RemoteMedia.Kind.IMAGE, client));
+            assertArrayEquals(PNG, Files.readAllBytes(target.toPath()));
+            assertEquals(1, opened.get());
+        } finally {
+            target.delete();
+        }
+    }
+
+    @Test public void fakeIpPoolsStopAtTheirEdges() throws Exception {
+        for (String address : new String[]{"198.18.0.1", "198.19.255.255", "fc00::1", "fc00:3fff:ffff::1"}) {
+            assertTrue(address, MediaTransport.isProxyMappedAddress(InetAddress.getByName(address)));
+        }
+        for (String address : new String[]{
+                "198.17.255.255", "198.20.0.1", "fc00:4000::1", "fc01::1", "fd00::1",
+                "10.0.0.1", "127.0.0.1", "192.168.1.2", "8.8.8.8", "2606:4700:4700::1111"
+        }) {
+            assertFalse(address, MediaTransport.isProxyMappedAddress(InetAddress.getByName(address)));
+        }
+    }
+
+    @Test public void aFakeIpAnswerBesideAPrivateOneRefusesTheHostname() throws Exception {
+        AtomicInteger opened = new AtomicInteger();
+        MediaTransport.Client client = new MediaTransport.Client(host -> new InetAddress[]{
+                InetAddress.getByName("198.18.0.1"), InetAddress.getByName("192.168.1.2")
+        }, (url, address) -> {
+            opened.incrementAndGet();
+            return new FakeConnection(url, HTTP_OK, null, PNG);
+        });
+
+        assertThrows(IOException.class, () -> client.open(
+                "https://v16.tiktokcdn.com/media", MediaBudget.deadline(),
+                1000, 1000, null, false));
+        assertEquals(0, opened.get());
+    }
+
     @Test public void aRedirectIntoADocumentationRangeStopsBeforeOpeningThatHop() throws Exception {
         AtomicInteger opened = new AtomicInteger();
         MediaTransport.Client client = new MediaTransport.Client(host -> new InetAddress[]{
@@ -310,7 +360,7 @@ public class MediaTransportSecurityTest {
             connection.setHostnameVerifier((host, session) -> "cdn.example".equals(host));
             return connection;
         }, () -> {
-            for (String address : new String[]{"8.8.8.8", "2606:4700:4700::1111"}) {
+            for (String address : new String[]{"8.8.8.8", "2606:4700:4700::1111", "198.18.0.7"}) {
                 URL original = new URL("https://cdn.example:8443/a%2Fb.jpg?signature=x%2By&n=2");
                 HttpsURLConnection connection = PinnedMediaConnection.open(
                         original, InetAddress.getByName(address));
@@ -322,6 +372,8 @@ public class MediaTransportSecurityTest {
                 assertTrue(connection.getHostnameVerifier().verify(address, null));
                 assertTrue(connection.getSSLSocketFactory() instanceof PinnedMediaConnection.PinnedFactory);
             }
+            assertThrows(IOException.class, () -> PinnedMediaConnection.open(
+                    new URL("https://cdn.example/a.jpg"), InetAddress.getByName("192.168.1.2")));
         });
     }
 

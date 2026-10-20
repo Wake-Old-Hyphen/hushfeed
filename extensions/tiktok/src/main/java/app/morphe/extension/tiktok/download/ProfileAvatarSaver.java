@@ -181,11 +181,30 @@ public final class ProfileAvatarSaver {
         return shown == null || shown;
     }
 
+    /** Where an image span sits in a TextView's text. */
+    private static final char OBJECT_REPLACEMENT = (char) 0xFFFC;
+
+    /**
+     * A label's text the way a handle reads. 47.4.3 draws a verified account's badge as an image
+     * inside the handle's own text, over an object replacement character, so @natgeo's header
+     * says "@natgeo" plus that character. Neither it nor an invisible format mark is part of
+     * the handle.
+     */
+    static String shownHandle(CharSequence text) {
+        if (text == null) return "";
+        StringBuilder handle = new StringBuilder(text.length());
+        for (int index = 0; index < text.length(); index++) {
+            char character = text.charAt(index);
+            if (character == OBJECT_REPLACEMENT || Character.getType(character) == Character.FORMAT) continue;
+            handle.append(character);
+        }
+        return handle.toString().trim();
+    }
+
     /** null when no handle is on screen at all, true when this one is, false when another is. */
     private static Boolean findHandle(View view, String wanted) {
         if (view instanceof TextView) {
-            CharSequence text = ((TextView) view).getText();
-            String value = text == null ? "" : text.toString().trim();
+            String value = shownHandle(((TextView) view).getText());
             if (value.startsWith("@") && !value.contains(" ")) return wanted.equals(value);
             return null;
         }

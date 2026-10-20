@@ -121,7 +121,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private boolean arrived;
     private PreferenceScreen searchScreen;
     private List<SearchResult> searchIndex;
-    /** Set when the search page goes behind another, where a result's setting may change. */
+    /** Set when a search result opens its page, where its setting may change. */
     private boolean searchIndexStale;
     private final List<Preference> searchRows = new ArrayList<>();
     private SettingsSearchInputPreference searchInput;
@@ -1048,6 +1048,10 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             row.setSummary(result.displaySummary());
             row.setOrder(order++);
             row.setOnPreferenceClickListener(preference -> {
+                // A result's page can change what the rows show, so they read again on the way back.
+                // A dialog or a link can't, and a plain pause (the screen going off) leaves them be.
+                searchIndexStale = !LicensesPreference.KEY.equals(result.key)
+                        && !MorpheTikTokAboutPreference.KEY.equals(result.key);
                 if (FEATURE_GATE_LAB_KEY.equals(result.key)) {
                     FeatureGateLabFragment.open(getActivity());
                 } else if (LicensesPreference.KEY.equals(result.key)) {
@@ -1997,7 +2001,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     @Override
     public void onPause() {
         budgetTicks.removeCallbacks(budgetTick);
-        searchIndexStale = searchScreen != null;
         super.onPause();
     }
 

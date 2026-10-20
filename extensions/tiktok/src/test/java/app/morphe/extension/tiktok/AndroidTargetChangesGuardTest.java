@@ -103,7 +103,10 @@ public class AndroidTargetChangesGuardTest {
             new ReviewedWrites("feedfilter/FeedItemsFilter.java", 3,
                     "safe: writes the search results' mItems, friendFeedData and, since #12, the "
                             + "Following feed's items field (mItems up to 46.8.3, items from "
-                            + "46.9.3), each an instance field on the response the hook was given"));
+                            + "46.9.3), each an instance field on the response the hook was given"),
+            new ReviewedWrites("live/LivePanelTheme.java", 2,
+                    "safe: writes a LIVE profile card label's background and that background's "
+                            + "colorCode, and lightLabel() skips either field when it's static"));
 
     /**
      * Addresses written into the payload, and what is done with them.
@@ -199,8 +202,9 @@ public class AndroidTargetChangesGuardTest {
         }
         int reviewed = REVIEWED_WRITES.stream().mapToInt(row -> row.writes).sum();
         assertEquals("the reviewed total no longer matches what the scan finds", reviewed, total);
-        // Nine on 2026-09-19; four comment-menu instance writes were added for #169.
-        assertEquals("the audit counted thirteen reflective writes on 2026-10-15", 13, total);
+        // Nine on 2026-09-19; four comment-menu instance writes were added for #169, and two
+        // LIVE profile card label writes for #159.
+        assertEquals("the audit counted fifteen reflective writes on 2026-10-20", 15, total);
     }
 
     @Test

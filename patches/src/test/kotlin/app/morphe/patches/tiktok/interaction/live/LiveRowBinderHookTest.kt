@@ -31,7 +31,8 @@ private const val READ_PRELOAD = "sget-object v3, $LIVE_ROW_PRELOAD->INSTANCE:$L
  * The LIVE row binder's and the team list's shape checks on hand-written methods (#159). The row
  * binder's base is found by its (int, Boolean) constructor's two fields and its own holder call on
  * `this` and the list, and the hook asks the extension for the row before any of TikTok's code.
- * A binder whose parts don't line up, or that leaves the hook too few registers, is refused. Each
+ * A binder whose parts don't line up, that leaves the hook too few registers or that does more with
+ * its holder than hand it back, is refused. Each
  * getContext() a page asks of itself for a color call takes the page hook, and a context the
  * extension's wrapper could break, or a branch that would skip a hook, is refused. The real build
  * is covered by LiveDarkPanelsAnchorsTest.
@@ -117,6 +118,41 @@ class LiveRowBinderHookTest {
     }
 
     @Test
+    fun `a binder with its list above v15 is refused`() {
+        // p0 is v14 and p2 is v16 in seventeen registers. A four-bit call can't reach the list, so
+        // TikTok's would be a range call, which isn't the holder call the binder is found by.
+        val make = method(
+            BINDER, "make", listOf("Landroid/view/LayoutInflater;", "Landroid/view/ViewGroup;"), HOLDER, 17,
+            """
+                $READ_PRELOAD
+                iget v1, p0, $BINDER->layout:I
+                move-object/from16 v2, p2
+                invoke-static {v1, v2}, LX/0JT4;->LJ(ILandroid/view/ViewGroup;)Landroid/view/View;
+                move-result-object v15
+                invoke-virtual/range {v14 .. v16}, $MAKE_HOLDER
+                move-result-object v0
+                return-object v0
+            """,
+        )
+        assertNull(rowBinder(make, binder()))
+        assertThrows(PatchException::class.java) { hookRowBinder(make, binder()) }
+    }
+
+    @Test
+    fun `a binder that does more with its holder than hand it back is refused`() {
+        val tagged = makeRow(handBack = "move-result-object v0\n" +
+            "invoke-virtual {v0}, $HOLDER->toString()Ljava/lang/String;\nreturn-object v0")
+        rowBinder(tagged, binder())!!
+        assertThrows(PatchException::class.java) { hookRowBinder(tagged, binder()) }
+        val other = makeRow(handBack = "move-result-object v1\nreturn-object v0")
+        rowBinder(other, binder())!!
+        assertThrows(PatchException::class.java) { hookRowBinder(other, binder()) }
+        val dropped = makeRow(handBack = "const/4 v0, 0x0\nreturn-object v0")
+        rowBinder(dropped, binder())!!
+        assertThrows(PatchException::class.java) { hookRowBinder(dropped, binder()) }
+    }
+
+    @Test
     fun `each context a page asks of itself for a color takes the hook`() {
         // The color id going into v1 ends the first context's life there.
         val page = page(after = """
@@ -188,6 +224,7 @@ class LiveRowBinderHookTest {
         layout: String = "$BINDER->layout:I",
         make: String = "invoke-virtual {p0, v0, p2}, $MAKE_HOLDER",
         preload: String = READ_PRELOAD,
+        handBack: String = "move-result-object v0\nreturn-object v0",
     ) = method(
         BINDER, "make", listOf("Landroid/view/LayoutInflater;", "Landroid/view/ViewGroup;"), HOLDER, 7,
         """
@@ -197,8 +234,7 @@ class LiveRowBinderHookTest {
             invoke-static {v1, p2, v2}, LX/0JT4;->LJIILL(ILandroid/view/ViewGroup;Z)Landroid/view/View;
             move-result-object v0
             $make
-            move-result-object v0
-            return-object v0
+            $handBack
         """,
     )
 

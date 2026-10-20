@@ -403,7 +403,7 @@ class LiveDarkPanelsAnchorsTest {
             val method = found.single()
             val (context, text) = gapInfoIcon(method)!!
             if ("47.4.3" in apk.name) assertEquals("${apk.name}: p1 and p4", 14 to 17, context to text)
-            // The extension takes the row text as a View.
+            // The extension finds the context only through a row text that's a View.
             assertTrue("${apk.name}: the row text isn't a TextView", "Landroid/widget/TextView;" in
                 generateSequence(method.parameterTypes[3].toString()) { classes[it]?.superclass }.toList())
             assertGapHooked(apk.name, method, context, text)
@@ -433,19 +433,13 @@ class LiveDarkPanelsAnchorsTest {
     /**
      * A bottom row shaped like 47.4.3's in [registers] registers: it reads the gap's FAQ, asks a
      * copy of the row text (p4) what it shows and tints the icon through the context (p1) with
-     * [lookup], with [after] past the tint.
+     * [lookup], with [after] past the tint, or runs [body] in place of all that.
      */
     private fun gapRow(
         registers: Int = 19,
         lookup: String = "const v0, 0x7f061f39\ninvoke-static { v0, p1 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I",
         after: String = "",
-    ) = MutableMethod(ImmutableMethod("Lapp/morphe/Gap;", "LJII",
-        listOf("Landroid/content/Context;", "Lcom/bytedance/ies/sdk/datachannel/DataChannel;",
-            "Lcom/bytedance/android/live/rank/impl/list/controller/RankListController;", "Landroidx/appcompat/widget/AppCompatTextView;",
-            RANK_GAP).map { ImmutableMethodParameter(it, null, null) },
-        "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
-        null, null, ImmutableMethodImplementation(registers, emptyList(), null, null))).apply {
-        addInstructionsWithLabels(0, """
+        body: String = """
             move-object/from16 v11, p5
             iget-object v1, v11, $RANK_GAP->bottomBarFaq:Ljava/lang/Object;
             if-eqz v1, :done
@@ -453,6 +447,15 @@ class LiveDarkPanelsAnchorsTest {
             invoke-virtual { v5 }, Landroidx/appcompat/widget/AppCompatTextView;->getText()Ljava/lang/CharSequence;
             $lookup
             $after
+        """,
+    ) = MutableMethod(ImmutableMethod("Lapp/morphe/Gap;", "LJII",
+        listOf("Landroid/content/Context;", "Lcom/bytedance/ies/sdk/datachannel/DataChannel;",
+            "Lcom/bytedance/android/live/rank/impl/list/controller/RankListController;", "Landroidx/appcompat/widget/AppCompatTextView;",
+            RANK_GAP).map { ImmutableMethodParameter(it, null, null) },
+        "V", AccessFlags.PUBLIC.value or AccessFlags.FINAL.value,
+        null, null, ImmutableMethodImplementation(registers, emptyList(), null, null))).apply {
+        addInstructionsWithLabels(0, """
+            $body
             :done
             return-void
         """)
@@ -471,6 +474,16 @@ class LiveDarkPanelsAnchorsTest {
         // In 21 registers p1 is v16, which the hook's four-bit call can't take.
         val wide = "const v15, 0x7f061f39\ninvoke-static/range { v15 .. v16 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I"
         assertNull("a context past v15", gapInfoIcon(gapRow(registers = 21, lookup = wide)))
+        // In 6 registers every one is a parameter: v0 is `this`, which the hook's copy would overwrite.
+        val bare = """
+            iget-object p3, p5, $RANK_GAP->bottomBarFaq:Ljava/lang/Object;
+            if-eqz p3, :done
+            invoke-virtual { p4 }, Landroidx/appcompat/widget/AppCompatTextView;->getText()Ljava/lang/CharSequence;
+            const p2, 0x7f061f39
+            invoke-static { p2, p1 }, LX/0Jvn;->LIZIZ(ILandroid/content/Context;)I
+        """
+        assertNull("no local to copy the text through", gapInfoIcon(gapRow(registers = 6, body = bare)))
+        assertEquals("the same row with one local", 2 to 5, gapInfoIcon(gapRow(registers = 7, body = bare)))
         for (after in listOf(
             "check-cast p1, Landroid/app/Activity;",
             "move-object v4, p1",

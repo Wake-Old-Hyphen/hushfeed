@@ -517,6 +517,9 @@ public class LivePanelThemeTest {
         Context panel = LivePanelTheme.darkLivePanel(share, LayoutInflater.from(live)).getContext();
         assertSame("a row in an ordinary panel", live, LivePanelTheme.stockViewContext(new TextView(panel), live));
         assertSame("no row", live, LivePanelTheme.stockViewContext(null, live));
+        ReflectionHelpers.setStaticField(LivePanelTheme.class, "viewContextFailureLogged", false);
+        assertSame("a row text that isn't a view", live, LivePanelTheme.stockViewContext("99+", live));
+        assertTrue("turned away, not caught", !(boolean) ReflectionHelpers.getStaticField(LivePanelTheme.class, "viewContextFailureLogged"));
         assertNull("no context", LivePanelTheme.stockViewContext(gap, null));
         assertSame("light mode", light, LivePanelTheme.stockViewContext(new TextView(new LivePanelTheme.StockContext(light, OVERLAY)), light));
         Settings.DARK_LIVE_PANELS.save(false);
@@ -590,6 +593,27 @@ public class LivePanelThemeTest {
             background.colorCode = colorCode;
             return background;
         }
+    }
+
+    /** A label whose background is static, which a write would set for every label at once. */
+    static final class SharedLabel {
+        static LabelBackground background;
+    }
+
+    /** A background whose color is static. */
+    static final class SharedColor {
+        static String colorCode = "#0A161823";
+    }
+
+    static final class SharedColorLabel {
+        private final SharedColor background = new SharedColor();
+    }
+
+    @Test public void aLabelsStaticFieldsAreLeftAlone() throws Exception {
+        LivePanelTheme.lightLabel(new SharedLabel());
+        assertNull("a static background was made", SharedLabel.background);
+        LivePanelTheme.lightLabel(new SharedColorLabel());
+        assertEquals("a static color was written", "#0A161823", SharedColor.colorCode);
     }
 
     @Test public void aCardsLabelsTakeTheirColorAsItShowsOverTheLightCardInDarkModeWithTheSwitch() {
