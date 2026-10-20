@@ -74,7 +74,8 @@ class C2paInitGuardTest {
     fun `the asset strip brings the guard, and only the asset strip`() {
         assertTrue("the asset strip doesn't bring the guard", c2paInitGuardPatch in coreAssetDebloatPatch.dependencies)
         assertNull("the guard shows up as a patch of its own", c2paInitGuardPatch.name)
-        for (patch in listOf(studioCreationDebloatPatch, liveStreamSuiteOptimizerPatch, p2pRelayBlockerPatch, languagePackPurgerPatch)) {
+        for (patch in listOf(studioCreationDebloatPatch, liveStreamSuiteOptimizerPatch, p2pRelayBlockerPatch, languagePackPurgerPatch,
+            voiceToolsDebloatPatch)) {
             assertTrue("${patch.name} brings the C2PA guard", c2paInitGuardPatch !in patch.dependencies)
         }
     }

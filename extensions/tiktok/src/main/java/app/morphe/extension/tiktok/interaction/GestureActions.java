@@ -22,6 +22,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor;
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.download.CoverSaver;
 import app.morphe.extension.tiktok.download.OriginalSoundDownloads;
 import app.morphe.extension.tiktok.download.ExternalDownloader;
@@ -199,7 +200,7 @@ public final class GestureActions {
                 || "original_sound".equals(action) || "copy_link".equals(action)
                 || "copy_sound_link".equals(action) || "youtube_music".equals(action)
                 || "sleep_timer".equals(action) || "save_frame".equals(action)
-                || "save_cover".equals(action);
+                || "save_cover".equals(action) || "clear_display".equals(action);
     }
 
     /**
@@ -354,6 +355,13 @@ public final class GestureActions {
         }
         if ("save_cover".equals(action)) {
             CoverSaver.save(Utils.getActivity(), onScreenAweme());
+            return true;
+        }
+        if ("clear_display".equals(action)) {
+            // TikTok's own Clear display, turned on and off the way its long press menu does (#136).
+            if (!RememberClearDisplayPatch.toggleFromGesture()) {
+                Utils.showToastShort(L10n.t("Clear display isn't available for this video"));
+            }
             return true;
         }
         if ("speed_toggle".equals(action)) {

@@ -72,6 +72,10 @@ public class LimitTextFollowsConstantsTest {
             assertTrue(summary(screen, "Confirm before liking").contains(window));
             assertTrue(summary(screen, "Caption text size")
                     .contains(CaptionStyle.MIN_TEXT_SIZE + " to " + CaptionStyle.MAX_TEXT_SIZE));
+            for (String height : new String[]{"Caption height", "Caption height in landscape",
+                    "Caption height in Clear display"}) {
+                assertTrue(height, summary(screen, height).contains("up to " + CaptionStyle.MAX_HEIGHT_DP));
+            }
             assertTrue(summary(screen, "Offline videos limit").contains(
                     CustomOfflineVideosLimitPatch.MIN_LIMIT + " to " + CustomOfflineVideosLimitPatch.MAX_LIMIT));
             assertTrue(summary(screen, "Forget seen videos after")
@@ -82,7 +86,8 @@ public class LimitTextFollowsConstantsTest {
                     + PlaybackSpeedPatch.speedLabel(PlaybackSpeedPatch.MAX_SPEED)));
             // No placeholder survives into what the reader sees.
             for (String title : new String[]{"Confirm before following", "Confirm before liking",
-                    "Caption text size", "Offline videos limit",
+                    "Caption text size", "Caption height", "Caption height in landscape",
+                    "Caption height in Clear display", "Offline videos limit",
                     "Forget seen videos after", "Speed menu choices"}) {
                 assertTrue(title + " still carries a placeholder: " + summary(screen, title),
                         !summary(screen, title).contains("%"));

@@ -33,6 +33,7 @@ class ReviewedProfilesMatchFixturesTest {
         "creation tools" to studioAssetProfiles,
         "LIVE extras" to liveAssetProfiles,
         "P2P relay" to p2pRelayProfiles,
+        "voice tools" to voiceToolsProfiles,
     )
 
     @Test

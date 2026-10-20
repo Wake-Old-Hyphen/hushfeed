@@ -357,6 +357,7 @@ public final class RememberClearDisplayPatch {
         nativeModel = null;
         nativeCondition = null;
         progressQueued.set(false);
+        readerPost = RememberClearDisplayPatch::postAsReader;
     }
 
     /** Whether the controls are hidden right now, automatically or by the user. */
@@ -505,9 +506,38 @@ public final class RememberClearDisplayPatch {
         Settings.CLEAR_DISPLAY.save((Boolean) clear);
     }
 
+    /** Where a gesture's change is posted; a test stands in its own. */
+    interface ReaderPost {
+        void post(boolean clear);
+    }
+
+    static ReaderPost readerPost = RememberClearDisplayPatch::postAsReader;
+
+    /**
+     * Double tap or Long press set to Clear display (#136): on when it's off, off when it's on.
+     * The event is the one TikTok's own long press menu posts, left unmarked, so it reaches
+     * {@link #rememberClearDisplayEvent} as the reader's change: remembered for the next video,
+     * Automatic Clear display done with on this one, and the faded controls set up as for TikTok's
+     * button. False when no video took it, a LIVE or an ad, or a bundle without this patch, and
+     * for a clear under the daily hold or the feed lock, whose panels need TikTok's tabs.
+     */
+    public static boolean toggleFromGesture() {
+        boolean clear = !clearNow;
+        if (clear && (SessionBudget.isLocked() || FeedLock.covers())) return false;
+        try {
+            readerPost.post(clear);
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Could not change clear display from a gesture", error);
+            return false;
+        }
+        return clearNow == clear;
+    }
+
     // Resolved from native first-frame code and clear-display event at patch time.
     private static Object readCurrentAweme(Object controller) { return null; }
     private static boolean postClear(boolean clear) { return false; }
+    /** postClear's event without the mark that keeps it from counting as the reader's. */
+    private static void postAsReader(boolean clear) { }
 
     static void beginNativeDispatch(Object event, boolean clear) {
         nativeEvent = event;

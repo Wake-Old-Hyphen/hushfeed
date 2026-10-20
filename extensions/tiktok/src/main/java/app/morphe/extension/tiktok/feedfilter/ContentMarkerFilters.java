@@ -345,6 +345,23 @@ public final class ContentMarkerFilters {
         }
     }
 
+    /**
+     * TikTok Subs posts only a creator's subscribers can watch, the ones with a lock on the grid
+     * (#219). Aweme's is_sub_only_video flag (isSubOnlyVideo on 47.4.3) is the whole test. These
+     * mostly sit on creator profiles, so the profile routes run this rule too.
+     */
+    public static class SubscriberOnlyFilter implements IFilter {
+        @Override
+        public boolean getEnabled() {
+            return Settings.HIDE_SUBSCRIBER_ONLY.get();
+        }
+
+        @Override
+        public boolean getFiltered(Aweme item) {
+            return Boolean.TRUE.equals(Reflect.property(item, "isSubOnlyVideo", "isSubOnlyVideo"));
+        }
+    }
+
     /** Videos from verified accounts. */
     public static class VerifiedFilter implements IFilter {
         @Override

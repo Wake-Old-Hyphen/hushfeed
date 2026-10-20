@@ -929,6 +929,25 @@ class TikTokPatchAnchorsMatchFixturesTest {
     }
 
     /**
+     * Hide subscriber-only videos (#219) asks Aweme.isSubOnlyVideo() by name, so a build that
+     * drops or renames the getter would quietly hide nothing.
+     */
+    @Test
+    fun `the subscriber-only flag resolves on every declared build`() {
+        val awemeType = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+        Fixtures.forEachDeclared { apk ->
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val aweme = container.dexEntryNames.asSequence()
+                .flatMap { container.getEntry(it)!!.dexFile.classes.asSequence() }
+                .firstOrNull { it.type == awemeType } ?: throw AssertionError("$awemeType is missing")
+            assertTrue(
+                "Aweme.isSubOnlyVideo()Z is missing",
+                aweme.methods.any { it.name == "isSubOnlyVideo" && it.parameterTypes.isEmpty() && it.returnType == "Z" },
+            )
+        }
+    }
+
+    /**
      * Match text stickers too reads Aweme's sticker list and each sticker's type and textStruct.
      * TikTok's own translation service is what says a type 18 sticker's textStruct is its words:
      * it checks the type against 18 before it reads the string; type 5 keeps anchor JSON there.

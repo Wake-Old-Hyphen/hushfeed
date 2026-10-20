@@ -4,7 +4,15 @@
 
 * **TikTok:** Gunakan font sistem dan Gunakan font yang diimpor kini juga berlaku di Pusat aktivitas, Riwayat tontonan, dan halaman web TikTok lainnya (#7).
 
-* **TikTok:** Sakelar baru membuka menu bagikan, peringkat penonton, klub penggemar, dan kartu profil di ruang LIVE dalam warna gelap saat TikTok dalam mode gelap (#159).
+* **TikTok:** Sakelar baru membuka menu bagikan, klub penggemar, dan kartu profil di ruang LIVE dalam warna gelap saat TikTok dalam mode gelap (#159).
+
+* **TikTok:** Sakelar filter feed baru, Sembunyikan video khusus pelanggan, menyembunyikan kiriman yang hanya bisa ditonton pelanggan kreator, di feed dan di profil (#219).
+
+* **TikTok:** Sakelar Wilayah baru, Biarkan Untuk Kamu memakai SIM asli, membuat pencarian stiker dan PineDrama melihat SIM yang kamu pilih, sementara Untuk Kamu meminta video dengan SIM ponselmu sendiri. Perlu patch Region spoof di paketmu (#214, #215).
+
+* **TikTok:** Baris Tinggi keterangan baru di Keterangan menaikkan teks ucapan, satu untuk ponsel tegak, satu untuk mendatar, dan satu untuk tampilan bersih. Ketebalan keterangan menggantikan Keterangan dengan ketebalan normal, dari Tipis sampai Sangat tebal. Kalau sakelar itu dulu aktif, nilainya jadi Normal (#206).
+
+* **TikTok:** Ketuk dua kali dan Tekan lama punya pilihan baru, Nyalakan atau matikan tampilan bersih. Pilihan ini menyembunyikan tombol di atas video seperti tampilan bersih TikTok, dan gerakan yang sama memunculkannya lagi (#136).
 
 ## 0.76.0 (2026-10-18)
 

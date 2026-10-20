@@ -48,6 +48,7 @@ public final class CreatorExceptions {
             ContentMarkerFilters.AiGeneratedFilter.class,
             ContentMarkerFilters.VerifiedFilter.class,
             ContentMarkerFilters.PlaylistFilter.class,
+            ContentMarkerFilters.SubscriberOnlyFilter.class,
             AdvancedFeedRules.PublicationAgeFilter.class,
             AdvancedFeedRules.QualityFilter.class,
             AdvancedFeedRules.UnpersonalizedForYouFilter.class,

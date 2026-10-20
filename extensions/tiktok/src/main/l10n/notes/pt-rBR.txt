@@ -4,7 +4,15 @@
 
 * **TikTok:** Usar a fonte do sistema e Usar uma fonte importada agora chegam à Central de atividades, ao Histórico de exibição e às outras páginas web do TikTok (#7).
 
-* **TikTok:** Uma nova chave abre escuros o menu de compartilhar, os rankings de espectadores, o fã-clube e os cartões de perfil de uma sala de LIVE quando o TikTok está no modo escuro (#159).
+* **TikTok:** Uma nova chave abre escuros o menu de compartilhar, o fã-clube e os cartões de perfil de uma sala de LIVE quando o TikTok está no modo escuro (#159).
+
+* **TikTok:** Uma nova chave do filtro do feed, Esconder os vídeos só para assinantes, esconde as publicações que só os assinantes de um criador podem assistir, no feed e nos perfis (#219).
+
+* **TikTok:** Uma nova chave em Região, Manter o Para você no seu SIM real, deixa a busca de figurinhas e o PineDrama verem o SIM escolhido enquanto o Para você pede vídeos com o SIM do seu celular. Ela precisa do patch Region spoof no pacote (#214, #215).
+
+* **TikTok:** Novas linhas de Altura das legendas em Legendas sobem as legendas faladas, uma com o celular em pé, uma na horizontal e uma com a tela limpa. Espessura das legendas substitui Legendas com espessura normal e vai de Fino a Extranegrito. Se você tinha aquela chave ligada, ela volta como Normal (#206).
+
+* **TikTok:** Toque duplo e Toque longo ganharam uma opção nova, Ligar ou desligar a tela limpa. Ela esconde os botões sobre o vídeo como a tela limpa do próprio TikTok, e o mesmo gesto traz eles de volta (#136).
 
 ## 0.76.0 (2026-10-18)
 

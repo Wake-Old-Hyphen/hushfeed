@@ -12,6 +12,7 @@ import app.morphe.patches.tiktok.misc.diagnostics.BUILD_DETAILS_ASSET
 import app.morphe.patches.tiktok.misc.diagnostics.BuildChoice
 import app.morphe.patches.tiktok.misc.diagnostics.BuildDetails
 import app.morphe.patches.tiktok.misc.diagnostics.buildChoicePatch
+import app.morphe.patches.tiktok.misc.diagnostics.buildDetailsPatch
 import java.util.Locale
 
 @Suppress("unused")
@@ -206,6 +207,47 @@ val liveStreamSuiteOptimizerPatch = rawResourcePatch(
     }
 }
 
+@Suppress("unused")
+val voiceToolsDebloatPatch = rawResourcePatch(
+    name = "Remove voice tools",
+    description = "Removes TikTok's speech recognition files, saving about 16 MB of storage. The " +
+        "catch: voice search, naming a song by listening, talking to TikTok's AI assistant and " +
+        "TikTok's music check on videos you post all stop working. Only patching again without it " +
+        "brings them back.",
+    default = false,
+) {
+    category("Performance")
+    compatibleWith(*AppCompatibilities.tiktok())
+    // The guard keeps TikTok's speech engine from loading the emptied libraries the first time
+    // anything asks for it (#213).
+    dependsOn(buildDetailsPatch, speechEngineGuardPatch)
+
+    execute {
+        // The four libraries need only each other and libaudio_fingerprint_sdk, which stays, and
+        // nothing else in the APK names them in its DT_NEEDED list.
+        val nativeFiles = listOf(
+            "lib/arm64-v8a/libspeechengine.so",
+            "lib/arm64-v8a/libspeechepg.so",
+            "lib/arm64-v8a/libspeechsdk.so",
+            "lib/arm64-v8a/libspeechspg.so",
+            "lib/armeabi-v7a/libspeechengine.so",
+            "lib/armeabi-v7a/libspeechepg.so",
+            "lib/armeabi-v7a/libspeechsdk.so",
+            "lib/armeabi-v7a/libspeechspg.so",
+        )
+        val result = stripVerifiedResources(
+            get("."),
+            "Voice Tools De-bloat",
+            emptyList(),
+            nativeFiles,
+            voiceToolsProfiles,
+            resolveStandaloneFile = { path -> get(path) },
+        )
+        result.report("Voice Tools De-bloat")
+        BuildDetails.applied(get(BUILD_DETAILS_ASSET), "voiceToolsDebloat")
+    }
+}
+
 private fun StripSummary.report(patchName: String) {
     if (files == 0) {
         println("[$patchName] This build ships none of the reviewed files, so there was nothing to empty.")
@@ -349,6 +391,25 @@ internal val p2pRelayProfiles = listOf(
     // PineDrama 47.4.3 (APKMirror's bundle, read on 2026-10-19) ships no relay library in its base
     // or any ABI split, so the strip has nothing to empty there either.
     ResourceProfile("PineDrama 47.4.3", emptyList(), onlyVersion = "47.4.3"),
+)
+
+private val voiceTools = ResourceProfile(
+    "TikTok 47.4.3",
+    listOf(
+        file("lib/arm64-v8a/libspeechengine.so", "66cdc8ec913a42e2e1c63531daff727a8bb09daf2a26f73dc6c1fd78c4c97a5e"),
+        file("lib/arm64-v8a/libspeechepg.so", "47027d80c045d7232e4859ab9416f3684b36eefdb616e725da5c797eb424ff1e"),
+        file("lib/arm64-v8a/libspeechsdk.so", "6077aa66c8ae0f05f7dd9cdd231c7b5b37173a8820033aa488483ab74c4a8839"),
+        file("lib/arm64-v8a/libspeechspg.so", "f521abde32911960bf935ea0ba97ed477575add1aa0cb3aee4fc7b847b0dd423"),
+        file("lib/armeabi-v7a/libspeechengine.so", "99c8941df82c357fd7560aa3ef26013b6186b1d708a56387dd59820d4404cc85"),
+        file("lib/armeabi-v7a/libspeechepg.so", "2b753ce19fa28fd0973ecb6751e58c1f7886c51114f8ba35ad14d5c203a96fde"),
+        file("lib/armeabi-v7a/libspeechsdk.so", "6bc593dd38bfc985202edefa1b161a071378ca6da754a3058f1e6056b2e2a248"),
+        file("lib/armeabi-v7a/libspeechspg.so", "2492ca89d1c73df7ad6da5c37eba62c0b08133f565ec6223273cdc9cceeaf578"),
+    ),
+)
+
+internal val voiceToolsProfiles = listOf(
+    voiceTools,
+    bundleOf(voiceTools, "lib/armeabi-v7a/libspeechepg.so", "lib/armeabi-v7a/libspeechspg.so"),
 )
 
 internal val languageInventories = listOf(

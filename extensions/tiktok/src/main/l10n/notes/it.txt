@@ -4,7 +4,15 @@
 
 * **TikTok:** Usa il carattere di sistema e Usa un carattere importato ora arrivano anche al Centro attività, alla Cronologia visualizzazioni e alle altre pagine web di TikTok (#7).
 
-* **TikTok:** Un nuovo interruttore apre scuri il menu di condivisione, le classifiche degli spettatori, il fan club e le schede profilo di una stanza LIVE quando TikTok è in modalità scura (#159).
+* **TikTok:** Un nuovo interruttore apre scuri il menu di condivisione, il fan club e le schede profilo di una stanza LIVE quando TikTok è in modalità scura (#159).
+
+* **TikTok:** Un nuovo interruttore del filtro del feed, Nascondi i video solo per abbonati, nasconde i post che solo gli abbonati di un creator possono guardare, nel feed e nei profili (#219).
+
+* **TikTok:** Un nuovo interruttore in Regione, Mantieni Per te sulla SIM reale, fa vedere alla ricerca degli sticker e a PineDrama la SIM impostata mentre Per te chiede video con la SIM del tuo telefono. Serve la patch Region spoof nel pacchetto (#214, #215).
+
+* **TikTok:** Nuove righe Altezza dei sottotitoli in Sottotitoli alzano i sottotitoli parlati, una per il telefono in verticale, una in orizzontale e una per la vista pulita. Spessore dei sottotitoli sostituisce Sottotitoli con spessore normale e va da Sottile a Extra grassetto. Se avevi quell'interruttore attivo, torna come Normale (#206).
+
+* **TikTok:** Doppio tocco e Pressione prolungata hanno una nuova scelta, Attiva o disattiva la vista pulita. Nasconde i pulsanti sopra il video come la vista pulita di TikTok, e lo stesso gesto li fa tornare (#136).
 
 ## 0.76.0 (2026-10-18)
 

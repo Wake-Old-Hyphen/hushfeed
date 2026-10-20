@@ -329,6 +329,8 @@ Separate words with commas. A comment is hidden if it contains any of them. Capi
 Comment media filename	Şərh mediasının fayl adı
 Comments	Şərhlər
 Comments aren't available for this video	Bu video üçün şərhlər əlçatan deyil
+Turn Clear display on or off	Təmiz ekranı aç və ya bağla
+Clear display isn't available for this video	Bu video üçün təmiz ekran əlçatan deyil
 Comments beside the video	Videonun yanında şərhlər
 Compact comment header	Yığcam şərh başlığı
 Compare gate reads with their previous values.	Qapı oxunuşlarını əvvəlki dəyərləri ilə müqayisə edin.
@@ -574,6 +576,7 @@ Hide place badges on videos, including cards with multiple places. Videos and yo
 Hide effect and template tags	Effekt və şablon etiketlərini gizlədin
 Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.	Videonun təsvirinin üstündə effekt, şablon, CapCut və ya süni intellekt üslubunu sınamağa dəvət edən etiketləri gizlədin. Məkan etiketləri və musiqi sətri üçün ayrıca açarlar var.
 Hide playlist videos	Pleylist videolarını gizlədin
+Hide subscriber-only videos	Yalnız abunəçilər üçün olan videoları gizlədin
 Hide promotional music	Tanıtım musiqisini gizlədin
 Hide comment typing suggestions	Şərh yazma təkliflərini gizlədin
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	TikTok-un axtarış səhifəsində yazmazdan əvvəl tövsiyə olunan axtarışları gizlədin. Axtarış tarixçəniz qalır. Bu, şərhlərin üstündəki təklifləri gizlətmir.
@@ -650,6 +653,7 @@ Hide video actions	Video əməliyyatlarını gizlədin
 Hide videos with TikTok's AI-generated label, AI content credentials, a TikTok AI effect such as AI Alive, or a tag like #ai or #aigenerated.	TikTok-un süni intellekt etiketini, süni intellekt məzmun etimadnaməsini, AI Alive kimi TikTok süni intellekt effektini və ya #ai, #aigenerated kimi teqi daşıyan videoları gizlədin.
 Hide videos marked as paid partnership or branded content.	Ödənişli tərəfdaşlıq və ya brendli məzmun kimi qeyd edilmiş videoları gizlədin.
 Hide videos posted as part of a playlist.	Pleylistin tərkibində paylaşılmış videoları gizlədin.
+Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.	Yalnız yaradıcının abunəçilərinin izləyə bildiyi kilidli paylaşımları lentdə və profillərdə gizlədin.
 Hide videos posted by verified accounts.	Təsdiqlənmiş hesabların paylaşdığı videoları gizlədin.
 Hide videos that belong to a paid Series.	Ödənişli Seriala aid videoları gizlədin.
 Hide videos with a lot of views and few comments. Works the same way as views per like. Zero turns it off.	Çoxlu baxışı və az şərhi olan videoları gizlədin. Hər bəyənməyə düşən baxış ilə eyni qaydada işləyir. Sıfır onu söndürür.
@@ -879,6 +883,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Playback	Oxutma
 Player	Pleyer
 Playlist posts	Pleylist paylaşımları
+Subscriber-only posts	Yalnız abunəçilər üçün paylaşımlar
 Popular	Populyar
 Popups	Pop-uplar
 Preset	Hazır ayar
@@ -1731,6 +1736,8 @@ A LIVE in the feed can count down and take you into the room on its own. This ke
 Play sounds TikTok pulled	TikTok-un çıxardığı səsləri oynat
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Səsi müəllif hüququna görə və ya bölgənizdə çıxarıldığı üçün TikTok-un səssizləşdirdiyi videolarda səsi oynadır. TikTok yenə də səsin əlçatan olmadığını göstərə bilər.
 Match region fields in requests	Sorğulardakı region sahələrini uyğunlaşdır
+Keep the For You feed on your real SIM	Sənin üçün lentini əsl SIM-də saxla
+Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Stiker axtarışı, PineDrama və TikTok-un qalanı yuxarıdakı SIM-i görməyə davam edir, Sənin üçün isə telefonunuzun öz SIM ölkəsi və operatoru ilə video istəyir. IP ünvanınız və hesab tarixçəniz yenə də nəzərə alınır.
 Show exact LIVE viewer counts	Dəqiq LIVE izləyici sayını göstər
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	LIVE otağı kimin baxdığını 1.2K kimi yuvarlaqlaşdırılmış rəqəmlə göstərir. Bu, əvəzinə dəqiq sayı göstərir.
 Offer LIVE quality in more rooms	Daha çox LIVE otağında keyfiyyət seçimi təklif et
@@ -2158,8 +2165,18 @@ Show the country as a flag	Ölkəni bayraqla göstərin
 Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Ölkənin iki hərfi yerinə onun bayrağını göstərir, yaradıcının adının və şərh yazanın vaxtının yanında.
 Full long-press menu in search results	Axtarış nəticələrində tam uzun basma menyusu
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Axtarışdan açdığınız videoya uzun basmaq Sənin üçün bölməsindəki eyni menyunu açır. Bunun üçün Uzun basma TikTok defoltunda olmalıdır.
-Normal-weight captions	Normal qalınlıqda başlıqlar
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Danışılan başlıqları TikTok-un qalın yazısı əvəzinə adi qalınlıqda göstərin. Növbəti başlığa tətbiq olunur.
+Caption height	Başlıq hündürlüyü
+Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.	Telefon şaquli olanda danışılan başlıqları TikTok-un yerindən yuxarı qaldırır. TikTok-un yeri üçün 0, ən çox %1$d yazın.
+Caption height in landscape	Üfüqi vəziyyətdə başlıq hündürlüyü
+Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.	Telefon üfüqi olanda danışılan başlıqları TikTok-un yerindən yuxarı qaldırır. TikTok-un yeri üçün 0, ən çox %1$d yazın.
+Caption boldness	Başlıq qalınlığı
+Light	İncə
+Medium	Orta
+Semi-bold	Yarımqalın
+Bold	Qalın
+Extra bold	Çox qalın
+Caption height in Clear display	Təmiz ekranda başlıq hündürlüyü
+Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Təmiz ekranda saxlanan başlığı adi yerindən yuxarı qaldırır. Adi yer üçün 0, ən çox %1$d yazın.
 The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	TikTok bağlananda yarımçıq qalan LIVE yazısı saxlanıla bilmədi. Yarımçıq fayl silindi.
 Also on opened videos	Açılmış videolarda da
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Axtarışdan, profildən və ya baxış tarixçənizdən açdığınız videoların yuxarısındakı axtarış çubuğunu gizlədin. Geri düyməsi qalır.

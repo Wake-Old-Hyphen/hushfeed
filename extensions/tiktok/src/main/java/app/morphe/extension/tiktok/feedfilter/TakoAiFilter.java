@@ -21,6 +21,7 @@ import com.ss.android.ugc.aweme.feed.model.banner.BannerCommonStruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class TakoAiFilter {
@@ -327,6 +328,81 @@ public final class TakoAiFilter {
             view.setLayoutParams(params);
         }
         view.setVisibility(View.GONE);
+    }
+
+    private static final String SEARCH_ANSWER_CARD = "search answer card";
+    private static final String SEARCH_CARDS_READ = "search cards read";
+
+    /**
+     * The search card protocols that draw a Tako AI answer. They live in a plugin TikTok downloads
+     * (df_search_top1) and keep their real names, since TikTok's own service list loads them by
+     * name. The S22 card ("TikTok Tako · AI summary from", 47.4.3) comes from that plugin's
+     * ainative/tako package.
+     */
+    static final Set<String> SEARCH_ANSWER_PROTOCOLS = Set.of(
+            "com.ss.android.ugc.aweme.search.pages.result.ainative.protocol.Top1AnswerAINativeCardProtocol",
+            "com.ss.android.ugc.aweme.search.pages.result.pov.ui.expand.Top1AnswerExpandCardProtocol",
+            "com.ss.android.ugc.aweme.search.pages.result.bot.component.SearchTakoCardProtocol"
+    );
+
+    private static final Set<String> seenSearchCardProtocols = ConcurrentHashMap.newKeySet();
+
+    /**
+     * The AI answer card at the top of a search's Top tab: a "TikTok Tako · AI summary from"
+     * header, a summary and "See more". Handed here as TikTok builds the view holder a native
+     * search card sits in, with the holder's view and the protocol. The protocol builds the
+     * holder's UI and every bind goes through it, so a holder only ever shows its own protocol's
+     * cards, and with the switch on an AI answer holder's view goes to no height for good, and
+     * back to no height whenever its row is attached again. The switch takes effect on restart, like the questions card. With
+     * diagnostic logging on, each protocol seen is logged once, so an export says which card
+     * a build drew.
+     */
+    public static void hideSearchAnswerCard(View view, Object protocol) {
+        if (protocol != null) hideSearchAnswerCard(view, protocol.getClass().getName());
+    }
+
+    /** The same, with the protocol's class name. */
+    static void hideSearchAnswerCard(View view, String name) {
+        try {
+            if (view == null) return;
+            HookStatus.bound(HOOK_FAMILY, SEARCH_CARDS_READ);
+            if (BaseSettings.DEBUG.get() && seenSearchCardProtocols.add(name)) {
+                Logger.printInfo(() -> "[Morphe TikTok TakoAI] Search card protocol: " + name);
+            }
+            if (!SEARCH_ANSWER_PROTOCOLS.contains(name)) return;
+            boolean enabled = Settings.HIDE_TAKO_AI.get();
+            HookStatus.bound(HOOK_FAMILY, SEARCH_ANSWER_CARD + (enabled ? " hidden" : " left"));
+            if (!enabled) return;
+            collapseRow(view);
+            view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View attached) {
+                    try {
+                        collapseRow(attached);
+                    } catch (Throwable failure) {
+                        HookStatus.threw(HOOK_FAMILY, SEARCH_ANSWER_CARD, failure);
+                    }
+                }
+
+                @Override
+                public void onViewDetachedFromWindow(View detached) {}
+            });
+        } catch (Throwable failure) {
+            // A build whose holder moved: leave the card as TikTok laid it out and say so.
+            HookStatus.threw(HOOK_FAMILY, SEARCH_ANSWER_CARD, failure);
+        }
+    }
+
+    /**
+     * A list row at no height. A row inflated without a parent has no layout params yet, and the
+     * list would give it wrap-content ones and measure the card, so it gets its own zero height,
+     * which the list keeps when it converts them.
+     */
+    static void collapseRow(View row) {
+        if (row.getLayoutParams() == null) {
+            row.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        }
+        collapse(row);
     }
 
     /**

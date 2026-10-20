@@ -232,7 +232,8 @@ class BuildDetailsPatchTest {
         listOf(BuildChoice.P2P, BuildChoice.CORE, BuildChoice.CREATION, BuildChoice.LIVE)
             .forEach { BuildDetails.stripped(output, it, StripSummary(1, 1, true)) }
         BuildDetails.raisedVersionCode(output)
-        listOf("accentColor", "changeAppName", "customLauncherIcon", "trustUserCertificates").forEach { BuildDetails.applied(output, it) }
+        listOf("accentColor", "changeAppName", "customLauncherIcon", "trustUserCertificates", "voiceToolsDebloat")
+            .forEach { BuildDetails.applied(output, it) }
         assertTrue("the record is ${output.length()} bytes", output.length() <= 4096)
     }
 
@@ -259,6 +260,12 @@ class BuildDetailsPatchTest {
         assertEquals("the asset strip's bytecode is the C2PA guard alone",
             setOf(c2paInitGuardPatch), core.filterIsInstance<BytecodePatch>().toSet())
         assertTrue("the asset strip unexpectedly injects runtime hooks", sharedExtensionPatch !in core)
+        // The voice strip leaves TikTok's speech engine without its libraries (#213), same idea.
+        val voice = dependencies(voiceToolsDebloatPatch)
+        assertTrue("the voice strip has no metadata dependency", buildDetailsPatch in voice)
+        assertEquals("the voice strip's bytecode is the speech engine guard alone",
+            setOf(speechEngineGuardPatch), voice.filterIsInstance<BytecodePatch>().toSet())
+        assertTrue("the voice strip unexpectedly injects runtime hooks", sharedExtensionPatch !in voice)
         assertEquals(setOf(liveGiftEffectOptimizerPatch),
             dependencies(liveStreamSuiteOptimizerPatch).filterIsInstance<BytecodePatch>().toSet())
         assertTrue(buildDetailsPatch in dependencies(sharedExtensionPatch))

@@ -60,6 +60,8 @@ import org.junit.Test
  * list's bottom row tints its info icon through the context the list hands it, so that context
  * and the row's text go to the extension before the row runs. LIVE's list rows skip the list's
  * inflater, so the row binders' base asks the extension for each row before TikTok's code runs.
+ * Spark's pages read light or dark from the theme name of the context they open in, so TikTok's
+ * Spark theme lookup and its page color lookup hand that context to the extension first.
  */
 class LiveDarkPanelsAnchorsTest {
     private fun classes(apk: java.io.File): Map<String, ClassDef> {
@@ -155,6 +157,63 @@ class LiveDarkPanelsAnchorsTest {
             // On 47.4.3 that's style/yb, which aapt2 shows X.060v.LIZ setting (2026-10-18).
             if ("47.4.3" in apk.name) assertEquals("${apk.name}: the dark app theme", 0x7f120375, theme)
         }
+    }
+
+    @Test
+    fun `each declared build keeps the Spark theme lookups the spark hook redirects`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val found = classes.values.flatMap { owner -> owner.methods.filter { SparkThemeNameFingerprint.takes(it, owner) } }
+            assertEquals("${apk.name}: the Spark theme lookup", 1, found.size)
+            val owner = classes.getValue(found.single().definingClass)
+            if ("47.4.3" in apk.name) assertEquals("${apk.name}: the Spark theme lookup's class", "LX/0GrQ;", owner.type)
+            val color = sparkThemeColor(owner.methods)
+            assertNotNull("${apk.name}: the Spark page color lookup", color)
+
+            // The hook as the patch writes it: the context goes to the extension before anything
+            // reads it, and the lookup goes on with the extension's answer in its place.
+            for (lookup in listOf(found.single(), color!!)) {
+                val hooked = MutableMethod(lookup)
+                hookSparkTheme(hooked)
+                val code = hooked.implementation!!.instructions.toList()
+                val context = lookup.implementation!!.registerCount - 1
+                assertEquals("${apk.name}: ${lookup.name}'s hook", Opcode.INVOKE_STATIC_RANGE, code[0].opcode)
+                assertEquals("sparkContext", ((code[0] as ReferenceInstruction).reference as MethodReference).name)
+                assertEquals("${apk.name}: ${lookup.name} hands over its context", context, (code[0] as RegisterRangeInstruction).startRegister)
+                assertEquals(Opcode.MOVE_RESULT_OBJECT, code[1].opcode)
+                assertEquals("${apk.name}: ${lookup.name} reads the answer", context, (code[1] as OneRegisterInstruction).registerA)
+                assertEquals("${apk.name}: ${lookup.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+            }
+        }
+    }
+
+    @Test
+    fun `LIVE controls hands both Spark theme lookups to the spark hook`() {
+        val root = java.io.File("src/main/kotlin").takeIf { it.isDirectory } ?: java.io.File("patches/src/main/kotlin")
+        val source = java.io.File(root, "app/morphe/patches/tiktok/interaction/live/LiveControlsPatch.kt").readText()
+        val execute = source.substring(source.indexOf("    execute {"))
+        assertTrue("the theme name lookup isn't found", execute.contains("val sparkTheme = SparkThemeNameFingerprint.method\n"))
+        assertTrue("the theme name lookup isn't hooked", execute.contains("hookSparkTheme(sparkTheme)\n"))
+        assertTrue("the page color lookup isn't hooked", Regex(
+            """hookSparkTheme\(\s*sparkThemeColor\(mutableClassDefBy\(sparkTheme\.definingClass\)\.methods\)""",
+        ).containsMatchIn(execute))
+    }
+
+    private fun lookup(parameter: String, flags: Int = AccessFlags.PUBLIC.value or AccessFlags.FINAL.value) =
+        MutableMethod(ImmutableMethod("Lapp/morphe/Spark;", "LIZIZ", listOf(ImmutableMethodParameter(parameter, null, null)),
+            "Ljava/lang/Integer;", flags, null, null, ImmutableMethodImplementation(3, emptyList(), null, null))).apply {
+            addInstructionsWithLabels(0, "const/4 v0, 0x0\nreturn-object v0")
+        }
+
+    @Test
+    fun `the spark hook takes only an instance lookup of a context`() {
+        assertNotNull(sparkThemeColor(listOf(lookup("Landroid/content/Context;"))))
+        assertNull("a String", sparkThemeColor(listOf(lookup("Ljava/lang/String;"))))
+        assertNull("two lookups", sparkThemeColor(listOf(lookup("Landroid/content/Context;"), lookup("Landroid/content/Context;"))))
+        val static = AccessFlags.PUBLIC.value or AccessFlags.STATIC.value
+        assertNull("a static one", sparkThemeColor(listOf(lookup("Landroid/content/Context;", static))))
+        assertThrows(PatchException::class.java) { hookSparkTheme(lookup("Ljava/lang/String;")) }
+        assertThrows(PatchException::class.java) { hookSparkTheme(lookup("Landroid/content/Context;", static)) }
     }
 
     @Test

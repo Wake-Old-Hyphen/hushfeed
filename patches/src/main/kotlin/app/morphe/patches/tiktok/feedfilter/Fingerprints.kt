@@ -1046,6 +1046,31 @@ internal object SearchTakoSugCardCreatedFingerprint : Fingerprint(
     parameters = listOf("Landroid/view/View;"),
 )
 
+/** The search result card protocol every native search card is built from. */
+internal const val SEARCH_CARD_PROTOCOL_CLASS_DESCRIPTOR =
+    "Lcom/ss/android/ugc/aweme/search/arch/v2/protocol/card/ISearchCardProtocol;"
+
+/**
+ * The view holder every native search result card sits in, built once per card protocol with the
+ * holder's view (p1) and that protocol (p4). The AI answer card at the top of the Top tab comes
+ * from a plugin TikTok downloads (df_search_top1), so its own classes aren't in the APK, but its
+ * holder is built here like every other card's. Real-named class; the third parameter is
+ * R8-named, so it's matched by kind.
+ */
+internal object SearchCardViewHolderConstructorFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/search/arch/v2/protocol/card/parser/SearchCardViewHolder;",
+    name = "<init>",
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/view/View;",
+        "Landroidx/lifecycle/LifecycleOwner;",
+        "L",
+        SEARCH_CARD_PROTOCOL_CLASS_DESCRIPTOR,
+        "Lkotlin/jvm/functions/Function0;",
+        "Lcom/ss/android/ugc/aweme/search/arch/v2/services/signal/impl/SearchContextAbilityImpl;",
+    ),
+)
+
 internal object FollowFeedPresenterPostProcessFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;"),

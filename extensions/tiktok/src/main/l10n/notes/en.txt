@@ -4,7 +4,15 @@
 
 * **TikTok:** Use system font and Use an imported font now reach Activity center, Watch history and TikTok's other web pages (#7).
 
-* **TikTok:** A new switch opens a LIVE room's share menu, viewer rankings, fan club and profile cards dark while TikTok is in dark mode (#159).
+* **TikTok:** A new switch opens a LIVE room's share menu, fan club and profile cards dark while TikTok is in dark mode (#159).
+
+* **TikTok:** A new Feed filter switch, Hide subscriber-only videos, hides posts only a creator's subscribers can watch, on the feed and on profiles (#219).
+
+* **TikTok:** A new Region switch, Keep the For You feed on your real SIM, lets sticker search and PineDrama see the SIM you set while For You asks for videos with your phone's own SIM. It needs the Region spoof patch in your bundle (#214, #215).
+
+* **TikTok:** New Caption height rows under Captions lift spoken captions higher, with one for upright, one for sideways and one for Clear display. Caption boldness replaces Normal-weight captions and goes from Light to Extra bold. If you had that switch on, it comes back as Normal (#206).
+
+* **TikTok:** Double tap and Long press have a new choice, Turn Clear display on or off. It hides the buttons over the video the way TikTok's own Clear display does, and the same gesture brings them back (#136).
 
 ## 0.76.0 (2026-10-18)
 

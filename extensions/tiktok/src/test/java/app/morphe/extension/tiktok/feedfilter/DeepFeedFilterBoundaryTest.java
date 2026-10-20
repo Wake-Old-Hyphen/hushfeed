@@ -68,6 +68,8 @@ public class DeepFeedFilterBoundaryTest {
         private long createTime;
         public List<?> anchors;
         public String commercialVideoInfo;
+        /** Aweme's is_sub_only_video field on 47.4.3, read by its own name. */
+        public boolean isSubOnlyVideo;
 
         Video(String id, boolean ad, long durationMs, String caption) {
             this(id, ad, durationMs, caption, null);
@@ -174,6 +176,7 @@ public class DeepFeedFilterBoundaryTest {
         save(Settings.HIDE_VERIFIED);
         save(Settings.HIDE_SERIES);
         save(Settings.HIDE_PLAYLIST_VIDEOS);
+        save(Settings.HIDE_SUBSCRIBER_ONLY);
         save(Settings.HIDE_INSERTED_CARDS);
         save(Settings.HIDE_SEEN_VIDEOS);
         save(Settings.HIDE_PROMOTIONAL_MUSIC);
@@ -242,6 +245,7 @@ public class DeepFeedFilterBoundaryTest {
         Settings.HIDE_VERIFIED.save(false);
         Settings.HIDE_SERIES.save(false);
         Settings.HIDE_PLAYLIST_VIDEOS.save(false);
+        Settings.HIDE_SUBSCRIBER_ONLY.save(false);
         Settings.HIDE_INSERTED_CARDS.save(false);
         Settings.HIDE_SEEN_VIDEOS.save(false);
         Settings.HIDE_PROMOTIONAL_MUSIC.save(false);
@@ -329,6 +333,37 @@ public class DeepFeedFilterBoundaryTest {
         FriendsResponse friends = new FriendsResponse(new FriendEntry(tagged), ordinaryFriend);
         FeedItemsFilter.filterFriendsFeed(friends);
         assertEquals(List.of(ordinaryFriend), friends.friendFeedData);
+    }
+
+    @Test
+    public void subscriberOnlyPostsLeaveTheFeedAndProfileGridsOnlyWithTheirSwitch() {
+        Video locked = new Video("subs-only", false, 500, "");
+        locked.isSubOnlyVideo = true;
+        Video open = new Video("public", false, 500, "");
+
+        FeedItemList page = new FeedItemList();
+        page.items = new ArrayList<>(List.of(locked, open));
+        FeedItemsFilter.filterOnRead(page);
+        assertEquals("off keeps them", List.of(locked, open), page.items);
+        assertEquals(List.of(locked, open), FeedItemsFilter.filterProfileAds(List.of(locked, open)));
+
+        Settings.HIDE_SUBSCRIBER_ONLY.save(true);
+        Video lockedNext = new Video("subs-only-next", false, 500, "");
+        lockedNext.isSubOnlyVideo = true;
+        Video openNext = new Video("public-next", false, 500, "");
+        FeedItemList next = new FeedItemList();
+        next.items = new ArrayList<>(List.of(lockedNext, openNext));
+        FeedItemsFilter.filterOnRead(next);
+        assertEquals(List.of(openNext), next.items);
+        // A creator's grid is where these sit, so the profile grid runs this rule beside ads.
+        assertEquals(List.of(open), FeedItemsFilter.filterProfileAds(List.of(locked, open)));
+        // The pager the reader tapped into keeps it, so it still starts on the tapped video (#135).
+        assertEquals(List.of(locked, open), FeedItemsFilter.filterProfileDetailAds(List.of(locked, open)));
+        // The feed's other preferences still stay off profile grids (#35).
+        Settings.FILTER_LOCATION_VIDEOS.save(true);
+        Video tagged = new Video("place", false, 500, "");
+        tagged.anchors = List.of(new LocationBadgeFilterTest.Anchor("anchor_poi"));
+        assertEquals(List.of(tagged, open), FeedItemsFilter.filterProfileAds(List.of(tagged, locked, open)));
     }
 
     @Test

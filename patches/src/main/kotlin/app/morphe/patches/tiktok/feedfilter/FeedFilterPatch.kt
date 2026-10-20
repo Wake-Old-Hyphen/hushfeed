@@ -729,6 +729,16 @@ val feedFilterPatch = bytecodePatch(
         }
         takoSugCard?.hideTakoSugCardAtReturns(required = declaredBuild)
 
+        // The AI answer card at the top of a search's Top tab ("TikTok Tako · AI summary from",
+        // 47.4.3). Its code is in a plugin TikTok downloads, so the hook sits in the base app's
+        // holder every native card is built in, and the extension tells the card by its protocol.
+        val searchCardHolder = if (declaredBuild) {
+            SearchCardViewHolderConstructorFingerprint.method
+        } else {
+            SearchCardViewHolderConstructorFingerprint.methodOrNull
+        }
+        searchCardHolder?.hideSearchAnswerCardAtReturns(required = declaredBuild)
+
         // The Tako bar inside the comments sheet, the "related words" strip above the comment
         // list. It is a server-driven top bar component of biz type SEARCH_TAKO (the service in
         // the Tako package) or SEARCH_TAKO_BG (the commentv2 bridge to the same Tako service).
@@ -1060,6 +1070,37 @@ internal fun MutableMethod.hideTakoSugCardAtReturns(required: Boolean) {
         addInstructionsAtControlFlowLabel(
             returnIndex,
             "invoke-static/range {p1 .. p1}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->hideSearchSugCard(Landroid/view/View;)V",
+        )
+    }
+}
+
+/**
+ * Hands the search card holder's view (p1) and card protocol (p4) to the extension at every
+ * return of `SearchCardViewHolder.<init>`. A build that writes over either would hand the
+ * extension something else, and one whose two registers no longer fit a plain invoke can't take
+ * it, so that build and one with no return to hook go without the hook: a [PatchException] when
+ * [required], the constructor left as it is otherwise.
+ */
+internal fun MutableMethod.hideSearchAnswerCardAtReturns(required: Boolean) {
+    fun skip(why: String) {
+        if (required) throw PatchException("Feed filter: SearchCardViewHolder.<init> $why")
+    }
+    val code = implementation ?: return skip("has no implementation")
+    // p0 is the holder, then one register for each of the six object parameters.
+    val view = code.registerCount - 6
+    val protocol = code.registerCount - 3
+    if (protocol > 15) return skip("keeps its parameters past v15")
+    if (code.instructions.any { it.writes(view) || it.writes(protocol) }) {
+        return skip("writes over its view or protocol parameter")
+    }
+    val returnIndices = code.instructions.withIndex()
+        .filter { it.value.opcode == Opcode.RETURN_VOID }
+        .map { it.index }
+    if (returnIndices.isEmpty()) return skip("has no return to hook")
+    returnIndices.asReversed().forEach { returnIndex ->
+        addInstructionsAtControlFlowLabel(
+            returnIndex,
+            "invoke-static {p1, p4}, $TAKO_AI_FILTER_CLASS_DESCRIPTOR->hideSearchAnswerCard(Landroid/view/View;Ljava/lang/Object;)V",
         )
     }
 }

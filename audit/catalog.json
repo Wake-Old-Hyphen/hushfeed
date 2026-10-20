@@ -4388,6 +4388,13 @@
     "restart": true
    },
    {
+    "key": "hide_subscriber_only",
+    "default": false,
+    "type": "bool",
+    "row": "Hide subscriber-only videos",
+    "restart": true
+   },
+   {
     "key": "hide_paid_partnership",
     "default": false,
     "type": "bool",
@@ -11337,6 +11344,12 @@
     "restart": true
    },
    {
+    "key": "simspoof_feed_real",
+    "default": false,
+    "type": "bool",
+    "row": "Keep the For You feed on your real SIM"
+   },
+   {
     "key": "region_store_spoof",
     "default": false,
     "type": "bool",
@@ -12028,6 +12041,72 @@
    }
   ],
   "notes": "With the default option (\"all\", the patch keeps every language) nothing is removed, so the audit APK shows kept_all (reviewed language set) or unverified (an unreviewed set, where the patch keeps everything). To test removal, patch a second APK with locales \"en,es\" and expect stripped plus native_locales_retained listing exactly those; the repo records no per-language file paths short of the 64 assets/lang_* directories, which the runner cannot enumerate. Strings in TikTok's UI staying in the phone's language is the visible check for a wrongly emptied pack (learned note #125)."
+ },
+ {
+  "name": "Remove voice tools",
+  "category": "Performance",
+  "default": false,
+  "kind": "static",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/optimizer/ResourceOptimizerPatches.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/optimizer/SpeechEngineGuardPatch.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/optimizer/VerifiedResourceStripper.kt"
+  ],
+  "settings": [],
+  "surface": "apk",
+  "checks": [
+   {
+    "id": "build-record-voice-tools",
+    "what": "The build details baked into the APK list voiceToolsDebloat among the applied resource patches.",
+    "steps": [
+     {
+      "probe": "report",
+      "expect": "^patch_time\\.resource_patches: .*\\bvoiceToolsDebloat\\b",
+      "waitMs": 10000
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "voice-files-emptied",
+    "what": "The four speech libraries named by the strip are zero-length in the APK.",
+    "steps": [
+     {
+      "apk": "entry-empty",
+      "path": "lib/arm64-v8a/libspeechengine.so"
+     },
+     {
+      "apk": "entry-empty",
+      "path": "lib/arm64-v8a/libspeechepg.so"
+     },
+     {
+      "apk": "entry-empty",
+      "path": "lib/arm64-v8a/libspeechsdk.so"
+     },
+     {
+      "apk": "entry-empty",
+      "path": "lib/arm64-v8a/libspeechspg.so"
+     }
+    ],
+    "auto": true
+   },
+   {
+    "id": "tiktok-runs",
+    "what": "TikTok started and sits on the For You feed with the patch built in.",
+    "steps": [
+     {
+      "open": "feed"
+     },
+     {
+      "probe": "feed",
+      "expect": "isOnFeed=true",
+      "waitMs": 1500
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "The strip empties libspeechengine, libspeechepg, libspeechsdk and libspeechspg for both ABIs (about 16.2 MiB); the split-bundle profile lacks the armeabi-v7a libspeechepg and libspeechspg, so only arm64 files are asserted. libaudio_fingerprint_sdk, which all four list in DT_NEEDED, stays. The bytecode guard (SpeechEngineGuardPatch) stops the engine class initializer's load, leaves the bridge null and answers createEngine, getVersion and isEngineSupported (engine and generator) and the generator's initMonitor up front; every other engine method already returns on the -1 handle. Voice search, song recognition from search, AI assistant dictation and the music check while posting are not scripted: each needs the microphone or a post, and posting is never done from the audit phone."
  },
  {
   "name": "Repost diagnostics",
@@ -15225,16 +15304,34 @@
     "row": "Caption background"
    },
    {
-    "key": "caption_regular_weight",
-    "default": false,
-    "type": "bool",
-    "row": "Normal-weight captions"
+    "key": "caption_bottom_offset",
+    "default": 0,
+    "type": "int",
+    "row": "Caption height"
+   },
+   {
+    "key": "caption_landscape_offset",
+    "default": 0,
+    "type": "int",
+    "row": "Caption height in landscape"
+   },
+   {
+    "key": "caption_font_weight",
+    "default": "default",
+    "type": "string",
+    "row": "Caption boldness"
    },
    {
     "key": "keep_captions_clear_display",
     "default": false,
     "type": "bool",
     "row": "Keep captions in Clear display"
+   },
+   {
+    "key": "caption_clear_display_offset",
+    "default": 0,
+    "type": "int",
+    "row": "Caption height in Clear display"
    },
    {
     "key": "download_subtitles",

@@ -380,6 +380,35 @@ public class LivePanelThemeTest {
         assertEquals(textColor(other), textColor(plain));
     }
 
+    @Test public void aDarkenedRoomsSparkPagesReadTheRoomsLightTheme() {
+        RuntimeEnvironment.setQualifiers("+night");
+        Activity live = room();
+        int roomText = textColor(live);
+        assertSame("the switch starts off", live, LivePanelTheme.sparkContext(live));
+        Settings.DARK_LIVE_PANELS.save(true);
+        assertSame("a room the switch never darkened", live, LivePanelTheme.sparkContext(live));
+        LivePanelTheme.darkLiveRoom(live, android.R.style.Theme_Black);
+        assertTrue("the room went dark", roomText != textColor(live));
+
+        Context spark = LivePanelTheme.sparkContext(live);
+        assertNotSame(live, spark);
+        assertEquals("the room's light theme", roomText, textColor(spark));
+        assertTrue("the room itself stays dark", roomText != textColor(live));
+        assertEquals("found through a popup's own wrapper", roomText,
+                textColor(LivePanelTheme.sparkContext(new ContextThemeWrapper(live, OVERLAY))));
+        assertSame("outside a room", dark, LivePanelTheme.sparkContext(dark));
+        assertSame("no context", null, LivePanelTheme.sparkContext(null));
+
+        Settings.DARK_LIVE_PANELS.save(false);
+        assertSame("the switch off", live, LivePanelTheme.sparkContext(live));
+        Settings.DARK_LIVE_PANELS.save(true);
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, true));
+        assertSame("paused", live, LivePanelTheme.sparkContext(live));
+        ReflectionHelpers.callStaticMethod(Setting.class, "setPausedForProcess", ClassParameter.from(boolean.class, false));
+        SettingsStatus.liveControlsEnabled = false;
+        assertSame("without the patch", live, LivePanelTheme.sparkContext(live));
+    }
+
     @Test public void theRankingsTabsReadTheirColorsThroughItsLightTheme() {
         RuntimeEnvironment.setQualifiers("+night");
         Activity live = room();

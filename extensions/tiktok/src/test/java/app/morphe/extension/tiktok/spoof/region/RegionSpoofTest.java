@@ -41,6 +41,8 @@ public class RegionSpoofTest {
         Settings.REGION_REQUEST_SPOOF.save(false);
         Settings.SIM_SPOOF_ISO.save("jp");
         Settings.SIMSPOOF_MCCMNC.save("44010");
+        Settings.SIMSPOOF_OP_NAME.save("NTT DOCOMO");
+        Settings.SIM_SPOOF_FEED_REAL.save(false);
     }
     @After public void tearDown() {
         RegionSpoof.requestDone();
@@ -236,6 +238,122 @@ public class RegionSpoofTest {
             RegionSpoof.requestDone();
             assertEquals(requestParams(), params);
         });
+    }
+
+    @Test public void onlyTheForYouPathsAreFeedFills() {
+        for (String path : new String[]{"/aweme/v1/feed/", "/aweme/v2/feed/", "//aweme/v12/feed/"}) {
+            assertTrue(path, RegionSpoof.isForYouFeed(path));
+        }
+        for (String path : new String[]{null, "", "/", "/aweme/v1/feed", "/aweme/v1/follow/feed/",
+                "/aweme/v1/friend/feed/", "/aweme/v/feed/", "aweme/v1/feed/", "/aweme/v1/feed/more/",
+                "/api/aweme/v1/feed/", "/aweme/vx/feed/", "/passport/user/login/"}) {
+            assertFalse(String.valueOf(path), RegionSpoof.isForYouFeed(path));
+        }
+    }
+
+    @Test public void aForYouRequestCarriesThePhonesOwnSimWhereTheFieldsHeldThePreset() {
+        Settings.REGION_REQUEST_SPOOF.save(true);
+        Settings.SIM_SPOOF_FEED_REAL.save(true);
+        phoneSim("de", "", "26201", "Telekom.de");
+        Map<String, String> params = simParams();
+        params.put("account_region", "JP");
+        Locale locale = Locale.US;
+        withSystem(Locale.GERMANY, "Europe/Berlin", () -> {
+            RegionSpoof.requestPath("/aweme/v1/feed/");
+            // AppLog's fill for the same request runs inside the handler's.
+            RegionSpoof.requestUrl("https://api16-normal-c-useast1a.tiktokv.com/aweme/v1/feed/?count=6");
+            assertEquals("the getters answered the preset inside a For You fill", "US", RegionSpoof.country("US"));
+            assertSame(locale, RegionSpoof.locale(locale));
+            RegionSpoof.requestParams(params);
+            RegionSpoof.requestDone();
+            assertEquals("the inner fill's end took the mark off", "US", RegionSpoof.country("US"));
+            RegionSpoof.requestDone();
+            assertEquals("JP", RegionSpoof.country("US"));
+        });
+        assertEquals("DE", params.get("carrier_region"));
+        assertEquals("DE", params.get("region"));
+        assertEquals("the field's own case is kept", "de", params.get("op_region"));
+        assertEquals("de", params.get("sim_region"));
+        assertEquals("26201", params.get("mcc_mnc"));
+        assertEquals("Telekom.de", params.get("carrier"));
+        assertEquals("the start-up copies are the system's now", "DE", params.get("sys_region"));
+        assertEquals("Europe/Berlin", params.get("timezone_name"));
+        // Match region fields in requests doesn't reach a For You request with the switch on.
+        assertEquals("US", params.get("current_region"));
+        assertEquals("US", params.get("residence"));
+        assertEquals("262", params.get("carrier_region_v2"));
+        assertEquals("a field that isn't the SIM's was changed", "JP", params.get("account_region"));
+    }
+
+    @Test public void aForYouRequestKeepsWhatIsntThePresetAndEverythingElseKeepsThePreset() {
+        Settings.SIM_SPOOF_FEED_REAL.save(true);
+        phoneSim("", "fr", "", "");
+        Map<String, String> params = simParams();
+        params.put("carrier_region", "GB");
+        forYou(params);
+        assertEquals("a value the preset didn't set was changed", "GB", params.get("carrier_region"));
+        assertEquals("the network's country stands in for a missing SIM", "FR", params.get("region"));
+        assertEquals("an operator nobody reported replaced the preset's", "44010", params.get("mcc_mnc"));
+        assertEquals("NTT DOCOMO", params.get("carrier"));
+
+        phoneSim("", "", "", "");
+        params = simParams();
+        forYou(params);
+        assertEquals("JP", params.get("carrier_region"));
+        assertEquals("jp", params.get("op_region"));
+
+        // The Following feed, the switch off, and the SIM override off all leave the map alone.
+        phoneSim("de", "de", "26201", "Telekom.de");
+        params = simParams();
+        RegionSpoof.requestPath("/aweme/v1/follow/feed/");
+        RegionSpoof.requestParams(params);
+        RegionSpoof.requestDone();
+        assertEquals(simParams(), params);
+        for (Runnable off : new Runnable[]{
+                () -> Settings.SIM_SPOOF_FEED_REAL.save(false),
+                () -> Settings.SIM_SPOOF.save(false)}) {
+            setup();
+            Settings.SIM_SPOOF_FEED_REAL.save(true);
+            off.run();
+            params = simParams();
+            forYou(params);
+            assertEquals(simParams(), params);
+        }
+    }
+
+    /** Builds a For You request's parameters, inside a system that matches the fixture's copies. */
+    private static void forYou(Map<String, String> params) {
+        withSystem(Locale.JAPAN, "Asia/Tokyo", () -> {
+            RegionSpoof.requestPath("/aweme/v2/feed/");
+            RegionSpoof.requestParams(params);
+            RegionSpoof.requestDone();
+        });
+    }
+
+    /** What TikTok's builder sends with the SIM preset set to Japan's NTT DOCOMO. */
+    private static Map<String, String> simParams() {
+        Map<String, String> params = requestParams();
+        params.put("carrier_region", "JP");
+        params.put("region", "JP");
+        params.put("op_region", "jp");
+        params.put("sim_region", "jp");
+        params.put("sys_region", "JP");
+        params.put("carrier_region_v2", "262");
+        params.put("mcc_mnc", "44010");
+        params.put("carrier", "NTT DOCOMO");
+        return params;
+    }
+
+    private static void phoneSim(String simCountry, String networkCountry, String operator, String operatorName) {
+        android.telephony.TelephonyManager phone = (android.telephony.TelephonyManager)
+                RuntimeEnvironment.getApplication().getSystemService(android.content.Context.TELEPHONY_SERVICE);
+        org.robolectric.shadows.ShadowTelephonyManager shadow = org.robolectric.Shadows.shadowOf(phone);
+        shadow.setSimCountryIso(simCountry);
+        shadow.setNetworkCountryIso(networkCountry);
+        shadow.setNetworkOperator(operator);
+        shadow.setSimOperator("");
+        shadow.setNetworkOperatorName(operatorName);
+        shadow.setSimOperatorName("");
     }
 
     @Test public void aUrlBeingBuiltMarksTheThreadLikeAUrlAndANullOneDoesNothing() {
@@ -475,7 +593,15 @@ public class RegionSpoofTest {
             assertNotNull(screen.findPreference("region_spoof"));
             assertNotNull(screen.findPreference("region_store_spoof"));
             assertNotNull(screen.findPreference("region_request_spoof"));
-            var country = (app.morphe.extension.tiktok.settings.preference.InputTextPreference)
+            assertNotNull(screen.findPreference("simspoof_feed_real"));
+            // Without the region patch nothing would put the real SIM back, so there's no row.
+            SettingsStatus.regionSpoofEnabled = false;
+            var simOnly = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new SimSpoofPreferenceCategory(activity, simOnly);
+            assertNull(simOnly.findPreference("simspoof_feed_real"));
+            assertNotNull(simOnly.findPreference("simspoof"));
+            SettingsStatus.regionSpoofEnabled = true;
+            var country =(app.morphe.extension.tiktok.settings.preference.InputTextPreference)
                     screen.findPreference("simspoof_iso");
             assertFalse(country.callChangeListener("zz"));
             assertFalse(country.callChangeListener(""));

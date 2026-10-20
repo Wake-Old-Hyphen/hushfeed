@@ -372,6 +372,8 @@ Comment sort and dislike styles,评论排序和不喜欢的风格
 "Comment with live photos, the camera or audio",使用实时照片、相机或音频进行评论
 Comments,评论
 Comments aren't available for this video,该视频无法发表评论
+Turn Clear display on or off,开启或关闭清除显示
+Clear display isn't available for this video,该视频无法使用清除显示
 Comments beside the video,视频旁边的评论
 Comments range,评论范围
 Compact comment header,紧凑的评论标题
@@ -521,7 +523,6 @@ Downloads,下载
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,沿着视频的左边缘或右边缘向上或向下拖动以更改边缘条在下方的设置。默认情况下，左侧是屏幕亮度，右侧是音量。在其他地方滑动仍然会滚动信息流.
 Drama and Series,戏剧和连续剧
 "Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.",在进度条上画一个更大的手柄和一条稍粗的线，这样就更容易看到您所在的位置.
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.,以常规粗细绘制语音字幕，而不是 TikTok 的粗体。适用于下一个标题.
 Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.,每个区域显示在这个 TikTok 中找到了 Hushfeed 寻找的东西以及丢失了多少东西.
 Easier comment likes,评论点赞更简单
 Edge strip width,封边条宽度
@@ -713,6 +714,7 @@ Hide reply previews,隐藏回复预览
 Don't open a reply under each comment. View replies still shows all of them.,不在每条评论下展开一条回复。查看回复仍会显示全部回复.
 "Hide place badges on videos, including cards with multiple places. Videos and your location permissions stay unchanged.",隐藏视频上的地点徽章，包括具有多个地点的卡片。视频和您的位置权限保持不变.
 Hide playlist videos,隐藏播放列表视频
+Hide subscriber-only videos,隐藏仅限订阅者的视频
 Hide profile shortcuts,隐藏个人资料快捷方式
 Hide profile shortcuts by name,按名称隐藏配置文件快捷方式
 Hide profile views,隐藏个人资料视图
@@ -816,6 +818,7 @@ Hide video actions,隐藏视频动作
 Hide videos marked as paid partnership or branded content.,隐藏标记为付费合作伙伴或品牌内容的视频.
 Hide videos marked as using promotional music.,隐藏标记为使用促销音乐的视频.
 Hide videos posted as part of a playlist.,隐藏作为播放列表的一部分发布的视频.
+"Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.",在推荐流和个人主页上隐藏只有创作者的订阅者才能观看的带锁帖子.
 Hide videos posted by verified accounts.,隐藏已验证帐户发布的视频.
 Hide videos that belong to a paid Series.,隐藏属于付费系列的视频.
 "Hide videos that use a sound blocked with the player's sound button, or named below.",隐藏使用播放器声音按钮阻止的声音或如下命名的视频.
@@ -1003,6 +1006,8 @@ Mark saved videos,标记已保存的视频
 Marked as not interested,标记为不感兴趣
 Match locale and timezone to country,将区域设置和时区与国家/地区相匹配
 Match region fields in requests,匹配请求中的区域字段
+Keep the For You feed on your real SIM,让“为你”使用真实 SIM 卡
+"Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.",贴纸搜索、PineDrama 和 TikTok 的其他部分仍会看到上面的 SIM 卡，而“为你”会按你手机自己的 SIM 卡国家和运营商请求视频。你的 IP 地址和账号历史仍会起作用.
 Match text stickers too,也匹配文字贴纸
 Matches the rule: %1$s,匹配规则：%1$s
 Maximum,最大
@@ -1085,7 +1090,18 @@ None of these gates had an override to reset.,这些门都没有可以重置的�
 None of these gates takes a true or false value.,这些门都不采用 true 或 false 值.
 None recorded,没有记录
 Normal,正常
-Normal-weight captions,正常粗细的字幕
+Caption height,字幕高度
+"Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.",手机竖直时，把语音字幕抬到 TikTok 的位置之上。填 0 使用 TikTok 的位置，最高 %1$d.
+Caption height in landscape,横屏字幕高度
+"Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.",手机横置时，把语音字幕抬到 TikTok 的位置之上。填 0 使用 TikTok 的位置，最高 %1$d.
+Caption boldness,字幕粗细
+Light,细
+Medium,中等
+Semi-bold,半粗
+Bold,粗
+Extra bold,特粗
+Caption height in Clear display,显示清晰时的字幕高度
+"Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.",显示清晰时，把保留的字幕抬到通常位置之上。填 0 使用通常位置，最高 %1$d.
 "Not a handle or id, so ignored: %1$s",不是句柄或 ID，因此被忽略：%1$s
 "Not a part Hushfeed fills in, so it's kept as typed: %1$s",Hushfeed 部分未填写，因此保持键入的状态：%1$s
 Not blocked,没有被阻止
@@ -1223,6 +1239,7 @@ Playback,回放
 Player,玩家
 Playing at %1$sx,在 %1$sx 进行比赛
 Playlist posts,播放列表帖子
+Subscriber-only posts,仅限订阅者的帖子
 Plays videos that TikTok covers with a content warning without asking you to tap through first.,播放 TikTok 包含内容警告的视频，而不要求您先点按.
 Popular,热门
 Popups,弹出窗口

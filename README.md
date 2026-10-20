@@ -25,14 +25,14 @@ Hushfeed is a set of [Morphe](https://github.com/MorpheApp/morphe-manager) patch
 
 Most switches start off, so a freshly patched TikTok looks and works the way it ships until you turn something on. What changed in each version is in the [changelog](CHANGELOG.md).
 
-**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 135 source patches](#patches)
+**[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 136 source patches](#patches)
 
 > [!IMPORTANT]
 > Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.76.0 contains 135 patches for TikTok 47.4.3. New in this one: it moves to TikTok 47.4.3, so patch that build instead of 47.1.4. Profile grids can show each video's length, and a new switch hides the reply TikTok opens under every comment. It needs Morphe Manager 1.34.0 or newer.
 
-The main branch contains 135 patches, the same set as v0.76.0.
+The main branch contains 136 patches, one more than v0.76.0.
 
 ## What it changes
 
@@ -55,7 +55,7 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 1. Get the TikTok 47.4.3 APK. Google Play only offers the newest build, so take it from APKMirror: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
 2. Use Morphe Manager 1.34.0 or newer. This bundle is built against patcher 1.15.1, which Manager 1.34.0 was the first to ship, and older Managers won't load it. morphe-desktop works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
-4. Pick the patches. Simple mode in Morphe Manager selects 117 of the 135 Hushfeed patches. The other 18 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 135 Hushfeed patches in eleven categories you can expand or collapse. Give the manager 1,024 MB of memory under **Settings > Process runtime** before you start, since less makes patching slow or stall.
+4. Pick the patches. Simple mode in Morphe Manager selects 117 of the 136 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 136 Hushfeed patches in eleven categories you can expand or collapse. Give the manager 1,024 MB of memory under **Settings > Process runtime** before you start, since less makes patching slow or stall.
 5. Patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key, because an update only installs over your copy, with your login intact, when it's signed with the same key.
 6. Install the patched APK, open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
 
@@ -119,10 +119,10 @@ Settings use the same rounded panels and controls across every page, in dark and
 
 ## Patches
 
-Simple mode in Morphe Manager selects 117 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 18 stay out of the default selection, and you pick them in Expert mode:
+Simple mode in Morphe Manager selects 117 of these patches. Each row says what the patch does, whether its switch starts on or off, and where to find it. The other 19 stay out of the default selection, and you pick them in Expert mode:
 
 - Change app name, Custom launcher icon, Hide Play Store update offer, Look like the store app and Run beside the store app change the app's name, icon, signature, package or version code.
-- Accent color, AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras and Remove unused language packs change TikTok's files while patching. Only a fresh patch takes that back.
+- Accent color, AMOLED dark theme, Block P2P video relay, Remove content credential and card scanner assets, Remove creation tools, Remove LIVE extras, Remove unused language packs and Remove voice tools change TikTok's files while patching. Only a fresh patch takes that back.
 - Trust user certificates changes TikTok with no switch in front of it.
 - Feature Gate Recorder and Network request report only record what TikTok does, for research. Hide the risk control CAPTCHA sits on TikTok's account checks.
 - Region spoof changes the region TikTok sees on every read, sign-in included. Skip first-launch setup only helps when it's picked before TikTok's first start, so its switch starts on.
@@ -228,6 +228,7 @@ Simple mode in Morphe Manager selects 117 of these patches. Each row says what t
 | `Remove creation tools` | Removes TikTok's camera, editing and effects files, saving about 38 MB of storage. The catch: the Create tab and every recording, editing and effects tool stop working, and opening one, like effect search, can close TikTok. Leave it out if you make videos. |
 | `Remove LIVE extras` | Removes the files for LIVE co-hosting, joining a LIVE as a guest, matches, games and gift effects, so the app gets about 3 MB smaller. The catch: in LIVEs, battle scores and guest names can go missing, and joining someone's LIVE by voice or video, co-hosting, games or animated gifts may stop working. |
 | `Remove unused language packs` | Removes the app languages you don't list in this patch's options, saving up to about 26 MB of storage. English is always kept. With no list it keeps them all. Only patching again brings removed ones back. |
+| `Remove voice tools` | Removes TikTok's speech recognition files, saving about 16 MB of storage. The catch: voice search, naming a song by listening, talking to TikTok's AI assistant and TikTok's music check on videos you post all stop working. Only patching again without it brings them back. |
 | `Repost diagnostics` | With diagnostic logging on, notes when you repost a video and what TikTok answered, to help track down reposts that don't stick. Works as soon as you patch it in, with no switch. |
 | `Resource and battery governor` | Stops TikTok reading your phone's motion sensors, which it can use to identify your phone, and stops a background speed test that can use a lot of memory. Starts off. Turn it on in Hushfeed settings > Privacy. |
 | `Resume videos after scrolling` | When you scroll back to a video, it picks up where you left off instead of starting over. On by default. Turn it off in Hushfeed settings > Playback. |
@@ -301,7 +302,7 @@ A few patches change TikTok with no switch in front of them, and Pause can't rea
 - Settings itself, which is how you get back to the switch.
 - Accent color, AMOLED dark theme, Hide Play Store update offer, Change app name and Custom launcher icon.
 - Disable screen capture detection, Disable login requirement and Fix Google login.
-- Block P2P video relay and the four patches that take files out of the app: Remove content credential and card scanner assets, Remove unused language packs, Remove creation tools and Remove LIVE extras.
+- Block P2P video relay and the five patches that take files out of the app: Remove content credential and card scanner assets, Remove unused language packs, Remove creation tools, Remove LIVE extras and Remove voice tools.
 - In Downloads, the folder and file name you picked still apply, as do the fallback to a clean video address and the save button on stickers.
 
 ### TikTok closes right after it opens

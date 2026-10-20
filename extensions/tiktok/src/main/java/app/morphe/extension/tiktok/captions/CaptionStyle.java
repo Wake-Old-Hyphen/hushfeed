@@ -6,6 +6,7 @@
  */
 package app.morphe.extension.tiktok.captions;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -14,11 +15,17 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 import app.morphe.extension.shared.ResourceIdCache;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
+import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.tiktok.settings.Settings;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -69,10 +76,32 @@ public final class CaptionStyle {
         return clampSize(Settings.CAPTION_TEXT_SIZE.get());
     }
 
+    /** The highest a caption height may lift a caption, in dp. The settings rows say this number. */
+    public static final int MAX_HEIGHT_DP = 300;
+
+    public static int clampHeight(int value) {
+        return Math.max(0, Math.min(MAX_HEIGHT_DP, value));
+    }
+
+    /**
+     * The weight Caption boldness asks for, or 0 for TikTok's own. Anything the picker can't have
+     * written, from a hand-edited backup say, is TikTok's own too.
+     */
+    static int fontWeight() {
+        String value = Settings.CAPTION_FONT_WEIGHT.get();
+        if (value == null || "default".equals(value)) return 0;
+        try {
+            int weight = Integer.parseInt(value.trim());
+            return weight >= 100 && weight <= 900 ? weight : 0;
+        } catch (NumberFormatException notAWeight) {
+            return 0;
+        }
+    }
+
     public static Layout layout(Layout original) {
         int size = size();
-        boolean regular = Settings.CAPTION_REGULAR_WEIGHT.get();
-        if (original == null || size == 0 && !regular) return original;
+        int weight = fontWeight();
+        if (original == null || size == 0 && weight == 0) return original;
         // On the host's render path, so nothing here may throw. The context is set long before
         // a caption is drawn, but a null answer costs one line. The window's width caps it, so
         // a split view's half of the screen isn't given the whole display's.
@@ -81,8 +110,8 @@ public final class CaptionStyle {
         TextPaint paint = new TextPaint(original.getPaint());
         android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         if (size > 0) paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, size, metrics));
-        if (regular) {
-            regularWeight(paint, paint.getTextSize() / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1, metrics));
+        if (weight > 0) {
+            applyWeight(paint, paint.getTextSize() / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1, metrics), weight);
         }
         int cap = metrics.widthPixels
                 - Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TIKTOK_MARGINS_DP, metrics));
@@ -109,21 +138,25 @@ public final class CaptionStyle {
     /**
      * TikTok Sans is a variable font. TikTok builds each tux font from its weight axis, and sets
      * its optical size axis to the text's size in sp, so the caption keeps TikTok's shapes and
-     * only its weight drops to 400 ({@code X.05o5} and {@code X.03xz} on 47.1.4). The typeface
-     * is asked for at 400 as well, so a bold style it carried can't come back through it.
+     * only its weight changes ({@code X.05o5} and {@code X.03xz} on 47.1.4). The typeface is
+     * asked for at the same weight, so a bold style it carried can't come back through it, and
+     * fake bold stays off: on top of a real 700 it smeared the strokes. Below API 28 a typeface
+     * has only bold or not, so 600 and up is bold there.
      */
-    static void regularWeight(TextPaint paint, float sp) {
+    static void applyWeight(TextPaint paint, float sp, int weight) {
         paint.setFakeBoldText(false);
         android.graphics.Typeface typeface = paint.getTypeface();
         boolean italic = typeface != null && typeface.isItalic();
+        boolean bold = weight >= 600;
         if (android.os.Build.VERSION.SDK_INT >= 28) {
-            paint.setTypeface(android.graphics.Typeface.create(typeface, 400, italic));
-        } else if (typeface != null && typeface.isBold()) {
-            paint.setTypeface(android.graphics.Typeface.create(typeface,
-                    italic ? android.graphics.Typeface.ITALIC : android.graphics.Typeface.NORMAL));
+            paint.setTypeface(android.graphics.Typeface.create(typeface, weight, italic));
+        } else if (typeface != null && typeface.isBold() != bold) {
+            paint.setTypeface(android.graphics.Typeface.create(typeface, bold
+                    ? (italic ? android.graphics.Typeface.BOLD_ITALIC : android.graphics.Typeface.BOLD)
+                    : (italic ? android.graphics.Typeface.ITALIC : android.graphics.Typeface.NORMAL)));
         }
         if (android.os.Build.VERSION.SDK_INT >= 26) {
-            paint.setFontVariationSettings(String.format(java.util.Locale.ROOT, "'wght' 400, 'opsz' %.1f", sp));
+            paint.setFontVariationSettings(String.format(java.util.Locale.ROOT, "'wght' %d, 'opsz' %.1f", weight, sp));
         }
     }
 
@@ -154,7 +187,113 @@ public final class CaptionStyle {
         return Math.min(grown, Math.max(base, cap));
     }
 
+    /**
+     * Caption heights (#206). The caption's container moves up by a translation, which TikTok's
+     * layout never sees, so the room it leaves for the caption stays as it was. What TikTok set as
+     * the container's translation is kept: each pass works out TikTok's part from what this one
+     * left there, and a value that changed since is TikTok's own. A lifted caption also gets a
+     * little Z, so it draws above the views it now overlaps rather than under them.
+     *
+     * <p>A group cuts its children off at its own edge when its parent clips children (a group's
+     * own clipChildren only clips each child at the child's bounds, which move with the
+     * translation). So while the lift is on, the parent of each group the lifted caption pokes out
+     * of stops clipping, as does a padded group the caption pokes into the top padding of, and
+     * each gets its own setting back when the height goes to 0. It stops at the first group with
+     * room for the lifted caption, three at most: the feed's pager and its pages clip on purpose
+     * and are full-screen, so they always have room.
+     */
+    private static final Map<View, Lift> LIFTS = new WeakHashMap<>();
+    private static final int UNCLIP_DEPTH = 3;
+    private static final float LIFT_Z_DP = 1;
+
+    private static final class Lift {
+        int px;
+        /** The translation this left on the container, TikTok's Z and the Z this put over it. */
+        float y, z, liftedZ;
+        /** The groups this stopped clipping, so they get it back even after the container moves. */
+        final List<WeakReference<ViewGroup>> unclipped = new ArrayList<>();
+        /** The groups this stopped clipping at their padding. */
+        final List<WeakReference<ViewGroup>> unpadded = new ArrayList<>();
+    }
+
+    /** The lift on this caption container in pixels, or 0. */
+    static int liftOf(View root) {
+        Lift lift = root == null ? null : LIFTS.get(root);
+        return lift == null ? 0 : lift.px;
+    }
+
+    /** TikTok's caption's height in pixels for the way the phone is held: the landscape one while it's sideways. */
+    static int heightPx(View view) {
+        boolean sideways = view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        return heightPx(view, sideways ? Settings.CAPTION_LANDSCAPE_OFFSET : Settings.CAPTION_BOTTOM_OFFSET);
+    }
+
+    /** One height row in pixels. */
+    static int heightPx(View view, IntegerSetting height) {
+        int dp = clampHeight(height.get());
+        return dp == 0 ? 0 : Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                view.getResources().getDisplayMetrics()));
+    }
+
+    static void lift(View root, int px) {
+        Lift lift = LIFTS.get(root);
+        float y = root.getTranslationY();
+        // TikTok's own part: what this left there less the lift, unless TikTok has set it since.
+        float tiktok = lift != null && y == lift.y ? y + lift.px : y;
+        if (px <= 0) {
+            if (lift == null) return;
+            LIFTS.remove(root);
+            if (y != tiktok) root.setTranslationY(tiktok);
+            if (root.getTranslationZ() == lift.liftedZ) root.setTranslationZ(lift.z);
+            for (WeakReference<ViewGroup> parent : lift.unclipped) {
+                ViewGroup group = parent.get();
+                if (group != null) group.setClipChildren(true);
+            }
+            for (WeakReference<ViewGroup> parent : lift.unpadded) {
+                ViewGroup group = parent.get();
+                if (group != null) group.setClipToPadding(true);
+            }
+            return;
+        }
+        if (lift == null) {
+            lift = new Lift();
+            lift.z = root.getTranslationZ();
+            LIFTS.put(root, lift);
+        } else if (root.getTranslationZ() != lift.liftedZ) lift.z = root.getTranslationZ();
+        lift.px = px;
+        lift.y = tiktok - px;
+        if (y != lift.y) root.setTranslationY(lift.y);
+        lift.liftedZ = lift.z + TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, LIFT_Z_DP,
+                root.getResources().getDisplayMetrics());
+        if (root.getTranslationZ() != lift.liftedZ) root.setTranslationZ(lift.liftedZ);
+        unclip(root, lift);
+    }
+
+    private static void unclip(View root, Lift lift) {
+        // The lifted caption's top edge in its parent, TikTok's own translation included.
+        float top = root.getTop() + root.getTranslationY();
+        ViewParent parent = root.getParent();
+        for (int depth = 0; depth < UNCLIP_DEPTH && parent instanceof ViewGroup; depth++) {
+            ViewGroup group = (ViewGroup) parent;
+            top -= group.getScrollY();
+            if (top >= group.getPaddingTop()) return;
+            if (group.getClipToPadding() && group.getPaddingTop() > 0) {
+                group.setClipToPadding(false);
+                lift.unpadded.add(new WeakReference<>(group));
+            }
+            if (top >= 0 || !(group.getParent() instanceof ViewGroup)) return;
+            ViewGroup outer = (ViewGroup) group.getParent();
+            if (outer.getClipChildren()) {
+                outer.setClipChildren(false);
+                lift.unclipped.add(new WeakReference<>(outer));
+            }
+            top += group.getTop() + group.getTranslationY();
+            parent = outer;
+        }
+    }
+
     static void apply(View root) {
+        lift(root, heightPx(root));
         int textId = identifier(root, TEXT_IDS);
         TextView text = textId == 0 ? null : root.findViewById(textId);
         if (text != null) {

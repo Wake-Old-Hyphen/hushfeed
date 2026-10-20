@@ -372,6 +372,8 @@ Separate words with commas. A comment is hidden if it contains any of them. Capi
 Comment media filename	Имя файла медиа комментария
 Comments	Комментарии
 Comments aren't available for this video	Комментарии недоступны для этого видео
+Turn Clear display on or off	Включить или выключить чистый вид
+Clear display isn't available for this video	Чистый вид недоступен для этого видео
 Comments beside the video	Комментарии рядом с видео
 Compare gate reads with their previous values.	Сравнивать считанные значения переключателей с их предыдущими значениями.
 Completed an interrupted settings change. Restart TikTok to apply this.	Прерванное изменение настроек завершено. Перезапустите TikTok, чтобы это применить.
@@ -618,6 +620,7 @@ Hide picture comments	Скрывать комментарии-картинки
 Hide reply previews	Скрывать превью ответов
 Don't open a reply under each comment. View replies still shows all of them.	Не раскрывать ответ под каждым комментарием. Кнопка просмотра ответов по-прежнему показывает все.
 Hide playlist videos	Скрывать видео из плейлистов
+Hide subscriber-only videos	Скрывать видео только для платных подписчиков
 Hide promotional music	Скрывать рекламную музыку
 Hide comment typing suggestions	Скрывать подсказки при наборе комментария
 Hide rows by title	Скрывать строки по названию
@@ -682,6 +685,7 @@ Hide video actions	Скрывать действия под видео
 Hide videos with TikTok's AI-generated label, AI content credentials, a TikTok AI effect such as AI Alive, or a tag like #ai or #aigenerated.	Скрывать видео с пометкой TikTok о создании ИИ, ИИ-метаданными C2PA, ИИ-эффектом TikTok вроде AI Alive или хештегом вроде #ai или #aigenerated.
 Hide videos marked as paid partnership or branded content.	Скрывать видео с пометкой «платное партнёрство» или «контент от бренда».
 Hide videos posted as part of a playlist.	Скрывать видео, опубликованные в составе плейлиста.
+Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.	Скрывать публикации с замком, которые могут смотреть только платные подписчики автора, в ленте и в профилях.
 Hide videos posted by verified accounts.	Скрывать видео от верифицированных аккаунтов.
 Hide videos that belong to a paid Series.	Скрывать видео, которые относятся к платному сериалу.
 Hide videos with a lot of views and few comments. Works the same way as views per like. Zero turns it off.	Скрывать видео с большим числом просмотров и малым числом комментариев. Работает так же, как «Просмотров на лайк». Ноль отключает это.
@@ -909,6 +913,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Playback	Воспроизведение
 Player	Плеер
 Playlist posts	Публикации из плейлиста
+Subscriber-only posts	Публикации только для платных подписчиков
 Popular	Популярное
 Popups	Всплывающие окна
 Press and hold a profile picture to save the full size original to your photo destination.	Нажмите и удерживайте фото профиля, чтобы сохранить оригинал в полном размере в папку для фото.
@@ -1872,6 +1877,8 @@ A LIVE in the feed can count down and take you into the room on its own. This ke
 Play sounds TikTok pulled	Воспроизводить звуки, удалённые TikTok
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Воспроизводит звук в видео, которые TikTok заглушил, потому что их звук удалён из-за авторских прав или в вашем регионе. TikTok может по-прежнему писать, что звук недоступен.
 Match region fields in requests	Подменять поля региона в запросах
+Keep the For You feed on your real SIM	Оставить «Рекомендации» на настоящей SIM
+Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Поиск стикеров, PineDrama и остальной TikTok по-прежнему видят SIM, указанную выше, а «Рекомендации» запрашивают видео со страной и оператором SIM вашего телефона. Ваш IP-адрес и история аккаунта по-прежнему учитываются.
 Show exact LIVE viewer counts	Показывать точное число зрителей LIVE
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	В комнате LIVE число зрителей показано округлённо, например 1,2K. Этот переключатель показывает точное число.
 Offer LIVE quality in more rooms	Выбор качества LIVE в большем числе комнат
@@ -2338,8 +2345,18 @@ Show the country as a flag	Показывать страну флагом
 Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Показывает флаг страны вместо двух букв рядом с именем автора и со временем комментария.
 Full long-press menu in search results	Полное меню долгого нажатия в результатах поиска
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Долгое нажатие на видео, открытое из поиска, открывает то же меню, что и в «Рекомендациях». Для этого в настройке «Долгое нажатие» должно быть выбрано «Стандарт TikTok».
-Normal-weight captions	Субтитры обычной толщины
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Показывать субтитры речи обычным начертанием вместо жирного шрифта TikTok. Применяется к следующей строке субтитров.
+Caption height	Высота субтитров
+Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.	Поднимает субтитры над местом TikTok, когда телефон стоит вертикально. Укажите 0 для места TikTok или до %1$d.
+Caption height in landscape	Высота субтитров в горизонтальном положении
+Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.	Поднимает субтитры над местом TikTok, когда телефон лежит горизонтально. Укажите 0 для места TikTok или до %1$d.
+Caption boldness	Жирность субтитров
+Light	Тонкая
+Medium	Средняя
+Semi-bold	Полужирная
+Bold	Жирная
+Extra bold	Сверхжирная
+Caption height in Clear display	Высота субтитров в чистом виде
+Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Поднимает оставленную строку субтитров в чистом виде над её обычным местом. Укажите 0 для обычного места или до %1$d.
 The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Не удалось сохранить запись LIVE, прерванную закрытием TikTok. Незавершённый файл удалён.
 Also on opened videos	Также в открытых видео
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Скрывать строку поиска вверху видео, открытых из поиска, профиля или истории просмотров. Кнопка «Назад» остаётся.

@@ -84,6 +84,9 @@ public class SettingsBackupTest {
         }
         // The one switch a file can't turn on (NetworkProxyTest.aRestoredFileNeverTurnsTheProxyOnOrMovesIt).
         expected.put(Settings.NETWORK_PROXY, false);
+        // The retired Normal-weight captions switch comes back as Caption boldness's Normal (#206).
+        expected.put(Settings.CAPTION_REGULAR_WEIGHT, false);
+        expected.put(Settings.CAPTION_FONT_WEIGHT, "400");
         FeatureGateLabStore.saveRule("abmock", "test_gate", "BOOLEAN", "true", true);
         FeatureGateLabStore.setMasterEnabled(true);
         FeatureGateLabStore.acknowledgeWarning();
@@ -130,6 +133,49 @@ public class SettingsBackupTest {
         assertEquals(java.util.List.of(app.morphe.extension.tiktok.download.DownloadDestination.Kind.VIDEO,
                         app.morphe.extension.tiktok.download.DownloadDestination.Kind.STICKER),
                 SettingsBackup.foldersKept(legacy));
+    }
+
+    /**
+     * #206: Caption boldness took the place of the Normal-weight captions switch. A backup from
+     * before it with the switch on restores to Normal rather than TikTok's bold, and the new key
+     * it lacks isn't reported as left alone. A file that carries both keeps the boldness it chose.
+     */
+    @Test public void aBackupWithNormalWeightCaptionsOnRestoresCaptionBoldnessAsNormal() throws Exception {
+        Settings.CAPTION_REGULAR_WEIGHT.save(true);
+        String legacy = withoutKeys(SettingsBackup.create(false), Settings.CAPTION_FONT_WEIGHT.key);
+        Settings.CAPTION_REGULAR_WEIGHT.resetToDefault();
+        Settings.CAPTION_FONT_WEIGHT.save("700");
+
+        assertEquals(0, SettingsBackup.settingsNotInFile(legacy));
+        SettingsBackup.restore(Utils.getContext(), legacy, true);
+        assertEquals("400", Settings.CAPTION_FONT_WEIGHT.get());
+        assertFalse(Settings.CAPTION_REGULAR_WEIGHT.get());
+
+        Settings.CAPTION_REGULAR_WEIGHT.save(true);
+        Settings.CAPTION_FONT_WEIGHT.save("700");
+        String both = SettingsBackup.create(false);
+        Settings.CAPTION_REGULAR_WEIGHT.resetToDefault();
+        Settings.CAPTION_FONT_WEIGHT.resetToDefault();
+        SettingsBackup.restore(Utils.getContext(), both, true);
+        assertEquals("700", Settings.CAPTION_FONT_WEIGHT.get());
+        assertFalse(Settings.CAPTION_REGULAR_WEIGHT.get());
+    }
+
+    /** And on the phone: a switch left on becomes Normal once, and a boldness already chosen stays. */
+    @Test public void normalWeightCaptionsLeftOnBecomesCaptionBoldnessNormalOnce() {
+        Settings.CAPTION_REGULAR_WEIGHT.save(true);
+        Settings.migrateCaptionWeight();
+        assertEquals("400", Settings.CAPTION_FONT_WEIGHT.get());
+        assertFalse(Settings.CAPTION_REGULAR_WEIGHT.get());
+        Settings.CAPTION_FONT_WEIGHT.save("default");
+        Settings.migrateCaptionWeight();
+        assertEquals("a second start changed the boldness again", "default", Settings.CAPTION_FONT_WEIGHT.get());
+
+        Settings.CAPTION_REGULAR_WEIGHT.save(true);
+        Settings.CAPTION_FONT_WEIGHT.save("700");
+        Settings.migrateCaptionWeight();
+        assertEquals("700", Settings.CAPTION_FONT_WEIGHT.get());
+        assertFalse(Settings.CAPTION_REGULAR_WEIGHT.get());
     }
 
     /**

@@ -4,7 +4,15 @@
 
 * **TikTok:** Sistem yazı tipini kullan ve İçe aktarılan yazı tipini kullan artık Etkinlik merkezi, İzleme geçmişi ve TikTok'un diğer web sayfalarında da geçerli (#7).
 
-* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken bir LIVE odasının paylaşım menüsünü, izleyici sıralamalarını, hayran kulübünü ve profil kartlarını koyu açar (#159).
+* **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken bir LIVE odasının paylaşım menüsünü, hayran kulübünü ve profil kartlarını koyu açar (#159).
+
+* **TikTok:** Akış filtresindeki yeni Yalnızca abonelere özel videoları gizle anahtarı, yalnızca bir içerik üreticinin abonelerinin izleyebildiği gönderileri akışta ve profillerde gizler (#219).
+
+* **TikTok:** Yeni bir Bölge anahtarı, Senin İçin akışını gerçek SIM'de tut, çıkartma aramasının ve PineDrama'nın seçtiğin SIM'i görmesini sağlarken Senin İçin telefonunun kendi SIM'iyle video ister. Paketinde Region spoof yamasının olması gerekir (#214, #215).
+
+* **TikTok:** Altyazılar altındaki yeni Altyazı yüksekliği satırları konuşma altyazılarını yukarı kaldırır, biri dik, biri yatay, biri temiz ekran için. Altyazı kalınlığı, Normal kalınlıkta altyazılar anahtarının yerini alır ve İnce'den Ekstra kalın'a kadar gider. O anahtar açıksa Normal olarak gelir (#206).
+
+* **TikTok:** Çift dokunma ve Uzun basma için yeni bir seçenek var, Temiz ekranı aç veya kapat. Videonun üstündeki düğmeleri TikTok'un kendi temiz ekranı gibi gizler, aynı hareket onları geri getirir (#136).
 
 ## 0.76.0 (2026-10-18)
 

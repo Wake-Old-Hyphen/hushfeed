@@ -327,6 +327,8 @@ Separate words with commas. A comment is hidden if it contains any of them. Capi
 Comment media filename	Dateiname für Kommentar-Medien
 Comments	Kommentare
 Comments aren't available for this video	Für dieses Video gibt es keine Kommentare
+Turn Clear display on or off	Freie Ansicht ein- oder ausschalten
+Clear display isn't available for this video	Für dieses Video gibt es keine freie Ansicht
 Comments beside the video	Kommentare neben dem Video
 Compare gate reads with their previous values.	Gate-Zugriffe mit ihren vorherigen Werten vergleichen.
 Completed an interrupted settings change. Restart TikTok to apply this.	Eine unterbrochene Einstellungsänderung wurde abgeschlossen. TikTok neu starten, damit das gilt.
@@ -561,6 +563,7 @@ Hide picture comments	Bild-Kommentare ausblenden
 Hide reply previews	Antwortvorschauen ausblenden
 Don't open a reply under each comment. View replies still shows all of them.	Unter Kommentaren keine Antwort aufgeklappt zeigen. Antworten ansehen zeigt weiterhin alle.
 Hide playlist videos	Playlist-Videos ausblenden
+Hide subscriber-only videos	Videos nur für Abonnenten ausblenden
 Hide promotional music	Werbemusik ausblenden
 Hide comment typing suggestions	Kommentarvorschläge beim Tippen ausblenden
 Hide rows by title	Zeilen nach Titel ausblenden
@@ -625,6 +628,7 @@ Hide video actions	Videoaktionen ausblenden
 Hide videos with TikTok's AI-generated label, AI content credentials, a TikTok AI effect such as AI Alive, or a tag like #ai or #aigenerated.	Videos mit TikToks KI-Kennzeichnung, KI-Inhaltsnachweisen, einem KI-Effekt von TikTok wie AI Alive oder einem Tag wie #ai oder #aigenerated ausblenden.
 Hide videos marked as paid partnership or branded content.	Videos ausblenden, die als bezahlte Partnerschaft oder Markeninhalt gekennzeichnet sind.
 Hide videos posted as part of a playlist.	Videos ausblenden, die als Teil einer Playlist veröffentlicht wurden.
+Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.	Beiträge mit Schloss, die nur die Abonnenten eines Creators ansehen können, im Feed und auf Profilen ausblenden.
 Hide videos posted by verified accounts.	Videos von verifizierten Konten ausblenden.
 Hide videos that belong to a paid Series.	Videos ausblenden, die zu einer bezahlten Serie gehören.
 Hide videos with a lot of views and few comments. Works the same way as views per like. Zero turns it off.	Blendet Videos mit vielen Aufrufen und wenigen Kommentaren aus. Funktioniert genauso wie Aufrufe pro Like. Null schaltet es aus.
@@ -849,6 +853,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Playback	Wiedergabe
 Player	Wiedergabe
 Playlist posts	Playlist-Beiträge
+Subscriber-only posts	Beiträge nur für Abonnenten
 Popular	Beliebt
 Popups	Pop-ups
 Press and hold a profile picture to save the full size original to your photo destination.	Ein Profilbild gedrückt halten, um das Original in voller Größe im Fotoordner zu speichern.
@@ -1734,6 +1739,8 @@ A LIVE in the feed can count down and take you into the room on its own. This ke
 Play sounds TikTok pulled	Von TikTok entfernte Sounds abspielen
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Spielt den Ton von Videos ab, die TikTok stummgeschaltet hat, weil ihr Sound wegen des Urheberrechts oder in deiner Region entfernt wurde. TikTok zeigt den Sound eventuell weiterhin als nicht verfügbar an.
 Match region fields in requests	Regionsfelder in Anfragen angleichen
+Keep the For You feed on your real SIM	„Für dich“ bei der echten SIM lassen
+Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Stickersuche, PineDrama und der Rest von TikTok sehen weiter die SIM oben, während „Für dich“ Videos mit dem SIM-Land und Anbieter deines Handys anfragt. Deine IP-Adresse und dein Kontoverlauf zählen weiterhin.
 Show exact LIVE viewer counts	Genaue LIVE-Zuschauerzahl anzeigen
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Ein LIVE-Raum zeigt die Zuschauerzahl als gerundete Zahl wie 1,2K. Damit siehst du stattdessen die genaue Zahl.
 Offer LIVE quality in more rooms	LIVE-Qualität in mehr Räumen anbieten
@@ -2161,8 +2168,18 @@ Show the country as a flag	Land als Flagge anzeigen
 Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Zeigt die Flagge des Landes statt seiner zwei Buchstaben, neben dem Namen des Creators und neben der Zeit eines Kommentars.
 Full long-press menu in search results	Volles Menü bei langem Drücken in Suchergebnissen
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Langes Drücken auf ein Video, das du aus der Suche geöffnet hast, öffnet dasselbe Menü wie bei Für dich. Dafür muss Langes Drücken auf TikTok-Standard stehen.
-Normal-weight captions	Untertitel in normaler Stärke
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Gesprochene Untertitel in normaler Schriftstärke statt in TikToks Fettschrift anzeigen. Gilt ab dem nächsten Untertitel.
+Caption height	Untertitelhöhe
+Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.	Hebt gesprochene Untertitel über TikToks Stelle, solange das Handy aufrecht ist. 0 für TikToks Stelle, oder bis zu %1$d.
+Caption height in landscape	Untertitelhöhe im Querformat
+Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.	Hebt gesprochene Untertitel über TikToks Stelle, solange das Handy quer liegt. 0 für TikToks Stelle, oder bis zu %1$d.
+Caption boldness	Schriftstärke der Untertitel
+Light	Leicht
+Medium	Mittel
+Semi-bold	Halbfett
+Bold	Fett
+Extra bold	Extrafett
+Caption height in Clear display	Untertitelhöhe in der freien Ansicht
+Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Hebt den behaltenen Untertitel in der freien Ansicht über seine übliche Stelle. 0 für die übliche Stelle, oder bis zu %1$d.
 The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	Die LIVE-Aufnahme, bei der TikTok geschlossen wurde, konnte nicht gespeichert werden. Die unfertige Datei wurde gelöscht.
 Also on opened videos	Auch bei geöffneten Videos
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Blende die Suchleiste oben in Videos aus, die du aus der Suche, einem Profil oder deinem Wiedergabeverlauf öffnest. Die Zurück-Schaltfläche bleibt.

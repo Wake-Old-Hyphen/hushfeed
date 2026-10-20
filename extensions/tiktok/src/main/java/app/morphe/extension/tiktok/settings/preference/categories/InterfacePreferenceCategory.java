@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.tiktok.captions.CaptionStyle;
 import app.morphe.extension.tiktok.feed.BurnInGuard;
 import app.morphe.extension.tiktok.feed.FeedTextSize;
@@ -563,15 +564,33 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             };
             captionSize.zeroMeans("TikTok's size");
             addPreference(captionSize);
-            addPreference(new TogglePreference(context, "Normal-weight captions",
-                    "Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.",
-                    Settings.CAPTION_REGULAR_WEIGHT));
+            addPreference(captionHeight(context, "Caption height",
+                    "Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.",
+                    Settings.CAPTION_BOTTOM_OFFSET));
+            addPreference(captionHeight(context, "Caption height in landscape",
+                    "Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.",
+                    Settings.CAPTION_LANDSCAPE_OFFSET));
+            addPreference(new ChoicePreference(context, "Caption boldness", Settings.CAPTION_FONT_WEIGHT,
+                    new String[]{"TikTok default", "Light", "Normal", "Medium", "Semi-bold", "Bold", "Extra bold"},
+                    new String[]{"default", "300", "400", "500", "600", "700", "800"}));
             addPreference(new ChoicePreference(context, "Caption background", Settings.CAPTION_BACKGROUND,
                     new String[]{"TikTok default", "Transparent", "Dark", "Black"},
                     new String[]{"default", "transparent", "dark", "black"}));
             addPreference(new TogglePreference(context, "Keep captions in Clear display",
                     "Show the current spoken caption while the other controls are hidden.", Settings.KEEP_CAPTIONS_CLEAR_DISPLAY));
+            addPreference(captionHeight(context, "Caption height in Clear display",
+                    "Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.",
+                    Settings.CAPTION_CLEAR_DISPLAY_OFFSET));
         }
+    }
+
+    private static NumberInputPreference captionHeight(Context context, String title, String summary, IntegerSetting setting) {
+        NumberInputPreference height = new NumberInputPreference(context, title,
+                L10n.f(context, summary, CaptionStyle.MAX_HEIGHT_DP), setting, "%1$s dp", "%1$s dp") {
+            @Override protected int clamp(int value) { return CaptionStyle.clampHeight(value); }
+        };
+        height.zeroMeans("Default");
+        return height;
     }
 
     private void addClearDisplay(Context context) {
@@ -670,7 +689,8 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         if (SettingsStatus.doubleTapEnabled) {
             // Long press's actions, which GestureActions runs the same way for both gestures. The
             // speed toggle changes the playing video's speed, so it needs the Playback speed patch's
-            // player bridge (#136).
+            // player bridge, and Clear display posts TikTok's own event through Remember clear
+            // display's bridge (#136).
             List<String> tapLabels = new ArrayList<>(Arrays.asList("TikTok default", "Do nothing", "Open comments",
                     "Save the original sound", "Copy the video link", "Copy the sound link",
                     "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
@@ -680,6 +700,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             if (SettingsStatus.liveSpeedEnabled) {
                 tapLabels.add("Speed up this video, double tap again to undo");
                 tapValues.add("speed_toggle");
+            }
+            if (SettingsStatus.automaticClearDisplayEnabled) {
+                tapLabels.add("Turn Clear display on or off");
+                tapValues.add("clear_display");
             }
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
                     tapLabels.toArray(new String[0]), tapValues.toArray(new String[0])));
@@ -691,14 +715,20 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         }
         if (SettingsStatus.longPressEnabled) {
             // Double tap's actions and a like, which TikTok's own double tap already does.
+            List<String> pressLabels = new ArrayList<>(Arrays.asList("TikTok default (hold to speed up, quick share)",
+                    "Do nothing", "Like the video", "Open comments", "Save the original sound",
+                    "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
+                    "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
+                    "Save the video's cover"));
+            List<String> pressValues = new ArrayList<>(Arrays.asList("default", "nothing", "like", "comments",
+                    "original_sound", "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
+                    "save_cover"));
+            if (SettingsStatus.automaticClearDisplayEnabled) {
+                pressLabels.add("Turn Clear display on or off");
+                pressValues.add("clear_display");
+            }
             addPreference(new ChoicePreference(context, "Long press", Settings.LONG_PRESS_ACTION,
-                    new String[]{"TikTok default (hold to speed up, quick share)", "Do nothing",
-                            "Like the video", "Open comments", "Save the original sound",
-                            "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
-                            "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
-                            "Save the video's cover"},
-                    new String[]{"default", "nothing", "like", "comments", "original_sound", "copy_link",
-                            "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"}));
+                    pressLabels.toArray(new String[0]), pressValues.toArray(new String[0])));
             addPreference(new TogglePreference(context, "Only on the sides of the video",
                     "Your Long press choice runs only on the left and right thirds of the video. "
                             + "A press in the middle still opens TikTok's own menu. "

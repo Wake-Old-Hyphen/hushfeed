@@ -320,6 +320,8 @@ Separate usernames or display names with commas. Their comments are hidden.,Pisa
 Comment media filename,Nama berkas media komentar
 Comments,Komentar
 Comments aren't available for this video,Komentar tidak tersedia untuk video ini
+Turn Clear display on or off,Nyalakan atau matikan tampilan bersih
+Clear display isn't available for this video,Tampilan bersih tidak tersedia untuk video ini
 Comments beside the video,Komentar di samping video
 Compare gate reads with their previous values.,Bandingkan pembacaan gate dengan nilai sebelumnya.
 Completed an interrupted settings change. Restart TikTok to apply this.,Perubahan pengaturan yang terhenti telah diselesaikan. Mulai ulang TikTok agar berlaku.
@@ -553,6 +555,7 @@ Hide picture comments,Sembunyikan komentar bergambar
 Hide reply previews,Sembunyikan pratinjau balasan
 Don't open a reply under each comment. View replies still shows all of them.,Jangan buka satu balasan di bawah setiap komentar. Lihat balasan tetap menampilkan semuanya.
 Hide playlist videos,Sembunyikan video playlist
+Hide subscriber-only videos,Sembunyikan video khusus pelanggan
 Hide promotional music,Sembunyikan musik promosi
 Hide comment typing suggestions,Sembunyikan saran saat mengetik komentar
 Hide rows by title,Sembunyikan baris berdasarkan judul
@@ -617,6 +620,7 @@ Hide video actions,Sembunyikan aksi video
 "Hide videos with TikTok's AI-generated label, AI content credentials, a TikTok AI effect such as AI Alive, or a tag like #ai or #aigenerated.","Sembunyikan video dengan label AI dari TikTok, kredensial konten AI, efek AI TikTok seperti AI Alive, atau tagar seperti #ai atau #aigenerated."
 Hide videos marked as paid partnership or branded content.,Sembunyikan video yang ditandai sebagai kemitraan berbayar atau konten bermerek.
 Hide videos posted as part of a playlist.,Sembunyikan video yang diunggah sebagai bagian dari playlist.
+"Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.","Sembunyikan kiriman bergembok yang hanya bisa ditonton pelanggan kreator, di feed dan di profil."
 Hide videos posted by verified accounts.,Sembunyikan video yang diunggah akun terverifikasi.
 Hide videos that belong to a paid Series.,Sembunyikan video yang termasuk Series berbayar.
 Hide videos with a lot of views and few comments. Works the same way as views per like. Zero turns it off.,Sembunyikan video dengan banyak tayangan dan sedikit komentar. Bekerja sama seperti tayangan per suka. Nol mematikannya.
@@ -843,6 +847,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Playback,Pemutaran
 Player,Pemutar
 Playlist posts,Kiriman playlist
+Subscriber-only posts,Kiriman khusus pelanggan
 Popular,Populer
 Popups,Pop-up
 Press and hold a profile picture to save the full size original to your photo destination.,Tekan dan tahan foto profil untuk menyimpan aslinya dalam ukuran penuh ke lokasi simpan fotomu.
@@ -1723,6 +1728,8 @@ A LIVE in the feed can count down and take you into the room on its own. This ke
 Play sounds TikTok pulled,Putar suara yang ditarik TikTok
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.,Putar audio pada video yang dibisukan TikTok karena suaranya ditarik akibat hak cipta atau di wilayah Anda. TikTok mungkin tetap menyebut suaranya tidak tersedia.
 Match region fields in requests,Samakan kolom wilayah dalam permintaan
+Keep the For You feed on your real SIM,Biarkan Untuk Kamu memakai SIM asli
+"Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.","Pencarian stiker, PineDrama, dan bagian TikTok lainnya tetap melihat SIM di atas, sedangkan Untuk Kamu meminta video dengan negara dan operator SIM ponselmu sendiri. Alamat IP dan riwayat akunmu tetap berpengaruh."
 Show exact LIVE viewer counts,Tampilkan jumlah penonton LIVE yang tepat
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.,"Ruang LIVE menampilkan jumlah penonton sebagai angka dibulatkan seperti 1,2K. Ini menampilkan jumlah yang tepat."
 Offer LIVE quality in more rooms,Tawarkan kualitas LIVE di lebih banyak ruang
@@ -2136,8 +2143,18 @@ Show the country as a flag,Tampilkan negara sebagai bendera
 "Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.","Menampilkan bendera negara sebagai ganti dua hurufnya, di sebelah nama kreator dan di sebelah waktu komentar."
 Full long-press menu in search results,Menu tekan lama lengkap di hasil pencarian
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.,Tekan lama pada video yang kamu buka dari pencarian membuka menu yang sama seperti di Untuk Kamu. Perlu Tekan lama pada bawaan TikTok.
-Normal-weight captions,Keterangan dengan ketebalan normal
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.,"Tampilkan teks ucapan dengan ketebalan biasa, bukan huruf tebal TikTok. Berlaku untuk keterangan berikutnya."
+Caption height,Tinggi keterangan
+"Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.","Menaikkan teks ucapan di atas posisi TikTok saat ponsel tegak. Pakai 0 untuk posisi TikTok, atau hingga %1$d."
+Caption height in landscape,Tinggi keterangan saat mendatar
+"Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.","Menaikkan teks ucapan di atas posisi TikTok saat ponsel mendatar. Pakai 0 untuk posisi TikTok, atau hingga %1$d."
+Caption boldness,Ketebalan keterangan
+Light,Tipis
+Medium,Sedang
+Semi-bold,Agak tebal
+Bold,Tebal
+Extra bold,Sangat tebal
+Caption height in Clear display,Tinggi keterangan saat tampilan bersih
+"Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.","Menaikkan keterangan yang dipertahankan saat tampilan bersih di atas posisi biasanya. Pakai 0 untuk posisi biasa, atau hingga %1$d."
 The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.,Rekaman LIVE yang terpotong saat TikTok tertutup tidak bisa disimpan. File yang belum selesai sudah dihapus.
 Also on opened videos,Juga di video yang dibuka
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Sembunyikan bilah pencarian di bagian atas video yang kamu buka dari pencarian, profil, atau riwayat tontonanmu. Tombol Kembali tetap ada."

@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -46,6 +48,10 @@ public final class CaptionTools {
     private static int stripGapHeight;
     /** The last frame's reading, which the next frame has to repeat before it counts. */
     private static int pendingGap = -1;
+    /** The weight the kept line was last given, 0 for the font it started with. */
+    private static int overlayWeight;
+    /** The font the kept line started with; null is the system font. */
+    private static Typeface overlayTypeface;
 
     /**
      * Puts every static back to a fresh process's state. {@code onVideoChanged(null)} is not that:
@@ -133,6 +139,7 @@ public final class CaptionTools {
         detachOverlay();
         if (!(decor instanceof FrameLayout)) return;
         TextView text = new TextView(activity);
+        overlayTypeface = text.getTypeface();
         text.setTextColor(Color.WHITE);
         text.setGravity(Gravity.CENTER);
         // In pixels, so on a 3x screen this was about 0.7dp of blur. It is what separates white
@@ -172,6 +179,7 @@ public final class CaptionTools {
         overlay = new WeakReference<>(null);
         observedDecor = new WeakReference<>(null);
         preDrawListener = null;
+        overlayWeight = 0;
         if (decor != null && draw != null && decor.getViewTreeObserver().isAlive()) {
             decor.getViewTreeObserver().removeOnPreDrawListener(draw);
         }
@@ -205,6 +213,11 @@ public final class CaptionTools {
             float wanted = android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP,
                     size == 0 ? 18 : size, text.getResources().getDisplayMetrics());
             if (text.getTextSize() != wanted) text.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, wanted);
+            int weight = CaptionStyle.fontWeight();
+            if (weight != overlayWeight) {
+                weigh(text, weight);
+                overlayWeight = weight;
+            }
             int color = CaptionStyle.backgroundColor();
             if (!Objects.equals(text.getTag(), color)) { text.setBackgroundColor(color); text.setTag(color); }
             place(text, decor);
@@ -228,7 +241,8 @@ public final class CaptionTools {
                 && strip.getRootView() == decor) {
             int[] at = new int[2];
             strip.getLocationInWindow(at);
-            gap = height - at[1] - strip.getHeight();
+            // Caption height's lift is left out, so the kept line starts from TikTok's own spot.
+            gap = height - at[1] - strip.getHeight() - CaptionStyle.liftOf(captionSource.get());
             if (gap >= height / 2) gap = -1;
         }
         if (gap >= 0 && (settled || gap == pendingGap)) {
@@ -238,16 +252,38 @@ public final class CaptionTools {
         pendingGap = gap;
     }
 
-    /** Lines the kept caption's bottom up with the strip's, or the old spot before one was seen. */
+    /**
+     * Lines the kept caption's bottom up with the strip's, or the old spot before one was seen,
+     * then lifts it by the Clear display height, upright or sideways: the landscape height is
+     * TikTok's own caption's.
+     */
     private static void place(TextView text, View decor) {
         if (!(text.getLayoutParams() instanceof FrameLayout.LayoutParams)) return;
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) text.getLayoutParams();
-        int margin = stripGap < 0 || decor == null || decor.getHeight() != stripGapHeight
+        int margin = (stripGap < 0 || decor == null || decor.getHeight() != stripGapHeight
                 ? fallbackMargin(text)
-                : Math.max(0, stripGap - decor.getPaddingBottom());
+                : Math.max(0, stripGap - decor.getPaddingBottom()))
+                + CaptionStyle.heightPx(text, Settings.CAPTION_CLEAR_DISPLAY_OFFSET);
         if (params.bottomMargin == margin) return;
         params.bottomMargin = margin;
         text.setLayoutParams(params);
+    }
+
+    /**
+     * Gives the kept line Caption boldness's weight, built on the font the line started with
+     * (the theme's, which may not be the system one), and TikTok default puts that font back.
+     */
+    private static void weigh(TextView text, int weight) {
+        if (weight == 0) {
+            // Clearing the variation rebuilds the paint's font from the current one, so it goes
+            // first and the starting font itself is what stays.
+            if (Build.VERSION.SDK_INT >= 26) text.setFontVariationSettings(null);
+            text.setTypeface(overlayTypeface);
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 28) text.setTypeface(Typeface.create(overlayTypeface, weight, false));
+        else text.setTypeface(overlayTypeface, weight >= 600 ? Typeface.BOLD : Typeface.NORMAL);
+        if (Build.VERSION.SDK_INT >= 26) text.setFontVariationSettings("'wght' " + weight);
     }
 
     private static int fallbackMargin(View text) {

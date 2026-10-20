@@ -178,7 +178,8 @@ class ExtensionBridgeLookupTest {
             "PlaybackSpeedPatch.kt:onFirstFrame", "PlaybackSpeedPatch.kt:setNativeSpeed",
             "PlaybackSpeedPatch.kt:nativeAweme", "AutoAdvancePatch.kt:readState",
             "NotInterestedPatch.kt:createCall", "RememberClearDisplayPatch.kt:postClear",
-            "RememberClearDisplayPatch.kt:readCurrentAweme", "HideLauncherShortcutsPatch.kt:askHostToRebuild",
+            "RememberClearDisplayPatch.kt:readCurrentAweme", "RememberClearDisplayPatch.kt:postAsReader",
+            "HideLauncherShortcutsPatch.kt:askHostToRebuild",
             "BackgroundPlayPatch.kt:replay",
         )
         val missing = known.filterNot(found::contains)

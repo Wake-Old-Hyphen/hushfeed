@@ -149,6 +149,60 @@ public class AutomaticClearDisplayTest {
         assertNotEquals(RememberClearDisplayPatch.isClearDisplayNow(), Settings.CLEAR_DISPLAY.get());
     }
 
+    /**
+     * #136: Double tap or Long press set to Clear display posts TikTok's own event unmarked, so it
+     * lands as the reader's change: remembered for the next video, the automatic path done with
+     * this one, and a second gesture brings the controls back. Nothing taking it says so.
+     */
+    @Test public void aGestureTogglesClearDisplayAsTheReadersOwnChange() {
+        List<Boolean> posted = new ArrayList<>();
+        RememberClearDisplayPatch.readerPost = clear -> {
+            posted.add(clear);
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(clear, 0));
+        };
+        List<Boolean> events = new ArrayList<>();
+        RememberClearDisplayPatch.firstFrame("gesture", () -> true, events::add);
+        assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+        assertEquals(List.of(true), posted);
+        assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+        assertTrue("the reader's clear display wasn't remembered", Settings.CLEAR_DISPLAY.get());
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(2));
+        assertEquals("the automatic path ran again on a video the reader cleared", List.of(false), events);
+
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        events.clear();
+        RememberClearDisplayPatch.firstFrame("next", () -> true, events::add);
+        assertEquals("the next video didn't follow the remembered choice", List.of(true), events);
+
+        assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+        assertEquals(List.of(true, false), posted);
+        assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+        assertFalse(Settings.CLEAR_DISPLAY.get());
+
+        RememberClearDisplayPatch.readerPost = clear -> { };
+        assertFalse("a change nothing took was reported as made", RememberClearDisplayPatch.toggleFromGesture());
+        assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+    }
+
+    /** #136: like every other clear, a gesture doesn't take the tabs the daily hold needs. */
+    @Test public void aGestureDoesNotClearUnderTheDailyHold() {
+        org.robolectric.util.ReflectionHelpers.callStaticMethod(app.morphe.extension.tiktok.wellbeing.SessionBudget.class, "awaitWritesForTests");
+        List<Boolean> posted = new ArrayList<>();
+        RememberClearDisplayPatch.readerPost = clear -> {
+            posted.add(clear);
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(clear, 0));
+        };
+        try {
+            lockTheDay();
+            assertFalse(RememberClearDisplayPatch.toggleFromGesture());
+            assertEquals("a gesture cleared under the hold", List.of(), posted);
+        } finally {
+            unlockTheDay();
+        }
+        assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+        assertEquals(List.of(true), posted);
+    }
+
     @Test public void aTapThatLeavesClearDisplayIsReportedToo() {
         List<Boolean> events = new ArrayList<>();
         RememberClearDisplayPatch.firstFrame("auto", () -> true, events::add);

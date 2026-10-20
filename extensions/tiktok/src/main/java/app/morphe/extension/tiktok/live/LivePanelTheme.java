@@ -78,6 +78,7 @@ public final class LivePanelTheme {
     private static volatile boolean overlayFailureLogged;
     private static volatile boolean rowFailureLogged;
     private static volatile boolean viewContextFailureLogged;
+    private static volatile boolean sparkFailureLogged;
 
     private LivePanelTheme() {
     }
@@ -574,6 +575,33 @@ public final class LivePanelTheme {
             if (!viewContextFailureLogged) {
                 viewContextFailureLogged = true;
                 Logger.printException(() -> "Could not give a LIVE ranking's info icon its light theme", failure);
+            }
+            return context;
+        }
+    }
+
+    /**
+     * Called by TikTok's Spark theme lookups, the light or dark answer and the page color Spark's
+     * web pages and popups take, with the context they read TikTok's theme name from. Over a room
+     * the room hook darkened, that name is TikTok's dark theme's, so a shop room's Top customers
+     * popup drew dark while its tab titles kept the light page's dark text (S22, 2026-10-20).
+     * While Dark LIVE panels is on in dark mode, a context over a darkened room gets one over the
+     * room's light theme as it was before, so the room's Spark popups stay stock. Every other
+     * context, the feed's and a room the hook never darkened included, comes back untouched.
+     */
+    public static Context sparkContext(Context context) {
+        try {
+            Resources.Theme light = lightRoom(context);
+            if (light == null || !LiveControls.darkLivePanels(context)) {
+                return context;
+            }
+            Resources.Theme theme = context.getResources().newTheme();
+            theme.setTo(light);
+            return new StockContext(context, theme);
+        } catch (Throwable failure) {
+            if (!sparkFailureLogged) {
+                sparkFailureLogged = true;
+                Logger.printException(() -> "Could not keep a LIVE room's Spark page stock", failure);
             }
             return context;
         }

@@ -185,6 +185,41 @@ public class GestureActionsTest {
     }
 
     /**
+     * #136: Clear display is a choice on both gestures where Remember clear display is in the
+     * bundle, and a tap set to it is always its own, even when nothing took the change.
+     */
+    @Test public void clearDisplayIsOnBothGesturesAndNeverFallsThroughToALike() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            SettingsStatus.longPressEnabled = true;
+            SettingsStatus.automaticClearDisplayEnabled = true;
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            for (String key : new String[]{"double_tap_action", "long_press_action"}) {
+                ChoicePreference choice = (ChoicePreference) screen.findPreference(key);
+                CharSequence[] values = choice.getEntryValues();
+                assertEquals(key, "clear_display", String.valueOf(values[values.length - 1]));
+                assertEquals(key, values.length, choice.getEntries().length);
+                assertEquals(key, L10n.t("Turn Clear display on or off"),
+                        String.valueOf(choice.getEntries()[values.length - 1]));
+            }
+            assertTrue("the 2x hold would start under the press", GestureActions.takesLongPress("clear_display"));
+
+            // No patch posts the change here, which is what a LIVE or an ad on screen looks like.
+            Settings.DOUBLE_TAP_ACTION.save("clear_display");
+            ShadowToast.reset();
+            assertTrue("the tap went to TikTok's like", GestureActions.onDoubleTap());
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertEquals(L10n.t("Clear display isn't available for this video"), ShadowToast.getTextOfLatestToast());
+        } finally {
+            SettingsStatus.automaticClearDisplayEnabled = false;
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+        }
+    }
+
+    /**
      * The two rows offer the same actions, each under its own TikTok default, but for the like:
      * TikTok's own double tap already likes.
      */

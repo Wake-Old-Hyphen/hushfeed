@@ -4,7 +4,15 @@
 
 * **TikTok:** Usar la fuente del sistema y Usar una fuente importada ahora llegan al Centro de actividad, al Historial de visualización y a las demás páginas web de TikTok (#7).
 
-* **TikTok:** Un nuevo interruptor abre en oscuro el menú de compartir, las clasificaciones de espectadores, el club de fans y las tarjetas de perfil de una sala LIVE cuando TikTok está en modo oscuro (#159).
+* **TikTok:** Un nuevo interruptor abre en oscuro el menú de compartir, el club de fans y las tarjetas de perfil de una sala LIVE cuando TikTok está en modo oscuro (#159).
+
+* **TikTok:** Un nuevo interruptor del filtro del feed, Ocultar los vídeos solo para suscriptores, oculta las publicaciones que solo pueden ver los suscriptores de un creador, en el feed y en los perfiles (#219).
+
+* **TikTok:** Un nuevo interruptor de Región, Mantener Para ti con tu SIM real, deja que la búsqueda de stickers y PineDrama vean la SIM que elegiste mientras Para ti pide vídeos con la SIM de tu teléfono. Necesita el parche Region spoof en tu paquete (#214, #215).
+
+* **TikTok:** Nuevas filas de Altura de los subtítulos en Subtítulos suben los subtítulos hablados, una con el teléfono en vertical, otra en horizontal y otra con los controles ocultos. Grosor de los subtítulos sustituye a Subtítulos con grosor normal y va de Fino a Extranegrita. Si tenías ese interruptor activado, vuelve como Normal (#206).
+
+* **TikTok:** Doble toque y Pulsación larga tienen una opción nueva, Ocultar o mostrar los controles. Oculta los botones sobre el vídeo como lo hace TikTok, y el mismo gesto los vuelve a mostrar (#136).
 
 ## 0.76.0 (2026-10-18)
 

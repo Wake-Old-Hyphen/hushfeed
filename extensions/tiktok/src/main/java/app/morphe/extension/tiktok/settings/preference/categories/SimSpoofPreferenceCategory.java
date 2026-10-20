@@ -106,6 +106,15 @@ public class SimSpoofPreferenceCategory extends ConditionalPreferenceCategory {
                                 + "TikTok to see the change.",
                 Settings.SIM_SPOOF
         ));
+        // The region patch's request hooks put the phone's own SIM back on For You requests, and
+        // the SIM patch is what put the preset there, so the row needs both in the bundle.
+        if (SettingsStatus.simSpoofEnabled && SettingsStatus.regionSpoofEnabled) {
+            addPreference(new TogglePreference(context, "Keep the For You feed on your real SIM",
+                    "Sticker search, PineDrama and the rest of TikTok still see the SIM above, "
+                            + "while For You asks for videos with your phone's own SIM country "
+                            + "and carrier. Your IP address and account history still count.",
+                    Settings.SIM_SPOOF_FEED_REAL));
+        }
         if (SettingsStatus.regionSpoofEnabled) {
             addPreference(new TogglePreference(context, "Match locale and timezone to country",
                     "Also change the region TikTok reports internally. Keeps your interface language. Your IP address and your account's own rules still apply.", Settings.REGION_SPOOF));

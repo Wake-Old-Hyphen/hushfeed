@@ -844,6 +844,45 @@ internal fun roomThemeJoin(instructions: List<Instruction>): Int {
 }
 
 /**
+ * TikTok's Spark theme lookup (X.0GrQ.LIZLLL on 47.4.3, #159): the light or dark answer Spark's
+ * web pages and popups take for a context, read from TikTok's theme name attribute in the
+ * context's theme ("TikTok Theme Dark" or "Const" is dark). Over a room the room hook darkened,
+ * a shop room's Top customers popup asked it with the room, drew dark, and kept the light page's
+ * dark tab titles (S22, 2026-10-20). Its answer's type is renamed each build, so it's found by
+ * its Context parameter and the theme names it compares; the one other method comparing them
+ * takes a String.
+ */
+internal object SparkThemeNameFingerprint : Fingerprint(
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("TikTok Theme Light", "TikTok Theme Dark"),
+)
+
+/**
+ * The same class's page color lookup, (Context)Integer, which resolves Spark's page background
+ * against the context's theme the same way, so it came out dark over the darkened room too.
+ */
+internal fun <M : Method> sparkThemeColor(methods: Iterable<M>): M? = methods.singleOrNull {
+    !AccessFlags.STATIC.isSet(it.accessFlags) && it.returnType == "Ljava/lang/Integer;" &&
+        it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
+}
+
+/** Hands the context a Spark theme lookup reads to the extension first, which can swap in the room's light one. */
+internal fun hookSparkTheme(lookup: MutableMethod) {
+    if (AccessFlags.STATIC.isSet(lookup.accessFlags) || lookup.implementation == null ||
+        lookup.parameterTypes.map(CharSequence::toString) != listOf("Landroid/content/Context;")
+    ) {
+        throw PatchException("LIVE controls: ${lookup.definingClass}->${lookup.name} isn't a Spark theme lookup")
+    }
+    lookup.addInstructions(
+        0,
+        """
+            invoke-static/range {p1 .. p1}, $PANEL_THEME->sparkContext(Landroid/content/Context;)Landroid/content/Context;
+            move-result-object p1
+        """,
+    )
+}
+
+/**
  * Hands the quality list's view to the extension as the dialog sets it up. The method keeps the
  * view above v15 on 47.1.4, so the call takes the range form.
  */
@@ -1729,6 +1768,17 @@ val liveControlsPatch = bytecodePatch(
             it.name == "darkAppTheme" && it.returnType == "I" && it.parameterTypes.isEmpty()
         }.returnEarly(darkTheme)
         hookRoomTheme(LivePlayActivityThemeFingerprint.method)
+        // TikTok's Spark pages read light or dark from the theme name of the context they open
+        // in, so over the darkened room a shop room's Top customers popup drew dark with dark tab
+        // titles (S22, 2026-10-20). Its theme and page color lookups hand their context to the
+        // extension first, which gives back one over the room's kept light theme, so the room's
+        // Spark popups stay stock.
+        val sparkTheme = SparkThemeNameFingerprint.method
+        hookSparkTheme(sparkTheme)
+        hookSparkTheme(
+            sparkThemeColor(mutableClassDefBy(sparkTheme.definingClass).methods)
+                ?: throw PatchException("LIVE controls: the Spark page color lookup wasn't found"),
+        )
         // A translated bio's "See original" link read dark on the dark profile card (Login2,
         // 2026-10-18): its replacement span draws it in the bio view's own light-theme text
         // color, skipping the link color. The extension makes the link color the view's text

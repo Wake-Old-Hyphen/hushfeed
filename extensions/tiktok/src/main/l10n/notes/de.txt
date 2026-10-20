@@ -4,7 +4,15 @@
 
 * **TikTok:** „Systemschrift verwenden“ und „Importierte Schrift verwenden“ wirken jetzt auch im Aktivitätscenter, im Wiedergabeverlauf und auf den anderen Webseiten von TikTok (#7).
 
-* **TikTok:** Ein neuer Schalter öffnet das Teilen-Menü, die Zuschauer-Ranglisten, den Fanclub und die Profilkarten eines LIVE-Raums dunkel, wenn TikTok im Dunkelmodus ist (#159).
+* **TikTok:** Ein neuer Schalter öffnet das Teilen-Menü, den Fanclub und die Profilkarten eines LIVE-Raums dunkel, wenn TikTok im Dunkelmodus ist (#159).
+
+* **TikTok:** Ein neuer Feed-Filter-Schalter, Videos nur für Abonnenten ausblenden, blendet Beiträge, die nur die Abonnenten eines Creators ansehen können, im Feed und auf Profilen aus (#219).
+
+* **TikTok:** Ein neuer Regionsschalter, „Für dich“ bei der echten SIM lassen, lässt Stickersuche und PineDrama die eingestellte SIM sehen, während „Für dich“ Videos mit der eigenen SIM deines Handys anfragt. Dafür muss der Patch Region spoof im Paket sein (#214, #215).
+
+* **TikTok:** Neue Zeilen Untertitelhöhe unter Untertitel heben gesprochene Untertitel höher, je eine für aufrecht, quer und die freie Ansicht. Schriftstärke der Untertitel ersetzt Untertitel in normaler Stärke und reicht von Leicht bis Extrafett. Wer den Schalter an hatte, bekommt Normal (#206).
+
+* **TikTok:** Doppeltippen und Langes Drücken haben eine neue Auswahl, Freie Ansicht ein- oder ausschalten. Sie blendet die Schaltflächen über dem Video aus wie TikToks eigene freie Ansicht, und dieselbe Geste holt sie zurück (#136).
 
 ## 0.76.0 (2026-10-18)
 

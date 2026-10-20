@@ -153,7 +153,7 @@ public class CreatorExceptionsTest {
     public static class Item extends Aweme {
         final String aid;
         Author author = new Author();
-        boolean ad, promotionalMusic, liveReplay, story, paidContent;
+        boolean ad, promotionalMusic, liveReplay, story, paidContent, subOnly;
         long liveId;
         int awemeType;
         String shareUrl, region, captionLanguage, distributeSource;
@@ -197,6 +197,7 @@ public class CreatorExceptionsTest {
         public Object getMPaidContentInfo() { return mPaidContentInfo; }
         public Object getCommercialVideoInfo() { return commercialVideoInfo; }
         public boolean isPaidContent() { return paidContent; }
+        public boolean isSubOnlyVideo() { return subOnly; }
         public long getCreateTime() { return createTime; }
         public Object getVideo() {
             Duration video = new Duration(durationMs);
@@ -235,6 +236,8 @@ public class CreatorExceptionsTest {
                         item -> item.author.verificationType = 1),
                 new Case("PlaylistFilter", () -> Settings.HIDE_PLAYLIST_VIDEOS.save(true),
                         item -> item.mixInfo = new Mix()),
+                new Case("SubscriberOnlyFilter", () -> Settings.HIDE_SUBSCRIBER_ONLY.save(true),
+                        item -> item.subOnly = true),
                 new Case("PublicationAgeFilter", () -> Settings.MAX_PUBLICATION_AGE_DAYS.save(7),
                         item -> item.createTime = nowSeconds - 30L * 86_400L),
                 new Case("QualityFilter", () -> Settings.MAX_VIDEO_SECONDS.save(1),
@@ -248,6 +251,12 @@ public class CreatorExceptionsTest {
                 new Case("FavouriteCountFilter", () -> range(Settings.MIN_MAX_FAVOURITES),
                         item -> item.stats.favourites = 5),
                 new Case("ShareCountFilter", () -> range(Settings.MIN_MAX_SHARES), item -> item.stats.shares = 5));
+    }
+
+    /** What a profile page keeps of a tripped post and a plain one: only its two rules take any. */
+    private static List<String> profileSurvivors(Case which) {
+        return Set.of("AdsFilter", "SubscriberOnlyFilter").contains(which.filter)
+                ? List.of("plain") : List.of("post", "plain");
     }
 
     private static List<Case> hardCases() {
@@ -300,7 +309,7 @@ public class CreatorExceptionsTest {
                 Settings.HIDE_SERIES, Settings.HIDE_MINI_DRAMAS, Settings.HIDE_PLAYLIST_VIDEOS,
                 Settings.HIDE_INSERTED_CARDS, Settings.HIDE_SEEN_VIDEOS, Settings.HIDE_PROMOTIONAL_MUSIC,
                 Settings.HIDE_LIVE_REPLAYS, Settings.HIDE_UNPERSONALIZED_FOR_YOU, Settings.HIDE_OFFLINE_VIDEOS,
-                Settings.BLOCKED_WORDS_IN_STICKERS,
+                Settings.BLOCKED_WORDS_IN_STICKERS, Settings.HIDE_SUBSCRIBER_ONLY,
         };
     }
 
@@ -495,21 +504,22 @@ public class CreatorExceptionsTest {
 
     /**
      * A profile's list, whoever's: TikTok reads it through the main feed's getItems, stamped with
-     * the profile's uid. Every filter but the ads one leaves it alone, so a minimum view count
-     * never empties a creator's page and a place badge never takes posts off a grid (#35). The
-     * same page unstamped is the control: each filter still takes the post from a feed.
+     * the profile's uid. Every filter but ads and subscriber-only posts (#219) leaves it alone, so
+     * a minimum view count never empties a creator's page and a place badge never takes posts off
+     * a grid (#35). The same page unstamped is the control: each filter still takes the post from
+     * a feed.
      */
     @Test
     public void aProfilesListKeepsEveryPostOnlyTheFeedFiltersHide() {
         List<Case> cases = new ArrayList<>(subjectiveCases());
-        for (Case which : hardCases()) if (!which.filter.equals("AdsFilter")) cases.add(which);
+        cases.addAll(hardCases());
         for (Case which : cases) {
             quiet();
             which.enable.run();
             FeedItemList profile = page(tripped("post", which), stranger("plain"));
             profile.dataUserId = "777";
-            assertEquals(which.filter + " hid a post on a profile page",
-                    List.of("post", "plain"), survivors(profile));
+            assertEquals(which.filter + " on a profile page",
+                    profileSurvivors(which), survivors(profile));
             assertEquals(which.filter + " did not run on the feed, so the profile case proves nothing",
                     List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
         }
@@ -649,14 +659,14 @@ public class CreatorExceptionsTest {
     @Test
     public void aProfilesListMarkedWhereItIsParsedKeepsItsPostsBeforeTheStamp() {
         List<Case> cases = new ArrayList<>(subjectiveCases());
-        for (Case which : hardCases()) if (!which.filter.equals("AdsFilter")) cases.add(which);
+        cases.addAll(hardCases());
         for (Case which : cases) {
             quiet();
             which.enable.run();
             FeedItemList parsed = page(tripped("post", which), stranger("plain"));
             FeedItemsFilter.markProfileResponse(parsed);
-            assertEquals(which.filter + " hid a post from a profile page read before its stamp",
-                    List.of("post", "plain"), survivors(parsed));
+            assertEquals(which.filter + " on a profile page read before its stamp",
+                    profileSurvivors(which), survivors(parsed));
             assertEquals(which.filter + " did not run on an unmarked page, so the marked case proves nothing",
                     List.of("plain"), survivors(page(tripped("post", which), stranger("plain"))));
         }
@@ -808,7 +818,7 @@ public class CreatorExceptionsTest {
         for (Class<?> type : CreatorExceptions.SUBJECTIVE) subjective.add(type.getSimpleName());
         assertEquals(new TreeSet<>(List.of("AiGeneratedFilter", "CommentCountFilter", "FavouriteCountFilter",
                 "ImageVideoFilter", "LikeCountFilter", "LocationBadgeFilter", "PlaylistFilter",
-                "PublicationAgeFilter", "QualityFilter", "ShareCountFilter", "StoryFilter",
+                "PublicationAgeFilter", "QualityFilter", "ShareCountFilter", "StoryFilter", "SubscriberOnlyFilter",
                 "UnpersonalizedForYouFilter", "VerifiedFilter", "ViewCountFilter")), subjective);
     }
 

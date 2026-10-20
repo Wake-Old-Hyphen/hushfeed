@@ -43,6 +43,8 @@ public final class FeedItemsFilter {
     private static final AdsFilter ADS_FILTER = new AdsFilter();
     private static final LocationBadgeFilter LOCATION_FILTER = new LocationBadgeFilter();
     private static final SeenVideoFilter SEEN_FILTER = new SeenVideoFilter();
+    private static final ContentMarkerFilters.SubscriberOnlyFilter SUBSCRIBER_ONLY_FILTER =
+        new ContentMarkerFilters.SubscriberOnlyFilter();
     private static final List<IFilter> CONTENT_FILTERS = List.of(
         ADS_FILTER,
         new LiveFilter(),
@@ -57,6 +59,7 @@ public final class FeedItemsFilter {
         new ContentMarkerFilters.SeriesFilter(),
         new ContentMarkerFilters.DramaFilter(),
         new ContentMarkerFilters.PlaylistFilter(),
+        SUBSCRIBER_ONLY_FILTER,
         new CardFilters.InsertedCardFilter(),
         SEEN_FILTER,
         new OfflineVideoFilter(),
@@ -87,6 +90,11 @@ public final class FeedItemsFilter {
     private static final List<IFilter> FOR_YOU_FILTERS = forYouFilters();
     private static volatile List<IFilter> RANGE_FILTERS = createRangeFilters();
     private static final List<IFilter> AD_ONLY_FILTERS = List.of(ADS_FILTER);
+    /**
+     * A profile's rules: ads, and the subscriber-only posts a creator's grid is where they
+     * mostly sit (#219). The feed's other preferences stay off profiles (#35).
+     */
+    private static final List<IFilter> PROFILE_FILTERS = List.of(ADS_FILTER, SUBSCRIBER_ONLY_FILTER);
     /**
      * The Following tab's rules where TikTok reads its list. On 47.1.4 the tab never loads
      * through the response hook, so this read is the only place its videos meet the feed rules,
@@ -352,7 +360,7 @@ public final class FeedItemsFilter {
     }
 
     public static List filterProfileAds(List items) {
-        return filterAdOnlyAwemeList("ProfileAwemeList", items);
+        return filterAwemeList("ProfileAwemeList", items, PROFILE_FILTERS);
     }
 
     /**
@@ -388,26 +396,36 @@ public final class FeedItemsFilter {
      * page (X.0OfL.LJIIL on 47.1.4). No profile parse saw that list and it carries no profile uid,
      * so its getItems read ran the main feed's rules: Hide photo posts or a blocked word took saved
      * posts out of the pager the reader tapped into, and it played the wrong one (#135). Marked, it
-     * gets a profile list's rules. Runs inside TikTok's own model, so it never throws.
+     * loses only ads: even a profile's subscriber-only rule would shift the pager off the video the
+     * reader tapped. Runs inside TikTok's own model, so it never throws.
      */
     public static void markOpenedList(Object list) {
         try {
             if (!(list instanceof FeedItemList)) return;
             HookStatus.bound("main feed", "opened list");
             synchronized (PARSED_PROFILE_LISTS) {
-                PARSED_PROFILE_LISTS.put((FeedItemList) list, Boolean.TRUE);
+                OPENED_LISTS.put((FeedItemList) list, Boolean.TRUE);
             }
         } catch (Throwable ex) {
             Logger.printException(() -> "Could not mark an opened list", ex);
         }
     }
 
+    /** Lists the reader opened from a grid, keyed by identity like {@link #PARSED_PROFILE_LISTS}. */
+    private static final Map<FeedItemList, Boolean> OPENED_LISTS = new WeakHashMap<>();
+
     /** Marked where TikTok parsed it, or stamped with a profile's uid (a clone keeps only the stamp). */
     static boolean isProfileList(FeedItemList list) {
         String profile = list.dataUserId;
         if (profile != null && !profile.isEmpty()) return true;
         synchronized (PARSED_PROFILE_LISTS) {
-            return PARSED_PROFILE_LISTS.containsKey(list);
+            return PARSED_PROFILE_LISTS.containsKey(list) || OPENED_LISTS.containsKey(list);
+        }
+    }
+
+    private static boolean isOpenedList(FeedItemList list) {
+        synchronized (PARSED_PROFILE_LISTS) {
+            return OPENED_LISTS.containsKey(list);
         }
     }
 
@@ -420,12 +438,14 @@ public final class FeedItemsFilter {
      * stamps the profile's uid on it, so every read went through the main feed's getItems filter,
      * and the feed's preferences emptied pages the reader chose to open: a place badge took an
      * owner's recent posts off their own grid (#35), and a minimum view count thinned out a small
-     * creator's page. A profile gets what the profile routes give it, ads only.
+     * creator's page. A profile gets what the profile routes give it: ads, and subscriber-only
+     * posts with their switch on. A list the reader opened loses ads alone.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void filterProfileList(FeedItemList feedItemList) {
         List items = feedItemList.items;
-        List kept = filterAdOnlyAwemeList(PROFILE_LIST_SOURCE, items);
+        List kept = filterAwemeList(PROFILE_LIST_SOURCE, items,
+                isOpenedList(feedItemList) ? AD_ONLY_FILTERS : PROFILE_FILTERS);
         if (kept == items) return;
         try {
             items.clear();
@@ -465,7 +485,9 @@ public final class FeedItemsFilter {
     /**
      * The ad event the profile detail pager raises for its own list. It used to share the
      * profile line, so an ad reported from that pager (issue #2) could not be told from one on
-     * the grid; a line of its own says whether the pager's route ran and what it took out.
+     * the grid; a line of its own says whether the pager's route ran and what it took out. Ads
+     * only: this is the list the reader tapped into, from any grid, and a profile's grid has
+     * already lost its subscriber-only posts by then.
      */
     public static List filterProfileDetailAds(List items) {
         return filterAdOnlyAwemeList("ProfileDetailAdEvent", items);
@@ -969,8 +991,13 @@ public final class FeedItemsFilter {
         return filterAdOnlyAwemeList("FeedInsertion:" + insertionSource, items);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     private static List filterAdOnlyAwemeList(String source, List items) {
+        return filterAwemeList(source, items, AD_ONLY_FILTERS);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static List filterAwemeList(String source, List items, List<IFilter> rules) {
         // Counted before the enablement check and before the empty check. A route that ran
         // with the ad filter off still proves the hook is alive, which is the half every ad
         // report so far has been missing, and a route handed nothing proves the page asked
@@ -978,14 +1005,15 @@ public final class FeedItemsFilter {
         // that read the same as a hook that never ran.
         FeedFilterCounters.sawList(source, items == null ? 0 : items.size());
         if (items == null || items.isEmpty()) return items;
-        if (!ADS_FILTER.getEnabled()) {
+        List<IFilter> active = getActiveFilters(rules);
+        if (active.isEmpty()) {
             FeedCapture.noRules(source);
             return items;
         }
 
         boolean verbose = BaseSettings.DEBUG.get();
         FeedCapture.Batch capture = FeedCapture.batch(source, items.size());
-        if (capture != null) capture.rules(AD_ONLY_FILTERS, null);
+        if (capture != null) capture.rules(active, null);
         ArrayList kept = null;
         int removed = 0;
         int notVideos = 0;
@@ -999,7 +1027,7 @@ public final class FeedItemsFilter {
                 nameNotVideo(source, container);
                 if (capture != null) capture.notVideo();
             }
-            String matched = item == null ? null : getFilterReason(AD_ONLY_FILTERS, item);
+            String matched = item == null ? null : getFilterReason(active, item);
             String reason = matched != null && own.owns(item) ? null : matched;
             if (reason == null) {
                 if (kept != null) kept.add(container);

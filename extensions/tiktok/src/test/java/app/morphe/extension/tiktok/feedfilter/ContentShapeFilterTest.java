@@ -65,6 +65,8 @@ public class ContentShapeFilterTest {
         private long liveId;
         /** Read by its field name, the way the Shop filter reads a selling LIVE. */
         public boolean isLiveHasProduct;
+        /** Read by its field name, like a TikTok Subs post's flag. */
+        public boolean isSubOnlyVideo;
 
         Item(String aid) {
             this.aid = aid;
@@ -77,6 +79,7 @@ public class ContentShapeFilterTest {
         Item shareUrl(String url) { shareUrl = url; return this; }
         Item type(int awemeType) { type = awemeType; return this; }
         Item live(long id, boolean selling) { liveId = id; isLiveHasProduct = selling; return this; }
+        Item subOnly() { isSubOnlyVideo = true; return this; }
         Item count(int index, long value) {
             long[] counts = {30, 30, 30, 30, 30};
             counts[index] = value;
@@ -159,6 +162,7 @@ public class ContentShapeFilterTest {
     public void tearDown() {
         for (BooleanSetting setting : shapeSwitches()) setting.resetToDefault();
         Settings.REMOVE_ADS.resetToDefault();
+        Settings.HIDE_SUBSCRIBER_ONLY.resetToDefault();
         for (StringSetting setting : rangeSettings()) setting.resetToDefault();
         FeedItemsFilter.rebuildRangeFiltersForTests();
         SeenVideoHistory.clear();
@@ -289,6 +293,17 @@ public class ContentShapeFilterTest {
         FeedItemsFilter.markOpenedList(opened);
         FeedItemsFilter.filterOnRead(opened);
         assertEquals(Arrays.asList("photo", "video"), aids(opened));
+
+        // A profile's subscriber-only rule stays off it too, though a parsed profile list runs it (#219).
+        Settings.HIDE_SUBSCRIBER_ONLY.save(true);
+        FeedItemList openedSubs = page(new Item("subs").subOnly(), new Item("plain"));
+        FeedItemsFilter.markOpenedList(openedSubs);
+        FeedItemsFilter.filterOnRead(openedSubs);
+        assertEquals(Arrays.asList("subs", "plain"), aids(openedSubs));
+        FeedItemList profile = page(new Item("subs").subOnly(), new Item("plain"));
+        FeedItemsFilter.markProfileResponse(profile);
+        FeedItemsFilter.filterOnRead(profile);
+        assertEquals(Arrays.asList("plain"), aids(profile));
 
         // An unmarked list read the same way is still filtered as the main feed's.
         FeedItemList unmarked = page(new Item("photo").images(new Object()), new Item("video"));

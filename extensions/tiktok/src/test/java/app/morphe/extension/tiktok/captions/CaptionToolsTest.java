@@ -45,7 +45,10 @@ public class CaptionToolsTest {
         CaptionStyle.resetLookupsForTests();
         Settings.CAPTION_TEXT_SIZE.save(0);
         Settings.CAPTION_BACKGROUND.save("default");
-        Settings.CAPTION_REGULAR_WEIGHT.save(false);
+        Settings.CAPTION_FONT_WEIGHT.save("default");
+        Settings.CAPTION_BOTTOM_OFFSET.save(0);
+        Settings.CAPTION_LANDSCAPE_OFFSET.save(0);
+        Settings.CAPTION_CLEAR_DISPLAY_OFFSET.save(0);
         Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(false);
         CaptionTools.onVideoChanged(null);
     }
@@ -178,10 +181,11 @@ public class CaptionToolsTest {
         return value * Utils.getContext().getResources().getDisplayMetrics().density;
     }
     /**
-     * TikTok draws spoken captions bold, and #158 asked for them at normal weight. The switch
-     * redraws the cue at 400 on its own, at TikTok's size, and TikTok's own paint keeps its bold.
+     * TikTok draws spoken captions bold, and #158 asked for them at normal weight. Caption
+     * boldness (#206) redraws the cue at the chosen weight on its own, at TikTok's size, and
+     * TikTok's own paint keeps its bold.
      */
-    @Test public void normalWeightCaptionsDrawAtRegularWeightAtTikToksSize() {
+    @Test public void captionBoldnessDrawsTheChosenWeightAtTikToksSize() {
         TextPaint paint = new TextPaint();
         paint.setTextSize(16);
         paint.setTypeface(Typeface.DEFAULT_BOLD);
@@ -189,22 +193,122 @@ public class CaptionToolsTest {
         Layout original = new StaticLayout("I think about leaving sometimes.", paint, 600,
                 Layout.Alignment.ALIGN_CENTER, 1, 0, true);
         assertSame(original, CaptionStyle.layout(original));
-        Settings.CAPTION_REGULAR_WEIGHT.save(true);
         try {
-            Layout styled = CaptionStyle.layout(original);
-            assertNotSame(original, styled);
-            assertEquals(original.getText(), styled.getText());
-            assertEquals("TikTok's size changed", 16, styled.getPaint().getTextSize(), 0);
-            assertFalse(styled.getPaint().isFakeBoldText());
-            assertEquals(400, styled.getPaint().getTypeface().getWeight());
-            assertTrue(styled.getPaint().getFontVariationSettings(),
-                    styled.getPaint().getFontVariationSettings().startsWith("'wght' 400, 'opsz' "));
+            for (int weight : new int[] {300, 400, 800}) {
+                Settings.CAPTION_FONT_WEIGHT.save(String.valueOf(weight));
+                Layout styled = CaptionStyle.layout(original);
+                assertNotSame(original, styled);
+                assertEquals(original.getText(), styled.getText());
+                assertEquals("TikTok's size changed", 16, styled.getPaint().getTextSize(), 0);
+                assertFalse(styled.getPaint().isFakeBoldText());
+                assertEquals(weight, styled.getPaint().getTypeface().getWeight());
+                assertTrue(styled.getPaint().getFontVariationSettings(),
+                        styled.getPaint().getFontVariationSettings().startsWith("'wght' " + weight + ", 'opsz' "));
+            }
             assertTrue("TikTok's own paint lost its bold", original.getPaint().isFakeBoldText());
             assertTrue(original.getPaint().getTypeface().isBold());
         } finally {
-            Settings.CAPTION_REGULAR_WEIGHT.save(false);
+            Settings.CAPTION_FONT_WEIGHT.save("default");
         }
         assertSame(original, CaptionStyle.layout(original));
+    }
+
+    /** A weight the picker can't have written, from a hand-edited backup say, is TikTok's own. */
+    @Test public void aWeightThePickerCantWriteIsTikToksOwn() {
+        try {
+            for (String value : new String[] {"default", "bold", "", "50", "950", "-400"}) {
+                Settings.CAPTION_FONT_WEIGHT.save(value);
+                assertEquals(value, 0, CaptionStyle.fontWeight());
+            }
+            Settings.CAPTION_FONT_WEIGHT.save(" 600 ");
+            assertEquals(600, CaptionStyle.fontWeight());
+        } finally {
+            Settings.CAPTION_FONT_WEIGHT.save("default");
+        }
+    }
+
+    /**
+     * #206: Caption height lifts the caption's container by a translation, on top of whatever
+     * translation TikTok gave it, and gives all of it back when the height goes to 0, so the
+     * caption is exactly where TikTok had it. A group cuts a child off at its own edge when the
+     * group's parent clips, so the one that stops clipping is the parent of the wrapper the
+     * caption pokes out of (the wrapper's own clip moves with the caption), and the padded wrapper
+     * stops clipping at its padding. The page has room above the wrapper, so the window keeps
+     * clipping.
+     */
+    @Test public void captionHeightLiftsTheContainerAndGivesTikToksPlacementBack() {
+        FrameLayout window = new FrameLayout(Utils.getContext());
+        FrameLayout page = new FrameLayout(Utils.getContext());
+        FrameLayout wrapper = new FrameLayout(Utils.getContext());
+        FrameLayout root = new FrameLayout(Utils.getContext());
+        window.addView(page);
+        page.addView(wrapper);
+        wrapper.addView(root);
+        wrapper.setPadding(0, 8, 0, 0);
+        page.layout(0, 0, 1080, 2000);
+        wrapper.layout(0, 1000, 1080, 1208);
+        root.layout(0, 8, 1080, 208);
+        root.setTranslationY(-10);
+        root.setTranslationZ(2);
+        assertTrue(page.getClipChildren() && wrapper.getClipToPadding());
+
+        Settings.CAPTION_BOTTOM_OFFSET.save(50);
+        CaptionStyle.apply(root);
+        assertEquals(-10 - Math.round(dp(50)), root.getTranslationY(), 0.01f);
+        assertEquals(Math.round(dp(50)), CaptionStyle.liftOf(root));
+        assertFalse("the wrapper's parent still cuts the lifted caption off", page.getClipChildren());
+        assertFalse("the wrapper still clips at its padding", wrapper.getClipToPadding());
+        assertTrue("the wrapper's own clip was changed for nothing", wrapper.getClipChildren());
+        assertTrue("the window was unclipped with room to spare", window.getClipChildren());
+        assertTrue(root.getTranslationZ() > 2);
+
+        // A render repeats without stacking the lift, and TikTok moving the container itself keeps
+        // the lift on top of TikTok's new spot.
+        CaptionStyle.apply(root);
+        assertEquals(-10 - Math.round(dp(50)), root.getTranslationY(), 0.01f);
+        root.setTranslationY(-20);
+        CaptionStyle.apply(root);
+        assertEquals(-20 - Math.round(dp(50)), root.getTranslationY(), 0.01f);
+        // A new height replaces the old lift rather than adding to it.
+        Settings.CAPTION_BOTTOM_OFFSET.save(120);
+        CaptionStyle.apply(root);
+        assertEquals(-20 - Math.round(dp(120)), root.getTranslationY(), 0.01f);
+        assertEquals(Math.round(dp(120)), CaptionStyle.liftOf(root));
+
+        Settings.CAPTION_BOTTOM_OFFSET.save(0);
+        CaptionStyle.apply(root);
+        assertEquals("TikTok's own translation didn't come back", -20, root.getTranslationY(), 0.01f);
+        assertEquals(2, root.getTranslationZ(), 0.01f);
+        assertTrue("the page didn't get its clipping back", page.getClipChildren());
+        assertTrue("the wrapper didn't get its padding clip back", wrapper.getClipToPadding());
+        assertEquals(0, CaptionStyle.liftOf(root));
+
+        // The landscape height is its own: upright, it moves nothing.
+        Settings.CAPTION_LANDSCAPE_OFFSET.save(80);
+        CaptionStyle.apply(root);
+        assertEquals(-20, root.getTranslationY(), 0.01f);
+    }
+
+    /**
+     * Sideways, the landscape height is the one that counts for TikTok's caption, and the upright
+     * one moves nothing. The kept Clear display line still answers only to its own row.
+     */
+    @Test @Config(qualifiers = "land")
+    public void sidewaysTheLandscapeHeightLiftsTheCaption() {
+        FrameLayout root = new FrameLayout(Utils.getContext());
+        Settings.CAPTION_BOTTOM_OFFSET.save(50);
+        CaptionStyle.apply(root);
+        assertEquals(0, root.getTranslationY(), 0.01f);
+        Settings.CAPTION_LANDSCAPE_OFFSET.save(80);
+        CaptionStyle.apply(root);
+        assertEquals(-Math.round(dp(80)), root.getTranslationY(), 0.01f);
+        assertEquals("the landscape height moved the kept line", 0,
+                CaptionStyle.heightPx(root, Settings.CAPTION_CLEAR_DISPLAY_OFFSET));
+        Settings.CAPTION_CLEAR_DISPLAY_OFFSET.save(40);
+        assertEquals(Math.round(dp(40)), CaptionStyle.heightPx(root, Settings.CAPTION_CLEAR_DISPLAY_OFFSET));
+        Settings.CAPTION_LANDSCAPE_OFFSET.save(0);
+        CaptionStyle.apply(root);
+        assertEquals(0, root.getTranslationY(), 0.01f);
     }
 
     /**
@@ -495,6 +599,17 @@ public class CaptionToolsTest {
             owner.windowFocusChanged(true);
             CaptionTools.refresh();
             assertEquals(View.VISIBLE, caption.getVisibility());
+            // Caption boldness reaches the kept line, and TikTok default gives it back the font
+            // it started with.
+            Typeface start = caption.getTypeface();
+            Settings.CAPTION_FONT_WEIGHT.save("700");
+            CaptionTools.refresh();
+            assertEquals(700, caption.getTypeface().getWeight());
+            assertEquals("'wght' 700", caption.getFontVariationSettings());
+            Settings.CAPTION_FONT_WEIGHT.save("default");
+            CaptionTools.refresh();
+            assertSame(start, caption.getTypeface());
+            assertNull(caption.getFontVariationSettings());
             CaptionTools.onCaption(source, null, "HIDDEN", "");
             assertEquals(View.GONE, caption.getVisibility());
             CaptionTools.onCaption(source, null, "EXPANDED", "Another cue");
@@ -635,6 +750,64 @@ public class CaptionToolsTest {
             lay(decor);
             assertEquals(View.VISIBLE, caption.getVisibility());
             assertEquals("the spot should carry over to the next video", stripBottom, bottom(caption));
+        }
+    }
+
+    /**
+     * #206: each height moves only its own caption. Caption height lifts TikTok's strip but not
+     * the kept line in Clear display, which still starts from TikTok's own spot, and the Clear
+     * display height lifts only the kept line.
+     */
+    @Test @Config(qualifiers = "w360dp-h780dp-xxhdpi")
+    public void eachCaptionHeightMovesOnlyItsOwnCaption() {
+        try (var owner = Robolectric.buildActivity(CaptionActivity.class).setup().visible()) {
+            var activity = owner.get();
+            Utils.setContext(activity);
+            int stripId = View.generateViewId();
+            CaptionStyle.resolveForTests("47.4.3:dly", stripId);
+            FrameLayout source = new FrameLayout(activity);
+            FrameLayout strip = new FrameLayout(activity);
+            strip.setId(stripId);
+            FrameLayout.LayoutParams spot = new FrameLayout.LayoutParams(-1, 90, android.view.Gravity.BOTTOM);
+            spot.bottomMargin = 700;
+            source.addView(strip, spot);
+            activity.setContentView(source);
+            owner.windowFocusChanged(true);
+            Settings.KEEP_CAPTIONS_CLEAR_DISPLAY.save(true);
+            View decor = activity.getWindow().getDecorView();
+
+            CaptionTools.onVideoChanged("lifted");
+            CaptionTools.onCaption(source, "lifted", "EXPANDED", "At TikTok's spot");
+            lay(decor);
+            int tiktokBottom = bottom(strip);
+
+            Settings.CAPTION_BOTTOM_OFFSET.save(40);
+            CaptionTools.onCaption(source, null, "EXPANDED", "Lifted cue");
+            lay(decor);
+            int lift = Math.round(dp(40));
+            assertEquals("Caption height didn't lift TikTok's caption", tiktokBottom - lift, bottom(strip));
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            decor.getViewTreeObserver().dispatchOnPreDraw();
+            CaptionTools.onClear(new Video("lifted"), true);
+            lay(decor);
+            TextView caption = find(decor, "Lifted cue");
+            assertNotNull(caption);
+            assertEquals(View.VISIBLE, caption.getVisibility());
+            assertEquals("Caption height moved the kept line too", tiktokBottom, bottom(caption));
+
+            CaptionTools.onClear(new Video("lifted"), false);
+            Settings.CAPTION_CLEAR_DISPLAY_OFFSET.save(30);
+            CaptionTools.onClear(new Video("lifted"), true);
+            lay(decor);
+            assertEquals("the Clear display height didn't lift the kept line",
+                    tiktokBottom - Math.round(dp(30)), bottom(caption));
+
+            CaptionTools.onClear(new Video("lifted"), false);
+            Settings.CAPTION_BOTTOM_OFFSET.save(0);
+            CaptionTools.onCaption(source, null, "EXPANDED", "Back at TikTok's spot");
+            lay(decor);
+            assertEquals("TikTok's caption didn't go back to its spot", tiktokBottom, bottom(strip));
+            assertEquals(0, source.getTranslationY(), 0.01f);
         }
     }
 
@@ -816,6 +989,15 @@ public class CaptionToolsTest {
             size.setValue("1");
             assertEquals("12", size.getValue());
             size.setValue("0");
+            assertNotNull(screen.findPreference("caption_font_weight"));
+            assertNull("the retired switch is still on the screen", screen.findPreference("caption_regular_weight"));
+            for (String key : new String[] {"caption_bottom_offset", "caption_landscape_offset", "caption_clear_display_offset"}) {
+                var height = (app.morphe.extension.tiktok.settings.preference.NumberInputPreference) screen.findPreference(key);
+                assertNotNull(key, height);
+                height.setValue("999");
+                assertEquals(key, String.valueOf(CaptionStyle.MAX_HEIGHT_DP), height.getValue());
+                height.setValue("0");
+            }
             activity.setPreferenceScreen(screen);
             org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
             app.morphe.extension.tiktok.UiCapture.save(activity.getWindow().getDecorView(), "caption-settings.png");

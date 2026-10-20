@@ -6,9 +6,11 @@
  */
 package app.morphe.extension.tiktok.spoof.region;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.SystemClock;
+import android.telephony.TelephonyManager;
 import androidx.annotation.Nullable;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -74,16 +76,23 @@ public final class RegionSpoof {
      * timezone and the request fields the builder hook would set. The two values TikTok worked
      * out once as it started, sys_region and timezone_name, were worked out under the preset and
      * kept, so requestParams() puts back what their sources say now.
+     *
+     * For You requests get the same mark when Keep the For You feed on your real SIM is on, and
+     * requestParams() gives them the phone's own SIM (#214, #215).
      */
     /**
-     * This thread's mark: when it was set, in {@link SystemClock#elapsedRealtime()}, and how many
-     * sign-in fills it spans. A fill can run inside another for the same request (AppLog's inside
-     * the handler's), and only the outer one's end takes the mark off.
+     * This thread's mark: when it was set, in {@link SystemClock#elapsedRealtime()}, how many
+     * fills it spans, and which kind of fill it is. A fill can run inside another for the same
+     * request (AppLog's inside the handler's), and only the outer one's end takes the mark off.
      */
-    private static final ThreadLocal<long[]> SIGN_IN = new ThreadLocal<>();
-    /** Threads building a sign-in request's parameters now, so every other call skips the ThreadLocal. */
-    private static final AtomicInteger signingIn = new AtomicInteger();
+    private static final ThreadLocal<long[]> MARK = new ThreadLocal<>();
+    /** Threads building a marked request's parameters now, so every other call skips the ThreadLocal. */
+    private static final AtomicInteger marked = new AtomicInteger();
+    private static final long SIGN_IN_FILL = 1;
+    private static final long FEED_FILL = 2;
     private static final String SIGN_IN_PATH = "passport/";
+    private static final String FEED_PATH_START = "aweme/v";
+    private static final String FEED_PATH_END = "/feed/";
     /**
      * How long a mark lasts. A fill takes milliseconds, so a mark this old is one whose fill threw
      * before requestDone() and whose thread hasn't sent another request since; it goes, rather
@@ -94,7 +103,7 @@ public final class RegionSpoof {
     /** From the common-parameter handler, with the path of the request it's about to fill. */
     public static void requestPath(@Nullable String path) {
         try {
-            mark(isSignIn(path) && Utils.getContext() != null && Settings.REGION_REQUEST_SPOOF.get());
+            mark(Utils.getContext() == null ? 0 : fillOf(path));
         } catch (RuntimeException error) {
             Logger.printException(() -> "Region spoof could not read a request's path", error);
         }
@@ -134,35 +143,44 @@ public final class RegionSpoof {
 
     /** From the common-parameter handler, once the request's parameters are built. */
     public static void requestDone() {
-        long[] mark = SIGN_IN.get();
+        long[] mark = MARK.get();
         if (mark != null && --mark[1] <= 0) clearMark();
     }
 
+    /** The kind of fill a request's path asks for, with the switch it needs on. Zero for none. */
+    private static long fillOf(@Nullable String path) {
+        if (isSignIn(path)) return Settings.REGION_REQUEST_SPOOF.get() ? SIGN_IN_FILL : 0;
+        if (isForYouFeed(path) && Settings.SIM_SPOOF.get() && Settings.SIM_SPOOF_FEED_REAL.get()) {
+            return FEED_FILL;
+        }
+        return 0;
+    }
+
     /**
-     * A sign-in's fill marks the thread, or goes one deeper into a mark already there. Any other
-     * request takes the mark off, whatever its depth: that's how a fill that threw before its end
-     * gets put right by the thread's next request.
+     * A marked fill marks the thread, or goes one deeper into a mark of the same kind already
+     * there. Any other request takes the mark off, whatever its depth: that's how a fill that
+     * threw before its end gets put right by the thread's next request.
      */
-    private static void mark(boolean signIn) {
-        long[] mark = SIGN_IN.get();
-        if (signIn) {
+    private static void mark(long fill) {
+        long[] mark = MARK.get();
+        if (fill != 0) {
             long now = SystemClock.elapsedRealtime();
-            if (mark != null && now - mark[0] < MARK_LIFETIME_MS) {
+            if (mark != null && mark[2] == fill && now - mark[0] < MARK_LIFETIME_MS) {
                 mark[1]++;
                 return;
             }
-            // A mark run out is a fill that threw long ago, so this sign-in starts its own.
+            // A mark run out is a fill that threw long ago, so this fill starts its own.
             if (mark != null) clearMark();
-            SIGN_IN.set(new long[]{now, 1});
-            signingIn.incrementAndGet();
+            MARK.set(new long[]{now, 1, fill});
+            marked.incrementAndGet();
         } else if (mark != null) {
             clearMark();
         }
     }
 
     private static void clearMark() {
-        SIGN_IN.remove();
-        signingIn.decrementAndGet();
+        MARK.remove();
+        marked.decrementAndGet();
     }
 
     /** TikTok's sign-in, sign-up and account verification endpoints all sit under /passport/. */
@@ -173,17 +191,34 @@ public final class RegionSpoof {
         return start > 0 && path.regionMatches(start, SIGN_IN_PATH, 0, SIGN_IN_PATH.length());
     }
 
-    private static boolean signingIn() {
-        if (signingIn.get() <= 0) return false;
-        long[] mark = SIGN_IN.get();
-        if (mark == null) return false;
-        if (SystemClock.elapsedRealtime() - mark[0] < MARK_LIFETIME_MS) return true;
+    /**
+     * The For You feed: /aweme/v1/feed/ and /aweme/v2/feed/ on 47.4.3. The Following and Friends
+     * feeds sit under their own paths and keep the preset.
+     */
+    static boolean isForYouFeed(@Nullable String path) {
+        if (path == null) return false;
+        int start = 0;
+        while (start < path.length() && path.charAt(start) == '/') start++;
+        if (start == 0 || !path.regionMatches(start, FEED_PATH_START, 0, FEED_PATH_START.length())) return false;
+        int digits = start + FEED_PATH_START.length();
+        int end = digits;
+        while (end < path.length() && path.charAt(end) >= '0' && path.charAt(end) <= '9') end++;
+        return end > digits && path.length() == end + FEED_PATH_END.length()
+                && path.regionMatches(end, FEED_PATH_END, 0, FEED_PATH_END.length());
+    }
+
+    /** The kind of fill this thread is in, or zero. */
+    private static long markedFill() {
+        if (marked.get() <= 0) return 0;
+        long[] mark = MARK.get();
+        if (mark == null) return 0;
+        if (SystemClock.elapsedRealtime() - mark[0] < MARK_LIFETIME_MS) return mark[2];
         clearMark();
-        return false;
+        return 0;
     }
 
     private static String selectedCountry() {
-        return signingIn() ? "" : presetCountry();
+        return markedFill() != 0 ? "" : presetCountry();
     }
 
     private static String presetCountry() {
@@ -235,8 +270,14 @@ public final class RegionSpoof {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void requestParams(Map params) {
         try {
-            if (params == null || Utils.getContext() == null || !Settings.REGION_REQUEST_SPOOF.get()) return;
-            if (signingIn()) {
+            if (params == null || Utils.getContext() == null) return;
+            long fill = markedFill();
+            if (fill == FEED_FILL) {
+                realSimFields(params);
+                return;
+            }
+            if (!Settings.REGION_REQUEST_SPOOF.get()) return;
+            if (fill == SIGN_IN_FILL) {
                 // A sign-in goes out with the fields TikTok set, so the account sees the real
                 // region, and the copies it made at start-up are put back to what they are now.
                 List<String> live = liveStartUpFields(params);
@@ -263,6 +304,68 @@ public final class RegionSpoof {
         } catch (RuntimeException error) {
             Logger.printException(() -> "Region spoof could not set a request's region fields", error);
         }
+    }
+
+    /*
+     * For You requests with Keep the For You feed on your real SIM on. TikTok reads the SIM once
+     * as it starts, through getters the SIM patch answers with the preset, and keeps the answers
+     * for the life of the process, so sticker search, PineDrama's episode panel and the feed's
+     * region all saw the same preset. These are the fields that carry it in a request: the SIM
+     * country in the region fields, the operator code and the carrier name. Each one still
+     * holding the preset gets the phone's own value, read here, where the SIM patch doesn't reach.
+     * A field with anything else came from somewhere the preset doesn't touch and stays, and so
+     * does every field when the phone has no SIM to read.
+     */
+    static final String[] SIM_COUNTRY_FIELDS = {"carrier_region", "region", "op_region", "sim_region"};
+    static final String SIM_OPERATOR_FIELD = "mcc_mnc";
+    static final String SIM_OPERATOR_NAME_FIELD = "carrier";
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void realSimFields(Map params) {
+        TelephonyManager phone = (TelephonyManager) Utils.getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        List<String> set = new ArrayList<>();
+        if (phone != null) {
+            String preset = Settings.SIM_SPOOF_ISO.get();
+            String country = firstOf(phone.getSimCountryIso(), phone.getNetworkCountryIso());
+            if (preset != null && !country.isEmpty()) {
+                for (String field : SIM_COUNTRY_FIELDS) {
+                    Object value = params.get(field);
+                    if (!(value instanceof String) || !((String) value).equalsIgnoreCase(preset.trim())) continue;
+                    String text = (String) value;
+                    params.put(field, text.equals(text.toUpperCase(Locale.ROOT))
+                            ? country.toUpperCase(Locale.ROOT) : country.toLowerCase(Locale.ROOT));
+                    set.add(field);
+                }
+            }
+            putReal(params, SIM_OPERATOR_FIELD, Settings.SIMSPOOF_MCCMNC.get(),
+                    firstOf(phone.getNetworkOperator(), phone.getSimOperator()), set);
+            putReal(params, SIM_OPERATOR_NAME_FIELD, Settings.SIMSPOOF_OP_NAME.get(),
+                    firstOf(phone.getNetworkOperatorName(), phone.getSimOperatorName()), set);
+        }
+        // The start-up copies were worked out under the preset if Match locale was on as TikTok
+        // started, and switching it off since doesn't change them, so they get the live answers
+        // whatever it says now, as a sign-in's do.
+        List<String> live = liveStartUpFields(params);
+        if (!BaseSettings.DEBUG.get()) return;
+        String line = "For You request fields put back to the phone's own SIM " + set
+                + ", start-up copies put back " + live;
+        if (line.equals(lastRequestReport)) return;
+        lastRequestReport = line;
+        Logger.printDebug(() -> line);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void putReal(Map params, String field, @Nullable String preset, String real, List<String> set) {
+        Object value = params.get(field);
+        if (preset == null || real.isEmpty() || !(value instanceof String)) return;
+        if (!((String) value).trim().equals(preset.trim())) return;
+        params.put(field, real);
+        set.add(field);
+    }
+
+    private static String firstOf(@Nullable String first, @Nullable String second) {
+        if (first != null && !first.trim().isEmpty()) return first.trim();
+        return second == null ? "" : second.trim();
     }
 
     /**

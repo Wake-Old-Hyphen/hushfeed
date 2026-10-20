@@ -329,6 +329,8 @@ Separate words with commas. A comment is hidden if it contains any of them. Capi
 Comment media filename	Yorum medyası dosya adı
 Comments	Yorumlar
 Comments aren't available for this video	Bu video için yorumlar kullanılamıyor
+Turn Clear display on or off	Temiz ekranı aç veya kapat
+Clear display isn't available for this video	Bu video için temiz ekran kullanılamıyor
 Comments beside the video	Yorumlar videonun yanında
 Compact comment header	Kompakt yorum başlığı
 Compare gate reads with their previous values.	Özellik kapısı okumalarını önceki değerleriyle karşılaştır.
@@ -574,6 +576,7 @@ Hide place badges on videos, including cards with multiple places. Videos and yo
 Hide effect and template tags	Efekt ve şablon etiketlerini gizle
 Hide the tags above a video's description that invite you to try an effect, a template, CapCut or an AI style. Location labels and the music line have their own switches.	Bir videonun açıklamasının üstünde seni bir efekti, şablonu, CapCut'ı veya yapay zekâ stilini denemeye davet eden etiketleri gizle. Konum etiketleri ve müzik satırının kendi anahtarları var.
 Hide playlist videos	Oynatma listesi videolarını gizle
+Hide subscriber-only videos	Yalnızca abonelere özel videoları gizle
 Hide promotional music	Tanıtım amaçlı müzikleri gizle
 Hide comment typing suggestions	Yorum yazma önerilerini gizle
 Hide recommended searches before you type on TikTok's search page. Your search history stays. This doesn't hide suggestions above comments.	TikTok'un arama sayfasında sen yazmadan önce çıkan önerilen aramaları gizle. Arama geçmişin kalır. Bu, yorumların üzerindeki önerileri gizlemez.
@@ -650,6 +653,7 @@ Hide video actions	Video eylemlerini gizle
 Hide videos with TikTok's AI-generated label, AI content credentials, a TikTok AI effect such as AI Alive, or a tag like #ai or #aigenerated.	TikTok'un yapay zeka etiketini, yapay zeka içerik kimlik bilgilerini, AI Alive gibi bir TikTok yapay zeka efektini ya da #ai veya #aigenerated gibi bir etiketi taşıyan videoları gizle.
 Hide videos marked as paid partnership or branded content.	Ücretli ortaklık veya markalı içerik olarak işaretlenen videoları gizle.
 Hide videos posted as part of a playlist.	Bir oynatma listesinin parçası olarak paylaşılan videoları gizle.
+Hide posts only a creator's subscribers can watch, the ones with a lock, on the feed and on profiles.	Yalnızca bir içerik üreticinin abonelerinin izleyebildiği kilitli gönderileri akışta ve profillerde gizle.
 Hide videos posted by verified accounts.	Doğrulanmış hesapların paylaştığı videoları gizle.
 Hide videos that belong to a paid Series.	Ücretli bir Seri'ye ait videoları gizle.
 Hide videos with a lot of views and few comments. Works the same way as views per like. Zero turns it off.	Görüntülenmesi çok, yorumu az olan videoları gizle. Beğeni başına görüntülenme ile aynı şekilde çalışır. Sıfır bunu kapatır.
@@ -879,6 +883,7 @@ Plays videos that TikTok covers with a content warning without asking you to tap
 Playback	Oynatma
 Player	Oynatıcı
 Playlist posts	Oynatma listesi gönderileri
+Subscriber-only posts	Abonelere özel gönderiler
 Popular	Popüler
 Popups	Açılır pencereler
 Preset	Hazır ayar
@@ -1731,6 +1736,8 @@ A LIVE in the feed can count down and take you into the room on its own. This ke
 Play sounds TikTok pulled	TikTok'un kaldırdığı sesleri çal
 Play the audio on videos TikTok silenced because their sound was pulled for copyright or in your region. TikTok may still say the sound isn't available.	Sesi telif hakkı nedeniyle ya da bölgende kaldırıldığı için TikTok'un sessize aldığı videolarda sesi çalar. TikTok yine de sesin kullanılamadığını söyleyebilir.
 Match region fields in requests	İsteklerdeki bölge alanlarını eşleştir
+Keep the For You feed on your real SIM	Senin İçin akışını gerçek SIM'de tut
+Sticker search, PineDrama and the rest of TikTok still see the SIM above, while For You asks for videos with your phone's own SIM country and carrier. Your IP address and account history still count.	Çıkartma araması, PineDrama ve TikTok'un geri kalanı yukarıdaki SIM'i görmeye devam eder, Senin İçin ise telefonunun kendi SIM ülkesi ve operatörüyle video ister. IP adresin ve hesap geçmişin yine de etkilidir.
 Show exact LIVE viewer counts	LIVE izleyici sayısını tam göster
 A LIVE room shows how many people are watching as a rounded number like 1.2K. This shows the exact count instead.	Bir LIVE odası kaç kişinin izlediğini 1,2K gibi yuvarlanmış bir sayıyla gösterir. Bu, bunun yerine tam sayıyı gösterir.
 Offer LIVE quality in more rooms	Daha fazla LIVE odasında kalite seçimi sun
@@ -2158,8 +2165,18 @@ Show the country as a flag	Ülkeyi bayrakla göster
 Shows the country's flag in place of its two letters, by the creator's name and by a commenter's time.	Ülkenin iki harfi yerine bayrağını, içerik üreticisinin adının ve yorumun saatinin yanında gösterir.
 Full long-press menu in search results	Arama sonuçlarında tam uzun basma menüsü
 A long press on a video you opened from search opens the same menu as on For You. It needs Long press on TikTok default.	Aramadan açtığın bir videoya uzun basmak, Senin İçin'deki menünün aynısını açar. Uzun basma TikTok varsayılanında olmalıdır.
-Normal-weight captions	Normal kalınlıkta altyazılar
-Draw spoken captions at regular weight instead of TikTok's bold. Applies to the next caption.	Konuşma altyazılarını TikTok'un kalın yazısı yerine normal kalınlıkta göster. Bir sonraki altyazıdan itibaren geçerli olur.
+Caption height	Altyazı yüksekliği
+Lifts spoken captions above TikTok's spot while the phone is upright. Use 0 for TikTok's spot, or up to %1$d.	Telefon dikken konuşma altyazılarını TikTok'un konumunun üstüne kaldırır. TikTok'un konumu için 0, en fazla %1$d kullan.
+Caption height in landscape	Yatayda altyazı yüksekliği
+Lifts spoken captions above TikTok's spot while the phone is sideways. Use 0 for TikTok's spot, or up to %1$d.	Telefon yatayken konuşma altyazılarını TikTok'un konumunun üstüne kaldırır. TikTok'un konumu için 0, en fazla %1$d kullan.
+Caption boldness	Altyazı kalınlığı
+Light	İnce
+Medium	Orta
+Semi-bold	Yarı kalın
+Bold	Kalın
+Extra bold	Ekstra kalın
+Caption height in Clear display	Temiz ekranda altyazı yüksekliği
+Lifts the kept caption above its usual spot in Clear display. Use 0 for the usual spot, or up to %1$d.	Temiz ekranda tutulan altyazıyı olağan konumunun üstüne kaldırır. Olağan konum için 0, en fazla %1$d kullan.
 The LIVE recording TikTok closed on couldn't be saved. Its unfinished file was cleared.	TikTok kapanınca yarıda kalan LIVE kaydı kaydedilemedi. Yarım kalan dosya silindi.
 Also on opened videos	Açılan videolarda da
 Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.	Aramadan, bir profilden veya izleme geçmişinden açtığın videoların üstündeki arama çubuğunu gizle. Geri düğmesi kalır.

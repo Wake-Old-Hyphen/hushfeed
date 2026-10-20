@@ -5516,6 +5516,45 @@
       ]
     },
     {
+      "name": "Remove voice tools",
+      "description": "Removes TikTok's speech recognition files, saving about 16 MB of storage. The catch: voice search, naming a song by listening, talking to TikTok's AI assistant and TikTok's music check on videos you post all stop working. Only patching again without it brings them back.",
+      "category": "Performance",
+      "use": false,
+      "dependencies": [
+        "BytecodePatch",
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.4.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.4.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024704030,
+                "ARMEABI_V7A": 2024704030,
+                "X86": 2024704030,
+                "X86_64": 2024704030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Repost diagnostics",
       "description": "With diagnostic logging on, notes when you repost a video and what TikTok answered, to help track down reposts that don't stick. Works as soon as you patch it in, with no switch.",
       "category": "Interaction",

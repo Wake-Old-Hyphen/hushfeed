@@ -4,7 +4,15 @@
 
 * **TikTok:** Sistem şriftindən istifadə edin və İdxal edilmiş şriftdən istifadə edin indi Fəaliyyət mərkəzində, Baxış tarixçəsində və TikTok-un digər veb səhifələrində də işləyir (#7).
 
-* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda LIVE otağının paylaşma menyusunu, izləyici reytinqlərini, fan klubunu və profil kartlarını tünd açır (#159).
+* **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda LIVE otağının paylaşma menyusunu, fan klubunu və profil kartlarını tünd açır (#159).
+
+* **TikTok:** Lent filtrində yeni Yalnız abunəçilər üçün olan videoları gizlədin açarı yalnız yaradıcının abunəçilərinin izləyə bildiyi paylaşımları lentdə və profillərdə gizlədir (#219).
+
+* **TikTok:** Yeni Region açarı, Sənin üçün lentini əsl SIM-də saxla, stiker axtarışına və PineDrama-ya seçdiyiniz SIM-i göstərir, Sənin üçün isə telefonunuzun öz SIM-i ilə video istəyir. Bunun üçün paketdə Region spoof yaması olmalıdır (#214, #215).
+
+* **TikTok:** Başlıqlar altında yeni Başlıq hündürlüyü sətirləri danışılan başlıqları yuxarı qaldırır, biri şaquli, biri üfüqi, biri təmiz ekran üçün. Başlıq qalınlığı Normal qalınlıqda başlıqlar açarını əvəz edir və İncədən Çox qalına qədər gedir. O açar açıq idisə, Normal kimi qayıdır (#206).
+
+* **TikTok:** İki dəfə toxunma və Uzun basma üçün yeni seçim var, Təmiz ekranı aç və ya bağla. Videonun üstündəki düymələri TikTok-un öz təmiz ekranı kimi gizlədir, eyni jest onları geri qaytarır (#136).
 
 ## 0.76.0 (2026-10-18)
 

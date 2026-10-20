@@ -114,6 +114,23 @@ val rememberClearDisplayPatch = bytecodePatch(
             move-result v0
             return v0
         """)
+        // Double tap or Long press set to Clear display (#136): the same event without the
+        // native dispatch mark, so the hook below reads it as the reader's own change.
+        val readerOriginal = extension.methods.filter { it.name == "postAsReader" }
+            .singleOrPatchException("Remember clear display: extension postAsReader bridge")
+        val reader = readerOriginal.cloneMutable(additionalRegisters = 5)
+        extension.methods.remove(readerOriginal)
+        extension.methods.add(reader)
+        reader.addInstructions(0, """
+            new-instance v0, $eventClass
+            move/from16 v1, p0
+            const/4 v2, 0x0
+            const-string v3, ""
+            const-string v4, "long_press"
+            invoke-direct { v0, v1, v2, v3, v4 }, $eventClass-><init>(ZILjava/lang/String;Ljava/lang/String;)V
+            invoke-virtual { v0 }, $eventClass->post()Lcom/ss/android/ugc/governance/eventbus/IEvent;
+            return-void
+        """)
         val readOriginal = extension.methods.filter { it.name == "readCurrentAweme" }
             .singleOrPatchException("Remember clear display: extension readCurrentAweme bridge")
         val read = readOriginal.cloneMutable(additionalRegisters = 1)

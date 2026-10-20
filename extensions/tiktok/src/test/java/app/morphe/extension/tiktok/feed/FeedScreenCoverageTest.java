@@ -101,7 +101,8 @@ public class FeedScreenCoverageTest {
     static final Set<String> WAITING_FOR_A_DEVICE = Set.of(
             "show_exact_counts", "hide_story_rings", "hide_live_ring", "hide_feed_search_button",
             "hide_playlist_bar", "hide_event_badge", "hide_inserted_cards", "hide_share_guide",
-            "caption_text_size", "caption_background", "keep_captions_clear_display", "caption_regular_weight",
+            "caption_text_size", "caption_background", "keep_captions_clear_display", "caption_font_weight",
+            "caption_bottom_offset", "caption_landscape_offset", "caption_clear_display_offset",
             "double_tap_action", "confirm_quick_repost");
 
     static final Map<String, Coverage> TABLE = new LinkedHashMap<>();
@@ -206,8 +207,12 @@ public class FeedScreenCoverageTest {
         put("caption_text_size", YES, UNCHECKED, NONE);
         put("caption_background", YES, UNCHECKED, NONE);
         put("keep_captions_clear_display", YES, UNCHECKED, NONE);
-        // The same caption layout the size reaches (#158).
-        put("caption_regular_weight", YES, UNCHECKED, NONE);
+        // The same caption layout the size reaches (#158), and its container (#206).
+        put("caption_font_weight", YES, UNCHECKED, NONE);
+        put("caption_bottom_offset", YES, UNCHECKED, NONE);
+        put("caption_landscape_offset", YES, UNCHECKED, NONE);
+        // The kept line Hushfeed draws itself, beside keep_captions_clear_display.
+        put("caption_clear_display_offset", YES, UNCHECKED, NONE);
 
         // Clear display follows TikTok's own mode in either window (#84).
         put("automatic_clear_display", YES, YES, NONE);
