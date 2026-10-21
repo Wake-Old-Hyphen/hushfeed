@@ -42,7 +42,7 @@ feed/VideoOverlayHider.java|VISUAL_SEARCH_PILL_IDS|d4|df_search_biz|com.ss.andro
 feed/VideoOverlayHider.java|LIVE_ENTRANCE_IDS|47.4.3:k_d|app|com.bytedance.tiktok.homepage.mainfragment.inflate.HomepageIconServiceImpl|on:TuxIconView#1
 feed/VideoOverlayHider.java|CAPTION_IDS|desc|app|com.ss.android.ugc.aweme.feed.assem.desc.VideoDescAssem|on:View
 feed/VideoOverlayHider.java|MUSIC_IDS|47.4.3:o7a|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicTitleAssem|on:LinearLayout#1
-feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.4.3:mud|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#4
+feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.4.3:ljn|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#6
 feed/VideoOverlayHider.java|SURVEY_IDS|47.4.3:f92|app|layout:com.by.andInflater.common_feed_item_feed|tag:RelativeLayout#1
 feed/VideoOverlayHider.java|TAB_STRIP_IDS|47.4.3:uwq|app|com.ss.android.ugc.aweme.homepage.ui.view.tab.top.TopTabLayoutAbility|on:View
 feed/VideoOverlayHider.java|BOTTOM_TABS_IDS|47.4.3:onp|app|com.ss.android.ugc.aweme.main.assems.mainfragment.BottomTabAssemBase|-
@@ -63,6 +63,7 @@ feed/VideoOverlayHider.java|BOTTOM_SPACER_IDS|47.4.3:duc|app|com.by.andInflater.
 feed/VideoOverlayHider.java|DETAIL_COMMENT_BAR_IDS|47.4.3:qox|app|com.ss.android.ugc.aweme.comment.service.CommentDetailInputLayoutIdsImpl|at:2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_STRIP_IDS|47.4.3:cnc|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:View#2
 feed/VideoOverlayHider.java|DETAIL_MESSAGE_BAR_IDS|47.4.3:kyn|app|com.ss.android.ugc.aweme.im.sdk.chat.feature.reply.feature.feed.DetailFeedQuickDMFragment|at:1
+feed/VideoOverlayHider.java|DETAIL_SOUND_BAR_IDS|47.4.3:ci3|app|com.ss.android.ugc.aweme.detail.component.bottom.shoot.ShootButtonBottomComponent|at:2
 feed/VideoOverlayHider.java|TOP_SEARCH_BAR_IDS|47.4.3:j1z|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:ConstraintLayout#1
 feed/VideoOverlayHider.java|TOP_SEARCH_SCRIM_IDS|47.4.3:g5g|app|com.by.andInflater.detail_feed_fragment_detail_page_opt|on:View#1
 feed/VideoOverlayHider.java|DETAIL_SEARCH_BOX_IDS|47.4.3:o94|app|com.ss.android.ugc.aweme.search.entry.core.viewmodel.DetailFeedSearchHelper|at:4
@@ -89,7 +90,7 @@ feed/FeedOverlayControls.java|inline|feed_multi_tag_layout|app|com.ss.android.ug
 feed/AuthorRegion.java|NAME_ID|title|app|com.by.andInflater.common_feed_layout_video_title|at:4
 feed/AuthorRegion.java|POST_TIME_ID|tv_post_time|app|com.ss.android.ugc.aweme.feed.assem.videoauthorinfo.VideoAuthorInfoRelationAssem|on:TuxTextView#1
 feed/LiveStatusBar.java|VIDEO_CONTAINER|video_view_container|app|com.bytedance.android.livesdk.chatroom.ui.LivePlayFragment|on:ViewGroup#2
-inbox/InboxFilter.java|LIST_IDS|47.4.3:l92|app|com.ss.android.ugc.aweme.inbox.BaseInboxFragment|at:2
+inbox/InboxFilter.java|LIST_IDS|47.4.3:l7h|app|com.ss.android.ugc.aweme.inbox.BaseInboxFragment|at:1
 inbox/InboxFilter.java|SYSTEM_ROW_IDS|47.4.3:uyv|app|layout:com.ss.android.ugc.aweme.inbox.lego.PreloadInboxTask|tag:MultiSelectConstraintLayout
 inbox/InboxFilter.java|CHAT_ROW_IDS|47.4.3:w24|app|com.by.andInflater.im_item_session_inbox_single_chat_cell|on:MultiSelectConstraintLayout
 inbox/InboxFilter.java|MESSAGE_REQUESTS_IDS|tv_request_unread_count|app|com.by.andInflater.im_item_session_inbox_message_request_cell|at:11

@@ -54,3 +54,29 @@ internal fun BytecodePatchContext.classesCalling(owners: Collection<String>): Se
     }
     return types
 }
+
+/**
+ * The types of the classes holding a call to one of [targets], each a full method descriptor
+ * (`Lpkg/Type;->name(params)ret`), looked up by the owner and the method's name together.
+ *
+ * <p>A lookup by owner alone makes the patcher build a match for every method that calls any
+ * method of that owner, then a set of all of them to drop repeats. For `View` that is most of
+ * TikTok, and Turn off haptics ran a desktop patcher out of heap right there (#220). With the name
+ * in the filter the patcher's index narrows to the classes that name both, so each lookup holds a
+ * few hundred matches instead.
+ */
+internal fun BytecodePatchContext.classesCallingMethods(targets: Collection<String>): Set<String> {
+    val pairs = targets.mapTo(LinkedHashSet()) { target ->
+        require(target.startsWith("L") && ";->" in target && "(" in target) {
+            "classesCallingMethods needs a full method descriptor, not $target"
+        }
+        target.substringBefore("->") to target.substringAfter("->").substringBefore('(')
+    }
+    val types = HashSet<String>()
+    for ((owner, name) in pairs) {
+        Fingerprint(filters = listOf(methodCall(definingClass = owner, name = name)))
+            .matchAllOrNull().orEmpty()
+            .mapTo(types) { it.originalClassDef.type }
+    }
+    return types
+}

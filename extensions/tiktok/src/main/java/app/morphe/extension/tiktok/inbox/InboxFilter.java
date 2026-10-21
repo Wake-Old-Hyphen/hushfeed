@@ -43,29 +43,29 @@ import java.util.WeakHashMap;
  * content, which keeps recycled views correct: a hidden row that gets reused for
  * something else is shown again on the next pass.
  *
- * Resource ids are TikTok 47.1.4's, the declared target, the same views 47.0.3's live Inbox and
- * precompiled row inflaters were read off. No older build's name is kept as a fallback: TikTok
- * hands the same short names out again on every build, and an older build's name is some
- * other view on this one.
+ * Resource ids are TikTok 47.4.3's, the declared target. The list, rows and header were read off
+ * the S22's live Inbox on 2026-10-20. No older build's name is kept as a fallback: TikTok hands
+ * the same short names out again on every build, and an older build's name is some other view
+ * on this one (47.1.4's list was l91, and 47.4.3's l92 is the header).
  * <pre>
- *   opi        bottom navigation, the Inbox tab (looked up by FeedVisibility)
- *   l91        the Inbox RecyclerView
- *   v1m        a system notice row, with its title in brl
- *   w54        the root of a chat row: a single chat, a group chat or the message requests row
+ *   oni        bottom navigation, the Inbox tab (looked up by FeedVisibility)
+ *   l7h        the Inbox RecyclerView
+ *   uyv        a system notice row, with its title in brh
+ *   w24        the root of a chat row: a single chat, a group chat or the message requests row
  *   tv_request_unread_count  the request count, which only the message requests row has
- *   oom        the root of a "Say hi to" row, an account suggested with Follow and a wave
+ *   omm        the root of a "Say hi to" row, an account suggested with Follow and a wave
  *   user_name  the title of a chat row or a "Say hi to" row
- *   wuh        a title inside the horizontal stories tray
- *   q6c        the suggested accounts section header, holding u4x
- *   u4x        the suggested accounts section title
- *   fyd        remove an account from suggested accounts
- *   fhi        header, add people
- *   kqj        header, search
- *   l93        header, activity status
+ *   wrv        a title inside the horizontal stories tray
+ *   q4f        the suggested accounts section header, holding u2n
+ *   u2n        the suggested accounts section title
+ *   fy6        remove an account from suggested accounts
+ *   fhd        header, add people
+ *   kp7        header, search
+ *   l7j        header, activity status
  * </pre>
  */
 public final class InboxFilter {
-    private static final String[] LIST_IDS = {"47.4.3:l92"};
+    private static final String[] LIST_IDS = {"47.4.3:l7h"};
     private static final String[] SYSTEM_ROW_IDS = {"47.4.3:uyv"};
     private static final String[] CHAT_ROW_IDS = {"47.4.3:w24"};
     private static final String[] MESSAGE_REQUESTS_IDS = {"tv_request_unread_count"};
@@ -126,6 +126,9 @@ public final class InboxFilter {
 
     /** Rows recognised as the stories tray, retained until a recycled row changes shape. */
     private static final WeakHashMap<View, Boolean> STORY_ROWS = new WeakHashMap<>();
+
+    /** Header controls a switch hid, the only ones it brings back when turned off. */
+    private static final WeakHashMap<View, Boolean> HIDDEN_HEADER_CONTROLS = new WeakHashMap<>();
 
     /** Native MultiBaseVH binding supplies category identity before localized text is laid out. */
     public static void onRowBound(Object holder, int position, Object model) {
@@ -331,12 +334,30 @@ public final class InboxFilter {
     }
 
     private static void applyHeader(Activity activity) {
-        setHidden(findRequired(activity, "add people", HEADER_ADD_PEOPLE_IDS),
+        setHeaderHidden(findRequired(activity, "add people", HEADER_ADD_PEOPLE_IDS),
                 Settings.HIDE_INBOX_ADD_PEOPLE.get());
-        setHidden(findRequired(activity, "search", HEADER_SEARCH_IDS),
+        setHeaderHidden(findRequired(activity, "search", HEADER_SEARCH_IDS),
                 Settings.HIDE_INBOX_SEARCH.get());
-        setHidden(findRequired(activity, "activity status", HEADER_ACTIVITY_STATUS_IDS),
+        setHeaderHidden(findRequired(activity, "activity status", HEADER_ACTIVITY_STATUS_IDS),
                 Settings.HIDE_INBOX_ACTIVITY_STATUS.get());
+    }
+
+    /**
+     * TikTok shows and hides header controls itself, so with a switch off only a control this
+     * hid comes back. Forcing it visible on every pass would undo TikTok's own choice.
+     */
+    private static void setHeaderHidden(View view, boolean hidden) {
+        if (view == null) {
+            return;
+        }
+        if (hidden) {
+            if (view.getVisibility() != View.GONE) {
+                view.setVisibility(View.GONE);
+            }
+            HIDDEN_HEADER_CONTROLS.put(view, Boolean.TRUE);
+        } else if (HIDDEN_HEADER_CONTROLS.remove(view) != null && view.getVisibility() == View.GONE) {
+            view.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

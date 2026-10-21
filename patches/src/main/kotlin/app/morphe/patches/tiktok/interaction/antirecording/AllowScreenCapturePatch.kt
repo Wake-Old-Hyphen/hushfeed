@@ -19,7 +19,7 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.privacy.targetNames
 import app.morphe.util.addInstructionsAtControlFlowLabel
-import app.morphe.util.classesCalling
+import app.morphe.util.classesCallingMethods
 import app.morphe.util.findInstructionIndicesReversedOrThrow
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
@@ -81,7 +81,7 @@ val allowScreenCapturePatch = bytecodePatch(
                 "setAttributes(Landroid/view/Window;Landroid/view/WindowManager@LayoutParams;)V",
         ).mapKeys { it.key.replace('@', '$') }.mapValues { it.value.replace('@', '$') }
         val names = targetNames(signatures.keys)
-        val callers = classesCalling(signatures.keys.map { it.substringBefore("->") })
+        val callers = classesCallingMethods(signatures.keys)
         val sites = mutableListOf<CaptureSite>()
         classDefForEach { owner ->
             if (owner.type in callers && !owner.type.startsWith("Lapp/morphe/extension/")) owner.methods.forEach { method ->

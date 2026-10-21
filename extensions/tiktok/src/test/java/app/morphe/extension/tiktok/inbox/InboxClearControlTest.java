@@ -37,7 +37,7 @@ import org.robolectric.shadows.ShadowToast;
 @Config(sdk = 28, qualifiers = "en")
 @LooperMode(LooperMode.Mode.PAUSED)
 public class InboxClearControlTest {
-    private static final String[] RESOURCE_NAMES = {"47.4.3:oni", "47.4.3:l92", "47.4.3:q4f", "47.4.3:u2n", "47.4.3:fy6",
+    private static final String[] RESOURCE_NAMES = {"47.4.3:oni", "47.4.3:l7h", "47.4.3:q4f", "47.4.3:u2n", "47.4.3:fy6",
             "47.4.3:wrv", "user_name", "47.4.3:uyv", "47.4.3:brh", "47.4.3:w24", "47.4.3:fhd", "47.4.3:kp7", "47.4.3:l7j"};
     private ActivityController<Activity> owner;
     private Activity activity;
@@ -465,7 +465,7 @@ public class InboxClearControlTest {
         tab.setSelected(true);
         root.addView(tab, new LinearLayout.LayoutParams(-1, 48));
         rows = new LinearLayout(activity);
-        rows.setId(id("47.4.3:l92"));
+        rows.setId(id("47.4.3:l7h"));
         rows.setOrientation(LinearLayout.VERTICAL);
         root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
         header = new RecordingHeader(activity);

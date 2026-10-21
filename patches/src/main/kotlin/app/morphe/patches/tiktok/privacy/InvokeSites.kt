@@ -7,7 +7,7 @@ package app.morphe.patches.tiktok.privacy
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
-import app.morphe.util.classesCalling
+import app.morphe.util.classesCallingMethods
 import app.morphe.util.findMutableMethodOf
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
@@ -61,7 +61,7 @@ internal fun BytecodePatchContext.invokeSitesOf(
         else -> VIRTUAL_OPCODES
     }
     val names = targetNames(targets)
-    val callers = classesCalling(targets.map { it.substringBefore("->") })
+    val callers = classesCallingMethods(targets)
     val sites = mutableListOf<InvokeSite>()
     classDefForEach { owner ->
         if (owner.type !in callers || owner.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach

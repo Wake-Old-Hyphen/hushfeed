@@ -2188,6 +2188,8 @@ See-through status bar	Şeffaf durum çubuğu
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Ana akışta videonun ekranın üstüne kadar uzanmasını sağlar, saat ve durum simgeleri videonun üzerinde görünür. Üstteki sekmeler yerinde kalır.
 Floating bottom bar	Yüzen alt çubuk
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Ana akıştaki sekmeleri videonun üzerinde yüzen yuvarlak, şeffaf koyu bir kapsülde gösterir. Şeffaf alt çubuk açık olmalıdır.
+Liquid glass look	Sıvı cam görünümü
+Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Ana akıştaki yüzen kapsülü daha açık ve daha şeffaf bir cam gibi, üst kenarında parlak bir çerçeveyle çizer. Yüzen alt çubuk açık olmalıdır.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikTok'un çevirisini geri getir
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	TikTok'un Ayarlar ve gizlilik altındaki Dil sayfasında yalnızca Uygulama dilini gören hesaplar için çeviri satırlarını geri getirir.

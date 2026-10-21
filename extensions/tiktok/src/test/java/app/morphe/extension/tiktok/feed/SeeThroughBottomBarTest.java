@@ -61,6 +61,7 @@ public class SeeThroughBottomBarTest {
     public void tearDown() {
         Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
         Settings.FLOATING_BOTTOM_BAR.save(false);
+        Settings.LIQUID_GLASS_BOTTOM_BAR.save(false);
         SeeThroughBottomBar.reset();
         VideoOverlayHider.resolveForTests("view_rootview", 0);
     }
@@ -182,6 +183,76 @@ public class SeeThroughBottomBarTest {
         } finally {
             PausedProcess.set(false);
             Settings.FLOATING_BOTTOM_BAR.save(false);
+        }
+    }
+
+    /**
+     * Liquid glass look (#218): with Floating bottom bar on, the pill is drawn as glass in the same
+     * place. Turning it off gives the plain pill back, and every way out still gives TikTok's own
+     * background back, never a pill kept as if it were TikTok's.
+     */
+    @Test
+    public void aGlassBarTakesThePillsPlaceAndEveryWayOutGivesTikToksBack() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            Scene scene = new Scene(activity, View.VISIBLE, Color.BLACK);
+            scene.bar.setPadding(5, 6, 7, 8);
+            android.graphics.drawable.Drawable original = scene.bar.getBackground();
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+            Settings.LIQUID_GLASS_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertFalse("the glass showed without Floating bottom bar",
+                    scene.bar.getBackground() instanceof SeeThroughBottomBar.FloatingBackground);
+            assertTrue(scene.bar.getBackground() instanceof ColorDrawable);
+
+            Settings.FLOATING_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(scene.bar.getBackground() instanceof SeeThroughBottomBar.GlassBackground);
+            SeeThroughBottomBar.GlassBackground glass = (SeeThroughBottomBar.GlassBackground) scene.bar.getBackground();
+            assertTrue(glass.getDrawable() instanceof SeeThroughBottomBar.GlassPill);
+            assertEquals("the glass moved the tabs", Arrays.asList(5, 6, 7, 8), padding(scene.bar));
+            float density = activity.getResources().getDisplayMetrics().density;
+            glass.setBounds(0, 0, 1080, 150);
+            assertEquals(new Rect(Math.round(12 * density), Math.round(2 * density),
+                    1080 - Math.round(12 * density), 150 - Math.round(6 * density)), glass.getDrawable().getBounds());
+
+            VideoOverlayHider.applyTo(activity);
+            assertSame("a pass swapped the glass for a new one", glass, scene.bar.getBackground());
+
+            Settings.LIQUID_GLASS_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(scene.bar.getBackground() instanceof SeeThroughBottomBar.FloatingBackground);
+            assertFalse("the glass stayed with the switch off",
+                    scene.bar.getBackground() instanceof SeeThroughBottomBar.GlassBackground);
+
+            Settings.LIQUID_GLASS_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(scene.bar.getBackground() instanceof SeeThroughBottomBar.GlassBackground);
+            PausedProcess.set(true);
+            VideoOverlayHider.applyTo(activity);
+            assertSame("Pause kept the glass", original, scene.bar.getBackground());
+            PausedProcess.set(false);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(scene.bar.getBackground() instanceof SeeThroughBottomBar.GlassBackground);
+
+            Settings.FLOATING_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(scene.bar.getBackground() instanceof ColorDrawable);
+            assertEquals(Color.TRANSPARENT, ((ColorDrawable) scene.bar.getBackground()).getColor());
+
+            Settings.FLOATING_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertSame("the bar's own background must be the very drawable TikTok set",
+                    original, scene.bar.getBackground());
+            assertEquals(Arrays.asList(5, 6, 7, 8), padding(scene.bar));
+        } finally {
+            PausedProcess.set(false);
+            Settings.FLOATING_BOTTOM_BAR.save(false);
+            Settings.LIQUID_GLASS_BOTTOM_BAR.save(false);
         }
     }
 
@@ -337,6 +408,70 @@ public class SeeThroughBottomBarTest {
             VideoOverlayHider.applyTo(activity);
             assertEquals(View.VISIBLE, strip.getVisibility());
             assertEquals(0f, layer.getTranslationY(), 0f);
+        } finally {
+            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
+            VideoOverlayHider.resolveForTests("viewpager_container", 0);
+            VideoOverlayHider.resolveForTests("widget_container", 0);
+        }
+    }
+
+    /**
+     * The switch turned on with TikTok running (S22, 2026-10-20): the guard had measured the
+     * caption clear of the bar, so it was armed, and TikTok then showed the strip again. The pass
+     * before TikTok's layout found the strip shown and the layer no longer lifted while the cell
+     * still had the strip's room, blamed the caption and kept the strip until a restart. Until
+     * the column has given the pager the room again nothing is judged.
+     */
+    @Test
+    public void aStripTikTokShowsAgainDoesNotEndTheCollapse() {
+        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
+        VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
+        Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setId(COLUMN_ID);
+            column.setOrientation(LinearLayout.VERTICAL);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(CELL_ID);
+            column.addView(cell, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+            View strip = new View(activity);
+            strip.setId(STRIP_ID);
+            column.addView(strip, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 138));
+            FrameLayout layer = new FrameLayout(activity);
+            layer.setId(LAYER_ID);
+            cell.addView(layer);
+            View anchor = new FrameLayout(activity);
+            anchor.setId(ANCHOR_ID);
+            layer.addView(anchor, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 161, android.view.Gravity.BOTTOM));
+            root.addView(column);
+            View bar = new FrameLayout(activity);
+            bar.setId(BAR_ID);
+            bar.setBackgroundColor(Color.BLACK);
+            root.addView(bar, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 138, android.view.Gravity.BOTTOM));
+            activity.setContentView(root);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(-138f, layer.getTranslationY(), 0f);
+
+            strip.setVisibility(View.VISIBLE);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("a strip waiting for TikTok's layout isn't blamed on the caption",
+                    SeeThroughBottomBar.collapseAllowed());
+            assertEquals(View.GONE, strip.getVisibility());
+
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(2181, cell.getHeight());
+            assertEquals(-138f, layer.getTranslationY(), 0f);
+            assertTrue(SeeThroughBottomBar.collapseAllowed());
         } finally {
             VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
             VideoOverlayHider.resolveForTests("viewpager_container", 0);

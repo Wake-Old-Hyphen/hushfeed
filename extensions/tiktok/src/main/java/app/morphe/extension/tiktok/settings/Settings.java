@@ -847,6 +847,13 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting FLOATING_BOTTOM_BAR = new BooleanSetting(
             "floating_bottom_bar", FALSE, false, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
     /**
+     * With Floating bottom bar, draws the pill as glass: a lighter tint, a frost and a sheen that
+     * brighten toward the top, and a rim that catches the light along the top edge (#218). Same
+     * place and size as the plain pill. Read on each layout.
+     */
+    public static final BooleanSetting LIQUID_GLASS_BOTTOM_BAR = new BooleanSetting(
+            "liquid_glass_bottom_bar", FALSE, false, Setting.parent(FLOATING_BOTTOM_BAR));
+    /**
      * Lets the main feed's video draw up under the status bar, with the clock over it (#145).
      * VideoOverlayHider collapses the spacer TikTok keeps above each video for the bar and
      * SeeThroughStatusBar clears the bar's color while the feed is in front; both go back when

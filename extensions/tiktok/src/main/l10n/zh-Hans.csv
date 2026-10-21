@@ -1596,6 +1596,8 @@ Show how long each video runs under its view count on profile grids. Photo posts
 Show the handle instead of the name,显示句柄而不是名称
 Show the hide button on videos,在视频上显示隐藏按钮
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.",在漂浮在视频上方的圆形透明黑色药丸上显示主信息流的选项卡。需要透明底栏.
+Liquid glass look,液态玻璃外观
+"Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.",将主信息流的浮动药丸绘制成玻璃效果，更浅、更透明，顶部边缘带有明亮的轮廓。需要浮动底栏.
 Show the mute button on videos,在视频上显示静音按钮
 Show the progress bar,显示进度条
 Show the progress bar thumbnail,显示进度条缩略图

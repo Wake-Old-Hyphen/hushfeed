@@ -2188,6 +2188,8 @@ See-through status bar	Şəffaf status paneli
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Videonun əsas lentdə ekranın yuxarısına qədər uzanmasına icazə verin, saat və status ikonları onun üzərində qalsın. Yuxarıdakı tablar yerində qalır.
 Floating bottom bar	Üzən alt panel
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Əsas lentin tablarını videonun üzərində üzən yuvarlaq, şəffaf tünd kapsulun üstündə göstərin. Şəffaf alt panel açıq olmalıdır.
+Liquid glass look	Maye şüşə görünüşü
+Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Əsas lentdəki üzən kapsulu daha açıq və daha şəffaf şüşə kimi, üst kənarında parlaq haşiyə ilə çəkir. Üzən alt panel açıq olmalıdır.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikTok-un tərcüməsini geri qaytar
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	TikTok-un Settings and privacy altındakı Language səhifəsində yalnız App language görən hesablar üçün tərcümə sətirlərini geri qaytarır.

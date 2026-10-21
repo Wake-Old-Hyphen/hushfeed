@@ -528,6 +528,7 @@ Downloads,Downloads
 Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.,Drag up or down along the left or right edge of a video to change what that edge strip is set to below. By default that's the screen brightness on the left and the volume on the right. Swiping anywhere else still scrolls the feed.
 Drama and Series,Drama and Series
 "Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are.","Draw a larger handle and a slightly thicker line on the progress bar, so it's easier to see where you are."
+"Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.","Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar."
 Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.,Each area shows how many of the things Hushfeed looks for were found in this TikTok and how many are missing.
 Easier comment likes,Easier comment likes
 Edge strip width,Edge strip width
@@ -975,6 +976,7 @@ Limits,Limits
 Link copied,Link copied
 Links,Links
 Links in comments open,Links in comments open
+Liquid glass look,Liquid glass look
 Live photo clip,Live photo clip
 Live photo clip saved to %1$s,Live photo clip saved to %1$s
 Live photo clips: %1$s,Live photo clips: %1$s

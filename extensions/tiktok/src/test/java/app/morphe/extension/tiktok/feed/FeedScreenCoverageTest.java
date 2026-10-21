@@ -224,6 +224,8 @@ public class FeedScreenCoverageTest {
         put("see_through_bottom_bar", YES, NONE, NONE);
         // Only the look of that same bar (#124).
         put("floating_bottom_bar", YES, NONE, NONE);
+        // And of that pill (#218).
+        put("liquid_glass_bottom_bar", YES, NONE, NONE);
         // The main feed only: an opened video keeps the strip under its own top bar (#145).
         put("see_through_status_bar", YES, NONE, NONE);
         // The guard runs with the overlay pass, which walks both windows and no LIVE room.
@@ -403,12 +405,12 @@ public class FeedScreenCoverageTest {
         Map<String, Integer> ids = new LinkedHashMap<>();
         ids.put("desc", 0x7f0a1c02);
         ids.put("47.4.3:o7a", 0x7f0a1c03);
-        ids.put("47.4.3:mud", 0x7f0a1c04);
+        ids.put("47.4.3:ljn", 0x7f0a1c04);
         ids.put("47.4.3:f92", 0x7f0a1c05);
         Map<BooleanSetting, String> switches = new LinkedHashMap<>();
         switches.put(Settings.HIDE_FEED_CAPTION, "desc");
         switches.put(Settings.HIDE_FEED_MUSIC, "47.4.3:o7a");
-        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.4.3:mud");
+        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.4.3:ljn");
         switches.put(Settings.HIDE_FEED_SURVEYS, "47.4.3:f92");
         for (BooleanSetting setting : switches.keySet()) {
             Coverage coverage = TABLE.get(setting.key);

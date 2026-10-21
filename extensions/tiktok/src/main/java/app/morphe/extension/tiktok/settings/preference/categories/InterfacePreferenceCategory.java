@@ -642,6 +642,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Liquid glass look",
+                    "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.",
+                    Settings.LIQUID_GLASS_BOTTOM_BAR
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "See-through status bar",
                     "Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.",
                     Settings.SEE_THROUGH_STATUS_BAR

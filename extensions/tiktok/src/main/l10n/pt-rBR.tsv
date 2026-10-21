@@ -2188,6 +2188,8 @@ See-through status bar	Barra de status transparente
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	No feed principal, deixe o vídeo chegar até o topo da tela, com o relógio e os ícones de status por cima. As abas do topo continuam onde estão.
 Floating bottom bar	Barra inferior flutuante
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Mostra as abas do feed principal sobre uma pílula escura, arredondada e transparente que flutua sobre o vídeo. Precisa de Barra inferior transparente.
+Liquid glass look	Visual de vidro líquido
+Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Desenha a pílula flutuante do feed principal como vidro, mais clara e mais transparente, com uma borda brilhante no topo. Precisa de Barra inferior flutuante.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	Trazer de volta a tradução do TikTok
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Traz de volta as linhas de tradução na página Idioma do TikTok, em Configurações e privacidade, para contas que ali só veem Idioma do app.

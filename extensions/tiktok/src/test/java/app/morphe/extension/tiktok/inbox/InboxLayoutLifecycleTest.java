@@ -41,10 +41,12 @@ public class InboxLayoutLifecycleTest {
      * fallback would resolve here and fail the test that says it is never tried. The other
      * 46.2.3 names are not registered, so this class would not notice one of them coming back;
      * RuntimeViewIdAnchorsTest's rule that a group looks up one name is what stops those.
+     * 47.4.3's header, l92, is registered on the header so a list lookup going back to it fails
+     * the header tests.
      */
     private static final String[] RESOURCE_NAMES = {"47.4.3:oni", "47.4.3:l92", "47.4.3:q4f", "47.4.3:u2n", "47.4.3:fy6", "47.4.3:wrv",
             "user_name", "47.4.3:uyv", "47.4.3:brh", "47.4.3:w24", "tv_request_unread_count", "47.4.3:omm", "zci", "47.4.3:fhd",
-            "47.4.3:kp7", "47.4.3:l7j", "v15", "vid"};
+            "47.4.3:kp7", "47.4.3:l7j", "v15", "vid", "47.4.3:l7h"};
     private final List<Inbox> inboxes = new ArrayList<>();
     private BooleanSetting[] switches;
 
@@ -202,6 +204,33 @@ public class InboxLayoutLifecycleTest {
         InboxFilter.onRowBound(new Holder(row), 4, new Object());
         inbox.layout();
         assertRow(row, false);
+    }
+
+    /**
+     * The move to 47.4.3 took the header, l92, for the list, so every pass treated the header's
+     * controls as rows and showed the back arrow TikTok keeps gone on top of add people (#221,
+     * S22, 2026-10-20). A header control TikTok hid stays hidden with its switch off, and a
+     * switch turned off again only brings back what it hid.
+     */
+    @Test public void headerControlsAreNotRowsAndASwitchOnlyRestoresWhatItHid() {
+        Inbox inbox = openInbox();
+        assertEquals("the back arrow TikTok keeps gone came back", View.GONE, inbox.back.getVisibility());
+        assertEquals(View.VISIBLE, inbox.addPeople.getVisibility());
+
+        inbox.search.setVisibility(View.GONE);
+        inbox.layout();
+        assertEquals("a header control TikTok hid came back with its switch off",
+                View.GONE, inbox.search.getVisibility());
+        inbox.search.setVisibility(View.VISIBLE);
+
+        Settings.HIDE_INBOX_ADD_PEOPLE.save(true);
+        inbox.layout();
+        assertEquals(View.GONE, inbox.addPeople.getVisibility());
+        assertEquals(View.VISIBLE, inbox.search.getVisibility());
+        Settings.HIDE_INBOX_ADD_PEOPLE.save(false);
+        inbox.layout();
+        assertEquals(View.VISIBLE, inbox.addPeople.getVisibility());
+        assertEquals(View.GONE, inbox.back.getVisibility());
     }
 
     /**
@@ -570,18 +599,24 @@ public class InboxLayoutLifecycleTest {
         final ActivityController<Activity> owner;
         final Activity activity;
         final LinearLayout rows;
-        final View tab, addPeople, search, status;
+        final View tab, back, addPeople, search, status;
 
         Inbox() {
             this(Robolectric.buildActivity(Activity.class).setup().visible());
         }
 
-        /** On an activity left wherever the caller put it, created at least. */
+        /**
+         * On an activity left wherever the caller put it, created at least. The header is
+         * 47.4.3's as the S22's Inbox showed it on 2026-10-20: l92 holding the back arrow TikTok
+         * keeps gone on the tab, the title with the activity status under it, add people and
+         * search in a wrapper of its own. The rows sit in l7h.
+         */
         Inbox(ActivityController<Activity> owner) {
             this.owner = owner;
             activity = owner.get();
             rows = new LinearLayout(activity);
             tab = new View(activity);
+            back = new View(activity);
             addPeople = new View(activity);
             search = new View(activity);
             status = new View(activity);
@@ -589,11 +624,23 @@ public class InboxLayoutLifecycleTest {
             root.setOrientation(LinearLayout.VERTICAL);
             tab.setId(id("47.4.3:oni"));
             tab.setSelected(true);
-            addPeople.setId(id("47.4.3:fhd"));
-            search.setId(id("47.4.3:kp7"));
+            root.addView(tab, new LinearLayout.LayoutParams(-1, 48));
+            LinearLayout header = new LinearLayout(activity);
+            header.setId(id("47.4.3:l92"));
+            back.setVisibility(View.GONE);
+            header.addView(back, new LinearLayout.LayoutParams(48, 48));
+            LinearLayout title = new LinearLayout(activity);
             status.setId(id("47.4.3:l7j"));
-            for (View view : new View[]{tab, addPeople, search, status}) root.addView(view, new LinearLayout.LayoutParams(-1, 48));
-            rows.setId(id("47.4.3:l92"));
+            title.addView(status, new LinearLayout.LayoutParams(-2, 48));
+            header.addView(title, new LinearLayout.LayoutParams(-2, 48));
+            addPeople.setId(id("47.4.3:fhd"));
+            header.addView(addPeople, new LinearLayout.LayoutParams(48, 48));
+            LinearLayout searchWrapper = new LinearLayout(activity);
+            search.setId(id("47.4.3:kp7"));
+            searchWrapper.addView(search, new LinearLayout.LayoutParams(48, 48));
+            header.addView(searchWrapper, new LinearLayout.LayoutParams(-2, 48));
+            root.addView(header, new LinearLayout.LayoutParams(-1, 48));
+            rows.setId(id("47.4.3:l7h"));
             rows.setOrientation(LinearLayout.VERTICAL);
             root.addView(rows, new LinearLayout.LayoutParams(-1, -1));
             activity.setContentView(root);

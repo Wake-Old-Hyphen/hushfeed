@@ -2191,6 +2191,8 @@ See-through status bar	Durchsichtige Statusleiste
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Das Video reicht im Haupt-Feed bis zum oberen Bildschirmrand, und Uhr und Statussymbole liegen darüber. Die Tabs oben bleiben, wo sie sind.
 Floating bottom bar	Schwebende untere Leiste
 Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.	Die Tabs im Haupt-Feed liegen auf einer abgerundeten, durchsichtigen dunklen Pille, die über dem Video schwebt. Braucht Durchsichtige untere Leiste.
+Liquid glass look	Liquid-Glass-Look
+Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.	Zeichnet die schwebende Pille im Haupt-Feed als Glas, heller und durchsichtiger, mit einem hellen Rand an der Oberkante. Braucht Schwebende untere Leiste.
 # context: a switch on the Comments page. Language, Settings and privacy and App language are TikTok's own labels: its language page, the menu that page sits in, and the page's first row
 Bring back TikTok's translation	TikToks Übersetzung zurückholen
 Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.	Holt die Übersetzungszeilen auf TikToks Seite Sprache unter Einstellungen und Datenschutz zurück, für Konten, die dort nur App-Sprache sehen.

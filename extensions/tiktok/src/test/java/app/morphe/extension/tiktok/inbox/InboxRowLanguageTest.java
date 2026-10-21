@@ -47,7 +47,7 @@ public class InboxRowLanguageTest {
         InboxFilter.resolveForTests(packageName, "47.4.3:uyv", 103);
         InboxFilter.resolveForTests(packageName, "47.4.3:brh", 104);
         InboxFilter.resolveForTests(packageName, "47.4.3:w24", 105);
-        InboxFilter.resolveForTests(packageName, "47.4.3:l92", 200);
+        InboxFilter.resolveForTests(packageName, "47.4.3:l7h", 200);
         FeedVisibility.resolveForTests(packageName, "47.4.3:oni", 201);
         predicate = InboxFilter.class.getDeclaredMethod("shouldHideRow", Activity.class, View.class);
         predicate.setAccessible(true);
