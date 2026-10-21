@@ -756,7 +756,7 @@ public final class VideoOverlayHider {
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, seeThroughBar, seeThroughBar
                             ? identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID) : 0, cellId);
-                    guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar);
+                    guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar, cellId);
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
                             touchScale != 1f, detailPager);
@@ -1376,7 +1376,7 @@ public final class VideoOverlayHider {
      * clear. Before the collapse the same call notes which of them sit clear of the bar.
      */
     private static void guardBottomSpacer(boolean[] hidden, List<List<View>> found, int[] selected,
-            boolean seeThroughBar) {
+            boolean seeThroughBar, int cellId) {
         int spacerAt = selected[BOTTOM_SPACER_TARGET];
         int stripAt = selected[DETAIL_COMMENT_STRIP_TARGET];
         if (!seeThroughBar || (spacerAt < 0 && stripAt < 0)) return;
@@ -1401,8 +1401,15 @@ public final class VideoOverlayHider {
             }
         }
         List<View> bars = selectedViews(found, selected, BOTTOM_TABS_TARGET);
-        List<View> overlays = new ArrayList<>(selectedViews(found, selected, ANCHOR_TARGET));
-        overlays.addAll(selectedViews(found, selected, ACTION_BAR_TARGET));
+        // A cell between pages is no measure: halfway through a swipe the next caption crosses
+        // the bar's top edge with or without the collapse (S22, 2026-10-21: 1555 to 2744 against
+        // 2043 ended the collapse until a restart).
+        List<View> overlays = new ArrayList<>();
+        for (int target : new int[] {ANCHOR_TARGET, ACTION_BAR_TARGET}) {
+            for (View overlay : selectedViews(found, selected, target)) {
+                if (inSettledCell(overlay, cellId)) overlays.add(overlay);
+            }
+        }
         boolean refused = false;
         for (View bar : bars) {
             refused |= SeeThroughBottomBar.judge(bar, overlays, collapsed);
@@ -1730,6 +1737,19 @@ public final class VideoOverlayHider {
         float[] held = DISCS_LIFTED.get(disc);
         float base = held != null && now == held[1] ? held[0] : now;
         return topInWindow(disc) + base;
+    }
+
+    /**
+     * Whether the cell {@code view} sits in is the one its pager has settled on: its top on the
+     * pager's. The cells around it wait a page above and below, and during a swipe every cell is
+     * between pages. A view outside a cell, or with no cell id resolved, counts as settled.
+     */
+    private static boolean inSettledCell(View view, int cellId) {
+        View cell = cellOf(view, cellId);
+        if (cell == null || !(cell.getParent() instanceof View)) return true;
+        View pager = (View) cell.getParent();
+        float offset = cell.getTop() + cell.getTranslationY() - pager.getScrollY() - pager.getPaddingTop();
+        return Math.abs(offset) < 1f;
     }
 
     /** The feed cell {@code view} sits in, or null outside one or without the cell's id. */

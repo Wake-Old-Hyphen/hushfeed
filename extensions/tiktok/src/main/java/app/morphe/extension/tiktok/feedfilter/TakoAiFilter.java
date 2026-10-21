@@ -19,6 +19,7 @@ import com.ss.android.ugc.aweme.feed.model.banner.BannerCommonKey;
 import com.ss.android.ugc.aweme.feed.model.banner.BannerCommonStruct;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -345,7 +346,9 @@ public final class TakoAiFilter {
             "com.ss.android.ugc.aweme.search.pages.result.bot.component.SearchTakoCardProtocol"
     );
 
-    private static final Set<String> seenSearchCardProtocols = ConcurrentHashMap.newKeySet();
+    // ConcurrentHashMap.newKeySet() is API 24, and this class loads on API 23 phones too.
+    private static final Set<String> seenSearchCardProtocols =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     /**
      * The AI answer card at the top of a search's Top tab: a "TikTok Tako · AI summary from"

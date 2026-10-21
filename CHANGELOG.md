@@ -4,12 +4,19 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features and fixes
+
+* **TikTok:** Turning on `See-through bottom bar` while TikTok is open now keeps the video running behind the tabs as you swipe. Before, the first swipe brought the black strip under the video back, and it stayed until TikTok was restarted. Hushfeed measured the next video while it was still sliding into place and took it for a caption pushed under the tabs (#145).
+
+## 0.77.0 (2026-10-20)
+
 ### Supported apps
 
 * **TikTok:** PineDrama moves to 47.4.3, the build APKMirror got on 2026-10-19, and 47.1.4 is dropped. The same 90 patches apply to it (#156).
 
 ### Features and fixes
 
+* **TikTok:** A TikTok link tapped in Telegram now opens TikTok as its own app instead of inside Telegram. The two used to share one card in Recents, so going back or swiping TikTok away closed Telegram too. Other apps that open links the same way get the same fix, and links from your browser open as they always did (#227).
 * **TikTok:** `Fade the video controls` reaches the avatar, like, comment, save and share buttons on TikTok 47.4.3 again, and Clear display with a fade level keeps them in sight at that level. On 47.4.3 Hushfeed looked for that column under the name of a thin strip at the top of the video, so the buttons stayed at full strength and a faded Clear display let TikTok take them all away. `Hide the right column` and `Burn-in guard`'s dimming reach the column again too (#209).
 * **TikTok:** The Inbox switches work on TikTok 47.4.3 again, and the back arrow no longer shows on top of the add people icon. Hushfeed took the Inbox header for the list on 47.4.3, so it treated the header's icons as rows and showed the arrow TikTok keeps hidden there, while `Hide archive`, `Hide conversations` and the other row switches never reached a row. Turning off `Hide the add people icon`, `Hide the Inbox search button` or `Hide activity status` now only brings back what it hid, and leaves alone a header icon TikTok hides on its own (#221).
 * **TikTok:** Patching needs far less memory at `Turn off haptics`, `Allow screenshots and Circle to Search` and the privacy patches. Finding TikTok's haptic calls used to make a record for every method that touched a view, about 700 MB of allocations on 47.4.3, and patching ran out of memory there with a smaller heap. The calls are now looked up by name, which takes about 20 MB (#220).
@@ -32,9 +39,9 @@ Every Hushfeed release, newest first.
 * **TikTok:** Account facts shows an account's language again on TikTok 47.4.3. TikTok stopped sending the join date, region and language with the profile itself, so every line said Not sent. The language now comes from the account's own videos on the profile, and the join date and region do too whenever TikTok sends them there.
 * **TikTok:** `Copy the full link for short links` stops waiting as soon as you share to another app. When you picked More and then used Copy in Android's own share sheet, Hushfeed read that link once TikTok was back in front and swapped it, and Android showed its "Hushfeed pasted from your clipboard" notice. TikTok's own Copy link still gets the full link.
 * **TikTok:** With `Show the time zone` on, a language that has no short name for your zone writes it as "GMT-4" instead of "GMT-04:00". The longer form pushed the creator's name off the row in Italian on a narrow phone and cut the time short.
-* **Hushfeed settings:** Search results show a setting's new value when you change it from a result and come back. They used to keep the old one, so `Caption background` still read Dark after you'd picked TikTok default.
-* **Hushfeed settings:** The Likes field in `Own profile counts` is translated now. It was the only English word in that editor on a phone set to another language.
-* **Hushfeed settings:** `Undo last restore or reset` also gives the Feature Gate Lab its own Undo back. A restore that carried Lab rules threw that away, so after undoing the restore you couldn't take back the Lab change you'd made just before it.
+* **TikTok:** Hushfeed settings search results show a setting's new value when you change it from a result and come back. They used to keep the old one, so `Caption background` still read Dark after you'd picked TikTok default.
+* **TikTok:** The Likes field in `Own profile counts` is translated now. It was the only English word in that editor on a phone set to another language.
+* **TikTok:** `Undo last restore or reset` in Hushfeed settings also gives the Feature Gate Lab its own Undo back. A restore that carried Lab rules threw that away, so after undoing the restore you couldn't take back the Lab change you'd made just before it.
 * **TikTok:** Tests now run a whole `Save videos without sound` save of a DASH video against a stand-in server. The saved file has to be TikTok's picture stream exactly as it arrived, with no sound track, the same rotation and length, and nothing left behind in the cache.
 * **TikTok:** New `Hide subscriber-only videos` switch under Feed filter. It hides the posts only a creator's subscribers can watch, the ones with a lock on them, from the feed, search and profile grids. A creator on your exceptions list keeps theirs, and your own posts always stay (#219).
 * **TikTok:** Three new `Caption height` rows under Captions lift spoken captions higher, up to 300 dp: one while the phone is upright, one while it's sideways, and one for the line `Keep captions in Clear display` leaves on screen. Each only moves its own caption, and 0 puts it back exactly where TikTok had it. `Caption boldness` replaces the `Normal-weight captions` switch with seven choices from Light to Extra bold, and reaches the kept Clear display line too. If you had the old switch on, it comes back as Normal, from a settings backup as well. Thanks to OmerKurdi79, whose branch these come from (#206).

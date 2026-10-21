@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama 47.4.3-ə keçir, 47.1.4 isə çıxarılır. Ona eyni 90 yama tətbiq olunur (#156).
+
+* **TikTok:** Telegram-da toxunulan TikTok linki indi TikTok-u öz tətbiqi kimi açır, ona görə geri qayıtmaq və ya TikTok-u sürüşdürüb bağlamaq artıq Telegram-ı da bağlamır (#227).
+
+* **TikTok:** Video idarəetmələrini solğunlaşdır TikTok 47.4.3-də yenidən avatar, bəyənmə, şərh, saxla və paylaş düymələrinə çatır, solğunluq səviyyəsi ilə Təmiz ekran isə onları görünən saxlayır (#209).
+
+* **TikTok:** Gələnlər açarları TikTok 47.4.3-də yenidən işləyir və geri oxu artıq adam əlavə etmə ikonunun üstündə görünmür (#221).
+
+* **TikTok:** Yamalama Turn off haptics, Allow screenshots and Circle to Search və məxfilik yamalarında xeyli az yaddaş istəyir (#220).
+
+* **TikTok:** Açılmış videolarda şərh panelini gizlədin açıq olanda səsin səhifəsindən açılan paylaşım TikTok-un qırmızı səs panelinin altına sürüşmür, üstündə qalır (#153).
+
+* **TikTok:** Üzən alt panel altında yeni Maye şüşə görünüşü açarı üzən tab həbini parlaq yuxarı kənarı olan şəffaf şüşə kimi çəkir (#218, #124).
+
+* **TikTok:** Siz seçməsəniz söndürülü qalan yeni Remove voice tools yaması təxminən 16 MB qənaət edir. Onunla səsli axtarış, dinləyərək mahnı tapmaq və TikTok-un süni intellekt köməkçisi ilə danışmaq işləmir (#213).
+
+* **TikTok:** Yeni Region açarı, Sənin üçün lentini əsl SIM-də saxla, stiker axtarışına və PineDrama-ya seçdiyiniz SIM-i göstərir, Sənin üçün isə telefonunuzun öz SIM-i ilə video istəyir. Bunun üçün paketdə Region spoof yaması olmalıdır (#214, #215).
+
+* **TikTok:** LIVE lentini süzün bloklanmış yaradıcılar istisna olmaqla Gələnlər qutusundakı və İzlənilənlər tabındakı LIVE sətirlərinə toxunmur (#212).
+
+* **TikTok:** Run beside the store app ilə yaradılan surət alt naviqasiya, paylaşma menyusu və video idarəetmə ayarlarını geri alır (#209).
+
+* **TikTok:** Remove content credential and card scanner assets artıq şərhə cavab verərkən qalereya ikonuna toxunanda TikTok-u çökdürmür (#211).
 
 * **TikTok:** İrəliləyiş panelini göstərin indi həssas məzmun xəbərdarlığının arxasındakı videolarda da paneli göstərir (#208).
 
 * **TikTok:** Sistem şriftindən istifadə edin və İdxal edilmiş şriftdən istifadə edin indi Fəaliyyət mərkəzində, Baxış tarixçəsində və TikTok-un digər veb səhifələrində də işləyir (#7).
 
+* **TikTok:** Hushfeed-in yükləmələri, Clash, mihomo, sing-box və Xray-in tez-tez işlədiyi kimi, fake-IP rejimindəki proksi tətbiqinin arxasında yenidən işləyir (#145).
+
+* **TikTok:** Təsdiqlənmiş hesabın profil şəklini basıb saxlamaq onu yenidən yadda saxlayır.
+
+* **TikTok:** Təklif olunan hesabları gizlədin profilinizdəki Adam tap səhifəsində təklif olunan hesablar başlığını da gizlədir.
+
 * **TikTok:** Yeni açar TikTok qaranlıq rejimdə olanda LIVE otağının paylaşma menyusunu, fan klubunu və profil kartlarını tünd açır (#159).
 
-* **TikTok:** Lent filtrində yeni Yalnız abunəçilər üçün olan videoları gizlədin açarı yalnız yaradıcının abunəçilərinin izləyə bildiyi paylaşımları lentdə və profillərdə gizlədir (#219).
+* **TikTok:** Yan menyu düyməsini gizlədin indi TikTok-un yuxarı paneli öz server qaydaları ilə qurduğu hesablarda da işləyir (#128).
 
-* **TikTok:** Yeni Region açarı, Sənin üçün lentini əsl SIM-də saxla, stiker axtarışına və PineDrama-ya seçdiyiniz SIM-i göstərir, Sənin üçün isə telefonunuzun öz SIM-i ilə video istəyir. Bunun üçün paketdə Region spoof yaması olmalıdır (#214, #215).
+* **TikTok:** Şərh qutusundakı düymələri gizlədin klaviaturanın üstündəki sətirdə foto, @ və hədiyyə düymələrini, həmçinin həmin sətrin üstəgəl panelindəki hədiyyə xanasını da gizlədir.
+
+* **TikTok:** Şərh qutusundakı düymələri gizlədin söndürüləndə foto və @ düymələri yenidən başlatmadan dərhal qayıdır.
+
+* **TikTok:** Hesab faktları TikTok 47.4.3-də hesabın dilini yenidən göstərir, dili hesabın öz videolarından oxuyur.
+
+* **TikTok:** Qısa linklər üçün tam linki kopyalayın başqa tətbiqə paylaşan kimi gözləməyi dayandırır, ona görə Android artıq Hushfeed-in mübadilə buferindən yapışdırdığını demir.
+
+* **TikTok:** Saat qurşağını göstərin açıq olanda qurşağınız üçün qısa adı olmayan dil onu GMT-04:00 əvəzinə GMT-4 kimi yazır, beləliklə yaradıcının adı yenidən sığır.
+
+* **TikTok:** Hushfeed ayarlarında axtarış nəticələri ayarı nəticədən dəyişib geri qayıdanda onun yeni dəyərini göstərir.
+
+* **TikTok:** Öz profilinizin sayları içindəki Bəyənmələr sahəsi indi tərcümə olunub.
+
+* **TikTok:** Son bərpa və ya sıfırlamanı geri qaytarın Feature Gate Lab-ə öz Geri al düyməsini də qaytarır.
+
+* **TikTok:** Testlər indi DASH videosu üçün Videoları səssiz saxlayın ilə tam saxlama aparır və faylın səs zolağı olmayan TikTok görüntü axını olduğunu yoxlayır.
+
+* **TikTok:** Lent filtrində yeni Yalnız abunəçilər üçün olan videoları gizlədin açarı yalnız yaradıcının abunəçilərinin izləyə bildiyi paylaşımları lentdə və profillərdə gizlədir (#219).
 
 * **TikTok:** Başlıqlar altında yeni Başlıq hündürlüyü sətirləri danışılan başlıqları yuxarı qaldırır, biri şaquli, biri üfüqi, biri təmiz ekran üçün. Başlıq qalınlığı Normal qalınlıqda başlıqlar açarını əvəz edir və İncədən Çox qalına qədər gedir. O açar açıq idisə, Normal kimi qayıdır (#206).
 
 * **TikTok:** İki dəfə toxunma və Uzun basma üçün yeni seçim var, Təmiz ekranı aç və ya bağla. Videonun üstündəki düymələri TikTok-un öz təmiz ekranı kimi gizlədir, eyni jest onları geri qaytarır (#136).
+
+* **TikTok:** Tako qabarcığını gizlədin TikTok-un sual kimi yazılmış axtarışa cavab verən süni intellekt xülasə kartını da axtarış nəticələrindən çıxarır.
 
 ## 0.76.0 (2026-10-18)
 

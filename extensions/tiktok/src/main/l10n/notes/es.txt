@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama pasa a 47.4.3 y se deja 47.1.4. Se le aplican los mismos 90 parches (#156).
+
+* **TikTok:** Un enlace de TikTok tocado en Telegram ahora abre TikTok como su propia app, así que volver atrás o descartar TikTok ya no cierra también Telegram (#227).
+
+* **TikTok:** Atenuar los controles del vídeo vuelve a llegar a los botones de avatar, me gusta, comentario, guardar y compartir en TikTok 47.4.3, y Controles ocultos con un nivel de atenuación los mantiene a la vista (#209).
+
+* **TikTok:** Los interruptores de la Bandeja de entrada vuelven a funcionar en TikTok 47.4.3, y la flecha de volver ya no aparece encima del icono para añadir personas (#221).
+
+* **TikTok:** Parchear necesita mucha menos memoria en Turn off haptics, Allow screenshots and Circle to Search y los parches de privacidad (#220).
+
+* **TikTok:** Con Ocultar la barra de comentarios en los videos abiertos activado, una publicación abierta desde la página de un sonido se queda encima de la barra roja de sonido de TikTok en vez de meterse debajo (#153).
+
+* **TikTok:** El nuevo interruptor Aspecto de cristal líquido, en Barra inferior flotante, dibuja la píldora de pestañas flotante como cristal translúcido con un borde superior brillante (#218, #124).
+
+* **TikTok:** El nuevo parche Remove voice tools, desactivado salvo que lo elijas, ahorra unos 16 MB. Con él dejan de funcionar la búsqueda por voz, reconocer una canción escuchándola y hablar con el asistente de IA de TikTok (#213).
+
+* **TikTok:** Un nuevo interruptor de Región, Mantener Para ti con tu SIM real, deja que la búsqueda de stickers y PineDrama vean la SIM que elegiste mientras Para ti pide vídeos con la SIM de tu teléfono. Necesita el parche Region spoof en tu paquete (#214, #215).
+
+* **TikTok:** Filtrar el feed de LIVE deja en paz las filas de LIVE de tu Bandeja de entrada y de la pestaña Siguiendo, salvo los creadores bloqueados (#212).
+
+* **TikTok:** Una copia hecha con Run beside the store app recupera sus ajustes de la navegación inferior, el menú de compartir y los controles del vídeo (#209).
+
+* **TikTok:** Remove content credential and card scanner assets ya no cierra TikTok cuando tocas el icono de la galería al responder a un comentario (#211).
 
 * **TikTok:** Mostrar la barra de progreso ahora también muestra la barra en los vídeos que tienen delante un aviso de contenido sensible (#208).
 
 * **TikTok:** Usar la fuente del sistema y Usar una fuente importada ahora llegan al Centro de actividad, al Historial de visualización y a las demás páginas web de TikTok (#7).
 
+* **TikTok:** Las descargas de Hushfeed vuelven a funcionar detrás de una app de proxy en modo fake-IP, como suelen ir Clash, mihomo, sing-box y Xray (#145).
+
+* **TikTok:** Mantener pulsada la foto de perfil de una cuenta verificada vuelve a guardarla.
+
+* **TikTok:** Ocultar las cuentas sugeridas también quita el título de cuentas sugeridas en Buscar personas de tu perfil.
+
 * **TikTok:** Un nuevo interruptor abre en oscuro el menú de compartir, el club de fans y las tarjetas de perfil de una sala LIVE cuando TikTok está en modo oscuro (#159).
 
-* **TikTok:** Un nuevo interruptor del filtro del feed, Ocultar los vídeos solo para suscriptores, oculta las publicaciones que solo pueden ver los suscriptores de un creador, en el feed y en los perfiles (#219).
+* **TikTok:** Ocultar el botón del menú lateral ahora también funciona en cuentas donde TikTok arma la barra superior con sus propias reglas del servidor (#128).
 
-* **TikTok:** Un nuevo interruptor de Región, Mantener Para ti con tu SIM real, deja que la búsqueda de stickers y PineDrama vean la SIM que elegiste mientras Para ti pide vídeos con la SIM de tu teléfono. Necesita el parche Region spoof en tu paquete (#214, #215).
+* **TikTok:** Ocultar los botones del cuadro de comentarios también quita los botones de foto, @ y regalo de la fila sobre el teclado, y el regalo del panel de más de esa fila.
+
+* **TikTok:** Al desactivar Ocultar los botones del cuadro de comentarios, los botones de foto y @ vuelven al momento, sin reiniciar.
+
+* **TikTok:** Datos de la cuenta vuelve a mostrar el idioma de una cuenta en TikTok 47.4.3, sacado de los propios vídeos de la cuenta.
+
+* **TikTok:** Copiar el enlace completo en los enlaces cortos deja de esperar en cuanto compartes a otra app, así que Android ya no avisa de que Hushfeed pegó desde el portapapeles.
+
+* **TikTok:** Con Mostrar la zona horaria activado, un idioma sin nombre corto para tu zona la escribe como GMT-4 en vez de GMT-04:00, así que el nombre del creador vuelve a caber.
+
+* **TikTok:** Los resultados de búsqueda de los ajustes de Hushfeed muestran el valor nuevo de un ajuste cuando lo cambias desde un resultado y vuelves.
+
+* **TikTok:** El campo Me gusta de Cifras de tu perfil ya está traducido.
+
+* **TikTok:** Deshacer la última restauración o reinicio también le devuelve al Laboratorio de interruptores su propio Deshacer.
+
+* **TikTok:** Las pruebas ahora hacen un guardado completo con Guardar los vídeos sin sonido de un vídeo DASH y comprueban que el archivo sea la pista de imagen de TikTok sin pista de sonido.
+
+* **TikTok:** Un nuevo interruptor del filtro del feed, Ocultar los vídeos solo para suscriptores, oculta las publicaciones que solo pueden ver los suscriptores de un creador, en el feed y en los perfiles (#219).
 
 * **TikTok:** Nuevas filas de Altura de los subtítulos en Subtítulos suben los subtítulos hablados, una con el teléfono en vertical, otra en horizontal y otra con los controles ocultos. Grosor de los subtítulos sustituye a Subtítulos con grosor normal y va de Fino a Extranegrita. Si tenías ese interruptor activado, vuelve como Normal (#206).
 
 * **TikTok:** Doble toque y Pulsación larga tienen una opción nueva, Ocultar o mostrar los controles. Oculta los botones sobre el vídeo como lo hace TikTok, y el mismo gesto los vuelve a mostrar (#136).
+
+* **TikTok:** Ocultar la burbuja de Tako también quita de los resultados de búsqueda la tarjeta de resumen con IA de TikTok, la que responde a una búsqueda escrita como pregunta.
 
 ## 0.76.0 (2026-10-18)
 

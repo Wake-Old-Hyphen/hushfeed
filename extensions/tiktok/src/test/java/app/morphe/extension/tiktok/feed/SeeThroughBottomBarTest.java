@@ -479,6 +479,100 @@ public class SeeThroughBottomBarTest {
         }
     }
 
+    /**
+     * TikTok's pager in short: the cells stacked a page apart and the pager scrolled to the
+     * current one, the way VerticalViewPager lays them out (S22, 2026-10-21: cells at 6129, 8172
+     * and 10215 in a 2043 pager).
+     */
+    private static final class StackedPager extends FrameLayout {
+        StackedPager(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            int page = bottom - top;
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).layout(0, i * page, right - left, (i + 1) * page);
+            }
+        }
+    }
+
+    /**
+     * The switch turned on with TikTok running, then a swipe (S22, 2026-10-21): the first pass
+     * measured the next cell's caption clear of the bar while it waited a page below, and halfway
+     * through the swipe that caption crossed the bar's top edge (1555 to 2744 against 2043), so
+     * the guard blamed the collapse and kept the strip until a restart. Only a cell the pager has
+     * settled on is judged.
+     */
+    @Test
+    public void aCellHalfwayThroughASwipeDoesNotEndTheCollapse() {
+        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
+        VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
+        Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setId(COLUMN_ID);
+            column.setOrientation(LinearLayout.VERTICAL);
+            StackedPager pager = new StackedPager(activity);
+            column.addView(pager, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+            View strip = new View(activity);
+            strip.setId(STRIP_ID);
+            column.addView(strip, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 138));
+            FrameLayout[] layers = new FrameLayout[2];
+            View[] anchors = new View[2];
+            for (int i = 0; i < layers.length; i++) {
+                FrameLayout cell = new FrameLayout(activity);
+                cell.setId(CELL_ID);
+                layers[i] = new FrameLayout(activity);
+                layers[i].setId(LAYER_ID);
+                cell.addView(layers[i]);
+                anchors[i] = new FrameLayout(activity);
+                anchors[i].setId(ANCHOR_ID);
+                layers[i].addView(anchors[i], new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT, 1189, android.view.Gravity.BOTTOM));
+                pager.addView(cell);
+            }
+            root.addView(column);
+            View bar = new FrameLayout(activity);
+            bar.setId(BAR_ID);
+            bar.setBackgroundColor(Color.BLACK);
+            root.addView(bar, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 138, android.view.Gravity.BOTTOM));
+            activity.setContentView(root);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(2181, pager.getHeight());
+            assertEquals(-138f, layers[1].getTranslationY(), 0f);
+            assertTrue(SeeThroughBottomBar.collapseAllowed());
+
+            // Halfway up to the next video, that cell's top at 701.
+            pager.scrollTo(0, 2181 - 701);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("a cell still moving isn't blamed on the collapse",
+                    SeeThroughBottomBar.collapseAllowed());
+            assertEquals(View.GONE, strip.getVisibility());
+
+            pager.scrollTo(0, 2181);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue(SeeThroughBottomBar.collapseAllowed());
+            assertEquals(View.GONE, strip.getVisibility());
+            assertEquals("the next caption ends on the bar's top edge", 2043f,
+                    ((View) anchors[1].getParent().getParent()).getTop() - pager.getScrollY()
+                            + anchors[1].getBottom() + layers[1].getTranslationY(), 0f);
+        } finally {
+            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
+            VideoOverlayHider.resolveForTests("viewpager_container", 0);
+            VideoOverlayHider.resolveForTests("widget_container", 0);
+        }
+    }
+
     private static void layOut(View root) {
         root.measure(View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(2181, View.MeasureSpec.EXACTLY));

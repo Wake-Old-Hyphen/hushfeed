@@ -80,6 +80,9 @@ public final class HomeTabSettingsShortcut {
         // Every bundle passes through here on each start, the Home tab's switch or not, so this is
         // where a restart pressed in the settings lands back on its page. It posts the opening and
         // touches no window itself.
+        // Also here, with the extension's context set: a link opened in another app's task is
+        // moved to TikTok's own (#227). Always on, so it has no patch or setting of its own.
+        if (context instanceof Activity) LinkTaskGuard.onMainActivityCreate((Activity) context);
         if (context instanceof Activity) SettingsReturn.onMainActivityCreated();
         try {
             if (!(context instanceof Activity) || !SettingsStatus.feedNavigationEnabled) return;

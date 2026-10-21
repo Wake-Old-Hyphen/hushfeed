@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama moves to 47.4.3 and 47.1.4 is dropped. The same 90 patches apply to it (#156).
+
+* **TikTok:** A TikTok link tapped in Telegram now opens TikTok as its own app, so going back or swiping TikTok away no longer closes Telegram too (#227).
+
+* **TikTok:** Fade the video controls reaches the avatar, like, comment, save and share buttons on TikTok 47.4.3 again, and Clear display with a fade level keeps them in sight (#209).
+
+* **TikTok:** The Inbox switches work on TikTok 47.4.3 again, and the back arrow no longer shows on top of the add people icon (#221).
+
+* **TikTok:** Patching needs far less memory at Turn off haptics, Allow screenshots and Circle to Search and the privacy patches (#220).
+
+* **TikTok:** With Hide the comment bar on opened videos on, a post opened from a sound's page stays above TikTok's red Use sound bar instead of sliding under it (#153).
+
+* **TikTok:** A new Liquid glass look switch under Floating bottom bar draws the floating tab pill as see-through glass with a bright top edge (#218, #124).
+
+* **TikTok:** A new Remove voice tools patch, off unless you pick it, saves about 16 MB. Voice search, finding a song by listening and talking to TikTok's AI assistant stop working with it (#213).
+
+* **TikTok:** A new Region switch, Keep the For You feed on your real SIM, lets sticker search and PineDrama see the SIM you set while For You asks for videos with your phone's own SIM. It needs the Region spoof patch in your bundle (#214, #215).
+
+* **TikTok:** Filter the LIVE feed leaves the LIVE rows in your Inbox and on the Following tab alone, apart from blocked creators (#212).
+
+* **TikTok:** A copy made with Run beside the store app gets its bottom navigation, share sheet and video control tweaks back (#209).
+
+* **TikTok:** Remove content credential and card scanner assets no longer crashes TikTok when you tap the gallery icon while replying to a comment (#211).
 
 * **TikTok:** Show the progress bar also shows the bar on videos behind a sensitive content warning (#208).
 
 * **TikTok:** Use system font and Use an imported font now reach Activity center, Watch history and TikTok's other web pages (#7).
 
+* **TikTok:** Hushfeed's downloads work again behind a proxy app running in fake-IP mode, the way Clash, mihomo, sing-box and Xray often run (#145).
+
+* **TikTok:** Holding a verified account's profile picture saves it again.
+
+* **TikTok:** Hide suggested accounts also hides the Suggested accounts title on Find people in your profile.
+
 * **TikTok:** A new switch opens a LIVE room's share menu, fan club and profile cards dark while TikTok is in dark mode (#159).
 
-* **TikTok:** A new Feed filter switch, Hide subscriber-only videos, hides posts only a creator's subscribers can watch, on the feed and on profiles (#219).
+* **TikTok:** Hide the side menu button now also works on accounts where TikTok builds the top bar from its own server rules (#128).
 
-* **TikTok:** A new Region switch, Keep the For You feed on your real SIM, lets sticker search and PineDrama see the SIM you set while For You asks for videos with your phone's own SIM. It needs the Region spoof patch in your bundle (#214, #215).
+* **TikTok:** Hide comment box buttons also hides the photo, @ and gift buttons in the row over the keyboard, and the gift tile in that row's plus panel.
+
+* **TikTok:** Turning Hide comment box buttons off brings the photo and @ buttons back right away, with no restart.
+
+* **TikTok:** Account facts shows an account's language again on TikTok 47.4.3, read from the account's own videos.
+
+* **TikTok:** Copy the full link for short links stops waiting once you share to another app, so Android no longer says Hushfeed pasted from your clipboard.
+
+* **TikTok:** With Show the time zone on, a language that has no short name for your zone writes it as GMT-4 instead of GMT-04:00, so the creator's name fits again.
+
+* **TikTok:** Hushfeed settings search results show a setting's new value when you change it from a result and come back.
+
+* **TikTok:** The Likes field in Own profile counts is translated now.
+
+* **TikTok:** Undo last restore or reset also gives the Feature Gate Lab its own Undo back.
+
+* **TikTok:** Tests now run a whole Save videos without sound save of a DASH video, so the saved file is checked to be TikTok's picture stream with no sound track.
+
+* **TikTok:** A new Feed filter switch, Hide subscriber-only videos, hides posts only a creator's subscribers can watch, on the feed and on profiles (#219).
 
 * **TikTok:** New Caption height rows under Captions lift spoken captions higher, with one for upright, one for sideways and one for Clear display. Caption boldness replaces Normal-weight captions and goes from Light to Extra bold. If you had that switch on, it comes back as Normal (#206).
 
 * **TikTok:** Double tap and Long press have a new choice, Turn Clear display on or off. It hides the buttons over the video the way TikTok's own Clear display does, and the same gesture brings them back (#136).
+
+* **TikTok:** Hide the Tako bubble also takes TikTok's AI summary card out of search results, the one that answers a search typed as a question.
 
 ## 0.76.0 (2026-10-18)
 

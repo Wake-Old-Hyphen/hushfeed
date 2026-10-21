@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama 47.4.3'e geçiyor ve 47.1.4 bırakılıyor. Aynı 90 yama onda da geçerli (#156).
+
+* **TikTok:** Telegram'da dokunulan bir TikTok bağlantısı artık TikTok'u kendi uygulaması olarak açıyor, yani geri gitmek ya da TikTok'u kaydırıp kapatmak artık Telegram'ı da kapatmıyor (#227).
+
+* **TikTok:** Video kontrollerini soluklaştır TikTok 47.4.3'te yeniden avatar, beğeni, yorum, kaydet ve paylaş düğmelerine ulaşıyor, soluklaştırma düzeyiyle Temiz ekran da onları görünür tutuyor (#209).
+
+* **TikTok:** Gelen Kutusu anahtarları TikTok 47.4.3'te yeniden çalışıyor ve geri oku artık kişi ekleme simgesinin üstünde görünmüyor (#221).
+
+* **TikTok:** Yamalama Turn off haptics, Allow screenshots and Circle to Search ve gizlilik yamalarında çok daha az bellek istiyor (#220).
+
+* **TikTok:** Açılan videolarda yorum çubuğunu gizle açıkken bir sesin sayfasından açılan gönderi TikTok'un kırmızı ses çubuğunun altına kaymıyor, üstünde kalıyor (#153).
+
+* **TikTok:** Yüzen alt çubuk altındaki yeni Sıvı cam görünümü anahtarı yüzen sekme hapını parlak üst kenarlı, içi görünen bir cam olarak çiziyor (#218, #124).
+
+* **TikTok:** Siz seçmedikçe kapalı olan yeni Remove voice tools yaması yaklaşık 16 MB yer kazandırıyor. Onunla sesli arama, dinleyerek şarkı bulma ve TikTok'un yapay zeka asistanıyla konuşma çalışmaz (#213).
+
+* **TikTok:** Yeni bir Bölge anahtarı, Senin İçin akışını gerçek SIM'de tut, çıkartma aramasının ve PineDrama'nın seçtiğin SIM'i görmesini sağlarken Senin İçin telefonunun kendi SIM'iyle video ister. Paketinde Region spoof yamasının olması gerekir (#214, #215).
+
+* **TikTok:** CANLI akışını filtrele, engellenen yayıncılar dışında, Gelen Kutusu'ndaki ve Takip edilenler sekmesindeki CANLI satırlarına dokunmuyor (#212).
+
+* **TikTok:** Run beside the store app ile yapılan bir kopya alt gezinme, paylaşım menüsü ve video kontrolü ayarlarını geri alıyor (#209).
+
+* **TikTok:** Remove content credential and card scanner assets artık bir yoruma yanıt verirken galeri simgesine dokunduğunuzda TikTok'u çökertmiyor (#211).
 
 * **TikTok:** İlerleme çubuğunu göster artık hassas içerik uyarısının arkasındaki videolarda da çubuğu gösteriyor (#208).
 
 * **TikTok:** Sistem yazı tipini kullan ve İçe aktarılan yazı tipini kullan artık Etkinlik merkezi, İzleme geçmişi ve TikTok'un diğer web sayfalarında da geçerli (#7).
 
+* **TikTok:** Hushfeed'in indirmeleri, Clash, mihomo, sing-box ve Xray'in sık çalıştığı gibi fake-IP modundaki bir proxy uygulamasının arkasında yeniden çalışıyor (#145).
+
+* **TikTok:** Doğrulanmış bir hesabın profil fotoğrafına basılı tutmak onu yeniden kaydediyor.
+
+* **TikTok:** Önerilen hesapları gizle, profilinizdeki Kişi bul sayfasında önerilen hesaplar başlığını da gizliyor.
+
 * **TikTok:** Yeni bir anahtar, TikTok karanlık moddayken bir LIVE odasının paylaşım menüsünü, hayran kulübünü ve profil kartlarını koyu açar (#159).
 
-* **TikTok:** Akış filtresindeki yeni Yalnızca abonelere özel videoları gizle anahtarı, yalnızca bir içerik üreticinin abonelerinin izleyebildiği gönderileri akışta ve profillerde gizler (#219).
+* **TikTok:** Yan menü düğmesini gizle artık TikTok'un üst çubuğu kendi sunucu kurallarıyla kurduğu hesaplarda da çalışıyor (#128).
 
-* **TikTok:** Yeni bir Bölge anahtarı, Senin İçin akışını gerçek SIM'de tut, çıkartma aramasının ve PineDrama'nın seçtiğin SIM'i görmesini sağlarken Senin İçin telefonunun kendi SIM'iyle video ister. Paketinde Region spoof yamasının olması gerekir (#214, #215).
+* **TikTok:** Yorum kutusundaki düğmeleri gizle klavyenin üstündeki satırdaki fotoğraf, @ ve hediye düğmelerini ve o satırın artı panelindeki hediye kutucuğunu da gizliyor.
+
+* **TikTok:** Yorum kutusundaki düğmeleri gizle kapatıldığında fotoğraf ve @ düğmeleri yeniden başlatmadan hemen geri geliyor.
+
+* **TikTok:** Hesap bilgileri TikTok 47.4.3'te bir hesabın dilini yeniden gösteriyor, dili hesabın kendi videolarından okuyor.
+
+* **TikTok:** Kısa bağlantılarda tam bağlantıyı kopyala başka bir uygulamayla paylaştığınız anda beklemeyi bırakıyor, böylece Android artık Hushfeed'in panodan yapıştırdığını söylemiyor.
+
+* **TikTok:** Saat dilimini göster açıkken, diliminiz için kısa adı olmayan bir dil onu GMT-04:00 yerine GMT-4 olarak yazıyor, böylece yayıncının adı yeniden sığıyor.
+
+* **TikTok:** Hushfeed ayarlarındaki arama sonuçları, bir ayarı sonuçtan değiştirip geri döndüğünüzde yeni değerini gösteriyor.
+
+* **TikTok:** Kendi profil sayılarınız içindeki Beğeniler alanı artık çevrildi.
+
+* **TikTok:** Son geri yüklemeyi veya sıfırlamayı geri al, Feature Gate Lab'e kendi Geri al düğmesini de geri veriyor.
+
+* **TikTok:** Testler artık bir DASH videosu için Videoları sessiz kaydet ile tam bir kaydetme çalıştırıyor ve dosyanın ses izi olmayan TikTok görüntü akışı olduğunu denetliyor.
+
+* **TikTok:** Akış filtresindeki yeni Yalnızca abonelere özel videoları gizle anahtarı, yalnızca bir içerik üreticinin abonelerinin izleyebildiği gönderileri akışta ve profillerde gizler (#219).
 
 * **TikTok:** Altyazılar altındaki yeni Altyazı yüksekliği satırları konuşma altyazılarını yukarı kaldırır, biri dik, biri yatay, biri temiz ekran için. Altyazı kalınlığı, Normal kalınlıkta altyazılar anahtarının yerini alır ve İnce'den Ekstra kalın'a kadar gider. O anahtar açıksa Normal olarak gelir (#206).
 
 * **TikTok:** Çift dokunma ve Uzun basma için yeni bir seçenek var, Temiz ekranı aç veya kapat. Videonun üstündeki düğmeleri TikTok'un kendi temiz ekranı gibi gizler, aynı hareket onları geri getirir (#136).
+
+* **TikTok:** Tako balonunu gizle, TikTok'un soru olarak yazılan bir aramayı yanıtlayan yapay zeka özeti kartını da arama sonuçlarından kaldırıyor.
 
 ## 0.76.0 (2026-10-18)
 

@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** O PineDrama passa para o 47.4.3 e o 47.1.4 sai. Os mesmos 90 patches valem para ele (#156).
+
+* **TikTok:** Um link do TikTok tocado no Telegram agora abre o TikTok como app próprio, então voltar ou fechar o TikTok não fecha mais o Telegram junto (#227).
+
+* **TikTok:** Esmaecer os controles do vídeo volta a alcançar os botões de avatar, curtir, comentar, salvar e compartilhar no TikTok 47.4.3, e a Tela limpa com um nível de esmaecimento os mantém à vista (#209).
+
+* **TikTok:** As chaves da Caixa de entrada voltam a funcionar no TikTok 47.4.3, e a seta de voltar não aparece mais por cima do ícone de adicionar pessoas (#221).
+
+* **TikTok:** Aplicar os patches precisa de bem menos memória em Turn off haptics, Allow screenshots and Circle to Search e nos patches de privacidade (#220).
+
+* **TikTok:** Com Esconder a barra de comentários nos vídeos abertos ligado, um post aberto pela página de um som fica acima da barra vermelha de som do TikTok em vez de ir para baixo dela (#153).
+
+* **TikTok:** A nova chave Visual de vidro líquido, em Barra inferior flutuante, desenha a pílula de abas flutuante como vidro translúcido com uma borda de cima brilhante (#218, #124).
+
+* **TikTok:** O novo patch Remove voice tools, desligado a menos que você o escolha, economiza cerca de 16 MB. Com ele, a busca por voz, achar uma música ouvindo e falar com o assistente de IA do TikTok deixam de funcionar (#213).
+
+* **TikTok:** Uma nova chave em Região, Manter o Para você no seu SIM real, deixa a busca de figurinhas e o PineDrama verem o SIM escolhido enquanto o Para você pede vídeos com o SIM do seu celular. Ela precisa do patch Region spoof no pacote (#214, #215).
+
+* **TikTok:** Filtrar o feed de LIVE deixa em paz as linhas de LIVE da Caixa de entrada e da aba Seguindo, exceto criadores bloqueados (#212).
+
+* **TikTok:** Uma cópia feita com Run beside the store app recupera os ajustes da navegação inferior, do menu de compartilhar e dos controles do vídeo (#209).
+
+* **TikTok:** Remove content credential and card scanner assets não derruba mais o TikTok quando você toca no ícone da galeria ao responder um comentário (#211).
 
 * **TikTok:** Mostrar a barra de progresso agora também mostra a barra nos vídeos que ficam atrás de um aviso de conteúdo sensível (#208).
 
 * **TikTok:** Usar a fonte do sistema e Usar uma fonte importada agora chegam à Central de atividades, ao Histórico de exibição e às outras páginas web do TikTok (#7).
 
+* **TikTok:** Os downloads do Hushfeed voltam a funcionar atrás de um app de proxy em modo fake-IP, como Clash, mihomo, sing-box e Xray costumam rodar (#145).
+
+* **TikTok:** Segurar a foto de perfil de uma conta verificada volta a salvá-la.
+
+* **TikTok:** Esconder as contas sugeridas também tira o título de contas sugeridas em Encontrar pessoas no seu perfil.
+
 * **TikTok:** Uma nova chave abre escuros o menu de compartilhar, o fã-clube e os cartões de perfil de uma sala de LIVE quando o TikTok está no modo escuro (#159).
 
-* **TikTok:** Uma nova chave do filtro do feed, Esconder os vídeos só para assinantes, esconde as publicações que só os assinantes de um criador podem assistir, no feed e nos perfis (#219).
+* **TikTok:** Esconder o botão do menu lateral agora também funciona em contas em que o TikTok monta a barra de cima pelas próprias regras do servidor (#128).
 
-* **TikTok:** Uma nova chave em Região, Manter o Para você no seu SIM real, deixa a busca de figurinhas e o PineDrama verem o SIM escolhido enquanto o Para você pede vídeos com o SIM do seu celular. Ela precisa do patch Region spoof no pacote (#214, #215).
+* **TikTok:** Esconder os botões da caixa de comentário também tira os botões de foto, @ e presente da linha acima do teclado, e o presente do painel de mais dessa linha.
+
+* **TikTok:** Desligar Esconder os botões da caixa de comentário traz os botões de foto e @ de volta na hora, sem reiniciar.
+
+* **TikTok:** Dados da conta volta a mostrar o idioma de uma conta no TikTok 47.4.3, lido dos próprios vídeos da conta.
+
+* **TikTok:** Copiar o link completo nos links curtos para de esperar assim que você compartilha com outro app, então o Android não avisa mais que o Hushfeed colou da área de transferência.
+
+* **TikTok:** Com Mostrar o fuso horário ligado, um idioma sem nome curto para o seu fuso o escreve como GMT-4 em vez de GMT-04:00, então o nome do criador volta a caber.
+
+* **TikTok:** Os resultados da busca nas configurações do Hushfeed mostram o novo valor de uma configuração quando você a muda a partir de um resultado e volta.
+
+* **TikTok:** O campo Curtidas em Contagens do seu perfil agora está traduzido.
+
+* **TikTok:** Desfazer a última restauração ou redefinição também devolve ao Laboratório de gates o próprio Desfazer.
+
+* **TikTok:** Os testes agora fazem um salvamento completo com Salvar os vídeos sem som de um vídeo DASH e conferem que o arquivo é a faixa de imagem do TikTok sem faixa de som.
+
+* **TikTok:** Uma nova chave do filtro do feed, Esconder os vídeos só para assinantes, esconde as publicações que só os assinantes de um criador podem assistir, no feed e nos perfis (#219).
 
 * **TikTok:** Novas linhas de Altura das legendas em Legendas sobem as legendas faladas, uma com o celular em pé, uma na horizontal e uma com a tela limpa. Espessura das legendas substitui Legendas com espessura normal e vai de Fino a Extranegrito. Se você tinha aquela chave ligada, ela volta como Normal (#206).
 
 * **TikTok:** Toque duplo e Toque longo ganharam uma opção nova, Ligar ou desligar a tela limpa. Ela esconde os botões sobre o vídeo como a tela limpa do próprio TikTok, e o mesmo gesto traz eles de volta (#136).
+
+* **TikTok:** Esconder a bolha do Tako também tira dos resultados de busca o cartão de resumo com IA do TikTok, aquele que responde a uma busca digitada como pergunta.
 
 ## 0.76.0 (2026-10-18)
 

@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama wechselt auf 47.4.3, 47.1.4 fällt weg. Es gelten dieselben 90 Patches (#156).
+
+* **TikTok:** Ein in Telegram angetippter TikTok-Link öffnet TikTok jetzt als eigene App, also schließt Zurückgehen oder Wegwischen von TikTok nicht mehr auch Telegram (#227).
+
+* **TikTok:** „Videosteuerung ausblenden lassen“ erreicht auf TikTok 47.4.3 wieder Avatar, Like, Kommentar, Speichern und Teilen, und die freie Ansicht mit einer Ausblendstufe lässt sie sichtbar (#209).
+
+* **TikTok:** Die Posteingang-Schalter funktionieren auf TikTok 47.4.3 wieder, und der Zurück-Pfeil liegt nicht mehr über dem Symbol zum Hinzufügen von Personen (#221).
+
+* **TikTok:** Das Patchen braucht bei Turn off haptics, Allow screenshots and Circle to Search und den Datenschutz-Patches viel weniger Speicher (#220).
+
+* **TikTok:** Mit „Kommentarleiste bei geöffneten Videos ausblenden“ bleibt ein von der Seite eines Sounds geöffneter Beitrag über TikToks roter Sound-Leiste, statt darunter zu rutschen (#153).
+
+* **TikTok:** Ein neuer Schalter „Liquid-Glass-Look“ unter „Schwebende untere Leiste“ zeichnet die schwebende Tab-Pille als durchsichtiges Glas mit hellem oberem Rand (#218, #124).
+
+* **TikTok:** Ein neuer Patch Remove voice tools, aus, solange du ihn nicht wählst, spart etwa 16 MB. Sprachsuche, Songerkennung durch Zuhören und das Sprechen mit TikToks KI-Assistenten funktionieren damit nicht mehr (#213).
+
+* **TikTok:** Ein neuer Regionsschalter, „Für dich“ bei der echten SIM lassen, lässt Stickersuche und PineDrama die eingestellte SIM sehen, während „Für dich“ Videos mit der eigenen SIM deines Handys anfragt. Dafür muss der Patch Region spoof im Paket sein (#214, #215).
+
+* **TikTok:** „LIVE-Feed filtern“ lässt die LIVE-Zeilen im Posteingang und im Tab Folge ich in Ruhe, abgesehen von blockierten Creatorn (#212).
+
+* **TikTok:** Eine mit Run beside the store app erstellte Kopie bekommt ihre Anpassungen an unterer Navigation, Teilen-Menü und Videosteuerung zurück (#209).
+
+* **TikTok:** Remove content credential and card scanner assets lässt TikTok nicht mehr abstürzen, wenn du beim Antworten auf einen Kommentar auf das Galerie-Symbol tippst (#211).
 
 * **TikTok:** „Fortschrittsbalken anzeigen“ zeigt den Balken jetzt auch bei Videos hinter einer Warnung vor sensiblen Inhalten (#208).
 
 * **TikTok:** „Systemschrift verwenden“ und „Importierte Schrift verwenden“ wirken jetzt auch im Aktivitätscenter, im Wiedergabeverlauf und auf den anderen Webseiten von TikTok (#7).
 
+* **TikTok:** Die Downloads von Hushfeed funktionieren wieder hinter einer Proxy-App im Fake-IP-Modus, so wie Clash, mihomo, sing-box und Xray oft laufen (#145).
+
+* **TikTok:** Langes Drücken auf das Profilbild eines verifizierten Kontos speichert es wieder.
+
+* **TikTok:** „Vorgeschlagene Konten ausblenden“ blendet auch die Überschrift der vorgeschlagenen Konten unter Personen finden in deinem Profil aus.
+
 * **TikTok:** Ein neuer Schalter öffnet das Teilen-Menü, den Fanclub und die Profilkarten eines LIVE-Raums dunkel, wenn TikTok im Dunkelmodus ist (#159).
 
-* **TikTok:** Ein neuer Feed-Filter-Schalter, Videos nur für Abonnenten ausblenden, blendet Beiträge, die nur die Abonnenten eines Creators ansehen können, im Feed und auf Profilen aus (#219).
+* **TikTok:** „Seitenmenü-Knopf ausblenden“ wirkt jetzt auch bei Konten, bei denen TikTok die obere Leiste nach eigenen Serverregeln baut (#128).
 
-* **TikTok:** Ein neuer Regionsschalter, „Für dich“ bei der echten SIM lassen, lässt Stickersuche und PineDrama die eingestellte SIM sehen, während „Für dich“ Videos mit der eigenen SIM deines Handys anfragt. Dafür muss der Patch Region spoof im Paket sein (#214, #215).
+* **TikTok:** „Schaltflächen im Kommentarfeld ausblenden“ blendet auch die Foto-, @- und Geschenk-Schaltflächen in der Zeile über der Tastatur aus, dazu die Geschenk-Kachel im Plus-Bereich dieser Zeile.
+
+* **TikTok:** Wenn du „Schaltflächen im Kommentarfeld ausblenden“ ausschaltest, kommen die Foto- und @-Schaltflächen sofort zurück, ohne Neustart.
+
+* **TikTok:** „Kontofakten“ zeigt auf TikTok 47.4.3 wieder die Sprache eines Kontos, gelesen aus den eigenen Videos des Kontos.
+
+* **TikTok:** „Bei Kurzlinks den vollständigen Link kopieren“ wartet nicht mehr, sobald du an eine andere App teilst, also meldet Android nicht mehr, dass Hushfeed aus der Zwischenablage eingefügt hat.
+
+* **TikTok:** Mit „Zeitzone anzeigen“ schreibt eine Sprache ohne Kurznamen für deine Zone sie als GMT-4 statt GMT-04:00, damit der Name des Creators wieder passt.
+
+* **TikTok:** Suchergebnisse in den Hushfeed-Einstellungen zeigen den neuen Wert einer Einstellung, wenn du sie aus einem Ergebnis heraus änderst und zurückkommst.
+
+* **TikTok:** Das Feld Likes in „Zahlen des eigenen Profils“ ist jetzt übersetzt.
+
+* **TikTok:** „Letzte Wiederherstellung oder Zurücksetzung rückgängig machen“ gibt auch dem Feature Gate Lab sein eigenes Rückgängig zurück.
+
+* **TikTok:** Tests spielen jetzt eine ganze Speicherung mit „Videos ohne Ton speichern“ für ein DASH-Video durch und prüfen, dass die Datei TikToks Bildspur ohne Tonspur ist.
+
+* **TikTok:** Ein neuer Feed-Filter-Schalter, Videos nur für Abonnenten ausblenden, blendet Beiträge, die nur die Abonnenten eines Creators ansehen können, im Feed und auf Profilen aus (#219).
 
 * **TikTok:** Neue Zeilen Untertitelhöhe unter Untertitel heben gesprochene Untertitel höher, je eine für aufrecht, quer und die freie Ansicht. Schriftstärke der Untertitel ersetzt Untertitel in normaler Stärke und reicht von Leicht bis Extrafett. Wer den Schalter an hatte, bekommt Normal (#206).
 
 * **TikTok:** Doppeltippen und Langes Drücken haben eine neue Auswahl, Freie Ansicht ein- oder ausschalten. Sie blendet die Schaltflächen über dem Video aus wie TikToks eigene freie Ansicht, und dieselbe Geste holt sie zurück (#136).
+
+* **TikTok:** „Tako-Blase ausblenden“ nimmt auch TikToks KI-Zusammenfassung aus den Suchergebnissen, die Karte, die eine als Frage getippte Suche beantwortet.
 
 ## 0.76.0 (2026-10-18)
 

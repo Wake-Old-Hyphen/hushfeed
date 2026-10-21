@@ -1,18 +1,68 @@
-## Unreleased
+## 0.77.0 (2026-10-20)
+
+* **TikTok:** PineDrama passa alla 47.4.3 e la 47.1.4 viene tolta. Valgono le stesse 90 patch (#156).
+
+* **TikTok:** Un link di TikTok toccato in Telegram ora apre TikTok come app a sé, quindi tornare indietro o chiudere TikTok non chiude più anche Telegram (#227).
+
+* **TikTok:** Attenua i controlli del video torna a raggiungere i pulsanti avatar, mi piace, commento, salva e condividi su TikTok 47.4.3, e la Vista pulita con un livello di attenuazione li lascia visibili (#209).
+
+* **TikTok:** Gli interruttori della Posta in arrivo funzionano di nuovo su TikTok 47.4.3, e la freccia indietro non compare più sopra l'icona per aggiungere persone (#221).
+
+* **TikTok:** Applicare le patch richiede molta meno memoria per Turn off haptics, Allow screenshots and Circle to Search e le patch per la privacy (#220).
+
+* **TikTok:** Con Nascondi la barra dei commenti nei video aperti attivo, un post aperto dalla pagina di un suono resta sopra la barra rossa del suono di TikTok invece di finirci sotto (#153).
+
+* **TikTok:** Il nuovo interruttore Aspetto vetro liquido in Barra inferiore fluttuante disegna la pillola delle schede come vetro trasparente con un bordo superiore luminoso (#218, #124).
+
+* **TikTok:** La nuova patch Remove voice tools, spenta finché non la scegli, fa risparmiare circa 16 MB. Con lei smettono di funzionare la ricerca vocale, il riconoscimento di una canzone ascoltandola e il parlare con l'assistente IA di TikTok (#213).
+
+* **TikTok:** Un nuovo interruttore in Regione, Mantieni Per te sulla SIM reale, fa vedere alla ricerca degli sticker e a PineDrama la SIM impostata mentre Per te chiede video con la SIM del tuo telefono. Serve la patch Region spoof nel pacchetto (#214, #215).
+
+* **TikTok:** Filtra il feed LIVE lascia stare le righe LIVE nella Posta in arrivo e nella scheda Seguiti, a parte i creator bloccati (#212).
+
+* **TikTok:** Una copia fatta con Run beside the store app recupera le sue modifiche alla navigazione in basso, al menu di condivisione e ai controlli del video (#209).
+
+* **TikTok:** Remove content credential and card scanner assets non fa più chiudere TikTok quando tocchi l'icona della galleria mentre rispondi a un commento (#211).
 
 * **TikTok:** Mostra la barra di avanzamento ora mostra la barra anche sui video dietro un avviso di contenuti sensibili (#208).
 
 * **TikTok:** Usa il carattere di sistema e Usa un carattere importato ora arrivano anche al Centro attività, alla Cronologia visualizzazioni e alle altre pagine web di TikTok (#7).
 
+* **TikTok:** I download di Hushfeed funzionano di nuovo dietro un'app proxy in modalità fake-IP, come spesso girano Clash, mihomo, sing-box e Xray (#145).
+
+* **TikTok:** Tenere premuta la foto profilo di un account verificato la salva di nuovo.
+
+* **TikTok:** Nascondi gli account suggeriti toglie anche il titolo degli account suggeriti in Trova persone nel tuo profilo.
+
 * **TikTok:** Un nuovo interruttore apre scuri il menu di condivisione, il fan club e le schede profilo di una stanza LIVE quando TikTok è in modalità scura (#159).
 
-* **TikTok:** Un nuovo interruttore del filtro del feed, Nascondi i video solo per abbonati, nasconde i post che solo gli abbonati di un creator possono guardare, nel feed e nei profili (#219).
+* **TikTok:** Nascondi il pulsante del menu laterale ora funziona anche sugli account dove TikTok costruisce la barra in alto con le proprie regole del server (#128).
 
-* **TikTok:** Un nuovo interruttore in Regione, Mantieni Per te sulla SIM reale, fa vedere alla ricerca degli sticker e a PineDrama la SIM impostata mentre Per te chiede video con la SIM del tuo telefono. Serve la patch Region spoof nel pacchetto (#214, #215).
+* **TikTok:** Nascondi i pulsanti nella casella dei commenti toglie anche i pulsanti foto, @ e regalo nella riga sopra la tastiera, e il riquadro regalo nel pannello più di quella riga.
+
+* **TikTok:** Spegnere Nascondi i pulsanti nella casella dei commenti riporta subito i pulsanti foto e @, senza riavvio.
+
+* **TikTok:** Info sull'account mostra di nuovo la lingua di un account su TikTok 47.4.3, letta dai video dell'account stesso.
+
+* **TikTok:** Copia il link completo per i link brevi smette di aspettare appena condividi con un'altra app, così Android non avvisa più che Hushfeed ha incollato dagli appunti.
+
+* **TikTok:** Con Mostra il fuso orario attivo, una lingua senza un nome breve per il tuo fuso lo scrive come GMT-4 invece di GMT-04:00, così il nome del creator ci sta di nuovo.
+
+* **TikTok:** I risultati della ricerca nelle impostazioni di Hushfeed mostrano il nuovo valore di un'impostazione quando la cambi da un risultato e torni indietro.
+
+* **TikTok:** Il campo Mi piace in Conteggi del tuo profilo ora è tradotto.
+
+* **TikTok:** Annulla l'ultimo ripristino o reset restituisce anche al Feature Gate Lab il suo Annulla.
+
+* **TikTok:** I test ora fanno un salvataggio completo con Salva i video senza audio di un video DASH e controllano che il file sia la traccia video di TikTok senza traccia audio.
+
+* **TikTok:** Un nuovo interruttore del filtro del feed, Nascondi i video solo per abbonati, nasconde i post che solo gli abbonati di un creator possono guardare, nel feed e nei profili (#219).
 
 * **TikTok:** Nuove righe Altezza dei sottotitoli in Sottotitoli alzano i sottotitoli parlati, una per il telefono in verticale, una in orizzontale e una per la vista pulita. Spessore dei sottotitoli sostituisce Sottotitoli con spessore normale e va da Sottile a Extra grassetto. Se avevi quell'interruttore attivo, torna come Normale (#206).
 
 * **TikTok:** Doppio tocco e Pressione prolungata hanno una nuova scelta, Attiva o disattiva la vista pulita. Nasconde i pulsanti sopra il video come la vista pulita di TikTok, e lo stesso gesto li fa tornare (#136).
+
+* **TikTok:** Nascondi la bolla di Tako toglie anche dai risultati di ricerca la scheda di riassunto IA di TikTok, quella che risponde a una ricerca scritta come domanda.
 
 ## 0.76.0 (2026-10-18)
 
