@@ -53,6 +53,7 @@ private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/fee
 private const val PROFILE_DETAIL_PANEL_DESCRIPTOR =
     "Lcom/ss/android/ugc/aweme/detail/panel/ProfileDetailFragmentPanel;"
 private const val TAKO_AI_FILTER_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/TakoAiFilter;"
+private const val AI_CAST_FILTER_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/AiCastFilter;"
 private const val CARD_FILTERS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/CardFilters;"
 private const val SEARCH_LYNX_CARDS_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/SearchLynxCards;"
 private const val LIVE_FEED_FILTER_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/feedfilter/LiveFeedFilter;"
@@ -770,6 +771,29 @@ val feedFilterPatch = bytecodePatch(
                 return v0
             """,
         )
+
+        // The camera's AI Cast button. The recorder adds the AI Theater toolbar component only
+        // when this gate says yes, and the gate already says no for stories, duets and the DM
+        // camera, so a no here builds a camera TikTok knows. Its row shows only where the gate was found.
+        val aiCastGate = if (declaredBuild) {
+            AiTheaterRecordEntranceFingerprint.method
+        } else {
+            AiTheaterRecordEntranceFingerprint.methodOrNull
+        }
+        aiCastGate?.let { gate ->
+            gate.guardAtEntry(
+                "Feed filter",
+                "invoke-static {}, $AI_CAST_FILTER_CLASS_DESCRIPTOR->shouldHideRecordEntrance()Z",
+                """
+                    const/4 v0, 0x0
+                    return v0
+                """,
+            )
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAiCastEntrance()V",
+            )
+        }
 
         // Issue #162. A caption tap (or "more") on some videos opens TikTok's search panel, with
         // "Discover more with Tako" and an "Ask Tako" box, instead of expanding the caption. The

@@ -1138,6 +1138,8 @@ On,开
 On mobile data,关于移动数据
 On or off,打开或关闭
 "On the Friends tab, hide posts, reposts and LIVEs from accounts that aren't a mutual follow, suggested accounts included. Your own posts stay.",在“好友”选项卡上，隐藏非相互关注帐户（包括建议帐户）的帖子、转发和直播。您自己的帖子会保留.
+Latest first on Following,“正在关注”最新优先
+"Play each batch the Following feed loads newest post first. TikTok still picks what each batch brings, and ads and LIVEs keep their place.",“正在关注”每次加载的一批内容按发布时间从新到旧播放。每批包含哪些内容仍由 TikTok 决定，广告和直播保持原位.
 On. Hushfeed hasn't seen TikTok send any reports since it started.,上。自启动以来，Hushfeed 尚未看到 TikTok 发送任何报告.
 On. Restore puts back the feed setup you had before.,上。恢复会恢复您之前的信息流设置.
 "Once today's budget runs out, the hold stays and can't be dismissed. The budget settings are locked until the day starts over. Turn this off any time before the budget runs out.",一旦今天的预算用完，保留将继续存在且无法撤销。预算设置将被锁定，直到新的一天开始。在预算用完之前随时关闭此功能.
@@ -1246,6 +1248,8 @@ Popups,弹出窗口
 Post age,后期年龄
 Post dates in the feed,在信息流中发布日期
 Post every video as if you'd turned on TikTok's own HD upload on the post page. A clip TikTok doesn't count as high quality posts as before.,发布每个视频就好像您在帖子页面上打开了 TikTok 自己的高清上传一样。剪辑 TikTok 不像以前那样算作高质量帖子.
+Hide the AI Cast button,隐藏 AI Cast 按钮
+Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera again to see the change.,从相机侧边工具栏移除 TikTok 的 AI Cast 按钮。重新打开相机即可看到变化.
 Posting,发帖
 Prefer H.264 video,更喜欢 H.264 视频
 Preset,预设
@@ -2174,6 +2178,10 @@ expanded,扩大
 this creator,这位创造者
 Only on the sides of the video,仅在视频两侧
 Your Long press choice runs only on the left and right thirds of the video. A press in the middle still opens TikTok's own menu. It needs a Long press choice other than TikTok default.,长按所选的操作只在视频的左侧和右侧三分之一生效。在中间长按仍会打开 TikTok 自带的菜单。需要把长按设为 TikTok 默认以外的选项.
+Where the time goes,时间显示位置
+Beside the bar,在进度条旁边
+Above the bar,在进度条上方
+"Above moves the caption and the buttons up a little so the time fits over the right end of the bar. When something else is in the way, the time goes beside the bar.",选择上方时，说明文字和按钮会稍微上移，让时间显示在进度条右端上方。如果还有其他东西挡着，时间就显示在进度条旁边.
 Full-width progress bar,全宽进度条
 "Run the progress bar from one screen edge to the other, without the gap TikTok leaves at each end.",进度条从屏幕一侧延伸到另一侧，去掉 TikTok 在两端留下的空隙.
 New device identity,新设备身份

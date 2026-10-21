@@ -34,6 +34,7 @@ import app.morphe.extension.tiktok.settings.SettingsStatus;
  * a tall screen a 9:16 video still left a black band under the clock with the spacer gone (S22: a
  * 1107 by 1968 surface in a 1080 by 2181 player, 106 px above and below). {@link #fill} grows a
  * portrait surface from its center until it covers the player, trimming a little off each side.
+ * See-through bottom bar asks for the same fill on its own, for the band under the picture (#218).
  */
 public final class SeeThroughStatusBar {
     /**

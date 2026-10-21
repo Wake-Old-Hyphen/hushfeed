@@ -12,7 +12,11 @@ import androidx.annotation.Nullable;
 
 import com.ss.android.ugc.aweme.feed.model.Aweme;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.feed.VideoOverlayHider;
 import app.morphe.extension.tiktok.settings.Settings;
 
 /**
@@ -35,7 +39,9 @@ import app.morphe.extension.tiktok.settings.Settings;
  * <p>Two choices sit beside the time (#173). {@link Settings#SEEKBAR_TIME_PLACEMENT} moves the
  * label over the bar's right end while nothing on screen reaches into that spot (see {@link
  * SeekbarTimePlacement}), and {@link Settings#SEEKBAR_FULL_WIDTH} takes TikTok's side gap off
- * the bar's row ({@link SeekbarFullWidth}), with or without the time.
+ * the bar's row ({@link SeekbarFullWidth}), with or without the time. On the main feed TikTok's
+ * music disc sits on that spot, so the label asks for room ({@link #roomAbove}) and the caption,
+ * the rail and the disc go up by it.
  */
 @SuppressWarnings("unused")
 public final class SeekbarTime {
@@ -51,6 +57,8 @@ public final class SeekbarTime {
     private static final int KEPT_TICKS = 4;
     private static final Tick[] TICKS = new Tick[KEPT_TICKS];
     private static int nextTick;
+    /** The room over the bar each label has asked the caption for, in px (#173). Main thread. */
+    private static final Map<Object, Integer> ROOM = new WeakHashMap<>();
 
     private SeekbarTime() {
     }
@@ -114,6 +122,31 @@ public final class SeekbarTime {
         } catch (RuntimeException failure) {
             Logger.printException(() -> "Seekbar time: could not update the time", failure);
         }
+    }
+
+    /**
+     * How far the caption, the rail and the music disc go up to make room for the time over the
+     * bar (#173), in px; 0 while the time is off, beside the bar, or nothing has asked. The overlay
+     * pass lifts every video's widget layer by this much on the main feed.
+     */
+    public static int roomAbove() {
+        if (ROOM.isEmpty() || !isEnabled() || !SeekbarTimePlacement.wantsAbove()) return 0;
+        int room = 0;
+        for (Integer asked : ROOM.values()) room = Math.max(room, asked);
+        return room;
+    }
+
+    /** Asks for [room] px over the bar on [owner]'s behalf, 0 to give it back, and moves the caption now. */
+    static void askRoom(SeekbarTimeLabel owner, int room) {
+        Integer before = room > 0 ? ROOM.put(owner, room) : ROOM.remove(owner);
+        if ((before == null ? 0 : before) == room) return;
+        Logger.printDebug(() -> "Seekbar time: room above the bar " + room + " px");
+        VideoOverlayHider.refreshFor(owner.getContext());
+    }
+
+    /** Forgets [owner]'s ask without a pass, for a label leaving the window. */
+    static void forgetRoom(SeekbarTimeLabel owner) {
+        ROOM.remove(owner);
     }
 
     /** The entry of the bar's style method: a drag style hides the time until the drag ends. */

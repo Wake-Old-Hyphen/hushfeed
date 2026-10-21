@@ -8,6 +8,7 @@ package app.morphe.extension.tiktok.feed;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -21,6 +22,8 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
 import app.morphe.extension.shared.GlobalLayoutHook;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceIdCache;
@@ -32,6 +35,7 @@ import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.navigation.FrontWindow;
 import app.morphe.extension.tiktok.navigation.NavigationTabsFilter;
 import app.morphe.extension.tiktok.profile.ProfileTopBar;
+import app.morphe.extension.tiktok.seekbar.SeekbarTime;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -357,6 +361,7 @@ public final class VideoOverlayHider {
     private static final int PLAYER_VIEW_TARGET = STATUS_BAR_SCRIM_TARGET + 1;
     private static final int DETAIL_MESSAGE_BAR_TARGET = PLAYER_VIEW_TARGET + 1;
     private static final int DETAIL_SOUND_BAR_TARGET = DETAIL_MESSAGE_BAR_TARGET + 1;
+    private static final int WIDGET_LAYER_TARGET = DETAIL_SOUND_BAR_TARGET + 1;
     private static final String[][] TRAVERSAL_TARGET_IDS = traversalTargetIds();
     private static final int LOGICAL_TARGET_COUNT = TRAVERSAL_TARGET_IDS.length;
     private static final int TRAVERSAL_TARGET_COUNT = candidateCount(TRAVERSAL_TARGET_IDS);
@@ -666,6 +671,9 @@ public final class VideoOverlayHider {
             } catch (NumberFormatException ignored) {
             }
             touchScale = Math.min(MAX_TOUCH_SCALE, Math.max(1f, touchScale));
+            // The time over the bar asks the caption for room on the main feed (#173); an opened
+            // video's caption already moves with its own bar (see alignBarRows), so none there.
+            int roomAbove = detailPager ? 0 : SeekbarTime.roomAbove();
             if (caption || music || actionBar || surveys || tabStrip || carry || detailCommentBar || anchor
                     || clearControls || detailSearchBox
                     || statusBar || seeThroughStatusBar || SeeThroughStatusBar.anyFilled()
@@ -673,7 +681,7 @@ public final class VideoOverlayHider {
                     || anyRail || !HIDDEN_HERE.isEmpty() || !FADED_HERE.isEmpty() || !WIDGETS_LIFTED.isEmpty()
                     || fadeLevel != 100 || !FADED_TO.isEmpty() || !BAR_ROWS_MOVED.isEmpty()
                     || !CAPTIONS_LIFTED.isEmpty() || !DISCS_LIFTED.isEmpty() || !RAILS_LIFTED.isEmpty()
-                    || touchScale != 1f || scaledLastPass) {
+                    || touchScale != 1f || scaledLastPass || roomAbove > 0) {
                 ViewGroup root = activity.findViewById(android.R.id.content);
                 int[] ids = TRAVERSAL.ids;
                 boolean[] hidden = TRAVERSAL.hidden;
@@ -696,6 +704,8 @@ public final class VideoOverlayHider {
                 wanted[DETAIL_MESSAGE_BAR_TARGET] = detailCommentBar;
                 // Only ever read; see pairDetailCommentBar.
                 wanted[DETAIL_SOUND_BAR_TARGET] = false;
+                // Only ever lifted; see liftWidgetLayers.
+                wanted[WIDGET_LAYER_TARGET] = false;
                 wanted[DETAIL_COMMENT_STRIP_TARGET] = detailCommentBar || stripForBar;
                 wanted[CLEAR_EXIT_TARGET] = clearControls;
                 wanted[CLEAR_PLAYBACK_TARGET] = clearControls;
@@ -712,8 +722,10 @@ public final class VideoOverlayHider {
                 wanted[DETAIL_SEARCH_BOX_TARGET] = detailSearchBox;
                 wanted[STATUS_BAR_SPACER_TARGET] = statusBar || seeThroughStatusBar;
                 wanted[STATUS_BAR_SCRIM_TARGET] = statusBar || seeThroughStatusBar;
-                // Grown, not hidden: see SeeThroughStatusBar.fill.
-                wanted[PLAYER_VIEW_TARGET] = seeThroughStatusBar;
+                // Grown, not hidden: see SeeThroughStatusBar.fill. With the strip under the video
+                // gone the player reaches the bottom edge, but TikTok still centers a 9:16 picture
+                // in it, so the picture stopped short of the tabs over a black band (#218).
+                wanted[PLAYER_VIEW_TARGET] = seeThroughStatusBar || stripForBar;
                 wanted[BOTTOM_SPACER_TARGET] = seeThroughBar && SeeThroughBottomBar.collapseAllowed();
                 for (int i = 0; i < RAIL_BUTTON_IDS.length; i++) {
                     wanted[RAIL_TARGET_START + i] = rail[i] || carryHides;
@@ -755,7 +767,8 @@ public final class VideoOverlayHider {
                     List<View> strips = selectedViews(found, TRAVERSAL.selected, DETAIL_COMMENT_STRIP_TARGET);
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, seeThroughBar, seeThroughBar
-                            ? identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID) : 0, cellId);
+                            ? identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID) : 0, cellId,
+                            selectedViews(found, TRAVERSAL.selected, WIDGET_LAYER_TARGET), roomAbove);
                     guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar, cellId);
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
@@ -980,7 +993,7 @@ public final class VideoOverlayHider {
     }
 
     private static String[][] traversalTargetIds() {
-        String[][] targets = new String[DETAIL_SOUND_BAR_TARGET + 1][];
+        String[][] targets = new String[WIDGET_LAYER_TARGET + 1][];
         targets[CAPTION_TARGET] = CAPTION_IDS;
         targets[MUSIC_TARGET] = MUSIC_IDS;
         targets[ACTION_BAR_TARGET] = ACTION_BAR_IDS;
@@ -1015,6 +1028,8 @@ public final class VideoOverlayHider {
         targets[PLAYER_VIEW_TARGET] = PLAYER_VIEW_IDS;
         targets[DETAIL_MESSAGE_BAR_TARGET] = DETAIL_MESSAGE_BAR_IDS;
         targets[DETAIL_SOUND_BAR_TARGET] = DETAIL_SOUND_BAR_IDS;
+        // Built here: this runs before the fields further down are set.
+        targets[WIDGET_LAYER_TARGET] = new String[] {WIDGET_LAYER_ID};
         return targets;
     }
 
@@ -1445,24 +1460,57 @@ public final class VideoOverlayHider {
      * cell's widget layer goes up by the same amount while the picture fills the room. Nothing
      * moves until the column has actually been laid out without the strip, and a layer TikTok
      * offsets itself is left to TikTok.
+     *
+     * <p>The time over the bar's right end asks for room there too (#173), and then every cell's
+     * layer goes up by [room] the same way, so the next video arrives already lifted. The time
+     * measures that room from where TikTok laid the layer out, before either lift, so it already
+     * counts the strip's height when both are on: the layer takes the larger of the two.
      */
-    private static void liftWidgetLayers(List<View> strips, boolean seeThroughBar, int layerId, int cellId) {
-        List<View> lifted = new ArrayList<>();
+    private static void liftWidgetLayers(List<View> strips, boolean seeThroughBar, int layerId, int cellId,
+                                         List<View> roomLayers, int room) {
+        Map<View, Float> lifts = new HashMap<>();
         if (seeThroughBar && layerId != 0 && cellId != 0) {
             for (View strip : strips) {
                 float gained = roomGained(strip);
                 if (gained <= 0f) continue;
                 List<View> layers = new ArrayList<>();
                 collectWidgetLayers((View) strip.getParent(), layerId, cellId, 0, layers);
-                for (View layer : layers) {
-                    offsetOwned(WIDGETS_LIFTED, layer, -gained);
-                    lifted.add(layer);
-                }
+                for (View layer : layers) lifts.put(layer, gained);
             }
+        }
+        if (room > 0) {
+            for (View layer : roomLayers) {
+                Float gained = lifts.get(layer);
+                lifts.put(layer, Math.max(gained == null ? 0f : gained, room));
+            }
+        }
+        for (Map.Entry<View, Float> lift : lifts.entrySet()) {
+            offsetOwned(WIDGETS_LIFTED, lift.getKey(), -lift.getValue());
         }
         if (WIDGETS_LIFTED.isEmpty()) return;
         for (View layer : new ArrayList<>(WIDGETS_LIFTED.keySet())) {
-            if (!lifted.contains(layer)) offsetOwned(WIDGETS_LIFTED, layer, 0f);
+            if (!lifts.containsKey(layer)) offsetOwned(WIDGETS_LIFTED, layer, 0f);
+        }
+    }
+
+    /** The id of the widget layer each cell holds, 0 where this build has none. */
+    public static int widgetLayerId(Context context) {
+        return RESOURCE_IDS.resolve(context.getResources(), context.getPackageName(), WIDGET_LAYER_ID, false);
+    }
+
+    /**
+     * A pass over the window [context] belongs to, at once, for a change no layout announces (the
+     * time asking for room over the bar). Without a window to name, the front one.
+     */
+    public static void refreshFor(@Nullable Context context) {
+        Context current = context;
+        while (current instanceof android.content.ContextWrapper && !(current instanceof Activity)) {
+            current = ((android.content.ContextWrapper) current).getBaseContext();
+        }
+        if (current instanceof Activity && !((Activity) current).isFinishing()) {
+            applyTo((Activity) current);
+        } else {
+            refresh();
         }
     }
 

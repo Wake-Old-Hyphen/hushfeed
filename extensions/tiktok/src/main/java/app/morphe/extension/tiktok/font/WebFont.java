@@ -32,14 +32,16 @@ import app.morphe.extension.tiktok.settings.Settings;
  * pages this puts one style element in the document that sets every text element's family.
  * Pages anywhere else, the in-app browser's included, are left alone.
  *
- * <p>An imported font goes in as a data URL, so the page needs no file access. A file over
- * {@link #MAX_INLINE_BYTES} would make every page load carry megabytes of text, so with one of
- * those the pages get the device font instead.
+ * <p>An imported font, or one picked in a Galaxy's settings ({@link PickedFont}), goes in as a
+ * data URL, so the page needs no file access. A file over {@link #MAX_INLINE_BYTES} would make
+ * every page load carry megabytes of text, so with one of those the pages get the device font
+ * instead.
  */
 public final class WebFont {
     private static final String HOOK_FAMILY = "web font";
     static final String STYLE_ID = "hushfeed-font";
     static final String IMPORTED_FAMILY = "Hushfeed imported";
+    static final String PICKED_FAMILY = "Hushfeed picked";
     static final long MAX_INLINE_BYTES = 2L * 1024 * 1024;
 
     /** Every text element, leaving SVG and icon glyph elements in the page's own font. */
@@ -67,7 +69,9 @@ public final class WebFont {
         try {
             if (webView == null || !BrowserPrivacyGuard.isTrustedAppPage(url)) return;
             String css = styleSheet(webView.getContext());
-            HookStatus.bound(HOOK_FAMILY, css == null ? "tiktok" : css.contains("@font-face") ? "imported" : "system");
+            HookStatus.bound(HOOK_FAMILY, css == null ? "tiktok"
+                    : css.contains(IMPORTED_FAMILY) ? "imported"
+                    : css.contains(PICKED_FAMILY) ? "picked" : "system");
             if (css == null || isRepeat(webView, url)) return;
             webView.evaluateJavascript(script(css), null);
         } catch (Throwable failure) {
@@ -91,18 +95,27 @@ public final class WebFont {
     /**
      * The style sheet the switches ask for, or null to leave the page in TikTok's font. Follows
      * {@link SystemFont#replacementFamily()}: an imported font that loads wins, then the device
-     * font while Use system font is on.
+     * font while Use system font is on. A font picked in a Galaxy's settings is the device font
+     * in TikTok's own text but not in a WebView, so it goes in as a face of its own.
      */
     static String styleSheet(Context context) {
+        return styleSheet(context, PickedFont.file());
+    }
+
+    static String styleSheet(Context context, File pickedFont) {
         if (Settings.IMPORTED_FONT.get() && ImportedFont.typeface() != null) {
             String face = importedFaceUrl(ImportedFont.file(context));
-            if (face != null) {
-                return "@font-face{font-family:\"" + IMPORTED_FAMILY + "\";src:url(" + face + ");}"
-                        + rule("\"" + IMPORTED_FAMILY + "\",sans-serif");
-            }
+            if (face != null) return withFace(IMPORTED_FAMILY, face);
             return rule("sans-serif");
         }
-        return Settings.SYSTEM_FONT.get() ? rule("sans-serif") : null;
+        if (!Settings.SYSTEM_FONT.get()) return null;
+        String picked = importedFaceUrl(pickedFont);
+        return picked != null ? withFace(PICKED_FAMILY, picked) : rule("sans-serif");
+    }
+
+    private static String withFace(String family, String url) {
+        return "@font-face{font-family:\"" + family + "\";src:url(" + url + ");}"
+                + rule("\"" + family + "\",sans-serif");
     }
 
     private static String rule(String family) {

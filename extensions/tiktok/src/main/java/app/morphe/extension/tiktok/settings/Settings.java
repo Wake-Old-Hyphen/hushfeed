@@ -386,6 +386,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_UNPERSONALIZED_FOR_YOU = new BooleanSetting("hide_unpersonalized_for_you", FALSE);
     /** Read on every Friends tab response, so it applies from the next page on. */
     public static final BooleanSetting FRIENDS_MUTUALS_ONLY = new BooleanSetting("friends_mutuals_only", FALSE);
+    /** Each batch the Following feed loads plays newest first (#226). Read once per run of the app. */
+    public static final BooleanSetting FOLLOWING_LATEST_FIRST = new BooleanSetting("following_latest_first", FALSE, true);
     public static final BooleanSetting HIDE_SHARE_CHANNELS = new BooleanSetting("hide_share_channels", FALSE);
     public static final BooleanSetting HIDE_SHARE_ACTIONS = new BooleanSetting("hide_share_actions", FALSE);
     public static final BooleanSetting SHARE_BLOCK_AUTHOR = new BooleanSetting("share_block_author", FALSE);
@@ -1102,6 +1104,12 @@ public class Settings extends BaseSettings {
      * post is prepared, so no restart.
      */
     public static final BooleanSetting ALWAYS_UPLOAD_HD = new BooleanSetting("always_upload_hd", FALSE);
+    /**
+     * Takes the AI Cast button (AI Self, AI Theater inside TikTok) off the camera's side toolbar;
+     * the Feed filter patch. TikTok asks as the camera builds its toolbar, so the next camera
+     * opened follows the switch.
+     */
+    public static final BooleanSetting HIDE_AI_CAST = new BooleanSetting("hide_ai_cast", FALSE);
     public static final StringSetting CUSTOM_SHARE_DOMAIN = new StringSetting("custom_share_domain", "");
     // Opens a short vt/vm.tiktok.com share link once to swap the full link onto the clipboard.
     public static final BooleanSetting EXPAND_SHORT_SHARE_LINKS = new BooleanSetting("expand_short_share_links", FALSE);

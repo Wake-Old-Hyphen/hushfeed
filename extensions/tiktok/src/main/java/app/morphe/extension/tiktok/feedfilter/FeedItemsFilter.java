@@ -1306,15 +1306,40 @@ public final class FeedItemsFilter {
             );
         }
 
+        AwemeExtractor followAweme =
+            container -> (container instanceof FollowFeed) ? ((FollowFeed) container).aweme : null;
         filterFeedList(
             phase == FilterPhase.RESPONSE ? "FollowFeedList:response" : "FollowFeedList:late",
             followFeedList,
             followItems,
-            container -> (container instanceof FollowFeed) ? ((FollowFeed) container).aweme : null,
+            followAweme,
             verbose,
             allowRecentSkip,
             phase
         );
+
+        // The filter may have swapped the list, so the sort reads it again.
+        List current = followItems(followFeedList);
+        FollowingLatestFirst.sort(followFeedList, current, followAweme, System.currentTimeMillis(),
+            order -> writeOrder(followFeedList, current, order));
+    }
+
+    /**
+     * Puts {@code order} into {@code list} slot by slot, or swaps in a copy when TikTok's list is
+     * read-only. True only for the slot by slot write: getItems has already handed its caller the
+     * list it read, so a swapped copy reaches later reads only.
+     */
+    private static boolean writeOrder(Object owner, List list, List order) {
+        if (list.size() != order.size()) return false;
+        try {
+            for (int slot = 0; slot < order.size(); slot++) {
+                if (list.get(slot) != order.get(slot)) list.set(slot, order.get(slot));
+            }
+            return true;
+        } catch (UnsupportedOperationException readOnly) {
+            replaceOwnerList(owner, order);
+            return false;
+        }
     }
 
     private static void filterFeedList(

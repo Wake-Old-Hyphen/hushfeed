@@ -77,6 +77,8 @@ public class SettingsStatus {
     public static boolean hideSearchSuggestionsEnabled = false;
     public static boolean searchAutoplayEnabled = false;
     public static boolean hdUploadEnabled = false;
+    /** Feed filter found the camera's AI Cast gate, so Hide the AI Cast button has a hook. */
+    public static boolean aiCastEntranceEnabled = false;
     public static boolean liveSearchEnabled = false;
     public static boolean seekbarThumbnailEnabled = false;
     public static boolean stopVideoLoopingEnabled = false;
@@ -354,6 +356,10 @@ public class SettingsStatus {
 
     public static void enableHdUpload() {
         hdUploadEnabled = true;
+    }
+
+    public static void enableAiCastEntrance() {
+        aiCastEntranceEnabled = true;
     }
 
     public static void enableLiveSearch() {

@@ -106,6 +106,12 @@ public class FeedFilterPreferenceCategory extends ConditionalPreferenceCategory 
         ));
         addPreference(new TogglePreference(
                 context,
+                "Latest first on Following",
+                "Play each batch the Following feed loads newest post first. TikTok still picks what each batch brings, and ads and LIVEs keep their place.",
+                Settings.FOLLOWING_LATEST_FIRST
+        ));
+        addPreference(new TogglePreference(
+                context,
                 "Hide stories", "Hide stories from the feed.",
                 Settings.HIDE_STORY
         ));

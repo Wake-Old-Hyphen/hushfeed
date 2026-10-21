@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.feed.VideoOverlayHider;
+import app.morphe.extension.tiktok.settings.SettingsStatus;
 
 /**
  * The time at the end of TikTok's progress bar row.
@@ -76,6 +78,8 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     private boolean above;
     /** When the row last asked whether the spot above is free; 0 before the first ask. */
     private long checkedAt;
+    /** Room this video was given that still left the spot taken, so it isn't asked again; -1 for none. */
+    private int refusedRoom = -1;
     /** The ancestors that had clipChildren on and were given it off so the time can draw above. */
     private final List<ViewGroup> unclipped = new ArrayList<>();
     /** The view raised over the feed while the time is above, its own Z and outline to give back. */
@@ -204,7 +208,10 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     void show(float percent, @Nullable SeekbarTime.Tick tick) {
         boolean sameVideo = tick != null && tick.aid != null && tick.aid.equals(aid);
         if (tick != null && (percent > 0f || sameVideo)) {
-            if (!sameVideo) checkedAt = 0L;
+            if (!sameVideo) {
+                checkedAt = 0L;
+                refusedRoom = -1;
+            }
             aid = tick.aid;
             hidden = tick.hidden;
             if (tick.durationMs > 0L) durationMs = tick.durationMs;
@@ -270,6 +277,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
     @Override
     protected void onDetachedFromWindow() {
         restoreClipping();
+        SeekbarTime.forgetRoom(this);
         ViewTreeObserver attached = observer;
         if (attached != null && attached.isAlive()) {
             attached.removeOnPreDrawListener(this);
@@ -285,24 +293,47 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
      * is free: a laid-out row, an ancestor that holds the spot, and no text on screen reaching
      * into it. Otherwise it steps back beside the bar and asks again after {@link
      * SeekbarTimePlacement#RECHECK_MS}, or at once when the row shows another video.
+     *
+     * <p>On the main feed TikTok's music disc, and on some videos the search row, sit right on
+     * that spot, so it was never free (S22, 2026-10-21). When only the video's widget layer is in
+     * the way, the time asks for the room it needs and the overlay pass lifts the caption, the
+     * rail and the disc by that much. A lift that still leaves the spot taken (an opened video,
+     * which gets none) isn't asked for again on that video. The lift is the overlay patch's pass,
+     * so a build without that patch asks for none, and the time goes above only where the spot is
+     * already free.
      */
     void place(boolean wantAbove, long now) {
         if (!wantAbove) {
-            if (above) goBeside();
+            goBeside();
             checkedAt = 0L;
             return;
         }
+        // An ad or a LIVE shows no time; whatever room the last video had stays, so nothing jumps.
+        if (hidden) return;
         if (checkedAt != 0L && now - checkedAt < SeekbarTimePlacement.RECHECK_MS) return;
         Rect spot = spotAbove();
         if (spot == null) {
-            if (above) goBeside();
+            goBeside();
             return;
         }
+        View root = row.getRootView();
+        int layerId = VideoOverlayHider.widgetLayerId(getContext());
+        int room = SettingsStatus.videoOverlaysEnabled
+                ? SeekbarTimePlacement.roomNeeded(root, spot, layerId) : 0;
+        // Between two videos: the next one is measured once the pager settles on it.
+        if (room < 0) return;
         checkedAt = now;
-        List<ViewGroup> chain = SeekbarTimePlacement.textReaches(row.getRootView(), spot, row)
-                ? null : SeekbarTimePlacement.clipChain(row, spot);
+        List<ViewGroup> chain = null;
+        if (room != refusedRoom && !SeekbarTimePlacement.textReaches(root, spot, row, layerId)) {
+            SeekbarTime.askRoom(this, room);
+            if (!SeekbarTimePlacement.textReaches(root, spot, row)) {
+                chain = SeekbarTimePlacement.clipChain(row, spot);
+            } else {
+                refusedRoom = room;
+            }
+        }
         if (chain == null) {
-            if (above) goBeside();
+            goBeside();
             return;
         }
         if (!above) goAbove();
@@ -348,9 +379,10 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         setPaddingRelative(Math.round(GAP_DP * density()), 0, Math.round(EDGE_DP * density()), 0);
     }
 
-    /** The label back at the end of the row, as it was attached. */
+    /** The label back at the end of the row, as it was attached, and any room it asked for given back. */
     private void goBeside() {
         restoreClipping();
+        SeekbarTime.askRoom(this, 0);
         if (!above) return;
         above = false;
         ViewGroup.LayoutParams params = getLayoutParams();
@@ -374,7 +406,7 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         if (getTranslationY() != dy) setTranslationY(dy);
     }
 
-    /** Lets exactly [chain] draw outside its bounds; any other group this label unclipped is put back. */
+    /** Turns clipping off on exactly [chain]; any other group this label unclipped is put back. */
     private void unclip(List<ViewGroup> chain) {
         for (int i = unclipped.size() - 1; i >= 0; i--) {
             ViewGroup group = unclipped.get(i);
@@ -389,14 +421,14 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
                 unclipped.add(group);
             }
         }
-        raise(chain.isEmpty() ? null : chain.get(chain.size() - 1));
+        raise(chain.size() < 2 ? null : chain.get(chain.size() - 2));
     }
 
     /**
      * The bar's strip sits under the feed in the container they share, so the feed's player, drawn
      * after it, painted over a time lifted out of the strip (Login2 emulator, 2026-10-15). While the
-     * time is above, the outermost view of the chain draws over its siblings by a pixel of Z, with no
-     * outline so it casts no shadow; both are given back as they were.
+     * time is above, the chain's view just inside the one holding the spot draws over its siblings
+     * by a pixel of Z, with no outline so it casts no shadow; both are given back as they were.
      */
     private void raise(@Nullable View top) {
         if (top == raised) return;

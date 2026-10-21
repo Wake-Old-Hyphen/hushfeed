@@ -55,6 +55,8 @@ public class SeeThroughStatusBarTest {
     @After
     public void tearDown() {
         Settings.SEE_THROUGH_STATUS_BAR.resetToDefault();
+        Settings.SEE_THROUGH_BOTTOM_BAR.resetToDefault();
+        SeeThroughBottomBar.reset();
         Settings.HIDE_STATUS_BAR.resetToDefault();
         Settings.FIT_VIDEO_TO_SCREEN.resetToDefault();
         SettingsStatus.videoFitEnabled = false;
@@ -245,6 +247,39 @@ public class SeeThroughStatusBarTest {
             Settings.SEE_THROUGH_STATUS_BAR.save(true);
             VideoOverlayHider.applyTo(activity);
             assertEquals("TikTok's own zoom was overwritten", 1.5f, surface.getScaleY(), 0f);
+        }
+    }
+
+    /**
+     * #218: with only See-through bottom bar on, the strip under the video goes and the player
+     * reaches the bottom edge, but TikTok centers the 9:16 picture in it, so the bottom of the
+     * floating bar sat over black. The bottom bar asks for the same fill; off puts it back.
+     */
+    @Test
+    public void aPortraitVideoReachesTheBottomWithOnlyTheBottomBarSeeThrough() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            feedCell(activity, View.INVISIBLE);
+            FrameLayout cell = activity.findViewById(CELL_ID);
+            FrameLayout player = new FrameLayout(activity);
+            player.setId(PLAYER_ID);
+            SurfaceView surface = new SurfaceView(activity);
+            player.addView(surface);
+            cell.addView(player, new FrameLayout.LayoutParams(1080, 2181));
+            showVideo(player, surface, 1107, 1968);
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+            VideoOverlayHider.applyTo(activity);
+            float scale = surface.getScaleY();
+            assertTrue("the picture still stopped short of the bottom", 1968 * scale >= 2181);
+            assertTrue("grown past what the player needs", 1968 * scale <= 2181 + 3);
+            assertFalse("the status bar was made see through", SeeThroughStatusBar.isCleared(activity));
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("off didn't put the picture back", 1f, surface.getScaleY(), 0f);
+            assertFalse(SeeThroughStatusBar.anyFilled());
         }
     }
 

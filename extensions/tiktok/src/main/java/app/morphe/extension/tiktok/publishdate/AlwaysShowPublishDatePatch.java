@@ -109,7 +109,7 @@ public final class AlwaysShowPublishDatePatch {
     }
 
     /** When the item was posted, in Unix seconds: its createTime, else what its ID says, else 0. */
-    static long postedAt(Object item, long nowMillis) {
+    public static long postedAt(Object item, long nowMillis) {
         if (!(item instanceof Aweme)) {
             return 0;
         }

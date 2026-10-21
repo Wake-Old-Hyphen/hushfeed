@@ -6,6 +6,7 @@ package app.morphe.extension.tiktok.font;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
@@ -20,7 +21,10 @@ import app.morphe.extension.tiktok.SettingsContextRule;
 import app.morphe.extension.tiktok.settings.Settings;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -42,6 +47,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 28)
 public class WebFontTest {
     @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
+    @Rule public final TemporaryFolder folders = new TemporaryFolder();
 
     private static final String WATCH_HISTORY = "https://inapp.tiktokv.com/tiktok/watch_history/index.html";
     private static final byte[] TRUETYPE = {0, 1, 0, 0, 0, 12, 0, (byte) 0x80};
@@ -169,5 +175,62 @@ public class WebFontTest {
     @Test public void aMissingWebViewIsIgnored() {
         Settings.SYSTEM_FONT.save(true);
         WebFont.onPageFinished(null, WATCH_HISTORY);
+    }
+
+    /** One UI's layout: {@code <user>/sans.loc} names the font's folder, which holds DroidSans.ttf. */
+    private File pickFont(byte[] face, String pointer) throws IOException {
+        File user = folders.newFolder("app_fonts", "0");
+        File font = folders.newFolder("Foundation");
+        Files.write(new File(font, PickedFont.REGULAR).toPath(), face);
+        String target = pointer != null ? pointer : font.getAbsolutePath() + "#Foundation";
+        Files.write(new File(user, PickedFont.POINTER).toPath(), target.getBytes(StandardCharsets.UTF_8));
+        return user;
+    }
+
+    @Test public void aFontPickedInPhoneSettingsGoesInWithUseSystemFont() throws IOException {
+        File picked = PickedFont.file(pickFont(TRUETYPE, null));
+        assertNotNull("the picked font's file wasn't found", picked);
+
+        Settings.SYSTEM_FONT.save(true);
+        String css = WebFont.styleSheet(context, picked);
+        String data = "data:font/ttf;base64," + Base64.encodeToString(TRUETYPE, Base64.NO_WRAP);
+        assertTrue(css, css.contains("src:url(" + data + ")"));
+        assertTrue(css, css.contains("font-family:\"" + WebFont.PICKED_FAMILY + "\",sans-serif !important"));
+
+        Settings.SYSTEM_FONT.save(false);
+        assertNull("the picked font went in with Use system font off", WebFont.styleSheet(context, picked));
+    }
+
+    @Test public void theImportedFontWinsOverAPickedFont() throws IOException {
+        File picked = PickedFont.file(pickFont(TRUETYPE, null));
+        importFont(new byte[] {'O', 'T', 'T', 'O', 0, 9, 0, 0x40}, "Display.otf");
+        Settings.SYSTEM_FONT.save(true);
+        Settings.IMPORTED_FONT.save(true);
+        String css = WebFont.styleSheet(context, picked);
+        assertTrue(css, css.contains(WebFont.IMPORTED_FAMILY));
+        assertFalse(css, css.contains(WebFont.PICKED_FAMILY));
+    }
+
+    @Test public void aPickedFontTooLargeToCarryInThePageGetsTheDeviceFont() throws IOException {
+        byte[] large = Arrays.copyOf(TRUETYPE, (int) WebFont.MAX_INLINE_BYTES + 16);
+        File picked = PickedFont.file(pickFont(large, null));
+        Settings.SYSTEM_FONT.save(true);
+        String css = WebFont.styleSheet(context, picked);
+        assertFalse("a font over the limit went into the page", css.contains("@font-face"));
+        assertTrue(css, css.contains("font-family:sans-serif !important"));
+    }
+
+    @Test public void thePhonesOwnFontIsNoPick() throws IOException {
+        assertNull("the stock font read as a pick", PickedFont.file(pickFont(TRUETYPE, "default#default")));
+    }
+
+    @Test public void aPointerToAFolderWithoutTheFaceIsNoPick() throws IOException {
+        File empty = folders.newFolder("Empty");
+        assertNull(PickedFont.file(pickFont(TRUETYPE, empty.getAbsolutePath() + "#Empty\n")));
+    }
+
+    @Test public void aPhoneWithoutThePointerHasNoPick() throws IOException {
+        assertNull(PickedFont.file(folders.newFolder("other")));
+        assertNull(PickedFont.file(new File(folders.getRoot(), "missing")));
     }
 }

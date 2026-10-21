@@ -169,7 +169,7 @@ public class SeekbarTimePlacementTest {
     }
 
     @Test
-    public void aboveUnclipsExactlyTheViewsBetweenTheRowAndTheStripThatHoldsTheSpot() {
+    public void aboveUnclipsTheViewsFromTheRowUpToTheStripThatHoldsTheSpotAndNoFurther() {
         Settings.SEEKBAR_TIME.save(true);
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
         build();
@@ -178,8 +178,10 @@ public class SeekbarTimePlacementTest {
 
         assertFalse("the row", bar.getClipChildren());
         assertFalse("the box around the row", inner.getClipChildren());
-        assertTrue("the strip holds the spot and keeps clipping", container.getClipChildren());
-        assertTrue(window.getClipChildren());
+        // A group clips each child at the child's own edge, so a strip that kept clipping cut the
+        // time off at the box's top (S22, 2026-10-21).
+        assertFalse("the strip holds the spot and clips the box", container.getClipChildren());
+        assertTrue("the strip is whole inside the window", window.getClipChildren());
         assertTrue("the box draws over the feed beside it", inner.getTranslationZ() > 0f);
         assertNull("without a shadow", inner.getOutlineProvider());
         assertEquals(0f, bar.getTranslationZ(), 0f);
@@ -232,6 +234,7 @@ public class SeekbarTimePlacementTest {
         assertEquals(0f, label.getTranslationY(), 0f);
         assertTrue("clipping is given back", bar.getClipChildren());
         assertTrue(inner.getClipChildren());
+        assertTrue(container.getClipChildren());
     }
 
     @Test
@@ -285,7 +288,7 @@ public class SeekbarTimePlacementTest {
         assertEquals(0f, label.getTranslationX(), 0f);
         assertEquals(0f, label.getTranslationY(), 0f);
         assertEquals(Gravity.END, label.getGravity() & Gravity.END);
-        assertTrue(bar.getClipChildren() && inner.getClipChildren());
+        assertTrue(bar.getClipChildren() && inner.getClipChildren() && container.getClipChildren());
 
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");
         SeekbarTimeLabel again = SeekbarTimeLabel.find(bar);
@@ -297,7 +300,8 @@ public class SeekbarTimePlacementTest {
         SeekbarTime.onBarProgress(bar, 52f);
         assertEquals(1, bar.getChildCount());
         assertSame(original, frame.getLayoutParams());
-        assertTrue("off puts clipping back", bar.getClipChildren() && inner.getClipChildren());
+        assertTrue("off puts clipping back",
+                bar.getClipChildren() && inner.getClipChildren() && container.getClipChildren());
     }
 
     @Test
@@ -312,7 +316,7 @@ public class SeekbarTimePlacementTest {
         SeekbarTime.onBarProgress(bar, 53f);
 
         assertEquals(1, bar.getChildCount());
-        assertTrue(bar.getClipChildren() && inner.getClipChildren());
+        assertTrue(bar.getClipChildren() && inner.getClipChildren() && container.getClipChildren());
     }
 
     @Test

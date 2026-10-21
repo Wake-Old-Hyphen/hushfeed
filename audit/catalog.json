@@ -4395,6 +4395,12 @@
     "restart": true
    },
    {
+    "key": "hide_ai_cast",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the AI Cast button"
+   },
+   {
     "key": "hide_paid_partnership",
     "default": false,
     "type": "bool",
@@ -4462,6 +4468,13 @@
     "default": false,
     "type": "bool",
     "row": "Hide unpersonalized For You videos"
+   },
+   {
+    "key": "following_latest_first",
+    "default": false,
+    "type": "bool",
+    "row": "Latest first on Following",
+    "restart": true
    },
    {
     "key": "feed_filter_count_pill",
@@ -13950,7 +13963,8 @@
    {
     "key": "seekbar_time_placement",
     "default": "beside",
-    "type": "string"
+    "type": "string",
+    "row": "Where the time goes"
    },
    {
     "key": "seekbar_big_handle",

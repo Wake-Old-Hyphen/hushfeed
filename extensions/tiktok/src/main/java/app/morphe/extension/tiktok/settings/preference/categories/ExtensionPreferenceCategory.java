@@ -58,6 +58,7 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.followStatusEnabled
                 || SettingsStatus.copyIdsEnabled
                 || SettingsStatus.hdUploadEnabled
+                || SettingsStatus.aiCastEntranceEnabled
                 || SettingsStatus.refreshRateEnabled
                 || SettingsStatus.launcherShortcutsEnabled
                 || SettingsStatus.firstLaunchSetupEnabled
@@ -300,14 +301,25 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.PROFILE_BACKGROUND
             ));
         }
-        if (SettingsStatus.hdUploadEnabled) {
+        if (SettingsStatus.hdUploadEnabled || SettingsStatus.aiCastEntranceEnabled) {
             addPreference(new SectionHeadingPreference(context, "Posting"));
+        }
+        if (SettingsStatus.hdUploadEnabled) {
             addPreference(new TogglePreference(
                     context,
                     "Always upload in HD",
                     "Post every video as if you'd turned on TikTok's own HD upload on the post page. "
                             + "A clip TikTok doesn't count as high quality posts as before.",
                     Settings.ALWAYS_UPLOAD_HD
+            ));
+        }
+        if (SettingsStatus.aiCastEntranceEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Hide the AI Cast button",
+                    "Takes TikTok's AI Cast button off the camera's side toolbar. Open the camera "
+                            + "again to see the change.",
+                    Settings.HIDE_AI_CAST
             ));
         }
         // The whole app, not the feed: screenshots and the status bar used to be on Feed screen and
