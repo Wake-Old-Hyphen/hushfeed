@@ -26,6 +26,7 @@ import app.morphe.extension.tiktok.blockauthor.FeedVisibility;
 import app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -362,10 +363,10 @@ public final class SessionLockOverlay {
     public static String timeLabel(long at) {
         Context context = Utils.getContext();
         if (context == null) {
-            return java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT)
+            return RegionSpoof.phoneClock(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))
                     .format(new java.util.Date(at));
         }
-        return android.text.format.DateFormat.getTimeFormat(context)
+        return RegionSpoof.phoneClock(android.text.format.DateFormat.getTimeFormat(context))
                 .format(new java.util.Date(at));
     }
 

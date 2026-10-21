@@ -299,6 +299,13 @@ public class ExtensionPreferenceCategory extends ConditionalPreferenceCategory {
                                 + "and gifts stay as they are.",
                         Settings.HIDE_PROFILE_MENU_BALANCE
                 ));
+                addPreference(new TogglePreference(
+                        context,
+                        "Hide the TikTok Minis icons in the profile menu",
+                        "Keep the TikTok Minis entry in the menu your profile's top right button opens, "
+                                + "and hide the row of app icons under it so the menu is shorter.",
+                        Settings.HIDE_PROFILE_MENU_MINIS_ICONS
+                ));
             }
         }
         if (SettingsStatus.profileBackgroundEnabled) {

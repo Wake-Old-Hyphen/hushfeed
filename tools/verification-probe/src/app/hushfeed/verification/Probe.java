@@ -477,6 +477,26 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok open-copied-video");
                         break;
                     }
+                    case "open-copied-photo": {
+                        // The copied link of a photo post, opened in TikTok's own page for it,
+                        // so one post can be looked at again after a setting changes (#188).
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                                app.getSystemService(Context.CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = clipboard == null ? null : clipboard.getPrimaryClip();
+                        CharSequence value = clip == null || clip.getItemCount() == 0 ? null
+                                : clip.getItemAt(0).coerceToText(app);
+                        String link = value == null ? "" : value.toString().trim();
+                        android.net.Uri uri = android.net.Uri.parse(link);
+                        if (!link.startsWith("https://www.tiktok.com/") || !"photo".equals(linkPathShape(uri.getPath()))) {
+                            throw new IllegalStateException("no copied TikTok photo URL");
+                        }
+                        Intent photo = new Intent(Intent.ACTION_VIEW, uri);
+                        photo.setPackage("com.zhiliaoapp.musically");
+                        photo.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        app.startActivity(photo);
+                        Log.i(TAG, "ok open-copied-photo");
+                        break;
+                    }
                     case "open-public-video": {
                         String aid = required(intent, "aid");
                         if (!aid.matches("[0-9]+")) throw new IllegalArgumentException("invalid public video id");
@@ -2152,6 +2172,20 @@ public final class Probe extends Instrumentation {
                         target.setAccessible(true);
                         Log.i(TAG, "ok countformat " + owner.getSimpleName() + "." + target.getName() + " count=" + count
                                 + " -> " + target.invoke(null, arguments));
+                        break;
+                    }
+                    case "timezone": {
+                        // The zone TikTok's process formats times in right now, as each of the
+                        // three time APIs sees it, and the current time each one prints. Region
+                        // spoof's Match locale and timezone (#184) moves the process default.
+                        long now = System.currentTimeMillis();
+                        java.text.DateFormat framework = android.text.format.DateFormat.getTimeFormat(app);
+                        android.icu.text.DateFormat icu = android.icu.text.DateFormat.getTimeInstance(android.icu.text.DateFormat.SHORT);
+                        Log.i(TAG, "ok timezone java=" + java.util.TimeZone.getDefault().getID()
+                                + " icu=" + android.icu.util.TimeZone.getDefault().getID()
+                                + " zoneId=" + java.time.ZoneId.systemDefault()
+                                + " framework=" + framework.format(new java.util.Date(now))
+                                + " icuTime=" + icu.format(new java.util.Date(now)));
                         break;
                     }
                     case "tiktoktheme": {

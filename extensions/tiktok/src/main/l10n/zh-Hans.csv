@@ -163,6 +163,7 @@ Account region,账户区域
 Active,活跃
 Activity,活动
 Activity center (PIA),活动中心（PIA）
+"Add a line along the bottom of a sound's cover while its preview plays, with the time played and the preview's length. Tap or drag it to move through the preview.",在声音试听播放时，沿声音封面底部添加一条线，显示已播放时间和试听时长。点按或拖动它即可在试听中移动.
 Add,添加
 Add a button beside the block control that turns the feed's sound off and on.,在块控件旁边添加一个按钮，用于关闭和打开信息流的声音.
 Add a button beside the block control to send feedback about the current video.,在块控件旁边添加一个按钮以发送有关当前视频的反馈.
@@ -212,7 +213,7 @@ Allow voice comments,允许语音评论
 Already active,已经活跃
 Already marked as not interested,已标记为不感兴趣
 Also apply these filters to downloaded videos TikTok uses when the feed can't load enough new items.,当信息流无法加载足够的新项目时，还可以将这些过滤器应用于 TikTok 使用的下载视频.
-Also change the region TikTok reports internally. Keeps your interface language. Your IP address and your account's own rules still apply.,还要在内部更改区域 TikTok 报告。保留您的界面语言。您的 IP 地址和您帐户自身的规则仍然适用.
+Also change the region TikTok reports internally and set TikTok to the country's time zone. Keeps your interface language. Your IP address and your account's own rules still apply.,还要在内部更改区域 TikTok 报告，并将 TikTok 设为该国家/地区的时区。保留您的界面语言。您的 IP 地址和您帐户自身的规则仍然适用.
 Also hide videos whose text stickers match a blocked caption word. Text stickers are the words a creator types over the video in TikTok's editor. Text that's part of the picture itself can't be read.,还隐藏文本贴纸与被阻止的字幕词匹配的视频。文本贴纸是创作者在 TikTok 的编辑器中在视频上输入的文字。无法读取属于图片本身的文本.
 "Also on a block list, so still hidden: %1$s",也在阻止列表中，因此仍然隐藏：%1$s
 Also on opened videos,也在打开的视频上
@@ -301,6 +302,7 @@ Blocked sounds,受阻的声音
 Blocking,阻塞
 Bottom tabs to keep,要保留的底部选项卡
 Brightness,亮度
+"Bring back TikTok's captions switch in its accessibility settings, and the caption controls on videos, when TikTok leaves them out. Captions only show on videos that have them.",当 TikTok 隐藏它们时，恢复 TikTok 无障碍设置中的字幕开关和视频上的字幕控件。字幕只会显示在带有字幕的视频上.
 "Brings back the translation rows on TikTok's Language page, under Settings and privacy, for accounts that only see App language there.",对于仅在那里看到应用程序语言的帐户，在 TikTok 的语言页面上的“设置和隐私”下返回翻译行.
 "Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.",即使开启了 TikTok 的“始终翻译”，视频的描述、字幕和文字也会保持原来的语言。点击“查看翻译”仍然有效。评论在上方有自己的开关.
 Don't auto translate videos,不要自动翻译视频
@@ -374,6 +376,8 @@ Comment sort and dislike styles,评论排序和不喜欢的风格
 "Comment with live photos, the camera or audio",使用实时照片、相机或音频进行评论
 Comments,评论
 Comments aren't available for this video,该视频无法发表评论
+Seek bar on sound previews,声音试听进度条
+Sound position,声音位置
 Turn Clear display on or off,开启或关闭清除显示
 Clear display isn't available for this video,该视频无法使用清除显示
 Comments beside the video,视频旁边的评论
@@ -891,6 +895,7 @@ Keep a local record of what you have watched and hide those videos when the feed
 Keep a paused video paused,使暂停的视频保持暂停状态
 "Keep a photo story on screen until you tap or swipe, instead of moving on after a few seconds.",将照片故事保留在屏幕上，直到您点击或滑动，而不是在几秒钟后继续.
 Keep a streak going,保持连胜
+Keep captions available,保持字幕可用
 Keep captions in Clear display,保持字幕清晰显示
 Keep faded controls in Clear display,使褪色的控件保持清晰显示
 Keep going,继续前进
@@ -1409,6 +1414,8 @@ Save cover button in the share sheet,在共享表中保存封面按钮
 Save details as JSON,将详细信息保存为 JSON
 Save details beside the video,在视频旁边保存详细信息
 "Save every photo in the post at full size as a JPEG, not as the screen shows it.",将帖子中的每张照片以全尺寸保存为 JPEG，而不是屏幕显示的那样.
+Keep photos as TikTok sent them,照片保持 TikTok 发送时的格式
+"Saved photos, covers and story photos stay HEIF or WebP instead of becoming a JPEG. Some galleries and computers can't open those.",保存的照片、封面和故事照片保持 HEIF 或 WebP 格式，不转换为 JPEG。部分图库和电脑无法打开这些格式.
 Save field values,保存字段值
 Save full report,保存完整报告
 Save in which quality?,以哪种质量保存?
@@ -1606,6 +1613,8 @@ Show the hide button on videos,在视频上显示隐藏按钮
 "Show the main feed's tabs on a rounded, see-through dark pill that floats over the video. Needs See-through bottom bar.",在漂浮在视频上方的圆形透明黑色药丸上显示主信息流的选项卡。需要透明底栏.
 Liquid glass look,液态玻璃外观
 "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.",将主信息流的浮动药丸绘制成玻璃效果，更浅、更透明，顶部边缘带有明亮的轮廓。需要浮动底栏.
+Glass lens on the current tab,当前选项卡上的玻璃透镜
+"On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",在主信息流上，一块较小的玻璃位于你所在的选项卡后面，并滑到你选择的下一个选项卡。需要液态玻璃外观.
 Show the mute button on videos,在视频上显示静音按钮
 Show the progress bar,显示进度条
 Show the progress bar thumbnail,显示进度条缩略图
@@ -1616,7 +1625,7 @@ Show the time played and the video's length at the end of the progress bar while
 Show the time to the second,将时间显示到秒
 Show the time zone,显示时区
 Show the whole Activity and New followers lists instead of stopping at a View all button.,显示整个活动和新关注者列表，而不是停在“查看全部”按钮上.
-"Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off.",显示整个视频而不是将其裁剪到窗口。对于已经适合的高手机来说，没有任何变化。在打开的折叠手机上，方形屏幕或分屏视图的侧面或末端不再被切断.
+"Show the whole video instead of cropping it to the window. Nothing changes on a tall phone, where it already fits. On a folding phone opened up, a squarer screen or a split view the sides or the ends stop being cut off. Photo slideshows get the same treatment on a squarer screen.",显示整个视频而不是将其裁剪到窗口。对于已经适合的高手机来说，没有任何变化。在打开的折叠手机上，方形屏幕或分屏视图的侧面或末端不再被切断.在更接近方形的屏幕上，照片幻灯片也会这样处理.
 Show translation,显示翻译
 Bring back TikTok's translation,恢复 TikTok 的翻译
 Show what is left of the budget,显示预算的剩余金额
@@ -2211,3 +2220,16 @@ Long-press Profile for Watch history,长按“个人主页”打开观看历史
 "Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.",按住“个人主页”选项卡可打开观看历史。点击“个人主页”仍像以前一样工作。如果按住“个人主页”会为您切换账号，此选项会接管该操作，个人主页顶部的名称仍可切换账号.
 Open the comments at full height,以全高打开评论
 "Opens the comment sheet at the full height of the screen instead of part way up. Drag it down to close it, as before.",以整个屏幕的高度打开评论，而不是只打开一部分。像以前一样向下拖动即可关闭.
+Hide the TikTok Minis icons in the profile menu,在个人资料菜单中隐藏 TikTok 迷你图标
+"Keep the TikTok Minis entry in the menu your profile's top right button opens, and hide the row of app icons under it so the menu is shorter.",保留个人资料右上角按钮所打开菜单中的 TikTok 迷你条目，并隐藏其下方的应用图标行，让菜单更短.
+Turn off the swipe to the side menu,关闭滑向侧面菜单的手势
+"Swiping right on the For You feed no longer opens TikTok's side menu, with Your orders, TikTok Minis and more.",在“为您推荐”信息流上向右滑动不再打开 TikTok 的侧面菜单，其中包含您的订单、TikTok 迷你等.
+Sort loaded videos on profile grids,对个人资料网格中已加载的视频排序
+Original order,原始顺序
+Newest first,最新的在前
+Oldest first,最早的在前
+Longest first,最长的在前
+Shortest first,最短的在前
+Most viewed first,播放最多的在前
+Most liked first,点赞最多的在前
+"Sorts the videos a profile or Liked grid has loaded so far, with pinned videos first, and the order covers more videos as you scroll. The next time a grid opens, it follows this.",对个人资料或喜欢网格目前已加载的视频排序，置顶视频仍排在最前。向下滚动时，排序会涵盖更多视频。下次打开网格时按此顺序显示.

@@ -96,6 +96,18 @@ public class SearchSettingsClarityTest {
      * it isn't shown. That check has its own flag, since a build the patch doesn't declare can
      * leave it out while the LIVE half applies.
      */
+    @Test public void sideMenuSwipeRowNamesTheSwipeAndNeedsItsOwnHook() {
+        assertRow("INTERFACE", "disable_feed_sidebar_swipe", "Turn off the swipe to the side menu", "Swiping right on the For You feed");
+        assertRow("INTERFACE", "disable_feed_sidebar_swipe", "Turn off the swipe to the side menu", "TikTok Minis");
+
+        SettingsStatus.feedSidebarSwipeEnabled = false;
+        onPage("INTERFACE", page -> {
+            assertNull("the swipe row outlived its hook", page.findPreference("disable_feed_sidebar_swipe"));
+            assertNotNull("the side menu button row follows its own flag",
+                    page.findPreference("hide_feed_sidebar_button"));
+        });
+    }
+
     @Test public void sideMenuButtonRowNamesTheMenuAndNeedsTheToolbarCheck() {
         assertRow("INTERFACE", "hide_feed_sidebar_button", "Hide the side menu button", "TikTok Minis");
         assertRow("INTERFACE", "hide_feed_sidebar_button", "Hide the side menu button", "Restart TikTok");

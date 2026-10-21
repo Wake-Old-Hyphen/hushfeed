@@ -186,6 +186,12 @@
     "row": "Download original photos"
    },
    {
+    "key": "keep_photos_as_sent",
+    "default": false,
+    "type": "bool",
+    "row": "Keep photos as TikTok sent them"
+   },
+   {
     "key": "download_audio_track",
     "default": false,
     "type": "bool",
@@ -713,6 +719,12 @@
     "default": false,
     "type": "bool",
     "row": "Show video length on profile grids"
+   },
+   {
+    "key": "profile_grid_sort",
+    "default": "off",
+    "type": "string",
+    "row": "Sort loaded videos on profile grids"
    }
   ],
   "surface": "feed",
@@ -5431,7 +5443,9 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videofit/VideoFitPatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/VideoFit.java"
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videofit/PhotoSlideFit.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/VideoFit.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/interaction/PhotoSlideFit.java"
   ],
   "settings": [
    {
@@ -6319,7 +6333,8 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/feedtoolbar/HideFeedLiveButtonPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/featurecontrols/FeatureControls.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/featurecontrols/LiveButtonReport.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/featurecontrols/LiveButtonReport.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/feedtoolbar/SidebarSwipe.kt"
   ],
   "settings": [
    {
@@ -6334,6 +6349,12 @@
     "type": "bool",
     "row": "Hide the side menu button",
     "restart": true
+   },
+   {
+    "key": "disable_feed_sidebar_swipe",
+    "default": false,
+    "type": "bool",
+    "row": "Turn off the swipe to the side menu"
    }
   ],
   "surface": "feed",
@@ -7560,6 +7581,12 @@
     "default": false,
     "type": "bool",
     "row": "Hide Balance in the profile menu"
+   },
+   {
+    "key": "hide_profile_menu_minis_icons",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the TikTok Minis icons in the profile menu"
    }
   ],
   "surface": "profile",
@@ -11592,6 +11619,49 @@
     "auto": true
    },
    {
+    "id": "app-zone",
+    "what": "With Match locale and timezone on and the SIM preset Serbia, the whole app's default time zone is Belgrade's from start-up (debug line 'App time zone set to Europe/Belgrade').",
+    "steps": [
+     {
+      "set": {
+       "simspoof": "true",
+       "simspoof_iso": "rs",
+       "simspoof_mccmnc": "22003",
+       "simspoof_op_name": "mt:s",
+       "region_spoof": "true",
+       "region_request_spoof": "false",
+       "region_store_spoof": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     },
+     {
+      "wait": 2500
+     },
+     {
+      "probe": "report",
+      "expect": "App time zone set to Europe/Belgrade"
+     },
+     {
+      "set": {
+       "simspoof": "false",
+       "region_spoof": "false"
+      }
+     },
+     {
+      "restart": true
+     },
+     {
+      "open": "feed"
+     }
+    ],
+    "auto": true
+   },
+   {
     "id": "registered",
     "what": "The patch registered its switch.",
     "steps": [
@@ -14139,6 +14209,12 @@
     "default": false,
     "type": "bool",
     "row": "Seek bar on video stories"
+   },
+   {
+    "key": "sound_seekbar",
+    "default": false,
+    "type": "bool",
+    "row": "Seek bar on sound previews"
    }
   ],
   "surface": "feed",
@@ -14219,7 +14295,7 @@
     "auto": true
    }
   ],
-  "notes": "TikTok only asks for show types 3 or 4 on videos it hides the bar for (short ones), so the first check can stay silent on a feed of long videos: inconclusive, not a failure, and the export shows it with Log diagnostics on (the runner turns it on for the run). The bar and its time are not found by id here because the repo records no stable id for the bar view; a screenshot review is the next step if the log lines do not settle it. The bigger handle, the full-width bar and the video story seek bar (story_seekbar, which needs a story and the audit never opens one) are not exercised."
+  "notes": "TikTok only asks for show types 3 or 4 on videos it hides the bar for (short ones), so the first check can stay silent on a feed of long videos: inconclusive, not a failure, and the export shows it with Log diagnostics on (the runner turns it on for the run). The bar and its time are not found by id here because the repo records no stable id for the bar view; a screenshot review is the next step if the log lines do not settle it. The bigger handle, the full-width bar, the video story seek bar (story_seekbar, which needs a story and the audit never opens one) and the sound preview seek bar (sound_seekbar, which needs a sound page) are not exercised."
  },
  {
   "name": "Show the progress bar thumbnail",
@@ -15457,8 +15533,10 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/SubtitleToolsPatch.kt",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/CaptionsAvailable.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionTools.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionTools.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionsAvailable.java"
   ],
   "settings": [
    {
@@ -15504,6 +15582,13 @@
     "row": "Caption height in Clear display"
    },
    {
+    "key": "keep_captions_available",
+    "default": false,
+    "type": "bool",
+    "row": "Keep captions available",
+    "restart": true
+   },
+   {
     "key": "download_subtitles",
     "default": false,
     "type": "bool",
@@ -15520,9 +15605,9 @@
       "probe": "fields",
       "extras": {
        "class": "app.morphe.extension.tiktok.settings.SettingsStatus",
-       "names": "subtitleToolsEnabled"
+       "names": "subtitleToolsEnabled,captionsAvailableEnabled"
       },
-      "expect": "\\bsubtitleToolsEnabled=true\\b",
+      "expect": "\\bsubtitleToolsEnabled=true\\b[^\\n]*\\bcaptionsAvailableEnabled=true\\b",
       "waitMs": 1500
      }
     ],

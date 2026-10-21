@@ -422,6 +422,8 @@ public final class VideoOverlayHider {
     private static boolean floatingBarNow;
     /** Whether that pill is drawn as glass this pass (#218). */
     private static boolean glassBarNow;
+    /** Whether that glass pill carries the lens behind the selected tab this pass (#231). */
+    private static boolean lensBarNow;
 
     /**
      * Whether the current pass is in Clear display with the fade between 0 and 100 (#84). The
@@ -647,6 +649,7 @@ public final class VideoOverlayHider {
             seeThroughBarNow = seeThroughBar;
             floatingBarNow = seeThroughBar && Settings.FLOATING_BOTTOM_BAR.get();
             glassBarNow = floatingBarNow && Settings.LIQUID_GLASS_BOTTOM_BAR.get();
+            lensBarNow = glassBarNow && Settings.GLASS_TAB_LENS.get();
             // On the S22 the main feed's room for the bar is the pager column's strip, the one an
             // opened post keeps under its comment bar; the spacer in each cell is already 0 there.
             boolean stripForBar = seeThroughBar && SeeThroughBottomBar.collapseAllowed();
@@ -2064,7 +2067,7 @@ public final class VideoOverlayHider {
                         boolean clearBar = seeThroughBarNow && !wanted;
                         // Floating bottom bar draws a rounded pill there instead (#124).
                         if (target == BOTTOM_TABS_TARGET) {
-                            SeeThroughBottomBar.setBackgroundClear(view, clearBar, floatingBarNow, glassBarNow);
+                            SeeThroughBottomBar.setBackgroundClear(view, clearBar, floatingBarNow, glassBarNow, lensBarNow);
                         }
                         if (target == BOTTOM_TABS_DIVIDER_TARGET && clearBar) {
                             setFaded(view, 100);
@@ -2084,9 +2087,13 @@ public final class VideoOverlayHider {
             // on, every pass there called the overlay hooks broken (#153). The detail pager
             // has it, so a rename still shows there. The search box at the top of an opened
             // video is there only on the pages TikTok gives a search bar, the player only in
-            // video cells, and the Message bar only on a mutual friend's video.
+            // video cells, and the Message bar only on a mutual friend's video. The Following
+            // stories button is there only for an account with stories to show, so once its id
+            // resolves, its absence is the account's: every Clear display called the overlay
+            // hooks broken in #209's report. An id this build lacks is still reported.
             } else if (target != SURVEY_TARGET && target != DETAIL_SEARCH_BOX_TARGET
                     && target != PLAYER_VIEW_TARGET && target != DETAIL_MESSAGE_BAR_TARGET
+                    && !(target == FOLLOWING_STORY_TARGET && anyResolved(ids, candidateAt, names.length))
                     && (detailPager || (target != DETAIL_COMMENT_BAR_TARGET
                             && target != DETAIL_COMMENT_STRIP_TARGET))
                     && (wanted || (scaling
@@ -2124,6 +2131,13 @@ public final class VideoOverlayHider {
             TapThroughControls.mark(entry, !gone && fadedClear);
             setHidden(entry, gone, View.INVISIBLE);
         }
+    }
+
+    private static boolean anyResolved(int[] ids, int from, int count) {
+        for (int i = from; i < from + count; i++) {
+            if (ids[i] != 0) return true;
+        }
+        return false;
     }
 
     private static int selectedId(int[] ids, int selected) {

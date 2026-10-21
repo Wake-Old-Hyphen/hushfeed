@@ -119,6 +119,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_CAPTIONS_CLEAR_DISPLAY = new BooleanSetting("keep_captions_clear_display", FALSE);
     public static final IntegerSetting CAPTION_CLEAR_DISPLAY_OFFSET = new IntegerSetting(
             "caption_clear_display_offset", 0, Setting.parent(KEEP_CAPTIONS_CLEAR_DISPLAY)).withRange(0, 300);
+    /** The Accessibility page's Captions switch and the caption controls, where TikTok leaves them off (CaptionsAvailable). */
+    public static final BooleanSetting KEEP_CAPTIONS_AVAILABLE = new BooleanSetting("keep_captions_available", FALSE, true);
     public static final BooleanSetting ALLOW_SCREEN_CAPTURE = new BooleanSetting("allow_screen_capture", FALSE, true);
     public static final BooleanSetting SYSTEM_FONT = new BooleanSetting("system_font", FALSE, true);
     public static final BooleanSetting SYSTEM_EMOJI = new BooleanSetting("system_emoji", FALSE, true);
@@ -141,6 +143,8 @@ public class Settings extends BaseSettings {
     /** Download lists the video's renditions and saves the one picked, for that save alone. */
     public static final BooleanSetting DOWNLOAD_ASK_QUALITY = new BooleanSetting("download_ask_quality", FALSE);
     public static final BooleanSetting DOWNLOAD_ORIGINAL_PHOTOS = new BooleanSetting("download_original_photos", FALSE);
+    /** Saved photos keep TikTok's HEIF or WebP instead of becoming a JPEG (#229). Read on each save. */
+    public static final BooleanSetting KEEP_PHOTOS_AS_SENT = new BooleanSetting("keep_photos_as_sent", FALSE);
     public static final BooleanSetting DOWNLOAD_PHOTOS_AS_VIDEO = new BooleanSetting("download_photos_as_video", FALSE);
     public static final IntegerSetting PHOTO_VIDEO_SECONDS = new IntegerSetting("photo_video_seconds", 3, false,
             Setting.parent(DOWNLOAD_PHOTOS_AS_VIDEO)).withRange(1, 10);
@@ -572,6 +576,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SEEKBAR_BIG_HANDLE = new BooleanSetting("seekbar_big_handle", FALSE);
     /** A line along the bottom of a video story that can be dragged to seek (#72). */
     public static final BooleanSetting STORY_SEEKBAR = new BooleanSetting("story_seekbar", FALSE);
+    /** A line along the bottom of a sound page's cover while its preview plays, which seeks the preview (#185). */
+    public static final BooleanSetting SOUND_SEEKBAR = new BooleanSetting("sound_seekbar", FALSE);
     public static final BooleanSetting SHOW_SEEKBAR_THUMBNAIL = new BooleanSetting(
             "show_seekbar_thumbnail",
             TRUE
@@ -660,6 +666,8 @@ public class Settings extends BaseSettings {
             "publish_date_short_date", FALSE, false, Setting.parent(PUBLISH_DATE_EXACT_TIME));
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
+    /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
+    public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);
     public static final BooleanSetting CLEAR_DISPLAY = new BooleanSetting("clear_display", FALSE);
     public static final BooleanSetting COPY_COMMENTS_WITHOUT_USERNAME = new BooleanSetting("copy_comments_without_username", TRUE);
@@ -875,6 +883,13 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting LIQUID_GLASS_BOTTOM_BAR = new BooleanSetting(
             "liquid_glass_bottom_bar", FALSE, false, Setting.parent(FLOATING_BOTTOM_BAR));
+    /**
+     * With Liquid glass look, draws a smaller piece of glass behind the selected tab that slides
+     * to the next tab picked (#231). Part of the bar's background, so the tabs and their taps
+     * don't move. Read on each layout.
+     */
+    public static final BooleanSetting GLASS_TAB_LENS = new BooleanSetting(
+            "glass_tab_lens", FALSE, false, Setting.parent(LIQUID_GLASS_BOTTOM_BAR));
     /**
      * Lets the main feed's video draw up under the status bar, with the clock over it (#145).
      * VideoOverlayHider collapses the spacer TikTok keeps above each video for the bar and
@@ -1110,6 +1125,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_PROFILE_ADD_FRIENDS = new BooleanSetting("hide_profile_add_friends", FALSE);
     /** The Balance cell in your profile's menu (#194). Read each time the menu is built. */
     public static final BooleanSetting HIDE_PROFILE_MENU_BALANCE = new BooleanSetting("hide_profile_menu_balance", FALSE);
+    /** The row of app icons under TikTok Minis in your profile's menu (#230). Read each time the menu is built. */
+    public static final BooleanSetting HIDE_PROFILE_MENU_MINIS_ICONS = new BooleanSetting("hide_profile_menu_minis_icons", FALSE);
     public static final BooleanSetting HIDE_VISUAL_SEARCH = new BooleanSetting("hide_visual_search", FALSE);
     public static final BooleanSetting HIDE_FULLSCREEN_BUTTON = new BooleanSetting("hide_fullscreen_button", FALSE, true);
     // Read each time TikTok asks, so it doesn't need a restart.
@@ -1140,6 +1157,10 @@ public class Settings extends BaseSettings {
     // top bar, so a change needs a restart.
     public static final BooleanSetting HIDE_FEED_SIDEBAR_BUTTON =
             new BooleanSetting("hide_feed_sidebar_button", FALSE, true);
+    // A right swipe from For You opens that same side menu (#213). TikTok asks on each swipe, so
+    // a change applies at once.
+    public static final BooleanSetting DISABLE_FEED_SIDEBAR_SWIPE =
+            new BooleanSetting("disable_feed_sidebar_swipe", FALSE);
     // Comment tools.
     public static final BooleanSetting COMMENT_KEYWORD_FILTER = new BooleanSetting("comment_keyword_filter", FALSE);
     public static final StringSetting COMMENT_BLOCKED_KEYWORDS = new StringSetting("comment_blocked_keywords", "");

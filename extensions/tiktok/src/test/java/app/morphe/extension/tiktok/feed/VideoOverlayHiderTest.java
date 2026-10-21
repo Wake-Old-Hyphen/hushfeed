@@ -547,6 +547,44 @@ public class VideoOverlayHiderTest {
         }
     }
 
+    /**
+     * TikTok gives the Following stories button only to an account with stories, so its absence
+     * in Clear display isn't a broken build, as #209's diagnostics said it was. A build without
+     * the id still is.
+     */
+    @Test
+    public void anAccountWithoutTheStoriesButtonDoesNotReportTheBuildBroken() {
+        int cellId = 0x7f0a0b11;
+        VideoOverlayHider.resolveForTests("view_rootview", cellId);
+        VideoOverlayHider.resolveForTests("47.4.3:wr5", 0x7f0a0b10);
+        HookStatus.clear();
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(cellId);
+            activity.setContentView(cell);
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(true, 0));
+
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("an account without stories called the overlay hooks broken: "
+                            + HookStatus.missing("overlay"),
+                    HookStatus.missing("overlay").stream().noneMatch(line -> line.contains("47.4.3:wr5")));
+
+            VideoOverlayHider.resolveForTests("47.4.3:wr5", 0);
+            VideoOverlayHider.applyTo(activity);
+            assertTrue("a build without the stories button's id went unreported",
+                    HookStatus.missing("overlay").stream().anyMatch(line -> line.contains("47.4.3:wr5")));
+        } finally {
+            app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch
+                    .rememberClearDisplayEvent(new ClearEvent(false, 2));
+            VideoOverlayHider.resolveForTests("view_rootview", 0);
+            VideoOverlayHider.resolveForTests("47.4.3:wr5", 0);
+            HookStatus.clear();
+        }
+    }
+
     @Test
     public void aPassHidesEveryCellsCaptionAndColumnAndPutsThemBack() {
         // The feed keeps the previous and next cells inflated beside the one on screen,

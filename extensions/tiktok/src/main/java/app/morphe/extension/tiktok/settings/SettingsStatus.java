@@ -20,6 +20,8 @@ public class SettingsStatus {
     public static void enableFoldableSplitView() { foldableSplitViewEnabled = true; }
     public static boolean subtitleToolsEnabled;
     public static void enableSubtitleTools() { subtitleToolsEnabled = true; }
+    public static boolean captionsAvailableEnabled;
+    public static void enableCaptionsAvailable() { captionsAvailableEnabled = true; }
     public static boolean screenCaptureEnabled;
     public static void enableScreenCapture() { screenCaptureEnabled = true; }
     // Volatile because FeatureGateLearnMode reads it before taking its monitor, on TikTok's own
@@ -156,9 +158,11 @@ public class SettingsStatus {
     public static boolean hideFeedSearchButtonEnabled = false;
     public static boolean showSeekbarEnabled = false;
     /** Show the progress bar's extras, which a build other than the declared one can leave out
-     *  while the bar itself still applies: the time and the bigger handle, and the story seek bar. */
+     *  while the bar itself still applies: the time and the bigger handle, the story seek bar and
+     *  the sound preview seek bar. */
     public static boolean seekbarExtrasEnabled = false;
     public static boolean storySeekbarEnabled = false;
+    public static boolean soundSeekbarEnabled = false;
     public static boolean sanitizeShareUrlsEnabled = false;
     public static boolean contactListBlockerEnabled = false;
     public static boolean searchHistoryEnabled = false;
@@ -391,6 +395,10 @@ public class SettingsStatus {
         storySeekbarEnabled = true;
     }
 
+    public static void enableSoundSeekbar() {
+        soundSeekbarEnabled = true;
+    }
+
     public static void enableSanitizeShareUrls() {
         sanitizeShareUrlsEnabled = true;
     }
@@ -594,6 +602,20 @@ public class SettingsStatus {
 
     public static void enableHideFeedSidebarButton() {
         hideFeedSidebarButtonEnabled = true;
+    }
+
+    /** The right swipe that opens the side menu was found and hooked; a build that moved it leaves it out. */
+    public static boolean feedSidebarSwipeEnabled = false;
+
+    /** The profile grid adapter was found and hooked to sort its loaded videos (#180). */
+    public static boolean gridSortEnabled = false;
+
+    public static void enableGridSort() {
+        gridSortEnabled = true;
+    }
+
+    public static void enableFeedSidebarSwipe() {
+        feedSidebarSwipeEnabled = true;
     }
 
     public static void enableHideFeedSearchButton() {

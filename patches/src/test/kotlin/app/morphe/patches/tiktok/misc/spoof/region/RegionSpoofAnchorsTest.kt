@@ -1,7 +1,12 @@
 package app.morphe.patches.tiktok.misc.spoof.region
 
+import app.morphe.BridgeTypeFlow
 import app.morphe.Fixtures
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patches.tiktok.misc.extension.HostApplicationAttachBaseContextFingerprint
 import app.morphe.takes
+import app.morphe.util.addInstruction
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.Opcodes
@@ -16,10 +21,18 @@ import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
+import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction10x
+import com.android.tools.smali.dexlib2.immutable.instruction.ImmutableInstruction35c
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableMethodReference
 import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -386,6 +399,72 @@ class RegionSpoofAnchorsTest {
         return slash && appendsChar
     }
 
+    /**
+     * The whole app's time zone (#184, #198): one call right after the host application's
+     * framework attach, which the shared extension's setContext lands in front of when the
+     * patches finalize, so the settings and the pause are known when the call reads them.
+     */
+    @Test
+    fun `each declared build sets the process zone right after setContext as the app attaches`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val taken = mutableListOf<Method>()
+            forEachMethod(apk) { classDef, method ->
+                if (HostApplicationAttachBaseContextFingerprint.takes(method, classDef)) taken += method
+            }
+            assertEquals("$version: attachBaseContext methods matched", 1, taken.size)
+            val native = taken.single()
+            val before = native.implementation!!.instructions.toList()
+            val index = processZoneIndex(native)
+            assertTrue("$version: nothing follows the framework call", index < before.size)
+            assertNotEquals("$version: the call would split TikTok's own call from its result",
+                Opcode.MOVE_RESULT_OBJECT, before[index].opcode)
+
+            val patched = MutableMethod(native)
+            patched.addInstruction(processZoneIndex(patched), PROCESS_ZONE_CALL)
+            // What the shared extension adds at the same index when the patches finalize.
+            patched.addInstruction(index, "invoke-static/range { p1 .. p1 }, $SET_CONTEXT")
+            val after = patched.implementation!!.instructions.toList()
+
+            val code = { list: List<Instruction> -> list.filter { it.opcode != Opcode.NOP } }
+            assertEquals("$version: two calls added", code(before).size + 2, code(after).size)
+            assertEquals("$version: setContext runs first", SET_CONTEXT,
+                ((after[index] as ReferenceInstruction).reference as MethodReference).toString())
+            assertEquals(Opcode.INVOKE_STATIC, after[index + 1].opcode)
+            assertEquals("$version: then the zone", APPLY_PROCESS_ZONE,
+                ((after[index + 1] as ReferenceInstruction).reference as MethodReference).toString())
+            assertEquals("$version: TikTok's code around them",
+                code(before).map { it.opcode },
+                code(after.filterIndexed { at, _ -> at != index && at != index + 1 }).map { it.opcode })
+            assertEquals(emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(patched))
+        }
+    }
+
+    @Test
+    fun `the zone call needs one framework attach in an instance method`() {
+        val attach = ImmutableInstruction35c(
+            Opcode.INVOKE_SUPER, 2, 0, 1, 0, 0, 0,
+            ImmutableMethodReference("Landroid/app/Application;", "attachBaseContext", listOf("Landroid/content/Context;"), "V"),
+        )
+        val other = ImmutableInstruction35c(
+            Opcode.INVOKE_SUPER, 2, 0, 1, 0, 0, 0,
+            ImmutableMethodReference("Landroid/content/ContextWrapper;", "attachBaseContext", listOf("Landroid/content/Context;"), "V"),
+        )
+        val end = ImmutableInstruction10x(Opcode.RETURN_VOID)
+        assertEquals(1, processZoneIndex(host(listOf(attach, end))))
+        assertThrows(PatchException::class.java) { processZoneIndex(host(listOf(end))) }
+        assertThrows(PatchException::class.java) { processZoneIndex(host(listOf(other, end))) }
+        assertThrows(PatchException::class.java) { processZoneIndex(host(listOf(attach, attach, end))) }
+        assertThrows(PatchException::class.java) { processZoneIndex(host(listOf(attach, end), static = true)) }
+    }
+
+    private fun host(instructions: List<Instruction>, static: Boolean = false): Method = ImmutableMethod(
+        "Lcom/ss/android/ugc/aweme/app/host/AwemeHostApplication;", "attachBaseContext",
+        listOf(ImmutableMethodParameter("Landroid/content/Context;", null, null)), "V",
+        AccessFlags.PROTECTED.value or (if (static) AccessFlags.STATIC.value else 0), null, null,
+        ImmutableMethodImplementation(2, instructions, null, null),
+    )
+
     private fun forEachMethod(apk: File, visit: (ClassDef, Method) -> Unit) {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         container.dexEntryNames.forEach { entry ->
@@ -430,5 +509,7 @@ class RegionSpoofAnchorsTest {
         const val SETTING_SERVICE = "Lcom/ss/android/ugc/aweme/setting/services/SettingServiceImpl;"
         const val ONCE_CACHE = "network_common_params_once"
         const val STRING = "Ljava/lang/String;"
+        const val SET_CONTEXT = "Lapp/morphe/extension/shared/Utils;->setContext(Landroid/content/Context;)V"
+        const val APPLY_PROCESS_ZONE = "Lapp/morphe/extension/tiktok/spoof/region/RegionSpoof;->applyProcessZone()V"
     }
 }

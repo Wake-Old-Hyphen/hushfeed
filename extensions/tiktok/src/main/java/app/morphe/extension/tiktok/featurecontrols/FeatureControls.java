@@ -12,6 +12,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 public final class FeatureControls {
     private static final int DEFAULT_LONG_PRESS_LOCK_DISTANCE_DP = 140;
     static final String SIDEBAR_BUTTON_FAMILY = "side menu button";
+    static final String SIDEBAR_SWIPE_FAMILY = "side menu swipe";
     static final String NON_PERSONALIZED_SEARCH_FAMILY = "non-personalized search";
     static final String LIVE_SEARCH_FAMILY = "LIVE search";
 
@@ -112,6 +113,17 @@ public final class FeatureControls {
         boolean hide = Settings.HIDE_FEED_SIDEBAR_BUTTON.get();
         HookStatus.bound(SIDEBAR_BUTTON_FAMILY, hide ? "hidden" : "left to TikTok");
         return hide;
+    }
+
+    /**
+     * Asked where TikTok decides whether a right swipe from For You may open the side menu
+     * (#213): true says the menu is not available to swipe to, so the swipe goes to the next
+     * tab the way it does for an account with no side menu. The button is a separate path.
+     */
+    public static boolean sidebarSwipeOff() {
+        boolean off = Settings.DISABLE_FEED_SIDEBAR_SWIPE.get();
+        HookStatus.bound(SIDEBAR_SWIPE_FAMILY, off ? "swipe off" : "left to TikTok");
+        return off;
     }
 
     public static int overrideLongPressQuickShare(int originalMode) {

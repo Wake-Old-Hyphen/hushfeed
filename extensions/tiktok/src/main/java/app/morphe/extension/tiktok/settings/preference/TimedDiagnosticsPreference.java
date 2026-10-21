@@ -14,6 +14,7 @@ import java.util.Date;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.DebugCapture;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 
 /**
  * Starts a {@link DebugCapture} on a tap and stops it on the next one. While it runs the row
@@ -45,7 +46,7 @@ public final class TimedDiagnosticsPreference extends Preference
     }
 
     private String time(long wallClock) {
-        return DateFormat.getTimeFormat(getContext()).format(new Date(wallClock));
+        return RegionSpoof.phoneClock(DateFormat.getTimeFormat(getContext())).format(new Date(wallClock));
     }
 
     private void applyState() {

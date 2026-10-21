@@ -31,12 +31,14 @@ import org.junit.Test
 
 private const val PATCH = "Hide profile shortcuts"
 private const val BALANCE = "content_section_cell_balance"
+private const val MINIS_ICONS = "content_section_cell_tiktok_minis_rich_card"
 private const val GUARD_SIZE = 6
 
 /**
  * What Hide Balance in the profile menu (#194) hooks, held to each declared build: the one static
  * question the menu asks about each cell by id, guarded at entry with the id handed to the
- * extension, and the Balance id the extension compares against, present in the build.
+ * extension, and the Balance and Minis icon card ids the extension compares against, present in
+ * the build.
  */
 class ProfileMenuCellsAnchorsTest {
     @Test
@@ -44,22 +46,22 @@ class ProfileMenuCellsAnchorsTest {
         Fixtures.forEachDeclared { apk ->
             val version = Fixtures.versionOf(apk)
             val taken = mutableListOf<Method>()
-            var balanceIdLoaded = false
+            val idsLoaded = mutableSetOf<String>()
             val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
             for (entry in container.dexEntryNames) {
                 for (classDef in container.getEntry(entry)!!.dexFile.classes) {
                     for (method in classDef.methods) {
                         if (ProfileMenuCellFingerprint.takes(method, classDef)) taken += method
-                        if (!balanceIdLoaded) {
-                            balanceIdLoaded = method.implementation?.instructions?.any {
-                                it.getReference<StringReference>()?.string == BALANCE
-                            } == true
+                        method.implementation?.instructions?.forEach {
+                            val loaded = it.getReference<StringReference>()?.string
+                            if (loaded != null && (loaded == BALANCE || loaded == MINIS_ICONS)) idsLoaded += loaded
                         }
                     }
                 }
             }
             assertEquals("$version: cell questions ${taken.map { it.definingClass }}", 1, taken.size)
-            assertTrue("$version: no method loads the Balance cell id $BALANCE", balanceIdLoaded)
+            assertTrue("$version: no method loads the Balance cell id $BALANCE", BALANCE in idsLoaded)
+            assertTrue("$version: no method loads the Minis icon card id $MINIS_ICONS (#230)", MINIS_ICONS in idsLoaded)
 
             val native = taken.single()
             val registers = native.implementation!!.registerCount

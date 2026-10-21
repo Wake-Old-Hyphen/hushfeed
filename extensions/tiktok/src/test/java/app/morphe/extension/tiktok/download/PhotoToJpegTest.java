@@ -10,6 +10,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.settings.Settings;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,12 +41,38 @@ import org.robolectric.annotation.GraphicsMode;
 @Config(sdk = 30)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class PhotoToJpegTest {
+    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
     @Rule public final TemporaryFolder folder = new TemporaryFolder();
     private final Context context = RuntimeEnvironment.getApplication();
 
     @After
     public void restoreTheExtractor() {
         PhotoToJpeg.primaryImageReader = PhotoToJpeg::readPrimaryImage;
+        Settings.KEEP_PHOTOS_AS_SENT.resetToDefault();
+    }
+
+    /** #229: someone who edits in an app that reads HEIF and WebP wants TikTok's own bytes. */
+    @Test
+    public void keepPhotosAsSentLeavesEveryPhotoAlone() throws IOException {
+        Settings.KEEP_PHOTOS_AS_SENT.save(true);
+        PhotoToJpeg.primaryImageReader = file -> {
+            throw new AssertionError("a kept photo went to the HEIF extractor");
+        };
+        File webp = encoded(48, 32, 0xFF3366CC, Bitmap.CompressFormat.WEBP_LOSSY);
+        byte[] sentWebp = Files.readAllBytes(webp.toPath());
+        assertEquals("webp", PhotoToJpeg.convert(context, webp, "webp"));
+        assertArrayEquals("the WebP TikTok sent is still there", sentWebp, Files.readAllBytes(webp.toPath()));
+        for (String extension : List.of("heif", "heic")) {
+            File heif = png(48, 32, 0xFF3366CC);
+            byte[] sent = Files.readAllBytes(heif.toPath());
+            assertEquals(extension, PhotoToJpeg.convert(context, heif, extension));
+            assertArrayEquals(extension + " untouched", sent, Files.readAllBytes(heif.toPath()));
+        }
+        assertNoConversionFilesLeft();
+
+        Settings.KEEP_PHOTOS_AS_SENT.save(false);
+        PhotoToJpeg.primaryImageReader = PhotoToJpeg::readPrimaryImage;
+        assertEquals("off converts again", "jpg", PhotoToJpeg.convert(context, webp, "webp"));
     }
 
     @Test

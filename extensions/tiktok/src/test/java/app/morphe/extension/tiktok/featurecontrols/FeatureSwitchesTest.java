@@ -44,7 +44,7 @@ public class FeatureSwitchesTest {
                 Settings.HIDE_PROFILE_REWARDS_SHORTCUT,
                 Settings.HIDE_FEED_FOLLOW_BUTTON, Settings.HIDE_FEED_SAVE_BUTTON,
                 Settings.HIDE_LIVE_ENTRANCE, Settings.HIDE_FEED_SEARCH_BUTTON,
-                Settings.HIDE_FEED_SIDEBAR_BUTTON,
+                Settings.HIDE_FEED_SIDEBAR_BUTTON, Settings.DISABLE_FEED_SIDEBAR_SWIPE,
                 Settings.HIDE_COMMENT_QUICK_REACTIONS, Settings.ENABLE_LONG_PRESS_SPEED_LOCK,
                 Settings.ENABLE_NON_PERSONALIZED_SEARCH, Settings.ENABLE_LIVE_SEARCH}) {
             setting.save(setting.defaultValue);
@@ -206,6 +206,34 @@ public class FeatureSwitchesTest {
         PausedProcess.set(true);
         assertFalse("Pause Hushfeed leaves the button to TikTok",
                 FeatureControls.hideFeedSidebarButtonView());
+    }
+
+    /**
+     * #213: the swipe check TikTok makes before a right swipe from For You may go to the side
+     * menu. Off, it is left to TikTok. On, it answers that the menu isn't on offer. Pause
+     * Hushfeed hands it back, and the Hook status line says the check ran.
+     */
+    @Test public void theSideMenuSwipeIsTurnedOffByItsOwnSwitchAndComesBackWhilePaused() {
+        assertEquals("the key", "disable_feed_sidebar_swipe", Settings.DISABLE_FEED_SIDEBAR_SWIPE.key);
+        assertFalse("the switch starts off", Settings.DISABLE_FEED_SIDEBAR_SWIPE.defaultValue);
+        assertFalse("changing it needs no restart", Settings.DISABLE_FEED_SIDEBAR_SWIPE.rebootApp);
+        assertFalse(FeatureControls.sidebarSwipeOff());
+        assertTrue(String.join(" ", HookStatus.report()).contains(FeatureControls.SIDEBAR_SWIPE_FAMILY));
+
+        Settings.HIDE_FEED_SIDEBAR_BUTTON.save(true);
+        assertFalse("the button switch must not take the swipe too", FeatureControls.sidebarSwipeOff());
+        Settings.HIDE_FEED_SIDEBAR_BUTTON.save(false);
+
+        Settings.DISABLE_FEED_SIDEBAR_SWIPE.save(true);
+        assertTrue(FeatureControls.sidebarSwipeOff());
+        assertFalse("and the swipe switch must not take the button",
+                FeatureControls.hideFeedSidebarButtonView());
+
+        PausedProcess.set(true);
+        assertFalse("Pause Hushfeed leaves the swipe to TikTok", FeatureControls.sidebarSwipeOff());
+        PausedProcess.set(false);
+        Settings.DISABLE_FEED_SIDEBAR_SWIPE.save(false);
+        assertFalse("turned back off, the swipe is back", FeatureControls.sidebarSwipeOff());
     }
 
     /**

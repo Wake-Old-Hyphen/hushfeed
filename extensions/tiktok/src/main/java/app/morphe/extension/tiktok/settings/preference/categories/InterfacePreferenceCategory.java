@@ -54,6 +54,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.engagementRateEnabled
                 || SettingsStatus.hideFeedLiveButtonEnabled
                 || SettingsStatus.hideFeedSidebarButtonEnabled
+                || SettingsStatus.feedSidebarSwipeEnabled
                 || SettingsStatus.hideFeedSearchButtonEnabled
                 || SettingsStatus.feedFilterEnabled
                 || SettingsStatus.promotionalBannersEnabled
@@ -61,6 +62,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 || SettingsStatus.sensitiveWarningsEnabled
                 || SettingsStatus.popupLabelsEnabled
                 || SettingsStatus.subtitleToolsEnabled
+                || SettingsStatus.captionsAvailableEnabled
                 || SettingsStatus.blockAuthorEnabled
                 || SettingsStatus.notInterestedEnabled
                 || SettingsStatus.feedMuteEnabled
@@ -293,6 +295,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Show how long each video runs under its view count on profile grids. Photo posts and videos TikTok sent no length for show none.",
                     Settings.VIDEO_LENGTH_ON_GRID
             ));
+            if (SettingsStatus.gridSortEnabled) {
+                addPreference(new ChoicePreference(context, "Sort loaded videos on profile grids",
+                        Settings.PROFILE_GRID_SORT,
+                        new String[]{"Original order", "Newest first", "Oldest first", "Longest first",
+                                "Shortest first", "Most viewed first", "Most liked first"},
+                        new String[]{"off", "newest", "oldest", "longest", "shortest", "most_viewed", "most_liked"})
+                        .withNote("Sorts the videos a profile or Liked grid has loaded so far, with pinned videos first, and the order covers more videos as you scroll. The next time a grid opens, it follows this."));
+            }
         }
         if (SettingsStatus.authorRegionEnabled) {
             addPreference(new TogglePreference(
@@ -342,6 +352,7 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
         boolean any = SettingsStatus.videoOverlaysEnabled
                 || SettingsStatus.hideFeedLiveButtonEnabled
                 || SettingsStatus.hideFeedSidebarButtonEnabled
+                || SettingsStatus.feedSidebarSwipeEnabled
                 || SettingsStatus.hideFeedSearchButtonEnabled
                 || SettingsStatus.feedFilterEnabled;
         if (!any) return;
@@ -363,6 +374,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Hide the side menu button",
                     "Hide the button at the top left of the feed that opens TikTok's side menu, with Your orders, TikTok Minis and more.",
                     Settings.HIDE_FEED_SIDEBAR_BUTTON
+            ));
+        }
+        if (SettingsStatus.feedSidebarSwipeEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Turn off the swipe to the side menu",
+                    "Swiping right on the For You feed no longer opens TikTok's side menu, with Your orders, TikTok Minis and more.",
+                    Settings.DISABLE_FEED_SIDEBAR_SWIPE
             ));
         }
         if (SettingsStatus.hideFeedSearchButtonEnabled) {
@@ -554,8 +573,16 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
     }
 
     private void addCaptions(Context context) {
-        if (SettingsStatus.subtitleToolsEnabled) {
+        if (SettingsStatus.subtitleToolsEnabled || SettingsStatus.captionsAvailableEnabled) {
             addPreference(new SectionHeadingPreference(context, "Captions"));
+        }
+        if (SettingsStatus.captionsAvailableEnabled) {
+            addPreference(new TogglePreference(context, "Keep captions available",
+                    "Bring back TikTok's captions switch in its accessibility settings, and the caption controls on videos, "
+                            + "when TikTok leaves them out. Captions only show on videos that have them.",
+                    Settings.KEEP_CAPTIONS_AVAILABLE));
+        }
+        if (SettingsStatus.subtitleToolsEnabled) {
             NumberInputPreference captionSize = new NumberInputPreference(context, "Caption text size",
                     L10n.f(context, "Use 0 for TikTok's size, or %1$d to %2$d. Applies to the next caption.",
                             CaptionStyle.MIN_TEXT_SIZE, CaptionStyle.MAX_TEXT_SIZE),
@@ -645,6 +672,12 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Liquid glass look",
                     "Draw the main feed's floating pill as glass, lighter and more see-through, with a bright rim along its top edge. Needs Floating bottom bar.",
                     Settings.LIQUID_GLASS_BOTTOM_BAR
+            ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Glass lens on the current tab",
+                    "On the main feed, a smaller piece of glass sits behind the tab you're on and slides to the next tab you pick. Needs Liquid glass look.",
+                    Settings.GLASS_TAB_LENS
             ));
             addPreference(new TogglePreference(
                     context,

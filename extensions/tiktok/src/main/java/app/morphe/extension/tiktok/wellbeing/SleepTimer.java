@@ -19,6 +19,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -130,7 +131,7 @@ public final class SleepTimer {
 
     private static String endTime(Context context) {
         long wall = System.currentTimeMillis() + Math.max(0, endsAt - SystemClock.elapsedRealtime());
-        return DateFormat.getTimeFormat(context).format(new Date(wall));
+        return RegionSpoof.phoneClock(DateFormat.getTimeFormat(context)).format(new Date(wall));
     }
 
     private static void closeTikTok() {

@@ -79,9 +79,9 @@ internal fun MutableMethod.storyProgressHook(): () -> Unit {
 
 /**
  * Refuses a method that is static or takes other parameters than the call passes on. The range
- * call names p0 onwards in one block, so it reads exactly these.
+ * call names p0 onwards in one block, so it reads exactly these. The sound cover's hook uses it too.
  */
-private fun MutableMethod.requireInstanceParameters(wanted: List<String>) {
+internal fun MutableMethod.requireInstanceParameters(wanted: List<String>) {
     val actual = parameterTypes.map(CharSequence::toString)
     if (AccessFlags.STATIC.isSet(accessFlags) || actual != wanted) {
         throw PatchException("$PATCH: $definingClass->$name takes $actual, expected an instance method taking $wanted")

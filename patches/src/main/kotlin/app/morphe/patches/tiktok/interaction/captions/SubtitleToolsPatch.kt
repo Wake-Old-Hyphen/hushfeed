@@ -17,6 +17,7 @@ import app.morphe.patches.tiktok.interaction.downloads.advancedDownloadsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.cloneMutable
 import app.morphe.util.getReference
@@ -26,6 +27,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstructio
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 private const val EXTENSION = "Lapp/morphe/extension/tiktok/captions/"
+private const val PATCH_NAME = "Subtitle tools"
 private object CaptionViewFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/aweme/autocaption/refactor/CLACaptionAssemV2;",
     name = "onViewCreated", parameters = listOf("Landroid/view/View;"), returnType = "V",
@@ -40,7 +42,8 @@ private object ClearTransitionFingerprint : Fingerprint(
 val subtitleToolsPatch = bytecodePatch(
     name = "Subtitle tools",
     description = "Lets you make captions bigger, change their background and keep them in " +
-        "clear display, and save subtitle files with downloaded videos. Starts off. Turn it on in " +
+        "clear display, bring back TikTok's captions switch where it's missing, and save subtitle " +
+        "files with downloaded videos. Starts off. Turn it on in " +
         "Hushfeed settings > Feed screen, and Downloads for subtitle files.",
 ) {
     category("Playback")
@@ -130,5 +133,19 @@ val subtitleToolsPatch = bytecodePatch(
         }
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableSubtitleTools()V")
+
+        // Keep captions available (#217), held to each declared build by CaptionsAvailableAnchorsTest.
+        val captionsAvailable = try {
+            hookCaptionsAvailable(PATCH_NAME)
+            true
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Keep captions available on ${packageMetadata.versionName}: ${problem.message}")
+            false
+        }
+        if (captionsAvailable) {
+            SettingsStatusLoadFingerprint.method.addInstruction(0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableCaptionsAvailable()V")
+        }
     }
 }

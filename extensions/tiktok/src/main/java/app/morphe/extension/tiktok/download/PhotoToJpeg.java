@@ -12,6 +12,7 @@ import android.graphics.ImageDecoder;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.tiktok.settings.Settings;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.nio.file.StandardCopyOption;
  * image decoder turns down gets a second read through the media extractor, which reads TikTok's
  * HEIF on that same phone. Any other format keeps exactly what TikTok sent, and so does a photo
  * this Android can't decode (before 9, or a HEIF neither path reads), an animated one and a
- * see-through one.
+ * see-through one. With Keep photos as TikTok sent them on, nothing is converted at all.
  */
 final class PhotoToJpeg {
     /** High enough that the second encoding can't be told from the first at full size. */
@@ -60,6 +61,8 @@ final class PhotoToJpeg {
      * @return the extension the file holds afterwards: "jpg" once converted, else {@code extension}.
      */
     static String convert(Context context, File file, String extension) {
+        // Some people edit in apps that read HEIF or WebP and want the bytes TikTok served (#229).
+        if (Settings.KEEP_PHOTOS_AS_SENT.get()) return extension;
         if (!"heif".equals(extension) && !"heic".equals(extension) && !"webp".equals(extension)) {
             return extension;
         }

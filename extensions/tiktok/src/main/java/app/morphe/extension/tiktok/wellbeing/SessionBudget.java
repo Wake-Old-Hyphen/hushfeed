@@ -8,9 +8,9 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.tiktok.settings.Settings;
+import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -639,7 +639,8 @@ public final class SessionBudget {
             dayComputations++;
             // The one place the zone is read, which is what makes this a miss rather than a
             // question asked several times a second.
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            // The phone's own zone, so the day ends on the phone's clock with Region spoof on too.
+            Calendar calendar = Calendar.getInstance(RegionSpoof.phoneTimeZone());
             calendar.setTimeInMillis(now);
             if (calendar.get(Calendar.HOUR_OF_DAY) < resetHour) {
                 calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -678,7 +679,7 @@ public final class SessionBudget {
      */
     static long dayEndAfter(long now) {
         int resetHour = Settings.SESSION_BUDGET_RESET_HOUR.get();
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        Calendar calendar = Calendar.getInstance(RegionSpoof.phoneTimeZone());
         calendar.setTimeInMillis(now);
         calendar.set(Calendar.HOUR_OF_DAY, resetHour);
         calendar.set(Calendar.MINUTE, 0);

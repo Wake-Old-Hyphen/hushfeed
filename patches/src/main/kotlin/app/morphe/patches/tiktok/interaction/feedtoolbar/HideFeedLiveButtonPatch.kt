@@ -63,8 +63,9 @@ internal fun isToolbarEnabledCheck(method: Method): Boolean =
 val hideFeedLiveButtonPatch = bytecodePatch(
     name = "Hide feed LIVE button",
     description = "Removes the LIVE button and the side menu button from the top left of the " +
-        "feed, for a cleaner screen. Each has its own switch, and both start off. Turn them on " +
-        "in Hushfeed settings > Feed screen.",
+        "feed, for a cleaner screen, and can stop a right swipe on For You from opening the side " +
+        "menu. Each has its own switch, and all start off. Turn them on in Hushfeed settings > " +
+        "Feed screen.",
     default = true,
 ) {
     category("Feed")
@@ -82,6 +83,7 @@ val hideFeedLiveButtonPatch = bytecodePatch(
         )
 
         hookSidebarButtonOn(packageMetadata.versionName)
+        hookSidebarSwipeOn(packageMetadata.versionName)
     }
 }
 

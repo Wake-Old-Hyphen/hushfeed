@@ -12,6 +12,7 @@ import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.extension.HostApplicationAttachBaseContextFingerprint
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.misc.spoof.sim.simSpoofPatch
@@ -312,6 +313,35 @@ internal fun proxyFill(method: Method): ProxyFill? {
     return ProxyFill(fillAt, url, owner, field)
 }
 
+internal const val PROCESS_ZONE_CALL = "invoke-static {}, $EXTENSION->applyProcessZone()V"
+
+/**
+ * Where the preset's time zone becomes the whole process's default (#184, #198): right after the
+ * host application's one call to Application.attachBaseContext, before TikTok builds a formatter.
+ * The shared extension puts Utils.setContext at that same index when the patches finalize, so it
+ * runs first and the settings and the pause are known by the time this call reads them.
+ */
+internal fun processZoneIndex(method: Method): Int {
+    if (AccessFlags.STATIC.isSet(method.accessFlags)) {
+        throw PatchException("Region spoof: the host application's attachBaseContext is static.")
+    }
+    val instructions = method.implementation?.instructions?.toList()
+        ?: throw PatchException("Region spoof: the host application's attachBaseContext has no code.")
+    val superCalls = instructions.indices.filter { index ->
+        instructions[index].getReference<MethodReference>()?.let { reference ->
+            reference.definingClass == "Landroid/app/Application;" &&
+                reference.name == "attachBaseContext" &&
+                reference.parameterTypes.map { it.toString() } == listOf("Landroid/content/Context;")
+        } == true
+    }
+    if (superCalls.size != 1) {
+        throw PatchException(
+            "Region spoof: expected one call to Application.attachBaseContext in the host application, found ${superCalls.size}.",
+        )
+    }
+    return superCalls.single() + 1
+}
+
 private fun writes(instruction: Instruction, register: Int): Boolean {
     if (!instruction.opcode.setsRegister()) return false
     val target = (instruction as? OneRegisterInstruction)?.registerA ?: return false
@@ -363,6 +393,8 @@ val regionSpoofPatch = bytecodePatch(
         if (proxyHelpers.isEmpty()) {
             throw PatchException("Region spoof: no JS request helper fills a POST body off a URL the way it did.")
         }
+        val host = HostApplicationAttachBaseContextFingerprint.method
+        processZoneIndex(host) // Throws here, before any write, if the start-up call moved.
 
         val replacements = mapOf("Ljava/util/Locale;" to "locale", "Ljava/util/TimeZone;" to "timeZone")
         val counts = mutableMapOf<String, Int>()
@@ -539,6 +571,11 @@ val regionSpoofPatch = bytecodePatch(
                 """,
             )
         }
+
+        // The framework's formatters read the process default rather than TikTok's hooked calls,
+        // so the preset's zone is made the default as the app starts. The index is found again
+        // here, since the getDefault hooks above may have added code in front of it.
+        host.addInstruction(processZoneIndex(host), PROCESS_ZONE_CALL)
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableRegionSpoof()V")
     }

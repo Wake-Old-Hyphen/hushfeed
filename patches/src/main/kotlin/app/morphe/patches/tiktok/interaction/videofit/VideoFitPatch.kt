@@ -83,8 +83,9 @@ private fun Method.isAdaptionHelper(parameters: Int): Boolean {
 val videoFitPatch = bytecodePatch(
     name = "Fit the video to the screen",
     description = "Shows the whole video instead of cutting off its sides on folding phones, " +
-        "squarer screens and split screen. A second switch does the opposite and fills the " +
-        "screen. Starts off. Turn it on in Hushfeed settings > Playback.",
+        "squarer screens and split screen, and fits photo slideshows whole on squarer screens. " +
+        "A second switch does the opposite and fills the screen. Starts off. Turn it on in " +
+        "Hushfeed settings > Playback.",
 ) {
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
@@ -209,6 +210,8 @@ val videoFitPatch = bytecodePatch(
                 ExternalLabel("morphe_fit_leave", getInstruction(0)),
             )
         }
+
+        hookPhotoSlides(packageMetadata.versionName)
 
         settingsStatus.addInstruction(
             0,

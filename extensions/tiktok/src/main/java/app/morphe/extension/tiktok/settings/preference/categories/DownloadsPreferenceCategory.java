@@ -200,6 +200,9 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
         }
         if (SettingsStatus.advancedDownloadsEnabled || SettingsStatus.downloadEnabled) {
             addPreference(new SectionHeadingPreference(context, "Photos and stickers"));
+            addPreference(new TogglePreference(context, "Keep photos as TikTok sent them",
+                    "Saved photos, covers and story photos stay HEIF or WebP instead of becoming a JPEG. "
+                            + "Some galleries and computers can't open those.", Settings.KEEP_PHOTOS_AS_SENT));
         }
         if (SettingsStatus.advancedDownloadsEnabled) {
             addPreference(new TogglePreference(context, "Download original photos",

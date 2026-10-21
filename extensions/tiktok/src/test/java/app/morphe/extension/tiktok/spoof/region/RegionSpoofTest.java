@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.settings.PausedProcess;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
 import app.morphe.extension.tiktok.settings.preference.categories.SimSpoofPreferenceCategory;
@@ -33,7 +34,12 @@ public class RegionSpoofTest {
     /** The newest API in the @Config above, and the only run that publishes a picture. */
     private static final int PUBLISHED_CAPTURE_SDK = 28;
 
+    /** The default zone as the test found it, put back after it. */
+    private TimeZone startZone;
+
     @Before public void setup() {
+        if (startZone == null) startZone = TimeZone.getDefault();
+        RegionSpoof.forgetProcessZone();
         Utils.setContext(RuntimeEnvironment.getApplication());
         Settings.SIM_SPOOF.save(true);
         Settings.REGION_SPOOF.save(true);
@@ -48,6 +54,9 @@ public class RegionSpoofTest {
         RegionSpoof.requestDone();
         SettingsStatus.simSpoofEnabled = false;
         SettingsStatus.regionSpoofEnabled = false;
+        PausedProcess.set(false);
+        RegionSpoof.forgetProcessZone();
+        TimeZone.setDefault(startZone);
     }
 
     @Test public void onlyPassportPathsAreSignIns() {
@@ -412,17 +421,150 @@ public class RegionSpoofTest {
         assertSame(zone, RegionSpoof.timeZone(zone));
     }
 
-    @Test public void allPresetsSupplyRealCountryTimezonesWithoutChangingGlobalDefaults() {
+    @Test public void everyPresetsZoneBecomesTheAppsDefaultAndTheLocaleDefaultStays() {
         Locale systemLocale = Locale.getDefault();
-        TimeZone systemZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone(PHONE_ZONE));
         for (SimPreset preset : SimPresets.PRESETS) {
             Settings.SIM_SPOOF_ISO.save(preset.iso);
             assertTrue(preset.iso, RegionSpoof.validCountry(preset.iso));
-            TimeZone result = RegionSpoof.timeZone(systemZone);
+            TimeZone result = RegionSpoof.timeZone(TimeZone.getDefault());
             assertEquals(preset.timeZone, result.getID());
+            assertEquals(preset.iso, preset.timeZone, TimeZone.getDefault().getID());
+            assertEquals("the phone's zone was lost going from preset to preset",
+                    PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
         }
         assertEquals(systemLocale, Locale.getDefault());
-        assertEquals(systemZone, TimeZone.getDefault());
+        Settings.REGION_SPOOF.save(false);
+        assertEquals(PHONE_ZONE, RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+    }
+
+    /** The phone's own zone in the process-zone tests: no preset uses it. */
+    private static final String PHONE_ZONE = "America/Chicago";
+    /** 14:00 in Belgrade on summer time, 07:00 in Chicago. */
+    private static final long JULY_NOON_UTC = 1_784_116_800_000L;
+    /** 13:00 in Belgrade on standard time, 06:00 in Chicago. */
+    private static final long JANUARY_NOON_UTC = 1_768_478_400_000L;
+
+    /** The phone in Chicago and the preset Serbia, with the zone set the way start-up sets it. */
+    private static void serbiaAtStartUp() {
+        TimeZone.setDefault(TimeZone.getTimeZone(PHONE_ZONE));
+        Settings.SIM_SPOOF_ISO.save("rs");
+        RegionSpoof.applyProcessZone();
+    }
+
+    private static String clock(java.text.DateFormat format, long at) {
+        return format.format(new java.util.Date(at));
+    }
+
+    @Test public void theFrameworksOwnFormattersShowBelgradeTimeForSerbiaDaylightSavingIncluded() {
+        serbiaAtStartUp();
+        assertEquals("Europe/Belgrade", TimeZone.getDefault().getID());
+        // What TikTok's message and comment cells build: formatters that read the default themselves.
+        java.text.SimpleDateFormat hours = new java.text.SimpleDateFormat("HH:mm", Locale.US);
+        assertEquals("summer time", "14:00", clock(hours, JULY_NOON_UTC));
+        assertEquals("standard time", "13:00", clock(hours, JANUARY_NOON_UTC));
+        assertEquals("Europe/Belgrade", android.text.format.DateFormat.getTimeFormat(
+                RuntimeEnvironment.getApplication()).getTimeZone().getID());
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTimeInMillis(JULY_NOON_UTC);
+        assertEquals(14, calendar.get(java.util.Calendar.HOUR_OF_DAY));
+        assertEquals("Europe/Belgrade", java.time.ZoneId.systemDefault().getId());
+        // And the hook's own answer is the same zone, as one more copy.
+        TimeZone hooked = RegionSpoof.timeZone(TimeZone.getDefault());
+        assertEquals("Europe/Belgrade", hooked.getID());
+    }
+
+    @Test public void theZoneGoesBackToThePhonesWhenTheSettingGoesOffOrHushfeedPauses() {
+        for (Runnable off : new Runnable[]{
+                () -> Settings.REGION_SPOOF.save(false),
+                () -> Settings.SIM_SPOOF.save(false),
+                () -> PausedProcess.set(true)}) {
+            try {
+                setup();
+                serbiaAtStartUp();
+                assertEquals("Europe/Belgrade", TimeZone.getDefault().getID());
+                assertEquals("the phone's own zone is kept", PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
+                off.run();
+                // The first call that notices already gets the phone's zone.
+                assertEquals(PHONE_ZONE, RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+                assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+                assertEquals("07:00", clock(new java.text.SimpleDateFormat("HH:mm", Locale.US), JULY_NOON_UTC));
+                assertEquals(PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
+                // Nothing is set again while it stays off.
+                RegionSpoof.applyProcessZone();
+                assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+            } finally {
+                PausedProcess.set(false);
+                TimeZone.setDefault(startZone);
+            }
+        }
+    }
+
+    @Test public void offOrPausedAtStartUpLeavesThePhonesZone() {
+        for (Runnable off : new Runnable[]{
+                () -> Settings.REGION_SPOOF.save(false),
+                () -> Settings.SIM_SPOOF_ISO.save("zz"),
+                () -> PausedProcess.set(true)}) {
+            try {
+                setup();
+                TimeZone.setDefault(TimeZone.getTimeZone(PHONE_ZONE));
+                Settings.SIM_SPOOF_ISO.save("rs");
+                off.run();
+                RegionSpoof.applyProcessZone();
+                assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+                TimeZone phone = TimeZone.getDefault();
+                assertSame(phone, RegionSpoof.timeZone(phone));
+                assertEquals(PHONE_ZONE, TimeZone.getDefault().getID());
+                assertEquals(PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
+            } finally {
+                PausedProcess.set(false);
+                TimeZone.setDefault(startZone);
+            }
+        }
+    }
+
+    @Test public void aZoneTheSystemPutsBackIsReplacedAtTheNextCallAndTheNewPhoneZoneKept() {
+        serbiaAtStartUp();
+        // Android's answer to the phone's zone changing: the default is dropped and read again
+        // from the system, which here is the phone's new zone.
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Denver"));
+        assertEquals("America/Denver", RegionSpoof.phoneTimeZone().getID());
+        assertEquals("Europe/Belgrade", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals("Europe/Belgrade", TimeZone.getDefault().getID());
+        assertEquals("America/Denver", RegionSpoof.phoneTimeZone().getID());
+        Settings.REGION_SPOOF.save(false);
+        RegionSpoof.timeZone(TimeZone.getDefault());
+        assertEquals("the phone's new zone came back", "America/Denver", TimeZone.getDefault().getID());
+    }
+
+    @Test public void aChangedPresetMovesTheAppsZoneAndKeepsThePhones() {
+        serbiaAtStartUp();
+        Settings.SIM_SPOOF_ISO.save("jp");
+        assertEquals("Asia/Tokyo", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        assertEquals("Asia/Tokyo", TimeZone.getDefault().getID());
+        assertEquals(PHONE_ZONE, RegionSpoof.phoneTimeZone().getID());
+        TimeZone kept = RegionSpoof.phoneTimeZone();
+        kept.setRawOffset(0);
+        assertEquals("a caller changed the kept phone zone", -6 * 3_600_000,
+                RegionSpoof.phoneTimeZone().getRawOffset());
+    }
+
+    @Test public void aSignInAndThePhonesClockGetThePhonesZoneWhileSerbiasIsTheDefault() {
+        Settings.REGION_REQUEST_SPOOF.save(true);
+        serbiaAtStartUp();
+        RegionSpoof.requestPath("/passport/user/login/");
+        assertEquals(PHONE_ZONE, RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+        Map<String, String> params = requestParams();
+        RegionSpoof.requestParams(params);
+        RegionSpoof.requestDone();
+        assertEquals("a sign-in sent the app's zone", PHONE_ZONE, params.get("timezone_name"));
+        assertEquals("the default changed for a sign-in", "Europe/Belgrade", TimeZone.getDefault().getID());
+        assertEquals("Europe/Belgrade", RegionSpoof.timeZone(TimeZone.getDefault()).getID());
+
+        java.text.DateFormat phone = RegionSpoof.phoneClock(new java.text.SimpleDateFormat("HH:mm", Locale.US));
+        assertEquals("07:00", clock(phone, JULY_NOON_UTC));
+        assertEquals("06:00", clock(phone, JANUARY_NOON_UTC));
     }
 
     @Test public void allPresetsMatchTheBundledTzdbRegionWhenAvailable() {

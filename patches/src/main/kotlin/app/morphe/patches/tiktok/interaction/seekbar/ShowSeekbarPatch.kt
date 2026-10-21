@@ -71,7 +71,7 @@ val showSeekbarPatch = bytecodePatch(
     description = "Shows the progress bar on videos where TikTok hides it, so you can see how " +
         "long a video is and skip around. On by default. Turn it off in Hushfeed settings > " +
         "Playback, where you can also show the time beside the bar or give it a bigger handle. " +
-        "A seek bar for video stories is there too.",
+        "Seek bars for video stories and sound previews are there too.",
     default = true,
 ) {
     category("Playback")
@@ -128,7 +128,7 @@ val showSeekbarPatch = bytecodePatch(
         mutableClassDefBy(drag.definingClass).methods.named(drag).answerDraggable()
         gates.answerVideoMask()
 
-        // Both extras below are held to every declared build by their anchors tests, so a miss
+        // The extras below are held to every declared build by their anchors tests, so a miss
         // there fails the patch. A build the patch is forced onto keeps the bar without them.
         // Every hook an extra needs is checked before any goes in, so an extra goes in whole or
         // not at all, and its switches show only once it's in.
@@ -169,6 +169,17 @@ val showSeekbarPatch = bytecodePatch(
                 StoryVideoCellViewFingerprint.method.storyCellViewHook(),
                 StoryVideoCellBindFingerprint.method.storyCellBindHook(),
                 PlayProgressFingerprint.method.storyProgressHook(),
+            )
+        }
+
+        // The seek bar on sound previews (#185), a switch that starts off. The sound page's cover
+        // reports its view, and the extension reads and seeks the page's preview player through
+        // bridges written from TikTok's own uses of it.
+        extra("the seek bar on sound previews", "enableSoundSeekbar") {
+            val members = resolveSoundPreviewMembers(SoundPreviewTickFingerprint.originalMethod) { classDefByOrNull(it) }
+            listOf(
+                SoundCoverViewFingerprint.method.soundCoverViewHook(),
+                soundPreviewBridges(members),
             )
         }
     }

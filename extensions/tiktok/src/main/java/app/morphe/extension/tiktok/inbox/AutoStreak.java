@@ -37,6 +37,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.preference.LogBufferManager;
 import app.morphe.extension.tiktok.SignedInUser;
+import app.morphe.extension.tiktok.spoof.region.RegionSpoof;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
 
@@ -277,7 +278,7 @@ public final class AutoStreak {
 
     /** The day {@code millis} falls on, in the phone's time zone. */
     static String day(long millis) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(RegionSpoof.phoneTimeZone());
         calendar.setTimeInMillis(millis);
         return String.format(Locale.US, "%04d-%02d-%02d", calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
@@ -285,7 +286,7 @@ public final class AutoStreak {
 
     /** {@code minute} after midnight on the day {@code now} falls on, {@code days} later. */
     static long at(long now, int minute, int days) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(RegionSpoof.phoneTimeZone());
         calendar.setTimeInMillis(now);
         calendar.add(Calendar.DAY_OF_YEAR, days);
         calendar.set(Calendar.HOUR_OF_DAY, minute / 60);
@@ -836,7 +837,7 @@ public final class AutoStreak {
     // What the rows say.
 
     static String time(Context context, long millis) {
-        return DateFormat.getTimeFormat(context).format(new Date(millis));
+        return RegionSpoof.phoneClock(DateFormat.getTimeFormat(context)).format(new Date(millis));
     }
 
     private static String attemptLine(Context context, Result result) {

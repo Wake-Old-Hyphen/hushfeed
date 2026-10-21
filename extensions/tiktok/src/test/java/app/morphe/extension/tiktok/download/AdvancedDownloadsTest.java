@@ -1056,6 +1056,7 @@ public class AdvancedDownloadsTest {
             new DownloadsPreferenceCategory(activity, screen);
             assertNotNull(screen.findPreference("download_video_quality"));
             assertNotNull(screen.findPreference("download_original_photos"));
+            assertNotNull(screen.findPreference("keep_photos_as_sent"));
             assertNotNull(screen.findPreference("download_audio_track"));
             assertNull(screen.findPreference("down_watermark"));
             assertEquals(Settings.DOWNLOAD_PHOTO_PATH.get(), screen.findPreference("download_photo_path").getSummary());

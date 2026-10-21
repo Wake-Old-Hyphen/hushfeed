@@ -19,6 +19,7 @@ import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.spoof.sim.SimPreset;
 import app.morphe.extension.tiktok.spoof.sim.SimPresets;
 import app.morphe.extension.tiktok.spoof.sim.SpoofSimPatch;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,15 +34,46 @@ public final class RegionSpoof {
     private static final Set<String> COUNTRIES = new HashSet<>(Arrays.asList(Locale.getISOCountries()));
 
     /*
-     * The patch sends every Locale.getDefault() and TimeZone.getDefault() in the app through
-     * here, on every thread, and those are asked for all the time: each String.format, each
-     * date and each lower-casing. Each answer used to compile a regex, build a Locale and scan
-     * the presets (or ICU's whole zone table for a custom country). The last answer is kept
-     * with what it was worked out from, so a changed setting still takes effect at once.
+     * The patch sends every Locale.getDefault() and TimeZone.getDefault() in TikTok's code
+     * through here, on every thread, and those are asked for all the time: each String.format,
+     * each date and each lower-casing. Each answer used to compile a regex, build a Locale and
+     * scan the presets (or ICU's whole zone table for a custom country). The last answer is kept
+     * with what it was worked out from, so a changed setting still takes effect at once. The
+     * extension's own classes aren't hooked.
      */
     private static volatile String[] lastCountry = {"", ""};
     private static volatile LocaleAnswer lastLocale;
     private static volatile Object[] lastZone = {"", null};
+
+    /*
+     * The whole app's time zone (#184, #198). The hook answers TikTok's own TimeZone.getDefault()
+     * calls, but the framework's formatters read the process default themselves: SimpleDateFormat,
+     * Calendar.getInstance(), DateFormat.getTimeFormat, DateUtils, java.time's
+     * ZoneId.systemDefault() and ICU, which follows java.util's default on Android. So with Match
+     * locale and timezone on, the preset's zone is made the process default too. The S22 showed
+     * all three reading it (2026-10-21), while the chat's date labels stayed on the phone's zone,
+     * so those are worked out somewhere that doesn't ask the default. The switch happens as the host application attaches its context,
+     * before TikTok builds a formatter, and the zone it replaced is the phone's, kept for the
+     * things that run on the phone's clock (phoneTimeZone()) and put back when the setting goes
+     * off or Hushfeed is paused.
+     *
+     * Android puts the system's zone back as the default when the phone's zone changes, so each
+     * answer the hook gives checks the default is still the preset's and sets it again if not.
+     * When nothing changed that's one string compare.
+     */
+    private static final Object ZONE_LOCK = new Object();
+    /** The default this class set and the phone's zone it replaced. Null while the default is the phone's. */
+    private static volatile AppliedZone applied;
+
+    private static final class AppliedZone {
+        final String id;
+        final TimeZone phone;
+
+        AppliedZone(String id, TimeZone phone) {
+            this.id = id;
+            this.phone = phone;
+        }
+    }
 
     private static final class LocaleAnswer {
         final Locale original;
@@ -253,8 +285,7 @@ public final class RegionSpoof {
      * hub's getter, and timezone_name, from TimeZone.getDefault().getID(). Both were worked out
      * with the hooks answering the preset, and the copies stay in a cache for the life of the
      * process. A sign-in puts the live answers back: the system locale's country, and the
-     * system's default zone. This class is skipped by the TimeZone hook, so its own calls are
-     * the unhooked ones.
+     * phone's own zone, which is the default unless this class made the preset's the default.
      */
     static final String[] SAVED_REGION_FIELDS = {"current_region", "residence"};
     static final String NETWORK_COUNTRY_FIELD = "carrier_region_v2";
@@ -384,7 +415,7 @@ public final class RegionSpoof {
             live.add(SYSTEM_REGION_FIELD);
         }
         if (params.get(TIMEZONE_NAME_FIELD) instanceof String) {
-            params.put(TIMEZONE_NAME_FIELD, TimeZone.getDefault().getID());
+            params.put(TIMEZONE_NAME_FIELD, phoneTimeZone().getID());
             live.add(TIMEZONE_NAME_FIELD);
         }
         return live;
@@ -475,19 +506,105 @@ public final class RegionSpoof {
     }
 
     public static TimeZone timeZone(TimeZone original) {
-        String country = selectedCountry();
-        if (original == null || country.isEmpty()) return original;
-        Object[] last = lastZone;
-        TimeZone zone;
-        if (country.equals(last[0])) {
-            zone = (TimeZone) last[1];
-        } else {
-            zone = zoneOf(country);
-            lastZone = new Object[]{country, zone};
+        if (original == null) return null;
+        if (markedFill() != 0) {
+            // A sign-in or a real-SIM feed fill gets the phone's own zone.
+            AppliedZone now = applied;
+            return now != null && now.id.equals(original.getID()) ? (TimeZone) now.phone.clone() : original;
         }
+        TimeZone zone = presetZone();
+        // The hooked call hands over the default, so this is where a default the system put
+        // back, or one left from a setting that has changed since, is noticed.
+        if (zone == null) {
+            AppliedZone was = applied;
+            if (was == null) return original;
+            // Switched off or paused since: the phone's zone goes back, to this caller too.
+            syncProcessZone(null);
+            return was.id.equals(original.getID()) ? (TimeZone) was.phone.clone() : original;
+        }
+        if (zone.getID().equals(original.getID())) return original;
+        syncProcessZone(zone);
         // A copy each time, as TimeZone.getDefault() gives: a TimeZone can be changed by whoever
         // holds it, and the kept one is shared by every caller.
-        return zone == null ? original : (TimeZone) zone.clone();
+        return (TimeZone) zone.clone();
+    }
+
+    /** From the host application's attachBaseContext, right after the extension gets its context. */
+    public static void applyProcessZone() {
+        try {
+            syncProcessZone(presetZone());
+        } catch (RuntimeException error) {
+            Logger.printException(() -> "Region spoof could not set the app's time zone", error);
+        }
+    }
+
+    /**
+     * The phone's own time zone, for what runs on the phone's clock: the wellbeing day, Auto
+     * streak's send time and a sign-in's timezone_name. While the preset's zone is the app's
+     * default this is the zone it replaced, otherwise the default itself.
+     */
+    public static TimeZone phoneTimeZone() {
+        TimeZone current = TimeZone.getDefault();
+        AppliedZone now = applied;
+        return now != null && now.id.equals(current.getID()) ? (TimeZone) now.phone.clone() : current;
+    }
+
+    /** The format, set to the phone's own zone, for a time Hushfeed shows against the phone's clock. */
+    public static DateFormat phoneClock(DateFormat format) {
+        format.setTimeZone(phoneTimeZone());
+        return format;
+    }
+
+    /** The preset country's zone while Match locale and timezone is on and Hushfeed isn't paused, else null. */
+    @Nullable
+    private static TimeZone presetZone() {
+        String country = presetCountry();
+        if (country.isEmpty()) return null;
+        Object[] last = lastZone;
+        if (country.equals(last[0])) return (TimeZone) last[1];
+        TimeZone zone = zoneOf(country);
+        lastZone = new Object[]{country, zone};
+        return zone;
+    }
+
+    /**
+     * Makes the process default the preset's zone, or the phone's when there's no preset. The
+     * default is read here, not taken from a caller, since it's what the framework's formatters
+     * use. A default that isn't the one this class set is the phone's: the first time through,
+     * or the system's own after the phone's zone changed.
+     */
+    static void syncProcessZone(@Nullable TimeZone preset) {
+        synchronized (ZONE_LOCK) {
+            AppliedZone now = applied;
+            TimeZone current = TimeZone.getDefault();
+            boolean ours = now != null && now.id.equals(current.getID());
+            if (preset == null) {
+                if (now == null) return;
+                applied = null;
+                // One the system set since is the phone's already.
+                if (ours) TimeZone.setDefault(now.phone);
+                reportZone("App time zone back to the phone's");
+                return;
+            }
+            String id = preset.getID();
+            if (id.equals(current.getID())) return;
+            TimeZone phone = ours ? now.phone : current;
+            TimeZone.setDefault(preset);
+            applied = new AppliedZone(id, phone);
+            // Never the phone's zone in the log, since that's the real region.
+            reportZone("App time zone set to " + id);
+        }
+    }
+
+    /** Forgets the phone's zone without touching the default, so a test starts from nothing set. */
+    static void forgetProcessZone() {
+        synchronized (ZONE_LOCK) {
+            applied = null;
+        }
+    }
+
+    private static void reportZone(String line) {
+        if (BaseSettings.DEBUG.get()) Logger.printDebug(() -> line);
     }
 
     private static TimeZone zoneOf(String country) {
