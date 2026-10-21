@@ -9,8 +9,15 @@ package app.morphe.extension.tiktok.download;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.Settings;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
@@ -21,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /** One bounded queue for every extension-owned media operation. */
 final class MediaJobScheduler {
+    /** The most saves that run at once. Saves at once can lower it, never raise it. */
     static final int MAX_RUNNING_JOBS = 3;
     static final int MAX_QUEUED_JOBS = 8;
 
@@ -46,8 +54,42 @@ final class MediaJobScheduler {
      * since API 24, and a call resolves by the reference's declared type, not the object's.
      */
     private static final ConcurrentHashMap<String, Job> BY_KEY = new ConcurrentHashMap<>();
+    /** Accepted jobs that are not over yet, in the order they were accepted, for the Downloads page (#27). */
+    private static final Set<Job> LIVE = Collections.synchronizedSet(new LinkedHashSet<>());
+    /** The most ended saves the Downloads page keeps from this session. */
+    static final int MAX_ENDED = 5;
+    /** Saves that ended this session, newest first, for the Downloads page. Guarded by itself. */
+    private static final ArrayDeque<Ended> ENDED = new ArrayDeque<>();
+    /** The job this worker thread is running, so what its save tells the reader is kept with it. */
+    private static final ThreadLocal<Job> CURRENT = new ThreadLocal<>();
+
+    static {
+        // A save mostly tells the reader how it went with a toast from its worker thread.
+        Utils.setToastObserver(MediaJobScheduler::said);
+    }
 
     private MediaJobScheduler() {}
+
+    /**
+     * A save that is over, as the Downloads page lists it under the ones still going. Only what
+     * that takes, not the job, whose work can hold a whole list of posts.
+     */
+    static final class Ended {
+        final String label;
+        /** The last thing the save told the reader as it ran, or null when it said nothing. */
+        final String said;
+        /** Taken out of line before it started. */
+        final boolean cancelled;
+        /** Stopped by an error the save didn't expect. */
+        final boolean failed;
+
+        Ended(String label, String said, boolean cancelled, boolean failed) {
+            this.label = label;
+            this.said = said;
+            this.cancelled = cancelled;
+            this.failed = failed;
+        }
+    }
 
     /**
      * One accepted save, from its place in line to its end. It waits, then runs, then is over,
@@ -69,7 +111,11 @@ final class MediaJobScheduler {
         private final Runnable done;
         /** What this save leaves on disk for the start after a closed TikTok; null when nothing does. */
         final SaveRecords.Record record;
+        /** The progress row following this save, for its count and its Cancel once it runs; null for none. */
+        volatile SaveProgress progress;
         private final AtomicInteger state = new AtomicInteger(WAITING);
+        /** The last thing this save told the reader while it ran. */
+        private volatile String said;
 
         private Job(String label, String key, Runnable work, Runnable done, int ahead,
                 SaveRecords.Record record) {
@@ -86,6 +132,11 @@ final class MediaJobScheduler {
             return state.get() == WAITING;
         }
 
+        /** True while a worker has it. */
+        boolean running() {
+            return state.get() == RUNNING;
+        }
+
         /**
          * Takes a job that is still waiting out of the line and ends it. False once a worker has
          * it: a transfer already under way is not stopped from here.
@@ -93,6 +144,7 @@ final class MediaJobScheduler {
         boolean cancel() {
             if (!state.compareAndSet(WAITING, OVER)) return false;
             EXECUTOR.remove(this);
+            remember(new Ended(label, null, true, false));
             end();
             return true;
         }
@@ -102,14 +154,23 @@ final class MediaJobScheduler {
             if (!state.compareAndSet(WAITING, RUNNING)) return;
             // A file this save publishes is written down against its record as it lands.
             SaveRecords.Record outer = SaveRecords.enter(record);
+            Job outerJob = CURRENT.get();
+            CURRENT.set(this);
+            boolean failed = false;
             try {
                 MediaBudget.runWithJobDeadline(work);
             } catch (RuntimeException failure) {
                 // The saver says what went wrong for anything it expects. What it didn't expect
                 // must not take TikTok down with the worker thread.
+                failed = true;
                 Logger.printException(() -> "Media job failed for " + label, failure);
             } finally {
+                if (outerJob == null) CURRENT.remove();
+                else CURRENT.set(outerJob);
                 SaveRecords.exit(outer);
+                // Listed as ended before it stops counting as running, so a refresh of the
+                // Downloads page between the two still finds it.
+                remember(new Ended(label, said, false, failed));
                 state.set(OVER);
                 end();
             }
@@ -117,6 +178,7 @@ final class MediaJobScheduler {
 
         private void end() {
             ADMITTED.decrementAndGet();
+            LIVE.remove(this);
             if (key != null) BY_KEY.remove(key, this);
             try {
                 if (done != null) done.run();
@@ -149,17 +211,19 @@ final class MediaJobScheduler {
      */
     static Job submit(String label, String key, int files, Runnable work, Runnable done) {
         if (work == null) throw new NullPointerException("work");
+        int limit = applyLimit();
         int before = ADMITTED.getAndIncrement();
-        Job job = new Job(label, key, work, done, Math.max(0, before - MAX_RUNNING_JOBS + 1),
+        Job job = new Job(label, key, work, done, Math.max(0, before - limit + 1),
                 SaveRecords.open(label, files));
+        LIVE.add(job);
         if (key != null) BY_KEY.put(key, job);
         try {
             EXECUTOR.execute(job);
             SaveRecords.accepted(job.record);
             return job;
         } catch (RejectedExecutionException error) {
-            job.state.set(Job.OVER);
-            job.end();
+            // Never listed as ended: it was never accepted. A cancel that got in first ended it.
+            if (job.state.compareAndSet(Job.WAITING, Job.OVER)) job.end();
             Logger.printException(() -> "Media job queue is full for " + label, error);
             Utils.showToastLong(L10n.t("Too many media saves are already running. Try again in a moment."));
             return null;
@@ -196,6 +260,91 @@ final class MediaJobScheduler {
     /** The live job saved under {@code key}, or null. */
     static Job job(String key) {
         return BY_KEY.get(key);
+    }
+
+    /** Every accepted job that is not over yet, oldest first: a copy, so a job ending doesn't change it. */
+    static List<Job> jobs() {
+        synchronized (LIVE) {
+            return new ArrayList<>(LIVE);
+        }
+    }
+
+    /** Lists a save as ended, newest first, keeping the last {@link #MAX_ENDED}. */
+    private static void remember(Ended ended) {
+        synchronized (ENDED) {
+            ENDED.addFirst(ended);
+            while (ENDED.size() > MAX_ENDED) ENDED.removeLast();
+        }
+    }
+
+    /** The saves that ended this session, newest first: a copy. */
+    static List<Ended> ended() {
+        synchronized (ENDED) {
+            return new ArrayList<>(ENDED);
+        }
+    }
+
+    static void clearEndedForTests() {
+        synchronized (ENDED) {
+            ENDED.clear();
+        }
+    }
+
+    /**
+     * Keeps what the save running on this thread just told the reader, as its last word for the
+     * Downloads page. Anything said off a worker thread belongs to no save and is let go.
+     */
+    static void said(String message) {
+        Job job = CURRENT.get();
+        if (job != null && message != null) job.said = message;
+    }
+
+    /** Saves at once as a number from 1 to {@link #MAX_RUNNING_JOBS}. Anything else reads as the most. */
+    static int runningLimit() {
+        // The settings are read from the app's preferences, which need its context to open.
+        if (Utils.getContext() == null) return MAX_RUNNING_JOBS;
+        return limitFrom(Settings.DOWNLOAD_SAVES_AT_ONCE.get());
+    }
+
+    static int limitFrom(String value) {
+        try {
+            int wanted = Integer.parseInt(value == null ? "" : value.trim());
+            return wanted >= 1 && wanted <= MAX_RUNNING_JOBS ? wanted : MAX_RUNNING_JOBS;
+        } catch (NumberFormatException unreadable) {
+            return MAX_RUNNING_JOBS;
+        }
+    }
+
+    /**
+     * Brings the pool to Saves at once as it's saved now, and answers the limit in force. Read
+     * under the lock, so a save submitted on another thread can't put back an older number after
+     * a newer one was applied.
+     */
+    static synchronized int applyLimit() {
+        return applyLimit(runningLimit());
+    }
+
+    /** How many saves the pool runs at once right now: what a place in line counts against. */
+    static int poolLimit() {
+        return EXECUTOR.getMaximumPoolSize();
+    }
+
+    /**
+     * Brings the pool to {@code limit} workers. A save already running finishes either way: a
+     * lower limit starts nothing new until enough of them have ended, and a higher one starts the
+     * saves waiting in line at once. The two sizes move in the order the pool allows, since the
+     * core size may never pass the maximum, so raising moves the maximum first and lowering the core.
+     */
+    static synchronized int applyLimit(int limit) {
+        int now = EXECUTOR.getMaximumPoolSize();
+        if (limit > now) {
+            EXECUTOR.setMaximumPoolSize(limit);
+            EXECUTOR.setCorePoolSize(limit);
+        } else if (limit < now) {
+            EXECUTOR.setCorePoolSize(limit);
+            EXECUTOR.setMaximumPoolSize(limit);
+        }
+        return limit;
     }
 
     static int queuedJobs() {

@@ -128,6 +128,10 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
             addPreference(new TogglePreference(context, "Record LIVEs you watch",
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));
+            addPreference(new ChoicePreference(context, "LIVE recording quality", Settings.LIVE_RECORD_QUALITY,
+                    new String[]{"Same as the room", "Highest", "Lowest"}, new String[]{"room", "highest", "lowest"})
+                    .withNote("Same as the room records the quality you're watching. Highest records "
+                            + "the best stream the room has, even while you watch it lower."));
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(

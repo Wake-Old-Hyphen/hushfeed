@@ -43,6 +43,7 @@ import java.util.WeakHashMap;
 public final class FeedVisibility {
     private static final String[] HOME_TAB_RESOURCE_NAMES = {"47.4.3:onh"};
     private static final String[] INBOX_TAB_RESOURCE_NAMES = {"47.4.3:oni"};
+    private static final String[] PROFILE_TAB_RESOURCE_NAMES = {"47.4.3:onj"};
     /**
      * The bottom Friends tab, the id FriendsTabProtocol loads on every declared build (one before
      * Home's). A build with no such view answers null and the tab is simply not covered.
@@ -71,6 +72,7 @@ public final class FeedVisibility {
 
     private static WeakReference<View> homeTabReference = new WeakReference<>(null);
     private static WeakReference<View> inboxTabReference = new WeakReference<>(null);
+    private static WeakReference<View> profileTabReference = new WeakReference<>(null);
     private static WeakReference<View> friendsTabReference = new WeakReference<>(null);
     private static WeakReference<View> commentSheetReference = new WeakReference<>(null);
     private static WeakReference<View> commentTitleReference = new WeakReference<>(null);
@@ -415,6 +417,12 @@ public final class FeedVisibility {
     public static View inboxTabView(Activity activity) {
         return tab(activity, "Inbox", INBOX_TAB_RESOURCE_NAMES, inboxTabReference,
                 reference -> inboxTabReference = reference);
+    }
+
+    /** The Profile tab, for its long press (#199). Null when this build renames it. */
+    public static View profileTabView(Activity activity) {
+        return tab(activity, "Profile", PROFILE_TAB_RESOURCE_NAMES, profileTabReference,
+                reference -> profileTabReference = reference);
     }
 
     private static View homeTab(Activity activity) {

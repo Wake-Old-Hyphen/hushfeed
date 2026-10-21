@@ -10,6 +10,7 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 import android.text.format.Formatter;
 
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.offline.CustomOfflineVideosLimitPatch;
 import app.morphe.extension.tiktok.settings.L10n;
 import app.morphe.extension.tiktok.settings.Settings;
@@ -19,17 +20,20 @@ import app.morphe.extension.tiktok.settings.preference.ChoicePreference;
 import app.morphe.extension.tiktok.settings.preference.ForgetSavedVideosPreference;
 import app.morphe.extension.tiktok.settings.preference.InputTextPreference;
 import app.morphe.extension.tiktok.settings.preference.NumberInputPreference;
+import app.morphe.extension.tiktok.settings.preference.SavesNowPreference;
 import app.morphe.extension.tiktok.settings.preference.SectionHeadingPreference;
 import app.morphe.extension.tiktok.settings.preference.TogglePreference;
 import app.morphe.extension.tiktok.download.DownloadDestination;
 import app.morphe.extension.tiktok.download.DownloadNamePreview;
 import app.morphe.extension.tiktok.download.ExternalDownloader;
 import app.morphe.extension.tiktok.download.GridPicker;
+import app.morphe.extension.tiktok.download.SaveQueue;
 import app.morphe.extension.tiktok.download.SavedVideoArchive;
 import app.morphe.extension.tiktok.download.SoundFormat;
 
 /**
- * Where files go and what goes in them, then video, photos and stickers, the long presses, the
+ * The saves under way and how many run at once, where files go and what goes in them, then
+ * video, photos and stickers, the long presses, the
  * story share sheet, subtitles, the hand-off to another app, and the offline limit. Each block
  * belongs to its own patch and any of them can be in the bundle alone, so every block is a plain
  * if and never a return: a return for one of them took every later block with it once.
@@ -58,6 +62,20 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
         // The downloader is what reads the destinations and names. With only the offline
         // videos limit selected they were rows on a reachable page that changed nothing.
         if (SettingsStatus.downloadEnabled || SettingsStatus.advancedDownloadsEnabled) {
+            // What is saving now and how many saves run at once, above the rest (#27).
+            addPreference(new SavesNowPreference(context));
+            ChoicePreference atOnce = new ChoicePreference(context, "Saves at once", Settings.DOWNLOAD_SAVES_AT_ONCE,
+                    new String[]{"One at a time", "Two at once", "Three at once"}, new String[]{"1", "2", "3"})
+                    .withNote("How many saves run at the same time. The others wait in line and "
+                            + "start as each one ends.");
+            // Applied as it's picked, so a save already waiting starts if the new number has room.
+            // Posted, since the choice is saved only after this returns, and the pool reads the
+            // saved one: a save submitted meanwhile would otherwise put the old number back.
+            atOnce.setOnPreferenceChangeListener((preference, value) -> {
+                Utils.runOnMainThread(SaveQueue::applyLimit);
+                return true;
+            });
+            addPreference(atOnce);
             addPreference(new SectionHeadingPreference(context, "Files"));
             addPreference(new DownloadPathPreference(
                     context,

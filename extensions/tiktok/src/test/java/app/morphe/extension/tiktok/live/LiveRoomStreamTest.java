@@ -41,6 +41,37 @@ public class LiveRoomStreamTest {
         assertEquals("a quality the stream lacks falls to the best", "origin", missing.target.quality);
     }
 
+    /** #203: the LIVE recording quality choice, watching hd. */
+    @Test public void theRecordingQualityChoiceOverridesTheQualityBeingWatched() {
+        assertEquals("hd", LiveRoomStream.choose(JSON, null, null, null,
+                LiveRoomStream.forRecording("room", "hd"), null, null).target.quality);
+        assertEquals("origin", LiveRoomStream.choose(JSON, null, null, null,
+                LiveRoomStream.forRecording("highest", "hd"), null, null).target.quality);
+        LiveRoomStream.Pick lowest = LiveRoomStream.choose(JSON, null, null, null,
+                LiveRoomStream.forRecording("lowest", "hd"), null, null);
+        assertEquals("audio only is never the smallest", "sd", lowest.target.quality);
+        assertEquals("https://p.example.com/sd.flv", lowest.target.url);
+        assertNull("an unread choice records what's being watched, or the best",
+                LiveRoomStream.forRecording(null, null));
+    }
+
+    @Test public void lowestPrefersAKnownSmallStreamToAnUnknownKey() {
+        Map<String, String> flv = new LinkedHashMap<>();
+        flv.put("ld", "https://p.example.com/ld.flv");
+        flv.put("xx", "https://p.example.com/xx.flv");
+        flv.put("hd", "https://p.example.com/hd.flv");
+        assertEquals("ld", LiveRoomStream.choose(null, flv, null, null, LiveRoomStream.LOWEST, null, null).target.quality);
+        Map<String, String> unknownOnly = new LinkedHashMap<>();
+        unknownOnly.put("xx", "https://p.example.com/xx.flv");
+        assertEquals("xx", LiveRoomStream.choose(null, unknownOnly, null, null, LiveRoomStream.LOWEST, null, null).target.quality);
+        Map<String, String> hls = new LinkedHashMap<>();
+        hls.put("hd", "https://p.example.com/hd.m3u8");
+        hls.put("ld", "https://p.example.com/ld.m3u8");
+        LiveRoomStream.Pick hlsOnly = LiveRoomStream.choose(null, null, hls, null, LiveRoomStream.LOWEST, null, null);
+        assertEquals(LiveRecorder.Transport.HLS, hlsOnly.target.transport);
+        assertEquals("ld", hlsOnly.target.quality);
+    }
+
     @Test public void hlsIsTheFallbackWhenThereIsNoFlv() {
         Map<String, String> hls = new LinkedHashMap<>();
         hls.put("sd", "https://p.example.com/a.m3u8");

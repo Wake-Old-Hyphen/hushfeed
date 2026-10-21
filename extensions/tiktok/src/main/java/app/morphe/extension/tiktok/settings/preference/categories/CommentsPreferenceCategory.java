@@ -29,6 +29,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
         return SettingsStatus.commentToolsEnabled
                 || SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
+                || SettingsStatus.videoAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.languagePageTranslationsEnabled
@@ -37,6 +38,7 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.hideCommentEggsEnabled
                 || SettingsStatus.commentSortControlsEnabled
+                || SettingsStatus.commentsFullHeightEnabled
                 || SettingsStatus.lengthLimitsEnabled
                 || SettingsStatus.voiceCommentsEnabled
                 || SettingsStatus.commenterDetailsEnabled;
@@ -51,11 +53,13 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
     public void addPreferences(Context context) {
         boolean reading = SettingsStatus.commentTranslationEnabled
                 || SettingsStatus.doNotAutoTranslateEnabled
+                || SettingsStatus.videoAutoTranslateEnabled
                 || SettingsStatus.translateIntoEnabled
                 || SettingsStatus.commentTranslateButtonEnabled
                 || SettingsStatus.languagePageTranslationsEnabled
                 || SettingsStatus.feedTranslationsEnabled
                 || SettingsStatus.commentSortControlsEnabled
+                || SettingsStatus.commentsFullHeightEnabled
                 || SettingsStatus.commentToolsEnabled
                 || SettingsStatus.copyCommentsWithoutUsernameEnabled
                 || SettingsStatus.commenterDetailsEnabled;
@@ -81,6 +85,16 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                     Settings.DONT_AUTO_TRANSLATE_LANGUAGES)
                     .withCheck(app.morphe.extension.tiktok.translation.DoNotAutoTranslate::languageProblem)
                     .withNameKeyboard());
+        }
+        if (SettingsStatus.videoAutoTranslateEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Don't auto translate videos",
+                    "Descriptions, captions and text on videos stay in the language they were made in, "
+                            + "even with TikTok's Always translate on. See translation still works when "
+                            + "you tap it. Comments have their own switch above.",
+                    Settings.NO_VIDEO_AUTO_TRANSLATE
+            ));
         }
         if (SettingsStatus.translateIntoEnabled) {
             addPreference(new InputTextPreference(
@@ -117,6 +131,15 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
                             + "creator options, instead of the shorter one your account got. "
                             + "Restart TikTok to see the change.",
                     Settings.COMMENT_SORT_CONTROLS
+            ));
+        }
+        if (SettingsStatus.commentsFullHeightEnabled) {
+            addPreference(new TogglePreference(
+                    context,
+                    "Open the comments at full height",
+                    "Opens the comment sheet at the full height of the screen instead of part "
+                            + "way up. Drag it down to close it, as before.",
+                    Settings.COMMENTS_FULL_HEIGHT
             ));
         }
         if (SettingsStatus.commentToolsEnabled) {

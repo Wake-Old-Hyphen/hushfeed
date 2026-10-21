@@ -67,3 +67,10 @@ internal object FeedTranslationReverseFingerprint : Fingerprint(
     custom = { method, _ -> method.feedTranslationReverseRead() != null },
 )
 
+/** TikTok's Always translate state, the getter that reads the user's own choice first (#194). */
+internal object MasterTranslationStateFingerprint : Fingerprint(
+    parameters = listOf(),
+    strings = listOf(MASTER_TRANSLATION_KEY),
+    custom = { method, _ -> method.isMasterTranslationState() },
+)
+

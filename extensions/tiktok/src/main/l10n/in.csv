@@ -1072,6 +1072,8 @@ Still saving the last one,Yang sebelumnya masih disimpan
 The last one is still waiting to start,Yang sebelumnya masih menunggu untuk dimulai
 "Stops TikTok from sending usage reports, ad tracking and crash reports. TikTok's own diagnostic tools go quiet too.","Menghentikan TikTok mengirim laporan penggunaan, pelacakan iklan, dan laporan error. Alat diagnostik TikTok sendiri juga ikut diam."
 "Stops TikTok from slowing your screen to match each video's frame rate. On a 90 or 120 Hz phone, that request makes the whole app, scrolling too, run slower.","Menghentikan TikTok memperlambat layarmu agar sesuai frame rate tiap video. Di ponsel 90 atau 120 Hz, permintaan itu membuat seluruh aplikasi, termasuk menggulir, berjalan lebih lambat."
+Keep the screen's brightness in the camera,Pertahankan kecerahan layar di kamera
+"Stops TikTok from turning your screen brighter while you film, edit or post a video.","Mencegah TikTok membuat layarmu lebih terang saat kamu merekam, mengedit, atau memposting video."
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.,Menghentikan TikTok membaca sensor gerak dan kompas ponselmu. Aplikasi bisa memakainya untuk mengenali ponselmu.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.,Mencegah TikTok membaca apa yang kamu salin. Menyalin tautan dari TikTok tetap berfungsi.
 Stop a long press on Like from opening TikTok's repost action.,Cegah tekan lama pada Suka membuka aksi posting ulang TikTok.
@@ -1954,6 +1956,8 @@ Paused,Dijeda
 Budgets and reminders,Batas dan pengingat
 Don't auto translate these languages,Jangan terjemahkan otomatis bahasa ini
 "Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.","Pisahkan kode bahasa dengan koma, misalnya es, de. Saat TikTok menerjemahkan untukmu, keterangan dan komentar dalam bahasa ini tetap seperti saat ditulis. Lihat terjemahan tetap berfungsi saat kamu mengetuknya. Daftar Jangan terjemahkan milik TikTok sendiri tetap seperti semula."
+Don't auto translate videos,Jangan terjemahkan video secara otomatis
+"Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.","Deskripsi, teks, dan tulisan di video tetap dalam bahasa aslinya, meskipun Selalu terjemahkan di TikTok aktif. Lihat terjemahan tetap berfungsi saat kamu mengetuknya. Komentar punya sakelar sendiri di atas."
 Performance,Performa
 Skip the splash ad,Lewati iklan pembuka
 Stop the full-screen ad TikTok can show while it starts up.,Hentikan iklan layar penuh yang bisa ditampilkan TikTok saat dibuka.
@@ -2166,6 +2170,8 @@ Hide profile views,Sembunyikan tayangan profil
 Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.,Sembunyikan tombol tayangan profil di bagian atas profilmu. Pengaturan riwayat tayangan profilmu tidak berubah.
 Hide Add friends,Sembunyikan Tambah teman
 Hide the Add friends button at the top of your profile. The menu button stays where it is.,Sembunyikan tombol Tambah teman di bagian atas profilmu. Tombol menu tetap di tempatnya.
+Hide Balance in the profile menu,Sembunyikan Saldo di menu profil
+Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.,Sembunyikan Saldo dari menu yang dibuka tombol kanan atas di profilmu. Koin dan hadiahmu tetap seperti semula.
 See-through status bar,Bilah status transparan
 "Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.","Biarkan video di feed utama menjangkau bagian atas layar, dengan jam dan ikon status di atasnya. Tab di bagian atas tetap di tempatnya."
 Floating bottom bar,Bilah bawah mengambang
@@ -2190,3 +2196,20 @@ New device identity,Identitas perangkat baru
 "Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Hapus data TikTok dan beri ID Android serta ID iklan baru saat mulai berikutnya, agar TikTok melihat ponsel yang belum pernah dikenalnya. Kamu akan keluar dari akun dan kehilangan draf. Pengaturan Hushfeed tetap ada."
 TikTok starts as a new phone after the restart. Tap again to cancel.,TikTok mulai sebagai ponsel baru setelah dimulai ulang. Ketuk lagi untuk membatalkan.
 Couldn't set up a new device identity. Try again.,Tidak bisa menyiapkan identitas perangkat baru. Coba lagi.
+Saves at once,Penyimpanan sekaligus
+How many saves run at the same time. The others wait in line and start as each one ends.,Berapa penyimpanan yang berjalan bersamaan. Sisanya menunggu dalam antrean dan dimulai setiap kali satu selesai.
+Saves right now,Penyimpanan saat ini
+Nothing is saving right now,Tidak ada yang sedang disimpan
+Earlier this session,Sebelumnya di sesi ini
+Stopped by an unexpected error,Berhenti karena kesalahan tak terduga
+Cover,Sampul
+One at a time,Satu per satu
+Two at once,Dua sekaligus
+Three at once,Tiga sekaligus
+LIVE recording quality,Kualitas rekaman LIVE
+Same as the room,Sama seperti di ruang
+"Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower.","""Sama seperti di ruang"" merekam kualitas yang sedang kamu tonton. ""Tertinggi"" merekam stream terbaik di ruang itu, meski kamu menontonnya dengan kualitas lebih rendah."
+Long-press Profile for Watch history,Tekan lama Profil untuk riwayat tontonan
+"Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.","Tekan lama tab Profil untuk membuka riwayat tontonanmu. Mengetuk Profil tetap berfungsi seperti biasa. Jika menekan lama Profil mengganti akunmu, opsi ini mengambil alih tekanan itu, dan nama di bagian atas profilmu tetap bisa mengganti akun."
+Open the comments at full height,Buka komentar dengan tinggi penuh
+"Opens the comment sheet at the full height of the screen instead of part way up. Drag it down to close it, as before.","Membuka komentar setinggi layar penuh, bukan hanya sebagian. Untuk menutupnya, tarik ke bawah seperti biasa."

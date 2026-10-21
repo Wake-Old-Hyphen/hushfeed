@@ -26,7 +26,9 @@ import app.morphe.extension.tiktok.settings.TikTokActivityHook;
  *
  * <p>TikTok gives that press nothing of its own: on 47.0.3 a held Home acts as a tap. A tab that
  * is already long-clickable when this first sees it is left alone, so a build that does give Home
- * a long press keeps it. Profile's long press is TikTok's account switcher, so not Profile.
+ * a long press keeps it. Profile's long press is TikTok's account switcher on some accounts, so
+ * settings stay on Home; Profile's press can open Watch history instead
+ * ({@link ProfileTabWatchHistory}, which this drives on the same layout passes).
  *
  * <p>The tab bar is rebuilt now and then (a tab filter change, a configuration change), so the
  * listener is checked on each layout pass of the main activity, and switching the setting off
@@ -50,6 +52,7 @@ public final class HomeTabSettingsShortcut {
 
         @Override public void onGone(Activity activity) {
             LAYOUT.detach();
+            ProfileTabWatchHistory.release();
         }
     });
     /** The tab the listener is on, so a rebuilt tab gets it again and an old one is let go. */
@@ -105,6 +108,7 @@ public final class HomeTabSettingsShortcut {
                 LAYOUT.detach();
                 return;
             }
+            ProfileTabWatchHistory.apply(activity);
             View home = FeedVisibility.homeTabView(activity);
             View current = attached.get();
             boolean wanted = Settings.HOME_TAB_OPENS_SETTINGS.get();
@@ -136,6 +140,7 @@ public final class HomeTabSettingsShortcut {
     static void resetForTests() {
         LAYOUT.detach();
         FRONT.resetForTests();
+        ProfileTabWatchHistory.resetForTests();
         attached = new WeakReference<>(null);
         refused = new WeakReference<>(null);
     }

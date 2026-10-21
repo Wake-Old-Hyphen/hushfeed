@@ -1075,6 +1075,8 @@ Still saving the last one	Todavía se está guardando el anterior
 The last one is still waiting to start	El anterior todavía está esperando para empezar
 Stops TikTok from sending usage reports, ad tracking and crash reports. TikTok's own diagnostic tools go quiet too.	Evita que TikTok envíe informes de uso, seguimiento publicitario e informes de fallos. Las herramientas de diagnóstico de TikTok también se quedan en silencio.
 Stops TikTok from slowing your screen to match each video's frame rate. On a 90 or 120 Hz phone, that request makes the whole app, scrolling too, run slower.	Evita que TikTok ralentice tu pantalla para igualar la tasa de fotogramas de cada video. En un teléfono de 90 o 120 Hz, esa petición hace que toda la app, el desplazamiento incluido, vaya más lenta.
+Keep the screen's brightness in the camera	Mantener el brillo de la pantalla en la cámara
+Stops TikTok from turning your screen brighter while you film, edit or post a video.	Evita que TikTok suba el brillo de tu pantalla mientras grabas, editas o publicas un video.
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.	Evita que TikTok lea los sensores de movimiento y de brújula de tu teléfono. Las apps pueden usarlos para reconocer tu teléfono.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.	Impide que TikTok lea lo que copiaste. Copiar un enlace desde TikTok sigue funcionando.
 Stop a long press on Like from opening TikTok's repost action.	Impedir que mantener pulsado Me gusta abra la acción de republicar de TikTok.
@@ -1968,6 +1970,8 @@ Paused	En pausa
 Budgets and reminders	Límites y recordatorios
 Don't auto translate these languages	No traducir automáticamente estos idiomas
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Separa los códigos de idioma con comas, como es, de. Cuando TikTok traduce por ti, las descripciones y los comentarios en estos idiomas se quedan como se escribieron. Ver traducción sigue funcionando cuando lo tocas. La lista propia de TikTok de idiomas que no se traducen se queda como está.
+Don't auto translate videos	No traducir automáticamente los videos
+Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.	Las descripciones, los subtítulos y el texto de los videos se quedan en el idioma en que se hicieron, aunque Traducir siempre de TikTok esté activado. Ver traducción sigue funcionando cuando lo tocas. Los comentarios tienen su propio interruptor arriba.
 Performance	Rendimiento
 Skip the splash ad	Omitir el anuncio de inicio
 Stop the full-screen ad TikTok can show while it starts up.	Evita el anuncio a pantalla completa que TikTok puede mostrar al abrirse.
@@ -2189,6 +2193,8 @@ Hide profile views	Ocultar las visualizaciones del perfil
 Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Oculta el botón de visualizaciones del perfil de la parte superior de tu perfil. Tu ajuste del historial de visualizaciones del perfil no cambia.
 Hide Add friends	Ocultar Añadir amigos
 Hide the Add friends button at the top of your profile. The menu button stays where it is.	Oculta el botón Añadir amigos de la parte superior de tu perfil. El botón de menú se queda donde está.
+Hide Balance in the profile menu	Ocultar Saldo en el menú del perfil
+Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Oculta Saldo del menú que abre el botón de arriba a la derecha de tu perfil. Tus monedas y regalos se quedan como están.
 See-through status bar	Barra de estado transparente
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Deja que el vídeo llegue en el feed principal hasta el borde superior de la pantalla, con el reloj y los iconos de estado encima. Las pestañas de arriba se quedan donde están.
 Floating bottom bar	Barra inferior flotante
@@ -2212,3 +2218,20 @@ New device identity	Nueva identidad del dispositivo
 Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Borra los datos de TikTok y le da un nuevo ID de Android y un nuevo ID de publicidad en el próximo inicio, para que vea un teléfono que no conoce. Se cerrará tu sesión y perderás tus borradores. Los ajustes de Hushfeed se mantienen.
 TikTok starts as a new phone after the restart. Tap again to cancel.	TikTok se inicia como un teléfono nuevo después del reinicio. Toca de nuevo para cancelar.
 Couldn't set up a new device identity. Try again.	No se pudo configurar una nueva identidad del dispositivo. Inténtalo de nuevo.
+Saves at once	Guardados a la vez
+How many saves run at the same time. The others wait in line and start as each one ends.	Cuántos guardados se hacen a la vez. Los demás esperan en la cola y empiezan a medida que termina cada uno.
+Saves right now	Guardados en curso
+Nothing is saving right now	Ahora no se está guardando nada
+Earlier this session	Antes en esta sesión
+Stopped by an unexpected error	Se detuvo por un error inesperado
+Cover	Portada
+One at a time	De uno en uno
+Two at once	Dos a la vez
+Three at once	Tres a la vez
+LIVE recording quality	Calidad de grabación de LIVE
+Same as the room	Igual que la sala
+Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower.	«Igual que la sala» graba la calidad que estás viendo. «La más alta» graba el mejor stream de la sala, aunque lo veas en una calidad más baja.
+Long-press Profile for Watch history	Mantener pulsado Perfil para abrir el historial de visualización
+Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.	Mantén pulsada la pestaña Perfil para abrir tu historial de visualización. Tocar Perfil funciona como antes. Si al mantener pulsado Perfil cambias de cuenta, esta opción ocupa ese gesto, y el nombre en la parte superior de tu perfil sigue cambiando de cuenta.
+Open the comments at full height	Abrir los comentarios a toda la altura
+Opens the comment sheet at the full height of the screen instead of part way up. Drag it down to close it, as before.	Abre los comentarios a toda la altura de la pantalla en lugar de solo una parte. Para cerrarlos, deslízalos hacia abajo como siempre.

@@ -160,7 +160,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting DOWNLOAD_WITHOUT_SOUND =
             new BooleanSetting("download_without_sound", FALSE);
     public static final BooleanSetting DOWNLOAD_PROGRESS = new BooleanSetting("download_progress", false);
-    public static final BooleanSetting DOWNLOAD_DETAILS = new BooleanSetting("download_details", FALSE);
+    /** How many of Hushfeed's saves run at once, "1" to "3"; the rest wait in line (#27). */
+    public static final StringSetting DOWNLOAD_SAVES_AT_ONCE = new StringSetting("download_saves_at_once", "3");
+    public static final BooleanSetting DOWNLOAD_DETAILS =new BooleanSetting("download_details", FALSE);
     /** The details file as JSON rather than plain text. */
     public static final BooleanSetting DOWNLOAD_DETAILS_JSON = new BooleanSetting(
             "download_details_json", FALSE, false, Setting.parent(DOWNLOAD_DETAILS));
@@ -277,6 +279,12 @@ public class Settings extends BaseSettings {
             new BooleanSetting("fill_video_to_screen", FALSE);
     public static final BooleanSetting UNCAP_REFRESH_RATE =
             new BooleanSetting("uncap_refresh_rate", FALSE);
+    /**
+     * Skips TikTok's brightness boost in the camera, editor and post screens (issue #200). The
+     * patch is in the default selection, so the switch starts off.
+     */
+    public static final BooleanSetting KEEP_CAMERA_BRIGHTNESS =
+            new BooleanSetting("keep_camera_brightness", FALSE);
     // The four Performance patches, in the default selection because each hook asks one of these
     // first. Off until the reader turns one on, and a paused build answers off. The splash, update
     // and traffic hooks act on TikTok's startup tasks, so they need a restart. The animated image
@@ -473,6 +481,11 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting KEEP_FOR_YOU_ON_PULL_DOWN = new BooleanSetting("keep_for_you_on_pull_down", FALSE);
     /** A long press on the Home tab opens Hushfeed's settings (#45). TikTok gives that press nothing of its own. */
     public static final BooleanSetting HOME_TAB_OPENS_SETTINGS = new BooleanSetting("home_tab_opens_settings", TRUE);
+    /**
+     * A long press on the Profile tab opens TikTok's Watch history (#199). Off by default: on some
+     * accounts that press is TikTok's account switcher, which this takes over while it's on.
+     */
+    public static final BooleanSetting PROFILE_TAB_OPENS_WATCH_HISTORY = new BooleanSetting("profile_tab_opens_watch_history", FALSE);
     /** The tab TikTok opens on from its icon: tiktok (its own pick), for_you, following, friends, inbox or profile. */
     public static final StringSetting START_PAGE = new StringSetting("start_page", "tiktok");
     /** TikTok's previous, pause and next buttons on the feed, shown without a screen reader. Off by default. */
@@ -484,6 +497,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting RECEIVED_DM_TRANSLATION_PREVIEW = new BooleanSetting("received_dm_translation_preview", FALSE);
     /** Languages TikTok's automatic translation leaves alone, added to its own Don't translate list (#121). */
     public static final StringSetting DONT_AUTO_TRANSLATE_LANGUAGES = new StringSetting("dont_auto_translate_languages", "");
+    /** Videos left in their own language while TikTok's Always translate is on (#194). TikTok builds the state at launch. */
+    public static final BooleanSetting NO_VIDEO_AUTO_TRANSLATE = new BooleanSetting("no_video_auto_translate", FALSE, true);
     /** The one language TikTok translates into instead of its own choice, empty for TikTok's (TranslateInto). */
     public static final StringSetting TRANSLATE_INTO = new StringSetting("translate_into", "");
     /**
@@ -614,6 +629,11 @@ public class Settings extends BaseSettings {
      * chip's once-a-second check, so no restart.
      */
     public static final BooleanSetting RECORD_LIVE = new BooleanSetting("record_live", FALSE);
+    /**
+     * Which of a room's streams a LIVE recording takes (#203): "room" for the quality being
+     * watched, "highest" or "lowest". Read as each recording starts, so no restart.
+     */
+    public static final StringSetting LIVE_RECORD_QUALITY = new StringSetting("live_record_quality", "room");
     /**
      * Plays the audio TikTok mutes on a post whose sound was pulled; the Keep pulled sounds
      * patch. Read as each video starts, so no restart.
@@ -1088,6 +1108,8 @@ public class Settings extends BaseSettings {
     /** The profile views button and Add friends at the top of your Profile tab (#158). Read on each layout. */
     public static final BooleanSetting HIDE_PROFILE_VIEWS_BUTTON = new BooleanSetting("hide_profile_views_button", FALSE);
     public static final BooleanSetting HIDE_PROFILE_ADD_FRIENDS = new BooleanSetting("hide_profile_add_friends", FALSE);
+    /** The Balance cell in your profile's menu (#194). Read each time the menu is built. */
+    public static final BooleanSetting HIDE_PROFILE_MENU_BALANCE = new BooleanSetting("hide_profile_menu_balance", FALSE);
     public static final BooleanSetting HIDE_VISUAL_SEARCH = new BooleanSetting("hide_visual_search", FALSE);
     public static final BooleanSetting HIDE_FULLSCREEN_BUTTON = new BooleanSetting("hide_fullscreen_button", FALSE, true);
     // Read each time TikTok asks, so it doesn't need a restart.
@@ -1160,6 +1182,7 @@ public class Settings extends BaseSettings {
             new BooleanSetting("larger_comment_like_target", FALSE, true);
     public static final BooleanSetting HIDE_COMMENT_EGGS = new BooleanSetting("hide_comment_eggs", FALSE);
     public static final BooleanSetting COMMENT_SORT_CONTROLS = new BooleanSetting("comment_sort_controls", FALSE);
+    public static final BooleanSetting COMMENTS_FULL_HEIGHT = new BooleanSetting("comments_full_height", FALSE);
     // Share sheet tools.
     public static final BooleanSetting HIDE_SHARE_CONTACTS = new BooleanSetting("hide_share_contacts", FALSE);
     public static final BooleanSetting SHARE_TAP_COPIES_LINK = new BooleanSetting("share_tap_copies_link", FALSE);

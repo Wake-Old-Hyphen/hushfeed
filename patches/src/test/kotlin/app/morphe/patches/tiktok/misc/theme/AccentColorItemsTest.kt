@@ -110,13 +110,16 @@ class AccentColorItemsTest {
     @Test
     fun `the tokens are read for exactly the declared builds and any other is refused`() {
         assertEquals(declaredVersions(), ACCENT_TOKENS.keys)
+        assertEquals(declaredVersions(), ACCENT_BADGES.keys)
         assertEquals(14, accentTokens("47.4.3").size)
         for (version in listOf("47.1.4", "47.1.3", "47.0.3", "46.9.3", null)) {
-            try {
-                accentTokens(version)
-                fail("accepted $version")
-            } catch (refusal: PatchException) {
-                assertTrue(refusal.message, refusal.message!!.contains("nothing was changed"))
+            for (read in listOf(::accentTokens, ::accentBadges)) {
+                try {
+                    read(version)
+                    fail("accepted $version")
+                } catch (refusal: PatchException) {
+                    assertTrue(refusal.message, refusal.message!!.contains("nothing was changed"))
+                }
             }
         }
         assertTrue(unreadAccentRefusal("47.1.4").endsWith("The palette is known for TikTok 47.4.3."))
@@ -124,6 +127,47 @@ class AccentColorItemsTest {
         assertTrue(renamedPathsRefusal(3, "Accent color").startsWith("Accent color: this TikTok APK"))
         assertTrue(renamedPathsRefusal(3).startsWith("AMOLED dark theme: this TikTok APK"))
     }
+
+    /** #192: a badge's fill is read through its color name, and only a red shape fill is taken. */
+    @Test
+    fun `a badge's red fill is read by name or literal and takes the accent`() {
+        val colors = colorLiterals(
+            parse("""<resources><color name="cx">#fffe2c55</color><color name="d0">#ff00aa5b</color><color name="e1">@color/cx</color></resources>"""),
+        )
+        assertEquals(mapOf("cx" to "#fffe2c55", "d0" to "#ff00aa5b"), colors)
+
+        val pill = parse(shape("@color/cx"))
+        assertEquals("#fffe2c55", badgeFill(pill, colors))
+        assertEquals("#ff2d7ff9", accentRecolor(false, "#2D7FF9", mutableSetOf())("#fffe2c55"))
+        setBadgeFill(pill, "#ff2d7ff9")
+        assertEquals("#ff2d7ff9", fillOf(pill))
+
+        assertEquals("#fe2c55", badgeFill(parse(shape("#fe2c55")), colors))
+        assertEquals("a green fill isn't a badge to recolor", null, badgeFill(parse(shape("@color/d0")), colors))
+        assertEquals("a color with no literal isn't read", null, badgeFill(parse(shape("@color/e1")), colors))
+        assertEquals("an unknown color isn't read", null, badgeFill(parse(shape("@color/zz")), colors))
+        assertEquals(
+            "a picture isn't a shape",
+            null,
+            badgeFill(parse("""<bitmap xmlns:android="http://schemas.android.com/apk/res/android" android:src="@drawable/a" />"""), colors),
+        )
+        assertTrue(missingAccentBadgeRefusal("bvk").endsWith("Nothing was changed."))
+    }
+
+    @Test
+    fun `with the wallpaper choice a badge points at the wallpaper red`() {
+        val literals = mutableSetOf<String>()
+        val pill = parse(shape("@color/cx"))
+        setBadgeFill(pill, accentRecolor(true, TIKTOK_ACCENT, literals)("#fffe2c55")!!)
+        assertEquals("@color/hushfeed_accent_fe2c55", fillOf(pill))
+        assertEquals(setOf("#fffe2c55"), literals)
+    }
+
+    private fun shape(fill: String) =
+        """<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">""" +
+            """<corners android:radius="100dp" /><solid android:color="$fill" /></shape>"""
+
+    private fun fillOf(drawable: Document) = (drawable.getElementsByTagName("solid").item(0) as Element).getAttribute("android:color")
 
     private fun rgbOf(literal: String) = literal.trim().removePrefix("#").takeLast(6).toInt(16)
 

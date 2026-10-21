@@ -168,8 +168,8 @@ val commentTranslationPatch = bytecodePatch(
     description = "Translates comments as they load, using TikTok's own translator, so you " +
         "don't have to tap Translate on each one. Starts off. Turn it on in Hushfeed settings > " +
         "Comments, where more rows list languages TikTok's automatic translation should leave alone, " +
-        "pick the language translations come out in, and add TikTok's translate button beside the " +
-        "comment count.",
+        "keep videos in the language they were made in, pick the language translations come out in, " +
+        "and add TikTok's translate button beside the comment count.",
     default = true,
 ) {
     category("Comments")
@@ -364,6 +364,23 @@ val commentTranslationPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableFeedTranslations()V",
+            )
+        }
+
+        // Videos kept in their own language while TikTok's Always translate is on (#194). Held to
+        // declared builds by VideoAutoTranslateAnchorsTest the same way.
+        val videoAutoTranslate = try {
+            hookVideoAutoTranslate()
+            true
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[Translate comments] Left out Don't auto translate videos on ${packageMetadata.versionName}: ${problem.message}")
+            false
+        }
+        if (videoAutoTranslate) {
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableVideoAutoTranslate()V",
             )
         }
 

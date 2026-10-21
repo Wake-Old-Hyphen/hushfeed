@@ -777,6 +777,18 @@ public class Utils {
         fragment.show(activity.getFragmentManager(), null);
     }
 
+    /** Hears each toast as it's asked for, on the thread that asks, before it shows. */
+    public interface ToastObserver {
+        void toasted(String message);
+    }
+
+    private static volatile ToastObserver toastObserver;
+
+    /** One observer at a time, which replaces the last; null stops it. */
+    public static void setToastObserver(ToastObserver observer) {
+        toastObserver = observer;
+    }
+
     /**
      * Safe to call from any thread.
      */
@@ -799,6 +811,14 @@ public class Utils {
      */
     public static void showToast(String messageToToast, int toastDuration) {
         Objects.requireNonNull(messageToToast);
+        ToastObserver observer = toastObserver;
+        if (observer != null) {
+            try {
+                observer.toasted(messageToToast);
+            } catch (RuntimeException failure) {
+                Logger.printException(() -> "Toast observer failed", failure);
+            }
+        }
         runOnMainThreadNowOrLater(() -> {
             Context currentContext = context;
 

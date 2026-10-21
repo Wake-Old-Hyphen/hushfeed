@@ -387,6 +387,8 @@ public final class SavedVideoArchive {
     }
 
     static void offer(MediaFileWriter.Saved saved, Runnable saveAgain, Runnable release) {
+        // The save ends here with nothing written; the offer speaks later, from the main thread.
+        MediaJobScheduler.said(L10n.t("This video is already saved"));
         Utils.runOnMainThread(() -> {
             Activity activity = Utils.getVisibleActivity();
             if (activity == null || activity.isFinishing() || activity.isDestroyed()) {

@@ -55,7 +55,8 @@ private const val PATCH_NAME = "Hide profile shortcuts"
 val hideProfileShortcutsPatch = bytecodePatch(
     name = "Hide profile shortcuts",
     description = "Hides the shortcuts you pick from the row under a profile's bio, like " +
-        "TikTok Studio or Your orders, and can hide the Thoughts bubble. Starts off. Turn it on " +
+        "TikTok Studio or Your orders, and can hide the Thoughts bubble and Balance in your " +
+        "profile's menu. Starts off. Turn it on " +
         "in Hushfeed settings > App, then restart TikTok.",
     default = true,
 ) {
@@ -82,6 +83,14 @@ val hideProfileShortcutsPatch = bytecodePatch(
             println("[$PATCH_NAME] Left out Hide thoughts on profiles on ${packageMetadata.versionName}: ${problem.message}")
             null
         }
+        // Balance in your profile's menu (#194), held the same way by ProfileMenuCellsAnchorsTest.
+        val menuCells = try {
+            ProfileMenuCellFingerprint.method.also { it.requireLocals(PATCH_NAME, 1) }
+        } catch (problem: Exception) {
+            if (packageMetadata.versionName in declaredVersions()) throw problem
+            println("[$PATCH_NAME] Left out Hide Balance in the profile menu on ${packageMetadata.versionName}: ${problem.message}")
+            null
+        }
         OwnProfileConversionFingerprint.method.filterProfileUserParameter(0)
         ProfileConversionFingerprint.method.filterProfileUserParameter(1)
 
@@ -92,6 +101,13 @@ val hideProfileShortcutsPatch = bytecodePatch(
             SettingsStatusLoadFingerprint.method.addInstruction(
                 0,
                 "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileThoughts()V",
+            )
+        }
+        if (menuCells != null) {
+            menuCells.hideProfileMenuCells(PATCH_NAME)
+            SettingsStatusLoadFingerprint.method.addInstruction(
+                0,
+                "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableProfileMenuCells()V",
             )
         }
     }

@@ -111,6 +111,7 @@ share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.4.3:a5x|app|method-string:share_p
 blockauthor/FeedVisibility.java|HOME_TAB_RESOURCE_NAMES|47.4.3:onh|app|com.ss.android.ugc.aweme.homepage.ui.view.tab.bottom.hometab.HomeTabProtocol|-
 blockauthor/FeedVisibility.java|FRIENDS_TAB_RESOURCE_NAMES|47.4.3:ong|app|com.ss.android.ugc.aweme.tab.FriendsTabProtocol|at:2
 blockauthor/FeedVisibility.java|INBOX_TAB_RESOURCE_NAMES|47.4.3:oni|app|com.ss.android.ugc.aweme.notification.view.NotificationTabProtocol|-
+blockauthor/FeedVisibility.java|PROFILE_TAB_RESOURCE_NAMES|47.4.3:onj|app|com.ss.android.ugc.profile.platform.framework.aweme.profile.ui.profiletab.ProfileTabProtocol|-
 blockauthor/FeedVisibility.java|COMMENT_SHEET_RESOURCE_NAMES|47.4.3:pwm|app|layout:com.ss.android.ugc.aweme.commentv2.commentpage.commonvideo.DefaultCommentPageContainerFragment|tag:LinearLayout#1
 blockauthor/FeedVisibility.java|COMMENT_TITLE_RESOURCE_NAMES|47.4.3:wla|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxTextView#1
 blockauthor/FeedVisibility.java|STORY_PAGER_RESOURCE_NAME|vp_story_collection|app|com.by.andInflater.story_layout_immersive_play_area|at:2

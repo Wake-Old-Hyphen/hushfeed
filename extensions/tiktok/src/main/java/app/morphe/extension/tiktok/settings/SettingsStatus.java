@@ -119,6 +119,7 @@ public class SettingsStatus {
     public static boolean inboxFilterEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;
+    public static boolean cameraBrightnessEnabled = false;
     public static boolean launcherShortcutsEnabled = false;
     public static boolean firstLaunchSetupEnabled = false;
     public static boolean duetStitchEnabled = false;
@@ -132,6 +133,7 @@ public class SettingsStatus {
     public static boolean commentToolsEnabled = false;
     public static boolean hideCommentEggsEnabled = false;
     public static boolean commentSortControlsEnabled = false;
+    public static boolean commentsFullHeightEnabled = false;
     public static boolean videoOverlaysEnabled = false;
     public static boolean feedTextSizeEnabled = false;
     public static boolean shareSheetEnabled = false;
@@ -271,6 +273,13 @@ public class SettingsStatus {
 
     public static void enableFeedTranslations() {
         feedTranslationsEnabled = true;
+    }
+
+    /** Translate comments hooked the read of TikTok's Always translate that every video decision asks. */
+    public static boolean videoAutoTranslateEnabled = false;
+
+    public static void enableVideoAutoTranslate() {
+        videoAutoTranslateEnabled = true;
     }
 
     public static void enableHideCommentQuickReactions() {
@@ -482,6 +491,10 @@ public class SettingsStatus {
         refreshRateEnabled = true;
     }
 
+    public static void enableCameraBrightness() {
+        cameraBrightnessEnabled = true;
+    }
+
     public static void enableLauncherShortcuts() {
         launcherShortcutsEnabled = true;
     }
@@ -520,6 +533,10 @@ public class SettingsStatus {
 
     public static void enableCommentSortControls() {
         commentSortControlsEnabled = true;
+    }
+
+    public static void enableCommentsFullHeight() {
+        commentsFullHeightEnabled = true;
     }
 
     public static void enableSeenVideoFilter() {
@@ -622,6 +639,13 @@ public class SettingsStatus {
 
     public static void enableProfileThoughts() {
         profileThoughtsEnabled = true;
+    }
+
+    /** Hide profile shortcuts found the question your profile's menu asks about each cell, and hooked it. */
+    public static boolean profileMenuCellsEnabled = false;
+
+    public static void enableProfileMenuCells() {
+        profileMenuCellsEnabled = true;
     }
 
     /** Skip the splash ad put its switch in front of the splash tasks and gates. */

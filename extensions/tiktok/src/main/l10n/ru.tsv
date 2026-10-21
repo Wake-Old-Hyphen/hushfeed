@@ -1153,6 +1153,8 @@ Still saving the last one	Последнее всё ещё сохраняетс�
 The last one is still waiting to start	Последнее всё ещё ожидает начала
 Stops TikTok from sending usage reports, ad tracking and crash reports. TikTok's own diagnostic tools go quiet too.	TikTok перестаёт отправлять отчёты об использовании, данные для рекламы и отчёты о сбоях. Собственные средства диагностики TikTok тоже затихают.
 Stops TikTok from slowing your screen to match each video's frame rate. On a 90 or 120 Hz phone, that request makes the whole app, scrolling too, run slower.	Не даёт TikTok замедлять экран до частоты кадров каждого видео. На телефоне с 90 или 120 Гц из-за этого весь экран приложения, включая прокрутку, работает медленнее.
+Keep the screen's brightness in the camera	Сохранять яркость экрана в камере
+Stops TikTok from turning your screen brighter while you film, edit or post a video.	Не даёт TikTok делать экран ярче, пока вы снимаете, редактируете или публикуете видео.
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.	TikTok перестаёт считывать датчики движения и компас вашего телефона. По ним приложения могут узнавать телефон.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.	Не позволять TikTok читать то, что вы скопировали. Копирование ссылки из TikTok по-прежнему работает.
 Stop a long press on Like from opening TikTok's repost action.	Не позволять долгому нажатию на «Нравится» открывать репост TikTok.
@@ -2136,6 +2138,8 @@ Paused	На паузе
 Budgets and reminders	Лимиты и напоминания
 Don't auto translate these languages	Не переводить эти языки автоматически
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Разделяйте коды языков запятыми, например es, de. Когда TikTok переводит за вас, описания и комментарии на этих языках остаются как написаны. «Посмотреть перевод» по-прежнему работает, если нажать. Собственный список TikTok «Не переводить» остаётся как есть.
+Don't auto translate videos	Не переводить видео автоматически
+Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.	Описания, субтитры и текст в видео остаются на языке, на котором их сделали, даже когда в TikTok включено «Всегда переводить». «Посмотреть перевод» по-прежнему работает, если нажать. У комментариев есть свой переключатель выше.
 Performance	Производительность
 Skip the splash ad	Пропускать рекламу при запуске
 Stop the full-screen ad TikTok can show while it starts up.	Не даёт TikTok показывать полноэкранную рекламу при запуске.
@@ -2369,6 +2373,8 @@ Hide profile views	Скрывать просмотры профиля
 Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Скрывать кнопку просмотров профиля вверху вашего профиля. Настройка истории просмотров профиля не меняется.
 Hide Add friends	Скрывать «Добавить друзей»
 Hide the Add friends button at the top of your profile. The menu button stays where it is.	Скрывать кнопку «Добавить друзей» вверху вашего профиля. Кнопка меню остаётся на месте.
+Hide Balance in the profile menu	Скрывать «Баланс» в меню профиля
+Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Скрывать «Баланс» в меню, которое открывает кнопка справа вверху вашего профиля. Ваши монеты и подарки остаются как есть.
 See-through status bar	Прозрачная строка состояния
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	В основной ленте видео доходит до верхнего края экрана, а часы и значки состояния показываются поверх него. Вкладки вверху остаются на месте.
 Floating bottom bar	Плавающая нижняя панель
@@ -2392,3 +2398,20 @@ New device identity	Новые идентификаторы устройства
 Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	Стирает данные TikTok и при следующем запуске выдаёт ему новый Android ID и рекламный ID, чтобы он видел незнакомый телефон. Вы выйдете из аккаунта, а черновики пропадут. Настройки Hushfeed сохранятся.
 TikTok starts as a new phone after the restart. Tap again to cancel.	После перезапуска TikTok запустится как на новом телефоне. Нажмите ещё раз, чтобы отменить.
 Couldn't set up a new device identity. Try again.	Не удалось задать новые идентификаторы устройства. Попробуйте ещё раз.
+Saves at once	Сохранений одновременно
+How many saves run at the same time. The others wait in line and start as each one ends.	Сколько сохранений идёт одновременно. Остальные ждут в очереди и начинаются по мере завершения каждого.
+Saves right now	Текущие сохранения
+Nothing is saving right now	Сейчас ничего не сохраняется
+Earlier this session	Ранее в этом сеансе
+Stopped by an unexpected error	Остановлено из-за непредвиденной ошибки
+Cover	Обложка
+One at a time	По одному
+Two at once	Два одновременно
+Three at once	Три одновременно
+LIVE recording quality	Качество записи LIVE
+Same as the room	Как в трансляции
+Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower.	«Как в трансляции» записывает качество, которое вы смотрите. «Самое высокое» записывает лучший поток трансляции, даже если вы смотрите её в более низком качестве.
+Long-press Profile for Watch history	Долгое нажатие на Профиль открывает историю просмотров
+Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.	Нажмите и удерживайте вкладку Профиль, чтобы открыть историю просмотров. Обычное нажатие на Профиль работает как раньше. Если удержание Профиля у вас переключает аккаунты, эта настройка занимает это нажатие, а имя вверху профиля по-прежнему переключает аккаунты.
+Open the comments at full height	Открывать комментарии на всю высоту
+Opens the comment sheet at the full height of the screen instead of part way up. Drag it down to close it, as before.	Открывает комментарии на всю высоту экрана, а не на часть. Чтобы закрыть, потяните их вниз, как раньше.

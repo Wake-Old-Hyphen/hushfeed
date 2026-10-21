@@ -40,6 +40,8 @@ final class SaveNotice {
      * carry it.
      */
     static void saved(String message, MediaFileWriter.Saved saved, Runnable retry) {
+        // The banner says it without a toast, so the Downloads page hears it from here.
+        MediaJobScheduler.said(message);
         Uri uri = saved == null ? null : saved.uri;
         if (uri == null && retry == null) {
             Utils.showToastShort(message);

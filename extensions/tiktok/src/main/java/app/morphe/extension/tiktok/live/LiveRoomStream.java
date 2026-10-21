@@ -35,11 +35,25 @@ public final class LiveRoomStream {
     /** Best first. "ao" is audio only and is never chosen. */
     private static final String[] QUALITY_ORDER = {"origin", "uhd", "hd", "sd", "ld", "md"};
 
+    /** A {@code preferred} that asks for the smallest stream the room has rather than one quality. */
+    static final String LOWEST = "lowest";
+
     private static int rank(String quality) {
         for (int i = 0; i < QUALITY_ORDER.length; i++) {
             if (QUALITY_ORDER[i].equals(quality)) return i;
         }
         return QUALITY_ORDER.length;
+    }
+
+    /**
+     * The {@code preferred} a recording passes for the LIVE recording quality choice (#203):
+     * "highest" asks for the best there is, "lowest" for the smallest, and anything else for the
+     * quality being watched, {@code watching}, which can be null.
+     */
+    public static String forRecording(String choice, String watching) {
+        if ("highest".equals(choice)) return null;
+        if (LOWEST.equals(choice)) return LOWEST;
+        return watching;
     }
 
     private static boolean https(String url) {
@@ -54,8 +68,8 @@ public final class LiveRoomStream {
 
     /**
      * The address and quality to record. {@code preferred} is the quality the viewer is watching
-     * when known (TikTok's key such as "hd"); a stream without it falls to the next one down and
-     * then the best there is. Any argument can be null.
+     * when known (TikTok's key such as "hd"); a stream without it falls to the best there is.
+     * {@link #LOWEST} takes the smallest one instead. Any argument can be null.
      */
     public static Pick choose(String streamDataJson, Map<String, String> flvMap, Map<String, String> hlsMap,
                               String hlsUrl, String preferred, String creator, String roomId) {
@@ -114,12 +128,21 @@ public final class LiveRoomStream {
     }
 
     private static boolean better(String candidate, String current, String preferred) {
+        if (LOWEST.equals(preferred)) {
+            // A key not in the order counts as the best, so a known small stream wins over it.
+            return lowness(candidate) > lowness(current);
+        }
         if (preferred != null) {
             boolean candidateIsIt = preferred.equals(candidate);
             boolean currentIsIt = preferred.equals(current);
             if (candidateIsIt != currentIsIt) return candidateIsIt;
         }
         return rank(candidate) < rank(current);
+    }
+
+    private static int lowness(String quality) {
+        int rank = rank(quality);
+        return rank == QUALITY_ORDER.length ? -1 : rank;
     }
 
     /** Reads the room off TikTok's room object. Never throws. */

@@ -1114,6 +1114,8 @@ Still saving the last one	Sonuncu hələ saxlanılır
 The last one is still waiting to start	Sonuncunun başlaması hələ gözlənilir
 Stops TikTok from sending usage reports, ad tracking and crash reports. TikTok's own diagnostic tools go quiet too.	TikTok-un istifadə hesabatlarını, reklam izləməsini və çökmə hesabatlarını göndərməsinin qarşısını alır. TikTok-un öz diaqnostika alətləri də susur.
 Stops TikTok from slowing your screen to match each video's frame rate. On a 90 or 120 Hz phone, that request makes the whole app, scrolling too, run slower.	TikTok-un ekranınızı hər videonun kadr sürətinə uyğun yavaşlatmasının qarşısını alır. 90 və ya 120 Hz telefonda bu tələb bütün tətbiqi, o cümlədən sürüşdürməni yavaşladır.
+Keep the screen's brightness in the camera	Kamerada ekranın parlaqlığını saxlayın
+Stops TikTok from turning your screen brighter while you film, edit or post a video.	Video çəkərkən, redaktə edərkən və ya paylaşarkən TikTok-un ekranınızı daha parlaq etməsinin qarşısını alır.
 Stops TikTok from reading your phone's motion and compass sensors. Apps can use them to recognize your phone.	TikTok-un telefonunuzun hərəkət və kompas sensorlarını oxumasının qarşısını alır. Tətbiqlər onlarla telefonunuzu tanıya bilər.
 Stop TikTok reading what you copied. Copying a link from TikTok still works.	TikTok-un kopyaladığınızı oxumasını dayandırın. TikTok-dan keçid kopyalamaq yenə də işləyir.
 Stop a long press on Like from opening TikTok's repost action.	Bəyənməyə uzun basmanın TikTok-un yenidən paylaşma əməliyyatını açmasının qarşısını alın.
@@ -1968,6 +1970,8 @@ Paused	Dayandırılıb
 Budgets and reminders	Limitlər və xatırlatmalar
 Don't auto translate these languages	Bu dilləri avtomatik tərcümə etməyin
 Separate language codes with commas, like es, de. When TikTok translates for you, captions and comments in these languages stay as they were written. See translation still works when you tap it. TikTok's own Don't translate list stays the way it is.	Dil kodlarını vergüllə ayırın, məsələn es, de. TikTok sizin yerinizə tərcümə edəndə bu dillərdəki başlıqlar və şərhlər yazıldığı kimi qalır. Tərcüməyə bax düyməsinə toxunanda isə yenə işləyir. TikTok-un öz Tərcümə etmə siyahısı olduğu kimi qalır.
+Don't auto translate videos	Videoları avtomatik tərcümə etməyin
+Descriptions, captions and text on videos stay in the language they were made in, even with TikTok's Always translate on. See translation still works when you tap it. Comments have their own switch above.	Videolardakı təsvirlər, başlıqlar və mətn çəkildikləri dildə qalır, TikTok-un Həmişə tərcümə et seçimi açıq olsa belə. Tərcüməyə bax düyməsinə toxunanda isə yenə işləyir. Şərhlərin yuxarıda öz açarı var.
 Performance	Performans
 Skip the splash ad	Açılış reklamını ötür
 Stop the full-screen ad TikTok can show while it starts up.	TikTok-un açılarkən göstərə biləcəyi tam ekran reklamı dayandırır.
@@ -2189,6 +2193,8 @@ Hide profile views	Profil baxışlarını gizlədin
 Hide the profile views button at the top of your profile. Your profile view history setting doesn't change.	Profilinizin yuxarısındakı profil baxışları düyməsini gizlədin. Profil baxış tarixçəsi ayarınız dəyişmir.
 Hide Add friends	Add friends düyməsini gizlədin
 Hide the Add friends button at the top of your profile. The menu button stays where it is.	Profilinizin yuxarısındakı Add friends düyməsini gizlədin. Menyu düyməsi yerində qalır.
+Hide Balance in the profile menu	Profil menyusunda Balansı gizlədin
+Hide Balance from the menu your profile's top right button opens. Your coins and gifts stay as they are.	Profilinizin sağ yuxarıdakı düyməsinin açdığı menyudan Balansı gizlədin. Sikkələriniz və hədiyyələriniz olduğu kimi qalır.
 See-through status bar	Şəffaf status paneli
 Let the video reach the top of the screen on the main feed, with the clock and status icons over it. The tabs at the top stay where they are.	Videonun əsas lentdə ekranın yuxarısına qədər uzanmasına icazə verin, saat və status ikonları onun üzərində qalsın. Yuxarıdakı tablar yerində qalır.
 Floating bottom bar	Üzən alt panel
@@ -2212,3 +2218,20 @@ New device identity	Yeni cihaz kimliyi
 Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.	TikTok-un məlumatlarını silir və növbəti açılışda ona yeni Android ID və reklam ID-si verir ki, tanımadığı telefon görsün. Hesabdan çıxış ediləcək və qaralamalarınız silinəcək. Hushfeed ayarları qalır.
 TikTok starts as a new phone after the restart. Tap again to cancel.	TikTok yenidən başladıqdan sonra yeni telefon kimi açılır. Ləğv etmək üçün yenidən toxunun.
 Couldn't set up a new device identity. Try again.	Yeni cihaz kimliyi qurmaq alınmadı. Yenidən cəhd edin.
+Saves at once	Eyni anda saxlamalar
+How many saves run at the same time. The others wait in line and start as each one ends.	Eyni anda neçə saxlamanın işlədiyi. Digərləri növbədə gözləyir və hər biri bitdikcə başlayır.
+Saves right now	Hazırkı saxlamalar
+Nothing is saving right now	Hazırda heç nə saxlanılmır
+Earlier this session	Bu seansda əvvəl
+Stopped by an unexpected error	Gözlənilməz xəta ilə dayandı
+Cover	Örtük
+One at a time	Bir-bir
+Two at once	Eyni anda iki
+Three at once	Eyni anda üç
+LIVE recording quality	LIVE yazısının keyfiyyəti
+Same as the room	Otaqdakı kimi
+Same as the room records the quality you're watching. Highest records the best stream the room has, even while you watch it lower.	"Otaqdakı kimi" baxdığın keyfiyyəti yazır. "Ən yüksək" sən daha aşağı keyfiyyətdə baxsan da, otağın ən yaxşı yayımını yazır.
+Long-press Profile for Watch history	Baxış tarixçəsi üçün Profili uzun basın
+Press and hold the Profile tab to open your Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press, and the name at the top of your profile still switches accounts.	Baxış tarixçənizi açmaq üçün Profil nişanını basıb saxlayın. Profilə toxunmaq əvvəlki kimi işləyir. Profili basıb saxlamaq sizdə hesabı dəyişirsə, bu seçim həmin basmanı götürür, profilinizin yuxarısındakı ad isə yenə hesabı dəyişir.
+Open the comments at full height	Şərhləri tam hündürlükdə açın
+Opens the comment sheet at the full height of the screen instead of part way up. Drag it down to close it, as before.	Şərhləri ekranın bir hissəsi əvəzinə tam hündürlüyündə açır. Bağlamaq üçün əvvəlki kimi aşağı çəkin.

@@ -459,6 +459,8 @@ public final class StickerGallerySaver {
     static Runnable stickerSaveWork(Context context, StickerAsset asset) {
         return () -> {
             SaveResult result = saveSticker(context, asset);
+            // The toast goes up from the main thread, where the Downloads page can't tell whose it is.
+            MediaJobScheduler.said(result.message);
             MAIN_HANDLER.post(() -> {
                 Utils.showToastShort(result.message);
                 if (result.success) {

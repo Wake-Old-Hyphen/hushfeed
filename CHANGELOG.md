@@ -6,6 +6,22 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
+* **TikTok:** New `Hide Balance in the profile menu` switch under Hushfeed settings > App. It takes Balance out of the menu your profile's top right button opens. Your coins and gifts don't change. It's off by default (#194).
+
+* **TikTok:** New `Don't auto translate videos` switch under Hushfeed settings > Comments. With TikTok's Always translate on, it translates video descriptions and captions by itself in For You, Following and Search. Turn this on and videos stay in the language they were made in. Comments follow their own switch, and tapping See translation still works on any video. It's off by default and takes a TikTok restart to apply (#194).
+
+* **TikTok:** With `Accent color` on, the unread count on the Inbox tab and the small unread dots now take your color too. The LIVE bubble over the Inbox tab already did, so the bubble and the count under it didn't match. Warnings still stay red (#192).
+
+* **TikTok:** New `Open the comments at full height` switch under Hushfeed settings > Comments. TikTok opens the comment sheet part way up the screen, and with the switch on it opens all the way to the top. Dragging it down still closes it. It's off by default (#191).
+
+* **TikTok:** New `Keep the screen's brightness in the camera` switch under Hushfeed settings > App > System. TikTok turns your screen brighter when you open its camera, and keeps it that way through editing and posting. With the switch on, the screen stays at the brightness you set. It's off by default (#200).
+
+* **TikTok:** New `Long-press Profile for Watch history` switch under Feed tab navigation. Holding the Profile tab opens TikTok's Watch history right away instead of four menus deep, and a tap still opens your profile. It's off by default. On accounts where holding Profile switches accounts, the switch takes over that press while it's on (the name at the top of your profile still switches) and hands it back when you turn it off (#199).
+
+* **TikTok:** In Simplified Chinese, "Profile" in Hushfeed's settings (the bottom tab lists, `Open TikTok on` and the Profile section heading) read "company profile". It now says 个人主页.
+
+* **TikTok:** New `LIVE recording quality` choice under `Record LIVEs you watch`. `Same as the room` keeps recording what you're watching, like before. `Highest` records the best stream the room has even while you watch it lower, and `Lowest` keeps the file small (#203).
+
 * **TikTok:** Turning on `See-through bottom bar` while TikTok is open now keeps the video running behind the tabs as you swipe. Before, the first swipe brought the black strip under the video back, and it stayed until TikTok was restarted. Hushfeed measured the next video while it was still sliding into place and took it for a caption pushed under the tabs (#145).
 
 * **TikTok:** New `Hide the AI Cast button` switch under Hushfeed settings > App > Posting. It takes TikTok's AI Cast button off the camera's side toolbar, the same way TikTok already leaves it out of duets, stories and the DM camera. It starts off.
@@ -17,6 +33,10 @@ Every Hushfeed release, newest first.
 * **TikTok:** With `See-through bottom bar` on by itself, a portrait video now reaches the bottom of the screen behind the tabs. TikTok kept centering the picture in the taller space, so it stopped short and the bottom of the bar sat over a black band. The picture grows just enough to cover it, the same way `See-through status bar` fills the top (#145, #218).
 
 * **TikTok:** New `Where the time goes` choice under `Show the time beside the progress bar` in Playback. Pick `Above the bar` and, in the main feed, the caption and the buttons on the right (the music disc too) move up a little so the time fits over the right end of the bar. If something else still sits on that spot, the time stays beside the bar. Picking `Beside the bar` again or turning the time off puts everything back where TikTok had it, and so does pausing Hushfeed (#173).
+
+* **TikTok:** With `Accent color` on, the "You may like" words on the search page and the dot before each one now take your color too, whether it's a preset or the wallpaper's. TikTok sends those words with a red of their own instead of using the app's colors, so they stayed red before (#163).
+
+* **TikTok:** Two new rows under Hushfeed settings > Downloads. `Saves right now` lists the saves under way, oldest first, and says what each one is doing or how many saves it's waiting on. Its Cancel takes a save out of line, or stops a save of several files after the one it's on. Under them, "Earlier this session" keeps the last five saves that finished, with how each went: what it said when it was done (like "Saved 27 videos"), that it was cancelled, or that it stopped on an error. `Saves at once` sets how many saves run together, from 1 to 3, and the rest wait their turn (#27).
 
 ## 0.77.0 (2026-10-20)
 

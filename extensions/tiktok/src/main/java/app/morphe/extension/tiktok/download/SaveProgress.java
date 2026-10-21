@@ -184,7 +184,10 @@ final class SaveProgress {
             if (done != null) done.run();
         });
         if (queued == null) return null;
+        // The job first: the Downloads page reaches this row through queued.progress, and its
+        // Cancel needs the job to take a waiting save out of line.
         job = queued;
+        queued.progress = this;
         if (showsRow()) show();
         return queued;
     }
@@ -272,6 +275,17 @@ final class SaveProgress {
 
     int total() {
         return total;
+    }
+
+    /** What the row says now, for the Downloads page's list of saves (#27). */
+    String statusText() {
+        if (cancelled.get() && !captioning) return L10n.t("Stopping after this file");
+        return progressText();
+    }
+
+    /** Cancel can still stop this save once it runs: the same rule as the row's button. */
+    boolean stoppable() {
+        return !cancelled.get() && (total > 1 || fileCount || captioning);
     }
 
     boolean isCancelled() {
@@ -627,9 +641,9 @@ final class SaveProgress {
      * Cancel on the row. A save still in line is taken out of it and never starts; one that has
      * started stops after the file under way. File-count jobs retain that control at every
      * count; the single-video stream row keeps its existing no-Cancel behavior while running,
-     * apart from the caption step, which stops at once.
+     * apart from the caption step, which stops at once. The Downloads page's Cancel is this too.
      */
-    private void cancelFromRow() {
+    void cancelFromRow() {
         MediaJobScheduler.Job waitingOn = job;
         if (waitingOn != null && waitingOn.cancel()) {
             // The job's end has taken the row down and let go of the save.

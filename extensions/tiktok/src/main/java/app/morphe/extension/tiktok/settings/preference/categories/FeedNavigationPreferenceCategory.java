@@ -94,6 +94,14 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
         ));
         addPreference(new TogglePreference(
                 context,
+                "Long-press Profile for Watch history",
+                "Press and hold the Profile tab to open your Watch history. A tap on Profile works "
+                        + "as before. If holding Profile switches accounts for you, this takes that "
+                        + "press, and the name at the top of your profile still switches accounts.",
+                Settings.PROFILE_TAB_OPENS_WATCH_HISTORY
+        ));
+        addPreference(new TogglePreference(
+                context,
                 "Keep For You on a Home tap",
                 "A tap on Home or on the For You tab while For You is showing no longer reloads it. "
                         + "The video you're on stays.",

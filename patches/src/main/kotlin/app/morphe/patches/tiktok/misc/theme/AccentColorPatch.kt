@@ -42,9 +42,9 @@ val accentColorPatch = resourcePatch(
     name = "Accent color",
     description = "Swaps the red of TikTok's main buttons and red text for blue, green, purple, " +
         "orange, teal or a color code you type in this patch's options, or for the color of the " +
-        "phone's wallpaper theme on Android 12 and up. Warnings stay red, and so can icons with " +
-        "the red drawn in. It's built in while patching, so only patching again without it " +
-        "undoes it.",
+        "phone's wallpaper theme on Android 12 and up. Unread dots and counts change with it. " +
+        "Warnings stay red, and so can icons with the red drawn in. It's built in while patching, " +
+        "so only patching again without it undoes it.",
     default = false,
 ) {
     category("Interface")
@@ -67,6 +67,8 @@ val accentColorPatch = resourcePatch(
             "Android 11 and older keep TikTok's red. The soft see-through reds stay as they are.",
         required = false,
     )
+    // The text on Lynx pages, the search page's suggested words among them, carries its own colors (#163).
+    dependsOn(lynxTextAccentPatch { followWallpaper == true || solidAccent(accent) != TIKTOK_ACCENT })
     execute {
         // Checked before anything is read or written, so a refused color changes nothing.
         val target = checkedAccent(accent)
@@ -105,12 +107,27 @@ val accentColorPatch = resourcePatch(
             val layers = if (!wallpaper) emptyList() else pictures.flatMap { (name, files) ->
                 files.map { Triple(name, it, splitRedPalette(it.readBytes()) ?: throw PatchException(missingAccentIconRefusal(name))) }
             }
+            // The unread dots and counts fill with a color that much else shares, warnings among
+            // them, so each badge's own fill takes the accent instead (#192). Read first, like the rest.
+            val colorsFile = get("res").resolve("values").resolve(WALLPAPER_COLORS_FILE)
+            val namedColors = if (colorsFile.isFile) colorLiterals(readXml(colorsFile)) else emptyMap()
+            val badges = accentBadges(packageMetadata.versionName).flatMap { name ->
+                drawables.map { it.resolve("$name.xml") }.filter { it.isFile }
+                    .ifEmpty { throw PatchException(missingAccentBadgeRefusal(name)) }
+                    .map { it to (badgeFill(readXml(it), namedColors) ?: throw PatchException(missingAccentBadgeRefusal(name))) }
+            }
             val wallpaperLiterals = mutableSetOf<String>()
             val colorFiles = if (wallpaper) wallpaperColorPaths(get("res")) else null
+            val lynxFiles = wallpaperColorPaths(get("res"), LYNX_COLOR_PREFIX)
+            val (lynxPlain, lynxSystem) = lynxColorEntries(wallpaper, target)
             for (file in files) {
                 document(file.relativeTo(get(".")).invariantSeparatorsPath).use {
                     recolorAccentItems(it, tokens, accentRecolor(wallpaper, target, wallpaperLiterals))
                 }
+            }
+            for ((badge, literal) in badges) {
+                val color = accentRecolor(wallpaper, target, wallpaperLiterals)(literal) ?: continue
+                document(badge.relativeTo(get(".")).invariantSeparatorsPath).use { setBadgeFill(it, color) }
             }
             for ((picture, bytes) in icons) picture.writeBytes(bytes)
             for ((name, picture, split) in layers) {
@@ -125,6 +142,9 @@ val accentColorPatch = resourcePatch(
                     .writeText(wallpaperIconDrawable(name, wallpaperReference(TIKTOK_ACCENT)!!), Charsets.UTF_8)
             }
             if (colorFiles != null) writeWallpaperColors(colorFiles, wallpaperLiterals)
+            // The names the Lynx text hook looks up when a page asks for one of these reds.
+            appendColorEntries(lynxFiles.first, lynxPlain)
+            if (lynxSystem != null) appendColorEntries(lynxFiles.second, lynxSystem)
         }
         BuildDetails.applied(get(BUILD_DETAILS_ASSET), "accentColor")
     }
@@ -184,6 +204,54 @@ internal fun accentIcons(versionName: String?): List<String> =
 internal fun missingAccentIconRefusal(name: String): String =
     "Accent color: this TikTok has no red follow plus picture where the patch looked ($name), so its " +
         "resources aren't the ones this patch read. Nothing was changed."
+
+/**
+ * The unread badges per build: shape drawables filled with TikTok's red through a color that many
+ * other views use, warnings among them, so the palette rewrite can't reach them and the color itself
+ * can't change. On 47.4.3 `bvk` is the count pill the bottom bar puts on the Inbox tab (the tab
+ * logic builds it in code and loads it through PreDrawableInflate) and `bwq` is the plain dot on a
+ * tab or beside a list row. The LIVE bubble over the Inbox tab reads UIShapePrimary, so without
+ * these it took the accent while the count under it stayed red (#192). AccentColorPaletteTest holds
+ * each declared build's fixture to its entry here.
+ */
+internal val ACCENT_BADGES: Map<String, List<String>> = linkedMapOf(
+    "47.4.3" to listOf("bvk", "bwq"),
+)
+
+/** The badge drawables to recolor on this build, or a refusal. */
+internal fun accentBadges(versionName: String?): List<String> =
+    versionName?.let { ACCENT_BADGES[it] } ?: throw PatchException(unreadAccentRefusal(versionName))
+
+internal fun missingAccentBadgeRefusal(name: String): String =
+    "Accent color: this TikTok has no red unread badge where the patch looked ($name), so its " +
+        "resources aren't the ones this patch read. Nothing was changed."
+
+/** Each `<color>` in a values file whose value is a literal, by name. */
+internal fun colorLiterals(colors: Document): Map<String, String> {
+    val entries = colors.getElementsByTagName("color")
+    return (0 until entries.length).map { entries.item(it) as Element }
+        .filter { it.textContent.trim().startsWith("#") }
+        .associate { it.getAttribute("name") to it.textContent.trim() }
+}
+
+/**
+ * The red a badge [drawable] fills with: the color of its one `solid`, given as a literal or as a
+ * `@color/` name that [colors] holds a literal for. Null when it isn't a shape with one solid fill
+ * in TikTok's red family.
+ */
+internal fun badgeFill(drawable: Document, colors: Map<String, String>): String? {
+    if (drawable.documentElement.tagName != "shape") return null
+    val solids = drawable.getElementsByTagName("solid")
+    if (solids.length != 1) return null
+    val value = (solids.item(0) as Element).getAttribute("android:color").trim()
+    val literal = if (value.startsWith("@color/")) colors[value.removePrefix("@color/")] else value
+    return literal?.takeIf(::isRedLiteral)
+}
+
+/** Fills the badge shape [drawable] with [color], a literal or a color reference. */
+internal fun setBadgeFill(drawable: Document, color: String) {
+    (drawable.getElementsByTagName("solid").item(0) as Element).setAttribute("android:color", color)
+}
 
 /**
  * [png] with every palette entry that is TikTok's red, white or a blend of the two moved the same
@@ -432,16 +500,53 @@ internal fun wallpaperColorName(literal: String): String =
 internal fun wallpaperReference(literal: String): String? =
     if (isOpaqueLiteral(literal)) "@color/" + wallpaperColorName(literal) else null
 
-/** The two color files the wallpaper choice adds to, or a refusal when either already holds one of its names. */
-internal fun wallpaperColorPaths(res: File): Pair<File, File> {
+/**
+ * The two color files the patch adds names starting with [prefix] to, or a refusal when either
+ * already holds one of them or has no closing tag to add them before. It runs before anything is
+ * written, so a refusal leaves the APK as it was.
+ */
+internal fun wallpaperColorPaths(res: File, prefix: String = WALLPAPER_COLOR_PREFIX): Pair<File, File> {
     val files = res.resolve("values").resolve(WALLPAPER_COLORS_FILE) to res.resolve("values-v31").resolve(WALLPAPER_COLORS_FILE)
-    if (listOf(files.first, files.second).any { it.isFile && it.readText(Charsets.UTF_8).contains("name=\"$WALLPAPER_COLOR_PREFIX") }) {
-        throw PatchException(
-            "Accent color: this TikTok already has colors named $WALLPAPER_COLOR_PREFIX* in its resources, so the " +
-                "wallpaper choice would write over them. Nothing was changed.",
-        )
+    for (file in listOf(files.first, files.second).filter { it.isFile }) {
+        val text = file.readText(Charsets.UTF_8)
+        if (text.contains("name=\"$prefix")) {
+            throw PatchException(
+                "Accent color: this TikTok already has colors named $prefix* in its resources, so the " +
+                    "patch would write over them. Nothing was changed.",
+            )
+        }
+        if (!text.contains("</resources>")) {
+            throw PatchException("Accent color: ${file.parentFile.name}/${file.name} has no closing resources tag. Nothing was changed.")
+        }
     }
     return files
+}
+
+/**
+ * The reds Lynx pages draw text in, which no resource holds (#163): the "You may like" words in
+ * search are the first on dark and the second on light, the same pair as the palettes' red text.
+ */
+internal val LYNX_TEXT_REDS = listOf("#FF576F", "#E10543")
+
+/** What the color each Lynx red becomes is named from. The extension looks these names up. */
+internal const val LYNX_COLOR_PREFIX = "hushfeed_lynx_"
+
+internal fun lynxColorName(literal: String): String =
+    LYNX_COLOR_PREFIX + String.format(Locale.ROOT, "%06x", literalRgb(literal) ?: throw IllegalArgumentException("not a color literal: $literal"))
+
+/**
+ * The `<color>` lines for the Lynx reds. In `values` each is the preset's shade, or under the
+ * wallpaper choice the red itself, and then `values-v31` points it at the system step for that
+ * red as the palette's references do. Without the wallpaper choice there are no `values-v31` lines.
+ */
+internal fun lynxColorEntries(wallpaper: Boolean, target: String): Pair<String, String?> {
+    fun lines(value: (String) -> String) = buildString {
+        for (literal in LYNX_TEXT_REDS.sortedBy(::lynxColorName)) {
+            append("    <color name=\"${lynxColorName(literal)}\">${value(literal).lowercase(Locale.ROOT)}</color>\n")
+        }
+    }
+    val plain = lines { if (wallpaper) it else accentShade(it, target) }
+    return plain to if (wallpaper) lines { "@android:color/system_accent1_${wallpaperStep(it)}" } else null
 }
 
 /**
@@ -468,18 +573,22 @@ internal fun wallpaperColorEntries(literals: Collection<String>): Pair<String, S
 /** Adds each table's entries to the end of its file's `resources`, or writes a new file where there is none. */
 internal fun writeWallpaperColors(files: Pair<File, File>, literals: Collection<String>) {
     val (plain, system) = wallpaperColorEntries(literals)
-    for ((file, entries) in listOf(files.first to plain, files.second to system)) {
-        file.parentFile.mkdirs()
-        if (!file.isFile) {
-            file.writeText(newColorsFile(entries), Charsets.UTF_8)
-            continue
-        }
-        val text = file.readText(Charsets.UTF_8)
-        val end = text.lastIndexOf("</resources>")
-        if (end < 0) throw PatchException("Accent color: ${file.name} has no closing resources tag. Nothing was changed.")
-        val lead = if (text.substring(0, end).endsWith("\n")) "" else "\n"
-        file.writeText(text.substring(0, end) + lead + entries + text.substring(end), Charsets.UTF_8)
+    appendColorEntries(files.first, plain)
+    appendColorEntries(files.second, system)
+}
+
+/** Adds [entries] to the end of the file's `resources`, or writes a new file where there is none. */
+internal fun appendColorEntries(file: File, entries: String) {
+    file.parentFile.mkdirs()
+    if (!file.isFile) {
+        file.writeText(newColorsFile(entries), Charsets.UTF_8)
+        return
     }
+    val text = file.readText(Charsets.UTF_8)
+    val end = text.lastIndexOf("</resources>")
+    if (end < 0) throw PatchException("Accent color: ${file.name} has no closing resources tag. Nothing was changed.")
+    val lead = if (text.substring(0, end).endsWith("\n")) "" else "\n"
+    file.writeText(text.substring(0, end) + lead + entries + text.substring(end), Charsets.UTF_8)
 }
 
 /** A `#RRGGBB` or `#AARRGGBB` literal in the red family: a saturated hue within 40 degrees of red. */

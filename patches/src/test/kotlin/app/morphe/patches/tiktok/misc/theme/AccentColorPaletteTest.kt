@@ -112,6 +112,39 @@ class AccentColorPaletteTest {
     }
 
     /**
+     * #192: the count on the Inbox tab and the plain unread dot stayed TikTok's red under the accent,
+     * while the LIVE bubble over the tab took it. Each badge is an XML shape whose fill names a color
+     * that holds TikTok's red, and the bottom bar loads it through its drawable inflater.
+     */
+    @Test
+    fun `each declared build's unread badges are red shapes the bottom bar loads`() {
+        Fixtures.forEachDeclared { apk ->
+            val version = Fixtures.versionOf(apk)
+            val table = FixtureResourceTable(apk)
+            for (name in accentBadges(version)) {
+                val id = table.drawableIds[name] ?: error("$version: no drawable $name")
+                val loaders = methodsLoading(apk, id).filter { method ->
+                    method.implementation!!.instructions.any {
+                        ((it as? ReferenceInstruction)?.reference as? MethodReference)?.definingClass == PRE_DRAWABLE_INFLATE
+                    }
+                }
+                assertTrue("$version: the bottom bar never loads $name", loaders.isNotEmpty())
+                val paths = table.drawableFiles[name].orEmpty()
+                assertTrue("$version: $name's files are $paths", paths.isNotEmpty() && paths.all { it.endsWith(".xml") })
+                ZipFile(apk).use { zip ->
+                    for (path in paths) {
+                        val xml = zip.getInputStream(zip.getEntry(path)).use { it.readBytes() }
+                        val fills = referencedIds(xml).mapNotNull { table.colorNames[it] }
+                        assertEquals("$version: $path fills with $fills", 1, fills.size)
+                        val literal = table.colorValues[fills.single()]
+                        assertEquals("$version: $path's ${fills.single()}", "#fffe2c55", literal)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * #163: with Follow the wallpaper the follow plus stayed TikTok's red, since a picture can't take
      * a color the phone picks later. It splits into a white layer and a red one the phone tints, and
      * the tinted layer drawn over the white one is the same picture the fixed colors make.
@@ -170,6 +203,19 @@ class AccentColorPaletteTest {
         assertEquals("@color/hushfeed_accent_fe2c55", wallpaperReference(TIKTOK_ACCENT))
     }
 
+    /** The resource ids a compiled XML file's values point at: each Res_value of type reference. */
+    private fun referencedIds(xml: ByteArray): Set<Int> {
+        val buffer = java.nio.ByteBuffer.wrap(xml).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        val ids = mutableSetOf<Int>()
+        for (at in 0..xml.size - 8) {
+            // size 8, res0 0, dataType 1 (reference), then the id.
+            if (buffer.getShort(at).toInt() != 8 || xml[at + 2].toInt() != 0 || xml[at + 3].toInt() != 1) continue
+            val id = buffer.getInt(at + 4)
+            if (id ushr 24 == 0x7f) ids += id
+        }
+        return ids
+    }
+
     /** The methods anywhere in the app that load [literal]. */
     private fun methodsLoading(apk: File, literal: Int): List<com.android.tools.smali.dexlib2.iface.Method> {
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
@@ -215,5 +261,10 @@ class AccentColorPaletteTest {
             if (id != null) names[name] = id
         }
         return names
+    }
+
+    private companion object {
+        /** The bottom bar's drawable loader, which builds the tab badges in code. */
+        const val PRE_DRAWABLE_INFLATE = "Lcom/ss/android/ugc/aweme/homepage/ui/inflate/PreDrawableInflate;"
     }
 }

@@ -191,6 +191,7 @@ public class UnfinishedSavesTest {
         assertEquals("Live photo clip", UnfinishedSaves.kindLabel(context, "comment live photo"));
         assertEquals("Video of photos", UnfinishedSaves.kindLabel(context, "photo video"));
         assertEquals("Video frame", UnfinishedSaves.kindLabel(context, FrameSaver.LABEL));
+        assertEquals("Cover", UnfinishedSaves.kindLabel(context, "cover"));
         assertEquals("Media save", UnfinishedSaves.kindLabel(context, SaveRecords.OTHER));
     }
 
