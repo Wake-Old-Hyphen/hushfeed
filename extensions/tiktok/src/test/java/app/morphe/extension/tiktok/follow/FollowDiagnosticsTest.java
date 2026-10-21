@@ -464,12 +464,8 @@ public class FollowDiagnosticsTest {
     }
 
     @Test
-    public void aLiveCommentSaysWhetherItWentToTheRoomEnteredLast() throws Exception {
-        for (String name : new String[]{"lastEnteredRoom", "lastEnterAtMs"}) {
-            java.lang.reflect.Field field = FollowDiagnostics.class.getDeclaredField(name);
-            field.setAccessible(true);
-            if (field.getType() == int.class) field.setInt(null, 0); else field.setLong(null, 0L);
-        }
+    public void aLiveCommentSaysWhetherItWentToTheRoomEnteredLast() {
+        FollowDiagnostics.resetForTests();
         BaseSettings.DEBUG.save(true);
         org.robolectric.shadows.ShadowLog.clear();
 

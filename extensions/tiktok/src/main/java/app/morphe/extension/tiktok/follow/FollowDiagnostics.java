@@ -82,7 +82,7 @@ public final class FollowDiagnostics {
      * A comment that the server takes but never shows (#110: from a room opened on the feed,
      * fine from the profile) may be going to a room this session never entered.
      */
-    private static volatile int lastEnteredRoom;
+    private static volatile String lastEnteredRoom;
     private static volatile long lastEnterAtMs;
     /** Query keys whose value says how a room was opened, as a word like homepage_hot. */
     private static final String[] LIVE_ROUTE_KEYS =
@@ -330,13 +330,13 @@ public final class FollowDiagnostics {
 
         String chatPath = liveChatPath(request);
         if (chatPath != null) {
-            logLiveChatResponse(chatPath, requestPath(request), response);
+            logLiveChatResponse(chatPath, request, response);
             return;
         }
 
         String fullPath = requestPath(request);
         if (fullPath != null && fullPath.toLowerCase(Locale.ROOT).contains("/webcast/room/enter/")) {
-            logLiveEnterResponse(fullPath, response);
+            logLiveEnterResponse(fullPath, request, response);
             return;
         }
 
@@ -357,11 +357,12 @@ public final class FollowDiagnostics {
      * send is recorded: the transport result, the server's status code and message, and whether
      * a risk check was hidden just before. Nothing the user typed and no account id is read.
      */
-    private static void logLiveChatResponse(String path, String fullPath, Object response) {
+    private static void logLiveChatResponse(String path, Object request, Object response) {
         if (!reserveNetworkEvent()) return;
 
         try {
-            Object body = response == null ? null : readField(response, "LIZIZ");
+            String room = liveRoomId(request, requestPath(request));
+            String fullPath = requestPath(request);            Object body = response == null ? null : readField(response, "LIZIZ");
             FollowVerdict verdict = FollowVerdict.of(body);
             String suppressed = CaptchaGate.recentlySuppressedCheckId();
             String line = "[Morphe TikTok FollowProbe] live comment response"
@@ -371,7 +372,9 @@ public final class FollowDiagnostics {
                     + " status_code=" + verdict.statusCode
                     + " status_msg=" + safeShort(verdict.statusMsg)
                     + " riskCheck=" + (suppressed == null ? "none" : safeShort(suppressed))
-                    + " room=" + roomAgainstLastEnter(fullPath)
+                    + " room=" + roomAgainstLastEnter(room)
+                    + " roomHash=" + roomHash(room)
+                    + " enteredHash=" + roomHash(lastEnteredRoom)
                     + " route=" + liveRoute(fullPath)
                     + " bodyClass=" + className(body)
                     + " bodyFieldNames=" + describeFieldNames(body)
@@ -387,10 +390,10 @@ public final class FollowDiagnostics {
      * room kept as a hash so a later comment can say whether it went to the same one. Recorded
      * with logging off too, so turning logging on inside a room still compares the next comment.
      */
-    private static void logLiveEnterResponse(String fullPath, Object response) {
-        String room = queryValue(fullPath, "room_id");
+    private static void logLiveEnterResponse(String fullPath, Object request, Object response) {
+        String room = liveRoomId(request, fullPath);
         if (room != null) {
-            lastEnteredRoom = room.hashCode();
+            lastEnteredRoom = room;
             lastEnterAtMs = System.currentTimeMillis();
         }
         if (!reserveNetworkEvent()) return;
@@ -402,7 +405,8 @@ public final class FollowDiagnostics {
                     + " responseCode=" + (response == null ? "n/a" : invokeValue(response, "LIZ"))
                     + " status_code=" + verdict.statusCode
                     + " status_msg=" + safeShort(verdict.statusMsg)
-                    + " room=" + (room == null ? "not_in_query" : "noted")
+                    + " room=" + (room == null ? "not_found" : "noted")
+                    + " roomHash=" + roomHash(room)
                     + " route=" + liveRoute(fullPath)
                     + " queryKeys=" + queryKeys(fullPath);
             Logger.printDebug(() -> line);
@@ -411,13 +415,47 @@ public final class FollowDiagnostics {
         }
     }
 
-    /** Whether a comment's room is the one entered last, and how long ago, never the id itself. */
-    static String roomAgainstLastEnter(String fullPath) {
+    /**
+     * The room a LIVE request names. TikTok sends room_id in the form body of a comment (#110), so
+     * the query is tried first and then the body, read only from the form output TikTok keeps in
+     * memory and can write again, as the follow probe already does. Null when neither has it.
+     */
+    private static String liveRoomId(Object request, String fullPath) {
         String room = queryValue(fullPath, "room_id");
-        if (room == null) return "not_in_query";
+        if (room != null) return room;
+        try {
+            return roomIdFromForm(encodedFormBody(requestPayloadRoot(request)));
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    /** The room_id in a form-encoded body, or null. */
+    static String roomIdFromForm(String encodedBody) {
+        if (encodedBody == null) return null;
+        for (String part : encodedBody.split("&")) {
+            int equals = part.indexOf('=');
+            if (equals > 0 && decodeUrlComponent(part.substring(0, equals)).equals("room_id")) {
+                String value = decodeUrlComponent(part.substring(equals + 1));
+                return value.isEmpty() ? null : value;
+            }
+        }
+        return null;
+    }
+
+    /** A short per-install pseudonym for a room id, so two lines compare without showing it. */
+    static String roomHash(String room) {
+        if (room == null) return "none";
+        String full = hash(room);
+        return full.length() > 8 ? full.substring(0, 8) : full;
+    }
+
+    /** Whether a comment's room is the one entered last, and how long ago, never the id itself. */
+    static String roomAgainstLastEnter(String room) {
+        if (room == null) return "not_found";
         if (lastEnterAtMs == 0L) return "no_enter_seen";
         long ago = Math.max(0L, (System.currentTimeMillis() - lastEnterAtMs) / 1000L);
-        return (room.hashCode() == lastEnteredRoom ? "last_entered" : "other_than_last_entered")
+        return (room.equals(lastEnteredRoom) ? "last_entered" : "other_than_last_entered")
                 + ",enteredSecondsAgo=" + ago;
     }
 
@@ -524,6 +562,8 @@ public final class FollowDiagnostics {
             networkContexts.clear();
         }
         loggedSettingsSnapshot = false;
+        lastEnteredRoom = null;
+        lastEnterAtMs = 0L;
         followReadbackWindowUntil = 0L;
         activeReadbackContext = null;
         recentDirectContext = null;

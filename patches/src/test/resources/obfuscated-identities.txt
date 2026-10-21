@@ -18,6 +18,7 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/Na
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|ong
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|onh
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|oni
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|onj
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|pwm
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/blockauthor/FeedVisibility.java|wla
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java|dly

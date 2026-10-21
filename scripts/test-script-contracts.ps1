@@ -1572,15 +1572,17 @@ try {
         $count = @((Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json).patches).Count
         $synced = $indexText
         if ($indexVersion -ne $fixtureVersion) { $synced = $synced -replace [regex]::Escape($indexVersion), $fixtureVersion }
-        $synced = $synced -replace '\b\d+ patches\b', "$count patches"
         # And the TikTok builds the catalog declares, where the index names its target: two since
         # 47.1.3 joined 47.0.3, while the published index still names the one it went out with.
         # Only the headline: the Manager changelog groups from the first ### on quote CHANGELOG.md
         # word for word, and a retarget left their "TikTok 47.1.4" rewritten to 47.4.3 (2026-10-17).
+        # The patch count too: 0.77.0's groups say "90 patches", and syncing it to the catalog's
+        # 138 failed every scripts run once patches joined after the release (2026-10-21).
         $catalogTargets = Format-VersionList -Versions @((Get-PatchTarget -PatchList (Get-Content -LiteralPath (Join-Path $factsRoot 'patches-list.json') -Raw | ConvertFrom-Json)).PackageVersions)
         $groupStart = $synced.IndexOf('### ', [StringComparison]::Ordinal)
         if ($groupStart -lt 0) { $groupStart = $synced.Length }
-        $synced = [regex]::Replace($synced.Substring(0, $groupStart), 'TikTok\s+\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*', "TikTok $catalogTargets") +
+        $headline = $synced.Substring(0, $groupStart) -replace '\b\d+ patches\b', "$count patches"
+        $synced = [regex]::Replace($headline, 'TikTok\s+\d+(?:\.\d+)+(?:(?:,\s*|,?\s+and\s+)\d+(?:\.\d+)+)*', "TikTok $catalogTargets") +
             $synced.Substring($groupStart)
         # The 0.60.0 index went out on the owner's word with the gate skipped, and its description
         # quotes the runtime count alone. The cases below move one count at a time against the two
@@ -3807,6 +3809,7 @@ Write-Host '[scripts] adb device lease contracts passed'
 & (Join-Path $Root 'scripts/test-storage-probe.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-fixture-jobs.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-release-publication.ps1') -Root $Root
+& (Join-Path $Root 'scripts/test-walk-receipt.ps1')
 & (Join-Path $Root 'scripts/test-device-lease.ps1')
 & (Join-Path $Root 'audit/test-evidence.ps1')
 

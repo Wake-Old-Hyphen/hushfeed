@@ -23,6 +23,9 @@ import java.util.WeakHashMap;
  * caption frame and the music disc GONE, so holding the column and the frames at the chosen level
  * showed nothing (emulator, 47.1.4, 2026-10-10). Leaving, it sets the wrappers back to VISIBLE at
  * 0 and animates them up to full over about a third of a second, after a pause of about as long.
+ * 47.4.3's clean mode works by area instead: for the right one it animates the rail's column itself
+ * to 0 and then sets it GONE, and leaves the wrappers inside as they were (InteractAreaComponent,
+ * "triggerXCleanMode", #209), so the column is kept as well as its wrappers.
  *
  * <p>Which of them were showing is noted as TikTok's clear-mode event arrives, before TikTok
  * handles it, so a wrapper TikTok keeps away outside Clear display (it hides some per post) stays
@@ -51,16 +54,18 @@ final class ClearDisplayShownControls {
     }
 
     /**
-     * Notes, as Clear display starts, which of the current video's controls are showing: each
-     * child of the {@code columns} (the rail's, the search bar's), and the {@code frames}
-     * themselves. Views from an earlier video are let go as they are; TikTok sets them when it
-     * shows that video again.
+     * Notes, as Clear display starts, which of the current video's controls are showing: the
+     * {@code columns} (the rail's, the search bar's) and each child of them, and the
+     * {@code frames}. Views from an earlier video are let go as they are; TikTok sets them when
+     * it shows that video again.
      */
     static void note(Object event, List<View> columns, List<View> frames) {
         if (event != null && noted.get() == event) return;
         noted = new WeakReference<>(event);
         KEPT.clear();
         for (View column : columns) {
+            // The column's level is the fade's to hold, like a frame's.
+            keepIfShown(column, false);
             if (!(column instanceof ViewGroup)) continue;
             ViewGroup group = (ViewGroup) column;
             for (int i = 0; i < group.getChildCount(); i++) {

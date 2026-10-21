@@ -238,13 +238,18 @@ class BuildDetailsPatchTest {
     }
 
     @Test fun `resource choices add only raw metadata dependencies and live retains its existing bytecode`() {
-        listOf(accentColorPatch, p2pRelayBlockerPatch, languagePackPurgerPatch,
+        listOf(p2pRelayBlockerPatch, languagePackPurgerPatch,
             studioCreationDebloatPatch, hidePlayStoreUpdatePatch, changeAppNamePatch, customLauncherIconPatch,
             trustUserCertificatesPatch).forEach { patch ->
             val closure = dependencies(patch)
             assertTrue("${patch.name} has no metadata dependency", buildDetailsPatch in closure)
             assertTrue("${patch.name} unexpectedly injects runtime hooks", closure.none { it is BytecodePatch })
         }
+        // Accent color stopped being resources only with #163: text on Lynx pages carries its own
+        // colors, so each stored color asks the extension's LynxAccent first.
+        val accent = dependencies(accentColorPatch)
+        assertTrue("Accent color has no metadata dependency", buildDetailsPatch in accent)
+        assertTrue("Accent color lost the Lynx text hooks", sharedExtensionPatch in accent)
         // AMOLED repaints one Compose palette builder in place (#152). That is bytecode, but it
         // calls nothing of Hushfeed's, so the extension stays out of a build that only wants AMOLED.
         val amoled = dependencies(amoledThemePatch)

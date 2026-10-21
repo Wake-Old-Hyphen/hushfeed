@@ -594,6 +594,74 @@ public class TapThroughControlsTest {
     }
 
     /**
+     * 47.4.3's clean mode takes the rail away by area: InteractAreaComponent animates the column
+     * itself to 0 and sets it GONE (INVISIBLE on some paths), and leaves the buttons inside it
+     * alone. Keeping only the buttons left them inside a column nobody showed (#209, 0.77.0).
+     */
+    @Test
+    public void theFadedClearDisplayKeepsTheColumn474TakesAwayWhole() {
+        try (var controller = Robolectric.buildActivity(Activity.class).setup()) {
+            activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(CELL_ID);
+            LinearLayout rail = new LinearLayout(activity);
+            rail.setId(COLUMN_ID);
+            rail.setOrientation(LinearLayout.VERTICAL);
+            View like = new View(activity);
+            View share = new View(activity);
+            rail.addView(like, new LinearLayout.LayoutParams(180, 169));
+            rail.addView(share, new LinearLayout.LayoutParams(180, 169));
+            cell.addView(rail, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 1189, Gravity.BOTTOM));
+            root.addView(cell, new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            activity.setContentView(root);
+            VideoOverlayHider.install(activity);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Settings.FADE_CONTROLS_OPACITY.save(50);
+            VideoOverlayHider.applyTo(activity);
+
+            for (int hidden : new int[]{View.GONE, View.INVISIBLE}) {
+                clear(true);
+                rail.setAlpha(0f);
+                rail.setVisibility(hidden);
+                VideoOverlayHider.applyTo(activity);
+                frameDrawn();
+                assertEquals("the column stays in sight", View.VISIBLE, rail.getVisibility());
+                assertEquals("at the chosen level", 0.5f, rail.getAlpha(), 0f);
+                assertEquals(View.VISIBLE, like.getVisibility());
+                assertEquals(View.VISIBLE, share.getVisibility());
+
+                // TikTok's animation ending sets it again, and the next frame undoes that.
+                rail.setVisibility(hidden);
+                frameDrawn();
+                assertEquals(View.VISIBLE, rail.getVisibility());
+
+                PausedProcess.set(true);
+                VideoOverlayHider.applyTo(activity);
+                frameDrawn();
+                assertEquals("Pause gives TikTok its Clear display back", hidden, rail.getVisibility());
+                PausedProcess.set(false);
+                VideoOverlayHider.applyTo(activity);
+                frameDrawn();
+                assertEquals(View.VISIBLE, rail.getVisibility());
+
+                clear(false);
+                rail.setVisibility(View.VISIBLE);
+                VideoOverlayHider.applyTo(activity);
+                frameDrawn();
+                org.robolectric.shadows.ShadowSystemClock.advanceBy(
+                        java.time.Duration.ofMillis(ClearDisplayShownControls.EXIT_HOLD_MS + 1));
+                frameDrawn();
+                assertFalse(ClearDisplayShownControls.anyKept());
+                assertEquals(View.VISIBLE, rail.getVisibility());
+            }
+        }
+    }
+
+    /**
      * A pinch that starts on the video and puts its second finger on a faded control stays the
      * video's, which is how TikTok's pinch out of Clear display sees both fingers.
      */

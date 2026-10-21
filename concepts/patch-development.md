@@ -6,7 +6,7 @@ This guide maps the TikTok app Hushfeed modifies to the code and release checks 
 
 Hushfeed is a Morphe patch bundle, not a TikTok APK. Morphe Manager takes a TikTok APK chosen by the user, applies the selected patches, and signs the result with the user's existing key. The patch definitions and the runtime code they inject live in separate Gradle modules.
 
-Source snapshot: version 0.77.0, 136 patch entries. Those come from gradle.properties and patches-list.json.
+Source snapshot: version 0.77.0, 138 patch entries. Those come from gradle.properties and patches-list.json.
 
 Published bundle: version 0.77.0, 136 patches. Those come from patches-bundle.json and the release it names.
 
@@ -88,18 +88,18 @@ The Morphe Gradle plugin and the default extension namespace are configured in s
 | Generated patch metadata | patches-list.json |
 | Build, fixture, device, and release helpers | scripts/ |
 
-The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, telemetry, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
+The runtime code is grouped by feature under extensions/tiktok/src/main/java/app/morphe/extension/tiktok/. Current package folders are accountmanagement, blockauthor, captions, capture, cleardisplay, comment, commentsort, diagnostics, download, externalbrowser, favorites, featurecontrols, featuregatelab, feed, feedfilter, foldable, follow, font, ghostmode, inbox, interaction, live, misc, navigation, network, notinterested, offline, playback, popups, privacy, profile, publishdate, repost, search, seekbar, seen, settings, share, speed, spoof, storage, telemetry, theme, translation, upload, and wellbeing. Search the generated patch catalog by display name first, then follow its dependencies into the Kotlin and Java sources.
 
-The current catalog's 136 patches are grouped as follows:
+The current catalog's 138 patches are grouped as follows:
 
 | Manager category | Patches |
 | --- | ---: |
-| Comments | 12 |
+| Comments | 13 |
 | Downloads | 5 |
 | Feed | 20 |
 | Inbox | 7 |
 | Interaction | 18 |
-| Interface | 8 |
+| Interface | 9 |
 | Performance | 11 |
 | Playback | 20 |
 | Privacy | 16 |

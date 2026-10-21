@@ -12,7 +12,7 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
  * Whether the patcher would take [method] of [classDef] for this fingerprint, judged from the
  * fingerprint's own fields with Morphe patcher 1.13's rules: a type written whole (`L...;`, a
  * primitive) is compared whole, one written without its `;` by prefix, a bare `...;` by suffix;
- * parameters one for one and the same count; each string found inside a string the method
+ * parameters one for one and the same count; each string equal to a whole string the method
  * loads, with one load answering one string at most (see the strings check); and the custom
  * predicate last.
  *
@@ -46,11 +46,16 @@ internal fun Fingerprint.takes(method: Method, classDef: ClassDef): Boolean {
         // inside one literal therefore never both match there. Checking each wanted string on its
         // own passed #169's "CommentLongPressFragment@" plus ".loadLongPressItems", which are both
         // pieces of one literal, and the real apply then failed.
+        //
+        // Whole strings only. Patcher 1.15 takes any loaded string that contains the wanted one,
+        // but 2.0 compares the whole string whenever any bundle in the run is 2.0, so a piece
+        // matches under one Manager and silently misses under the next. A piece of a literal
+        // belongs in a contains `string` filter, which `filters` below judges.
         val remaining = wanted.toMutableList()
         method.implementation?.instructions?.forEach { instruction ->
             if (instruction.opcode != Opcode.CONST_STRING && instruction.opcode != Opcode.CONST_STRING_JUMBO) return@forEach
             val loaded = ((instruction as ReferenceInstruction).reference as StringReference).string
-            val answered = remaining.indexOfFirst { loaded.contains(it) }
+            val answered = remaining.indexOf(loaded)
             if (answered >= 0) remaining.removeAt(answered)
         }
         if (remaining.isNotEmpty()) return false

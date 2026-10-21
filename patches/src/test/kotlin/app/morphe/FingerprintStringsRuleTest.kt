@@ -1,6 +1,8 @@
 package app.morphe
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
+import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.Method
@@ -15,9 +17,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * [takes] judges a fingerprint's strings the way Morphe patcher 1.15 does: each string the
- * method loads answers one wanted string at most. #169 shipped a fingerprint with two pieces of
- * one log literal, the old per-string check passed it on the fixture, and the real apply failed.
+ * [takes] judges a fingerprint's strings the way Morphe patcher 2.0 does, the stricter of the two
+ * runtimes users have: each wanted string is a whole string the method loads, and each load
+ * answers one wanted string at most. #169 shipped a fingerprint with two pieces of one log
+ * literal, the old per-string check passed it on the fixture, and the real apply failed.
  */
 class FingerprintStringsRuleTest {
     private val type = "LFixture;"
@@ -36,16 +39,31 @@ class FingerprintStringsRuleTest {
         object : Fingerprint(strings = strings) {}.takes(method, owner(method))
 
     @Test
-    fun `two pieces of one literal don't both match it`() {
+    fun `a piece of a literal doesn't match it`() {
         val log = method("CommentLongPressFragment@922.loadLongPressItems$2")
+        assertFalse(takes(listOf(".loadLongPressItems"), log))
         assertFalse(takes(listOf("CommentLongPressFragment@", ".loadLongPressItems"), log))
-        assertTrue(takes(listOf(".loadLongPressItems"), log))
+        assertTrue(takes(listOf("CommentLongPressFragment@922.loadLongPressItems$2"), log))
+    }
+
+    @Test
+    fun `a contains filter takes a piece of a literal`() {
+        val log = method("CommentLongPressFragment@922.loadLongPressItems$2")
+        val piece = object : Fingerprint(filters = listOf(string(".loadLongPressItems", StringComparisonType.CONTAINS))) {}
+        assertTrue(piece.takes(log, owner(log)))
+        assertFalse(piece.takes(method("loadLongPressItems"), owner(method("loadLongPressItems"))))
+    }
+
+    @Test
+    fun `one load answers one wanted string`() {
+        assertFalse(takes(listOf("report", "report"), method("report")))
+        assertTrue(takes(listOf("report", "report"), method("report", "report")))
     }
 
     @Test
     fun `two loads answer two wanted strings in any order`() {
         val both = method("loadLongPressItems", "CommentLongPressFragment@922")
-        assertTrue(takes(listOf("CommentLongPressFragment@", "loadLongPressItems"), both))
-        assertFalse(takes(listOf("CommentLongPressFragment@", "loadLongPressItems", "report"), both))
+        assertTrue(takes(listOf("CommentLongPressFragment@922", "loadLongPressItems"), both))
+        assertFalse(takes(listOf("CommentLongPressFragment@922", "loadLongPressItems", "report"), both))
     }
 }

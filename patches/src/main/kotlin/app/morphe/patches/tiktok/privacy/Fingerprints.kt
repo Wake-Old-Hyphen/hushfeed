@@ -23,6 +23,9 @@ internal object SelfPackageInfoCacheFingerprint : Fingerprint(
     returnType = "Landroid/content/pm/PackageInfo;",
     parameters = listOf("Landroid/content/pm/PackageManager;", "Ljava/lang/String;", "I"),
     custom = { method, _ ->
+        // The extension's StoreIdentity.packageInfo has this shape too. The patcher took TikTok's
+        // only because TikTok's dex files are searched first, and a validating run refuses the pair.
+        val ours = method.definingClass.startsWith("Lapp/morphe/extension/")
         // The hook reads p0 as the PackageManager, which only a static method's p0 is.
         val static = AccessFlags.STATIC.isSet(method.accessFlags)
         val instructions = method.implementation?.instructions?.toList().orEmpty()
@@ -37,7 +40,7 @@ internal object SelfPackageInfoCacheFingerprint : Fingerprint(
                 ((it as? ReferenceInstruction)?.reference as? FieldReference)?.type ==
                 "Landroid/content/pm/PackageInfo;"
         }
-        static && callsGetPackageInfo && cachesPackageInfo
+        !ours && static && callsGetPackageInfo && cachesPackageInfo
     },
 )
 

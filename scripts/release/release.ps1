@@ -15,8 +15,10 @@
       build      From the pushed, clean release commit: the bundle (timestamp pinned, classes.dex
                  present), the receipt over every declared fixture and SHA256SUMS.txt, into
                  build/release-assets/<version>.
-      publish    Notes from the whole CHANGELOG section and a lightweight tag. Download and
-                 compare all three assets from a draft before publishing it.
+      publish    Refuses unless -Walk names the walk-receipt.json of a full, passing whole-app
+                 walk of this exact bundle on a release phone or an emulator. Then notes from the
+                 whole CHANGELOG section and a lightweight tag. Download and compare all three
+                 assets from a draft before publishing it.
       index      patches-bundle.json, the README intro and counts, the bug form and the repository
                  description. Then commit "chore(release): point Manager to the verified X.Y.Z
                  bundle" and push (pre-push compares the hosted bundle byte for byte).
@@ -26,7 +28,7 @@
 
 .EXAMPLE
     scripts/release/release.ps1 -Stage prepare -Version 0.70.0
-    scripts/release/release.ps1 -Stage publish -Version 0.70.0 -Intro intro.md -Checked checked.md
+    scripts/release/release.ps1 -Stage publish -Version 0.70.0 -Intro intro.md -Checked checked.md -Walk <walk folder>/walk-receipt.json
     scripts/release/release.ps1 -Stage index -Version 0.70.0 -ReadmeSummary readme.txt -BundleSummary bundle.txt -DeviceLine "..."
 #>
 [CmdletBinding()]
@@ -36,6 +38,8 @@ param(
     [string]$Date,
     [string]$Intro,
     [string]$Checked,
+    # publish: the walk-receipt.json a whole-app walk of this exact bundle left.
+    [string]$Walk,
     [string]$ReadmeSummary,
     [string]$BundleSummary,
     [string]$DeviceLine = '',
@@ -52,6 +56,7 @@ $receiptName = "release-receipt-$Version.json"
 . (Join-Path $root 'scripts/common.ps1')
 . (Join-Path $root 'scripts/patch-target.ps1')
 . (Join-Path $root 'scripts/release-attestation.ps1')
+. (Join-Path $root 'scripts/walk-receipt.ps1')
 if ($RequireImmutableRelease -and $Stage -notin @('publish', 'index')) {
     throw '-RequireImmutableRelease applies to publish or index.'
 }
@@ -572,6 +577,14 @@ switch ($Stage) {
         }
         $receipt = Get-Content -LiteralPath (Join-Path $assets $receiptName) -Raw | ConvertFrom-Json
         if ($receipt.source.commit -and $receipt.source.commit -ne $head) { throw "The receipt is for $($receipt.source.commit), HEAD is $head." }
+        # Nothing goes public until the whole app has been walked with this exact bundle.
+        if (-not $Walk) { throw '-Walk names the walk-receipt.json a whole-app walk of this bundle left on a release phone or an emulator.' }
+        $walked = Test-WalkReceipt -Path $Walk -BundlePath (Join-Path $assets $bundleName)
+        if (-not $walked.Valid) {
+            throw ("The whole-app walk doesn't back $bundleName, so nothing was published: $($walked.Reason). " +
+                'Patch an APK from this bundle, walk the whole app on a release phone or an emulator, and pass its walk-receipt.json as -Walk.')
+        }
+        Step "walked on $($walked.Receipt.device): $($walked.Receipt.screens) screens, no crash"
         $notes = Join-Path $assets 'notes.md'
         Invoke-Native 'release notes' { py -3.13 (Join-Path $root 'tools/release_text.py') github-notes --version $Version --intro $Intro --checked $Checked --out $notes }
         Invoke-ReleasePublication -Root $root -Repository $Repository -Version $Version -ExpectedCommit $head `
