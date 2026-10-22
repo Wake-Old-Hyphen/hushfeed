@@ -83,8 +83,10 @@ val allowScreenCapturePatch = bytecodePatch(
         val names = targetNames(signatures.keys)
         val callers = classesCallingMethods(signatures.keys)
         val sites = mutableListOf<CaptureSite>()
-        classDefForEach { owner ->
-            if (owner.type in callers && !owner.type.startsWith("Lapp/morphe/extension/")) owner.methods.forEach { method ->
+        for (callerType in callers) {
+            if (callerType.startsWith("Lapp/morphe/extension/")) continue
+            val owner = classDefByOrNull(callerType) ?: continue
+            owner.methods.forEach { method ->
                 method.implementation?.instructions?.forEachIndexed { index, instruction ->
                     // Opcode, then name, then the whole descriptor: every instruction of TikTok
                     // passes here, and a descriptor per instruction cost seconds a run (#54).

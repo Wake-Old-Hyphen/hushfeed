@@ -7,6 +7,7 @@
  */
 package app.morphe.patches.tiktok.misc.inbox
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -71,6 +72,12 @@ private const val CELL_PACKAGE = "/relation/usercard/impl/cell/"
 private const val CELL_SUFFIX = "RecUserCell;"
 private const val TITLE_CELL = "/TitleAreaCell;"
 
+private object SuggestionListCellBindFingerprint : Fingerprint(
+    name = "onBindItemView",
+    returnType = "V",
+    custom = { method, classDef -> isSuggestionListCell(classDef.type) && method.implementation != null },
+)
+
 /**
  * Whether a class in TikTok's user card lists is one of the suggestion cells, or the title
  * cell that heads such a list. With only the cells collapsed, Profile > Find people on
@@ -95,19 +102,12 @@ internal fun isSuggestionListCell(type: String) =
  * @return how many bind methods were hooked.
  */
 internal fun BytecodePatchContext.collapseSuggestionCells(): Int {
-    // Collected first, mutated after: the walk is over the immutable classes.
-    val binds = mutableListOf<Pair<ClassDef, Method>>()
-    classDefForEach { classDef ->
-        if (!isSuggestionListCell(classDef.type)) return@classDefForEach
-        classDef.methods.forEach { method ->
-            if (method.name == "onBindItemView" && method.implementation != null) binds += classDef to method
-        }
+    val matches = SuggestionListCellBindFingerprint.matchAll()
+    requireSuggestionCellBinds(matches.map { it.originalClassDef.type })
+    matches.forEach { match ->
+        match.method.collapseSuggestionCellAtBind()
     }
-    requireSuggestionCellBinds(binds.map { (classDef, _) -> classDef.type })
-    binds.forEach { (classDef, method) ->
-        mutableClassDefBy(classDef).findMutableMethodOf(method).collapseSuggestionCellAtBind()
-    }
-    return binds.size
+    return matches.size
 }
 
 /**

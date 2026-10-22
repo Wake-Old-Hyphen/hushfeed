@@ -61,7 +61,11 @@ val browserPrivacyGuardPatch = bytecodePatch(
         // subclass is found rather than named, because its name changes with every build. The
         // invoke-super inside the override is left alone: it is the pass-through path, and
         // rewriting it to a static that dispatches virtually again would recurse.
-        val webViewTypes = descendantsOf(WEB_VIEW)
+        val children = HashMap<String, MutableList<String>>()
+        classDefForEach { classDef ->
+            classDef.superclass?.let { children.getOrPut(it, ::ArrayList).add(classDef.type) }
+        }
+        val webViewTypes = descendantsOf(WEB_VIEW, children)
         val interfaceReplacement =
             "$EXTENSION->filterJsInterface(${WEB_VIEW}Ljava/lang/Object;Ljava/lang/String;)V"
         val interfaceReplacements = webViewTypes.associate { type ->
@@ -92,7 +96,7 @@ val browserPrivacyGuardPatch = bytecodePatch(
         val interfaceReloads = invokeSitesOf(reloadTargets, throughInterface = true)
         prefixSites(interfaceReloads, "$EXTENSION->beforeInterfaceReload(Ljava/lang/Object;)V")
 
-        val callbacks = webViewClientCallbacks()
+        val callbacks = webViewClientCallbacks(children)
         val pageStarts = callbacks.count { it.method.name == "onPageStarted" }
         val requestIntercepts = callbacks.count { it.method.name == "shouldInterceptRequest" }
         val pageRequests = callbacks.size - pageStarts - requestIntercepts
@@ -130,39 +134,36 @@ val browserPrivacyGuardPatch = bytecodePatch(
 
 /** Every interface the given classes implement, with the interfaces those extend. */
 private fun BytecodePatchContext.interfacesOf(types: Set<String>): Set<String> {
-    val byType = HashMap<String, ClassDef>()
-    classDefForEach { byType[it.type] = it }
     val found = mutableSetOf<String>()
     val pending = ArrayDeque<String>()
-    types.forEach { type -> byType[type]?.interfaces?.let(pending::addAll) }
+    types.forEach { type -> classDefByOrNull(type)?.interfaces?.let(pending::addAll) }
     while (pending.isNotEmpty()) {
         val type = pending.removeFirst()
-        if (found.add(type)) byType[type]?.interfaces?.let(pending::addAll)
+        if (found.add(type)) classDefByOrNull(type)?.interfaces?.let(pending::addAll)
     }
     return found
 }
 
 private data class ClientCallback(val owner: ClassDef, val method: Method)
 
-private fun BytecodePatchContext.descendantsOf(baseType: String): Set<String> {
+private fun descendantsOf(baseType: String, children: Map<String, List<String>>): Set<String> {
     val types = mutableSetOf(baseType)
-    var grew = true
-    while (grew) {
-        grew = false
-        classDefForEach { classDef ->
-            if (classDef.superclass in types && types.add(classDef.type)) grew = true
+    val pending = ArrayDeque<String>().apply { add(baseType) }
+    while (pending.isNotEmpty()) {
+        val current = pending.removeFirst()
+        children[current]?.forEach { child ->
+            if (types.add(child)) pending.add(child)
         }
     }
     return types
 }
 
-private fun BytecodePatchContext.webViewClientCallbacks(): List<ClientCallback> {
-    val clientTypes = descendantsOf(WEB_VIEW_CLIENT)
+private fun BytecodePatchContext.webViewClientCallbacks(children: Map<String, List<String>>): List<ClientCallback> {
+    val clientTypes = descendantsOf(WEB_VIEW_CLIENT, children)
     val callbacks = mutableListOf<ClientCallback>()
-    classDefForEach { owner ->
-        if (owner.type !in clientTypes || owner.type.startsWith("Lapp/morphe/extension/")) {
-            return@classDefForEach
-        }
+    for (type in clientTypes) {
+        if (type.startsWith("Lapp/morphe/extension/")) continue
+        val owner = classDefByOrNull(type) ?: continue
         owner.methods.forEach { method ->
             if (method.implementation == null) return@forEach
             val parameters = method.parameterTypes.map(CharSequence::toString)

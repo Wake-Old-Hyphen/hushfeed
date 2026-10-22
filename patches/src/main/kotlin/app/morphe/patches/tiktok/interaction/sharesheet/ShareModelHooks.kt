@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -52,6 +53,14 @@ private object ShareRecipientBinderFingerprint : Fingerprint(
     name = "onBindViewHolder",
     parameters = listOf(VIEW_HOLDER, "I"),
     returnType = "V",
+    filters = listOf(
+        methodCall(
+            definingClass = IM_CONVERSATION,
+            name = "getConversationId",
+            parameters = emptyList(),
+            returnType = "Ljava/lang/String;",
+        ),
+    ),
     custom = { method, _ -> method.isShareRecipientBinder() },
 )
 

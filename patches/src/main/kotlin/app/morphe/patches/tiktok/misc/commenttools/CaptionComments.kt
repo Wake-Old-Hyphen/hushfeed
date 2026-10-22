@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.commenttools
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -37,6 +38,12 @@ internal object CaptionExpandFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf("Z", "Ljava/lang/String;", POST_MODE_MECHANISM),
+    filters = listOf(
+        methodCall(
+            definingClass = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;",
+            name = "getAweme",
+        ),
+    ),
 )
 
 /**
@@ -48,7 +55,13 @@ internal object CaptionRowFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf(AWEME),
-    custom = { method, _ -> method.captionRowAnswer() != null },
+    filters = listOf(
+        app.morphe.patcher.fieldAccess(
+            opcode = Opcode.IGET_BOOLEAN,
+            definingClass = COMMENT_COMMON_MODEL,
+            name = "shouldShowVideoDesc",
+        ),
+    ),
 )
 
 /** Whether the instruction reads CommentCommonModel.shouldShowVideoDesc. */

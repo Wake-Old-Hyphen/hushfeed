@@ -17,7 +17,6 @@ import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
 import app.morphe.patches.tiktok.shared.guardAtEntry
-import app.morphe.util.matchAllInDefiningClasses
 import app.morphe.util.numberOfParameterRegisters
 import com.android.tools.smali.dexlib2.AccessFlags
 
@@ -162,12 +161,13 @@ val ghostModePatch = bytecodePatch(
         )
 
         listOf(
-            Triple(StoryViewReportFingerprint, STORY_API, "shouldBlockStoryView"),
-            Triple(ProfileViewReportFingerprint, PROFILE_VIEWER_API, "shouldBlockProfileView"),
-            Triple(TypingStatusSenderFingerprint, TYPING_STATUS_SENDER, "shouldBlockTypingStatus"),
-        ).forEach { (fingerprint, suffix, guard) ->
+            StoryViewReportFingerprint to "shouldBlockStoryView",
+            ProfileViewReportFingerprint to "shouldBlockProfileView",
+            TypingStatusSenderFingerprint to "shouldBlockTypingStatus",
+        ).forEach { (fingerprint, guard) ->
             // Retrofit declarations have no body. Every concrete reporting method is mandatory.
-            val reporters = matchAllInDefiningClasses(fingerprint, suffix).map { it.method }.filter { it.implementation != null }
+            val matches = fingerprint.matchAll().filter { it.originalMethod.implementation != null }
+            val reporters = matches.map { it.method }
             if (reporters.isEmpty()) {
                 throw PatchException("Ghost mode: no concrete reporter for $guard.")
             }

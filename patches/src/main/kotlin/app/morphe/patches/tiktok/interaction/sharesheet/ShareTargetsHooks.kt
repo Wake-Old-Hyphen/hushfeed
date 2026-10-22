@@ -214,12 +214,17 @@ private fun Method.iconMapRead(): Pair<FieldReference, MethodReference>? {
     return null
 }
 
+private object GenericShareChannelInitFingerprint : Fingerprint(
+    name = "<init>",
+    parameters = listOf(SHARE_CHANNEL_INFO),
+    returnType = "V",
+)
+
 /** Writes TikTok's members into the bodies of ShareTargets' three bridges. */
 internal fun BytecodePatchContext.hookShareTargets() {
-    val candidates = mutableListOf<ClassDef>()
-    classDefForEach { classDef ->
-        if (classDef.isGenericShareChannel()) candidates += classDef
-    }
+    val candidates = GenericShareChannelInitFingerprint.matchAllOrNull().orEmpty()
+        .map { it.originalClassDef }
+        .filter { it.isGenericShareChannel() }
     val members = shareTargetMembers(candidates) { type -> classDefByOrNull(type) }
     val channel = members.channel.type
     val base = members.base.type

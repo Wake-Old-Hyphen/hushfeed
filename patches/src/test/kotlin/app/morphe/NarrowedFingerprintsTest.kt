@@ -1,6 +1,8 @@
 package app.morphe
 
+import app.morphe.patcher.FieldAccessFilter
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.MethodCallFilter
 import app.morphe.patches.tiktok.interaction.ghostmode.ProfileViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.StoryViewReportFingerprint
 import app.morphe.patches.tiktok.interaction.ghostmode.TypingStatusSenderFingerprint
@@ -94,8 +96,8 @@ class NarrowedFingerprintsTest {
         for (item in narrowed.filter { !it.addedClassAndName }) {
             val filter = item.fingerprint.filters.orEmpty().single()
             val type = when (filter) {
-                is app.morphe.patcher.MethodCallFilter -> filter.definingClass
-                is app.morphe.patcher.FieldAccessFilter -> filter.definingClass
+                is MethodCallFilter -> filter.definingClass
+                is FieldAccessFilter -> filter.definingClass
                 else -> null
             }
             // The patcher indexes a call or field access by an exact class, `L...;`, and walks

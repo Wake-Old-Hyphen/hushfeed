@@ -168,8 +168,9 @@ private fun BytecodePatchContext.answerReads(
     sitesOf: (Method) -> List<AdIdReadSite>,
 ): List<AdIdReadSite> {
     val methods = mutableListOf<Pair<ClassDef, Method>>()
-    classDefForEach { owner ->
-        if (owner.type !in types || owner.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach
+    for (type in types) {
+        if (type.startsWith("Lapp/morphe/extension/")) continue
+        val owner = classDefByOrNull(type) ?: continue
         owner.methods.forEach { method -> if (sitesOf(method).isNotEmpty()) methods += owner to method }
     }
     val answered = mutableListOf<AdIdReadSite>()

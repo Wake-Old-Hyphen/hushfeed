@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.misc.follow
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -39,6 +41,15 @@ private data class FollowCallPatch(
     val beforeInstructions: String,
 )
 
+private object JediFollowRequestFingerprint : Fingerprint(
+    filters = listOf(
+        methodCall(
+            definingClass = JEDI_FOLLOW_API_DESCRIPTOR,
+            name = "followWithRetrofitPost",
+        ),
+    ),
+)
+
 @Suppress("unused")
 val followDiagnosticsPatch = bytecodePatch(
     name = "Follow diagnostics",
@@ -54,41 +65,26 @@ val followDiagnosticsPatch = bytecodePatch(
 
     execute {
         val patchesByMethod = linkedMapOf<Method, ArrayDeque<FollowCallPatch>>()
-        // Each anchor is a name test inside a walk over every class, and a name that no method
-        // carries any more simply never matches. Collected and counted before anything is
-        // written, so that a build which renames one fails the patch by name instead of
-        // shipping it with that hook missing, and fails it with nothing written: the patcher
-        // does not take a failed patch's writes back out, and a hook written before the walk
-        // reached a renamed one used to stay in the APK.
-        val commonFollow = mutableListOf<Method>()
-        val executeCall = mutableListOf<Method>()
-        val parseResponse = mutableListOf<Method>()
+        // Found and counted before anything is written, so a build that renames an anchor fails
+        // the patch by name with nothing written: the patcher doesn't take a failed patch's
+        // writes back out.
+        val commonFollowClass = classDefByOrNull(COMMON_FOLLOW_API_DESCRIPTOR)
+        val interceptorClass = classDefByOrNull(CALL_SERVER_INTERCEPTOR_DESCRIPTOR)
 
-        classDefForEach { classDef ->
-            for (method in classDef.methods) {
-                val implementation = method.implementation ?: continue
+        val commonFollow = commonFollowClass?.methods?.filter { it.name == "LIZ" && it.implementation != null }.orEmpty()
+        val executeCall = interceptorClass?.methods?.filter { it.name == NETWORK_EXECUTE_CALL_METHOD && it.implementation != null }.orEmpty()
+        val parseResponse = interceptorClass?.methods?.filter { it.name == NETWORK_PARSE_RESPONSE_METHOD && it.implementation != null }.orEmpty()
 
-                if (classDef.type == COMMON_FOLLOW_API_DESCRIPTOR && method.name == "LIZ") {
-                    commonFollow += method
-                    continue
-                }
+        val matches = JediFollowRequestFingerprint.matchAll()
+            .filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
+        for (match in matches) {
+            val method = match.originalMethod
+            val implementation = method.implementation ?: continue
+            implementation.instructions.forEachIndexed { index, instruction ->
+                val beforeInstructions = followRequestInstructions(instruction) ?: return@forEachIndexed
 
-                if (classDef.type == CALL_SERVER_INTERCEPTOR_DESCRIPTOR && method.name == NETWORK_EXECUTE_CALL_METHOD) {
-                    executeCall += method
-                    continue
-                }
-
-                if (classDef.type == CALL_SERVER_INTERCEPTOR_DESCRIPTOR && method.name == NETWORK_PARSE_RESPONSE_METHOD) {
-                    parseResponse += method
-                    continue
-                }
-
-                implementation.instructions.forEachIndexed { index, instruction ->
-                    val beforeInstructions = followRequestInstructions(instruction) ?: return@forEachIndexed
-
-                    patchesByMethod.getOrPut(method) { ArrayDeque() }
-                        .add(FollowCallPatch(index, beforeInstructions))
-                }
+                patchesByMethod.getOrPut(method) { ArrayDeque() }
+                    .add(FollowCallPatch(index, beforeInstructions))
             }
         }
 

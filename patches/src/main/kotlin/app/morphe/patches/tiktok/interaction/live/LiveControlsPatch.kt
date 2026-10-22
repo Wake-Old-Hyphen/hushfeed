@@ -5,6 +5,8 @@
 package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
@@ -167,6 +169,7 @@ internal const val LIVE_HOST_RESOURCE = "Lcom/ss/android/ugc/aweme/live/livehost
 internal object LiveDarkThemeFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("Landroid/content/Context;"),
+    filters = listOf(methodCall(opcode = Opcode.INVOKE_STATIC, definingClass = LIVE_HOST_RESOURCE)),
     custom = { method, classDef -> isLiveDarkThemeAnswer(method, classDef) },
 )
 
@@ -316,6 +319,7 @@ internal const val SUB_RANK_TAB = "Lcom/bytedance/android/livesdk/rank/model/Sub
 internal class RankTabColorFingerprint(field: String) : Fingerprint(
     returnType = "V",
     parameters = listOf("L"),
+    filters = listOf(fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = SUB_RANK_TAB, name = field)),
     custom = { method, _ -> rankTabContext(method, field) != null },
 )
 
@@ -533,6 +537,7 @@ internal object RankGapInfoIconFingerprint : Fingerprint(
         "L",
         RANK_GAP,
     ),
+    filters = listOf(fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = RANK_GAP, name = "bottomBarFaq")),
     custom = { method, _ -> gapInfoIcon(method) != null },
 )
 
@@ -670,6 +675,7 @@ internal fun hookPageContexts(method: MutableMethod) {
 internal object LiveRowBinderFingerprint : Fingerprint(
     returnType = "Landroidx/recyclerview/widget/RecyclerView\$ViewHolder;",
     parameters = listOf("Landroid/view/LayoutInflater;", "Landroid/view/ViewGroup;"),
+    filters = listOf(fieldAccess(definingClass = LIVE_ROW_PRELOAD)),
     custom = { method, classDef -> rowBinder(method, classDef) != null },
 )
 
@@ -789,6 +795,7 @@ internal const val BASE_ACTIVITY = "Lcom/bytedance/ies/foundation/activity/BaseA
 internal object AppDarkThemeFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(BASE_ACTIVITY),
+    filters = listOf(methodCall(opcode = Opcode.INVOKE_VIRTUAL, name = "isDarkModeSupported", parameters = listOf(), returnType = "Z")),
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) && appDarkTheme(method) != null },
 )
 
@@ -1140,6 +1147,7 @@ private const val SET_BACKGROUND = "Landroid/view/View;->setBackground(Landroid/
 internal object LiveProfileBadgeFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(LIVE_BADGE),
+    filters = listOf(fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = COMBINE_BADGE, name = "background")),
     custom = { method, _ -> badgeTileCalls(method) != null },
 )
 

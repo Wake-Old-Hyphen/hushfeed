@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
@@ -34,6 +35,7 @@ private val onPagerBase: (com.android.tools.smali.dexlib2.iface.Method, com.andr
  * reach both.
  */
 internal object MainPagerPageEnabledFingerprint : Fingerprint(
+    classFingerprint = MainPagerDispatchFingerprint,
     name = "getIsPageEnabled",
     returnType = "Z",
     parameters = listOf(),
@@ -45,6 +47,7 @@ internal object MainPagerDispatchFingerprint : Fingerprint(
     name = "dispatchTouchEvent",
     returnType = "Z",
     parameters = listOf("Landroid/view/MotionEvent;"),
+    filters = listOf(methodCall(name = "getIsPageEnabled", returnType = "Z", parameters = listOf())),
     custom = onPagerBase,
 )
 
@@ -56,6 +59,7 @@ internal object MainPagerInterceptFingerprint : Fingerprint(
     name = "onInterceptTouchEvent",
     returnType = "Z",
     parameters = listOf("Landroid/view/MotionEvent;"),
+    filters = listOf(methodCall(name = "getIsPageEnabled", returnType = "Z", parameters = listOf())),
     custom = onPagerBase,
 )
 
@@ -69,6 +73,7 @@ internal object MainPagerTouchFingerprint : Fingerprint(
     name = "onTouchEvent",
     returnType = "Z",
     parameters = listOf("Landroid/view/MotionEvent;"),
+    filters = listOf(methodCall(name = "getIsPageEnabled", returnType = "Z", parameters = listOf())),
     custom = onPagerBase,
 )
 

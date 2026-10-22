@@ -5,14 +5,13 @@
 package app.morphe.patches.tiktok.interaction.offlinevideos
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 
 internal object OfflineModeSheetOptionsFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/offlinemode/ui/sheet/OfflineModeSheetPageAssem;",
+    name = "<clinit>",
     returnType = "V",
-    custom = { method, classDef ->
-        classDef.endsWith("/OfflineModeSheetPageAssem;") &&
-            method.name == "<clinit>" &&
-            method.parameterTypes.isEmpty()
-    },
+    parameters = emptyList(),
 )
 
 /**
@@ -45,7 +44,10 @@ private val OFFLINE_OPTION_CONSTANTS = listOf(
 )
 
 internal object OfflineModeOptionEnumFingerprint : Fingerprint(
+    name = "<clinit>",
     returnType = "V",
+    parameters = emptyList(),
+    filters = listOf(fieldAccess(name = "DOWNLOAD_50_VIDEOS")),
     custom = { method, classDef ->
         method.name == "<clinit>" &&
             method.parameterTypes.isEmpty() &&

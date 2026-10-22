@@ -58,6 +58,10 @@ internal fun ClassDef.registersMessageListProtocol(constant: String): Boolean =
  * whose constructor stores MessageListProtocolEnum.PRESHOWN_STICKER_BANNER_PROTOCOL.
  */
 internal object ChatStickerBannerEnabledFingerprint : Fingerprint(
+    classFingerprint = Fingerprint(
+        name = "<init>",
+        filters = listOf(app.morphe.patcher.fieldAccess(name = "PRESHOWN_STICKER_BANNER_PROTOCOL")),
+    ),
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),
@@ -66,6 +70,10 @@ internal object ChatStickerBannerEnabledFingerprint : Fingerprint(
 
 /** The suggested reply cells in a chat's message list. On 47.4.3 R8 renamed the class (IMUnifiedSuggestedReplyMsgProtocol); it registers UNIFIED_SUGGESTED_REPLY_MSG. */
 internal object ChatSuggestedReplyEnabledFingerprint : Fingerprint(
+    classFingerprint = Fingerprint(
+        name = "<init>",
+        filters = listOf(app.morphe.patcher.fieldAccess(name = "UNIFIED_SUGGESTED_REPLY_MSG")),
+    ),
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),
@@ -74,6 +82,10 @@ internal object ChatSuggestedReplyEnabledFingerprint : Fingerprint(
 
 /** The banner that introduces suggested replies. On 47.4.3 R8 renamed the class (SmartReplyIntroBannerProtocol); it registers SMART_REPLY_ENTRANCE_CARD. */
 internal object ChatSmartReplyIntroEnabledFingerprint : Fingerprint(
+    classFingerprint = Fingerprint(
+        name = "<init>",
+        filters = listOf(app.morphe.patcher.fieldAccess(name = "SMART_REPLY_ENTRANCE_CARD")),
+    ),
     name = "isEnabled",
     returnType = "Z",
     parameters = emptyList(),

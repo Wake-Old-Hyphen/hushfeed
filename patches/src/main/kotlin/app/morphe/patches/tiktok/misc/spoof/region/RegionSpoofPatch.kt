@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.misc.spoof.region
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.anyInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.PatchException
@@ -348,6 +350,33 @@ private fun writes(instruction: Instruction, register: Int): Boolean {
     return target == register || (instruction.opcode.setsWideRegister() && target + 1 == register)
 }
 
+private object ProxyFillFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("L"),
+    filters = listOf(
+        methodCall(
+            definingClass = COMMON_API,
+            name = "doPost",
+        ),
+    ),
+    custom = { method, _ -> proxyFill(method) != null },
+)
+
+private object LocaleOrTimeZoneGetDefaultFingerprint : Fingerprint(
+    filters = listOf(
+        anyInstruction(
+            methodCall(
+                definingClass = "Ljava/util/Locale;",
+                name = "getDefault",
+            ),
+            methodCall(
+                definingClass = "Ljava/util/TimeZone;",
+                name = "getDefault",
+            ),
+        ),
+    ),
+)
+
 @Suppress("unused")
 val regionSpoofPatch = bytecodePatch(
     name = "Region spoof",
@@ -386,10 +415,7 @@ val regionSpoofPatch = bytecodePatch(
         if (appLogUrlEntry.funnel.toString() != appLogBuilderEntry.funnel.toString()) {
             throw PatchException("Region spoof: AppLog's two URL entry points no longer share one funnel.")
         }
-        val proxyHelpers = mutableListOf<Method>()
-        classDefForEach { definition ->
-            definition.methods.forEach { method -> if (proxyFill(method) != null) proxyHelpers += method }
-        }
+        val proxyHelpers = ProxyFillFingerprint.matchAll().map { it.originalMethod }
         if (proxyHelpers.isEmpty()) {
             throw PatchException("Region spoof: no JS request helper fills a POST body off a URL the way it did.")
         }
@@ -398,28 +424,28 @@ val regionSpoofPatch = bytecodePatch(
 
         val replacements = mapOf("Ljava/util/Locale;" to "locale", "Ljava/util/TimeZone;" to "timeZone")
         val counts = mutableMapOf<String, Int>()
-        classDefForEach { definition ->
-            if (definition.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach
-            definition.methods.forEach { method ->
-                val instructions = method.implementation?.instructions?.toList() ?: return@forEach
-                val calls = instructions.withIndex().mapNotNull { (index, instruction) ->
-                    if (instruction.opcode != Opcode.INVOKE_STATIC && instruction.opcode != Opcode.INVOKE_STATIC_RANGE) return@mapNotNull null
-                    val reference = instruction.getReference<MethodReference>() ?: return@mapNotNull null
-                    val wrapper = replacements[reference.definingClass] ?: return@mapNotNull null
-                    if (reference.name != "getDefault" || reference.returnType != reference.definingClass) return@mapNotNull null
-                    val result = instructions.getOrNull(index + 1)
-                    if (result?.opcode != Opcode.MOVE_RESULT_OBJECT) return@mapNotNull null
-                    counts[wrapper] = (counts[wrapper] ?: 0) + 1
-                    Triple(index + 2, (result as OneRegisterInstruction).registerA, wrapper to reference.returnType)
-                }
-                if (calls.isNotEmpty()) {
-                    val mutable = mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
-                    calls.asReversed().forEach { (index, register, target) ->
-                        mutable.addInstructions(index, """
-                            invoke-static/range { v$register .. v$register }, $EXTENSION->${target.first}(${target.second})${target.second}
-                            move-result-object v$register
-                        """)
-                    }
+        val matches = LocaleOrTimeZoneGetDefaultFingerprint.matchAll()
+            .filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
+        for (match in matches) {
+            val method = match.originalMethod
+            val instructions = method.implementation?.instructions?.toList() ?: continue
+            val calls = instructions.withIndex().mapNotNull { (index, instruction) ->
+                if (instruction.opcode != Opcode.INVOKE_STATIC && instruction.opcode != Opcode.INVOKE_STATIC_RANGE) return@mapNotNull null
+                val reference = instruction.getReference<MethodReference>() ?: return@mapNotNull null
+                val wrapper = replacements[reference.definingClass] ?: return@mapNotNull null
+                if (reference.name != "getDefault" || reference.returnType != reference.definingClass) return@mapNotNull null
+                val result = instructions.getOrNull(index + 1)
+                if (result?.opcode != Opcode.MOVE_RESULT_OBJECT) return@mapNotNull null
+                counts[wrapper] = (counts[wrapper] ?: 0) + 1
+                Triple(index + 2, (result as OneRegisterInstruction).registerA, wrapper to reference.returnType)
+            }
+            if (calls.isNotEmpty()) {
+                val mutable = match.method
+                calls.asReversed().forEach { (index, register, target) ->
+                    mutable.addInstructions(index, """
+                        invoke-static/range { v$register .. v$register }, $EXTENSION->${target.first}(${target.second})${target.second}
+                        move-result-object v$register
+                    """)
                 }
             }
         }

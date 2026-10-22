@@ -8,6 +8,7 @@ package app.morphe.patches.tiktok.interaction.videooverlays
 
 import app.morphe.util.addInstruction
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -36,6 +37,7 @@ private object LocationDealCardFingerprint : Fingerprint(
     custom = { method, _ -> isLocationCardBind(method, "PoiDealAnchorView") },
 )
 private object LocationBadgeListFingerprint : Fingerprint(
+    filters = listOf(fieldAccess(definingClass = MULTI_TAG)),
     custom = { method, _ -> isLocationBadgeListFactory(method) },
 )
 private object FeedReportButtonGateFingerprint : Fingerprint(

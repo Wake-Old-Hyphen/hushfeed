@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.interaction.exactcounts
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.literal
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.string
@@ -69,6 +70,7 @@ internal fun Method.compactNumberFormatterCalls(): Int =
 internal object CompactCountFormatterFingerprint : Fingerprint(
     returnType = "Ljava/lang/String;",
     parameters = listOf("J"),
+    filters = listOf(literal(10_000L)),
     custom = { method, _ ->
         method.isCountFormatter() && method.compactNumberFormatterCalls() == 2 &&
             method.implementation!!.instructions.any { (it as? WideLiteralInstruction)?.wideLiteral == 10_000L }

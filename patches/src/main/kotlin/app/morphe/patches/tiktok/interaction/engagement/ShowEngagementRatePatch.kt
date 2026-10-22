@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.engagement
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -144,6 +145,7 @@ internal object ProfileGridHolderBindFingerprint : Fingerprint(
     parameters = listOf(
         AWEME, "I", "Z", "Z", "I", "Ljava/lang/String;", "Ljava/lang/String;", "Z", "Z", "Ljava/util/Set;", "Ljava/util/Set;",
     ),
+    filters = listOf(methodCall(definingClass = STATISTICS, name = "getPlayCount")),
     custom = { method, _ -> method.viewCountReads().isNotEmpty() },
 )
 

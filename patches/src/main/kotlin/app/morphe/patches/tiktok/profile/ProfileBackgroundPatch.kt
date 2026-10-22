@@ -7,6 +7,7 @@
  */
 package app.morphe.patches.tiktok.profile
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
@@ -112,6 +113,16 @@ internal fun ClassDef.profileBackgroundAllowListRead(): Pair<Method, Int>? {
 
 private const val ALLOW_LIST_KEY = "profile_bg_in_allow_list"
 
+/**
+ * The classes with a method reading [key], found through the patcher's string index. One
+ * fingerprint per key rather than a filter taking either: patcher 1.15.1 can't index a filter
+ * with alternatives, and walked every method in the app for it (17 s against 0.4 s).
+ */
+private class ProfileBackgroundGateFingerprint(key: String) : Fingerprint(
+    strings = listOf(key),
+    custom = { _, classDef -> classDef.isProfileBackgroundGateHolder() },
+)
+
 @Suppress("unused")
 val profileBackgroundPatch = bytecodePatch(
     // A literal, not PATCH: the README and default-selection tests find patches by reading it.
@@ -127,8 +138,10 @@ val profileBackgroundPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
-        val holders = mutableListOf<ClassDef>()
-        classDefForEach { classDef -> if (classDef.isProfileBackgroundGateHolder()) holders += classDef }
+        val holders = PROFILE_BACKGROUND_KEYS
+            .flatMap { ProfileBackgroundGateFingerprint(it).matchAllOrNull().orEmpty() }
+            .map { it.originalClassDef }
+            .distinctBy { it.type }
         val holder = holders.singleOrNull() ?: throw PatchException(
             "$PATCH: expected one class holding the profile background gate (reading " +
                 "${PROFILE_BACKGROUND_KEYS.joinToString()}, with a (boolean) -> boolean gate and a " +

@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.looping
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -46,6 +48,13 @@ internal fun isStoryPlayModeEnum(classDef: ClassDef): Boolean {
     val names = classDef.staticFields.map { it.name }.toSet()
     return names.containsAll(STORY_PLAY_MODE_CONSTANTS)
 }
+
+private object StoryPlayModeEnumFingerprint : Fingerprint(
+    filters = listOf(
+        fieldAccess(name = "LOOP_LAST_VIDEO_AFTER_ONE_USER_FINISH"),
+    ),
+    custom = { _, classDef -> isStoryPlayModeEnum(classDef) },
+)
 
 /** The pager's play-completed callback: it takes the player's id string and returns nothing. */
 internal fun ClassDef.playCompletedMethod() =
@@ -132,8 +141,9 @@ val storyControlsPatch = bytecodePatch(
 }
 
 private fun BytecodePatchContext.findPlayModeEnum(): String {
-    val found = mutableListOf<String>()
-    classDefForEach { if (isStoryPlayModeEnum(it)) found += it.type }
+    val found = StoryPlayModeEnumFingerprint.matchAll()
+        .map { it.originalClassDef.type }
+        .distinct()
     if (found.size != 1) {
         throw PatchException("Story controls: expected one story play mode enum, found ${found.size}.")
     }

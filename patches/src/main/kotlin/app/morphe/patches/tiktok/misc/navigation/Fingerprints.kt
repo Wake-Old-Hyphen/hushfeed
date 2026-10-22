@@ -70,6 +70,7 @@ internal object TabCountDotVisibilityFingerprint : Fingerprint(
 )
 
 internal object TabDotVisibilityFingerprint : Fingerprint(
+    classFingerprint = TabCountDotVisibilityFingerprint,
     name = "setTabDotVisibility",
     returnType = "V",
     parameters = listOf("I"),

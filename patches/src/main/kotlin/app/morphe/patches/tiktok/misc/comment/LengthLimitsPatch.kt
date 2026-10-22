@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.comment
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.patch.PatchException
@@ -56,12 +57,14 @@ internal object CommentInputLimitFingerprint : Fingerprint(
     definingClass = "${KEYBOARD}PortraitInputKeyboard;",
     parameters = emptyList(),
     returnType = "I",
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.opcode == Opcode.IGET_WIDE &&
-                ((instruction as? ReferenceInstruction)?.reference as? FieldReference)?.toString() == LONG_COMMENT_MAX_INPUT
-        } == true
-    },
+    filters = listOf(
+        fieldAccess(
+            opcode = Opcode.IGET_WIDE,
+            definingClass = "Lcom/ss/android/ugc/aweme/comment/experiment/LongCommentWritingConfig;",
+            name = "maxInputLimit",
+            type = "J",
+        ),
+    ),
 )
 
 private val ON_VIEW_CREATED = listOf("Landroid/view/View;", "Landroid/os/Bundle;")

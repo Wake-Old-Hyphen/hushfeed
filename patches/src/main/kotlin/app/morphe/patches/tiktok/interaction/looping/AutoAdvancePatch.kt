@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.looping
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -43,6 +44,18 @@ private const val LAZY = "LAZY"
 private const val IMMEDIATE = "IMMEDIATE"
 private const val SEARCH_FLAG = "search_auto_scroll"
 
+private object LazyRegistrationFingerprint : Fingerprint(
+    filters = listOf(
+        fieldAccess(name = LAZY),
+    ),
+    custom = { method, _ ->
+        val instructions = method.implementation?.instructions
+        instructions?.any {
+            it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == COMPONENT
+        } == true
+    },
+)
+
 /** Where the panel records how the host should load one of its components. */
 private class Registration(
     val owner: String,
@@ -67,29 +80,28 @@ private class Registration(
  */
 private fun BytecodePatchContext.resolveLazyRegistrations(): List<Registration> {
     val found = mutableListOf<Registration>()
-    classDefForEach { classDef ->
-        for (method in classDef.methods) {
-            val instructions = method.implementation?.instructions?.toList() ?: continue
-            val namesComponent = instructions.indexOfFirst {
-                it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == COMPONENT
-            }
-            if (namesComponent < 0) continue
-            instructions.forEachIndexed { index, instruction ->
-                // LAZY is a common name for a common idea: this build has it on a coroutine
-                // start and on two other enums as well. What tells the registration apart is
-                // that it writes the constant it just loaded straight into the entry beside
-                // the component it is registering.
-                if (index <= namesComponent) return@forEachIndexed
-                if (instruction.opcode != Opcode.SGET_OBJECT) return@forEachIndexed
-                val field = instruction.getReference<FieldReference>() ?: return@forEachIndexed
-                if (field.name != LAZY) return@forEachIndexed
-                val store = instructions.getOrNull(index + 1) ?: return@forEachIndexed
-                if (store.opcode != Opcode.IPUT_OBJECT) return@forEachIndexed
-                if ((store as TwoRegisterInstruction).registerA !=
-                    (instruction as OneRegisterInstruction).registerA) return@forEachIndexed
-                if (store.getReference<FieldReference>()?.type != field.type) return@forEachIndexed
-                found.add(Registration(classDef.type, method, index, field.type))
-            }
+    for (match in LazyRegistrationFingerprint.matchAll()) {
+        val method = match.originalMethod
+        val instructions = method.implementation?.instructions?.toList() ?: continue
+        val namesComponent = instructions.indexOfFirst {
+            it.opcode == Opcode.CONST_CLASS && it.getReference<TypeReference>()?.type == COMPONENT
+        }
+        if (namesComponent < 0) continue
+        instructions.forEachIndexed { index, instruction ->
+            // LAZY is a common name for a common idea: this build has it on a coroutine
+            // start and on two other enums as well. What tells the registration apart is
+            // that it writes the constant it just loaded straight into the entry beside
+            // the component it is registering.
+            if (index <= namesComponent) return@forEachIndexed
+            if (instruction.opcode != Opcode.SGET_OBJECT) return@forEachIndexed
+            val field = instruction.getReference<FieldReference>() ?: return@forEachIndexed
+            if (field.name != LAZY) return@forEachIndexed
+            val store = instructions.getOrNull(index + 1) ?: return@forEachIndexed
+            if (store.opcode != Opcode.IPUT_OBJECT) return@forEachIndexed
+            if ((store as TwoRegisterInstruction).registerA !=
+                (instruction as OneRegisterInstruction).registerA) return@forEachIndexed
+            if (store.getReference<FieldReference>()?.type != field.type) return@forEachIndexed
+            found.add(Registration(match.originalClassDef.type, method, index, field.type))
         }
     }
     if (found.isEmpty()) {

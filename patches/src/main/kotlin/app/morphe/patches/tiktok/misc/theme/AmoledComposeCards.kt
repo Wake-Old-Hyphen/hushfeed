@@ -4,6 +4,9 @@
  */
 package app.morphe.patches.tiktok.misc.theme
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.literal
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -52,6 +55,15 @@ internal fun Method.pageGrouped2Field(): FieldReference? {
         ?.getReference<FieldReference>() ?: return null
     return field.takeIf { it.definingClass == definingClass && it.type == "J" }
 }
+
+/** A toString that prints [PAGE_GROUPED_2_LABEL] before a field of its own class. */
+internal object PageGrouped2ToStringFingerprint : Fingerprint(
+    name = "toString",
+    returnType = "Ljava/lang/String;",
+    parameters = emptyList(),
+    strings = listOf(PAGE_GROUPED_2_LABEL),
+    custom = { method, _ -> method.pageGrouped2Field() != null },
+)
 
 /** The palette's card field, read off the one class whose toString labels it. Null unless exactly one does. */
 internal fun Iterable<ClassDef>.composeCardField(): FieldReference? =
@@ -162,22 +174,26 @@ internal fun amoledComposeCardsPatch(color: () -> String?) = bytecodePatch {
         // Refuses an unread build before anything changes, as the resource side does.
         darkBackgroundColors(packageMetadata.versionName)
         val chosen = amoledColor(color())
-        val candidates = mutableListOf<ClassDef>()
-        classDefForEach { classDef ->
-            if (classDef.methods.any { it.name == "toString" && it.pageGrouped2Field() != null }) candidates += classDef
-        }
+        // Both lookups go through the patcher's indexes (the label string, then the card field's
+        // writes) instead of walking every class, which made this the slowest patch in the bundle.
+        val candidates = PageGrouped2ToStringFingerprint.matchAllOrNull().orEmpty()
+            .map { it.originalClassDef }.distinctBy { it.type }
         val field = candidates.composeCardField()
             ?: throw PatchException("AMOLED dark theme: couldn't find the Compose palette's card color.")
-        val builders = mutableListOf<Pair<String, String>>()
-        classDefForEach { classDef ->
-            classDef.methods.filter { it.isDarkPaletteBuilder(field) }.forEach { builders += classDef.type to it.name }
-        }
-        val (owner, name) = builders.singleOrNull()
+        val builders = Fingerprint(
+            returnType = field.definingClass,
+            parameters = emptyList(),
+            // The dark gray leads, since the palette type and its short field name are both read
+            // all over the app and narrow the search far less than the one literal does.
+            filters = listOf(
+                literal(DARK_CARD_GRAY),
+                fieldAccess(definingClass = field.definingClass, name = field.name, type = "J", opcode = Opcode.IPUT_WIDE),
+            ),
+            custom = { method, _ -> method.isDarkPaletteBuilder(field) },
+        ).matchAllOrNull().orEmpty()
+        val builder = builders.singleOrNull()
             ?: throw PatchException("AMOLED dark theme: expected one dark palette builder, found ${builders.size}.")
-        val builder = mutableClassDefBy(owner).methods.single {
-            it.name == name && it.parameterTypes.isEmpty() && it.returnType == field.definingClass
-        }
-        builder.paintCards(field, composeArgb(chosen))
+        builder.method.paintCards(field, composeArgb(chosen))
     }
 }
 

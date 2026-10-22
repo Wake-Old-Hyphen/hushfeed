@@ -64,6 +64,8 @@ internal fun isManualSearchRecorder(method: Method): Boolean =
 private object SearchHistoryRecordFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf(SEARCH_HISTORY, "Ljava/lang/String;"),
+    // The log line's whole literal, so the string index finds the manager without a full walk.
+    strings = listOf("recordSearchHistory, repo:"),
     custom = { method, _ -> isSearchHistoryRecorder(method) },
 )
 

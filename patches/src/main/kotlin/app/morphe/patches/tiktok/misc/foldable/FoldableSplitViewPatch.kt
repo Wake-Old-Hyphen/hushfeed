@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.misc.foldable
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -49,7 +50,12 @@ internal object FeedSplitContainerFingerprint : Fingerprint(
     returnType = "Landroid/view/View;",
     parameters = listOf("Lcom/bytedance/ies/uikit/base/AbsFragment;", "Landroid/view/LayoutInflater;"),
     strings = listOf("HOME_"),
-    custom = { method, _ -> method.registersSplitContainer() },
+    filters = listOf(
+        methodCall(
+            opcode = Opcode.INVOKE_STATIC,
+            definingClass = SPLIT_CONTAINER_MANAGER,
+        ),
+    ),
 )
 
 internal fun Method.registersSplitContainer(): Boolean = implementation?.instructions?.any { instruction ->

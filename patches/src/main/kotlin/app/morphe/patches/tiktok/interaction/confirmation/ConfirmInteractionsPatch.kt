@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.confirmation
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -97,6 +98,7 @@ private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/Vide
 internal object StoryLikeClickFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("L", "Landroid/view/View;"),
+    filters = listOf(checkCast(STORY_DIGG_ASSEM)),
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) && method.isStoryLikeToggle() },
 )
 

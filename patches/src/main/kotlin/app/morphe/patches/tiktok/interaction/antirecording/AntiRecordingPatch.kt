@@ -6,6 +6,9 @@
  */
 package app.morphe.patches.tiktok.interaction.antirecording
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.anyInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -23,6 +26,21 @@ private data class ScreenCaptureCallSite(
     val classDef: ClassDef,
     val method: Method,
     val instructionIndexes: List<Int>,
+)
+
+private object ScreenCaptureCallbackFingerprint : Fingerprint(
+    filters = listOf(
+        anyInstruction(
+            methodCall(
+                definingClass = "Landroid/app/Activity;",
+                name = "registerScreenCaptureCallback",
+            ),
+            methodCall(
+                definingClass = "Landroid/app/Activity;",
+                name = "unregisterScreenCaptureCallback",
+            ),
+        ),
+    ),
 )
 
 /**
@@ -67,28 +85,28 @@ val antiRecordingPatch = bytecodePatch(
         }
 
         val callSites = mutableListOf<ScreenCaptureCallSite>()
-        classDefForEach { classDef ->
-            classDef.methods.forEach { method ->
-                val indexes = method.implementation?.instructions
-                    ?.mapIndexedNotNull { index, instruction ->
-                        val reference = (instruction as? ReferenceInstruction)
-                            ?.reference as? MethodReference
-                            ?: return@mapIndexedNotNull null
-                        if (reference.definingClass != "Landroid/app/Activity;") {
-                            return@mapIndexedNotNull null
-                        }
-                        if (
-                            reference.name != "registerScreenCaptureCallback" &&
-                            reference.name != "unregisterScreenCaptureCallback"
-                        ) {
-                            return@mapIndexedNotNull null
-                        }
-                        index
+        for (match in ScreenCaptureCallbackFingerprint.matchAll()) {
+            val method = match.originalMethod
+            val classDef = match.originalClassDef
+            val indexes = method.implementation?.instructions
+                ?.mapIndexedNotNull { index, instruction ->
+                    val reference = (instruction as? ReferenceInstruction)
+                        ?.reference as? MethodReference
+                        ?: return@mapIndexedNotNull null
+                    if (reference.definingClass != "Landroid/app/Activity;") {
+                        return@mapIndexedNotNull null
                     }
-                    .orEmpty()
-                if (indexes.isNotEmpty()) {
-                    callSites += ScreenCaptureCallSite(classDef, method, indexes)
+                    if (
+                        reference.name != "registerScreenCaptureCallback" &&
+                        reference.name != "unregisterScreenCaptureCallback"
+                    ) {
+                        return@mapIndexedNotNull null
+                    }
+                    index
                 }
+                .orEmpty()
+            if (indexes.isNotEmpty()) {
+                callSites += ScreenCaptureCallSite(classDef, method, indexes)
             }
         }
 

@@ -63,8 +63,9 @@ internal fun BytecodePatchContext.invokeSitesOf(
     val names = targetNames(targets)
     val callers = classesCallingMethods(targets)
     val sites = mutableListOf<InvokeSite>()
-    classDefForEach { owner ->
-        if (owner.type !in callers || owner.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach
+    for (callerType in callers) {
+        if (callerType.startsWith("Lapp/morphe/extension/")) continue
+        val owner = classDefByOrNull(callerType) ?: continue
         owner.methods.forEach { method ->
             method.implementation?.instructions?.forEachIndexed { index, instruction ->
                 if (instruction.opcode !in opcodes) return@forEachIndexed

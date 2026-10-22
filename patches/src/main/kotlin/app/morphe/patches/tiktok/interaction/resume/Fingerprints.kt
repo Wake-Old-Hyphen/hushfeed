@@ -36,21 +36,17 @@ internal object FeedProgressContinueGateFingerprint : Fingerprint(
 )
 
 internal object FeedPlayCompletedFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    name = "onPlayCompleted",
     returnType = "V",
     parameters = listOf("Ljava/lang/String;"),
-    custom = { method, classDef ->
-        classDef.type == "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;" &&
-            method.name == "onPlayCompleted"
-    },
 )
 
 internal object FeedPlayProgressFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    name = "onPlayProgressChange",
     returnType = "V",
     parameters = listOf("Ljava/lang/String;", "J", "J"),
-    custom = { method, classDef ->
-        classDef.type == "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;" &&
-            method.name == "onPlayProgressChange"
-    },
 )
 
 // The method that answers "where should this video start", read out of the 46.2.3 fixture. The

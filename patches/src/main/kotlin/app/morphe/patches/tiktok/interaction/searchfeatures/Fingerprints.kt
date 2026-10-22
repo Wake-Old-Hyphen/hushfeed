@@ -19,11 +19,8 @@ internal object NonPersonalizedSearchStateFingerprint : Fingerprint(
 )
 
 internal object LiveSearchGateFingerprint : Fingerprint(
+    definingClass = "Lcom/bytedance/android/livesdk/livesetting/feed/LiveDrawerSearchEnableSetting;",
+    name = "getValue",
     returnType = "Z",
     parameters = emptyList(),
-    custom = { method, classDef ->
-        classDef.type ==
-            "Lcom/bytedance/android/livesdk/livesetting/feed/LiveDrawerSearchEnableSetting;" &&
-            method.name == "getValue"
-    },
 )

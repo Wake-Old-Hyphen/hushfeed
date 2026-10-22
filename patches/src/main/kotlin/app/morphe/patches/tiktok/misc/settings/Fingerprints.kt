@@ -15,26 +15,22 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 
 internal object AdPersonalizationActivityOnCreateFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("/AdPersonalizationActivity;") && method.name == "onCreate"
-    },
+    definingClass = "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;",
+    name = "onCreate",
 )
 
 internal object AdPersonalizationActivityOnBackPressedFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("/AdPersonalizationActivity;") &&
-            method.name == "onBackPressed" &&
-            method.parameterTypes.isEmpty() &&
-            method.returnType == "V"
-    },
+    definingClass = "Lcom/bytedance/ies/ugc/aweme/commercialize/compliance/personalization/AdPersonalizationActivity;",
+    name = "onBackPressed",
+    returnType = "V",
+    parameters = emptyList(),
 )
 
 
 
 internal object SettingsStatusLoadFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("Lapp/morphe/extension/tiktok/settings/SettingsStatus;") && method.name == "load"
-    },
+    definingClass = "Lapp/morphe/extension/tiktok/settings/SettingsStatus;",
+    name = "load",
 )
 
 /**
@@ -54,13 +50,10 @@ internal fun BytecodePatchContext.registerForBuildDetails(enable: String) {
  * parameter, or the register arithmetic in the patch names something else.
  */
 internal object NpthExtentTaskInitFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/legoImp/task/NpthExtentTask;",
+    name = "LIZ",
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
-    custom = { method, classDef ->
-        classDef.endsWith("/NpthExtentTask;") &&
-            method.name == "LIZ" &&
-            method.parameterTypes.size == 1
-    },
 )
 
 /**
@@ -86,17 +79,17 @@ internal fun MethodReference.isSettingsRowsSort(): Boolean =
         returnType == "Ljava/util/List;"
 
 internal object SettingsComposeRowsFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/setting/ui/rvmpcompose/SettingsComposeRvmpFragment;",
+    returnType = "V",
     custom = ::isSettingsComposeRowsMethod,
 )
 
 internal object SupportGroupDefaultStateFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("/SupportGroupVM;") && method.name == "defaultState"
-    },
+    definingClass = "Lcom/ss/android/ugc/aweme/setting/ui/rvmpcompose/group/support/SupportGroupVM;",
+    name = "defaultState",
 )
 
 internal object OpenDebugCellVmDefaultStateFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("/OpenDebugCellVM;") && method.name == "defaultState"
-    },
+    definingClass = "Lcom/ss/android/ugc/aweme/setting/ui/rvmpcompose/group/support/cells/OpenDebugCellVM;",
+    name = "defaultState",
 )

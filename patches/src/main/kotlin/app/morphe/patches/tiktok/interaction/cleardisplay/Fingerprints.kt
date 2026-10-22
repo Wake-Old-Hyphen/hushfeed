@@ -8,9 +8,8 @@ import app.morphe.patcher.Fingerprint
 import com.android.tools.smali.dexlib2.AccessFlags
 
 internal object OnClearDisplayEventFingerprint : Fingerprint(
-    custom = { method, classDef ->
-        classDef.endsWith("/ClearModePanelComponent;") && method.name == "onClearModeEvent"
-    },
+    definingClass = "Lcom/ss/android/ugc/feed/platform/panel/clearmode/ClearModePanelComponent;",
+    name = "onClearModeEvent",
 )
 
 internal object ClearDisplayCellFingerprint : Fingerprint(

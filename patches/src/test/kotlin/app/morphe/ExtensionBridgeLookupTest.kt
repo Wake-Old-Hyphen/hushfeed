@@ -76,9 +76,25 @@ class ExtensionBridgeLookupTest {
                     return@forEach
                 }
                 // A name passed in: the lookup must sit in a local helper taking it, and every
-                // call of that helper must hand it a literal or a loop over literals.
-                val helper = Regex("""fun (\w+)\(\s*${Regex.escape(name)}: String""")
-                    .findAll(text.substring(0, lookup.range.first)).lastOrNull()
+                // call of that helper must hand it a literal or a loop over literals. Or the name
+                // is a key of a map of literals the lookup walks, when that walk is nearer than
+                // any such helper.
+                val head = text.substring(0, lookup.range.first)
+                val helper = Regex("""fun (\w+)\(\s*${Regex.escape(name)}: String""").findAll(head).lastOrNull()
+                val walk = listOfNotNull(
+                    Regex("""(\w+)\.(?:map|forEach|mapNotNull|onEach)\s*\{\s*\(\s*${Regex.escape(name)}\s*,[^)]*\)\s*->""")
+                        .findAll(head).lastOrNull(),
+                    Regex("""for \(\(\s*${Regex.escape(name)}\s*,[^)]*\)\s+in\s+(\w+)\)""").findAll(head).lastOrNull(),
+                ).maxByOrNull { it.range.first }
+                if (walk != null && (helper == null || walk.range.first > helper.range.first)) {
+                    val keys = mapKeys(text, walk.groupValues[1])
+                    if (keys.isEmpty()) {
+                        unresolved += "$fileName looks up a bridge on $type by the keys of ${walk.groupValues[1]}, which the scan can't read"
+                    } else {
+                        keys.forEach { found += Triple(fileName, type, it) }
+                    }
+                    return@forEach
+                }
                 if (helper == null) {
                     unresolved += "$fileName looks up a bridge on $type by `$name`, which isn't a helper's parameter"
                     return@forEach
@@ -111,6 +127,23 @@ class ExtensionBridgeLookupTest {
             }
         }
         return Scan(found, unresolved)
+    }
+
+    /** The literal keys of the `mapOf` or `linkedMapOf` [map] is declared as, one entry per line. Empty when it isn't one. */
+    private fun mapKeys(text: String, map: String): List<String> {
+        val start = Regex("""\bval ${Regex.escape(map)}\b[^=]*=\s*(?:mapOf|linkedMapOf|hashMapOf)\(""").find(text)
+            ?: return emptyList()
+        var depth = 1
+        var index = start.range.last + 1
+        while (index < text.length && depth > 0) {
+            when (text[index]) {
+                '(' -> depth++
+                ')' -> depth--
+            }
+            index++
+        }
+        return Regex("""(?m)^\s*"(\w+)"\s+to\b""").findAll(text.substring(start.range.last + 1, index))
+            .map { it.groupValues[1] }.toList()
     }
 
     /** Declarations of [name] in [source]: annotated, package-private and instance ones included. */
@@ -180,7 +213,7 @@ class ExtensionBridgeLookupTest {
             "NotInterestedPatch.kt:createCall", "RememberClearDisplayPatch.kt:postClear",
             "RememberClearDisplayPatch.kt:readCurrentAweme", "RememberClearDisplayPatch.kt:postAsReader",
             "HideLauncherShortcutsPatch.kt:askHostToRebuild",
-            "BackgroundPlayPatch.kt:replay",
+            "BackgroundPlayPatch.kt:replay", "SoundSeekbar.kt:previewPosition", "SoundSeekbar.kt:seekPreview",
         )
         val missing = known.filterNot(found::contains)
         assertTrue("the bridge scan no longer sees: $missing (saw ${found.sorted()})", missing.isEmpty())
@@ -193,6 +226,20 @@ class ExtensionBridgeLookupTest {
             private const val HOLDER = "Lapp/morphe/extension/tiktok/Holder;"
             private const val PACKAGE = "Lapp/morphe/extension/tiktok/"
             private const val HOST = "Lcom/ss/android/Host;"
+            internal val BRIDGES: Map<String, Pair<List<String>, String>> = linkedMapOf(
+                "keyed" to (listOf(HOST) to "Z"),
+                "alsoKeyed" to (listOf(HOST, "I") to "I"),
+            )
+            fun bodies(): Map<String, String> {
+                fun text(name: String, type: String) = "invoke-virtual {v0}, ${'$'}HOST->${'$'}name()${'$'}type"
+                return mapOf("keyed" to text("notALookup", "Z"))
+            }
+            fun BytecodePatchContext.walk() {
+                val owner = mutableClassDefBy(HOLDER)
+                BRIDGES.map { (name, signature) ->
+                    owner.methods.filter { it.name == name }
+                }
+            }
             fun BytecodePatchContext.go() {
                 val holder = mutableClassDefBy(HOLDER)
                 holder.methods.filter { it.name == "literal" }
@@ -217,7 +264,10 @@ class ExtensionBridgeLookupTest {
         val scan = scan("Sample.kt", source)
         assertEquals(emptyList<String>(), scan.unresolved)
         assertEquals(
-            setOf("literal", "single", "fromTemplate", "inline", "viaHelper", "paired", "alsoPaired", "plain", "alsoPlain"),
+            setOf(
+                "keyed", "alsoKeyed", "literal", "single", "fromTemplate", "inline", "viaHelper", "paired", "alsoPaired",
+                "plain", "alsoPlain",
+            ),
             scan.found.map { it.third }.toSet(),
         )
         assertTrue(scan.found.single { it.third == "fromTemplate" }.second == "Lapp/morphe/extension/tiktok/Templated;")
@@ -230,9 +280,11 @@ class ExtensionBridgeLookupTest {
                 names.forEach { rewrite(it) }
                 val other = computed()
                 holder.methods.filter { it.name == other }
+                val built = buildMap { put("hidden", 1) }
+                built.forEach { (name, arity) -> holder.methods.filter { it.name == name } }
             }
         """.trimIndent())
-        assertEquals("unreadable lookups were not reported: ${unreadable.unresolved}", 2, unreadable.unresolved.size)
+        assertEquals("unreadable lookups were not reported: ${unreadable.unresolved}", 3, unreadable.unresolved.size)
     }
 
     /** Declarations in every form a bridge is written, and calls that must not count. */

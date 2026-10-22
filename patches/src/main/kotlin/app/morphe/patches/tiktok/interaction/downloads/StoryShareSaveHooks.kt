@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -103,8 +104,10 @@ internal fun ClassDef.saveClicks(): List<Method> = methods.filter { method ->
 }
 
 internal object NativeSaveActionFingerprint : Fingerprint(
+    name = "<init>",
     returnType = "V",
     parameters = SAVE_ACTION_PARAMETERS,
+    filters = listOf(fieldAccess(opcode = Opcode.IPUT_OBJECT, type = SAVE_AWEME)),
     custom = { method, classDef -> method.name == "<init>" && classDef.isNativeSaveAction() },
 )
 

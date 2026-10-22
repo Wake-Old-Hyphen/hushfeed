@@ -6,6 +6,7 @@
 package app.morphe.patches.tiktok.misc.optimizer
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import com.android.tools.smali.dexlib2.AccessFlags
 
 internal const val SPLASH_SERVICE_DESCRIPTOR =
@@ -103,5 +104,11 @@ internal object UpdateBootFinishedTaskFingerprint : Fingerprint(
 /** Fresco's animated drawable factory, which picks the frame cache by caching strategy. */
 internal object AnimatedDrawableFactoryFingerprint : Fingerprint(
     returnType = ANIMATED_DRAWABLE_DESCRIPTOR,
+    filters = listOf(
+        methodCall(
+            definingClass = FRESCO_FRAME_CACHE_DESCRIPTOR,
+            name = "<init>",
+        ),
+    ),
     custom = { method, _ -> method.isAnimatedDrawableFactory() },
 )

@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.gesture
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -56,21 +57,23 @@ private fun Method.isCoordinateCallback() =
  * holds a Context and the other an int, which is the ordinary cell against the adapter's; the
  * patch hooks both the same way so it does not need to tell them apart.
  */
+private object CoordinateLongPressCallbackFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    returnType = "V",
+    parameters = listOf("F", "F"),
+)
+
 internal fun BytecodePatchContext.coordinateLongPressCallbacks(): List<MutableMethod> {
-    val found = mutableListOf<Pair<ClassDef, Method>>()
-    classDefForEach { classDef ->
-        if (classDef.fields.none { it.type == FEED_PAGE_PARAMS }) return@classDefForEach
-        val callback = classDef.methods.singleOrNull { it.isCoordinateCallback() }
-            ?: return@classDefForEach
-        found += classDef to callback
+    val matches = CoordinateLongPressCallbackFingerprint.matchAllOrNull().orEmpty().filter { match ->
+        match.originalClassDef.fields.any { it.type == FEED_PAGE_PARAMS }
     }
-    if (found.size != 2) {
+    if (matches.size != 2) {
         throw PatchException(
             "Long-press controls: expected two feed coordinate listeners holding a " +
-                "BaseFeedPageParams and one (float, float) callback, found ${found.size}.",
+                "BaseFeedPageParams and one (float, float) callback, found ${matches.size}.",
         )
     }
-    val shared = found[0].first.interfaces.toSet() intersect found[1].first.interfaces.toSet()
+    val shared = matches[0].originalClassDef.interfaces.toSet() intersect matches[1].originalClassDef.interfaces.toSet()
     val declaresCallback = shared.singleOrNull()?.let { type ->
         classDefByOrNull(type)?.methods?.singleOrNull { method ->
             method.returnType == "V" &&
@@ -83,9 +86,7 @@ internal fun BytecodePatchContext.coordinateLongPressCallbacks(): List<MutableMe
                 "interface declaring the (float, float) callback; they share $shared.",
         )
     }
-    return found.map { (classDef, callback) ->
-        mutableClassDefBy(classDef).findMutableMethodOf(callback)
-    }
+    return matches.map { it.method }
 }
 
 internal fun MutableMethod.hookCoordinateLongPress() {
@@ -153,22 +154,22 @@ internal fun MutableMethod.preserveConfiguredLongPressFromEdgeSpeedup() {
  * LandscapeVideoViewCell it holds rather than by which of the two the patcher meets first.
  */
 internal object FeedLongPressFingerprint : Fingerprint(
+    classFingerprint = Fingerprint(
+        name = "onDoubleTap",
+        parameters = listOf(MOTION_EVENT),
+        returnType = "Z",
+        filters = listOf(
+            methodCall(
+                name = "handleDoubleClick",
+                parameters = listOf(MOTION_EVENT),
+                returnType = "V",
+            ),
+        ),
+        custom = { _, classDef -> classDef.fields.none { it.type == LANDSCAPE_CELL } },
+    ),
     name = "onLongPress",
     parameters = listOf(MOTION_EVENT),
     returnType = "V",
-    custom = { _, classDef ->
-        classDef.fields.none { it.type == LANDSCAPE_CELL } && classDef.methods.any { method ->
-            method.name == "onDoubleTap" &&
-                method.parameterTypes == listOf(MOTION_EVENT) &&
-                method.implementation?.instructions?.any { instruction ->
-                    instruction.getReference<MethodReference>()?.let { reference ->
-                        reference.name == "handleDoubleClick" &&
-                            reference.parameterTypes == listOf(MOTION_EVENT) &&
-                            reference.returnType == "V"
-                    } == true
-                } == true
-        }
-    },
 )
 
 /**
@@ -196,11 +197,10 @@ internal object LikeViewFingerprint : Fingerprint(
  * searching the instructions, so a prepend at zero moves it along with everything else.
  */
 private object PlayerProgressFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    name = "onPlayProgressChange",
     returnType = "V",
     parameters = listOf("Ljava/lang/String;", "J", "J"),
-    custom = { method, classDef ->
-        method.name == "onPlayProgressChange" && classDef.endsWith("/PlayerController;")
-    },
 )
 
 /**

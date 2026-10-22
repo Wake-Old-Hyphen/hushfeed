@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -111,7 +112,10 @@ internal fun ClassDef.isNativeReportAction(): Boolean {
 }
 
 internal object NativeReportActionFingerprint : Fingerprint(
+    name = "<init>",
     returnType = "V",
+    parameters = listOf(AWEME, "L", STRING, STRING, ACTIVITY, "Landroidx/fragment/app/Fragment;"),
+    filters = listOf(fieldAccess(opcode = Opcode.IPUT_OBJECT, type = AWEME)),
     custom = { method, classDef -> method.isReportActionConstructor() && classDef.isNativeReportAction() },
 )
 
@@ -254,8 +258,9 @@ internal fun BytecodePatchContext.hookOwnedShareActions() {
     val imageViews = mutableMapOf<String, Boolean>()
     val isImageView = { type: String -> imageViews.getOrPut(type) { extendsClass(type, IMAGE) } }
     val iconBinders = mutableListOf<Pair<Method, OwnedShareIconBind>>()
-    classDefForEach { classDef ->
-        if (classDef.type in callers) classDef.methods.forEach { method ->
+    for (callerType in callers) {
+        val classDef = classDefByOrNull(callerType) ?: continue
+        classDef.methods.forEach { method ->
             method.ownedShareIconBind(action, isImageView)?.let { bind -> iconBinders += method to bind }
         }
     }

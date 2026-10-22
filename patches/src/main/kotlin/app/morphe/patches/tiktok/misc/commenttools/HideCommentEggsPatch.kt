@@ -101,6 +101,7 @@ internal object CommentPageSurpriseFingerprint : Fingerprint(
 /** The publish response: builds the struct from the surprise the server sent with a typed comment. */
 private object PublishedSurpriseFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
+    filters = listOf(fieldAccess(definingClass = COMMENT_RESPONSE, name = "commentSurprise")),
     custom = { method, _ ->
         val references = method.references()
         references.constructTheStruct() && references.readField(COMMENT_RESPONSE, "commentSurprise")
@@ -110,6 +111,7 @@ private object PublishedSurpriseFingerprint : Fingerprint(
 /** The milestone builder: replays a cached first-comment surprise for the scene it names. */
 private object MilestoneSurpriseFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
+    filters = listOf(fieldAccess(name = "FIRST_COMMENT_MILESTONE")),
     custom = { method, _ ->
         val references = method.references()
         references.constructTheStruct() &&

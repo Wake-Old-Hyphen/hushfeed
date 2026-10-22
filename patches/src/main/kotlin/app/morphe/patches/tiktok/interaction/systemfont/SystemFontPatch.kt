@@ -4,6 +4,8 @@
  */
 package app.morphe.patches.tiktok.interaction.systemfont
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.PatchException
@@ -44,6 +46,45 @@ private const val ASSET_SHAPE = "Ljava/lang/String;"
 /** The variable font's asset name, present in every engine implementation's pool. */
 private const val ENGINE_MARKER = "font/TikTokSans-VF.otf"
 
+private object FontEngineFingerprint : Fingerprint(
+    strings = listOf(ENGINE_MARKER),
+    custom = { _, classDef -> isFontEngine(classDef) },
+)
+
+private object EmojiGlyphCheckFingerprint : Fingerprint(
+    returnType = "Z",
+    filters = listOf(
+        methodCall(
+            definingClass = PAINT,
+            name = "hasGlyph",
+            returnType = "Z",
+        ),
+    ),
+    custom = { method, classDef -> !classDef.type.startsWith(EXTENSION_ROOT) && isEmojiGlyphCheck(method) },
+)
+
+private object WebViewPageFinishedFingerprint : Fingerprint(
+    name = "onPageFinished",
+    parameters = listOf(WEB_VIEW, STRING),
+    returnType = "V",
+    custom = { method, classDef ->
+        !classDef.type.startsWith(EXTENSION_ROOT) &&
+            !AccessFlags.STATIC.isSet(method.accessFlags) &&
+            method.implementation != null
+    },
+)
+
+private object WebViewPageCommitVisibleFingerprint : Fingerprint(
+    name = "onPageCommitVisible",
+    parameters = listOf(WEB_VIEW, STRING),
+    returnType = "V",
+    custom = { method, classDef ->
+        !classDef.type.startsWith(EXTENSION_ROOT) &&
+            !AccessFlags.STATIC.isSet(method.accessFlags) &&
+            method.implementation != null
+    },
+)
+
 @Suppress("unused")
 val systemFontPatch = bytecodePatch(
     name = "Use system font",
@@ -75,16 +116,9 @@ val systemFontPatch = bytecodePatch(
         //
         // The same pass finds the emoji switch's anchor (see isEmojiGlyphCheck), so the app's
         // classes are walked once for both.
-        val engines = mutableListOf<ClassDef>()
-        val glyphChecks = mutableListOf<Method>()
-        val allClasses = mutableListOf<ClassDef>()
-        classDefForEach { classDef ->
-            allClasses += classDef
-            if (isFontEngine(classDef)) engines += classDef
-            if (!classDef.type.startsWith(EXTENSION_ROOT)) {
-                classDef.methods.filterTo(glyphChecks, ::isEmojiGlyphCheck)
-            }
-        }
+        val engines = FontEngineFingerprint.matchAll()
+            .map { it.originalClassDef }
+            .distinctBy { it.type }
         if (engines.isEmpty()) {
             throw PatchException(
                 "Use system font: no font engine class found (a class building a Typeface from " +
@@ -107,7 +141,19 @@ val systemFontPatch = bytecodePatch(
         // WebView, drawn in TikTok's web font, so the engine never sees them (#7). Every
         // page-finished and page-visible callback of TikTok's WebViewClients hands the page to
         // the extension, which styles TikTok's own pages and leaves every other site alone.
-        val pageCallbacks = webPageCallbacks(allClasses)
+        fun isClient(type: String): Boolean {
+            var current: String? = classDefByOrNull(type)?.superclass
+            repeat(32) {
+                val parent = current ?: return false
+                if (parent == WEB_VIEW_CLIENT) return true
+                current = classDefByOrNull(parent)?.superclass
+            }
+            return false
+        }
+        val candidateCallbacks = (WebViewPageFinishedFingerprint.matchAll() + WebViewPageCommitVisibleFingerprint.matchAll())
+            .map { it.originalMethod }
+            .distinct()
+        val pageCallbacks = candidateCallbacks.filter { isClient(it.definingClass) }
         if (pageCallbacks.isEmpty()) {
             throw PatchException(
                 "$PATCH: no WebViewClient onPageFinished or onPageCommitVisible implementation found.",
@@ -127,6 +173,7 @@ val systemFontPatch = bytecodePatch(
         // the device can draw one is the glyph check's answer, and the processor wraps an emoji
         // only on false. The extension answers true first while the switch is on, so nothing is
         // wrapped. Anything else runs the check as TikTok wrote it.
+        val glyphChecks = EmojiGlyphCheckFingerprint.matchAll().map { it.originalMethod }
         val glyphCheck = glyphChecks.singleOrNull() ?: throw PatchException(
             "$PATCH: expected one emoji glyph check (a method answering a boolean from a " +
                 "CharSequence, a start, an end and the emoji, that calls $PAINT_HAS_GLYPH), " +

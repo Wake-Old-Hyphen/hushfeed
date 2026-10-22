@@ -305,8 +305,9 @@ internal fun BytecodePatchContext.skipReportsAtEveryCallSite(reporters: List<Met
 
     // Collected first, mutated after: the walk is over the immutable classes.
     val callers = mutableListOf<Triple<ClassDef, Method, List<Int>>>()
-    classDefForEach { classDef ->
-        if (classDef.type !in callingClasses || classDef.type in wrapperTypes) return@classDefForEach
+    for (callingType in callingClasses) {
+        if (callingType in wrapperTypes) continue
+        val classDef = classDefByOrNull(callingType) ?: continue
         classDef.methods.forEach { method ->
             // A call is an invoke; checking that first spares reading a reference off every
             // other instruction of TikTok (#54).

@@ -37,9 +37,9 @@ internal fun isFeedReportButtonGate(method: Method): Boolean =
             it.getReference<StringReference>()?.string == FEED_REPORT_GATE_KEY
         } == true
 internal val locationCardMarkers = listOf("PoiAnchorView2", "PoiDealAnchorView")
-private const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
+internal const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
 private const val ANCHOR = "Lcom/ss/android/ugc/aweme/feed/model/AnchorCommonStruct;"
-private const val MULTI_TAG = "Lcom/ss/android/ugc/aweme/fcpanchor/access/VideoFeedMultiTagAssem;"
+internal const val MULTI_TAG = "Lcom/ss/android/ugc/aweme/fcpanchor/access/VideoFeedMultiTagAssem;"
 
 /** 46.2-46.8 inline this builder into a lambda; 46.9+ use a static list factory. */
 internal fun isLocationBadgeListFactory(method: Method): Boolean {

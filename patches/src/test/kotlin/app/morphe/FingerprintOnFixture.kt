@@ -26,7 +26,9 @@ import com.android.tools.smali.dexlib2.iface.reference.StringReference
  * judged.
  */
 internal fun Fingerprint.takes(method: Method, classDef: ClassDef): Boolean {
-    require(classFingerprint == null) { "class fingerprints are not modelled: $this" }
+    classFingerprint?.let { cf ->
+        if (classDef.methods.none { cf.takes(it, classDef) }) return false
+    }
     val ordered = filters.orEmpty().also { all ->
         require(all.all { it.location is InstructionLocation.MatchAfterAnywhere }) {
             "only instruction filters placed anywhere are modelled: $this"

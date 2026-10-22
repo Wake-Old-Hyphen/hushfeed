@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features and fixes
 
+* **TikTok:** Patching is faster. Many patches used to search every class in TikTok for the code they change, and now they look it up by a string, a number or a name the patcher already keeps an index of. With every patch on 47.4.3, a desktop run went from 89 to 60 seconds and the patching step itself from 54 to 26. The APK that comes out is the same.
 * **TikTok:** `Sort loaded videos on profile grids` puts the videos a profile or Liked grid has loaded in the order you pick: newest or oldest, longest or shortest, most viewed or most liked. Pinned videos stay first, videos with no value for that order go last, and new pages are sorted in as you scroll. `Original order` is TikTok's own. It only changes videos the grid has already loaded, not the ones it hasn't fetched yet (#180).
 * **TikTok:** `Fit the video to the screen` now shows photo slideshows whole on a squarer screen too. Each slide sits centered with black above and below instead of losing the top and bottom, and swiping, the dots, the caption and the music line work as before. On a normal tall phone nothing changes (#188).
 * **TikTok:** New `Keep captions available` switch under Hushfeed settings > Feed screen > Captions. TikTok hides the Captions switch in its accessibility settings, and the caption controls that go with it, for some accounts and regions. Turn this on and they come back. Captions still only show on videos that carry them. It's off by default and takes a TikTok restart to apply (#217).

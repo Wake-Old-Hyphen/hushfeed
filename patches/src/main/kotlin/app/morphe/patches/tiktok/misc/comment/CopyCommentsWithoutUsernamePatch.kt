@@ -99,6 +99,14 @@ val copyCommentsWithoutUsernamePatch = bytecodePatch(
         )
 
         val commentCopyFingerprint = Fingerprint(
+            filters = listOf(
+                methodCall(
+                    definingClass = clipboardHelper.definingClass,
+                    name = clipboardHelper.name,
+                    parameters = clipboardHelper.parameters,
+                    returnType = clipboardHelper.returnType,
+                ),
+            ),
             custom = { method, _ ->
                 method.isCommentCopyBuilder(clipboardHelper)
             },

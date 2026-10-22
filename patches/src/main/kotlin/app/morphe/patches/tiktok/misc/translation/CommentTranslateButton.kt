@@ -4,12 +4,15 @@
  */
 package app.morphe.patches.tiktok.misc.translation
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.Match
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.LazyAbGateSearch
 import app.morphe.patches.tiktok.shared.checkBooleanWhenOn
+import app.morphe.patches.tiktok.shared.findLazyAbGate
 import app.morphe.patches.tiktok.shared.returnBooleanWhenOn
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsAtControlFlowLabel
@@ -39,6 +42,10 @@ internal const val AUTO_TRANSLATION_KEY = "comment_auto_translation_enabled"
 
 /** The key TikTok keeps the comment header's translate toggle under, in its own storage. */
 internal const val TOGGLE_STATE_KEY = "key_is_comment_translation_on"
+
+private object CommentTranslateToggleFingerprint : Fingerprint(
+    strings = listOf(TOGGLE_STATE_KEY),
+)
 
 /**
  * Whether [method] is the gate's enabled read: static, takes nothing, answers a boolean, and
@@ -113,6 +120,12 @@ internal class CommentTranslateButtonTargets(
 internal fun findCommentTranslateButtonTargets(
     classOf: (String) -> ClassDef?,
     classes: ((ClassDef) -> Unit) -> Unit,
+): CommentTranslateButtonTargets = findCommentTranslateButtonTargets(classOf, null, classes)
+
+internal fun findCommentTranslateButtonTargets(
+    classOf: (String) -> ClassDef?,
+    toggleFingerprintMatches: (() -> List<Match>)?,
+    classes: ((ClassDef) -> Unit) -> Unit,
 ): CommentTranslateButtonTargets {
     val (gate, enabledRead) = LazyAbGateSearch(classOf).find(
         "$PATCH_NAME (translate button)",
@@ -130,10 +143,18 @@ internal fun findCommentTranslateButtonTargets(
 
     val reads = mutableListOf<Method>()
     val writes = mutableListOf<Method>()
-    classes { classDef ->
-        for (method in classDef.methods) {
+    if (toggleFingerprintMatches != null) {
+        for (match in toggleFingerprintMatches()) {
+            val method = match.originalMethod
             if (method.isToggleStateRead()) reads += method
             if (method.isToggleStateWrite()) writes += method
+        }
+    } else {
+        classes { classDef ->
+            for (method in classDef.methods) {
+                if (method.isToggleStateRead()) reads += method
+                if (method.isToggleStateWrite()) writes += method
+            }
         }
     }
     if (reads.size != 1 || writes.size != 1) {
@@ -203,9 +224,44 @@ internal fun MutableMethod.sendToggleStateThroughExtension() {
  * the read goes through the extension, which answers off for a toggle Hushfeed's button turned
  * on once the switch is off. Fails closed: everything is found before anything is changed.
  */
+internal fun BytecodePatchContext.commentTranslateButtonTargets(): CommentTranslateButtonTargets {
+    val (gate, enabledRead) = findLazyAbGate(
+        "$PATCH_NAME (translate button)",
+        AUTO_TRANSLATION_KEY,
+    ) { method, _ -> method.isAutoTranslationEnabledRead() }
+    val styleAnswers = gate.methods.filter { it.isButtonStyleAnswer(enabledRead) }
+    if (styleAnswers.size != 1) {
+        throw PatchException(
+            "$PATCH_NAME: expected one answer to whether the comment header shows the translate " +
+                "button on ${gate.type}, found ${styleAnswers.size}.",
+        )
+    }
+
+    val reads = mutableListOf<Method>()
+    val writes = mutableListOf<Method>()
+    for (match in CommentTranslateToggleFingerprint.matchAll()) {
+        val method = match.originalMethod
+        if (method.isToggleStateRead()) reads += method
+        if (method.isToggleStateWrite()) writes += method
+    }
+    if (reads.size != 1 || writes.size != 1) {
+        throw PatchException(
+            "$PATCH_NAME: expected one read and one write of \"$TOGGLE_STATE_KEY\", " +
+                "found ${reads.size} and ${writes.size}.",
+        )
+    }
+    if (reads.single().definingClass != writes.single().definingClass) {
+        throw PatchException(
+            "$PATCH_NAME: the translate toggle's read and write are on different classes: " +
+                "${reads.single().definingClass} and ${writes.single().definingClass}.",
+        )
+    }
+    return CommentTranslateButtonTargets(enabledRead, styleAnswers.single(), reads.single(), writes.single())
+}
+
 context(patchContext: BytecodePatchContext)
 internal fun installCommentTranslateButton() {
-    val targets = findCommentTranslateButtonTargets(patchContext::classDefByOrNull, patchContext::classDefForEach)
+    val targets = patchContext.commentTranslateButtonTargets()
     fun mutable(method: Method) = patchContext.mutableClassDefBy(method.definingClass).findMutableMethodOf(method)
 
     val enabledRead = mutable(targets.enabledRead)

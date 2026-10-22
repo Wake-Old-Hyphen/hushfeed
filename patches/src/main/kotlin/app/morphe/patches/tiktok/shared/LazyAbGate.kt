@@ -6,6 +6,8 @@
  */
 package app.morphe.patches.tiktok.shared
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -66,13 +68,55 @@ private val INTEGER_MOVES = setOf(Opcode.MOVE, Opcode.MOVE_FROM16, Opcode.MOVE_1
  * is called `invoke$n`, which would make this a one-line lookup and would be one more thing R8
  * chooses.
  */
+internal fun BytecodePatchContext.findLazyAbGate(
+    what: String,
+    key: String,
+    gate: (Method, ClassDef) -> Boolean,
+): Pair<ClassDef, Method> {
+    val search = LazyAbGateSearch(::classDefByOrNull)
+    val candidateClasses = mutableSetOf<ClassDef>()
+
+    val keyMatches = Fingerprint(strings = listOf(key)).matchAllOrNull().orEmpty()
+    for (match in keyMatches) {
+        val originalClass = match.originalClassDef
+        val clinit = originalClass.methods.firstOrNull { it.name == "<clinit>" && it.implementation != null }
+        if (clinit != null && search.readsSettingsKey(clinit, key)) {
+            candidateClasses += originalClass
+        }
+        val initCallers = Fingerprint(
+            filters = listOf(methodCall(definingClass = originalClass.type, name = "<init>")),
+        ).matchAllOrNull().orEmpty()
+        for (callerMatch in initCallers) {
+            val callerClass = callerMatch.originalClassDef
+            val callerClinit = callerClass.methods.firstOrNull { it.name == "<clinit>" && it.implementation != null }
+            if (callerClinit != null && search.readsSettingsKey(callerClinit, key)) {
+                candidateClasses += callerClass
+            }
+        }
+    }
+
+    if (candidateClasses.isNotEmpty()) {
+        val found = candidateClasses.mapNotNull { classDef ->
+            val methods = classDef.methods.filter { gate(it, classDef) }
+            if (methods.isEmpty()) null else classDef to methods
+        }
+        if (found.size == 1) {
+            val (classDef, methods) = found.single()
+            if (methods.size == 1) {
+                return classDef to methods.single()
+            }
+        }
+    }
+
+    return search.find(what, key, gate, ::classDefForEach)
+}
+
 internal fun BytecodePatchContext.resolveLazyAbGate(
     what: String,
     key: String,
     gate: (Method, ClassDef) -> Boolean,
 ): MutableMethod {
-    val (classDef, method) =
-        LazyAbGateSearch(::classDefByOrNull).find(what, key, gate, ::classDefForEach)
+    val (classDef, method) = findLazyAbGate(what, key, gate)
     return mutableClassDefBy(classDef).findMutableMethodOf(method)
 }
 

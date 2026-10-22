@@ -45,9 +45,11 @@ internal fun BytecodePatchContext.resolveStoryLongPressTimer(): MutableMethod {
         if (RUNNABLE !in classDef.interfaces) return@classDefForEach
         val field = classDef.fields.singleOrNull() ?: return@classDefForEach
         val view = classDefByOrNull(field.type) ?: return@classDefForEach
-        if (!extendsAndroidView(view)) return@classDefForEach
+        // The view's own fields before its superclass walk, which looks up every ancestor of
+        // every one-field Runnable's field.
         if (view.fields.none { it.type == TOUCH_LISTENER }) return@classDefForEach
         if (view.fields.none { it.type == classDef.type }) return@classDefForEach
+        if (!extendsAndroidView(view)) return@classDefForEach
         if (classDef.methods.none {
                 it.name == "<init>" && it.parameterTypes.toList() == listOf(field.type)
             }

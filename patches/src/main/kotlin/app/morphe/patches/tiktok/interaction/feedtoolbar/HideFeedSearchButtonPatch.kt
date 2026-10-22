@@ -6,6 +6,8 @@
  */
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -21,24 +23,26 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 private const val HOME_PAGE_UI_FRAME_SERVICE_DESCRIPTOR =
     "Lcom/ss/android/ugc/aweme/homepage/api/ui/HomePageUIFrameService;"
 
+private object InflatesSearchIconFingerprint : Fingerprint(
+    parameters = listOf("Landroid/content/Context;"),
+    returnType = "Landroid/view/View;",
+    filters = listOf(
+        methodCall(
+            definingClass = HOME_PAGE_UI_FRAME_SERVICE_DESCRIPTOR,
+            name = "getInflatedSearchIcon",
+            returnType = "Landroid/view/View;",
+        ),
+    ),
+)
+
 private fun BytecodePatchContext.resolveSearchEnabledBoundary(): MutableMethod {
     val controllerSuperclasses = mutableSetOf<String>()
-    classDefForEach { classDef ->
-        val inflatesSearchIcon = classDef.methods.any { method ->
-            method.parameterTypes == listOf("Landroid/content/Context;") &&
-                method.returnType == "Landroid/view/View;" &&
-                method.implementation?.instructions?.any { instruction ->
-                    instruction.getReference<MethodReference>()?.let { reference ->
-                        reference.definingClass == HOME_PAGE_UI_FRAME_SERVICE_DESCRIPTOR &&
-                            reference.name == "getInflatedSearchIcon" &&
-                            reference.returnType == "Landroid/view/View;"
-                    } == true
-                } == true
-        }
+    for (match in InflatesSearchIconFingerprint.matchAll()) {
+        val classDef = match.originalClassDef
         val hasVisibilityProtocol = classDef.methods.any { method ->
             method.parameterTypes == listOf("I") && method.returnType == "V"
         }
-        if (inflatesSearchIcon && hasVisibilityProtocol) {
+        if (hasVisibilityProtocol) {
             classDef.superclass?.let(controllerSuperclasses::add)
         }
     }

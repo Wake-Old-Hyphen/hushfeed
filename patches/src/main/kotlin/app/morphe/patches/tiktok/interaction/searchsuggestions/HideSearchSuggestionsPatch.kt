@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.interaction.searchsuggestions
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -62,6 +64,8 @@ internal fun isSearchRewardsAccessor(method: Method): Boolean =
 private object SearchRewardsServiceFingerprint : Fingerprint(
     returnType = SEARCH_REWARDS_SERVICE,
     parameters = listOf(),
+    // The accessor casts what it loads to the service, so the type index finds it.
+    filters = listOf(checkCast(SEARCH_REWARDS_SERVICE)),
     custom = { method, _ -> isSearchRewardsAccessor(method) },
 )
 
@@ -119,17 +123,13 @@ private const val FIRST_SCREEN_KEY = "search_lynx_recommend_first_screen"
  * behind a lambda, and exactly one `<clinit>` in the app holds that key on all three builds.
  */
 private object LynxFirstScreenCacheFingerprint : Fingerprint(
+    classFingerprint = Fingerprint(
+        name = "<clinit>",
+        strings = listOf(FIRST_SCREEN_KEY),
+    ),
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     parameters = emptyList(),
     returnType = "Z",
-    custom = { _, classDef ->
-        classDef.methods.any { candidate ->
-            candidate.name == "<clinit>" &&
-                candidate.implementation?.instructions?.any {
-                    it.getReference<StringReference>()?.string == FIRST_SCREEN_KEY
-                } == true
-        }
-    },
 )
 
 /**
@@ -213,6 +213,7 @@ internal fun isSearchHintObserver(method: Method): Boolean =
 
 private object SearchHintObserverFingerprint : Fingerprint(
     returnType = "V",
+    filters = listOf(methodCall(definingClass = SUGGEST_WORD, name = "checkAndResetIsFromRefresh")),
     custom = { method, _ -> isSearchHintObserver(method) },
 )
 

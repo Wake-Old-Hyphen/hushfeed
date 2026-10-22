@@ -6,6 +6,7 @@ package app.morphe.patches.tiktok.misc.translation
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.methodCall
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -13,12 +14,11 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 internal object MultiCommentTranslationStartFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Ljava/util/List;", "L", "Z"),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.getReference<MethodReference>()?.definingClass ==
-                "Lcom/ss/android/ugc/aweme/comment/translation/MultiTranslationBody;"
-        } == true
-    },
+    filters = listOf(
+        methodCall(
+            definingClass = "Lcom/ss/android/ugc/aweme/comment/translation/MultiTranslationBody;",
+        )
+    )
 )
 
 internal object BaseCommentCellBindFingerprint : Fingerprint(
@@ -26,15 +26,12 @@ internal object BaseCommentCellBindFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("L"),
     strings = listOf("comment_panel"),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.getReference<MethodReference>()?.let { reference ->
-                reference.definingClass ==
-                    "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/BaseCommentCell;" &&
-                    reference.returnType == "Lcom/ss/android/ugc/aweme/comment/model/Comment;"
-            } == true
-        } == true
-    },
+    filters = listOf(
+        methodCall(
+            definingClass = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/powercell/BaseCommentCell;",
+            returnType = "Lcom/ss/android/ugc/aweme/comment/model/Comment;",
+        ),
+    ),
 )
 
 internal object CommentListLoadedFingerprint : Fingerprint(

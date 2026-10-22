@@ -66,11 +66,10 @@ internal object DailyScreenTimeReminderFingerprint : Fingerprint(
  * instructions for its own site, so a prepend at zero moves it rather than displacing it.
  */
 internal object PlayerProgressAidFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    name = "onPlayProgressChange",
     returnType = "V",
     parameters = listOf("Ljava/lang/String;", "J", "J"),
-    custom = { method, classDef ->
-        method.name == "onPlayProgressChange" && classDef.endsWith("/PlayerController;")
-    },
 )
 
 /**

@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.sensitivewarnings
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.getReference
@@ -38,6 +39,7 @@ private const val EXTENSION = "Lapp/morphe/extension/tiktok/feed/SensitiveWarnin
 internal object KnowTheFactsBannerGateFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(KTF_AWEME),
+    filters = listOf(fieldAccess(definingClass = KTF_INFO, name = "showWarning", type = "Z")),
     custom = { method, _ -> isKnowTheFactsBannerGate(method) },
 )
 

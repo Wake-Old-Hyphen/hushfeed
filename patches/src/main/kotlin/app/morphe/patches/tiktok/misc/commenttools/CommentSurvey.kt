@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.misc.commenttools
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import com.android.tools.smali.dexlib2.AccessFlags
 
 internal const val COMMENT_SURVEY_ITEM = "Lcom/ss/android/ugc/aweme/comment/experiment/CommentSurveyDataItem;"
@@ -19,5 +20,7 @@ internal const val COMMENT_SURVEY_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tikt
 internal object CommentSurveyConfigFingerprint : Fingerprint(
     returnType = COMMENT_SURVEY_ITEM,
     parameters = emptyList(),
+    // It reads its cached survey array, which lets the type index find it without a full walk.
+    filters = listOf(fieldAccess(type = "[$COMMENT_SURVEY_ITEM")),
     custom = { method, _ -> AccessFlags.STATIC.isSet(method.accessFlags) },
 )

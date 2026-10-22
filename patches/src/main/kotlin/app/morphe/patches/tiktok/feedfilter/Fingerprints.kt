@@ -5,6 +5,8 @@
 package app.morphe.patches.tiktok.feedfilter
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
+import app.morphe.patcher.methodCall
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -134,6 +136,13 @@ internal fun com.android.tools.smali.dexlib2.iface.instruction.Instruction.isMod
 internal object OpenedListFillFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Ljava/util/List;", "J", "Z", "Ljava/lang/String;"),
+    filters = listOf(
+        fieldAccess(
+            opcode = Opcode.IPUT_WIDE,
+            definingClass = "Lcom/ss/android/ugc/aweme/feed/model/FeedItemList;",
+            name = "maxCursor",
+        ),
+    ),
     custom = { method, _ ->
         method.implementation?.instructions?.let { instructions ->
             instructions.any { it.isModelSetItems() } && instructions.any { it.isModelDataRead() } &&
@@ -305,6 +314,15 @@ internal object CacheResultClassFingerprint : Fingerprint(
 internal object CacheResultNormalizerFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "V",
+    parameters = listOf("L"),
+    filters = listOf(
+        methodCall(
+            definingClass = AWEME_DESCRIPTOR,
+            name = "clearSurveyInfoForCacheConsume",
+            parameters = emptyList(),
+            returnType = "V",
+        ),
+    ),
     custom = custom@{ method, _ ->
         if (method.parameterTypes.size != 1) return@custom false
 
@@ -322,6 +340,7 @@ internal object CacheResultNormalizerFingerprint : Fingerprint(
 internal object CacheChainDeliveryFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "V",
+    parameters = listOf("L"),
     custom = custom@{ method, classDef ->
         if (method.parameterTypes.size != 1 || classDef.fields.count() != 2) return@custom false
 
@@ -569,13 +588,23 @@ internal const val LYNX_SSR_INFO_DESCRIPTOR = "Lcom/ss/android/ugc/aweme/search/
  */
 internal object SearchLynxHolderBindFingerprint : Fingerprint(
     returnType = "V",
-    custom = { method, _ ->
-        val parameters = method.parameterTypes.map { it.toString() }
-        parameters.size == 10 &&
-            parameters[1] == DYNAMIC_PATCH_DESCRIPTOR &&
-            parameters[4] == LYNX_SSR_INFO_DESCRIPTOR &&
-            parameters[8] == SEARCH_MIX_FEED_DESCRIPTOR
-    },
+    parameters = listOf(
+        "L",
+        DYNAMIC_PATCH_DESCRIPTOR,
+        "L",
+        "L",
+        LYNX_SSR_INFO_DESCRIPTOR,
+        "L",
+        "Z",
+        "Z",
+        SEARCH_MIX_FEED_DESCRIPTOR,
+        "I",
+    ),
+    filters = listOf(
+        methodCall(
+            definingClass = DYNAMIC_PATCH_DESCRIPTOR,
+        ),
+    ),
 )
 
 /**
@@ -634,6 +663,12 @@ internal object FriendsFeedSuccessFingerprint : Fingerprint(
     name = "onSuccess",
     returnType = "V",
     parameters = listOf("Ljava/lang/Object;"),
+    filters = listOf(
+        fieldAccess(
+            definingClass = "Lcom/ss/android/ugc/aweme/friendstab/api/FriendsFeedResponse;",
+            name = "friendFeedData",
+        ),
+    ),
     custom = { method, _ ->
         method.implementation?.instructions?.any { instruction ->
             instruction.getReference<FieldReference>()?.let { reference ->
@@ -956,6 +991,7 @@ internal object CaptionSearchPanelFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "V",
     parameters = listOf("Z", "Ljava/lang/String;", POST_MODE_ENTRANCE),
+    filters = listOf(methodCall(definingClass = VISUAL_SEARCH_SERVICE, returnType = "Z")),
     custom = { method, _ -> method.captionSearchPanelGate() != null },
 )
 
@@ -996,6 +1032,7 @@ internal object SmartSearchCaptionFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
     parameters = listOf(AWEME_DESCRIPTOR, "Ljava/lang/String;", "Z"),
+    filters = listOf(methodCall(returnType = "Z", parameters = listOf(AWEME_DESCRIPTOR))),
     custom = { method, classDef -> method.asksSmartSearchCaption(classDef) },
 )
 
@@ -1089,6 +1126,12 @@ internal object SearchCardViewHolderConstructorFingerprint : Fingerprint(
 internal object FollowFeedPresenterPostProcessFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;"),
+    filters = listOf(
+        methodCall(
+            definingClass = "Lcom/ss/android/ugc/aweme/follow/presenter/FollowFeedList;",
+            name = "setInsertedResults",
+        ),
+    ),
     custom = { method, _ ->
         val references = method.implementation?.instructions
             ?.mapNotNull { it.getReference<MethodReference>() }
@@ -1219,3 +1262,18 @@ internal object LiveDrawRoomPageFingerprint : Fingerprint(
             method.parameterTypes.firstOrNull()?.toString() == classDef.type
     },
 )
+
+internal object RecUserCardSurfaceFingerprint : Fingerprint(
+    strings = listOf("friend_recommend_card"),
+)
+
+internal object ProfileAdResponseReadFingerprint : Fingerprint(
+    filters = listOf(
+        fieldAccess(
+            definingClass = PROFILE_AD_RESPONSE_DESCRIPTOR,
+            name = "awemeList",
+            type = "Ljava/util/List;",
+        ),
+    ),
+)
+

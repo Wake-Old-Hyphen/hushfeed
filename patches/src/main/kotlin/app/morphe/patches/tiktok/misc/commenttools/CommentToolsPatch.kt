@@ -76,6 +76,9 @@ internal fun isCommentSearchHeaderFactory(method: Method): Boolean {
 }
 
 private object CommentSearchHeaderFactoryFingerprint : Fingerprint(
+    definingClass = COMMENT_SCENE_SERVICE_IMPL,
+    returnType = "Landroid/view/View;",
+    strings = listOf("comment_top"),
     custom = { method, _ -> isCommentSearchHeaderFactory(method) },
 )
 

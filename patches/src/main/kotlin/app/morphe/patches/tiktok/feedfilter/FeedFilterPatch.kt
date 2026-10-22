@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.feedfilter
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
@@ -472,11 +473,11 @@ val feedFilterPatch = bytecodePatch(
         }
         val cacheSuccessField = cacheSuccessFields.single()
 
-        val legacyCacheChain = CacheChainDeliveryFingerprint.methodOrNull
         val cacheNormalizer = CacheResultNormalizerFingerprint.methodOrNull
-        if ((legacyCacheChain == null) == (cacheNormalizer == null)) {
+        val legacyCacheChain = if (cacheNormalizer == null) CacheChainDeliveryFingerprint.methodOrNull else null
+        if (cacheNormalizer == null && legacyCacheChain == null) {
             throw PatchException(
-                "Expected exactly one cache delivery strategy, found legacy=" +
+                "Expected a cache delivery strategy, found legacy=" +
                     "${legacyCacheChain != null}, normalizer=${cacheNormalizer != null}",
             )
         }
@@ -935,16 +936,7 @@ val feedFilterPatch = bytecodePatch(
         // TikTok may remove this surface in a future build. If the marker still exists, its
         // insertion hook is mandatory; if the surface itself is absent, there is no card here
         // to suppress.
-        var recUserCardSurfacePresent = false
-        classDefForEach { classDef ->
-            if (!recUserCardSurfacePresent) {
-                recUserCardSurfacePresent = classDef.methods.any { method ->
-                    method.implementation?.instructions?.any { instruction ->
-                        instruction.getReference<StringReference>()?.string == "friend_recommend_card"
-                    } == true
-                }
-            }
-        }
+        val recUserCardSurfacePresent = RecUserCardSurfaceFingerprint.matchAllOrNull() != null
         selectRecUserCardInsertion(
             RecUserCardInsertFingerprint.methodOrNull,
             recUserCardSurfacePresent,
@@ -1033,22 +1025,16 @@ internal fun selectRecUserCardInsertion(
  * its target: the register holds the list only on the path that read it.
  */
 internal fun BytecodePatchContext.filterProfileAdResponseReads() {
-    val readers = mutableListOf<Pair<ClassDef, Method>>()
-    classDefForEach { classDef ->
-        if (classDef.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach
-        classDef.methods.forEach { method ->
-            if (method.implementation?.instructions?.any(Instruction::readsProfileAdList) == true) {
-                readers += classDef to method
-            }
-        }
-    }
-    if (readers.isEmpty()) {
+    val matches = ProfileAdResponseReadFingerprint.matchAllOrNull()
+        ?.filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
+        .orEmpty()
+    if (matches.isEmpty()) {
         throw PatchException(
             "Feed filter: nothing reads awemeList of $PROFILE_AD_RESPONSE_DESCRIPTOR any more.",
         )
     }
-    readers.forEach { (classDef, method) ->
-        val reader = mutableClassDefBy(classDef).findMutableMethodOf(method)
+    matches.forEach { match ->
+        val reader = match.method
         reader.implementation!!.instructions.withIndex()
             .filter { it.value.readsProfileAdList() }
             .map { it.index }

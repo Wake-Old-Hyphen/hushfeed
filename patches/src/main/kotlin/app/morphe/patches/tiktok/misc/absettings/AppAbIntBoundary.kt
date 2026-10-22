@@ -79,6 +79,9 @@ internal fun BytecodePatchContext.appAbClassType(): String = synchronized(resolv
     resolved.getOrPut(this) {
         val carriers = mutableListOf<ClassDef>()
         classDefForEach { classDef ->
+            // The double getter's return type alone rules out nearly every class, so the shape
+            // set is only built for the few that have one.
+            if (classDef.methods.none { it.returnType == "D" && it.shape() == APP_AB_DOUBLE }) return@classDefForEach
             val shapes = classDef.methods.mapTo(HashSet()) { it.shape() }
             if (APP_AB_SHAPES.all { it in shapes }) carriers += classDef
         }

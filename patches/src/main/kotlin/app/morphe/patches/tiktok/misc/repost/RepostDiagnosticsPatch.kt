@@ -45,19 +45,11 @@ val repostDiagnosticsPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
-        val publish = mutableListOf<Method>()
-        val execute = mutableListOf<Method>()
-        val parse = mutableListOf<Method>()
-        classDefForEach { type ->
-            for (method in type.methods) {
-                if (method.implementation == null) continue
-                when {
-                    type.type == UPVOTE_API && method.name == "publishUpvote" -> publish += method
-                    type.type == INTERCEPTOR && method.name == EXECUTE -> execute += method
-                    type.type == INTERCEPTOR && method.name == PARSE -> parse += method
-                }
-            }
-        }
+        val upvoteApiClass = classDefByOrNull(UPVOTE_API)
+        val interceptorClass = classDefByOrNull(INTERCEPTOR)
+        val publish = upvoteApiClass?.methods?.filter { it.name == "publishUpvote" && it.implementation != null }.orEmpty()
+        val execute = interceptorClass?.methods?.filter { it.name == EXECUTE && it.implementation != null }.orEmpty()
+        val parse = interceptorClass?.methods?.filter { it.name == PARSE && it.implementation != null }.orEmpty()
         if (publish.size != 1 || execute.size != 1 || parse.size != 1) {
             throw PatchException(
                 "Repost diagnostics: expected one publish and two network lancets, found " +

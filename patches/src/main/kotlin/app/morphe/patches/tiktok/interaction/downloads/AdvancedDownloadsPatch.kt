@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -234,6 +235,8 @@ internal fun Method.isPhotoSaveJob(classDef: ClassDef): Boolean {
 private object PhotoSaveJobFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("L", STRING, STRING, "L", AWEME, SET, "L", "Z", FUNCTION1, "I"),
+    // The job reads the post's id. The call narrows the search to classes that make it.
+    filters = listOf(methodCall(definingClass = AWEME, name = "getAid")),
     custom = { method, classDef -> method.isPhotoSaveJob(classDef) },
 )
 

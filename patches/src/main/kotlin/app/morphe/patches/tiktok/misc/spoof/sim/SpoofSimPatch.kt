@@ -5,6 +5,9 @@
 
 package app.morphe.patches.tiktok.misc.spoof.sim
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.anyInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
@@ -24,6 +27,25 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import app.morphe.patches.tiktok.shared.requireLocals
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "Lapp/morphe/extension/tiktok/spoof/sim/SpoofSimPatch;"
+
+private object SimSpoofTargetFingerprint : Fingerprint(
+    filters = listOf(
+        anyInstruction(
+            methodCall(
+                definingClass = "Landroid/telephony/TelephonyManager;",
+                returnType = "Ljava/lang/String;",
+            ),
+            methodCall(
+                name = "getMccString",
+                returnType = "Ljava/lang/String;",
+            ),
+            methodCall(
+                name = "getMncString",
+                returnType = "Ljava/lang/String;",
+            ),
+        ),
+    ),
+)
 
 @Suppress("unused")
 val simSpoofPatch = bytecodePatch(
@@ -56,33 +78,33 @@ val simSpoofPatch = bytecodePatch(
         )
 
         val patchesByMethod = linkedMapOf<Method, ArrayDeque<Pair<Int, String>>>()
-        classDefForEach { classDef ->
-            if (classDef.type.startsWith("Lapp/morphe/extension/")) return@classDefForEach
-            for (method in classDef.methods) {
-                val implementation = method.implementation ?: continue
-                implementation.instructions.forEachIndexed { index, instruction ->
-                    if (
-                        instruction.opcode != Opcode.INVOKE_VIRTUAL &&
-                        instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE
-                    ) return@forEachIndexed
+        val matches = SimSpoofTargetFingerprint.matchAll()
+            .filterNot { it.originalClassDef.type.startsWith("Lapp/morphe/extension/") }
+        for (match in matches) {
+            val method = match.originalMethod
+            val implementation = method.implementation ?: continue
+            implementation.instructions.forEachIndexed { index, instruction ->
+                if (
+                    instruction.opcode != Opcode.INVOKE_VIRTUAL &&
+                    instruction.opcode != Opcode.INVOKE_VIRTUAL_RANGE
+                ) return@forEachIndexed
 
-                    val methodReference = instruction.getReference<MethodReference>()
-                        ?: return@forEachIndexed
-                    val replacement = when {
-                        methodReference.definingClass == "Landroid/telephony/TelephonyManager;" ->
-                            replacements[methodReference.name]
-                        methodReference.definingClass.startsWith("Landroid/telephony/CellIdentity") &&
-                            methodReference.name == "getMccString" -> "getMcc"
-                        methodReference.definingClass.startsWith("Landroid/telephony/CellIdentity") &&
-                            methodReference.name == "getMncString" -> "getMnc"
-                        else -> null
-                    }
-                    if (replacement == null || methodReference.returnType != "Ljava/lang/String;") {
-                        return@forEachIndexed
-                    }
-                    if (implementation.instructions.elementAtOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT) {
-                        patchesByMethod.getOrPut(method) { ArrayDeque() }.add(index to replacement)
-                    }
+                val methodReference = instruction.getReference<MethodReference>()
+                    ?: return@forEachIndexed
+                val replacement = when {
+                    methodReference.definingClass == "Landroid/telephony/TelephonyManager;" ->
+                        replacements[methodReference.name]
+                    methodReference.definingClass.startsWith("Landroid/telephony/CellIdentity") &&
+                        methodReference.name == "getMccString" -> "getMcc"
+                    methodReference.definingClass.startsWith("Landroid/telephony/CellIdentity") &&
+                        methodReference.name == "getMncString" -> "getMnc"
+                    else -> null
+                }
+                if (replacement == null || methodReference.returnType != "Ljava/lang/String;") {
+                    return@forEachIndexed
+                }
+                if (implementation.instructions.elementAtOrNull(index + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT) {
+                    patchesByMethod.getOrPut(method) { ArrayDeque() }.add(index to replacement)
                 }
             }
         }

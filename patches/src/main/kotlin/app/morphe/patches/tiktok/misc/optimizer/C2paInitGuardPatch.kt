@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.misc.optimizer
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.util.addInstruction
@@ -31,15 +32,14 @@ internal const val C2PA_SDK_CLASS_DESCRIPTOR = "Lcom/bytedance/ttc2pa/TTC2PA;"
 internal object C2paServiceInitFingerprint : Fingerprint(
     definingClass = C2PA_SERVICE_CLASS_DESCRIPTOR,
     name = "init",
+    accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     parameters = listOf("L"),
-    custom = { method, _ ->
-        AccessFlags.PUBLIC.isSet(method.accessFlags) &&
-            method.implementation?.instructions?.any { instruction ->
-                val reference = (instruction as? ReferenceInstruction)?.reference
-                reference is MethodReference && reference.definingClass == C2PA_SDK_CLASS_DESCRIPTOR
-            } == true
-    },
+    filters = listOf(
+        methodCall(
+            definingClass = C2PA_SDK_CLASS_DESCRIPTOR,
+        ),
+    ),
 )
 
 /**

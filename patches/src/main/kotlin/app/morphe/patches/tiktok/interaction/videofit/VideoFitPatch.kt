@@ -7,6 +7,7 @@
 package app.morphe.patches.tiktok.interaction.videofit
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
@@ -51,12 +52,14 @@ private object SaveAdaptionResultFingerprint : Fingerprint(
 private object ApplyAdaptionResultFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/view/View;", RESULT, "Lkotlin/jvm/functions/Function0;"),
+    filters = listOf(methodCall(definingClass = RESULT, name = "getWidth")),
     custom = { method, _ -> method.isAdaptionHelper(3) },
 )
 
 private object AdaptionAppliedFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("Landroid/view/View;", RESULT),
+    filters = listOf(methodCall(definingClass = RESULT, name = "getWidth")),
     custom = { method, _ -> method.isAdaptionHelper(2) },
 )
 
@@ -125,14 +128,8 @@ val videoFitPatch = bytecodePatch(
 
         // Each helper has to be the only method of its shape in the app. The patcher hands back
         // its first match, which would otherwise be whichever class it happened to walk first.
-        var appliers = 0
-        var checkers = 0
-        classDefForEach { classDef ->
-            for (method in classDef.methods) {
-                if (method.returnType == "V" && method.isAdaptionHelper(3)) appliers++
-                if (method.returnType == "Z" && method.isAdaptionHelper(2)) checkers++
-            }
-        }
+        val appliers = ApplyAdaptionResultFingerprint.matchAll().size
+        val checkers = AdaptionAppliedFingerprint.matchAll().size
         check(appliers == 1) {
             "Fit video to the screen: expected one static (View, VideoAdaptionResult, Function0)V " +
                 "that applies the result, found $appliers."

@@ -6,6 +6,8 @@
  */
 package app.morphe.patches.tiktok.interaction.blockauthor
 
+import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
 import app.morphe.patcher.patch.BytecodePatchContext
@@ -47,12 +49,26 @@ internal class NativeFocus(
     val change: MutableMethod,
 )
 
+/**
+ * The helper's abandon method: an instance `(Context)V` calling `abandonAudioFocus`. The call
+ * lets the patcher's member-name index pick the few classes to look at, where walking every
+ * class took seconds.
+ */
+private object AbandonAudioFocusFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(CONTEXT),
+    filters = listOf(methodCall(name = "abandonAudioFocus")),
+    custom = { method, _ -> method.name != "<init>" && !AccessFlags.STATIC.isSet(method.accessFlags) },
+)
+
 internal fun BytecodePatchContext.resolveNativeFocus(): NativeFocus {
     val found = mutableListOf<Triple<ClassDef, Method, Method>>()
     val listenerOf = mutableMapOf<String, String>()
-    classDefForEach { classDef ->
+    val helpers = AbandonAudioFocusFingerprint.matchAllOrNull().orEmpty()
+        .map { it.originalClassDef }.distinctBy { it.type }
+    for (classDef in helpers) {
         val fields = classDef.fields.toList()
-        if (fields.count { it.type == AUDIO_MANAGER } != 1) return@classDefForEach
+        if (fields.count { it.type == AUDIO_MANAGER } != 1) continue
         // One listener field, not the first of several. Only the change hook is placed off this
         // field; the other two read the listener off the host's own call. Two listener-typed
         // fields and a guess here would instrument a class the host never registers, while the
@@ -65,9 +81,9 @@ internal fun BytecodePatchContext.resolveNativeFocus(): NativeFocus {
         val listeners = fields.filter { it.type != AUDIO_MANAGER && implementsAudioListener(it.type) }
         val listener = (listeners.singleOrNull { field ->
             classDefByOrNull(field.type)?.interfaces?.contains(AUDIO_LISTENER) == true
-        } ?: listeners.singleOrNull())?.type ?: return@classDefForEach
+        } ?: listeners.singleOrNull())?.type ?: continue
         if (classDef.methods.none { it.name == "<init>" && it.parameterTypes.toList() == listOf(CONTEXT) }) {
-            return@classDefForEach
+            continue
         }
         val contextMethods = classDef.methods.filter {
             it.name != "<init>" && it.returnType == "V" &&
@@ -76,7 +92,7 @@ internal fun BytecodePatchContext.resolveNativeFocus(): NativeFocus {
         }
         val abandon = contextMethods.singleOrNull { method -> method.calls { it.name == "abandonAudioFocus" } }
         val request = contextMethods.singleOrNull { method -> method.calls(::requestsFocus) }
-        if (abandon == null || request == null || abandon == request) return@classDefForEach
+        if (abandon == null || request == null || abandon == request) continue
         listenerOf[classDef.type] = listener
         found += Triple(classDef, request, abandon)
     }

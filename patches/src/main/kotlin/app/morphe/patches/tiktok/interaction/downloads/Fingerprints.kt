@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.downloads
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -13,21 +14,21 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 internal object AclCommonShareFingerprint : Fingerprint(
-    definingClass = "/ACLCommonShare;",
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/model/ACLCommonShare;",
     name = "getCode",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "I",
 )
 
 internal object AclCommonShare2Fingerprint : Fingerprint(
-    definingClass = "/ACLCommonShare;",
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/model/ACLCommonShare;",
     name = "getShowType",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "I",
 )
 
 internal object AclCommonShare3Fingerprint : Fingerprint(
-    definingClass = "/ACLCommonShare;",
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/model/ACLCommonShare;",
     name = "getTranscode",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     returnType = "I",
@@ -59,13 +60,11 @@ internal object VideoDownloadUriFingerprint : Fingerprint(
 )
 
 internal object AwemeGetVideoFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;",
+    name = "getVideo",
     accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "Lcom/ss/android/ugc/aweme/feed/model/Video;",
-    custom = { method, classDef ->
-        classDef.endsWith("/Aweme;") &&
-            method.name == "getVideo" &&
-            method.parameterTypes.isEmpty()
-    },
+    parameters = emptyList(),
 )
 
 internal fun Method.drawsCommentImageWatermark(): Boolean =
@@ -130,14 +129,9 @@ internal object VideoMediaStoreInsertFingerprint : Fingerprint(
         "Ljava/lang/String;",
         "Ljava/lang/String;",
     ),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.getReference<MethodReference>()?.let { reference ->
-                reference.definingClass == "Landroid/provider/MediaStore\$Video\$Media;" &&
-                    reference.name == "getContentUri"
-            } == true
-        } == true
-    },
+    filters = listOf(
+        methodCall(definingClass = "Landroid/provider/MediaStore\$Video\$Media;", name = "getContentUri"),
+    ),
 )
 
 internal object PhotoMediaStoreInsertFingerprint : Fingerprint(
@@ -149,14 +143,9 @@ internal object PhotoMediaStoreInsertFingerprint : Fingerprint(
         "Ljava/lang/String;",
         "Ljava/lang/String;",
     ),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.getReference<MethodReference>()?.let { reference ->
-                reference.definingClass == "Landroid/provider/MediaStore\$Images\$Media;" &&
-                    reference.name == "getContentUri"
-            } == true
-        } == true
-    },
+    filters = listOf(
+        methodCall(definingClass = "Landroid/provider/MediaStore\$Images\$Media;", name = "getContentUri"),
+    ),
 )
 
 /**
@@ -238,6 +227,7 @@ internal object StickerPreviewSourceFingerprint : Fingerprint(
 )
 
 internal object DownloadSuccessCoroutineFingerprint : Fingerprint(
+    name = "invokeSuspend",
     returnType = "Ljava/lang/Object;",
     parameters = listOf("Ljava/lang/Object;"),
     strings = listOf(
@@ -245,5 +235,4 @@ internal object DownloadSuccessCoroutineFingerprint : Fingerprint(
         "filePath",
         "fileExist",
     ),
-    custom = { method, _ -> method.name == "invokeSuspend" },
 )

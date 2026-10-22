@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.videooverlays
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
@@ -190,6 +191,7 @@ internal fun isCoverAnimationHold(method: Method): Boolean {
 internal object MusicCoverPlaySubscriberFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     parameters = listOf("Ljava/lang/Object;", "Ljava/lang/Object;"),
+    filters = listOf(checkCast(MUSIC_COVER_ASSEM)),
     custom = { method, _ -> highFrameRateHoldIndex(method) >= 0 },
 )
 

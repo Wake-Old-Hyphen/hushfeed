@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.favorites
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
@@ -43,6 +44,14 @@ internal fun Method.isQuickFavoritePanelShow(): Boolean {
     val strings = implementation?.instructions?.mapNotNull { it.getReference<StringReference>()?.string } ?: return false
     return QUICK_FAVORITE_PANEL_TRACE in strings && "show" in strings
 }
+
+private object QuickFavoritePanelShowFingerprint : Fingerprint(
+    returnType = "V",
+    strings = listOf(QUICK_FAVORITE_PANEL_TRACE, "show"),
+    custom = { method, classDef ->
+        !classDef.type.startsWith("Lapp/morphe/") && method.isQuickFavoritePanelShow()
+    },
+)
 
 /** Whether [type] is a Dialog, following the app's own superclasses up to the framework's. */
 internal fun isDialog(type: String, classOf: (String) -> ClassDef?): Boolean {
@@ -103,11 +112,7 @@ val keepFavoritesTabPatch = bytecodePatch(
         hookAppAbIntBoundary(EXTENSION_CLASS_DESCRIPTOR, "keepInt")
         hookAppAbBooleanBoundary(EXTENSION_CLASS_DESCRIPTOR, "keepBoolean")
 
-        val shows = mutableListOf<Pair<ClassDef, Method>>()
-        classDefForEach { classDef ->
-            if (classDef.type.startsWith("Lapp/morphe/")) return@classDefForEach
-            classDef.methods.filter { it.isQuickFavoritePanelShow() }.forEach { shows += classDef to it }
-        }
+        val shows = QuickFavoritePanelShowFingerprint.matchAll().map { it.originalClassDef to it.originalMethod }
         if (shows.size !in 1..2) {
             throw PatchException(
                 "Keep the Favorites tab: expected one or two quick favorites popup shows, " +

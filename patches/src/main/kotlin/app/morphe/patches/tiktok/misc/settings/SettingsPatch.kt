@@ -368,21 +368,22 @@ val settingsPatch = bytecodePatch(
         fun resolveOpenDebugTargets(): OpenDebugTargets {
             val stateClass = openDebugStateClass(OpenDebugCellVmDefaultStateFingerprint.method)
 
-            val composeMethods = mutableListOf<Pair<ClassDef, SmaliMethod>>()
-            classDefForEach { classDef ->
-                for (method in classDef.methods) {
-                    if (isOpenDebugRowComposeMethod(method, stateClass)) composeMethods += classDef to method
-                }
-            }
+            val composeMatches = app.morphe.patcher.Fingerprint(
+                name = "LIZ",
+                returnType = "V",
+                parameters = listOf(stateClass, "Z", "Z", "L", "I"),
+                filters = listOf(app.morphe.patcher.fieldAccess(opcode = Opcode.IGET_OBJECT, definingClass = stateClass)),
+                custom = { method, _ -> isOpenDebugRowComposeMethod(method, stateClass) },
+            ).matchAllOrNull().orEmpty()
 
-            val (composeClassDef, composeMethod) = composeMethods.singleOrNull()
+            val composeMatch = composeMatches.singleOrNull()
                 ?: throw PatchException(
                     "Enable Open Debug: expected one OpenDebug row compose for $stateClass, " +
-                        "found ${composeMethods.size}.",
+                        "found ${composeMatches.size}.",
                 )
             return OpenDebugTargets(
                 stateClass = stateClass,
-                composeMutable = mutableClassDefBy(composeClassDef).findMutableMethodOf(composeMethod),
+                composeMutable = composeMatch.method,
             )
         }
 
@@ -414,8 +415,7 @@ val settingsPatch = bytecodePatch(
             val wrapperClass = wrapper.className
 
             val matches = mutableListOf<MutableMethod>()
-            classDefForEach { classDef ->
-                if (classDef.type != wrapperClass) return@classDefForEach
+            classDefByOrNull(wrapperClass)?.let { classDef ->
                 for (method in classDef.methods) {
                     if (method.parameterTypes.size != 1 || method.parameterTypes[0] != classDef.type) continue
                     if (method.name != wrapper.invokeName) continue
@@ -437,8 +437,7 @@ val settingsPatch = bytecodePatch(
             val lambdaClass = openDebugFunction2LambdaClass(defaultState)
 
             val matches = mutableListOf<MutableMethod>()
-            classDefForEach { classDef ->
-                if (classDef.type != lambdaClass) return@classDefForEach
+            classDefByOrNull(lambdaClass)?.let { classDef ->
                 for (method in classDef.methods) {
                     if (!method.name.matches(Regex("invoke\\\$\\d+"))) continue
                     if (method.returnType != "Ljava/lang/Object;") continue
@@ -612,12 +611,11 @@ val settingsPatch = bytecodePatch(
             val constructorReference = openDebugStateConstructor(defaultState, openDebugStateClass)
 
             var stateConstructor: MutableMethod? = null
-            classDefForEach { classDef ->
-                if (classDef.type != constructorReference.definingClass) return@classDefForEach
+            classDefByOrNull(constructorReference.definingClass)?.let { classDef ->
                 val constructor = classDef.methods.singleOrNull { method ->
                     method.name == constructorReference.name &&
                         method.parameterTypes == constructorReference.parameterTypes
-                } ?: return@classDefForEach
+                } ?: return@let
                 stateConstructor = mutableClassDefBy(classDef).findMutableMethodOf(constructor)
             }
             val constructor = stateConstructor

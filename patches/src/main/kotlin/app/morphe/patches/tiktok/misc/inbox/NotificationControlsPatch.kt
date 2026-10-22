@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.anyInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.util.addInstruction
 import app.morphe.patcher.patch.bytecodePatch
@@ -59,11 +61,18 @@ internal object PushNotifyFingerprint : Fingerprint(
     definingClass = "Lcom/ss/android/ugc/awemepushlib/manager/MessageShowHandler;",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "V",
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            instruction.getReference<MethodReference>()?.postsNotification() == true
-        } == true
-    },
+    filters = listOf(
+        anyInstruction(
+            methodCall(
+                name = "notify",
+                definingClass = "Landroid/app/NotificationManager;",
+            ),
+            methodCall(
+                name = "notify",
+                definingClass = "Lapp/morphe/extension/tiktok/inbox/SuggestedVideoPushBlock;",
+            ),
+        ),
+    ),
 )
 
 /**

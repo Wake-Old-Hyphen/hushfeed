@@ -332,7 +332,7 @@ val downloadsPatch = bytecodePatch(
                 val previewRegister = when (bindInstruction) {
                     is FiveRegisterInstruction -> bindInstruction.registerD
                     is RegisterRangeInstruction -> bindInstruction.startRegister + 1
-                    else -> throw app.morphe.patcher.patch.PatchException(
+                    else -> throw PatchException(
                         "Downloads: unsupported sticker preview bind instruction.",
                     )
                 }
@@ -341,7 +341,7 @@ val downloadsPatch = bytecodePatch(
                 val sourceTempRegister = registerProvider.getFreeRegister()
 
                 if (previewTempRegister > 15 || sourceTempRegister > 15) {
-                    throw app.morphe.patcher.patch.PatchException(
+                    throw PatchException(
                         "Downloads: could not allocate low registers for sticker source association.",
                     )
                 }

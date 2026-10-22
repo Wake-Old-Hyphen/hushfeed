@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.videooverlays
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.shared.guardAtEntry
 import app.morphe.util.getReference
@@ -29,6 +30,14 @@ private const val FOOTNOTE_SERVICE = "Lcom/ss/android/ugc/aweme/foonote/service/
 internal object FootnoteBannerGateFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf(FOOTNOTE_AWEME),
+    filters = listOf(
+        methodCall(
+            definingClass = FOOTNOTE_AWEME,
+            name = "getFootNoteInfo",
+            returnType = FOOTNOTE_INFO,
+            parameters = emptyList(),
+        ),
+    ),
     custom = { method, _ -> isFootnoteBannerGate(method) },
 )
 

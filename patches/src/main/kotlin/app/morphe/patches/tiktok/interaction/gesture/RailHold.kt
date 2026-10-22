@@ -9,6 +9,7 @@ import app.morphe.util.addInstructions
 import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
@@ -98,6 +99,14 @@ internal object HoldTouchFingerprint : Fingerprint(
     name = "onTouch",
     returnType = "Z",
     parameters = listOf(VIEW, "Landroid/view/MotionEvent;"),
+    filters = listOf(
+        methodCall(
+            opcode = Opcode.INVOKE_INTERFACE,
+            definingClass = EDGE_SPEEDUP_ABILITY,
+            returnType = "Z",
+            parameters = listOf("F", "F"),
+        ),
+    ),
     custom = { method, classDef ->
         "Landroid/view/View\$OnTouchListener;" in classDef.interfaces &&
             method.implementation?.instructions?.any { it.asksHoldCheck() } == true &&

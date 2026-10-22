@@ -4,6 +4,7 @@
  */
 package app.morphe.patches.tiktok.misc.commentpublish
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
@@ -67,6 +68,13 @@ internal fun Instruction.isHandOff(owner: String): Boolean {
         parameters[0] == COMMENT && parameters[2] == "Z"
 }
 
+internal object CommentPublishPartFingerprint : Fingerprint(
+    definingClass = PUBLISH_VIEW_MODEL_SUFFIX,
+    returnType = "V",
+    parameters = listOf("L", COMMENT, FUNCTION1),
+    custom = { method, _ -> method.isPublishEntryPart() },
+)
+
 @Suppress("unused")
 val commentPublishDiagnosticsPatch = bytecodePatch(
     name = "Comment publish diagnostics",
@@ -80,11 +88,8 @@ val commentPublishDiagnosticsPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
-        val parts = mutableListOf<Pair<ClassDef, Method>>()
-        classDefForEach { classDef ->
-            if (!classDef.type.endsWith(PUBLISH_VIEW_MODEL_SUFFIX)) return@classDefForEach
-            classDef.methods.filter { it.isPublishEntryPart() }.forEach { parts += classDef to it }
-        }
+        val matches = CommentPublishPartFingerprint.matchAll()
+        val parts = matches.map { it.originalClassDef to it.originalMethod }
         check(parts.isNotEmpty()) { "Comment publish diagnostics: no publish entry logs the send click or a refusal." }
         check(parts.size <= 2) {
             "Comment publish diagnostics: expected the publish entry in one or two methods, found ${parts.size}" +

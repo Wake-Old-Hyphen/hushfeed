@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.promobanners
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
 import app.morphe.patcher.fieldAccess
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
@@ -34,14 +35,9 @@ private const val TUX_ICON_VIEW_DESCRIPTOR = "Lcom/bytedance/tux/icon/TuxIconVie
 private object TouchPointPendantParserFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Ljava/util/HashMap;", "Ljava/util/List;", "Z"),
-    custom = { method, _ ->
-        val referencedTypes = method.implementation?.instructions
-            ?.mapNotNull { it.getReference<TypeReference>()?.type }
-            ?.toSet()
-            ?: emptySet()
-        "Lcom/bytedance/touchpoint/api/model/NormalPendant;" in referencedTypes &&
-            "Lcom/bytedance/touchpoint/data/parser/notify/PendantViewModel;" in referencedTypes
-    },
+    filters = listOf(
+        checkCast("Lcom/bytedance/touchpoint/api/model/NormalPendant;"),
+    ),
 )
 
 /** The 47.0.3 binder that creates the purple rewards shortcut beside Add friends. */

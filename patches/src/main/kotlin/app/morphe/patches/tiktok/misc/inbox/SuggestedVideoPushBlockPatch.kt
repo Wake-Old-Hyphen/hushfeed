@@ -101,8 +101,7 @@ internal val notificationFilterPatch = bytecodePatch {
         // Only the classes the patcher's type index says call NotificationManager are read. On
         // 47.1.4 a full walk is about 40 million instructions for 22 calls in 66 classes (#54).
         val callers = classesCalling(listOf(NOTIFICATION_MANAGER))
-        val found = mutableListOf<ClassDef>()
-        classDefForEach { if (it.type in callers) found += it }
+        val found = callers.mapNotNull(::classDefByOrNull)
         val targets = notifyingMethods(found)
         if (targets.none { (classDef, _) -> classDef.type == PUSH_HANDLER }) {
             throw PatchException("Notification filter: TikTok's push handler no longer posts a notification.")

@@ -89,31 +89,26 @@ val commentSendFixPatch = bytecodePatch(
     compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
-        val entries = mutableListOf<Pair<ClassDef, Method>>()
-        classDefForEach { classDef ->
-            if (!classDef.type.endsWith(PUBLISH_VIEW_MODEL_SUFFIX)) return@classDefForEach
-            classDef.methods.filter { it.isPublishEntryPart() && CLICK_EVENT in it.stringConstants() }
-                .forEach { entries += classDef to it }
-        }
+        val matches = CommentPublishPartFingerprint.matchAll()
+        val entries = matches.filter { CLICK_EVENT in it.originalMethod.stringConstants() }
         check(entries.size == 1) {
             "Comment send fix: expected one publish entry that logs the send click, found ${entries.size}."
         }
-        val (classDef, entry) = entries.single()
-        val method = mutableClassDefBy(classDef.type).findMutableMethodOf(entry)
+        val method = entries.single().method
         val instructions = method.implementation!!.instructions.toList()
 
         val checks = instructions.withIndex().filter { it.value.isSendCheck() }
         check(checks.size == 1) {
-            "Comment send fix: expected one send check in ${entry.name}, found ${checks.size}."
+            "Comment send fix: expected one send check in ${method.name}, found ${checks.size}."
         }
         val (checkIndex, sendCheck) = checks.single()
         val screen = sendCheck.firstArgumentRegister()
         val screenType = sendCheck.getReference<MethodReference>()!!.parameterTypes[0]
         val topPage = checkNotNull(instructions.topPageRead()) {
-            "Comment send fix: ${entry.name} does not read TikTok's top page."
+            "Comment send fix: ${method.name} does not read TikTok's top page."
         }
         check(topPage.first < checkIndex) {
-            "Comment send fix: ${entry.name} reads TikTok's top page after its send check."
+            "Comment send fix: ${method.name} reads TikTok's top page after its send check."
         }
 
         // The check first, being further down, so the top page's index still holds.

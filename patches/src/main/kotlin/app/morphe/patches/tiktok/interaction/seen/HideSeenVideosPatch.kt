@@ -20,11 +20,10 @@ private const val HISTORY_DESCRIPTOR = "Lapp/morphe/extension/tiktok/seen/SeenVi
 
 /** The player's progress callback, which carries the video id, position and duration. */
 private object PlayerProgressFingerprint : Fingerprint(
+    definingClass = "Lcom/ss/android/ugc/aweme/feed/controller/PlayerController;",
+    name = "onPlayProgressChange",
     returnType = "V",
     parameters = listOf("Ljava/lang/String;", "J", "J"),
-    custom = { method, classDef ->
-        method.name == "onPlayProgressChange" && classDef.endsWith("/PlayerController;")
-    },
 )
 
 /**

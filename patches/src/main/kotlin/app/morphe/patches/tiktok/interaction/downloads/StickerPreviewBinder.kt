@@ -52,9 +52,11 @@ internal fun MethodReference.isStickerPreviewBind() =
 internal fun BytecodePatchContext.resolveStickerPreviewBind(): MutableMethod {
     val found = mutableListOf<Pair<ClassDef, Method>>()
     classDefForEach { classDef ->
-        if (!extendsLinearLayout(classDef)) return@classDefForEach
+        // The field check first: it reads the class alone, where the superclass walk looks up
+        // every ancestor, and few classes hold both views.
         val fieldTypes = classDef.fields.mapTo(HashSet()) { it.type }
         if (SMART_IMAGE_VIEW !in fieldTypes || TUX_TEXT_VIEW !in fieldTypes) return@classDefForEach
+        if (!extendsLinearLayout(classDef)) return@classDefForEach
         classDef.methods.forEach { method ->
             if (!method.isStickerPreviewBind()) return@forEach
             // An instance method: the save button hook hands p0 and p1 to the extension as the

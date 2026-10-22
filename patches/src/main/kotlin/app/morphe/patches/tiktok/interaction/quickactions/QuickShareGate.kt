@@ -6,6 +6,7 @@
  */
 package app.morphe.patches.tiktok.interaction.quickactions
 
+import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
@@ -40,18 +41,19 @@ private val GATE_CALLER = listOf(
     Opcode.INVOKE_STATIC, Opcode.MOVE_RESULT, Opcode.IF_NEZ, Opcode.CONST_4, Opcode.RETURN,
 )
 
+private object LongPressQuickShareGateCallerFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = emptyList(),
+    custom = { method, _ ->
+        method.implementation?.instructions?.map { it.opcode } == GATE_CALLER
+    },
+)
+
 internal fun BytecodePatchContext.resolveLongPressQuickShareGate(): MutableMethod {
-    val callers = mutableListOf<Method>()
-    classDefForEach { classDef ->
-        for (method in classDef.methods) {
-            if (method.returnType != "Z" || method.parameterTypes.isNotEmpty()) continue
-            val opcodes = method.implementation?.instructions?.map { it.opcode } ?: continue
-            if (opcodes == GATE_CALLER) callers += method
-        }
-    }
-    val caller = callers.singleOrNull() ?: throw PatchException(
+    val matches = LongPressQuickShareGateCallerFingerprint.matchAllOrNull().orEmpty()
+    val caller = matches.singleOrNull()?.originalMethod ?: throw PatchException(
         "Long press quick share: expected one method with the gate caller's shape, found " +
-            "${callers.size}: " + callers.joinToString { "${it.definingClass}->${it.name}" } + ".",
+            "${matches.size}.",
     )
     if (classDefByOrNull(IM_SHARE_SERVICE) != null && caller.definingClass != IM_SHARE_SERVICE) {
         throw PatchException(
