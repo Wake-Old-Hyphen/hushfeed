@@ -7,6 +7,7 @@ package app.morphe.patches.tiktok.privacy
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.misc.branding.appResource
 import app.morphe.patches.tiktok.misc.branding.decodedXmlFiles
 import app.morphe.patches.tiktok.misc.branding.elements
 import app.morphe.patches.tiktok.misc.branding.readXml
@@ -46,15 +47,17 @@ val trustUserCertificatesPatch = resourcePatch(
     execute {
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
+        val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name).relativeTo(packageRoot).invariantSeparatorsPath },
-            isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
+            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedConfigPathsRefusal(collisions.size))
 
         val reference = networkSecurityConfigReference(readXml(get("AndroidManifest.xml")))
+        appResource(reference)?.let { (type, name) -> decode("res/$type*/$name.xml") }
         val files = decodedXmlFiles(get("res"), reference)
         if (files.isEmpty()) {
             throw PatchException("Trust user certificates: TikTok's network security config $reference isn't in the app. Nothing was changed.")

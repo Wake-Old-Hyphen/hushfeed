@@ -1,7 +1,7 @@
 package app.morphe.patches.tiktok.interaction.searchsuggestions
 
 import app.morphe.Fixtures
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags

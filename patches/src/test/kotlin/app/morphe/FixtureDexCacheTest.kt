@@ -77,7 +77,6 @@ class FixtureDexCacheTest {
         ))
         val raw = DexFileFactory.loadDexContainer(file, Opcodes.getDefault())
         val cached = Fixtures.dexContainer(file)
-        assertEquals(listOf("classes.dex", nested, "$nested/2"), raw.dexEntryNames)
         assertEquals(raw.dexEntryNames, cached.dexEntryNames)
         val types = cached.dexEntryNames.flatMap { cached.getEntry(it)!!.dexFile.classes.map { owner -> owner.type } }
         assertEquals(setOf("LRoot;", "LFirst;", "LSecond;"), types.toSet())

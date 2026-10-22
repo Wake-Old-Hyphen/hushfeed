@@ -218,6 +218,9 @@ private object GenericShareChannelInitFingerprint : Fingerprint(
     name = "<init>",
     parameters = listOf(SHARE_CHANNEL_INFO),
     returnType = "V",
+    // Every channel keeps the info it was built from, and the field's type is one the patcher
+    // can look up, where a constructor's parameters alone meant walking every method.
+    filters = listOf(fieldAccess(opcode = Opcode.IPUT_OBJECT, type = SHARE_CHANNEL_INFO)),
 )
 
 /** Writes TikTok's members into the bodies of ShareTargets' three bridges. */

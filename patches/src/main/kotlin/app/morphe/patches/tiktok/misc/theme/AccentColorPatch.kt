@@ -75,16 +75,19 @@ val accentColorPatch = resourcePatch(
         val wallpaper = followWallpaper == true
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
+        val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name).relativeTo(packageRoot).invariantSeparatorsPath },
-            isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
+            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size, "Accent color"))
         if (wallpaper || target != TIKTOK_ACCENT) {
             // This build's accent tokens, or a refusal: a name carried over from another build is a guess.
             val tokens = accentTokens(packageMetadata.versionName)
+            val iconNames = accentIcons(packageMetadata.versionName)
+            decode("res/values*/styles.xml")
             val files = get("res").listFiles().orEmpty()
                 .filter { it.isDirectory && it.name.startsWith("values") }
                 .map { it.resolve("styles.xml") }.filter { it.exists() }
@@ -96,8 +99,9 @@ val accentColorPatch = resourcePatch(
             // Icons with the red drawn in, each recolored in memory first for the same reason. A picture
             // can't take a color the phone picks later, so with the wallpaper choice each one splits into
             // a white layer and a red one the phone tints.
+            decode(*iconNames.map { "res/drawable*/$it.png" }.toTypedArray())
             val drawables = get("res").listFiles().orEmpty().filter { it.isDirectory && it.name.startsWith("drawable") }
-            val pictures = accentIcons(packageMetadata.versionName).map { name ->
+            val pictures = iconNames.map { name ->
                 name to drawables.map { it.resolve("$name.png") }.filter { it.isFile }
                     .ifEmpty { throw PatchException(missingAccentIconRefusal(name)) }
             }
@@ -109,6 +113,8 @@ val accentColorPatch = resourcePatch(
             }
             // The unread dots and counts fill with a color that much else shares, warnings among
             // them, so each badge's own fill takes the accent instead (#192). Read first, like the rest.
+            decode("res/values/$WALLPAPER_COLORS_FILE", "res/values-v31/$WALLPAPER_COLORS_FILE")
+            decode(*accentBadges(packageMetadata.versionName).map { "res/drawable*/$it.xml" }.toTypedArray())
             val colorsFile = get("res").resolve("values").resolve(WALLPAPER_COLORS_FILE)
             val namedColors = if (colorsFile.isFile) colorLiterals(readXml(colorsFile)) else emptyMap()
             val badges = accentBadges(packageMetadata.versionName).flatMap { name ->

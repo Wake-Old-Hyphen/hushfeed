@@ -29,7 +29,8 @@ private const val EXTENSION = "Lapp/morphe/extension/tiktok/cleardisplay/Remembe
 val rememberClearDisplayPatch = bytecodePatch(
     name = "Remember clear display",
     description = "Keeps clear display, TikTok's mode that hides the buttons over a video, on " +
-        "as you swipe to the next video. It can also turn on by itself after a delay you pick, " +
+        "as you swipe to the next video (`Keep Clear display across videos` turns that part off). " +
+        "It can also turn on by itself after a delay you pick, " +
         "which starts off in Hushfeed settings > Feed screen. When clear display ends, the " +
         "Following stories bubble TikTok hid comes back too.",
     default = true,

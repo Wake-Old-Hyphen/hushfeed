@@ -94,19 +94,27 @@ val customLauncherIconPatch = resourcePatch(
         val picture = launcherPicture(pictureFile)
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
+        val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name).relativeTo(packageRoot).invariantSeparatorsPath },
-            isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
+            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedIconPathsRefusal(collisions.size))
 
         val res = get("res")
         val icons = launcherIconReferences(readXml(get("AndroidManifest.xml")))
+        icons.mapNotNull(::appResource).forEach { (type, name) -> decode("res/$type*/$name.xml") }
         val adaptiveIcons = icons.flatMap { adaptiveIconFiles(res, it) }.distinct()
         if (adaptiveIcons.isEmpty()) {
             throw PatchException("Custom launcher icon: TikTok's icon ${icons.joinToString()} has no adaptive version to restyle.")
+        }
+        for (file in adaptiveIcons) {
+            val root = readXml(file).documentElement
+            listOfNotNull(root.layer("background"), root.layer("foreground"))
+                .mapNotNull { appResource(it.getAttribute(DRAWABLE)) }
+                .forEach { (type, name) -> decode("res/$type*/$name.xml") }
         }
         val pictureReference = picture?.let { "@drawable/$PICTURE_NAME" }
         // A dry run on a throwaway copy of each icon first: a refusal leaves every file as it was.

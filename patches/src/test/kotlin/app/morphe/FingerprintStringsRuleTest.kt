@@ -47,6 +47,24 @@ class FingerprintStringsRuleTest {
     }
 
     @Test
+    fun `two contains string filters can't share one literal`() {
+        val log = method("CommentLongPressFragment@922.loadLongPressItems$2")
+        assertFalse(
+            object : Fingerprint(
+                strings = listOf(
+                    string("CommentLongPressFragment@", StringComparisonType.CONTAINS),
+                    string(".loadLongPressItems", StringComparisonType.CONTAINS),
+                ),
+            ) {}.takes(log, owner(log)),
+        )
+        assertTrue(
+            object : Fingerprint(
+                strings = listOf(string(".loadLongPressItems", StringComparisonType.CONTAINS)),
+            ) {}.takes(log, owner(log)),
+        )
+    }
+
+    @Test
     fun `a contains filter takes a piece of a literal`() {
         val log = method("CommentLongPressFragment@922.loadLongPressItems$2")
         val piece = object : Fingerprint(filters = listOf(string(".loadLongPressItems", StringComparisonType.CONTAINS))) {}
@@ -64,6 +82,7 @@ class FingerprintStringsRuleTest {
     fun `two loads answer two wanted strings in any order`() {
         val both = method("loadLongPressItems", "CommentLongPressFragment@922")
         assertTrue(takes(listOf("CommentLongPressFragment@922", "loadLongPressItems"), both))
+        assertFalse(takes(listOf("CommentLongPressFragment@", "loadLongPressItems"), both))
         assertFalse(takes(listOf("CommentLongPressFragment@922", "loadLongPressItems", "report"), both))
     }
 }

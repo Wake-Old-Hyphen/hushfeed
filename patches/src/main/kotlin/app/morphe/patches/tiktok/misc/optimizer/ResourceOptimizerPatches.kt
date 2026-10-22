@@ -80,6 +80,7 @@ val coreAssetDebloatPatch = rawResourcePatch(
             "lib/arm64-v8a/libartlog_monitor.so",
             "lib/armeabi-v7a/libartlog_monitor.so",
         )
+        decode("assets/microblink")
         val result = stripVerifiedResources(
             get("."),
             "Core Asset De-bloat",
@@ -115,6 +116,7 @@ val languagePackPurgerPatch = rawResourcePatch(
     )
 
     execute {
+        decode("assets/strings#lang_*")
         val result = stripVerifiedLanguagePacks(get("."), targetLocales, languageInventories)
         if (result.retainedLocales == null) {
             // Build details keep "unverified": nothing here was checked against a reviewed APK.
@@ -160,6 +162,7 @@ val studioCreationDebloatPatch = rawResourcePatch(
             "lib/armeabi-v7a/libeffect_plugin.so",
             "lib/armeabi-v7a/libttvesdk_plugin.so",
         )
+        decode("assets/model/ttfacemodel")
         val result = stripVerifiedResources(
             get("."),
             "Studio & Creation De-bloat",
@@ -190,6 +193,10 @@ val liveStreamSuiteOptimizerPatch = rawResourcePatch(
         val nativeFiles = listOf(
             "lib/arm64-v8a/liblink_mic_sdk.so",
             "lib/armeabi-v7a/liblink_mic_sdk.so",
+        )
+        decode(
+            "assets/native_runtime_server/game",
+            "assets/offline/tiktok_live_tt_live_lynx_match_component_container",
         )
         val result = stripVerifiedResources(
             get("."),

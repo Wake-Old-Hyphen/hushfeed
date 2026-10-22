@@ -5,7 +5,7 @@
 package app.morphe.patches.tiktok.interaction.sharesheet
 
 import app.morphe.Fixtures
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.util.addInstructions
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.tiktok.interaction.downloads.STORY_SHARE_SAVE
 import app.morphe.patches.tiktok.interaction.downloads.addShareActionToSnapshot

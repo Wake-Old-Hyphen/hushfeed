@@ -5,6 +5,7 @@
 package app.morphe.patches.tiktok.interaction.feedtoolbar
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
@@ -31,6 +32,8 @@ private const val FEATURE_CONTROLS = "Lapp/morphe/extension/tiktok/featurecontro
 internal object SidebarSwipeFingerprint : Fingerprint(
     returnType = "Z",
     parameters = emptyList(),
+    // The service call leads, so the patcher looks up its few callers instead of every ()Z.
+    filters = listOf(methodCall(definingClass = HOME_SIDEBAR_SERVICE, returnType = "Z", parameters = emptyList())),
     custom = { method, classDef -> isSidebarSwipeQuestion(method, classDef) },
 )
 

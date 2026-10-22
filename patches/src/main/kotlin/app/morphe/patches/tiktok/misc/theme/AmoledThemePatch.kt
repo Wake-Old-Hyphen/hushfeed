@@ -43,11 +43,12 @@ val amoledThemePatch = resourcePatch(
     execute {
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)
+        val decodable by lazy { listDecodableFiles("res/**").toSet() }
         val collisions = renamedPathCollisions(
             entries = listApkEntries("res/"),
             decodedDirectories = decodedResourceDirectories(decodedRoots),
-            aliasOf = { name -> get(name).relativeTo(packageRoot).invariantSeparatorsPath },
-            isDecoded = { name -> decodedRoots.any { it.resolve(name).isFile } },
+            aliasOf = { name -> get(name, false).relativeTo(packageRoot).invariantSeparatorsPath },
+            isDecoded = { name -> name in decodable || decodedRoots.any { it.resolve(name).isFile } },
         )
         if (collisions.isNotEmpty()) throw PatchException(renamedPathsRefusal(collisions.size))
         val color = amoledColor(background)
@@ -57,6 +58,7 @@ val amoledThemePatch = resourcePatch(
         val surfaces = surfaceStyleItems(packageMetadata.versionName)
         val found = mutableSetOf<String>()
         val styleItemsFound = mutableSetOf<String>()
+        decode("res/values*/colors.xml", "res/values*/styles.xml")
         val valuesDirectories = get("res").listFiles().orEmpty()
             .filter { it.isDirectory && it.name.startsWith("values") }
         valuesDirectories.map { it.resolve("colors.xml") }.filter { it.exists() }.forEach { file ->

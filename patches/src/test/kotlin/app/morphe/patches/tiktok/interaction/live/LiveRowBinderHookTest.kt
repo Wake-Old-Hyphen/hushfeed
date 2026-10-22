@@ -1,7 +1,7 @@
 package app.morphe.patches.tiktok.interaction.live
 
 import app.morphe.BridgeTypeFlow
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import com.android.tools.smali.dexlib2.AccessFlags

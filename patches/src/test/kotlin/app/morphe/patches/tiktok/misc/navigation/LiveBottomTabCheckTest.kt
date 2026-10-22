@@ -1,7 +1,7 @@
 package app.morphe.patches.tiktok.misc.navigation
 
 import app.morphe.Fixtures
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import app.morphe.util.getReference

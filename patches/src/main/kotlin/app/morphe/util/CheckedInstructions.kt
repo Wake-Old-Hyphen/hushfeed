@@ -38,10 +38,13 @@ fun MutableMethod.addInstructions(index: Int, smali: String) =
     keepsEvery(smali) { patcherAddInstructions(index, smali) }
 
 fun MutableMethod.addInstructions(smali: String) =
-    keepsEvery(smali) { patcherAddInstructions(smali) }
+    keepsEvery(smali) { patcherAddInstructions(0, smali) }
 
 fun MutableMethod.addInstructionsWithLabels(index: Int, smali: String, vararg externalLabels: ExternalLabel) =
     keepsEvery(smali) { patcherAddInstructionsWithLabels(index, smali, *externalLabels) }
+
+fun MutableMethod.addInstructionsWithLabels(smali: String, vararg externalLabels: ExternalLabel) =
+    keepsEvery(smali) { patcherAddInstructionsWithLabels(0, smali, *externalLabels) }
 
 // Built instructions go in as they are; there is nothing to compile and nothing to drop.
 fun MutableMethod.addInstruction(index: Int, instruction: BuilderInstruction) =

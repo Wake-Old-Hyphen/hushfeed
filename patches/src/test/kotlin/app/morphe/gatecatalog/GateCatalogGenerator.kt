@@ -172,7 +172,10 @@ object GateCatalogGenerator {
         val scan = Scan()
         val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
         val classes = mutableListOf<Pair<String, ClassDef>>()
-        for (entry in container.dexEntryNames) {
+        // By name, not the container's order: a SettingsManager row keeps the first call site the
+        // scan meets, and the reader under patcher 2.0 lists classes4.dex before classes28.dex
+        // where the 1.x one listed them by name, which moved 13 of 47.4.3's sites.
+        for (entry in container.dexEntryNames.sorted()) {
             for (classDef in container.getEntry(entry)!!.dexFile.classes) classes += entry to classDef
         }
         // Each dynamic feature module's code, a zip holding its dex under lib/<abi>/, the same

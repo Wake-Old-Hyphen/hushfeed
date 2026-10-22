@@ -53,9 +53,9 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 ## Install
 
 1. Get the TikTok 47.4.3 APK. Google Play only offers the newest build, so take it from APKMirror: [47.4.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-4-3-release/tiktok-47-4-3-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
-2. Use Morphe Manager 1.34.0 or newer. This bundle is built against patcher 1.15.1, which Manager 1.34.0 was the first to ship, and older Managers won't load it. morphe-desktop works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
+2. Use Morphe Manager 2.0.0 or newer. Hushfeed bundles after v0.77.0 are built against patcher 2.0.0, which Manager 2.0.0 was the first to ship, and older Managers won't load them. morphe-desktop 1.19.0 or newer works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
-4. Pick the patches. Simple mode in Morphe Manager selects 119 of the 138 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 1.34.0 shows all 138 Hushfeed patches in eleven categories you can expand or collapse. Give the manager 1,024 MB of memory under **Settings > Process runtime** before you start, since less makes patching slow or stall.
+4. Pick the patches. Simple mode in Morphe Manager selects 119 of the 138 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 2.0.0 shows all 138 Hushfeed patches in eleven categories you can expand or collapse. Leave **Use embedded VM** on under **Settings > Patcher**, since it lets the patcher use whatever memory the phone can spare.
 5. Patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key, because an update only installs over your copy, with your login intact, when it's signed with the same key.
 6. Install the patched APK, open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
 
@@ -277,9 +277,9 @@ Simple mode in Morphe Manager selects 119 of these patches. Each row says what t
 - Facebook login can't work on a patched build, because Facebook checks the app's signing key and yours isn't TikTok's. Log in with your email or phone number and a code, or with Google.
 - If a login stalls with Hide CAPTCHA popups on, turn it off and restart TikTok. None of the Feature Gate Lab presets touch a CAPTCHA.
 
-### Patching stops at 24 or 25 percent
+### Patching stalls partway
 
-The manager has run short of memory. Cancel, set **Settings > Process runtime** to 1,024 MB if it's lower and start again. If it still stalls, try 512 MB, which gives the patcher less to hold at once. Hide Play Store update offer, Change app name and Custom launcher icon decode resources too, so raise the limit if one of them runs out.
+The manager has probably run short of memory. In Manager 2.0, check that **Use embedded VM** is on under **Settings > Patcher**, close other apps and start again. Every Hushfeed patch at once fits in about 1 GB. If it stops while Manager is in the background, allow it under **Battery optimization** on that same page. On an older Manager, set **Settings > Process runtime** to 1,024 MB instead, or 512 MB if it still stalls. Hide Play Store update offer, Change app name and Custom launcher icon decode resources too, so they're the ones to leave out if memory stays tight.
 
 You can select every patch at once. Each release is patched with all of them selected before it ships, so none refuse to go in together.
 

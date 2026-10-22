@@ -1,6 +1,6 @@
 package app.morphe.patches.tiktok.interaction.speed
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions as patcherAddInstructions
+import app.morphe.util.addInstructions as patcherAddInstructions
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.addInstructions
 import app.morphe.util.cloneMutable

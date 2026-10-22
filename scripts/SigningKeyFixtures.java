@@ -68,6 +68,6 @@ final class UnsignedPatcherFixture {
         if ("1".equals(System.getenv("HUSHFEED_FIXTURE_PATCH_FAIL"))) System.exit(1);
         String names = "\"" + String.join("\",\"", patches) + "\"";
         Files.writeString(report, "{\"packageName\":\"com.zhiliaoapp.musically\",\"packageVersion\":\"1.0.0\","
-                + "\"appliedPatches\":[" + names + "],\"failedPatches\":[],\"patchingSteps\":[{\"success\":true}]}");
+                + "\"appliedPatches\":[" + names + "],\"failedPatches\":[],\"stepResults\":[{\"step\":\"PATCHING\",\"success\":true}]}");
     }
 }

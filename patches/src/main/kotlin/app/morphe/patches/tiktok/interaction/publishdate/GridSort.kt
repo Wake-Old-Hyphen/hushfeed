@@ -10,12 +10,6 @@ import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.util.addInstruction
 import app.morphe.util.addInstructions
-import app.morphe.util.getReference
-import com.android.tools.smali.dexlib2.AccessFlags
-import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.iface.ClassDef
-import com.android.tools.smali.dexlib2.iface.Method
-import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val PATCH = "Always show publish date"
 private const val GRID_SORT = "Lapp/morphe/extension/tiktok/feed/GridSort;"
@@ -23,33 +17,32 @@ private const val GRID_SORT = "Lapp/morphe/extension/tiktok/feed/GridSort;"
 /** The string only the profile and Liked grid's adapter logs under. */
 private const val ADAPTER_TAG = "Profile_AwemeAdapter"
 
+/** The grid adapter's cell builder, the one method in the app that logs under [ADAPTER_TAG]. */
+internal object GridAdapterTagFingerprint : Fingerprint(
+    strings = listOf(ADAPTER_TAG),
+)
+
 /**
  * The profile grid adapter's `setData(List)` (#180), which gives the adapter the list it keeps
  * and draws its cells from. The class is renamed on every build, so it is found by the log tag
  * its cell builder uses, and the method by TikTok's own unobfuscated name.
  */
 internal object GridAdapterSetDataFingerprint : Fingerprint(
+    classFingerprint = GridAdapterTagFingerprint,
+    name = "setData",
+    isStatic = false,
     returnType = "V",
     parameters = listOf("Ljava/util/List;"),
-    custom = { method, classDef -> isGridAdapterMethod(method, classDef, "setData") },
 )
 
 /** Its `setDataAfterLoadMore(List)`, which a new page of the grid goes through. */
 internal object GridAdapterPageFingerprint : Fingerprint(
+    classFingerprint = GridAdapterTagFingerprint,
+    name = "setDataAfterLoadMore",
+    isStatic = false,
     returnType = "V",
     parameters = listOf("Ljava/util/List;"),
-    custom = { method, classDef -> isGridAdapterMethod(method, classDef, "setDataAfterLoadMore") },
 )
-
-internal fun isGridAdapterMethod(method: Method, classDef: ClassDef, name: String): Boolean {
-    if (method.name != name || AccessFlags.STATIC.isSet(method.accessFlags)) return false
-    return classDef.methods.any { sibling ->
-        sibling.implementation?.instructions?.any { instruction ->
-            instruction.opcode == Opcode.CONST_STRING &&
-                instruction.getReference<StringReference>()?.string == ADAPTER_TAG
-        } == true
-    }
-}
 
 /**
  * Sorts the grid's loaded videos while its switch is on (#180), and says whether the hooks went

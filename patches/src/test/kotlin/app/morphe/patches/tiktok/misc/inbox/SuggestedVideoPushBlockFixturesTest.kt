@@ -2,7 +2,7 @@ package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.Fixtures
 import app.morphe.takes
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.util.addInstructions
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags

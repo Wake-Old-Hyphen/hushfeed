@@ -2,7 +2,7 @@ package app.morphe.patches.tiktok.misc.popups
 
 import app.morphe.Fixtures
 import app.morphe.patcher.patch.PatchException
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.util.addInstructionsWithLabels
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.takes
 import com.android.tools.smali.dexlib2.AccessFlags

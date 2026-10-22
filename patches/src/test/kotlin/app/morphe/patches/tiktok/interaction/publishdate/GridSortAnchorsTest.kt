@@ -112,10 +112,11 @@ class GridSortAnchorsTest {
 
     @Test
     fun `only a list method of the class that logs the grid adapter tag is taken`() {
-        assertTrue(isGridAdapterMethod(method("setData"), adapter(tagged = true), "setData"))
-        assertFalse("another name", isGridAdapterMethod(method("addData"), adapter(tagged = true), "setData"))
-        assertFalse("static", isGridAdapterMethod(method("setData", static = true), adapter(tagged = true), "setData"))
-        assertFalse("another adapter", isGridAdapterMethod(method("setData"), adapter(tagged = false), "setData"))
+        assertTrue(GridAdapterSetDataFingerprint.takes(method("setData"), adapter(tagged = true)))
+        assertTrue(GridAdapterPageFingerprint.takes(method("setDataAfterLoadMore"), adapter(tagged = true)))
+        assertFalse("another name", GridAdapterSetDataFingerprint.takes(method("addData"), adapter(tagged = true)))
+        assertFalse("static", GridAdapterSetDataFingerprint.takes(method("setData", static = true), adapter(tagged = true)))
+        assertFalse("another adapter", GridAdapterSetDataFingerprint.takes(method("setData"), adapter(tagged = false)))
     }
 
     private fun method(name: String, static: Boolean = false): Method =

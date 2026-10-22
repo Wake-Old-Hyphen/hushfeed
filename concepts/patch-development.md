@@ -69,7 +69,7 @@ The delivered bundle contains classes.dex, extensions/tiktok.mpe, and extensions
 | :extensions:shared | Shared runtime extension payload |
 | :extensions:shared:library | Shared settings, utility, and diagnostic code used by extensions and tests |
 
-The Morphe Gradle plugin and the default extension namespace are configured in settings.gradle.kts. The current plugin pin is 1.3.4. The version catalog pins patcher 1.15.1 and the README holds the Manager floor at 1.34.0. Keep those pins compatible because Manager refuses a bundle built for a newer patcher. The TikTok extension compiles for Java 11 with API 23 as its floor. The shared library compiles for Java 17, also with API 23 as its floor. Module build files declare which payload name each extension produces. The stub modules let source compile against host types; they are not a substitute for checking the real APK.
+The Morphe Gradle plugin and the default extension namespace are configured in settings.gradle.kts. The current plugin pin is 1.3.4. The version catalog pins patcher 2.0.0 and the README holds the Manager floor at 2.0.0 (morphe-desktop 1.19.0 is the first CLI on it). Keep those pins compatible because Manager refuses a bundle built for a newer patcher. The TikTok extension compiles for Java 11 with API 23 as its floor. The shared library compiles for Java 17, also with API 23 as its floor. Module build files declare which payload name each extension produces. The stub modules let source compile against host types; they are not a substitute for checking the real APK.
 
 ## Where to look first
 
