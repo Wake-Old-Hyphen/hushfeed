@@ -96,8 +96,8 @@ public final class GestureActions {
      *
      * <p>A double tap lands with the finger still down, as a long press does, so the Long press
      * actions run from here unchanged: the sleep timer's picker is posted until the touch is done
-     * with, and a frame is read at the tap. The edge seek stays with the long press. Nothing here
-     * says where the tap landed.
+     * with, and a frame is read at the tap. The edge seek stays with the long press. Where the tap
+     * landed matters only to Double tap by corner.
      *
      * <p>Each guard hands over the tap's event. A route that reached a second guard with the same
      * tap, rather than through the panel that swallows it, gets the first guard's answer back and
@@ -107,7 +107,7 @@ public final class GestureActions {
         if (event != null && event.getDownTime() == answeredTapDown && event.getEventTime() == answeredTapAt) {
             return answeredTap;
         }
-        boolean answer = onDoubleTap();
+        boolean answer = runAction(doubleTapAction(event));
         if (event != null) {
             answeredTapDown = event.getDownTime();
             answeredTapAt = event.getEventTime();
@@ -167,7 +167,27 @@ public final class GestureActions {
 
     /** {@link #onDoubleTap(MotionEvent)} for a tap with no event to tell it apart by. */
     public static boolean onDoubleTap() {
-        return runAction(Settings.DOUBLE_TAP_ACTION.get());
+        return runAction(doubleTapAction(null));
+    }
+
+    /**
+     * The double tap choice for a tap at this event: its corner's with Double tap by corner on,
+     * the plain choice otherwise or for a tap with no event or window to place it against (#232).
+     */
+    static String doubleTapAction(MotionEvent event) {
+        if (event == null || !Settings.DOUBLE_TAP_SPLIT_ZONES.get()) return Settings.DOUBLE_TAP_ACTION.get();
+        // The window's size and the event's own x and y, as sideOf places a long press: the
+        // listener's touch layer fills the window, and getRawX would be off in a split view.
+        Context context = Utils.getWindowContext();
+        if (context == null) return Settings.DOUBLE_TAP_ACTION.get();
+        android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        if (width <= 0 || height <= 0) return Settings.DOUBLE_TAP_ACTION.get();
+        boolean left = event.getX() < width / 2;
+        boolean top = event.getY() < height / 2;
+        if (top) return (left ? Settings.DOUBLE_TAP_TOP_LEFT_ACTION : Settings.DOUBLE_TAP_TOP_RIGHT_ACTION).get();
+        return (left ? Settings.DOUBLE_TAP_BOTTOM_LEFT_ACTION : Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION).get();
     }
 
     /**

@@ -355,9 +355,14 @@ Clear all suggested accounts,清除所有建议的帐户
 Clear diagnostic data,清除诊断数据
 Clear display,显示清晰
 Clear display delay,清晰显示延迟
+Keep Clear display across videos,在视频之间保持显示清晰
+"Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.",你开启的显示清晰在滑到下一个视频时保持开启。关闭时，每个新视频开始时都会显示控件.
 Clear preset,清除预设
 "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.",清晰的屏幕隐藏了 LIVE 的聊天、礼物和按钮，因此只有流显示。 TikTok 仅将其放入某些房间的菜单中。这将其添加到其他内容中.
 Clear search,清除搜索
+Recent searches,最近搜索
+Clear search history,清除搜索记录
+Delete search,删除这条搜索
 Clear seen videos,清除看过的视频
 Clear the search,清除搜索
 Cleared. Tap to undo before TikTok closes.,清除。在 TikTok 关闭之前点击以撤消.
@@ -522,6 +527,12 @@ Don't start the feed on returning,返回时不要启动信息流
 Don't start the first video,不要开始第一个视频
 Done,完成
 Double tap,双击
+Double tap by corner,按角落双击
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.,为视频的四个角落区域分别设置双击操作。关闭时使用上方的“双击”一行.
+Top left double tap,左上角双击
+Top right double tap,右上角双击
+Bottom left double tap,左下角双击
+Bottom right double tap,右下角双击
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.",下载列出了该视频的质量，以及每个视频的大小 TikTok 给出的大小，并保存您选择的一个。上述质量在下次保存时保持不变.
 Download original photos,下载原始照片
 Downloads,下载

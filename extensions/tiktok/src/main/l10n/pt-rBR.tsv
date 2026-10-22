@@ -302,8 +302,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	Não foi poss
 Clear diagnostic data	Limpar os dados de diagnóstico
 Clear display	Tela limpa
 Clear display delay	Espera para limpar a tela
+Keep Clear display across videos	Manter a Tela limpa entre vídeos
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	A Tela limpa que você ligar continua ligada quando você desliza para o próximo vídeo. Desligado, cada vídeo novo começa com os controles à mostra.
 Clear preset	Limpar predefinição
 Clear search	Limpar a busca
+Recent searches	Buscas recentes
+Clear search history	Limpar o histórico de busca
+Delete search	Remover esta busca
 Clear seen videos	Limpar os vídeos vistos
 Clear the search	Limpar a pesquisa
 Cleared. Tap to undo before TikTok closes.	Apagados. Toque para desfazer antes de o TikTok fechar.
@@ -423,6 +428,12 @@ Don't start the feed on returning	Não iniciar o feed ao voltar
 Do nothing	Não fazer nada
 Done	Concluído
 Double tap	Toque duplo
+Double tap by corner	Toque duplo por canto
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Dá a cada quarto do vídeo sua própria ação de toque duplo. Enquanto isso estiver desligado, vale a linha Toque duplo acima.
+Top left double tap	Toque duplo no canto superior esquerdo
+Top right double tap	Toque duplo no canto superior direito
+Bottom left double tap	Toque duplo no canto inferior esquerdo
+Bottom right double tap	Toque duplo no canto inferior direito
 Download original photos	Baixar as fotos originais
 Destination updated	Destino atualizado
 Downloads	Downloads

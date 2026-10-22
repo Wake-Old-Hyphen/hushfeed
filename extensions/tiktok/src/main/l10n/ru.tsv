@@ -350,8 +350,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	Не удал
 Clear diagnostic data	Очистить диагностические данные
 Clear display	Чистый вид
 Clear display delay	Задержка чистого вида
+Keep Clear display across videos	Сохранять чистый вид между видео
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	Включённый «Чистый вид» остаётся, когда вы листаете к следующему видео. Если выключено, каждое новое видео начинается с видимыми кнопками.
 Clear preset	Очистить пресет
 Clear search	Очистить поиск
+Recent searches	Недавние запросы
+Clear search history	Очистить историю поиска
+Delete search	Удалить этот запрос
 Clear seen videos	Очистить просмотренные видео
 Clear the search	Очистить поиск
 Cleared. Tap to undo before TikTok closes.	Очищено. Нажмите, чтобы отменить, пока TikTok не закрылся.
@@ -471,6 +476,12 @@ Don't start the feed on returning	Не запускать ленту занов�
 Do nothing	Ничего не делать
 Done	Готово
 Double tap	Двойное нажатие
+Double tap by corner	Двойное нажатие по углам
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Своё действие двойного нажатия для каждой четверти видео. Пока это выключено, действует строка «Двойное нажатие» выше.
+Top left double tap	Двойное нажатие вверху слева
+Top right double tap	Двойное нажатие вверху справа
+Bottom left double tap	Двойное нажатие внизу слева
+Bottom right double tap	Двойное нажатие внизу справа
 Download original photos	Загружать оригиналы фото
 Destination updated	Место назначения обновлено
 Downloads	Загрузки

@@ -302,8 +302,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	No se pudo gr
 Clear diagnostic data	Borrar los datos de diagnóstico
 Clear display	Controles ocultos
 Clear display delay	Retardo para ocultar los controles
+Keep Clear display across videos	Mantener Controles ocultos entre vídeos
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	Si activas Controles ocultos, sigue activo al deslizar al siguiente vídeo. Desactivado, cada vídeo nuevo empieza con sus controles a la vista.
 Clear preset	Quitar el preajuste
 Clear search	Borrar la búsqueda
+Recent searches	Búsquedas recientes
+Clear search history	Borrar el historial de búsqueda
+Delete search	Eliminar esta búsqueda
 Clear seen videos	Borrar los vídeos vistos
 Clear the search	Borrar la búsqueda
 Cleared. Tap to undo before TikTok closes.	Borrados. Toca para deshacerlo antes de que se cierre TikTok.
@@ -423,6 +428,12 @@ Don't start the feed on returning	No poner el feed en marcha al volver
 Do nothing	No hacer nada
 Done	Listo
 Double tap	Doble toque
+Double tap by corner	Doble toque por esquina
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Da a cada cuarto del vídeo su propia acción de doble toque. Mientras esté desactivado, se usa la fila Doble toque de arriba.
+Top left double tap	Doble toque arriba a la izquierda
+Top right double tap	Doble toque arriba a la derecha
+Bottom left double tap	Doble toque abajo a la izquierda
+Bottom right double tap	Doble toque abajo a la derecha
 Download original photos	Descargar las fotos originales
 Destination updated	Destino actualizado
 Downloads	Descargas

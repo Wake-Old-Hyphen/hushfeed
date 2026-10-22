@@ -101,6 +101,7 @@ public final class SettingsSearchInputPreference extends Preference {
         editText.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         editText.setOnEditorActionListener((view, actionId, event) -> {
             if (actionId != EditorInfo.IME_ACTION_SEARCH) return false;
+            app.morphe.extension.tiktok.settings.SettingsSearchHistory.add(editText.getText().toString());
             // The results sit under the keyboard; the search key brings them into view.
             InputMethodManager manager = (InputMethodManager) view.getContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);

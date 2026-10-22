@@ -298,8 +298,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.,Tata letak la
 Clear diagnostic data,Hapus data diagnostik
 Clear display,Tampilan bersih
 Clear display delay,Jeda tampilan bersih
+Keep Clear display across videos,Pertahankan Tampilan bersih antar video
+"Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.","Tampilan bersih yang kamu nyalakan tetap aktif saat kamu menggeser ke video berikutnya. Jika nonaktif, setiap video baru dimulai dengan kontrolnya terlihat."
 Clear preset,Hapus preset
 Clear search,Hapus pencarian
+Recent searches,Pencarian terbaru
+Clear search history,Hapus riwayat pencarian
+Delete search,Hapus pencarian ini
 Clear seen videos,Hapus video yang dilihat
 Clear the search,Hapus pencarian
 Cleared. Tap to undo before TikTok closes.,Sudah dihapus. Ketuk untuk mengurungkan sebelum TikTok ditutup.
@@ -418,6 +423,12 @@ Don't start the feed on returning,Jangan mulai feed saat kembali
 Do nothing,Tidak melakukan apa pun
 Done,Selesai
 Double tap,Ketuk dua kali
+Double tap by corner,Ketuk dua kali per sudut
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.,"Beri setiap seperempat video pilihan ketuk dua kalinya sendiri. Selama ini nonaktif, baris Ketuk dua kali di atas yang dipakai."
+Top left double tap,Ketuk dua kali kiri atas
+Top right double tap,Ketuk dua kali kanan atas
+Bottom left double tap,Ketuk dua kali kiri bawah
+Bottom right double tap,Ketuk dua kali kanan bawah
 Download original photos,Unduh foto asli
 Destination updated,Tujuan diperbarui
 Downloads,Unduhan

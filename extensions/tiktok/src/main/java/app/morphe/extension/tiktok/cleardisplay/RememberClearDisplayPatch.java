@@ -255,13 +255,18 @@ public final class RememberClearDisplayPatch {
             boolean remembered = false;
             // Not under the daily hold, whose panel needs TikTok's tabs back (leaveForHold).
             // Nor under the feed lock, which covers the feed the same way and needs the tabs too.
-            if (Settings.CLEAR_DISPLAY.get() && !SessionBudget.isLocked() && !FeedLock.covers()) {
+            if (remembersClearDisplay() && !SessionBudget.isLocked() && !FeedLock.covers()) {
                 remembered = emit(event, true);
             }
             // Switched off while it had the controls hidden: TikTok brings them back on the next
             // video by itself, but the live state, which the tab strip hide reads, would say
-            // hidden until TikTok's own clear display bar was used (S22, 2026-09-23).
-            else if (automaticHidden) emit(event, false);
+            // hidden until TikTok's own clear display bar was used (S22, 2026-09-23). The same
+            // goes for a clear made by hand with Keep Clear display across videos off (#232).
+            // Paused, that switch reads off like every other, and TikTok's own clear is left alone.
+            else if (automaticHidden || (clearNow && !Setting.isPaused()
+                    && !Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get())) {
+                emit(event, false);
+            }
             // A remembered clear lands on every video as it starts, the way the automatic path
             // with no delay does, so it carries the same way: a video opened from Favorites
             // showed its controls for about a second until its clear landed (#84).
@@ -377,7 +382,7 @@ public final class RememberClearDisplayPatch {
         if (SessionBudget.isLocked() || FeedLock.covers()) return false;
         boolean clearsAsItStarts = Settings.AUTOMATIC_CLEAR_DISPLAY.get()
                 ? Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.get() == 0
-                : Settings.CLEAR_DISPLAY.get();
+                : remembersClearDisplay();
         if (!clearsAsItStarts) return false;
         if (carrying) return true;
         if (!starting || !SettingsStatus.automaticClearDisplayEnabled) return false;
@@ -503,7 +508,14 @@ public final class RememberClearDisplayPatch {
         else MAIN.post(changed);
         // Paused, TikTok's own clear mode is not remembered over the choice kept for later.
         if (Setting.isPaused()) return;
-        Settings.CLEAR_DISPLAY.save((Boolean) clear);
+        // Not kept for the next video: nothing is remembered, so turning the switch back on
+        // later doesn't bring back a Clear display from before (#232).
+        Settings.CLEAR_DISPLAY.save((Boolean) clear && Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get());
+    }
+
+    /** Whether the next video starts cleared because the last one was cleared by hand. */
+    private static boolean remembersClearDisplay() {
+        return Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get() && Settings.CLEAR_DISPLAY.get();
     }
 
     /** Where a gesture's change is posted; a test stands in its own. */

@@ -184,6 +184,34 @@ public class AutomaticClearDisplayTest {
         assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
     }
 
+    /** #232: with Keep Clear display across videos off, a clear made by hand lasts for its video. */
+    @Test public void withKeepOffAClearByHandEndsWithItsVideo() {
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.save(false);
+        try {
+            RememberClearDisplayPatch.readerPost = clear ->
+                    RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(clear, 0));
+            List<Boolean> events = new ArrayList<>();
+            RememberClearDisplayPatch.firstFrame("cleared", () -> true, events::add);
+            assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+            assertFalse("a clear that isn't kept was saved for later", Settings.CLEAR_DISPLAY.get());
+
+            events.clear();
+            RememberClearDisplayPatch.firstFrame("next", () -> true, events::add);
+            assertEquals("the next video kept the clear", List.of(false), events);
+            assertFalse("the live state still says cleared", RememberClearDisplayPatch.isClearDisplayNow());
+
+            // A clear saved before the switch went off doesn't come back while it's off.
+            Settings.CLEAR_DISPLAY.save(true);
+            events.clear();
+            RememberClearDisplayPatch.firstFrame("older", () -> true, events::add);
+            assertEquals(List.of(), events);
+        } finally {
+            Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.resetToDefault();
+        }
+    }
+
     /** #136: like every other clear, a gesture doesn't take the tabs the daily hold needs. */
     @Test public void aGestureDoesNotClearUnderTheDailyHold() {
         org.robolectric.util.ReflectionHelpers.callStaticMethod(app.morphe.extension.tiktok.wellbeing.SessionBudget.class, "awaitWritesForTests");

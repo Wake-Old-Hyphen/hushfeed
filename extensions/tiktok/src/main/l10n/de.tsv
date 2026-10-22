@@ -305,8 +305,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	Das Layout de
 Clear diagnostic data	Diagnosedaten löschen
 Clear display	Freie Ansicht
 Clear display delay	Verzögerung der freien Ansicht
+Keep Clear display across videos	Freie Ansicht über Videos hinweg behalten
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	Schaltest du Freie Ansicht ein, bleibt sie an, wenn du zum nächsten Video wischst. Aus startet jedes neue Video mit sichtbaren Steuerelementen.
 Clear preset	Voreinstellung löschen
 Clear search	Suche löschen
+Recent searches	Letzte Suchen
+Clear search history	Suchverlauf löschen
+Delete search	Diese Suche entfernen
 Clear seen videos	Gesehene Videos löschen
 Clear the search	Suche löschen
 Cleared. Tap to undo before TikTok closes.	Gelöscht. Tippe, um es rückgängig zu machen, bevor TikTok geschlossen wird.
@@ -426,6 +431,12 @@ Don't start the feed on returning	Feed beim Zurückkommen nicht starten
 Do nothing	Nichts tun
 Done	Fertig
 Double tap	Doppeltippen
+Double tap by corner	Doppeltippen nach Ecke
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Gibt jedem Viertel des Videos eine eigene Aktion für Doppeltippen. Solange das aus ist, gilt die Zeile Doppeltippen darüber.
+Top left double tap	Doppeltippen oben links
+Top right double tap	Doppeltippen oben rechts
+Bottom left double tap	Doppeltippen unten links
+Bottom right double tap	Doppeltippen unten rechts
 Download original photos	Originalfotos herunterladen
 Destination updated	Speicherziel aktualisiert
 Downloads	Downloads

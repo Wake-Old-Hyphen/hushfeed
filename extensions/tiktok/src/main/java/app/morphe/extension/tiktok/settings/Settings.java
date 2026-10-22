@@ -203,7 +203,24 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SAVE_STORY_FROM_SHARE = new BooleanSetting("save_story_from_share", FALSE);
     /** A circle on each profile, Liked or Favorites grid cell, to pick posts and save them in one run (#27). */
     public static final BooleanSetting PICK_GRID_VIDEOS = new BooleanSetting("pick_grid_videos", FALSE);
-    public static final StringSetting DOUBLE_TAP_ACTION = new StringSetting("double_tap_action", "default");
+    /**
+     * Each quarter of the video runs its own double tap choice (#232). The plain Double tap
+     * choice then only covers a tap the window can't place.
+     */
+    public static final BooleanSetting DOUBLE_TAP_SPLIT_ZONES = new BooleanSetting("double_tap_split_zones", FALSE);
+    public static final StringSetting DOUBLE_TAP_ACTION = new StringSetting("double_tap_action", "default",
+            false, Setting.parentNot(DOUBLE_TAP_SPLIT_ZONES));
+    public static final StringSetting DOUBLE_TAP_TOP_LEFT_ACTION = new StringSetting("double_tap_top_left_action",
+            "default", false, Setting.parent(DOUBLE_TAP_SPLIT_ZONES));
+    public static final StringSetting DOUBLE_TAP_TOP_RIGHT_ACTION = new StringSetting("double_tap_top_right_action",
+            "default", false, Setting.parent(DOUBLE_TAP_SPLIT_ZONES));
+    public static final StringSetting DOUBLE_TAP_BOTTOM_LEFT_ACTION = new StringSetting("double_tap_bottom_left_action",
+            "default", false, Setting.parent(DOUBLE_TAP_SPLIT_ZONES));
+    public static final StringSetting DOUBLE_TAP_BOTTOM_RIGHT_ACTION = new StringSetting("double_tap_bottom_right_action",
+            "default", false, Setting.parent(DOUBLE_TAP_SPLIT_ZONES));
+    /** What settings search was last used for, newest first, as a JSON array. Kept out of backups. */
+    public static final StringSetting RECENT_SETTINGS_SEARCHES =
+            new StringSetting("recent_settings_searches", "[]", false, false);
     public static final StringSetting LONG_PRESS_ACTION = new StringSetting("long_press_action", "default");
     /**
      * The Long press choice runs only on the left and right thirds of the video, so a press in the
@@ -670,6 +687,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
     public static final BooleanSetting SHOW_EXACT_COUNTS = new BooleanSetting("show_exact_counts", FALSE);
     public static final BooleanSetting CLEAR_DISPLAY = new BooleanSetting("clear_display", FALSE);
+    /** Clear display turned on by hand carries to the next video. Off, each video starts with its controls (#232). */
+    public static final BooleanSetting REMEMBER_CLEAR_DISPLAY_ON_SCROLL =
+            new BooleanSetting("remember_clear_display_on_scroll", TRUE);
     public static final BooleanSetting COPY_COMMENTS_WITHOUT_USERNAME = new BooleanSetting("copy_comments_without_username", TRUE);
     public static final FloatSetting REMEMBERED_SPEED = new FloatSetting("remembered_speed_v2", 1.0f);
     public static final BooleanSetting REMEMBER_SPEED = new BooleanSetting("remember_playback_speed", TRUE);

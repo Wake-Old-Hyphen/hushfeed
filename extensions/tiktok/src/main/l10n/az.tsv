@@ -307,8 +307,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	Ekranın düz
 Clear diagnostic data	Diaqnostik məlumatları təmizləyin
 Clear display	Təmiz ekran
 Clear display delay	Təmiz ekran gecikməsi
+Keep Clear display across videos	Təmiz ekranı videolar arasında saxlayın
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	Açdığınız Təmiz ekran növbəti videoya keçəndə açıq qalır. Söndürüləndə hər yeni video idarəetmələri görünən halda başlayır.
 Clear preset	Hazır ayarı təmizləyin
 Clear search	Axtarışı təmizləyin
+Recent searches	Son axtarışlar
+Clear search history	Axtarış tarixçəsini təmizləyin
+Delete search	Axtarışı silin
 Clear seen videos	İzlənmiş videoları təmizləyin
 Clear the search	Axtarışı təmizləyin
 Cleared. Tap to undo before TikTok closes.	Təmizləndi. TikTok bağlanmazdan əvvəl geri qaytarmaq üçün toxunun.
@@ -433,6 +438,12 @@ Don't start the feed on returning	Qayıdanda lenti başlatmayın
 Do nothing	Heç nə etməyin
 Done	Hazırdır
 Double tap	İki dəfə toxunma
+Double tap by corner	Küncə görə iki dəfə toxunma
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Videonun hər dörddə birinə öz iki dəfə toxunma seçimini verin. Bu söndürüləndə yuxarıdakı İki dəfə toxunma sətri işləyir.
+Top left double tap	Yuxarı sol iki dəfə toxunma
+Top right double tap	Yuxarı sağ iki dəfə toxunma
+Bottom left double tap	Aşağı sol iki dəfə toxunma
+Bottom right double tap	Aşağı sağ iki dəfə toxunma
 Download original photos	Orijinal fotoları endirin
 Downloads	Endirmələr
 Drag to move, release to place	Daşımaq üçün sürüşdürün, yerləşdirmək üçün buraxın

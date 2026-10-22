@@ -970,4 +970,71 @@ public class GestureActionsTest {
             Settings.EDGE_SEEK_SECONDS.resetToDefault();
         }
     }
+
+    /** A double tap at {@code x}, {@code y}, with its own times so no earlier answer is reused. */
+    private static MotionEvent tapAt(float x, float y, long downTime) {
+        return MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_UP, x, y, 0);
+    }
+
+    /** #232: with Double tap by corner on, each quarter of the video runs its own choice. */
+    @Test public void doubleTapByCornerRunsEachQuartersOwnChoice() {
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = controller.get();
+            Utils.setContext(activity);
+            Utils.setActivity(activity);
+            SettingsStatus.doubleTapEnabled = true;
+            int width = activity.getResources().getDisplayMetrics().widthPixels;
+            int height = activity.getResources().getDisplayMetrics().heightPixels;
+            MotionEvent topLeft = tapAt(width * 0.1f, height * 0.1f, 1_000L);
+            MotionEvent topRight = tapAt(width * 0.9f, height * 0.1f, 2_000L);
+            MotionEvent bottomLeft = tapAt(width * 0.1f, height * 0.9f, 3_000L);
+            MotionEvent bottomRight = tapAt(width * 0.9f, height * 0.9f, 4_000L);
+            Settings.DOUBLE_TAP_ACTION.save("copy_link");
+            Settings.DOUBLE_TAP_TOP_LEFT_ACTION.save("nothing");
+            Settings.DOUBLE_TAP_TOP_RIGHT_ACTION.save("comments");
+            Settings.DOUBLE_TAP_BOTTOM_LEFT_ACTION.save("save_frame");
+            Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION.save("default");
+
+            // Off, where the tap lands changes nothing, and the corner rows wait greyed out.
+            Settings.DOUBLE_TAP_SPLIT_ZONES.save(false);
+            for (MotionEvent tap : new MotionEvent[]{topLeft, topRight, bottomLeft, bottomRight}) {
+                assertEquals("copy_link", GestureActions.doubleTapAction(tap));
+            }
+            assertTrue(Settings.DOUBLE_TAP_ACTION.isAvailable());
+            assertFalse(Settings.DOUBLE_TAP_TOP_LEFT_ACTION.isAvailable());
+            assertFalse(Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION.isAvailable());
+
+            Settings.DOUBLE_TAP_SPLIT_ZONES.save(true);
+            assertEquals("nothing", GestureActions.doubleTapAction(topLeft));
+            assertEquals("comments", GestureActions.doubleTapAction(topRight));
+            assertEquals("save_frame", GestureActions.doubleTapAction(bottomLeft));
+            assertEquals("default", GestureActions.doubleTapAction(bottomRight));
+            assertEquals("a tap with nothing to place it by keeps the plain choice",
+                    "copy_link", GestureActions.doubleTapAction(null));
+            assertFalse(Settings.DOUBLE_TAP_ACTION.isAvailable());
+            assertTrue(Settings.DOUBLE_TAP_TOP_LEFT_ACTION.isAvailable());
+            assertTrue(Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION.isAvailable());
+
+            // The dispatch follows the corner: Do nothing takes the tap, TikTok's default likes.
+            assertTrue(GestureActions.onDoubleTap(topLeft));
+            assertFalse(GestureActions.onDoubleTap(bottomRight));
+
+            // Every corner offers what Double tap offers.
+            PreferenceScreen screen = activity.getPreferenceManager().createPreferenceScreen(activity);
+            new InterfacePreferenceCategory(activity, screen);
+            java.util.List<String> plain = entryValues(screen, "double_tap_action");
+            for (String key : new String[]{"double_tap_top_left_action", "double_tap_top_right_action",
+                    "double_tap_bottom_left_action", "double_tap_bottom_right_action"}) {
+                assertEquals(key, plain, entryValues(screen, key));
+            }
+            assertNotNull(screen.findPreference("double_tap_split_zones"));
+        } finally {
+            Settings.DOUBLE_TAP_SPLIT_ZONES.resetToDefault();
+            Settings.DOUBLE_TAP_ACTION.resetToDefault();
+            Settings.DOUBLE_TAP_TOP_LEFT_ACTION.resetToDefault();
+            Settings.DOUBLE_TAP_TOP_RIGHT_ACTION.resetToDefault();
+            Settings.DOUBLE_TAP_BOTTOM_LEFT_ACTION.resetToDefault();
+            Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION.resetToDefault();
+        }
+    }
 }

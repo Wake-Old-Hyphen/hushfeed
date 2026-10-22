@@ -124,6 +124,8 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     /** Set when a search result opens its page, where its setting may change. */
     private boolean searchIndexStale;
     private final List<Preference> searchRows = new ArrayList<>();
+    /** The search the rows below the box show, trimmed. */
+    private String shownSearch = "";
     private SettingsSearchInputPreference searchInput;
     private SettingsHeaderPreference masterHeader;
     /** The home page's Quick setups card, which a long press takes off the page. Null off the home page. */
@@ -1005,11 +1007,14 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         // Folding happens before the empty check: a query of nothing but accent marks is not
         // empty as typed but folds away to nothing, and every setting contains "".
         String typed = query == null ? "" : query.trim();
+        shownSearch = typed;
         String normalizedQuery = normalizeSearchText(typed);
         if (normalizedQuery.isEmpty()) {
             if (typed.isEmpty()) {
                 if (searchInput != null) searchInput.hideResultCount();
-                addSearchState("Start typing", "Search by name, description or category.");
+                if (!addRecentSearches()) {
+                    addSearchState("Start typing", "Search by name, description or category.");
+                }
             } else {
                 // "???" folds to nothing as well. Start typing, under a box with text in it,
                 // read as if the search had ignored it.
@@ -1037,7 +1042,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             if (setting instanceof app.morphe.extension.shared.settings.BooleanSetting
                     && setting.isAvailable() && flipped.add(setting.key)) {
                 SearchTogglePreference toggle = new SearchTogglePreference(getActivity(), result.title,
-                        result.displaySummary(), (app.morphe.extension.shared.settings.BooleanSetting) setting);
+                        result.displaySummary(), (app.morphe.extension.shared.settings.BooleanSetting) setting, typed);
                 toggle.setOrder(order++);
                 searchRows.add(toggle);
                 searchScreen.addPreference(toggle);
@@ -1048,6 +1053,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             row.setSummary(result.displaySummary());
             row.setOrder(order++);
             row.setOnPreferenceClickListener(preference -> {
+                app.morphe.extension.tiktok.settings.SettingsSearchHistory.add(typed);
                 // A result's page can change what the rows show, so they read again on the way back.
                 // A dialog or a link can't, and a plain pause (the screen going off) leaves them be.
                 searchIndexStale = !LicensesPreference.KEY.equals(result.key)
@@ -1072,6 +1078,47 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             searchRows.add(row);
             searchScreen.addPreference(row);
         }
+    }
+
+    /**
+     * Recent searches under the empty box, with a row that forgets them all (#232, after
+     * OmerKurdi79's version). False when there are none, for Start typing to show instead.
+     */
+    private boolean addRecentSearches() {
+        List<String> recent = app.morphe.extension.tiktok.settings.SettingsSearchHistory.recent();
+        if (recent.isEmpty()) return false;
+        Context context = getActivity();
+        int order = 0;
+        Preference heading = new SectionHeadingPreference(context, "Recent searches");
+        heading.setOrder(order++);
+        searchRows.add(heading);
+        searchScreen.addPreference(heading);
+        for (String item : recent) {
+            RecentSearchPreference row = new RecentSearchPreference(context, item,
+                    picked -> {
+                        // A bound box searches through its own text watcher; one not yet bound doesn't.
+                        if (searchInput != null) searchInput.setQuery(picked);
+                        if (!picked.equals(shownSearch)) updateSearchResults(picked);
+                    },
+                    forgotten -> {
+                        app.morphe.extension.tiktok.settings.SettingsSearchHistory.remove(forgotten);
+                        updateSearchResults("");
+                    });
+            row.setOrder(order++);
+            searchRows.add(row);
+            searchScreen.addPreference(row);
+        }
+        Preference clear = new Preference(context);
+        clear.setTitle(L10n.t(context, "Clear search history"));
+        clear.setOrder(order);
+        clear.setOnPreferenceClickListener(preference -> {
+            app.morphe.extension.tiktok.settings.SettingsSearchHistory.clear();
+            updateSearchResults("");
+            return true;
+        });
+        searchRows.add(clear);
+        searchScreen.addPreference(clear);
+        return true;
     }
 
     private void addSearchState(String title, String summary) {

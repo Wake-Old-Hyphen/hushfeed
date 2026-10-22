@@ -44,6 +44,8 @@ public class SettingsSearchQueryTest {
 
     @Before public void setUp() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
+        // Opening a result keeps its search, and the empty page then lists it over Start typing.
+        SettingsSearchHistory.clear();
         for (Field field : SettingsStatus.class.getDeclaredFields()) {
             if (field.getType() == boolean.class && Modifier.isStatic(field.getModifiers())) {
                 field.setAccessible(true);
@@ -58,6 +60,7 @@ public class SettingsSearchQueryTest {
             entry.getKey().setBoolean(null, entry.getValue());
         }
         statuses.clear();
+        SettingsSearchHistory.clear();
     }
 
     @Test public void aQueryOfNothingButAccentMarksMatchesNothing() throws Exception {

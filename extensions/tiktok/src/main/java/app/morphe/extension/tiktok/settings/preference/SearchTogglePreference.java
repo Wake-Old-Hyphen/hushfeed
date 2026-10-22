@@ -10,6 +10,7 @@ import android.view.View;
 
 import app.morphe.extension.shared.settings.BooleanSetting;
 import app.morphe.extension.tiktok.Utils;
+import app.morphe.extension.tiktok.settings.SettingsSearchHistory;
 
 /**
  * A switch found by the settings search, flipped where it stands. It saves under the setting's
@@ -21,12 +22,22 @@ import app.morphe.extension.tiktok.Utils;
  */
 @SuppressWarnings("deprecation")
 final class SearchTogglePreference extends SwitchPreference {
-    SearchTogglePreference(Context context, String title, String summary, BooleanSetting setting) {
+    private final String query;
+
+    SearchTogglePreference(Context context, String title, String summary, BooleanSetting setting, String query) {
         super(context);
+        this.query = query;
         setTitle(title);
         setSummary(summary);
         setKey(setting.key);
         setChecked(setting.savedValue());
+    }
+
+    /** Flipping a found switch is the search doing its job, so it's kept like opening a result (#232). */
+    @Override
+    protected void onClick() {
+        SettingsSearchHistory.add(query);
+        super.onClick();
     }
 
     @Override

@@ -304,6 +304,8 @@ Blocked sound names,Blocked sound names
 Blocked sounds,Blocked sounds
 Blocking,Blocking
 Bold,Bold
+Bottom left double tap,Bottom left double tap
+Bottom right double tap,Bottom right double tap
 Bottom tabs to keep,Bottom tabs to keep
 Brightness,Brightness
 "Bring back TikTok's captions switch in its accessibility settings, and the caption controls on videos, when TikTok leaves them out. Captions only show on videos that have them.","Bring back TikTok's captions switch in its accessibility settings, and the caption controls on videos, when TikTok leaves them out. Captions only show on videos that have them."
@@ -361,9 +363,11 @@ Clear diagnostic data,Clear diagnostic data
 Clear display,Clear display
 Clear display delay,Clear display delay
 Clear display isn't available for this video,Clear display isn't available for this video
+"Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.","Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing."
 Clear preset,Clear preset
 "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.","Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others."
 Clear search,Clear search
+Clear search history,Clear search history
 Clear seen videos,Clear seen videos
 Clear the search,Clear the search
 Cleared. Tap to undo before TikTok closes.,Cleared. Tap to undo before TikTok closes.
@@ -497,6 +501,7 @@ Days to remember a video. Zero removes the age limit. History keeps at most %1$s
 "Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible.","Days. Zero keeps every age. Posts without a usable timestamp, including future posts, stay visible."
 Default,Default
 Default playback speed,Default playback speed
+Delete search,Delete search
 Deletes %1$s from TikTok's storage.,Deletes %1$s from TikTok's storage.
 Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.,Delivery unconfirmed: %1$d/%2$d chats. Remaining chats still need a message.
 Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.,Delivery unconfirmed: %1$d/%2$d chats. Those chats won't be retried today.
@@ -529,6 +534,7 @@ Don't start the feed on returning,Don't start the feed on returning
 Don't start the first video,Don't start the first video
 Done,Done
 Double tap,Double tap
+Double tap by corner,Double tap by corner
 "Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save.","Download lists the qualities this video comes in, with the size TikTok gives for each, and saves the one you pick. The quality above stays as it is for the next save."
 Download original photos,Download original photos
 Downloads,Downloads
@@ -657,6 +663,7 @@ Gestures,Gestures
 Ghost mode,Ghost mode
 Ghost mode diagnostics,Ghost mode diagnostics
 "Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow.","Give each commenter's name a color of its own, the same one every time you see that account, so a long thread is easier to follow."
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.,Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.
 Glass lens on the current tab,Glass lens on the current tab
 Go to the screen now. Hushfeed records its layout in %1$d seconds.,Go to the screen now. Hushfeed records its layout in %1$d seconds.
 Got it,Got it
@@ -904,6 +911,7 @@ Includes these events: %1$s,Includes these events: %1$s
 Inserted cards,Inserted cards
 "Install one, then come back here.","Install one, then come back here."
 Joined,Joined
+Keep Clear display across videos,Keep Clear display across videos
 Keep For You on a Home tap,Keep For You on a Home tap
 Keep For You on a pull down,Keep For You on a pull down
 Keep a local record of what you have watched and hide those videos when the feed sends them again.,Keep a local record of what you have watched and hide those videos when the feed sends them again.
@@ -1347,6 +1355,7 @@ Reading the font file,Reading the font file
 Reading the seen-history file,Reading the seen-history file
 Reading watch history,Reading watch history
 Received message translation,Received message translation
+Recent searches,Recent searches
 Record,Record
 Record LIVEs you watch,Record LIVEs you watch
 Record a screen's layout,Record a screen's layout
@@ -2042,6 +2051,8 @@ Today: %1$d video,Today: %1$d video
 Today: %1$d videos,Today: %1$d videos
 Too late to put the saved videos back,Too late to put the saved videos back
 Too many media saves are already running. Try again in a moment.,Too many media saves are already running. Try again in a moment.
+Top left double tap,Top left double tap
+Top right double tap,Top right double tap
 Tracking,Tracking
 "Tracking, device access and links","Tracking, device access and links"
 Translate button in comments,Translate button in comments

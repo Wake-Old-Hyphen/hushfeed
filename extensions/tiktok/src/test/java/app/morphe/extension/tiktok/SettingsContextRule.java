@@ -74,6 +74,9 @@ public final class SettingsContextRule extends ExternalResource {
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Could not clear the comment buttons", exception);
         }
+        // Opening a search result keeps its search, and the next test's empty search page would
+        // list it where Start typing belongs.
+        app.morphe.extension.tiktok.settings.SettingsSearchHistory.clear();
     }
 
     @Override

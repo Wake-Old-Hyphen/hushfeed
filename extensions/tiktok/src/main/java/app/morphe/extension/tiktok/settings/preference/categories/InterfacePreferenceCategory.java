@@ -643,6 +643,14 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.",
                     Settings.HIDE_CLEAR_DISPLAY_CONTROLS
             ));
+        }
+        // #232: below the controls row, which stays right under the automatic switch for #84.
+        if (SettingsStatus.automaticClearDisplayEnabled) {
+            addPreference(new TogglePreference(context, "Keep Clear display across videos",
+                    "Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.",
+                    Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL));
+        }
+        if (SettingsStatus.videoOverlaysEnabled) {
             addPreference(new NumberInputPreference(
                     context,
                     "Fade the video controls",
@@ -744,8 +752,22 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                 tapLabels.add("Turn Clear display on or off");
                 tapValues.add("clear_display");
             }
+            String[] tapLabelArray = tapLabels.toArray(new String[0]);
+            String[] tapValueArray = tapValues.toArray(new String[0]);
             addPreference(new ChoicePreference(context, "Double tap", Settings.DOUBLE_TAP_ACTION,
-                    tapLabels.toArray(new String[0]), tapValues.toArray(new String[0])));
+                    tapLabelArray, tapValueArray));
+            // Four corners with the same choices, after OmerKurdi79's version (#232).
+            addPreference(new TogglePreference(context, "Double tap by corner",
+                    "Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.",
+                    Settings.DOUBLE_TAP_SPLIT_ZONES));
+            addPreference(new ChoicePreference(context, "Top left double tap",
+                    Settings.DOUBLE_TAP_TOP_LEFT_ACTION, tapLabelArray, tapValueArray));
+            addPreference(new ChoicePreference(context, "Top right double tap",
+                    Settings.DOUBLE_TAP_TOP_RIGHT_ACTION, tapLabelArray, tapValueArray));
+            addPreference(new ChoicePreference(context, "Bottom left double tap",
+                    Settings.DOUBLE_TAP_BOTTOM_LEFT_ACTION, tapLabelArray, tapValueArray));
+            addPreference(new ChoicePreference(context, "Bottom right double tap",
+                    Settings.DOUBLE_TAP_BOTTOM_RIGHT_ACTION, tapLabelArray, tapValueArray));
         }
         if (SettingsStatus.swipeLeftEnabled) {
             addPreference(new ChoicePreference(context, "Swipe left", Settings.SWIPE_LEFT_ACTION,

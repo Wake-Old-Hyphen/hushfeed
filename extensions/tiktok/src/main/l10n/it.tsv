@@ -305,8 +305,13 @@ Couldn't record the screen's layout. Start again from Diagnostics.	Non è stato 
 Clear diagnostic data	Cancella i dati diagnostici
 Clear display	Vista pulita
 Clear display delay	Ritardo della vista pulita
+Keep Clear display across videos	Mantieni Vista pulita tra i video
+Clear display you turn on stays on as you swipe to the next video. Off, each new video starts with its controls showing.	Se attivi Vista pulita, resta attiva quando scorri al video successivo. Se disattivato, ogni nuovo video parte con i controlli visibili.
 Clear preset	Cancella preset
 Clear search	Cancella ricerca
+Recent searches	Ricerche recenti
+Clear search history	Cancella la cronologia delle ricerche
+Delete search	Elimina questa ricerca
 Clear seen videos	Cancella i video già visti
 Clear the search	Cancella la ricerca
 Cleared. Tap to undo before TikTok closes.	Cancellato. Tocca per annullare prima che TikTok si chiuda.
@@ -426,6 +431,12 @@ Don't start the feed on returning	Non avviare il feed al ritorno
 Do nothing	Non fare nulla
 Done	Fatto
 Double tap	Doppio tocco
+Double tap by corner	Doppio tocco per angolo
+Give each quarter of the video its own double tap choice. The Double tap row above is used while this is off.	Dà a ogni quarto del video la sua azione per il doppio tocco. Finché è disattivato, vale la riga Doppio tocco qui sopra.
+Top left double tap	Doppio tocco in alto a sinistra
+Top right double tap	Doppio tocco in alto a destra
+Bottom left double tap	Doppio tocco in basso a sinistra
+Bottom right double tap	Doppio tocco in basso a destra
 Download original photos	Scarica le foto originali
 Destination updated	Destinazione aggiornata
 Downloads	Download

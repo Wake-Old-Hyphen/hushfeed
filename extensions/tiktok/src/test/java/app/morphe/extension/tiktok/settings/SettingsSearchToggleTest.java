@@ -59,6 +59,7 @@ public class SettingsSearchToggleTest {
             entry.getKey().setBoolean(null, entry.getValue());
         }
         Settings.BLOCK_ADVERTISING_ID.resetToDefault();
+        SettingsSearchHistory.clear();
     }
 
     @Test public void aPlainSwitchFoundBySearchFlipsWhereItStands() throws Exception {
@@ -79,6 +80,8 @@ public class SettingsSearchToggleTest {
 
         assertTrue(((SwitchPreference) row).isChecked());
         assertTrue("the flip never reached the setting", Settings.BLOCK_ADVERTISING_ID.get());
+        assertEquals("flipping a found switch didn't keep its search (#232)",
+                java.util.List.of("advertising id"), SettingsSearchHistory.recent());
         assertSame("flipping a result left the search page", search,
                 search.getActivity().getFragmentManager().findFragmentById(android.R.id.content));
     }

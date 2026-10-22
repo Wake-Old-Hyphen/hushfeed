@@ -15,6 +15,7 @@ import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.tiktok.settings.preference.HookStatusPreference;
 import app.morphe.extension.tiktok.settings.preference.MorpheTikTokAboutPreference;
+import app.morphe.extension.tiktok.settings.preference.RecentSearchPreference;
 import app.morphe.extension.tiktok.settings.preference.SettingsSearchInputPreference;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
 import java.lang.reflect.Field;
@@ -46,6 +47,8 @@ public class SettingsActionFlowTest {
     @Before public void setUp() throws Exception {
         Utils.setContext(RuntimeEnvironment.getApplication());
         HookStatus.clear();
+        // The history is a Setting, whose value outlives the test that searched.
+        SettingsSearchHistory.clear();
         for (Field field : SettingsStatus.class.getDeclaredFields()) {
             if (field.getType() == boolean.class && Modifier.isStatic(field.getModifiers())) {
                 field.setAccessible(true);
@@ -61,6 +64,7 @@ public class SettingsActionFlowTest {
             entry.getKey().setBoolean(null, entry.getValue());
         }
         HookStatus.clear();
+        SettingsSearchHistory.clear();
         Utils.setContext(RuntimeEnvironment.getApplication());
     }
 
@@ -120,12 +124,82 @@ public class SettingsActionFlowTest {
         idle();
         assertNull("the search view stayed attached behind its result", fragment.getView());
 
+        assertEquals("opening a result keeps its search", List.of("speed"), SettingsSearchHistory.recent());
+
         assertTrue(fragment.getFragmentManager().popBackStackImmediate());
         idle();
         EditText restored = fragment.getView().findViewWithTag("settings_search_input");
         assertNotNull("the search input was not rebuilt", restored);
         assertEquals("speed", restored.getText().toString());
         assertTrue(titles(fragment).contains("Default playback speed"));
+    }
+
+    /** #232: the empty box lists earlier searches, and each one runs again or goes away. */
+    @Test public void recentSearchesShowUnderTheEmptyBoxAndRunAgain() {
+        Bundle arguments = new Bundle();
+        arguments.putBoolean("morphe_settings_search", true);
+        TikTokPreferenceFragment fragment = attach(arguments);
+        EditText input = fragment.getView().findViewWithTag("settings_search_input");
+        assertTrue(titles(fragment).contains("Start typing"));
+
+        // Typing alone keeps nothing; the keyboard's search key does.
+        input.setText("spe");
+        idle();
+        assertEquals(List.of(), SettingsSearchHistory.recent());
+        for (String query : new String[]{"speed", "comment"}) {
+            input.setText(query);
+            idle();
+            input.onEditorAction(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH);
+        }
+        input.setText("");
+        idle();
+        assertEquals(List.of("comment", "speed"), recents(fragment));
+        assertTrue(titles(fragment).contains("Recent searches"));
+        assertTrue(titles(fragment).contains("Clear search history"));
+        assertFalse(titles(fragment).contains("Start typing"));
+
+        // A tap searches it again, with the words back in the box.
+        recentRow(fragment, "speed").performClick();
+        idle();
+        assertEquals("speed", input.getText().toString());
+        assertTrue(titles(fragment).contains("Default playback speed"));
+
+        // The bin forgets that one search and leaves the rest.
+        input.setText("");
+        idle();
+        android.view.ViewGroup row = (android.view.ViewGroup) recentRow(fragment, "speed");
+        View bin = row.getChildAt(row.getChildCount() - 1);
+        assertEquals("Delete search", bin.getContentDescription());
+        bin.performClick();
+        idle();
+        assertEquals(List.of("comment"), recents(fragment));
+
+        clickTitle(fragment, "Clear search history");
+        idle();
+        assertEquals(List.of(), SettingsSearchHistory.recent());
+        assertTrue(titles(fragment).contains("Start typing"));
+        assertFalse(titles(fragment).contains("Recent searches"));
+    }
+
+    private static List<String> recents(TikTokPreferenceFragment fragment) {
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < fragment.getPreferenceScreen().getPreferenceCount(); i++) {
+            Preference row = fragment.getPreferenceScreen().getPreference(i);
+            if (row instanceof RecentSearchPreference) result.add(((RecentSearchPreference) row).getQuery());
+        }
+        return result;
+    }
+
+    /** The view the list shows for one recent search, with its own click wiring. */
+    private static View recentRow(TikTokPreferenceFragment fragment, String query) {
+        ListView list = fragment.getView().findViewById(android.R.id.list);
+        for (int i = 0; i < list.getCount(); i++) {
+            Object item = list.getItemAtPosition(i);
+            if (item instanceof RecentSearchPreference && query.equals(((RecentSearchPreference) item).getQuery())) {
+                return list.getAdapter().getView(i, null, list);
+            }
+        }
+        throw new AssertionError("no recent search row for " + query);
     }
 
     @Test public void hookStatusShowsTheEmptyReportFromItsInstalledRow() {

@@ -3558,6 +3558,36 @@
     "default": "default",
     "type": "string",
     "row": "Double tap"
+   },
+   {
+    "key": "double_tap_split_zones",
+    "default": false,
+    "type": "bool",
+    "row": "Double tap by corner"
+   },
+   {
+    "key": "double_tap_top_left_action",
+    "default": "default",
+    "type": "string",
+    "row": "Top left double tap"
+   },
+   {
+    "key": "double_tap_top_right_action",
+    "default": "default",
+    "type": "string",
+    "row": "Top right double tap"
+   },
+   {
+    "key": "double_tap_bottom_left_action",
+    "default": "default",
+    "type": "string",
+    "row": "Bottom left double tap"
+   },
+   {
+    "key": "double_tap_bottom_right_action",
+    "default": "default",
+    "type": "string",
+    "row": "Bottom right double tap"
    }
   ],
   "surface": "feed",
@@ -11700,6 +11730,12 @@
     "default": 1000,
     "type": "int",
     "row": "Clear display delay"
+   },
+   {
+    "key": "remember_clear_display_on_scroll",
+    "default": true,
+    "type": "bool",
+    "row": "Keep Clear display across videos"
    },
    {
     "key": "keep_captions_clear_display",
