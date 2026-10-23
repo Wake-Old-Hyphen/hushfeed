@@ -227,6 +227,8 @@ final class SeeThroughBottomBar {
         private final RectF span = new RectF();
         private final ViewTreeObserver.OnPreDrawListener follow = this::followSelection;
         private ViewTreeObserver watched;
+        /** The bar's remembered spot this lens last wrote, null before its first lens. */
+        private LensSpot written;
         /** The selected tab's span the last draw used, NaN before a draw that found one. */
         private float drawnLeft = Float.NaN, drawnRight = Float.NaN;
         /** Where the slide runs from and to, and when it began. */
@@ -297,6 +299,7 @@ final class SeeThroughBottomBar {
             shown.set(lerp(fromLeft, toLeft, done), pill.top + inset, lerp(fromRight, toRight, done), pill.bottom - inset);
             LensSpot spot = LAST_SPOT.get(bar);
             if (spot == null) LAST_SPOT.put(bar, spot = new LensSpot());
+            written = spot;
             spot.left = shown.left;
             spot.right = shown.right;
             spot.at = now;
@@ -324,8 +327,16 @@ final class SeeThroughBottomBar {
         }
 
         private boolean followSelection() {
+            // A still screen draws nothing, so a lens still showing is as current as this frame,
+            // whatever its last draw's time. The lens that replaces it (the bar has already
+            // dropped this one as its callback by then) or this lens after a frame with no tab
+            // slides on from it (S22, 2026-10-23: a lens jumped after a second on one tab).
+            if (written != null && !Float.isNaN(drawnLeft)) written.at = SystemClock.uptimeMillis();
             ViewGroup bar = bar();
             if (bar == null || bar.getBackground() != this) {
+                // Off the bar, so off the screen. A listener the window kept anyway (unwatch can't
+                // reach one merged in from a detached observer) then leaves the memory alone.
+                drawnLeft = drawnRight = Float.NaN;
                 unwatch();
                 return true;
             }

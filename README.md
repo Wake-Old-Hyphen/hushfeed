@@ -397,6 +397,10 @@ Where things live:
 - `patches-list.json` is the generated patch catalog. `patches-bundle.json` is the Morphe source index for the published bundle and only changes at release time. Starting with the next release, its description includes that release's grouped change list so Morphe Manager can show it right away.
 - [App and patch development map](concepts/patch-development.md): the target boundary, the source modules and how to add a patch. The research lives beside it in the [TikTok app audit](concepts/tiktok-app-audit.md), the [network and power measurements](concepts/runtime-observation.md) and the [measured TikTok runtime](concepts/runtime-results-2026-10-09.md).
 
+### Add-on bundles
+
+A bundle patched in beside Hushfeed can hang its own settings off Hushfeed's. These stay put, and `AddonContractTest` fails if one changes: `TikTokPreferenceFragment`'s `createMasterMenu(Context, PreferenceScreen)` and `onResume()`, the home page rows keyed `section_interface`, `section_feed_filter`, `section_feed_navigation`, `section_playback` and `section_screen_time` above the Hushfeed heading, and the public `SettingsMenuPreference`, `SectionHeadingPreference`, `SettingsHeaderPreference`, `SettingsUi`, `L10n` and `HushfeedPause` members that test lists. Anything else in the settings code can move between releases.
+
 ## Privacy
 
 Hushfeed has no server of its own and collects nothing. Everything it adds runs inside TikTok on your phone.

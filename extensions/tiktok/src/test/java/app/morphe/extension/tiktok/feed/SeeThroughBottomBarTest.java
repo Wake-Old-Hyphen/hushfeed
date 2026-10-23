@@ -455,8 +455,12 @@ public class SeeThroughBottomBarTest {
         second.draw(canvas);
         assertEquals(648 + inset, second.lensBounds().left, 0.001f);
 
+        // The bar takes another look for a while, with frames going by, then the glass again.
+        bar.setBackground(new ColorDrawable(Color.BLACK));
+        bar.getViewTreeObserver().dispatchOnPreDraw();
         org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
                 .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_MEMORY_MS + 1));
+        bar.getViewTreeObserver().dispatchOnPreDraw();
         select(bar, 0);
         SeeThroughBottomBar.GlassLensBackground third = new SeeThroughBottomBar.GlassLensBackground(density);
         bar.setBackground(third);
@@ -465,6 +469,65 @@ public class SeeThroughBottomBarTest {
         Rect pill = third.getDrawable().getBounds();
         assertEquals("a lens back after a while slid in from an old spot",
                 pill.left + inset, third.lensBounds().left, 0.001f);
+    }
+
+    /**
+     * A still screen draws nothing, so a lens that sat behind its tab for a while had last been
+     * drawn long before the next tap. The lens that replaced it then jumped (S22, 2026-10-23, #231).
+     * The frame after the tap counts as the old lens's last moment on screen.
+     */
+    @Test
+    public void aNewLensSlidesOnAfterTheOldOneSatStillForAWhile() {
+        animatorScale(1f);
+        float density = context.getResources().getDisplayMetrics().density;
+        float inset = SeeThroughBottomBar.LENS_INSET_DP * density;
+        SeeThroughBottomBar.GlassLensBackground first = new SeeThroughBottomBar.GlassLensBackground(density);
+        LinearLayout bar = tabBar(context, first);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(
+                android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888));
+        first.draw(canvas);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_MEMORY_MS * 3));
+
+        select(bar, 3);
+        SeeThroughBottomBar.GlassLensBackground second = new SeeThroughBottomBar.GlassLensBackground(density);
+        bar.setBackground(second);
+        second.setBounds(0, 0, 1080, 150);
+        bar.getViewTreeObserver().dispatchOnPreDraw();
+        second.draw(canvas);
+        assertEquals("the new lens jumped after a still screen", 216 + inset, second.lensBounds().left, 0.001f);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
+        second.draw(canvas);
+        assertEquals(648 + inset, second.lensBounds().left, 0.001f);
+    }
+
+    /** A frame with no tab selected between two taps doesn't make the lens jump either. */
+    @Test
+    public void theLensSlidesOnPastAFrameWithNoTabAfterSittingStill() {
+        animatorScale(1f);
+        float density = context.getResources().getDisplayMetrics().density;
+        float inset = SeeThroughBottomBar.LENS_INSET_DP * density;
+        SeeThroughBottomBar.GlassLensBackground lens = new SeeThroughBottomBar.GlassLensBackground(density);
+        LinearLayout bar = tabBar(context, lens);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(
+                android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888));
+        lens.draw(canvas);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_MEMORY_MS * 3));
+
+        select(bar, -1);
+        bar.getViewTreeObserver().dispatchOnPreDraw();
+        lens.draw(canvas);
+        assertTrue(lens.lensBounds().isEmpty());
+        select(bar, 3);
+        bar.getViewTreeObserver().dispatchOnPreDraw();
+        lens.draw(canvas);
+        assertEquals("the lens jumped past a frame with no tab", 216 + inset, lens.lensBounds().left, 0.001f);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
+        lens.draw(canvas);
+        assertEquals(648 + inset, lens.lensBounds().left, 0.001f);
     }
 
     @Test

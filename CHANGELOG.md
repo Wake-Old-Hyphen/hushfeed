@@ -15,6 +15,10 @@ Every Hushfeed release, newest first.
 * **TikTok:** With `Dark LIVE panels in dark mode` on, a room's viewer ranking opens dark again. A shop room's Top customers ranking still keeps TikTok's light look, because its tab titles came out dark on dark (#159).
 * **TikTok:** The README says how much memory morphe-desktop needs on a computer. With every patch picked on 47.5.3 it runs out at 1 GB, Java's default on a 4 GB machine, and finishes at 1.5 GB, so start it with `java -Xmx2g` (#220).
 * **TikTok:** With `Double tap` set to `Do nothing`, or every corner of `Double tap by corner` set to it, a tap on a video pauses or plays the moment your finger lifts. TikTok used to hold each tap for a beat in case a second one followed, and two quick taps counted as a double tap that did nothing. Now each one counts (#239).
+* **TikTok:** The build uses Gradle 9.8.2, up from 9.7.1. The build files now name the Guava advisory by its CVE number, CVE-2026-102554, because GitHub's global advisory database doesn't list its GHSA id.
+* **TikTok:** The README now lists the parts of Hushfeed's settings that an add-on bundle patched in beside it can count on, and a test fails if one of them changes. Anything else in the settings code can still move between releases.
+* **TikTok:** What's new now carries only the newest releases' notes, and its Full changelog button has the rest. Every release since 0.60.0 used to be built in, in all nine languages, and those notes alone were about 14% of the extension's size.
+* **TikTok:** `Glass lens on the current tab` slides to the next tab even after you've sat on one tab for a while. Before, it only slid when you tapped quickly, and after a second or so on a tab it jumped instead (#231).
 
 ## 0.78.0 (2026-10-22)
 
