@@ -190,9 +190,11 @@ function Invoke-WalkTap($Node, [string]$What, [int]$WaitMs = 2000, [string]$Titl
 }
 
 function Invoke-WalkSwipe([int]$Width, [int]$Height, [switch]$Down) {
+    # Up starts above the caption block: on a text post the creator's name reaches 0.72 of the
+    # height, and a swipe that started there opened the profile on the Login2 emulator.
     $x = [int]($Width / 2)
-    $from = [int]($Height * 0.72); $to = [int]($Height * 0.30)
-    if ($Down) { $from, $to = $to, $from }
+    $from = [int]($Height * 0.55); $to = [int]($Height * 0.18)
+    if ($Down) { $from = [int]($Height * 0.30); $to = [int]($Height * 0.72) }
     Invoke-WalkAdb shell input swipe $x $from $x $to 450 | Out-Null
     Start-Sleep -Milliseconds 1300
 }
@@ -220,6 +222,12 @@ function Find-WalkVideoButton([string]$Label, [string]$What, [int]$Width, [int]$
         $nodes = Get-WalkScreen "before $What" -AllowPause
         $button = @(Find-UiNode -Nodes $nodes -Label $Label | Where-Object Clickable) | Select-Object -First 1
         if ($button) { return $button }
+        if ($nodes -and -not (Find-WalkNav $nodes $WalkLabels.Home $Height)) {
+            # Off the feed (a profile, a LIVE): Back to it, since swipes there never find a button.
+            Write-WalkLog "off the feed before $What"
+            if (-not (Restore-WalkTabs $What $Height)) { return $null }
+            continue
+        }
         Invoke-WalkSwipe $Width $Height
         if (-not (Test-WalkAlive "$What swipe")) { return $null }
     }

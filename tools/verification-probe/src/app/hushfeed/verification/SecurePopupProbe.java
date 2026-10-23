@@ -44,21 +44,21 @@ final class SecurePopupProbe {
                 throw new IllegalStateException("host decor did not receive FLAG_SECURE");
             }
 
-            Class<?> propertiesClass = loader.loadClass("X.011R");
+            Class<?> propertiesClass = loader.loadClass("X.011c");
             Constructor<?> propertiesConstructor = propertiesClass.getConstructor(
                     boolean.class, boolean.class, boolean.class, int.class);
             Object properties = propertiesConstructor.newInstance(false, true, true, 0);
 
-            Class<?> densityClass = loader.loadClass("X.01oO");
+            Class<?> densityClass = loader.loadClass("X.01oI");
             Object density = Proxy.newProxyInstance(loader, new Class<?>[]{densityClass},
                     (proxy, method, arguments) -> densityResult(
                             activity.getResources().getDisplayMetrics().density,
                             proxy, method, arguments));
-            Class<?> positionClass = loader.loadClass("X.011P");
+            Class<?> positionClass = loader.loadClass("X.011a");
             Object position = Proxy.newProxyInstance(loader, new Class<?>[]{positionClass},
                     (proxy, method, arguments) -> method.getReturnType() == long.class ? 0L : null);
             Class<?> functionClass = loader.loadClass("kotlin.jvm.functions.Function0");
-            Class<?> popupClass = loader.loadClass("X.01tC");
+            Class<?> popupClass = loader.loadClass("X.01tG");
             Constructor<?> popupConstructor = popupClass.getConstructor(
                     functionClass, propertiesClass, String.class, View.class,
                     densityClass, positionClass, UUID.class);
@@ -122,8 +122,8 @@ final class SecurePopupProbe {
         if (type == float.class) {
             float value = args != null && args.length > 0 && args[0] instanceof Number
                     ? ((Number) args[0]).floatValue() : 0f;
-            if ("LJJJJL".equals(name)) return value * density;
-            if ("LLIIIJ".equals(name)) return value / density;
+            if ("LJJJJLL".equals(name)) return value * density;
+            if ("LLIIIL".equals(name)) return value / density;
             if ("getDensity".equals(name)) return density;
             return value;
         }

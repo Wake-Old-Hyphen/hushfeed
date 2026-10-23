@@ -61,8 +61,8 @@ public final class GestureProbe extends Instrumentation {
             if (!railPointer.equals("first") && !railPointer.equals("second")) {
                 throw new IllegalArgumentException("rail-pointer must be first or second");
             }
-            if (!"47.4.3".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
-                throw new IllegalStateException("The resource anchors require TikTok 47.4.3");
+            if (!"47.5.3".equals(getContext().getPackageManager().getPackageInfo(TARGET, 0).versionName)) {
+                throw new IllegalStateException("The resource anchors require TikTok 47.5.3");
             }
             if (audio == null) throw new IllegalStateException("No audio service for restoration");
             audioState = new GestureAudio.Port() {
@@ -90,7 +90,7 @@ public final class GestureProbe extends Instrumentation {
             result.putString("bounds", bounds.toShortString());
             List<GestureSequence.Event> events = null;
             if (mode.equals("pinch")) {
-                Rect rail = anchor(root, "ljn"), comment = anchor(root, "eq2");
+                Rect rail = anchor(root, "lke"), comment = anchor(root, "epr");
                 if (!rail.contains(comment)) throw new IllegalStateException("Comment button is not on the observed rail");
                 float x = comment.exactCenterX(), y = comment.exactCenterY();
                 float otherX = bounds.exactCenterX();
@@ -100,14 +100,14 @@ public final class GestureProbe extends Instrumentation {
                 boolean first = railPointer.equals("first");
                 events = GestureSequence.pinch(bounds.left, bounds.top, bounds.right, bounds.bottom,
                         first ? x : otherX, y, first ? otherX : x, y, scale, steps, duration);
-                result.putString("railAnchor", "eq5 " + comment.toShortString());
+                result.putString("railAnchor", "epr " + comment.toShortString());
                 result.putString("railPointer", railPointer);
                 result.putFloat("scale", scale);
             } else if (mode.equals("photo-x")) {
-                Rect close = anchor(root, "uym");
+                Rect close = anchor(root, "v08");
                 events = GestureSequence.tap(bounds.left, bounds.top, bounds.right, bounds.bottom,
                         close.exactCenterX(), close.exactCenterY());
-                result.putString("photoAnchor", "v1c " + close.toShortString());
+                result.putString("photoAnchor", "v08 " + close.toShortString());
             }
             if (events != null) {
                 attemptedInput = true;

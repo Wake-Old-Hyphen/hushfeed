@@ -209,6 +209,41 @@ public class SeekbarTimePlacementTest {
     }
 
     @Test
+    public void anIconOverTheBarsEndKeepsTheTimeBesideOnceTheLabelHasLaidOutBesideIt() {
+        Settings.SEEKBAR_TIME.save(true);
+        build();
+        // Beside the bar the label holds the row's end and the frame stops short of it, so a spot
+        // measured from the frame sat a label's width too far left. It found the Tako button's
+        // spot free, the time went above onto it, and the next check sent it back, every other
+        // check (Login2 emulator, 2026-10-22).
+        SeekbarTimeLabel label = tick();
+        assertFalse(label.isAbove());
+        int width = label.getWidth();
+        assertTrue("the frame stops short of the row's end", frame.getRight() <= WIDTH - width);
+        android.widget.ImageView tako = new android.widget.ImageView(context);
+        tako.setImageDrawable(new android.graphics.drawable.ColorDrawable(0xffffffff));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                Math.max(1, width / 2), 95, Gravity.TOP | Gravity.END);
+        params.topMargin = 1850;
+        window.addView(tako, params);
+        layoutAll();
+
+        Settings.SEEKBAR_TIME_PLACEMENT.save("above");
+        long later = SystemClock.uptimeMillis() + 10 * SeekbarTimePlacement.RECHECK_MS;
+        for (int check = 1; check <= 3; check++) {
+            label.place(true, later + check * 10 * SeekbarTimePlacement.RECHECK_MS);
+            layoutAll();
+            label.onPreDraw();
+            assertFalse("check " + check, label.isAbove());
+        }
+
+        window.removeView(tako);
+        layoutAll();
+        label.place(true, later + 40 * SeekbarTimePlacement.RECHECK_MS);
+        assertTrue("the spot is free again", label.isAbove());
+    }
+
+    @Test
     public void textInTheSpotKeepsTheTimeBesideTheBarAndTheTimeComesBackWhenItGoes() {
         Settings.SEEKBAR_TIME.save(true);
         Settings.SEEKBAR_TIME_PLACEMENT.save("above");

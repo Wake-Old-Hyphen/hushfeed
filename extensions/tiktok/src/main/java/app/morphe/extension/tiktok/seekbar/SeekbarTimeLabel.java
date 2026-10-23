@@ -357,7 +357,9 @@ final class SeekbarTimeLabel extends TextView implements ViewTreeObserver.OnPreD
         SeekbarTimePlacement.positionInWindow(frame, at);
         int[] rowAt = new int[2];
         SeekbarTimePlacement.positionInWindow(row, rowAt);
-        int right = at[0] + frame.getWidth();
+        // Beside the bar the label holds the row's end and the frame stops a label's width short of
+        // it. Once the time is above, the frame runs on to where the label ended, so measure there.
+        int right = at[0] + frame.getWidth() + Math.max(0, getRight() - frame.getRight());
         return new Rect(right - params.width, rowAt[1] - row.getHeight(), right, rowAt[1]);
     }
 

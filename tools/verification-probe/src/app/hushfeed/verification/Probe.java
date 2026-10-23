@@ -1721,7 +1721,7 @@ public final class Probe extends Instrumentation {
                         break;
                     }
                     case "captionstate": {
-                        // The caption strip (dlk) and its text (dlr) in one read. A caption line is
+                        // The caption strip (dln) and its text (dlu) in one read. A caption line is
                         // on screen only while it is spoken, and separate reads kept landing after
                         // it had gone. For each shown view with either id: place, size and
                         // background, and for the text its size in pixels and its line count.
@@ -1729,11 +1729,11 @@ public final class Probe extends Instrumentation {
                                 .getMethod("getActivity").invoke(null);
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
-                        // 47.1.4 renamed them to dm5 and dmb: -e strip dm5 -e text dmb.
+                        // 47.5.3 names them dln and dlu (47.1.4 had dm5 and dmb): -e strip dm5 -e text dmb.
                         String stripName = intent.getStringExtra("strip");
                         String textName = intent.getStringExtra("text");
-                        if (stripName == null) stripName = "dlk";
-                        if (textName == null) textName = "dlr";
+                        if (stripName == null) stripName = "dln";
+                        if (textName == null) textName = "dlu";
                         int strip = resources.getIdentifier(stripName, "id", activity.getPackageName());
                         int text = resources.getIdentifier(textName, "id", activity.getPackageName());
                         StringBuilder out = new StringBuilder();
@@ -1902,8 +1902,8 @@ public final class Probe extends Instrumentation {
                         if (activity == null) throw new IllegalStateException("no current activity");
                         android.content.res.Resources resources = activity.getResources();
                         java.util.Map<Integer, String> wanted = new java.util.HashMap<>();
-                        // llj is the rail column up to 47.1.x, ljn on 47.4.3.
-                        for (String name : new String[]{"llj", "ljn", "desc", "bqv", "ll8", "videomusiccoverblock", "g85"}) {
+                        // The 47.5.3 names: lke rail column, bqj anchor, lk3 search bar, g90 like button.
+                        for (String name : new String[]{"lke", "desc", "bqj", "lk3", "videomusiccoverblock", "g90"}) {
                             int id = resources.getIdentifier(name, "id", activity.getPackageName());
                             if (id != 0) wanted.put(id, name);
                         }
@@ -1965,7 +1965,7 @@ public final class Probe extends Instrumentation {
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
                         int[] ids = new int[3];
-                        String[] names = {"llj", "bqv", "videomusiccoverblock"};
+                        String[] names = {"lke", "bqj", "videomusiccoverblock"};
                         for (int i = 0; i < names.length; i++) {
                             ids[i] = resources.getIdentifier(names[i], "id", activity.getPackageName());
                         }
@@ -2031,8 +2031,8 @@ public final class Probe extends Instrumentation {
                         Method clearNow = loader.loadClass("app.morphe.extension.tiktok.cleardisplay.RememberClearDisplayPatch")
                                 .getMethod("isClearDisplayNow");
                         android.content.res.Resources resources = activity.getResources();
-                        int strip = resources.getIdentifier("dlk", "id", activity.getPackageName());
-                        int drawn = resources.getIdentifier("dls", "id", activity.getPackageName());
+                        int strip = resources.getIdentifier("dln", "id", activity.getPackageName());
+                        int drawn = resources.getIdentifier("dlu", "id", activity.getPackageName());
                         int[] counts = new int[9];
                         android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
                         long start = android.os.SystemClock.uptimeMillis();
@@ -2070,7 +2070,7 @@ public final class Probe extends Instrumentation {
                                         + " strip=" + counts[2] + " line=" + counts[3] + " cue=" + counts[4]
                                         + " clearedStrip=" + counts[5] + " clearedLine=" + counts[6]
                                         + " clearedCue=" + counts[7] + " lineWithControls=" + counts[8]
-                                        + (strip == 0 || drawn == 0 ? " dlk/dls=missing" : ""));
+                                        + (strip == 0 || drawn == 0 ? " dln/dlu=missing" : ""));
                             }
                         });
                         break;
@@ -2145,7 +2145,7 @@ public final class Probe extends Instrumentation {
                     }
                     case "countformat": {
                         // One of TikTok's static count formatters run with a count the check
-                        // picks, and the text it wrote: -e class X.0EYv -e method LIZIZ -e count
+                        // picks, and the text it wrote: -e class X.0EV9 -e method LIZIZ -e count
                         // 123456. One that takes (long) gets just the count, one that takes
                         // (Aweme, long) the video on screen as well. A check can read what Show
                         // exact counts makes of a big count whatever the feed serves. The class
@@ -2194,12 +2194,12 @@ public final class Probe extends Instrumentation {
                         // Without it set to dark, TikTok stays light whatever the phone's night
                         // mode is (seen on the S22, 2026-10-16). Read through TikTok's own store
                         // factory, the static (int, Context, String) -> SharedPreferences method
-                        // TikTok reads it with (-e store X.02s6 -e method LIZJ on 47.1.4), since
+                        // TikTok reads it with (-e store X.02rD -e method LIZJ on 47.5.3), since
                         // that one may route the store to Keva rather than a plain file; its
                         // sibling LIZIZ skips that. -e set N writes N, which the next start applies;
                         // -e set unset removes it.
                         String storeClass = intent.getStringExtra("store");
-                        if (storeClass == null) storeClass = "X.02s6";
+                        if (storeClass == null) storeClass = "X.02rD";
                         String storeMethod = intent.getStringExtra("method");
                         if (storeMethod == null) storeMethod = "LIZJ";
                         Method factory = loader.loadClass(storeClass)
@@ -2334,8 +2334,8 @@ public final class Probe extends Instrumentation {
                         // logs, per video, when it became current, when its position first moved,
                         // every hold of 250 ms or more after that, every jump the position made
                         // that playing doesn't explain, and every sample the main thread was late
-                        // for. Same holder and getter extras as playerspeed (47.1.4: -e holder
-                        // X.037t -e getter LJIILIIL). No id, caption or creator leaves.
+                        // for. Same holder and getter extras as playerspeed (47.5.3: -e holder
+                        // X.037e -e getter LJIILL). No id, caption or creator leaves.
                         Method getter = loader.loadClass(required(intent, "holder"))
                                 .getDeclaredMethod(required(intent, "getter"));
                         getter.setAccessible(true);
@@ -4349,9 +4349,9 @@ public final class Probe extends Instrumentation {
                 Class<?> register = loader.loadClass("com.ss.android.deviceregister.DeviceRegisterManager");
                 Log.i(TAG, "ok idreset before" + registeredIds(context, appLog, register));
                 if (readOnly) return;
-                // 47.4.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
+                // 47.5.3's reset callback: LIZ() when the timeout runs out, LIZIZ(installInfo)
                 // when new install info arrives.
-                Class<?> callbackType = loader.loadClass("X.0Ncl");
+                Class<?> callbackType = loader.loadClass("X.0LRh");
                 final java.util.concurrent.CountDownLatch answered = new java.util.concurrent.CountDownLatch(1);
                 final String[] outcome = {"no answer"};
                 Object callback = java.lang.reflect.Proxy.newProxyInstance(loader, new Class<?>[]{callbackType},

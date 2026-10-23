@@ -3,12 +3,15 @@
 import copy
 import hashlib
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-import native_media as media
+# `py -I` leaves the script's folder off sys.path, so put the sibling module back by hand.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import native_media as media  # noqa: E402
 
 
 class NativeMediaTests(unittest.TestCase):
@@ -18,7 +21,7 @@ class NativeMediaTests(unittest.TestCase):
         self.receipt = {"schema": 1, "kind": "controlled-trackmuxer-art", "token": self.manifest["token"],
                         "manifestSha256": "b" * 64, "installedApkSha256": "e" * 64,
                         "sourceHashes": self.manifest["sourceHashes"].copy(),
-                        "package": "com.zhiliaoapp.musically", "version": "47.4.3", "vm": "Dalvik", "sdk": 23,
+                        "package": "com.zhiliaoapp.musically", "version": "47.5.3", "vm": "Dalvik", "sdk": 23,
                         "actualInstalledTrackMuxer": True, "accepted": True, "complete": True, "nativeDashBranchExercised": False,
                         "servedDashAcceptance": False, "compiledSourceQualified": False, "deadlineMs": 90000,
                         "elapsedMs": 1000, "restoration": {"inputsUnchanged": True, "productionDeadlineRestored": True,
