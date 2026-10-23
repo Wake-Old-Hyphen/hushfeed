@@ -1367,6 +1367,67 @@ public final class Probe extends Instrumentation {
                         }, gap);
                         break;
                     }
+                    case "tapwatch": {
+                        // Taps on TikTok's window and when, counted from the first lift, the video
+                        // went between playing and paused, for #239: TikTok holds a tap for its
+                        // double-tap window before pausing, unless a double tap does nothing.
+                        // -e taps 2 -e gap 150 sends two taps 150 ms apart (lift to next touch).
+                        // Polls the player every 5 ms on the main thread until 1.5 s after the
+                        // last lift and logs every change, e.g. flips=[paused@11ms, playing@190ms].
+                        float x = Float.parseFloat(required(intent, "x"));
+                        float y = Float.parseFloat(required(intent, "y"));
+                        String holdText = intent.getStringExtra("hold");
+                        long hold = holdText == null ? 30L : Long.parseLong(holdText);
+                        String tapsText = intent.getStringExtra("taps");
+                        int taps = tapsText == null ? 1 : Integer.parseInt(tapsText);
+                        String gapText = intent.getStringExtra("gap");
+                        long gap = gapText == null ? 150L : Long.parseLong(gapText);
+                        android.app.Activity activity = (android.app.Activity) loader.loadClass(UTILS)
+                                .getMethod("getActivity").invoke(null);
+                        if (activity == null) throw new IllegalStateException("no current activity");
+                        android.view.View decor = activity.getWindow().getDecorView();
+                        Method playing = loader.loadClass("app.morphe.extension.tiktok.wellbeing.SessionPlaybackHold")
+                                .getMethod("currentPlaying");
+                        Object before = playing.invoke(null);
+                        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+                        long start = android.os.SystemClock.uptimeMillis();
+                        long firstUp = start + hold;
+                        long lastUp = start + (taps - 1) * (hold + gap) + hold;
+                        for (int i = 0; i < taps; i++) {
+                            long down = start + i * (hold + gap);
+                            main.postAtTime(() -> touch(decor, down, android.os.SystemClock.uptimeMillis(),
+                                    android.view.MotionEvent.ACTION_DOWN, x, y), down);
+                            main.postAtTime(() -> touch(decor, down, android.os.SystemClock.uptimeMillis(),
+                                    android.view.MotionEvent.ACTION_UP, x, y), down + hold);
+                        }
+                        StringBuilder flips = new StringBuilder();
+                        Object[] last = {before};
+                        Runnable[] poll = new Runnable[1];
+                        poll[0] = () -> {
+                            long now = android.os.SystemClock.uptimeMillis();
+                            Object state;
+                            try {
+                                state = playing.invoke(null);
+                            } catch (Exception e) {
+                                Log.i(TAG, "failed tapwatch " + e);
+                                return;
+                            }
+                            if (state != null && !state.equals(last[0])) {
+                                if (flips.length() > 0) flips.append(", ");
+                                flips.append(Boolean.TRUE.equals(state) ? "playing@" : "paused@")
+                                        .append(now - firstUp).append("ms");
+                                last[0] = state;
+                            }
+                            if (now - lastUp >= 1500L) {
+                                Log.i(TAG, "ok tapwatch taps=" + taps + " gap=" + gap + "ms hold=" + hold
+                                        + "ms before=" + before + " flips=[" + flips + "] after=" + state);
+                            } else {
+                                main.postDelayed(poll[0], 5L);
+                            }
+                        };
+                        main.post(poll[0]);
+                        break;
+                    }
                     case "report": {
                         // The diagnostic export, which is the extension's own record of what it
                         // did. Logcat is not: the release extension is minified and its Log calls
@@ -2202,6 +2263,48 @@ public final class Probe extends Instrumentation {
                                 : result instanceof Number || result instanceof Boolean ? String.valueOf(result)
                                 : "<" + result.getClass().getName() + ", value not shown>";
                         Log.i(TAG, "ok call " + target.getName() + " -> " + shown);
+                        break;
+                    }
+                    case "seed-commenter-region": {
+                        // TikTok 47.5.3 sends comment accounts with no country, so a commenter's
+                        // country can only come from the feed's cache of creators it has shown.
+                        // This files -e region XX under every commenter Hushfeed has bound, as if
+                        // each one's own video had played in the feed, then has the open sheet
+                        // bind its rows again so they take that path. Reopening the sheet would
+                        // not do it: TikTok shows a video's cached rows without binding them.
+                        // -e region clear forgets the cache again. The handles stay in TikTok's
+                        // process, only their count is logged.
+                        String region = required(intent, "region");
+                        Class<?> regions = loader.loadClass("app.morphe.extension.tiktok.feed.AuthorRegion");
+                        if ("clear".equals(region)) {
+                            regions.getMethod("forgetSeenRegions").invoke(null);
+                            Log.i(TAG, "ok seed-commenter-region cleared");
+                            break;
+                        }
+                        Field bound = loader.loadClass("app.morphe.extension.tiktok.comment.CommenterDetails")
+                                .getDeclaredField("HANDLE_BY_UID");
+                        bound.setAccessible(true);
+                        Map<?, ?> byUid = (Map<?, ?>) bound.get(null);
+                        List<String> handles = new ArrayList<>();
+                        synchronized (byUid) {
+                            for (Object handle : byUid.values()) handles.add((String) handle);
+                        }
+                        if (handles.isEmpty()) {
+                            throw new IllegalStateException("no commenter bound yet, open a comment sheet first");
+                        }
+                        Method remember = regions.getMethod("rememberSeen", String.class, String.class);
+                        for (String handle : handles) remember.invoke(null, handle, region);
+                        java.util.Set<String> shown = new java.util.HashSet<>();
+                        for (String handle : handles) shown.add("@" + handle);
+                        int rebound = 0;
+                        for (android.view.View root : windowRoots()) rebound += rebindCommentList(root, shown);
+                        if (rebound == 0) {
+                            // A failed step skips the check's clear, so don't leave the seed behind.
+                            regions.getMethod("forgetSeenRegions").invoke(null);
+                            throw new IllegalStateException("no comment list on screen shows a bound commenter");
+                        }
+                        Log.i(TAG, "ok seed-commenter-region " + region + " for " + handles.size()
+                                + " commenters, rebound " + rebound + " list");
                         break;
                     }
                     case "idreset": {
@@ -3547,6 +3650,47 @@ public final class Probe extends Instrumentation {
                 return (java.util.List<android.view.View>) value;
             }
             throw new IllegalStateException("WindowManagerGlobal returned no root list");
+        }
+
+        /**
+         * Has the innermost shown list holding one of these '@handle' names bind its rows again,
+         * and answers how many lists it asked. Innermost, because the feed's pager is a list too
+         * and must not be the one picked.
+         */
+        private static int rebindCommentList(android.view.View view, java.util.Set<String> shown) throws Exception {
+            if (!view.isShown()) return 0;
+            int rebound = 0;
+            if (view instanceof android.view.ViewGroup) {
+                android.view.ViewGroup group = (android.view.ViewGroup) view;
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    rebound += rebindCommentList(group.getChildAt(i), shown);
+                }
+            }
+            if (rebound > 0 || !isRecyclerView(view.getClass()) || !showsAny(view, shown)) return rebound;
+            Object adapter = view.getClass().getMethod("getAdapter").invoke(view);
+            if (adapter == null) return 0;
+            adapter.getClass().getMethod("notifyDataSetChanged").invoke(adapter);
+            return 1;
+        }
+
+        private static boolean isRecyclerView(Class<?> type) {
+            for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+                if ("androidx.recyclerview.widget.RecyclerView".equals(c.getName())) return true;
+            }
+            return false;
+        }
+
+        private static boolean showsAny(android.view.View view, java.util.Set<String> texts) {
+            if (view instanceof android.widget.TextView) {
+                CharSequence text = ((android.widget.TextView) view).getText();
+                return text != null && texts.contains(withoutFormatMarks(text.toString()).trim());
+            }
+            if (!(view instanceof android.view.ViewGroup)) return false;
+            android.view.ViewGroup group = (android.view.ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                if (showsAny(group.getChildAt(i), texts)) return true;
+            }
+            return false;
         }
 
         /** Opens the settings screen the same way the row inside TikTok's own settings does. */

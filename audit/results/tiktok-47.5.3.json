@@ -9,8 +9,8 @@
     "sha256": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254"
   },
   "runner": {
-    "commit": "c3accf2412179b815674cc3596ad84ea02143bb9",
-    "catalog": "46f1a55abc22c67929eb72ddd17e3947cb1a60f833f026d5b2a6270ae78fcab8"
+    "commit": "100d09580ee5045178ae54a7fe284481718b63d8",
+    "catalog": "73673bc3cab0bd4d88f60cd27056bb2c31b4e2331c2726d8f8c89bbd1e77db64"
   },
   "build": {
     "status": "verified",
@@ -27,18 +27,18 @@
     "android": "16"
   },
   "startedUtc": "2026-10-23T05:15:54.0200322Z",
-  "finishedUtc": "2026-10-23T10:01:58.6711312Z",
-  "evidence": "evidence-47.5.3-a3",
+  "finishedUtc": "2026-10-23T11:09:45.212725Z",
+  "evidence": "evidence-47.5.3-cr2",
   "summary": {
-    "pass": 354,
-    "fail": 1,
+    "pass": 355,
+    "fail": 0,
     "review": 7,
     "inconclusive": 13,
     "error": 0,
     "skipped": 0
   },
   "hooks": {
-    "families": 35,
+    "families": 47,
     "missed": []
   },
   "patches": [
@@ -19659,9 +19659,9 @@
       "name": "Show commenter handle and region",
       "category": "Comments",
       "kind": "runtime",
-      "ranUtc": "2026-10-23T07:35:04.3624741Z",
+      "ranUtc": "2026-10-23T11:08:54.1632709Z",
       "apkSha256": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
-      "evidence": "evidence-47.5.3-a1",
+      "evidence": "evidence-47.5.3-cr2",
       "checks": [
         {
           "id": "handle-and-region-bound",
@@ -19690,7 +19690,7 @@
             }
           },
           "receipt": {
-            "execution": "f16cbbc0d1bd46b6873a1bfb888fee2c",
+            "execution": "a42b4ef2715847098722cb6c07736597",
             "definition": "05dac236e426a076b34ee636674921cb2c6247ed31878e09dbdfd2bb257396e0",
             "apk": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
             "installed": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
@@ -19713,11 +19713,11 @@
             "files": [
               {
                 "file": "Show_commenter_handle_and_region-handle-and-region-bound-3-videoinfo.txt",
-                "sha256": "5e4e8d7c81d96e88602790ee9ade4a211519a4f04e654a0b024c44d50ab6ebdc"
+                "sha256": "961b60cfed3c9fb6760902e277e0b60446a3a03f66e0ea86192355dd2c378000"
               },
               {
                 "file": "Show_commenter_handle_and_region-handle-and-region-bound-4-comments.txt",
-                "sha256": "4937f82fef2adfeb2c7b3dca25d49988b5c26cad295871387f4436e9f7354f89"
+                "sha256": "ef63493441cb60612902ed1d73497348aa49a883231e00bfb930202747a23190"
               },
               {
                 "file": "Show_commenter_handle_and_region-handle-and-region-bound-6-hookdetails.txt",
@@ -19733,7 +19733,7 @@
             "status": "pass",
             "failures": []
           },
-          "receiptId": "c24e284fd39075e38ffdcde69ec9c70ef72d36e62d3a4c795912a6751cf2e5ab"
+          "receiptId": "dbadf948872784986f0c6cf43e6d15808be282e46a4dddb51cc641b9a43e04cb"
         },
         {
           "id": "name-color",
@@ -19761,7 +19761,7 @@
             }
           },
           "receipt": {
-            "execution": "31a481dfdb61488ebff4d01633ff261e",
+            "execution": "df25ae0101854ad48d827726f2890c35",
             "definition": "06cdcda18848fcbdc94f0140450e9916e296741b375910eddaddcd48e075b63e",
             "apk": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
             "installed": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
@@ -19783,11 +19783,11 @@
             "files": [
               {
                 "file": "Show_commenter_handle_and_region-name-color-3-videoinfo.txt",
-                "sha256": "884a6c1f943510a37097286621b153e57dc0ea481e2c7176319ef6e11bfd5809"
+                "sha256": "72c1fa8e68da3a9421d72d961d4d19ec59704b1e4c9e00f82e0d01257bb9f78a"
               },
               {
                 "file": "Show_commenter_handle_and_region-name-color-4-comments.txt",
-                "sha256": "4f2d40d8909b56da9eaa8d68b55f946d6ec8fba2cb699222196a39c3ad899ce6"
+                "sha256": "1ef5dbc5ca657e945555383cf42dd08364c2ca104c303899c1abb147849793c9"
               },
               {
                 "file": "Show_commenter_handle_and_region-name-color-6-hookdetails.txt",
@@ -19799,27 +19799,29 @@
             "status": "pass",
             "failures": []
           },
-          "receiptId": "dcd0f5e8fc9df7afb909e55e20abaf25894702ebcae9915c19885eea6c7d928f"
+          "receiptId": "379145884764128f5c0ca27d7c2b61521c5f22faf3e4b9b81bc25dd6af4f2125"
         },
         {
           "id": "sheet-text",
-          "what": "Review: names read '@handle' and the time line carries a country after it.",
+          "what": "Review: names read '@handle' and the time line carries a country after it. TikTok 47.5.3 sends comment accounts with no country, so the probe files AQ under each bound commenter in the feed's creator cache (as if their videos had played) and has the open sheet bind its rows again, which then show it from there.",
           "auto": false,
-          "status": "fail",
+          "status": "pass",
           "failures": [],
           "evidence": [
             "Show_commenter_handle_and_region-sheet-text-3-videoinfo.txt",
             "Show_commenter_handle_and_region-sheet-text-4-comments.txt",
-            "Show_commenter_handle_and_region-sheet-text-5-log.txt",
-            "Show_commenter_handle_and_region-sheet-text-commenters-2192db902dc04ae5b1806905567e784c.png"
+            "Show_commenter_handle_and_region-sheet-text-6-seed-commenter-region.txt",
+            "Show_commenter_handle_and_region-sheet-text-7-log.txt",
+            "Show_commenter_handle_and_region-sheet-text-commenters-7fd7270d63bf4214b91c7560c6da6a79.png",
+            "Show_commenter_handle_and_region-sheet-text-11-seed-commenter-region.txt"
           ],
           "review": [
             {
-              "shot": "Show_commenter_handle_and_region-sheet-text-commenters-2192db902dc04ae5b1806905567e784c.png",
-              "criteria": "Comment rows show '@username' in place of display names and a country (or flag) after each comment's time. Failing looks like display names and times only."
+              "shot": "Show_commenter_handle_and_region-sheet-text-commenters-7fd7270d63bf4214b91c7560c6da6a79.png",
+              "criteria": "Comment rows show '@username' in place of display names and a country (or flag) after each comment's time: AQ (Antarctica) on the rows whose account carried none. Failing looks like display names and times only."
             }
           ],
-          "definitionHash": "57506f7cbc71919a01a25587008932b72175c2502dd716f8eec6f4fd235caf16",
+          "definitionHash": "c317b9e089002862c2a2b17f13d25545cbc9420d8bbb0888ee873c3376a7d7ed",
           "apkSha256": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
           "installedApkSha256": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
           "build": {
@@ -19833,8 +19835,8 @@
             }
           },
           "receipt": {
-            "execution": "7fe2bd74467640cb8b6083f011623b6b",
-            "definition": "57506f7cbc71919a01a25587008932b72175c2502dd716f8eec6f4fd235caf16",
+            "execution": "2545291c99a54b50babe1032232f2cb2",
+            "definition": "c317b9e089002862c2a2b17f13d25545cbc9420d8bbb0888ee873c3376a7d7ed",
             "apk": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
             "installed": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
             "build": {
@@ -19850,43 +19852,53 @@
             "evidence": [
               "Show_commenter_handle_and_region-sheet-text-3-videoinfo.txt",
               "Show_commenter_handle_and_region-sheet-text-4-comments.txt",
-              "Show_commenter_handle_and_region-sheet-text-5-log.txt",
-              "Show_commenter_handle_and_region-sheet-text-commenters-2192db902dc04ae5b1806905567e784c.png"
+              "Show_commenter_handle_and_region-sheet-text-6-seed-commenter-region.txt",
+              "Show_commenter_handle_and_region-sheet-text-7-log.txt",
+              "Show_commenter_handle_and_region-sheet-text-commenters-7fd7270d63bf4214b91c7560c6da6a79.png",
+              "Show_commenter_handle_and_region-sheet-text-11-seed-commenter-region.txt"
             ],
             "files": [
               {
                 "file": "Show_commenter_handle_and_region-sheet-text-3-videoinfo.txt",
-                "sha256": "fcb7ede2e09cf4d989137bfab3813a1c9df10183d33d85557fd465c318995330"
+                "sha256": "9e7670979ca2b5993042c9b1580166e92f08f8cbc3444b5a29320ca64076632e"
               },
               {
                 "file": "Show_commenter_handle_and_region-sheet-text-4-comments.txt",
-                "sha256": "fcbd5babc804d2e4c5bd86b0b3fe200457855fff1d3c5508ca07efffcc7dd32b"
+                "sha256": "db22cc12e0369c0bf8f4f1c6c579ef0dda733abcb5efe21dc8cd5851a17a685a"
               },
               {
-                "file": "Show_commenter_handle_and_region-sheet-text-5-log.txt",
-                "sha256": "0f046bbd8def3280c1ccdee8559837620fd6925baec3c3af85c28235f6eede5c"
+                "file": "Show_commenter_handle_and_region-sheet-text-6-seed-commenter-region.txt",
+                "sha256": "8b0be31802980c36c4fb3689128c5a3291ca2b3273f94d5694236e4297c35b57"
               },
               {
-                "file": "Show_commenter_handle_and_region-sheet-text-commenters-2192db902dc04ae5b1806905567e784c.png",
-                "sha256": "f7f095bfb063224bda6ab24367061ba3453373a4d12bc576ea61f3c6b62087f6"
+                "file": "Show_commenter_handle_and_region-sheet-text-7-log.txt",
+                "sha256": "f620882f9825764ce9502ccbb6d4657ca299d7519683b02891654242e13c0d67"
+              },
+              {
+                "file": "Show_commenter_handle_and_region-sheet-text-commenters-7fd7270d63bf4214b91c7560c6da6a79.png",
+                "sha256": "08bed4262186b16ffa8f0abe121078986b2686286b1c9629c2efcc01994c7102"
+              },
+              {
+                "file": "Show_commenter_handle_and_region-sheet-text-11-seed-commenter-region.txt",
+                "sha256": "e4b66e5f9a6c8f1841c4bbcbd775c776d01a3192a5f6349c121b411709730078"
               }
             ],
             "review": [
               {
-                "shot": "Show_commenter_handle_and_region-sheet-text-commenters-2192db902dc04ae5b1806905567e784c.png",
-                "criteria": "Comment rows show '@username' in place of display names and a country (or flag) after each comment's time. Failing looks like display names and times only."
+                "shot": "Show_commenter_handle_and_region-sheet-text-commenters-7fd7270d63bf4214b91c7560c6da6a79.png",
+                "criteria": "Comment rows show '@username' in place of display names and a country (or flag) after each comment's time: AQ (Antarctica) on the rows whose account carried none. Failing looks like display names and times only."
               }
             ],
             "auto": false,
             "status": "review",
             "failures": []
           },
-          "receiptId": "0154742779682162c251866ff78910859d2645374ad9a937c4a0a66b4529b1db",
-          "verdictNote": "Handles show, but no comment row carries a country: the log reads 'carried none, showing nothing' for all three. The 47.5.3 dex still has Comment.user and User.region/accountRegion, and an emulator sample the same day gave 10 of 11 comment accounts with no region (the eleventh came from the feed cache), so TikTok now serves commenters without a region.",
+          "receiptId": "7c7fde77509d7a9479cae3cd18514dce4951de80eec3bbfefe9b1a77e5a3e323",
+          "verdictNote": "Every row reads '@handle' in place of a display name and the time lines read '08-14 · AQ', '09-23 · AQ' and so on. The seed rebound 1 list for 8 commenters, and the log shows 'carried none, showing AQ from the feed' for each row.",
           "verdict": {
-            "receiptId": "0154742779682162c251866ff78910859d2645374ad9a937c4a0a66b4529b1db",
-            "status": "fail",
-            "note": "Handles show, but no comment row carries a country: the log reads 'carried none, showing nothing' for all three. The 47.5.3 dex still has Comment.user and User.region/accountRegion, and an emulator sample the same day gave 10 of 11 comment accounts with no region (the eleventh came from the feed cache), so TikTok now serves commenters without a region."
+            "receiptId": "7c7fde77509d7a9479cae3cd18514dce4951de80eec3bbfefe9b1a77e5a3e323",
+            "status": "pass",
+            "note": "Every row reads '@handle' in place of a display name and the time lines read '08-14 · AQ', '09-23 · AQ' and so on. The seed rebound 1 list for 8 commenters, and the log shows 'carried none, showing AQ from the feed' for each row."
           }
         },
         {
@@ -19913,7 +19925,7 @@
             }
           },
           "receipt": {
-            "execution": "279168af31dd4f17a76f5da467c7a5cf",
+            "execution": "897a89c5add24a6aa547e2499c2436ae",
             "definition": "df2b15e55f5cae13d290d53538b325212ed769d798ef154e1c2c19c24866619e",
             "apk": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
             "installed": "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254",
@@ -19933,7 +19945,7 @@
             "files": [
               {
                 "file": "Show_commenter_handle_and_region-registered-1-report.txt",
-                "sha256": "cea5b1de28ef40730d173279183651d5be9493cb5b91305ad0b4eeebf313082c"
+                "sha256": "bdfc6a1edae9e332d24a8e7e6544afa9620b64f860dc034f74138bbacfae7ee0"
               }
             ],
             "review": [],
@@ -19941,7 +19953,7 @@
             "status": "pass",
             "failures": []
           },
-          "receiptId": "462cc27786dda98fa6a8163e1d1331943f811f199e4cb609df51fa7c44e572f2"
+          "receiptId": "b5a4444ed8273dc54c642fa85e509fb200640088758d33048e26464e88b7f8f4"
         }
       ]
     },
@@ -24298,7 +24310,7 @@
     "catalogChecks": 375,
     "resultChecks": 375,
     "currentChecks": 375,
-    "currentPass": 354,
+    "currentPass": 355,
     "apkDigests": [
       "ab88f0ed62618a0988ecfb6344b486b7750bf0e7afdd33b935d73edf331a4254"
     ],
