@@ -12001,7 +12001,9 @@
   "kind": "runtime",
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/AvatarRingsPatch.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/AvatarRings.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/AvatarRings.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/StoryOverLive.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/StoryOverLive.java"
   ],
   "settings": [
    {
@@ -12015,6 +12017,12 @@
     "default": false,
     "type": "bool",
     "row": "Remove the LIVE ring"
+   },
+   {
+    "key": "open_story_over_live",
+    "default": false,
+    "type": "bool",
+    "row": "Open the Story when a creator is LIVE"
    }
   ],
   "surface": "feed",

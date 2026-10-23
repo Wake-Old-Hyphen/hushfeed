@@ -1126,6 +1126,8 @@ public class Settings extends BaseSettings {
     // Remove avatar rings: the story ring and the LIVE ring, each on its own switch.
     public static final BooleanSetting HIDE_STORY_RINGS = new BooleanSetting("hide_story_rings", FALSE);
     public static final BooleanSetting HIDE_LIVE_RING = new BooleanSetting("hide_live_ring", FALSE);
+    // A creator's profile picture opens their Story before their LIVE, the next tap the LIVE (#233).
+    public static final BooleanSetting OPEN_STORY_OVER_LIVE = new BooleanSetting("open_story_over_live", FALSE);
     // Lift text length limits: comments, repost notes and the bio.
     public static final BooleanSetting LIFT_LENGTH_LIMITS = new BooleanSetting("lift_length_limits", FALSE);
     // Enable voice comments, in the default selection with this off. A restart, since TikTok may

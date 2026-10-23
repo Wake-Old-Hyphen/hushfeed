@@ -538,6 +538,58 @@ public class AutomaticClearDisplayTest {
         }
     }
 
+    /**
+     * On 47.5.3 search opens its video inside the main activity, so the window never changes:
+     * with the controls brought back by hand on a result, backing out and opening the same result
+     * again left it uncleared (S22 2026-10-23, #84). A newly opened page is a new viewer.
+     */
+    @Test public void theSameResultOpenedAgainInTheMainActivityClearsAgain() {
+        SettingsStatus.automaticClearDisplayEnabled = true;
+        Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(0);
+        List<Boolean> events = new ArrayList<>();
+        try (var main = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            Object first = new Object();
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailView(first, new android.view.View(main.get()));
+            RememberClearDisplayPatch.firstFrame("result", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+            assertFalse(RememberClearDisplayPatch.isClearDisplayNow());
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailPause(first);
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailDestroyed(first);
+
+            Object second = new Object();
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailView(second, new android.view.View(main.get()));
+            RememberClearDisplayPatch.firstFrame("result", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("the reopened result stayed uncleared", RememberClearDisplayPatch.isClearDisplayNow());
+        }
+    }
+
+    /** The same page coming back, its view made again or not, keeps the controls brought back. */
+    @Test public void theSamePageComingBackKeepsItsRestoredControls() {
+        SettingsStatus.automaticClearDisplayEnabled = true;
+        Settings.AUTOMATIC_CLEAR_DISPLAY_DELAY.save(0);
+        List<Boolean> events = new ArrayList<>();
+        try (var main = Robolectric.buildActivity(android.app.Activity.class).setup()) {
+            Object page = new Object();
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailView(page, new android.view.View(main.get()));
+            RememberClearDisplayPatch.firstFrame("result", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(false, 2));
+
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailPause(page);
+            RememberClearDisplayPatch.firstFrame("result", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse("back without a new view, the restore was undone", RememberClearDisplayPatch.isClearDisplayNow());
+
+            app.morphe.extension.tiktok.blockauthor.FeedVisibility.onDetailView(page, new android.view.View(main.get()));
+            RememberClearDisplayPatch.firstFrame("result", () -> true, events::add);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse("back with its view made again, the restore was undone", RememberClearDisplayPatch.isClearDisplayNow());
+        }
+    }
+
     /** A page whose post never plays (a photo post reports nothing) gets its controls back soon. */
     @Test public void aPageThatNeverPlaysGetsItsControlsBackAfterItsLimit() {
         SettingsStatus.automaticClearDisplayEnabled = true;

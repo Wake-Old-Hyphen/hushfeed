@@ -15,6 +15,9 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.shared.compat.AppCompatibilities
+import app.morphe.patches.tiktok.interaction.sharesheet.SHARE_LIVE_QUALITY
+import app.morphe.patches.tiktok.interaction.sharesheet.addOwnedShareAction
+import app.morphe.patches.tiktok.interaction.sharesheet.ownedShareActionsPatch
 import app.morphe.patches.tiktok.misc.extension.sharedExtensionPatch
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
@@ -848,6 +851,36 @@ internal fun roomThemeJoin(instructions: List<Instruction>): Int {
             instructions.getOrNull(at + 1)?.opcode !in setOf(Opcode.GOTO, Opcode.GOTO_16, Opcode.GOTO_32)
     }
     return falls.lastOrNull()?.plus(1) ?: -1
+}
+
+/**
+ * The LIVE room activity's onConfigurationChanged (#159). The room handles a dark mode flip itself
+ * (uiMode is in its configChanges), so androidx's AppCompat reworks its theme inside the super
+ * call: it moves the room's resources to the new night mode, calls setTheme with the room's last
+ * theme, which reaches the room hook, then applies that same theme again with force, putting the
+ * room's light style back over the dark app theme the hook just added. A room left open while
+ * the system theme flipped opened Share white (S22, 2026-10-23).
+ */
+internal object LivePlayActivityConfigurationFingerprint : Fingerprint(
+    definingClass = LIVE_PLAY_ACTIVITY,
+    name = "onConfigurationChanged",
+    returnType = "V",
+    parameters = listOf("Landroid/content/res/Configuration;"),
+)
+
+/** Hands the room to the room hook again right after its super onConfigurationChanged returns. */
+internal fun hookRoomConfiguration(changed: MutableMethod) {
+    val instructions = changed.implementation?.instructions?.toList()
+        ?: throw PatchException("LIVE controls: the room's onConfigurationChanged has no body")
+    val parent = instructions.indexOfFirst {
+        val call = (it as? ReferenceInstruction)?.reference as? MethodReference
+        it.opcode == Opcode.INVOKE_SUPER && call?.name == "onConfigurationChanged"
+    }
+    if (parent < 0) throw PatchException("LIVE controls: the room's onConfigurationChanged never calls its super")
+    changed.addInstruction(
+        parent + 1,
+        "invoke-static/range {p0 .. p0}, $PANEL_THEME->darkLiveRoom(Landroid/app/Activity;)V",
+    )
 }
 
 /**
@@ -1704,7 +1737,7 @@ val liveControlsPatch = bytecodePatch(
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
 ) {
     category("Playback")
-    dependsOn(settingsPatch, sharedExtensionPatch)
+    dependsOn(settingsPatch, sharedExtensionPatch, ownedShareActionsPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {
@@ -1787,6 +1820,10 @@ val liveControlsPatch = bytecodePatch(
             it.name == "darkAppTheme" && it.returnType == "I" && it.parameterTypes.isEmpty()
         }.returnEarly(darkTheme)
         hookRoomTheme(LivePlayActivityThemeFingerprint.method)
+        // A dark mode flip with a room open doesn't recreate it: AppCompat re-applies the room's
+        // last light theme with force after setTheme, so the room hook runs again once the
+        // change is through.
+        hookRoomConfiguration(LivePlayActivityConfigurationFingerprint.method)
         // TikTok's Spark pages read light or dark from the theme name of the context they open
         // in, so over the darkened room they draw dark, which suits them, except a shop room's
         // viewer ranking with a Top customers tab: its native tab titles kept their light colors
@@ -1961,6 +1998,12 @@ val liveControlsPatch = bytecodePatch(
             "invoke-static/range {v${stored.register} .. v${stored.register}}, " +
                 "$EXTENSION->noteLiveQualityPick(Ljava/lang/String;)V",
         )
+        // Gaming (LIVE Studio) and low-latency rooms leave the newer Video quality entry out of
+        // their Share sheet; with Offer LIVE quality on, both blocks answer no (#37).
+        LiveSheetActionsFingerprint.method.hookQualityEntryBlocks(qualityEntryBlocks(LiveSheetActionsFingerprint.method))
+        // A LIVE room's share sheet is the regular one with itemType "live", so the recording
+        // quality row rides the same finished-row hook Block this creator and Save cover use (#203).
+        addOwnedShareAction(SHARE_LIVE_QUALITY)
     }
 }
 
@@ -1990,4 +2033,76 @@ internal fun MutableMethod.hookViewerCount(site: ViewerCountSite) {
         site.formatIndex,
         "invoke-static/range {v${site.pairLow} .. v${site.pairLow + 1}}, $EXTENSION->noteViewerCount(J)V",
     )
+}
+
+/**
+ * The provider of a LIVE room's share sheet entries (X.0qEC.LIZ on 47.5.3, provideLiveSheetActions
+ * in its own log line). It adds Video quality, the older picker when the stream asks for a quality
+ * button and the newer one beside the resolution selection setting, and it leaves the newer one out
+ * of two kinds of room: LIVE Studio rooms (streamed from TikTok's PC app, most gaming rooms), whose
+ * mode check is a static (Room)Z call after the AUDIO read, and rooms that support low latency,
+ * which TikTok's LiveTalentDefinitionBlockLowLatencySetting blocks (#37).
+ */
+internal object LiveSheetActionsFingerprint : Fingerprint(
+    returnType = "Ljava/util/List;",
+    parameters = listOf(LIVE_MODE, LIVE_ROOM_TYPE, "Lcom/bytedance/ies/sdk/datachannel/DataChannel;", "Z"),
+    strings = listOf("provideLiveSheetActions(). enable=", "LiveSheetActionProvider"),
+)
+
+/** The two answers in the sheet provider that keep the newer quality entry out of a room (#37). */
+internal data class QualityEntryBlocks(val studioResult: Int, val lowLatencyResult: Int)
+
+/**
+ * Finds both blocks in [method]: the move-result of the Room mode check that follows the sget of
+ * LiveMode.AUDIO (true for LIVE Studio), and the move-result of Room.isSupportLowLatency. Each is a
+ * boolean the entry's branch compares with one, so the hook can hand it back as zero.
+ */
+internal fun qualityEntryBlocks(method: Method): QualityEntryBlocks {
+    val instructions = method.implementation?.instructions?.toList().orEmpty()
+    fun resultAfter(call: Int): Int {
+        if (instructions.getOrNull(call + 1)?.opcode != Opcode.MOVE_RESULT) {
+            throw PatchException("LIVE controls: the sheet provider's call at $call has no boolean result")
+        }
+        return call + 1
+    }
+    val audio = instructions.indexOfFirst { instruction ->
+        instruction.opcode == Opcode.SGET_OBJECT &&
+            ((instruction as ReferenceInstruction).reference as? FieldReference).let {
+                it?.definingClass == LIVE_MODE && it.name == "AUDIO"
+            }
+    }
+    if (audio < 0) throw PatchException("LIVE controls: the sheet provider no longer reads LiveMode.AUDIO")
+    val studio = (audio + 1 until instructions.size).firstOrNull { index ->
+        val instruction = instructions[index]
+        instruction.opcode == Opcode.INVOKE_STATIC &&
+            ((instruction as ReferenceInstruction).reference as? MethodReference).let {
+                it != null && it.returnType == "Z" && it.parameterTypes.map(CharSequence::toString) == listOf(LIVE_ROOM_TYPE)
+            }
+    } ?: throw PatchException("LIVE controls: the sheet provider has no room mode check after the AUDIO read")
+    val lowLatency = instructions.withIndex().filter { (_, instruction) ->
+        instruction.opcode == Opcode.INVOKE_VIRTUAL &&
+            ((instruction as ReferenceInstruction).reference as? MethodReference).let {
+                it?.definingClass == LIVE_ROOM_TYPE && it.name == "isSupportLowLatency"
+            }
+    }.map { it.index }.singleOrNull()
+        ?: throw PatchException("LIVE controls: expected one isSupportLowLatency read in the sheet provider")
+    return QualityEntryBlocks(resultAfter(studio), resultAfter(lowLatency))
+}
+
+/**
+ * Hands each block's boolean to the extension, which answers zero while Offer LIVE quality is on
+ * and the flag otherwise. Both go in after their move-result, later one first so the earlier index
+ * still holds; nothing branches onto the instruction after either.
+ */
+internal fun MutableMethod.hookQualityEntryBlocks(blocks: QualityEntryBlocks) {
+    for (result in listOf(blocks.studioResult, blocks.lowLatencyResult).sortedDescending()) {
+        val register = (getInstruction(result) as OneRegisterInstruction).registerA
+        addInstructions(
+            result + 1,
+            """
+                invoke-static {v$register}, $EXTENSION->qualityEntryBlocked(I)I
+                move-result v$register
+            """,
+        )
+    }
 }

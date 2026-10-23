@@ -159,6 +159,9 @@ public final class LivePanelTheme {
      * reaches them (#159). While Dark LIVE panels is on and TikTok itself is in dark mode,
      * TikTok's dark app theme goes on over them with force, as TikTok themes its other screens
      * in dark mode. The room's color scheme styles still apply after it.
+     * Also called after the room's onConfigurationChanged: the room handles a dark mode flip
+     * itself, and AppCompat re-applies the room's last light style with force after its setTheme,
+     * so Share opened white in a room left open while the system theme flipped (S22, 2026-10-23).
      */
     public static void darkLiveRoom(Activity room) {
         darkLiveRoom(room, darkAppTheme());

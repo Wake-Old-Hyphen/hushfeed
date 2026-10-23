@@ -202,6 +202,10 @@ final class SeeThroughBottomBar {
     static final long LENS_SLIDE_MS = 280;
     /** How long a bar remembers where its last lens was, for the lens that replaces it. */
     static final long LENS_MEMORY_MS = 1000;
+    /** A gap between two frames of a slide longer than this is the main thread stalling. */
+    static final long LENS_STALL_MS = 50;
+    /** How far a slide moves on over a stall: one frame at 60 Hz. */
+    static final long LENS_FRAME_MS = 16;
 
     /**
      * Glass lens (#231): the glass pill with a smaller piece of glass behind the tab you're on,
@@ -234,6 +238,8 @@ final class SeeThroughBottomBar {
         /** Where the slide runs from and to, and when it began. */
         private float fromLeft, fromRight, toLeft, toRight;
         private long slideStart;
+        /** When this lens last drew itself, 0 before its first lens. */
+        private long lastDraw;
 
         GlassLensBackground(float density) {
             super(density);
@@ -268,6 +274,7 @@ final class SeeThroughBottomBar {
                 return;
             }
             long now = SystemClock.uptimeMillis();
+            holdOverStall(now);
             if (Float.isNaN(drawnLeft)) {
                 LensSpot last = LAST_SPOT.get(bar);
                 toLeft = left;
@@ -363,6 +370,23 @@ final class SeeThroughBottomBar {
         private void unwatch() {
             if (watched != null && watched.isAlive()) watched.removeOnPreDrawListener(follow);
             watched = null;
+        }
+
+        /**
+         * A slide timed by the clock alone finishes unseen when the main thread stalls, as it does
+         * while TikTok builds a tab's page the first time it opens: the frame after the stall
+         * showed the lens already behind the new tab (S22, 2026-10-23: about 270 ms with no frame
+         * after the first tap from Home onto Inbox, #231). A slide that was running at the last
+         * draw carries on a frame past where that draw showed it. A gap past the bar's memory
+         * means the bar was out of sight, and the slide is left to finish.
+         */
+        private void holdOverStall(long now) {
+            long gap = now - lastDraw;
+            if (lastDraw != 0 && gap > LENS_STALL_MS && gap < LENS_MEMORY_MS
+                    && lastDraw - slideStart < LENS_SLIDE_MS) {
+                slideStart += gap - LENS_FRAME_MS;
+            }
+            lastDraw = now;
         }
 
         private float progress(long now) {

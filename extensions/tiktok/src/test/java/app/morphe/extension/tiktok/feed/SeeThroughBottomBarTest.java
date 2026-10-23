@@ -342,6 +342,15 @@ public class SeeThroughBottomBarTest {
         return org.robolectric.util.ReflectionHelpers.callInstanceMethod(bar.getViewTreeObserver(), "hasOnPreDrawListeners");
     }
 
+    /** {@code ms} of frames 10 ms apart, each one a draw, the way a running slide asks for them. */
+    private static void frames(SeeThroughBottomBar.GlassLensBackground lens, android.graphics.Canvas canvas, long ms) {
+        assertEquals("frames come 10 ms apart", 0, ms % 10);
+        for (long done = 0; done < ms; done += 10) {
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(10));
+            lens.draw(canvas);
+        }
+    }
+
     /**
      * The lens sits behind the selected tab, in from the pill's top and bottom and the tab's
      * sides, and with animations off it jumps straight to the next tab picked. A selection change
@@ -415,15 +424,11 @@ public class SeeThroughBottomBarTest {
         lens.draw(canvas);
         assertEquals("the slide starts where the lens was", 216 + inset, lens.lensBounds().left, 0.001f);
 
-        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS / 2));
-        lens.draw(canvas);
+        frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS / 2);
         // Halfway through the time, a cubic ease-out is seven eighths of the way there.
         assertEquals(216 + inset + 432 * 0.875f, lens.lensBounds().left, 0.5f);
 
-        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
-        lens.draw(canvas);
+        frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
         assertEquals(648 + inset, lens.lensBounds().left, 0.001f);
         assertEquals(864 - inset, lens.lensBounds().right, 0.001f);
     }
@@ -450,9 +455,7 @@ public class SeeThroughBottomBarTest {
         second.setBounds(0, 0, 1080, 150);
         second.draw(canvas);
         assertEquals("the new lens jumped instead of sliding on", 216 + inset, second.lensBounds().left, 0.001f);
-        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
-        second.draw(canvas);
+        frames(second, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
         assertEquals(648 + inset, second.lensBounds().left, 0.001f);
 
         // The bar takes another look for a while, with frames going by, then the glass again.
@@ -496,9 +499,7 @@ public class SeeThroughBottomBarTest {
         bar.getViewTreeObserver().dispatchOnPreDraw();
         second.draw(canvas);
         assertEquals("the new lens jumped after a still screen", 216 + inset, second.lensBounds().left, 0.001f);
-        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
-        second.draw(canvas);
+        frames(second, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
         assertEquals(648 + inset, second.lensBounds().left, 0.001f);
     }
 
@@ -524,10 +525,49 @@ public class SeeThroughBottomBarTest {
         bar.getViewTreeObserver().dispatchOnPreDraw();
         lens.draw(canvas);
         assertEquals("the lens jumped past a frame with no tab", 216 + inset, lens.lensBounds().left, 0.001f);
-        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS));
-        lens.draw(canvas);
+        frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
         assertEquals(648 + inset, lens.lensBounds().left, 0.001f);
+    }
+
+    /**
+     * TikTok's main thread stalls for a few hundred ms building a tab's page the first time it
+     * opens, and a slide timed by the clock alone finished unseen: the frame after the stall
+     * showed the lens already behind the new tab (S22, 2026-10-23, the first tap from Home onto
+     * Inbox, #231). The slide carries on from where it was shown, and a bar out of sight for
+     * longer than its memory lets the slide finish.
+     */
+    @Test
+    public void aSlideCarriesOnPastAStalledMainThread() {
+        animatorScale(1f);
+        float density = context.getResources().getDisplayMetrics().density;
+        float inset = SeeThroughBottomBar.LENS_INSET_DP * density;
+        SeeThroughBottomBar.GlassLensBackground lens = new SeeThroughBottomBar.GlassLensBackground(density);
+        LinearLayout bar = tabBar(context, lens);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(
+                android.graphics.Bitmap.createBitmap(1080, 150, android.graphics.Bitmap.Config.ARGB_8888));
+        lens.draw(canvas);
+
+        select(bar, 3);
+        lens.draw(canvas);
+        assertEquals(216 + inset, lens.lensBounds().left, 0.001f);
+        // The stall: no frame at all for longer than the whole slide.
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_SLIDE_MS + 10));
+        lens.draw(canvas);
+        float left = lens.lensBounds().left;
+        assertTrue("the slide finished unseen during the stall: " + left, left < 216 + inset + 432 * 0.25f);
+        assertTrue("the slide stood still after the stall: " + left, left > 216 + inset);
+        frames(lens, canvas, SeeThroughBottomBar.LENS_SLIDE_MS);
+        assertEquals(648 + inset, lens.lensBounds().left, 0.001f);
+
+        // A slide under way when the bar went out of sight for longer than its memory.
+        select(bar, 0);
+        lens.draw(canvas);
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
+                .idleFor(java.time.Duration.ofMillis(SeeThroughBottomBar.LENS_MEMORY_MS + 10));
+        lens.draw(canvas);
+        assertEquals("a slide resumed after the bar was out of sight",
+                lens.getDrawable().getBounds().left + inset, lens.lensBounds().left, 0.001f);
     }
 
     @Test

@@ -160,6 +160,58 @@ class LiveDarkPanelsAnchorsTest {
     }
 
     @Test
+    fun `each declared build keeps the room's configuration change and AppCompat's theme rework the second room hook follows`() {
+        Fixtures.forEachDeclared { apk ->
+            val classes = classes(apk)
+            val room = classes[LIVE_PLAY_ACTIVITY] ?: throw AssertionError("${apk.name}: $LIVE_PLAY_ACTIVITY is gone")
+            val found = room.methods.filter { LivePlayActivityConfigurationFingerprint.takes(it, room) }
+            assertEquals("${apk.name}: the room's onConfigurationChanged", 1, found.size)
+
+            // The hook as the patch writes it: right after the super call, in the range form,
+            // handing over the room itself.
+            val hooked = MutableMethod(found.single())
+            hookRoomConfiguration(hooked)
+            val code = hooked.implementation!!.instructions.toList()
+            val hook = code.indexOfFirst {
+                ((it as? ReferenceInstruction)?.reference as? MethodReference)?.name == "darkLiveRoom"
+            }
+            assertTrue("${apk.name}: no hook in the room's onConfigurationChanged", hook > 0)
+            val call = code[hook]
+            assertEquals("${apk.name}: the hook's call", Opcode.INVOKE_STATIC_RANGE, call.opcode)
+            assertEquals("${apk.name}: the hook hands over the room", found.single().implementation!!.registerCount - 2,
+                (call as RegisterRangeInstruction).startRegister)
+            val before = code[hook - 1]
+            assertEquals(Opcode.INVOKE_SUPER, before.opcode)
+            assertEquals("${apk.name}: the hook follows the super call", "onConfigurationChanged",
+                ((before as ReferenceInstruction).reference as MethodReference).name)
+            assertEquals("${apk.name}", emptyList<BridgeTypeFlow.Problem>(), BridgeTypeFlow.check(hooked))
+
+            // What the hook answers: AppCompat's night mode update calls setTheme with the
+            // activity's theme and then applies that theme again with force.
+            val rework = classes["Landroidx/appcompat/app/AppCompatDelegateImpl;"]?.methods?.toList().orEmpty().filter { method ->
+                val names = method.implementation?.instructions?.mapNotNull {
+                    ((it as? ReferenceInstruction)?.reference as? MethodReference)?.let { ref -> "${ref.definingClass}->${ref.name}" }
+                }.orEmpty()
+                val update = names.indexOf("Landroid/content/res/Resources;->updateConfiguration")
+                val setTheme = names.indexOf("Landroid/content/Context;->setTheme")
+                val apply = names.indexOf("Landroid/content/res/Resources\$Theme;->applyStyle")
+                update >= 0 && setTheme > update && apply > setTheme
+            }
+            assertEquals("${apk.name}: AppCompat's theme rework", 1, rework.size)
+        }
+    }
+
+    @Test
+    fun `the configuration hook refuses a room whose onConfigurationChanged skips its super`() {
+        val method = MutableMethod(ImmutableMethod(LIVE_PLAY_ACTIVITY, "onConfigurationChanged",
+            listOf(ImmutableMethodParameter("Landroid/content/res/Configuration;", null, null)), "V",
+            AccessFlags.PUBLIC.value, null, null, ImmutableMethodImplementation(2, emptyList(), null, null))).apply {
+            addInstructionsWithLabels(0, "return-void")
+        }
+        assertThrows(PatchException::class.java) { hookRoomConfiguration(method) }
+    }
+
+    @Test
     fun `each declared build keeps Spark's page theme decision the spark hook answers first`() {
         Fixtures.forEachDeclared { apk ->
             val classes = classes(apk)

@@ -130,9 +130,11 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "Adds a Record button to LIVE rooms. A recording starts when you tap it and ends when you tap Stop or leave the room. Nothing before that is saved.",
                     Settings.RECORD_LIVE));
             addPreference(new ChoicePreference(context, "LIVE recording quality", Settings.LIVE_RECORD_QUALITY,
-                    new String[]{"Same as the room", "Highest", "Lowest"}, new String[]{"room", "highest", "lowest"})
+                    app.morphe.extension.tiktok.live.LiveRecordQuality.LABELS,
+                    app.morphe.extension.tiktok.live.LiveRecordQuality.VALUES)
                     .withNote("Same as the room records the quality you're watching. Highest records "
-                            + "the best stream the room has, even while you watch it lower."));
+                            + "the best stream the room has, even while you watch it lower. A number records that "
+                            + "quality, or the closest one the room has when it isn't offered."));
         }
         if (SettingsStatus.stopVideoLoopingEnabled) {
             addPreference(new TogglePreference(
