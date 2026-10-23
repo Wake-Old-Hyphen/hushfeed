@@ -10,6 +10,8 @@ import com.android.tools.smali.dexlib2.Opcodes
 import com.android.tools.smali.dexlib2.iface.ClassDef
 import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -57,6 +59,38 @@ class FeedMuteAnchorsTest {
                 body.registerCount - 1 >= 1)
             assertTrue("$version: the engine's play() is on the engine the members name",
                 play.definingClass == members.engine)
+
+            // 47.5.3 inlined the session's give-up into the player's release(), so the patch adds
+            // a copy of the block to the session. Every member it names must exist as named, and
+            // the smali compiler must have kept all 33 instructions (it drops what won't fit).
+            val synthesized = version == "47.5.3"
+            assertEquals("$version: the give-up is copied onto the session", synthesized, members.sessionAbandonBody != null)
+            assertEquals("$version: the bridge's give-up name", if (synthesized) SESSION_ABANDON else abandon.name,
+                members.sessionAbandon)
+            val copy = sessionAbandonMethod(members.session, members.sessionAbandonBody ?: return@forEachDeclared)
+            val code = copy.implementation!!.instructions.toList()
+            assertEquals("$version: the copied give-up's instructions", 33, code.size)
+            assertTrue("$version: the copy keeps to v0..v6", copy.implementation!!.registerCount == 7)
+            for (instruction in code) {
+                when (val reference = (instruction as? ReferenceInstruction)?.reference) {
+                    is FieldReference -> classes[reference.definingClass]?.let { owner ->
+                        assertTrue("$version: ${owner.type} has no ${reference.name}:${reference.type}",
+                            owner.fields.any { it.name == reference.name && it.type == reference.type })
+                    }
+                    is MethodReference -> classes[reference.definingClass]?.let { owner ->
+                        assertTrue("$version: ${owner.type} has no $reference", owner.methods.any {
+                            it.name == reference.name && it.returnType == reference.returnType &&
+                                it.parameterTypes.map(CharSequence::toString) == reference.parameterTypes.map(CharSequence::toString)
+                        })
+                    }
+                }
+            }
+            val sent = code.single { it.opcode == Opcode.INVOKE_STATIC && (it as ReferenceInstruction).reference.let { ref ->
+                ref is MethodReference && ref.returnType == "Z" } }
+            assertTrue("$version: the copy sends through the same helper as release()", abandon.implementation!!.instructions.any {
+                it.opcode == Opcode.INVOKE_STATIC && (it as ReferenceInstruction).reference.toString() ==
+                    (sent as ReferenceInstruction).reference.toString()
+            })
         }
     }
 }

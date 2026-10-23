@@ -1,6 +1,7 @@
 package app.morphe.extension.tiktok.inbox;
 
 import static org.junit.Assert.*;
+import com.ss.android.ugc.aweme.notice.repo.list.bean.MusNotice;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +60,21 @@ public class InboxQueryTextTest {
         }));
     }
 
+    @Test public void rowModelsAreReadThroughTheirOnlyNoticeFieldWhateverR8NamesThem() {
+        Template template = new Template();
+        template.content = "Alice liked your video";
+        Row row = new Row(new MusNotice(new General(template)));
+        assertTrue(InboxQueryText.MATCHER.notification(row));
+        assertTrue(InboxQueryText.MATCHER.matches(row, "alice liked"));
+        assertFalse(InboxQueryText.MATCHER.matches(row, "bob"));
+        assertFalse("a row without a template isn't searchable", InboxQueryText.MATCHER.notification(new Row(new MusNotice(null))));
+        assertFalse(InboxQueryText.MATCHER.notification(new Row(null)));
+        assertFalse("two notice fields are ambiguous", InboxQueryText.MATCHER.notification(
+                new TwoNotices(new MusNotice(new General(template)))));
+        try { InboxQueryText.MATCHER.matches(new Row(null), "alice"); fail("a row that lost its notice must refuse the query"); }
+        catch (IllegalStateException expected) { /* The caller refuses the query atomically. */ }
+    }
+
     @Test public void oversizedTextFailsTheTransactionInsteadOfSilentlyTruncatingMatches() {
         Template template = new Template();
         template.content = String.join("", Collections.nCopies(16_385, "x"));
@@ -71,6 +87,16 @@ public class InboxQueryTextTest {
         catch (IllegalStateException expected) { /* The caller restores/refuses a query atomically. */ }
     }
 
+    public static final class Row {
+        public static final MusNotice SHARED = null;
+        public final MusNotice a;
+        public final String b = "row id";
+        Row(MusNotice notice) { a = notice; }
+    }
+    public static final class TwoNotices {
+        public final MusNotice a, b;
+        TwoNotices(MusNotice notice) { a = notice; b = notice; }
+    }
     public static final class Notice {
         public final General templateNotice;
         Notice(Template template) { templateNotice = new General(template); }

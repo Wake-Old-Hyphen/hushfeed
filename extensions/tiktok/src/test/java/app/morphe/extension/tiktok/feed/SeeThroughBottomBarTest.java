@@ -51,9 +51,9 @@ public class SeeThroughBottomBarTest {
         context = RuntimeEnvironment.getApplication();
         Utils.setContext(context);
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.4.3:duc", SPACER_ID);
-        VideoOverlayHider.resolveForTests("47.4.3:onp", BAR_ID);
-        VideoOverlayHider.resolveForTests("47.4.3:bqr", ANCHOR_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:du1", SPACER_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:op9", BAR_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:bqj", ANCHOR_ID);
         SeeThroughBottomBar.reset();
     }
 
@@ -563,7 +563,7 @@ public class SeeThroughBottomBarTest {
      */
     @Test
     public void theMainFeedStripGoesAndTheCaptionStaysAboveTheBar() {
-        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:cmy", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
@@ -616,7 +616,7 @@ public class SeeThroughBottomBarTest {
             assertEquals(View.VISIBLE, strip.getVisibility());
             assertEquals(0f, layer.getTranslationY(), 0f);
         } finally {
-            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
+            VideoOverlayHider.resolveForTests("47.5.3:cmy", 0);
             VideoOverlayHider.resolveForTests("viewpager_container", 0);
             VideoOverlayHider.resolveForTests("widget_container", 0);
         }
@@ -631,7 +631,7 @@ public class SeeThroughBottomBarTest {
      */
     @Test
     public void aStripTikTokShowsAgainDoesNotEndTheCollapse() {
-        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:cmy", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
@@ -680,7 +680,7 @@ public class SeeThroughBottomBarTest {
             assertEquals(-138f, layer.getTranslationY(), 0f);
             assertTrue(SeeThroughBottomBar.collapseAllowed());
         } finally {
-            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
+            VideoOverlayHider.resolveForTests("47.5.3:cmy", 0);
             VideoOverlayHider.resolveForTests("viewpager_container", 0);
             VideoOverlayHider.resolveForTests("widget_container", 0);
         }
@@ -714,7 +714,7 @@ public class SeeThroughBottomBarTest {
      */
     @Test
     public void aCellHalfwayThroughASwipeDoesNotEndTheCollapse() {
-        VideoOverlayHider.resolveForTests("47.4.3:cnc", STRIP_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:cmy", STRIP_ID);
         VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
         VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
         Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
@@ -774,7 +774,7 @@ public class SeeThroughBottomBarTest {
                     ((View) anchors[1].getParent().getParent()).getTop() - pager.getScrollY()
                             + anchors[1].getBottom() + layers[1].getTranslationY(), 0f);
         } finally {
-            VideoOverlayHider.resolveForTests("47.4.3:cnc", 0);
+            VideoOverlayHider.resolveForTests("47.5.3:cmy", 0);
             VideoOverlayHider.resolveForTests("viewpager_container", 0);
             VideoOverlayHider.resolveForTests("widget_container", 0);
         }

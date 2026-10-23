@@ -31,7 +31,7 @@ private const val VIEW = "Landroid/view/View;"
 private const val RECYCLER = "Landroidx/recyclerview/widget/RecyclerView;"
 private const val TOOLS = "Lapp/morphe/extension/tiktok/share/ShareSheetTools;"
 
-// ACTIONS_LIST_IDS in ShareSheetTools: 47.1.4 a5u.
+// ACTIONS_LIST_IDS in ShareSheetTools: 47.5.3 a5z (id/a5z, 0x7f0a013a, the panel's actions list).
 internal val SHARE_ACTION_IDS = setOf(0x7f0a013a)
 
 internal data class SharePanelRow(val castIndex: Int, val register: Int)

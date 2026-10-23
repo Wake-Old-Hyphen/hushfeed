@@ -195,12 +195,12 @@ class RuntimeViewIdAnchorsTest {
     /** Each group handed another group's id on each declared build, by that build's name for it. */
     @Test
     fun `semantic owners reject an unrelated id for every group that needs one`() {
-        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.4.3:a5x"
-        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.4.3:k11"
-        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.4.3:mne"
-        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.4.3:dm5"
+        val actions = "share/ShareSheetTools.java|ACTIONS_LIST_IDS|47.5.3:a5z"
+        val dislike = "comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.5.3:k1q"
+        val dislikeIcon = "comment/CommentTools.java|DISLIKE_ICON_IDS|47.5.3:mo2"
+        val captionText = "captions/CaptionStyle.java|TEXT_IDS|47.5.3:dlu"
         val wrongNames = mapOf(
-            "47.4.3" to mapOf(actions to "k11", dislike to "a5x", dislikeIcon to "a5x", captionText to "k11"),
+            "47.5.3" to mapOf(actions to "k1q", dislike to "a5z", dislikeIcon to "a5z", captionText to "k1q"),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), wrongNames.keys)
         for ((version, wrong) in wrongNames) {
@@ -283,7 +283,7 @@ class RuntimeViewIdAnchorsTest {
          */
         data class LayoutMethodString(val value: String) : Owner
 
-        /** A class that declares this real method name loads the id somewhere in that class. */
+        /** A class that declares these real method names, joined by +, loads the id somewhere in that class. */
         data class ClassMethod(val name: String) : Owner
     }
 
@@ -377,6 +377,9 @@ class RuntimeViewIdAnchorsTest {
     }
 
     /** The layouts a layout owner inflates, in the order of their ids, each path once. */
+    /** Whether a class declaring [declared] declares every name of a `setDarkMode+setPreviousPage` owner. */
+    private fun declaresAll(declared: Set<String>, names: String) = names.split('+').all { it in declared }
+
     private fun layoutPaths(loaded: Map<String, Set<Int>>, layouts: Map<Int, List<String>>, owner: Owner.LayoutClass): List<String> =
         loaded[descriptor(owner.className)].orEmpty().sorted().flatMap { layouts[it].orEmpty() }.distinct()
 
@@ -691,7 +694,7 @@ class RuntimeViewIdAnchorsTest {
                 val declared = methods.map { it.name }.toSet()
                 val classHits = mutableSetOf<Int>()
                 val classUses = mutableListOf<IdUse>()
-                val declaresWanted = classMethods.any { it in declared }
+                val declaresWanted = classMethods.any { declaresAll(declared, it) }
                 for (method in methods) {
                     val instructions = method.implementation?.instructions?.toList() ?: continue
                     val literals = instructions.filterIsInstance<NarrowLiteralInstruction>().map { it.narrowLiteral }
@@ -718,7 +721,7 @@ class RuntimeViewIdAnchorsTest {
                     if (declaresWanted) classUses += uses
                 }
                 for (name in classMethods) {
-                    if (name in declared) {
+                    if (declaresAll(declared, name)) {
                         byMethod.getValue(name) += classHits
                         usesByMethod.getValue(name) += classUses
                     }
@@ -813,7 +816,7 @@ class RuntimeViewIdAnchorsTest {
                 }
                 ownerField.startsWith(CLASS_METHOD_OWNER) -> {
                     val name = ownerField.removePrefix(CLASS_METHOD_OWNER)
-                    assertTrue("bad class method owner in: $line", name.matches(METHOD_NAME))
+                    assertTrue("bad class method owner in: $line", name.split('+').all { it.matches(METHOD_NAME) })
                     Owner.ClassMethod(name)
                 }
                 else -> {
@@ -994,7 +997,7 @@ class RuntimeViewIdAnchorsTest {
         const val METHOD_STRING_OWNER = "method-string:"
         /** An owner written `layout-method-string:<text>`: a method naming the text loads a layout that sets the id. */
         const val LAYOUT_METHOD_STRING_OWNER = "layout-method-string:"
-        /** An owner written `class-method:<name>`: a class declaring the method loads the id. */
+        /** An owner written `class-method:<name>[+<name>...]`: a class declaring every one of the methods loads the id. */
         const val CLASS_METHOD_OWNER = "class-method:"
         const val ANDROID_ID = 0x010100d0
 

@@ -86,7 +86,7 @@ class ReceivedDmTranslationHooksTest {
     }
 
     private fun menu(owner: String = RECEIVED_MENU, registers: Int = 13, result: String = "return-object v0", prefix: String = "") =
-        method(owner, "kq", listOf("LX/0BUG;"), "Ljava/util/List;", registers, """
+        method(owner, "kq", listOf("LX/0BLT;"), "Ljava/util/List;", registers, """
             if-eqz p1, :empty
             $prefix
             $nativeMenu
@@ -96,8 +96,8 @@ class ReceivedDmTranslationHooksTest {
             return-object v0
         """)
 
-    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, "Tp", listOf("LX/0dfc;", "Z"), "V", 40, """
-        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->mq()LX/0dfB;
+    private fun bind(overwrite: String = "") = method(RECEIVED_ASSEM, "Sp", listOf("LX/14WN;", "Z"), "V", 40, """
+        invoke-virtual/range {p0 .. p0}, $RECEIVED_ASSEM->mq()LX/14ZV;
         move-result-object v0
         if-nez v0, :ready
         return-void
@@ -117,7 +117,7 @@ class ReceivedDmTranslationHooksTest {
 
     private companion object {
         const val nativeMenu = """
-            invoke-static/range {v1 .. v8}, LX/0dd4;->LIZ(LX/0BUG;LX/0deu;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/0dKt;Ljava/lang/CharSequence;)Ljava/util/List;
+            invoke-static/range {v1 .. v8}, LX/14WE;->LIZ(LX/0BLT;LX/14Wa;Landroid/content/Context;Landroidx/fragment/app/FragmentManager;Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;LX/14WH;Ljava/lang/CharSequence;)Ljava/util/List;
             move-result-object v0
         """
     }

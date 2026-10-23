@@ -47,8 +47,8 @@ public class SeeThroughStatusBarTest {
     public void setUp() {
         Utils.setContext(RuntimeEnvironment.getApplication());
         VideoOverlayHider.resolveForTests("view_rootview", CELL_ID);
-        VideoOverlayHider.resolveForTests("47.4.3:dus", SPACER_ID);
-        VideoOverlayHider.resolveForTests("47.4.3:wiz", BAND_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:dug", SPACER_ID);
+        VideoOverlayHider.resolveForTests("47.5.3:wks", BAND_ID);
         VideoOverlayHider.resolveForTests("player_view", PLAYER_ID);
     }
 
@@ -62,8 +62,8 @@ public class SeeThroughStatusBarTest {
         SettingsStatus.videoFitEnabled = false;
         PausedProcess.set(false);
         VideoOverlayHider.resolveForTests("view_rootview", 0);
-        VideoOverlayHider.resolveForTests("47.4.3:dus", 0);
-        VideoOverlayHider.resolveForTests("47.4.3:wiz", 0);
+        VideoOverlayHider.resolveForTests("47.5.3:dug", 0);
+        VideoOverlayHider.resolveForTests("47.5.3:wks", 0);
         VideoOverlayHider.resolveForTests("player_view", 0);
         Utils.setContext(RuntimeEnvironment.getApplication());
     }

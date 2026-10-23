@@ -30,7 +30,7 @@ internal const val PAGE_GROUPED_2_LABEL = ", UIPageGrouped2="
 /**
  * UIPageGrouped2 in TikTok's dark Compose palette: the gray of the cards on its Compose settings
  * pages, Settings and privacy among them (#152). The View pages read the same token through
- * attr/a0h on 47.4.3, whose dark literal (agp) the resource side already rewrites.
+ * attr/a0j on 47.5.3, whose dark literal (agt) the resource side already rewrites.
  */
 internal const val DARK_CARD_GRAY = 0xff1e1e1eL
 

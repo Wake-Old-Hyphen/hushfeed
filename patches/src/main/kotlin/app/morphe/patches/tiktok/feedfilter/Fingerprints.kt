@@ -1240,26 +1240,19 @@ internal object ShareGuideFingerprint : Fingerprint(
  * hands each page of /webcast/feed/ items to this static Kotlin default-argument bridge, which
  * turns them into rooms. {@code LX/0KGC;->LJJLIL} on 47.0.3, {@code LX/0KJ1;->LJJLIIIJLLLLLLLZ} on
  * 47.1.3, {@code LX/0KJ5;} on 47.1.4. A class initializer holds the same two strings, so the
- * shape is pinned too: the provider itself first, then the page and its FeedExtra.
+ * shape is pinned too: the provider itself first, then the page, its FeedExtra and a String, an
+ * int, the booleans and the default-argument mask last. Only the number of booleans is left
+ * open, since 47.5.3 added a fifth one ({@code LX/0IkF;->LJJLIIJ}).
  */
 internal object LiveDrawRoomPageFingerprint : Fingerprint(
     returnType = "V",
-    parameters = listOf(
-        "L",
-        "Ljava/util/List;",
-        "Lcom/bytedance/android/live/base/model/feed/FeedExtra;",
-        "Ljava/lang/String;",
-        "I",
-        "Z",
-        "Z",
-        "Z",
-        "Z",
-        "I",
-    ),
     strings = listOf("following_window_live_cell_loadmore", "tiktok_message_inner_loadmore"),
     custom = { method, classDef ->
-        AccessFlags.STATIC.isSet(method.accessFlags) &&
-            method.parameterTypes.firstOrNull()?.toString() == classDef.type
+        val parameters = method.parameterTypes.map(CharSequence::toString)
+        AccessFlags.STATIC.isSet(method.accessFlags) && parameters.size >= 7 &&
+            parameters.take(5) == listOf(classDef.type, "Ljava/util/List;",
+                "Lcom/bytedance/android/live/base/model/feed/FeedExtra;", "Ljava/lang/String;", "I") &&
+            parameters.last() == "I" && parameters.subList(5, parameters.size - 1).all { it == "Z" }
     },
 )
 

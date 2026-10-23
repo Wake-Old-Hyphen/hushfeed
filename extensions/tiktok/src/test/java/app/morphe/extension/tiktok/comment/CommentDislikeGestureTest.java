@@ -248,8 +248,8 @@ public class CommentDislikeGestureTest {
         // the cache is seeded with ids the test's own views carry.
         Object cache = ReflectionHelpers.getStaticField(CommentTools.class, "RESOURCE_IDS");
         java.util.Map<String, Integer> ids = ReflectionHelpers.getField(cache, "ids");
-        ids.put(activity.getPackageName() + ":47.4.3:k11", 0x7f000101);
-        ids.put(activity.getPackageName() + ":47.4.3:mne", 0x7f000102);
+        ids.put(activity.getPackageName() + ":47.5.3:k1q", 0x7f000101);
+        ids.put(activity.getPackageName() + ":47.5.3:mo2", 0x7f000102);
 
         android.widget.FrameLayout itemView = new android.widget.FrameLayout(activity);
         View button = new View(activity);

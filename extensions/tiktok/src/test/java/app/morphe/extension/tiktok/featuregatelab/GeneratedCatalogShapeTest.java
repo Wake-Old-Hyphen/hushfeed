@@ -140,8 +140,8 @@ public class GeneratedCatalogShapeTest {
      * are ones older builds had otherwise: a default that moved, a gate added and one dropped.
      */
     @Test public void theRunningBuildsCatalogIsTheOneShown() throws Exception {
-        BuildNames.setRunningBuildForTests("47.4.3");
-        assertEquals("47.4.3", FeatureGateCatalog.catalogBuild());
+        BuildNames.setRunningBuildForTests("47.5.3");
+        assertEquals("47.5.3", FeatureGateCatalog.catalogBuild());
         FeatureGateCatalog.Snapshot shown = load();
         entry(shown, "abmock", "low_memory_kill_monitor", "INT", "89");
         entry(shown, "abmock", "4710_lifecycle_job_next_day_fixed", "INT", "0");
@@ -149,9 +149,9 @@ public class GeneratedCatalogShapeTest {
     }
 
     @Test public void aBuildWithNoCatalogIsShownTheNewestOne() {
-        // 47.1.4 had a catalog until 47.4.3 replaced it.
-        BuildNames.setRunningBuildForTests("47.1.4");
-        assertFalse(FeatureGateCatalog.hasCatalogFor("47.1.4"));
+        // 47.4.3 had a catalog until 47.5.3 replaced it.
+        BuildNames.setRunningBuildForTests("47.4.3");
+        assertFalse(FeatureGateCatalog.hasCatalogFor("47.4.3"));
         assertEquals(FeatureGateCatalog.newestCatalogBuild(), FeatureGateCatalog.catalogBuild());
         BuildNames.setRunningBuildForTests("46.9.3");
         assertFalse(FeatureGateCatalog.hasCatalogFor("46.9.3"));

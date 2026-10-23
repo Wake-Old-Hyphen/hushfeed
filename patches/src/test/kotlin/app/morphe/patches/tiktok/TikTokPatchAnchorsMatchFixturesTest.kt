@@ -1064,7 +1064,7 @@ class TikTokPatchAnchorsMatchFixturesTest {
                     method.implementation?.instructions?.toList()?.bioLimitConstants()?.size ?: 0
                 }
             }
-            assertEquals("${apk.name}: bio limit comparisons", 3, bioSites)
+            assertEquals("${apk.name}: bio limit comparisons", 4, bioSites)
         }
     }
 

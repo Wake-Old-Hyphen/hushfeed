@@ -369,7 +369,7 @@ Write-Host '[scripts] guarded phone foreground parser contracts passed'
 $catalog = Get-Content -LiteralPath (Join-Path $Root 'patches-list.json') -Raw | ConvertFrom-Json
 $target = Get-PatchTarget -PatchList $catalog
 Assert-True ($target.PackageName -eq 'com.zhiliaoapp.musically') 'The catalog package was not resolved.'
-$stockTarget = [pscustomobject]@{ package = 'com.zhiliaoapp.musically'; versionName = '47.4.3' }
+$stockTarget = [pscustomobject]@{ package = 'com.zhiliaoapp.musically'; versionName = '47.5.3' }
 $normalTarget = Resolve-PatchVerificationTarget -Stock $stockTarget -Target $target
 Assert-True (-not $normalTarget.Forced -and -not $normalTarget.Probe) 'Declared support became a qualification probe.'
 $asiaTarget = [pscustomobject]@{ package = 'com.ss.android.ugc.trill'; versionName = '47.0.3' }
@@ -390,17 +390,17 @@ Assert-Throws { Resolve-PatchVerificationTarget -Stock $futureStock -Target $tar
     'A future build was accepted without force.'
 Assert-True (Resolve-PatchVerificationTarget -Stock $futureStock -Target $target -Force).Forced `
     'An explicitly forced future build was not marked forced.'
-Assert-True ((@($target.PackageVersions) -join ',') -eq '47.4.3' -and $target.PackageVersion -eq '47.4.3') `
+Assert-True ((@($target.PackageVersions) -join ',') -eq '47.5.3' -and $target.PackageVersion -eq '47.5.3') `
     "The catalog versions were not resolved: $(@($target.PackageVersions) -join ', ')."
 Assert-True ((Format-VersionList -Versions @('47.0.3')) -eq '47.0.3' -and
     (Format-VersionList -Versions @('47.0.3', '47.1.3')) -eq '47.0.3 and 47.1.3' -and
     (Format-VersionList -Versions @('1.0', '2.0', '3.0')) -eq '1.0, 2.0 and 3.0') 'A version list was not written as a sentence.'
 $twoTargets = [pscustomobject]@{ PackageVersions = @('47.1.4', '47.2.3'); PackageVersion = '47.2.3' }
 Assert-True ((Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.1.4' }) -Target $twoTargets) -eq '47.1.4' -and
-    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.4.3' }) -Target $target) -eq '47.4.3' -and
-    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.0.3' }) -Target $target) -eq '47.4.3' -and
-    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.2.3' }) -Target $target) -eq '47.4.3' -and
-    (Get-DeclaredReportVersion -Report $null -Target $target) -eq '47.4.3') `
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.5.3' }) -Target $target) -eq '47.5.3' -and
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.0.3' }) -Target $target) -eq '47.5.3' -and
+    (Get-DeclaredReportVersion -Report ([pscustomobject]@{ packageVersion = '47.2.3' }) -Target $target) -eq '47.5.3' -and
+    (Get-DeclaredReportVersion -Report $null -Target $target) -eq '47.5.3') `
     'A report was held to a version other than the declared one it names.'
 
 $allNames = @($catalog.patches | ForEach-Object { $_.name })
@@ -3833,6 +3833,7 @@ Write-Host '[scripts] adb device lease contracts passed'
 & (Join-Path $Root 'scripts/test-fixture-jobs.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-release-publication.ps1') -Root $Root
 & (Join-Path $Root 'scripts/test-walk-receipt.ps1')
+& (Join-Path $Root 'scripts/test-walk-app.ps1')
 & (Join-Path $Root 'scripts/test-device-lease.ps1')
 & (Join-Path $Root 'audit/test-evidence.ps1')
 

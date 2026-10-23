@@ -67,7 +67,7 @@ final class InboxQueryNative {
         }
         return Reflect.readField(owner.state.get(), "LJFF") instanceof Lock
                 && Reflect.readField(owner.state.get(), "LJ") instanceof List
-                && Reflect.readField(owner.adapter.get(), "LLLII") != null
+                && Reflect.readField(owner.adapter.get(), InboxQueryOwners.ADAPTER_DIFF) != null
                 && Reflect.method(owner.fragment.get().getClass(), "hushLoadedInboxIndicesEnabled") != null;
     }
 
@@ -332,7 +332,7 @@ final class InboxQueryNative {
             for (InboxQueryOwners.Owner owner : InboxQueryOwners.snapshot()) {
                 View list = owner.list.get();
                 if (owner.current() && list != null && list.getParent() == spring
-                        && Reflect.invoke(owner.fragment.get(), "bY") == spring
+                        && Reflect.invoke(owner.fragment.get(), InboxQueryOwners.FRAGMENT_SPRING) == spring
                         && owner.query.phase() != LoadedInboxQuery.Phase.IDLE) return false;
             }
             return true;

@@ -254,7 +254,7 @@ group = "app.morphe"
 patches {
     about {
         name = "Hushfeed"
-        description = "Hushfeed patches for TikTok 47.4.3, built for Morphe. Fewer accidental taps, less noise, more control over the feed, inbox, comments and downloads."
+        description = "Hushfeed patches for TikTok 47.5.3, built for Morphe. Fewer accidental taps, less noise, more control over the feed, inbox, comments and downloads."
         source = "https://github.com/SysAdminDoc/hushfeed"
         author = "SysAdminDoc"
         contact = "https://github.com/SysAdminDoc/hushfeed/issues"
@@ -424,6 +424,8 @@ val extensionClasses = listOf(
     "app/morphe/patches/tiktok/interaction/videooverlays/MusicDiscSpinAnchorsTest.class",
     "app/morphe/patches/tiktok/misc/diagnostics/BuildDetailsPatchTest.class",
     "app/morphe/patches/tiktok/misc/featuregatelab/FeatureGateLabFramesTest.class",
+    "app/morphe/patches/tiktok/misc/inbox/InboxQueryOwnerFixturesTest.class",
+    "app/morphe/patches/tiktok/misc/inbox/InboxRenderedModelsFixturesTest.class",
     "app/morphe/patches/tiktok/misc/onboarding/FirstLaunchSkipListTest.class",
     "app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationIconTest.class",
     "app/morphe/patches/tiktok/privacy/StoreIdentityExtensionTest.class",

@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** O Hushfeed passa para o TikTok 47.5.3 e o 47.4.3 sai. Aplique os patches no APK do 47.5.3 com a mesma chave de assinatura e seu login e suas configurações ficam. O PineDrama continua no 47.4.3.
+
+* **TikTok:** O Remove unused language packs agora também funciona no PineDrama 47.4.3.
+
+* **TikTok:** Pesquisar atividade carregada volta a mostrar a barra de pesquisa na página Atividade da Caixa de entrada.
+
+* **TikTok:** A nova chave Toque duplo por canto dá a cada quarto do vídeo sua própria ação de toque duplo. A ideia e a primeira versão vieram de @OmerKurdi79 (#232).
+
+* **TikTok:** A pesquisa das configurações lembra suas últimas dez pesquisas. Toque em uma para repetir ou remova com a lixeira (#232).
+
+* **TikTok:** A nova chave Manter a Tela limpa entre vídeos vem ligada. Desligando, uma Tela limpa que você ligar vale só para aquele vídeo (#232).
+
+* **TikTok:** Aplicar os patches ficou mais rápido. Uma execução completa no computador caiu de 89 para 60 segundos, e o APK gerado é o mesmo.
+
+* **TikTok:** Ordenar os vídeos carregados nas grades de perfil ordena por data, duração, visualizações ou curtidas os vídeos que a grade de um perfil ou de Curtidos carregou (#180).
+
+* **TikTok:** Ajustar o vídeo à tela mostra os slideshows de fotos inteiros também em telas mais quadradas (#188).
+
+* **TikTok:** A nova chave Manter as legendas disponíveis traz de volta a chave Legendas do TikTok onde o TikTok a esconde. Reinicie o TikTok depois de ligar (#217).
+
+* **TikTok:** Ajustar o idioma e o fuso horário ao país agora dá ao TikTok o fuso horário desse país desde o início, com horário de verão incluído (#184, #198).
+
+* **TikTok:** A nova chave Barra de reprodução nas prévias de sons adiciona uma barra que você pode tocar ou arrastar enquanto a prévia de um som toca (#185).
+
+* **TikTok:** Manter os controles esmaecidos na tela limpa volta a deixar os botões de curtir, comentar, salvar e compartilhar na tela (#209).
+
+* **TikTok:** O relatório de diagnóstico não chama mais de quebrados os controles do vídeo em contas sem o botão de stories de Seguindo (#209).
+
+* **TikTok:** Com Registrar diagnósticos ligado, cada linha de comentário de LIVE identifica sua sala com um código curto em vez do id da sala (#110).
+
+* **TikTok:** O Hushfeed agora exige o Morphe Manager 2.0.0 ou mais novo, ou o morphe-desktop 1.19.0 no computador. Aplicar os patches leva cerca de metade do tempo.
+
+* **TikTok:** A nova chave Esconder Saldo no menu do perfil tira o Saldo do menu que o botão do canto superior direito do seu perfil abre (#194).
+
+* **TikTok:** A nova chave Manter as fotos como o TikTok as enviou salva as fotos como o arquivo HEIF ou WebP que o TikTok enviou, em vez de um JPEG (#229).
+
+* **TikTok:** A nova chave Lente de vidro na aba atual põe um pedacinho de vidro atrás da aba em que você está (#231, #124).
+
+* **TikTok:** A nova chave Esconder os ícones do TikTok Minis no menu do perfil deixa esse menu mais curto (#230).
+
+* **TikTok:** A nova chave Desativar o deslize para o menu lateral impede que um deslize para a direita em Para você abra o menu lateral do TikTok (#213).
+
+* **TikTok:** A nova chave Não traduzir vídeos automaticamente mantém descrições e legendas dos vídeos no idioma em que foram feitos. Reinicie o TikTok depois de ligar (#194).
+
+* **TikTok:** O Accent color agora também colore o contador de não lidas na aba Caixa de entrada e os pontos de não lidas (#192).
+
+* **TikTok:** A nova chave Abrir os comentários na altura total abre a folha de comentários até o topo (#191).
+
+* **TikTok:** A nova chave Manter o brilho da tela na câmera impede que a câmera do TikTok deixe sua tela mais clara (#200).
+
+* **TikTok:** A nova chave Toque e segure Perfil para abrir o histórico de exibição abre o histórico de exibição quando você segura a aba Perfil (#199).
+
+* **TikTok:** Em chinês simplificado, Perfil nas configurações do Hushfeed agora aparece como 个人主页 em vez de "perfil da empresa".
+
+* **TikTok:** A nova opção Qualidade da gravação de LIVE grava as LIVEs na qualidade da sala, a mais alta ou a mais baixa (#203).
+
+* **TikTok:** Ligar Barra inferior transparente com o TikTok aberto não traz mais de volta a faixa preta embaixo dos vídeos depois do primeiro deslize (#145).
+
+* **TikTok:** A nova chave Ocultar o botão AI Cast tira o AI Cast da barra de ferramentas lateral da câmera.
+
+* **TikTok:** A nova chave Mais recentes primeiro em Seguindo toca cada lote de posts de Seguindo do mais novo para o mais antigo. Reinicie o TikTok depois de ligar (#226).
+
+* **TikTok:** Em um Galaxy com Usar a fonte do sistema ligado, sua fonte agora aparece também no histórico de exibição, na Central de atividade e em outras páginas web do TikTok (#7).
+
+* **TikTok:** Com Barra inferior transparente ligada sozinha, os vídeos em pé agora chegam até o fim da tela atrás das abas (#145, #218).
+
+* **TikTok:** A nova opção Onde o tempo aparece pode pôr o tempo acima da barra de progresso no feed (#173).
+
+* **TikTok:** O Accent color agora também colore as palavras "Você pode gostar" na página de pesquisa (#163).
+
+* **TikTok:** Downloads lista os salvamentos em andamento e os cinco últimos concluídos, e Salvamentos ao mesmo tempo deixa até 3 rodarem juntos (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** O PineDrama passa para o 47.4.3 e o 47.1.4 sai. Os mesmos 90 patches valem para ele (#156).

@@ -105,9 +105,9 @@ public class BuildDetailsTest {
         assertUnknown(record.replace("#121212", "#ff121212"));
         assertUnknown(record.replace("language_packs=stripped", "language_packs=not_selected"));
         assertUnknown(record.replace("source_end=A1234567890123456789B", "source_end=B1234567890123456789B"));
-        assertUnknown(record.replace("target_version_code=2024704030", "target_version_code=2147483647"));
+        assertUnknown(record.replace("target_version_code=2024705030", "target_version_code=2147483647"));
         assertUnknown(record.replace("target_package=com.zhiliaoapp.musically", "target_package=unknown"));
-        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024704030"));
+        assertUnknown(record.replace("version_code_override=2147483647", "version_code_override=2024705030"));
     }
 
     /** The target package stands on its own for a renamed copy's name lookups (#209): the record's, or nothing. */
@@ -157,18 +157,19 @@ public class BuildDetailsTest {
         for (String line : targets.split("\\R")) {
             String[] target = line.split("[/=]");
             String report = BuildDetails.report(record.replace("com.zhiliaoapp.musically", target[0])
-                    .replace("47.4.3", target[1]).replace("2024704030", target[2]));
+                    .replace("47.5.3", target[1]).replace("2024705030", target[2]));
             assertTrue(report, report.contains("build_metadata: available\n"));
             assertTrue(report.contains("patch_time.native_locales_retained: " + locales + "\n"));
             assertTrue(report.contains("target_package: " + target[0] + "\n"));
             assertTrue(report.contains("target_version: " + target[1] + "\n"));
         }
         // A build the bundle no longer declares is no target of this one, for either app.
-        assertUnknown(record.replace("47.4.3", "47.1.3").replace("2024704030", "2024701030"));
-        assertUnknown(record.replace("47.4.3", "47.1.4").replace("2024704030", "2024701040"));
+        assertUnknown(record.replace("47.5.3", "47.4.3").replace("2024705030", "2024704030"));
+        assertUnknown(record.replace("47.5.3", "47.1.4").replace("2024705030", "2024701040"));
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video")
-                .replace("47.4.3", "47.1.4").replace("2024704030", "2024701040"));
-        // PineDrama (#156) shares TikTok's 47.4.3 version and code under its own package; another package is not declared.
+                .replace("47.5.3", "47.1.4").replace("2024705030", "2024701040"));
+        // PineDrama (#156) stays on 47.4.3 under its own package while TikTok moved to 47.5.3, and another package is not declared.
+        assertUnknown(record.replace("com.zhiliaoapp.musically", "com.ss.android.ttmd.video"));
         assertUnknown(record.replace("com.zhiliaoapp.musically", "com.example.other"));
     }
 

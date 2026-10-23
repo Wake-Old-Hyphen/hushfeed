@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed pindah ke TikTok 47.5.3 dan 47.4.3 tidak didukung lagi. Patch APK 47.5.3 dengan kunci tanda tangan yang sama, maka login dan pengaturanmu tetap ada. PineDrama tetap di 47.4.3.
+
+* **TikTok:** Remove unused language packs kini juga berfungsi di PineDrama 47.4.3.
+
+* **TikTok:** Cari aktivitas yang dimuat kembali menampilkan bilah pencariannya di halaman Aktivitas pada Kotak Masuk.
+
+* **TikTok:** Sakelar baru Ketuk dua kali per sudut memberi setiap seperempat video aksi ketuk dua kali sendiri. Ide dan versi pertamanya datang dari @OmerKurdi79 (#232).
+
+* **TikTok:** Pencarian pengaturan mengingat sepuluh pencarian terakhirmu. Ketuk salah satunya untuk menjalankannya lagi, atau hapus dengan ikon tempat sampah (#232).
+
+* **TikTok:** Sakelar baru Pertahankan Tampilan bersih antar video aktif secara default. Matikan, dan Tampilan bersih yang kamu nyalakan hanya berlaku untuk video itu (#232).
+
+* **TikTok:** Proses patch lebih cepat. Satu kali jalan penuh di komputer turun dari 89 ke 60 detik, dan APK yang dihasilkan sama.
+
+* **TikTok:** Urutkan video yang dimuat di kisi profil mengurutkan video yang dimuat kisi profil atau kisi Disukai berdasarkan tanggal, durasi, jumlah tayangan, atau suka (#180).
+
+* **TikTok:** Sesuaikan video dengan layar menampilkan slideshow foto secara utuh di layar yang lebih persegi juga (#188).
+
+* **TikTok:** Sakelar baru Biarkan keterangan tetap tersedia mengembalikan sakelar Teks milik TikTok di tempat TikTok menyembunyikannya. Mulai ulang TikTok setelah menyalakannya (#217).
+
+* **TikTok:** Samakan lokal dan zona waktu dengan negara kini memberi TikTok zona waktu negara itu sejak awal, termasuk waktu musim panas (#184, #198).
+
+* **TikTok:** Sakelar baru Bilah geser di pratinjau suara menambahkan bilah yang bisa diketuk atau digeser saat pratinjau suara diputar (#185).
+
+* **TikTok:** Pertahankan kontrol pudar di Tampilan bersih kembali menjaga tombol suka, komentar, simpan, dan bagikan tetap di layar (#209).
+
+* **TikTok:** Laporan diagnostik tidak lagi menyebut kontrol video rusak pada akun tanpa tombol cerita Mengikuti (#209).
+
+* **TikTok:** Saat Catat diagnostik aktif, setiap baris komentar LIVE menyebut ruangnya dengan kode pendek, bukan ID ruang (#110).
+
+* **TikTok:** Hushfeed kini butuh Morphe Manager 2.0.0 atau yang lebih baru, atau morphe-desktop 1.19.0 di komputer. Proses patch memakan waktu sekitar setengahnya.
+
+* **TikTok:** Sakelar baru Sembunyikan Saldo di menu profil mengeluarkan Saldo dari menu yang dibuka tombol kanan atas di profilmu (#194).
+
+* **TikTok:** Sakelar baru Simpan foto seperti yang dikirim TikTok menyimpan foto sebagai berkas HEIF atau WebP yang dikirim TikTok, bukan JPEG (#229).
+
+* **TikTok:** Sakelar baru Lensa kaca di tab saat ini menaruh sepotong kecil kaca di belakang tab yang sedang kamu buka (#231, #124).
+
+* **TikTok:** Sakelar baru Sembunyikan ikon TikTok Minis di menu profil membuat menu itu lebih pendek (#230).
+
+* **TikTok:** Sakelar baru Matikan usapan ke menu samping mencegah usapan ke kanan di Untuk Anda membuka menu samping TikTok (#213).
+
+* **TikTok:** Sakelar baru Jangan terjemahkan video secara otomatis menjaga deskripsi dan teks video tetap dalam bahasa aslinya. Mulai ulang TikTok setelah menyalakannya (#194).
+
+* **TikTok:** Accent color kini juga mewarnai jumlah belum dibaca di tab Kotak Masuk dan titik belum dibaca (#192).
+
+* **TikTok:** Sakelar baru Buka komentar dengan tinggi penuh membuka lembar komentar sampai ke atas (#191).
+
+* **TikTok:** Sakelar baru Pertahankan kecerahan layar di kamera mencegah kamera TikTok membuat layarmu lebih terang (#200).
+
+* **TikTok:** Sakelar baru Tekan lama Profil untuk riwayat tontonan membuka riwayat tontonan saat kamu menahan tab Profil (#199).
+
+* **TikTok:** Dalam bahasa Mandarin Sederhana, Profil di pengaturan Hushfeed kini tertulis 个人主页, bukan "profil perusahaan".
+
+* **TikTok:** Pilihan baru Kualitas rekaman LIVE merekam LIVE dengan kualitas ruangnya, yang tertinggi atau yang terendah (#203).
+
+* **TikTok:** Menyalakan Bilah bawah transparan saat TikTok terbuka tidak lagi memunculkan kembali garis hitam di bawah video setelah usapan pertama (#145).
+
+* **TikTok:** Sakelar baru Sembunyikan tombol AI Cast mengeluarkan AI Cast dari bilah alat samping kamera.
+
+* **TikTok:** Sakelar baru Terbaru dulu di Mengikuti memutar setiap kelompok postingan Mengikuti dari yang terbaru. Mulai ulang TikTok setelah menyalakannya (#226).
+
+* **TikTok:** Di Galaxy dengan Gunakan font sistem aktif, fontmu kini juga tampil di riwayat tontonan, pusat aktivitas, dan halaman web TikTok lainnya (#7).
+
+* **TikTok:** Dengan Bilah bawah transparan aktif sendiri, video potret kini mencapai bagian bawah layar di belakang tab (#145, #218).
+
+* **TikTok:** Pilihan baru Posisi waktu bisa menaruh waktu di atas bilah kemajuan di feed (#173).
+
+* **TikTok:** Accent color kini juga mewarnai kata "Kamu mungkin suka" di halaman pencarian (#163).
+
+* **TikTok:** Unduhan mencantumkan penyimpanan yang sedang berjalan dan lima terakhir yang selesai, dan Penyimpanan sekaligus membiarkan sampai 3 berjalan bersamaan (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama pindah ke 47.4.3 dan 47.1.4 tidak didukung lagi. 90 patch yang sama berlaku untuknya (#156).

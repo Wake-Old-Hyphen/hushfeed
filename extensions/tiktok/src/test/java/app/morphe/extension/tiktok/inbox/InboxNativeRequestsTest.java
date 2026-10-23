@@ -46,6 +46,54 @@ public class InboxNativeRequestsTest {
         assertTrue("another owner keeps its ordinary request path", InboxNativeRequests.allowed(new Object()));
     }
 
+    @Test public void viewModelJobsAreFoundByTypeWhateverR8NamesThem() {
+        NotificationResultViewModel regular = new NotificationResultViewModel();
+        NotificationCreatorResultViewModel creator = new NotificationCreatorResultViewModel();
+        NotificationAllTabResultViewModel allTab = new NotificationAllTabResultViewModel();
+        assertEquals(2, InboxNativeRequests.jobFields(NotificationResultViewModel.class).size());
+        assertEquals(2, InboxNativeRequests.jobFields(NotificationCreatorResultViewModel.class).size());
+        assertEquals("the all-tab model watches the jobs it inherits", 2,
+                InboxNativeRequests.jobFields(NotificationAllTabResultViewModel.class).size());
+        assertFalse(InboxNativeRequests.busy(regular));
+        assertFalse(InboxNativeRequests.busy(creator));
+        assertFalse(InboxNativeRequests.busy(allTab));
+
+        regular.b = new RenamedCoroutine();
+        creator.y = new RenamedCoroutine();
+        allTab.a = new RenamedCoroutine();
+        assertTrue(InboxNativeRequests.busy(regular));
+        assertTrue(InboxNativeRequests.busy(creator));
+        assertTrue(InboxNativeRequests.busy(allTab));
+        regular.b.completed = true;
+        creator.y.completed = true;
+        allTab.a.completed = true;
+        assertFalse(InboxNativeRequests.busy(regular));
+        assertFalse(InboxNativeRequests.busy(creator));
+        assertFalse(InboxNativeRequests.busy(allTab));
+    }
+
+    @Test public void aViewModelWithoutReadableJobsStaysBusy() {
+        assertTrue(InboxNativeRequests.busy(new JoblessNotificationResultViewModel()));
+    }
+
+    public static class RenamedCoroutine extends kotlinx.coroutines.JobSupport {}
+    public static class BaseNotificationResultViewModel { public RenamedCoroutine scope = new RenamedCoroutine(); }
+    public static class NotificationResultViewModel extends BaseNotificationResultViewModel {
+        public RenamedCoroutine a, b;
+        public String c;
+    }
+    public static final class NotificationAllTabResultViewModel extends NotificationResultViewModel {
+        public static final RenamedCoroutine IDLE = new RenamedCoroutine();
+    }
+    public static final class NotificationCreatorResultViewModel extends BaseNotificationResultViewModel {
+        public RenamedCoroutine x, y;
+        public Object lazy = new Object();
+        public java.util.List<Object> rows = new java.util.ArrayList<>();
+    }
+    public static final class JoblessNotificationResultViewModel extends BaseNotificationResultViewModel {
+        public Object lazy;
+    }
+
     public static final class NativeJob {
         boolean completed;
         public boolean isCompleted() { return completed; }

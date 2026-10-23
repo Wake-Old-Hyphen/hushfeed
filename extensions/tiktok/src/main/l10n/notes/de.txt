@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed wechselt zu TikTok 47.5.3, 47.4.3 fällt weg. Patche die APK von 47.5.3 mit demselben Signaturschlüssel, dann bleiben Login und Einstellungen erhalten. PineDrama bleibt bei 47.4.3.
+
+* **TikTok:** Remove unused language packs funktioniert jetzt auch bei PineDrama 47.4.3.
+
+* **TikTok:** „Geladene Aktivitäten durchsuchen“ zeigt die Suchleiste auf der Aktivitätsseite im Posteingang wieder an.
+
+* **TikTok:** Ein neuer Schalter „Doppeltippen nach Ecke“ gibt jedem Viertel des Videos eine eigene Doppeltipp-Aktion. Die Idee und die erste Version stammen von @OmerKurdi79 (#232).
+
+* **TikTok:** Die Einstellungssuche merkt sich deine letzten zehn Suchen. Tippe eine an, um sie noch einmal auszuführen, oder entferne sie mit dem Papierkorb (#232).
+
+* **TikTok:** Ein neuer Schalter „Freie Ansicht über Videos hinweg behalten“ ist standardmäßig an. Schaltest du ihn aus, gilt eine eingeschaltete freie Ansicht nur für dieses eine Video (#232).
+
+* **TikTok:** Das Patchen geht schneller. Ein kompletter Lauf am Desktop sank von 89 auf 60 Sekunden, und die erzeugte APK ist dieselbe.
+
+* **TikTok:** „Geladene Videos in Profilrastern sortieren“ ordnet die Videos, die ein Profil- oder Gefällt-mir-Raster geladen hat, nach Datum, Länge, Aufrufen oder Likes (#180).
+
+* **TikTok:** „Video an den Bildschirm anpassen“ zeigt Foto-Diashows auch auf quadratischeren Bildschirmen vollständig (#188).
+
+* **TikTok:** Ein neuer Schalter „Untertitel verfügbar halten“ bringt TikToks Untertitel-Schalter dort zurück, wo TikTok ihn versteckt. Starte TikTok nach dem Einschalten neu (#217).
+
+* **TikTok:** „Sprache und Zeitzone an das Land anpassen“ gibt TikTok jetzt von Anfang an die Zeitzone dieses Landes, samt Sommerzeit (#184, #198).
+
+* **TikTok:** Ein neuer Schalter „Spulleiste in Sound-Vorschauen“ fügt eine Leiste hinzu, die du antippen oder ziehen kannst, während die Vorschau eines Sounds läuft (#185).
+
+* **TikTok:** „Abgeblendete Steuerung in der freien Ansicht behalten“ hält die Tasten für Like, Kommentar, Speichern und Teilen wieder auf dem Bildschirm (#209).
+
+* **TikTok:** Der Diagnosebericht nennt die Videosteuerung bei Konten ohne die Schaltfläche für Gefolgt-Stories nicht mehr defekt (#209).
+
+* **TikTok:** Bei eingeschaltetem „Diagnose protokollieren“ nennt jede LIVE-Kommentarzeile ihren Raum mit einem kurzen Code statt mit der Raum-ID (#110).
+
+* **TikTok:** Hushfeed braucht jetzt Morphe Manager 2.0.0 oder neuer, am Computer morphe-desktop 1.19.0. Das Patchen dauert etwa halb so lang.
+
+* **TikTok:** Ein neuer Schalter „Kontostand im Profilmenü ausblenden“ nimmt den Kontostand aus dem Menü, das die Schaltfläche oben rechts im Profil öffnet (#194).
+
+* **TikTok:** Ein neuer Schalter „Fotos so behalten, wie TikTok sie sendet“ speichert Fotos als HEIF- oder WebP-Datei, wie TikTok sie geschickt hat, statt als JPEG (#229).
+
+* **TikTok:** Ein neuer Schalter „Glaslinse auf dem aktuellen Tab“ legt ein kleines Stück Glas hinter den Tab, auf dem du gerade bist (#231, #124).
+
+* **TikTok:** Ein neuer Schalter „TikTok-Minis-Symbole im Profilmenü ausblenden“ macht dieses Menü kürzer (#230).
+
+* **TikTok:** Ein neuer Schalter „Wischen zum Seitenmenü ausschalten“ verhindert, dass ein Wisch nach rechts auf „Für dich“ das Seitenmenü von TikTok öffnet (#213).
+
+* **TikTok:** Ein neuer Schalter „Videos nicht automatisch übersetzen“ lässt Videobeschreibungen und Untertitel in der Sprache, in der sie entstanden sind. Starte TikTok nach dem Einschalten neu (#194).
+
+* **TikTok:** Accent color färbt jetzt auch die Zahl der ungelesenen Nachrichten im Posteingang-Tab und die Punkte für Ungelesenes (#192).
+
+* **TikTok:** Ein neuer Schalter „Kommentare in voller Höhe öffnen“ öffnet das Kommentarfenster ganz bis nach oben (#191).
+
+* **TikTok:** Ein neuer Schalter „Bildschirmhelligkeit in der Kamera behalten“ verhindert, dass TikToks Kamera deinen Bildschirm heller macht (#200).
+
+* **TikTok:** Ein neuer Schalter „Profil lange drücken für Wiedergabeverlauf“ öffnet den Wiedergabeverlauf, wenn du den Profil-Tab gedrückt hältst (#199).
+
+* **TikTok:** In vereinfachtem Chinesisch steht für Profil in den Einstellungen von Hushfeed jetzt 个人主页 statt „Firmenprofil“.
+
+* **TikTok:** Eine neue Auswahl „Qualität von LIVE-Aufnahmen“ nimmt LIVEs in der Qualität des Raums auf, in der höchsten oder der niedrigsten (#203).
+
+* **TikTok:** Wenn du „Durchsichtige untere Leiste“ einschaltest, während TikTok offen ist, kommt der schwarze Streifen unter den Videos nach dem ersten Wischen nicht mehr zurück (#145).
+
+* **TikTok:** Ein neuer Schalter „Taste AI Cast ausblenden“ nimmt AI Cast aus der seitlichen Werkzeugleiste der Kamera.
+
+* **TikTok:** Ein neuer Schalter „Neueste zuerst bei „Gefolgt““ spielt jeden Schwung Beiträge aus Gefolgt mit den neuesten zuerst ab. Starte TikTok nach dem Einschalten neu (#226).
+
+* **TikTok:** Auf einem Galaxy mit eingeschaltetem „Systemschrift verwenden“ erscheint deine Schrift jetzt auch im Wiedergabeverlauf, im Activity Center und auf anderen Webseiten von TikTok (#7).
+
+* **TikTok:** Wenn „Durchsichtige untere Leiste“ allein eingeschaltet ist, reichen Hochformat-Videos jetzt hinter den Tabs bis an den unteren Bildschirmrand (#145, #218).
+
+* **TikTok:** Eine neue Auswahl „Wo die Zeit steht“ kann die Zeit im Feed über der Fortschrittsleiste anzeigen (#173).
+
+* **TikTok:** Accent color färbt jetzt auch die Worte „Das könnte dir gefallen“ auf der Suchseite (#163).
+
+* **TikTok:** „Downloads“ listet die laufenden Speicherungen und die letzten fünf fertigen auf, und „Gleichzeitige Speicherungen“ lässt bis zu 3 gleichzeitig laufen (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama wechselt auf 47.4.3, 47.1.4 fällt weg. Es gelten dieselben 90 Patches (#156).

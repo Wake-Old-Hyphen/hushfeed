@@ -44,11 +44,11 @@ public class InboxRowLanguageTest {
         Settings.HIDE_INBOX_CUSTOM_TITLES.save("");
         String packageName = RuntimeEnvironment.getApplication().getPackageName();
         InboxFilter.resolveForTests(packageName, "user_name", 102);
-        InboxFilter.resolveForTests(packageName, "47.4.3:uyv", 103);
-        InboxFilter.resolveForTests(packageName, "47.4.3:brh", 104);
-        InboxFilter.resolveForTests(packageName, "47.4.3:w24", 105);
-        InboxFilter.resolveForTests(packageName, "47.4.3:l7h", 200);
-        FeedVisibility.resolveForTests(packageName, "47.4.3:oni", 201);
+        InboxFilter.resolveForTests(packageName, "47.5.3:v0g", 103);
+        InboxFilter.resolveForTests(packageName, "47.5.3:br_", 104);
+        InboxFilter.resolveForTests(packageName, "47.5.3:w3x", 105);
+        InboxFilter.resolveForTests(packageName, "47.5.3:l89", 200);
+        FeedVisibility.resolveForTests(packageName, "47.5.3:op2", 201);
         predicate = InboxFilter.class.getDeclaredMethod("shouldHideRow", Activity.class, View.class);
         predicate.setAccessible(true);
     }

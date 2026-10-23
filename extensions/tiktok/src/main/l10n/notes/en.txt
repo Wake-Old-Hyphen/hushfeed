@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed moves to TikTok 47.5.3, and 47.4.3 is dropped. Patch the 47.5.3 APK with the same signing key and your login and settings stay. PineDrama stays on 47.4.3.
+
+* **TikTok:** Remove unused language packs now works on PineDrama 47.4.3 too.
+
+* **TikTok:** Search loaded activity shows its search bar on the Inbox's Activity page again.
+
+* **TikTok:** A new Double tap by corner switch gives each quarter of the video its own double tap action. The idea and first version came from @OmerKurdi79 (#232).
+
+* **TikTok:** Settings search remembers your last ten searches. Tap one to run it again, or remove it with the bin (#232).
+
+* **TikTok:** A new Keep Clear display across videos switch is on by default. Turn it off and a Clear display you turn on lasts for that video only (#232).
+
+* **TikTok:** Patching is faster. A full desktop run went from 89 to 60 seconds, and the APK it makes is the same.
+
+* **TikTok:** Sort loaded videos on profile grids orders the videos a profile or Liked grid has loaded by date, length, views or likes (#180).
+
+* **TikTok:** Fit the video to the screen shows photo slideshows whole on squarer screens too (#188).
+
+* **TikTok:** A new Keep captions available switch brings back TikTok's Captions switch where TikTok hides it. Restart TikTok after turning it on (#217).
+
+* **TikTok:** Match locale and timezone to country now gives TikTok that country's time zone from the start, daylight saving included (#184, #198).
+
+* **TikTok:** A new Seek bar on sound previews switch adds a bar you can tap or drag while a sound's preview plays (#185).
+
+* **TikTok:** Keep faded controls in Clear display keeps the like, comment, save and share buttons on screen again (#209).
+
+* **TikTok:** The diagnostic report no longer calls the video controls broken on accounts without the Following stories button (#209).
+
+* **TikTok:** With Log diagnostics on, each LIVE comment line names its room with a short code instead of the room id (#110).
+
+* **TikTok:** Hushfeed now needs Morphe Manager 2.0.0 or newer, or morphe-desktop 1.19.0 on a computer. Patching takes about half as long.
+
+* **TikTok:** A new Hide Balance in the profile menu switch takes Balance out of the menu your profile's top right button opens (#194).
+
+* **TikTok:** A new Keep photos as TikTok sent them switch saves photos as the HEIF or WebP file TikTok sent instead of a JPEG (#229).
+
+* **TikTok:** A new Glass lens on the current tab switch puts a small piece of glass behind the tab you're on (#231, #124).
+
+* **TikTok:** A new Hide the TikTok Minis icons in the profile menu switch makes that menu shorter (#230).
+
+* **TikTok:** A new Turn off the swipe to the side menu switch stops a right swipe on For You from opening TikTok's side menu (#213).
+
+* **TikTok:** A new Don't auto translate videos switch keeps video descriptions and captions in the language they were made in. Restart TikTok after turning it on (#194).
+
+* **TikTok:** Accent color now colors the unread count on the Inbox tab and the unread dots too (#192).
+
+* **TikTok:** A new Open the comments at full height switch opens the comment sheet all the way up (#191).
+
+* **TikTok:** A new Keep the screen's brightness in the camera switch stops TikTok's camera from turning your screen brighter (#200).
+
+* **TikTok:** A new Long-press Profile for Watch history switch opens Watch history when you hold the Profile tab (#199).
+
+* **TikTok:** In Simplified Chinese, Profile in Hushfeed's settings now reads 个人主页 instead of "company profile".
+
+* **TikTok:** A new LIVE recording quality choice records LIVEs at the room's quality, the highest or the lowest (#203).
+
+* **TikTok:** Turning on See-through bottom bar while TikTok is open no longer brings back the black strip under videos after the first swipe (#145).
+
+* **TikTok:** A new Hide the AI Cast button switch takes AI Cast off the camera's side toolbar.
+
+* **TikTok:** A new Latest first on Following switch plays each batch of Following posts newest first. Restart TikTok after turning it on (#226).
+
+* **TikTok:** On a Galaxy with Use system font on, your font now shows on Watch history, Activity center and TikTok's other web pages too (#7).
+
+* **TikTok:** With See-through bottom bar on by itself, portrait videos now reach the bottom of the screen behind the tabs (#145, #218).
+
+* **TikTok:** A new Where the time goes choice can put the time above the progress bar in the feed (#173).
+
+* **TikTok:** Accent color now colors the "You may like" words on the search page too (#163).
+
+* **TikTok:** Downloads lists the saves under way and the last five that finished, and Saves at once lets up to 3 run together (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama moves to 47.4.3 and 47.1.4 is dropped. The same 90 patches apply to it (#156).

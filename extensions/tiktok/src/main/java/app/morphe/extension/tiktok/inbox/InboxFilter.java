@@ -43,42 +43,43 @@ import java.util.WeakHashMap;
  * content, which keeps recycled views correct: a hidden row that gets reused for
  * something else is shown again on the next pass.
  *
- * Resource ids are TikTok 47.4.3's, the declared target. The list, rows and header were read off
- * the S22's live Inbox on 2026-10-20. No older build's name is kept as a fallback: TikTok hands
- * the same short names out again on every build, and an older build's name is some other view
- * on this one (47.1.4's list was l91, and 47.4.3's l92 is the header).
+ * Resource ids are TikTok 47.5.3's, the declared target. 47.4.3's list, rows and header were read
+ * off the S22's live Inbox on 2026-10-20, and 47.5.3's names are the same views found again in its
+ * dex by the classes and layouts that load them. No older build's name is kept as a fallback:
+ * TikTok hands the same short names out again on every build, and an older build's name is some
+ * other view on this one (47.1.4's list was l91, and 47.4.3's l92 was the header).
  * <pre>
- *   oni        bottom navigation, the Inbox tab (looked up by FeedVisibility)
- *   l7h        the Inbox RecyclerView
- *   uyv        a system notice row, with its title in brh
- *   w24        the root of a chat row: a single chat, a group chat or the message requests row
+ *   op2        bottom navigation, the Inbox tab (looked up by FeedVisibility)
+ *   l89        the Inbox RecyclerView
+ *   v0g        a system notice row, with its title in br_
+ *   w3x        the root of a chat row: a single chat, a group chat or the message requests row
  *   tv_request_unread_count  the request count, which only the message requests row has
- *   omm        the root of a "Say hi to" row, an account suggested with Follow and a wave
+ *   oo6        the root of a "Say hi to" row, an account suggested with Follow and a wave
  *   user_name  the title of a chat row or a "Say hi to" row
- *   wrv        a title inside the horizontal stories tray
- *   q4f        the suggested accounts section header, holding u2n
- *   u2n        the suggested accounts section title
- *   fy6        remove an account from suggested accounts
- *   fhd        header, add people
- *   kp7        header, search
- *   l7j        header, activity status
+ *   wtk        a title inside the horizontal stories tray
+ *   q5n        the suggested accounts section header, holding u4_
+ *   u4_        the suggested accounts section title
+ *   fyu        remove an account from suggested accounts
+ *   fh0        header, add people
+ *   kpy        header, search
+ *   l8a        header, activity status
  * </pre>
  */
 public final class InboxFilter {
-    private static final String[] LIST_IDS = {"47.4.3:l7h"};
-    private static final String[] SYSTEM_ROW_IDS = {"47.4.3:uyv"};
-    private static final String[] CHAT_ROW_IDS = {"47.4.3:w24"};
+    private static final String[] LIST_IDS = {"47.5.3:l89"};
+    private static final String[] SYSTEM_ROW_IDS = {"47.5.3:v0g"};
+    private static final String[] CHAT_ROW_IDS = {"47.5.3:w3x"};
     private static final String[] MESSAGE_REQUESTS_IDS = {"tv_request_unread_count"};
-    private static final String[] SAY_HI_ROW_IDS = {"47.4.3:omm"};
-    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.4.3:brh"};
+    private static final String[] SAY_HI_ROW_IDS = {"47.5.3:oo6"};
+    private static final String[] SYSTEM_ROW_TITLE_IDS = {"47.5.3:br_"};
     private static final String[] USER_ROW_TITLE_IDS = {"user_name"};
-    private static final String[] STORIES_TITLE_IDS = {"47.4.3:wrv"};
-    private static final String[] SUGGESTED_HEADER_IDS = {"47.4.3:q4f"};
-    private static final String[] SUGGESTED_TITLE_IDS = {"47.4.3:u2n"};
-    private static final String[] SUGGESTED_REMOVE_IDS = {"47.4.3:fy6"};
-    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.4.3:fhd"};
-    private static final String[] HEADER_SEARCH_IDS = {"47.4.3:kp7"};
-    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.4.3:l7j"};
+    private static final String[] STORIES_TITLE_IDS = {"47.5.3:wtk"};
+    private static final String[] SUGGESTED_HEADER_IDS = {"47.5.3:q5n"};
+    private static final String[] SUGGESTED_TITLE_IDS = {"47.5.3:u4_"};
+    private static final String[] SUGGESTED_REMOVE_IDS = {"47.5.3:fyu"};
+    private static final String[] HEADER_ADD_PEOPLE_IDS = {"47.5.3:fh0"};
+    private static final String[] HEADER_SEARCH_IDS = {"47.5.3:kpy"};
+    private static final String[] HEADER_ACTIVITY_STATUS_IDS = {"47.5.3:l8a"};
 
     /** One dismissal at a time, so bulk clearing does not hammer TikTok's API. */
     private static final long DISMISS_INTERVAL_MS = 300L;

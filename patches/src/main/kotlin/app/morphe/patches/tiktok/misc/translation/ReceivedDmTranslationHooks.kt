@@ -29,13 +29,13 @@ private const val RECEIVED = "Translate comments (received message preview)"
 private const val OBJECT = "Ljava/lang/Object;"
 private const val STRING = "Ljava/lang/String;"
 private const val LIST = "Ljava/util/List;"
-private const val MESSAGE = "LX/0BUG;"
-private const val MODEL = "LX/0dfc;"
+private const val MESSAGE = "LX/0BLT;"
+private const val MODEL = "LX/14WN;"
 private const val SESSION = "Lcom/ss/android/ugc/aweme/im/chatroom/api/model/SessionInfo;"
 private const val FUNCTION = "Lkotlin/jvm/functions/Function1;"
-private val menuParameters = listOf(MESSAGE, "LX/0deu;", "Landroid/content/Context;", "Landroidx/fragment/app/FragmentManager;",
+private val menuParameters = listOf(MESSAGE, "LX/14Wa;", "Landroid/content/Context;", "Landroidx/fragment/app/FragmentManager;",
     "Lcom/ss/android/ugc/aweme/im/sdk/chat/feature/IMMessageListTranslationViewModel;",
-    "Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;", "LX/0dKt;", "Ljava/lang/CharSequence;")
+    "Lcom/ss/android/ugc/aweme/im/messagelist/api/select/IMSelectTextAbility;", "LX/14WH;", "Ljava/lang/CharSequence;")
 
 internal data class ReceivedMenuResult(val call: Int, val result: Int, val returned: Int, val register: Int)
 internal data class ReceivedPreviewTargets(val bind: Method, val unbind: Method, val menu: Method,
@@ -55,7 +55,7 @@ internal fun Method.receivedMenuResult(): ReceivedMenuResult {
     if (code.registerCount !in 3..16) throw PatchException("$RECEIVED: received menu registers changed")
     val instructions = code.instructions.toList()
     val calls = instructions.withIndex().filter { (_, instruction) ->
-        instruction.getReference<MethodReference>()?.let { reference -> reference.definingClass == "LX/0dd4;" &&
+        instruction.getReference<MethodReference>()?.let { reference -> reference.definingClass == "LX/14WE;" &&
             reference.name == "LIZ" && reference.returnType == LIST &&
             reference.parameterTypes.map(CharSequence::toString) == menuParameters } == true
     }
@@ -115,52 +115,52 @@ internal fun findReceivedPreviewTargets(classOf: (String) -> ClassDef?): Receive
         if (owner(type).fields.count { it.name == name && it.type == fieldType && AccessFlags.STATIC.isSet(it.accessFlags) == static } != 1)
             throw PatchException("$RECEIVED: changed $type->$name field")
     }
-    if (owner(RECEIVED_ROW).superclass != RECEIVED_ASSEM || MODEL !in owner("LX/0dfZ;").interfaces)
+    if (owner(RECEIVED_ROW).superclass != RECEIVED_ASSEM || MODEL !in owner("LX/14WK;").interfaces)
         throw PatchException("$RECEIVED: changed received-row subtype")
     field(RECEIVED_MENU, "LLLILZ", RECEIVED_CELL)
     val menu = abi(RECEIVED_MENU, "kq", LIST, listOf(MESSAGE))
     val result = menu.receivedMenuResult()
-    if (!menu.calls("LX/03Sz;", "getChildren", LIST) ||
-        !menu.calls("Lcom/bytedance/ies/powerlist/PowerCell;", "getItem", "LX/05u8;") ||
-        menu.implementation!!.instructions.none { it.opcode == Opcode.CHECK_CAST && it.getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == "LX/0dfZ;" })
+    if (!menu.calls("LX/03QV;", "getChildren", LIST) ||
+        !menu.calls("Lcom/bytedance/ies/powerlist/PowerCell;", "getItem", "LX/05w2;") ||
+        menu.implementation!!.instructions.none { it.opcode == Opcode.CHECK_CAST && it.getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == "LX/14WK;" })
         throw PatchException("$RECEIVED: changed current received-cell ownership")
-    val bind = abi(RECEIVED_ASSEM, "Tp", "V", listOf(MODEL, "Z"))
+    val bind = abi(RECEIVED_ASSEM, "Sp", "V", listOf(MODEL, "Z"))
     bind.receivedBindReturns()
     val unbind = abi(RECEIVED_ASSEM, "cq", "V")
     if (!abi(RECEIVED_ASSEM, "unBind", "V").calls(RECEIVED_ASSEM, "cq", "V"))
         throw PatchException("$RECEIVED: changed native row retirement")
-    abi("LX/03Sz;", "getChildren", LIST)
-    abi("Lcom/bytedance/ies/powerlist/PowerCell;", "getItem", "LX/05u8;")
-    abi("LX/08oa;", "LIZ", OBJECT, listOf("Lcom/bytedance/assem/arch/reused/ReusedAssem;"), true)
-    abi("LX/0cxv;", "LIZ", MESSAGE, listOf("LX/0dSc;"), true)
-    abi(MODEL, "LLIIJLIL", STRING)
-    abi(RECEIVED_ASSEM, "mq", "LX/0dfB;")
-    field("LX/0dfB;", "LL", "Landroid/view/View;")
-    field(RECEIVED_ASSEM, "LLJJL", "LX/04QJ;")
-    abi("LX/04QJ;", "getValue", OBJECT)
-    field("LX/0YZ7;", "LL", SESSION)
+    abi("LX/03QV;", "getChildren", LIST)
+    abi("Lcom/bytedance/ies/powerlist/PowerCell;", "getItem", "LX/05w2;")
+    abi("LX/08jl;", "LIZ", OBJECT, listOf("Lcom/bytedance/assem/arch/reused/ReusedAssem;"), true)
+    abi("LX/14BU;", "LIZ", MESSAGE, listOf("LX/14OB;"), true)
+    abi(MODEL, "LLIILII", STRING)
+    abi(RECEIVED_ASSEM, "lq", "LX/14ZV;")
+    field("LX/14ZV;", "LL", "Landroid/view/View;")
+    field(RECEIVED_ASSEM, "LLJJL", "LX/04XN;")
+    abi("LX/04XN;", "getValue", OBJECT)
+    field("LX/14aD;", "LL", SESSION)
     listOf("isSingleChat", "isPreviewMode", "isReportPage").forEach { abi(SESSION, it, "Z") }
     abi(SESSION, "getConversationId", STRING)
-    if (owner("LX/0dli;").superclass != SESSION) throw PatchException("$RECEIVED: changed single-peer session")
-    abi("LX/0dli;", "getSingleChatFromUserId", STRING)
+    if (owner("LX/14N8;").superclass != SESSION) throw PatchException("$RECEIVED: changed single-peer session")
+    abi("LX/14N8;", "getSingleChatFromUserId", STRING)
     listOf("getUuid", "getConversationId", "getContent").forEach { abi(MESSAGE, it, STRING) }
     abi(MESSAGE, "getSender", "J")
     abi(MESSAGE, "getMsgType", "I")
-    abi("LX/0CVs;", "LJI", "Z", listOf(MESSAGE), true)
-    abi("LX/0CWU;", "LJIIIZ", "Z", listOf(MESSAGE, "LX/0dRY;"), true)
-    field("LX/0dRY;", "TRANSLATE", "LX/0dRY;", true)
-    field("LX/0CHK;", "LIZIZ", "LX/0CHK;", true)
-    abi("LX/0CHK;", "LJIIZILJ", "Z")
-    abi("LX/18pP;", "<init>", "V", listOf(STRING, "Ljava/lang/Enum;", "LX/18h3;", "LX/18h1;", "LX/18kj;", "LX/19Hs;", "Z", FUNCTION))
-    field("LX/18pP;", "LIZ", STRING)
-    field("LX/18pP;", "LJII", FUNCTION)
-    abi("LX/18h2;", "<init>", "V", listOf("I"))
-    abi("LX/18gz;", "<init>", "V", listOf(STRING))
-    abi("LX/19Hs;", "<init>", "V")
-    if ("LX/18h3;" !in owner("LX/18h2;").interfaces || "LX/18h1;" !in owner("LX/18gz;").interfaces)
+    abi("LX/0CGj;", "LJI", "Z", listOf(MESSAGE), true)
+    abi("LX/0CGx;", "LJIIIZ", "Z", listOf(MESSAGE, "LX/14MX;"), true)
+    field("LX/14MX;", "TRANSLATE", "LX/14MX;", true)
+    field("LX/0Byb;", "LIZIZ", "LX/0Byb;", true)
+    abi("LX/0Byb;", "LJIILLIIL", "Z")
+    abi("LX/15PA;", "<init>", "V", listOf(STRING, "Ljava/lang/Enum;", "LX/15PO;", "LX/15PP;", "LX/15P9;", "LX/15PN;", "Z", FUNCTION))
+    field("LX/15PA;", "LIZ", STRING)
+    field("LX/15PA;", "LJII", FUNCTION)
+    abi("LX/15PH;", "<init>", "V", listOf("I"))
+    abi("LX/15PF;", "<init>", "V", listOf(STRING))
+    abi("LX/15PN;", "<init>", "V")
+    if ("LX/15PO;" !in owner("LX/15PH;").interfaces || "LX/15PP;" !in owner("LX/15PF;").interfaces)
         throw PatchException("$RECEIVED: changed menu icon/text wrappers")
-    field("LX/18kj;", "PRIMARY", "LX/18kj;", true)
-    field("LX/0dJL;", "TRANSLATE", "LX/0dJL;", true)
+    field("LX/15P9;", "PRIMARY", "LX/15P9;", true)
+    field("LX/14Lw;", "TRANSLATE", "LX/14Lw;", true)
     field("Lkotlin/Unit;", "LIZ", "Lkotlin/Unit;", true)
     abi(FUNCTION, "invoke", OBJECT, listOf(OBJECT))
     return ReceivedPreviewTargets(bind, unbind, menu, result)

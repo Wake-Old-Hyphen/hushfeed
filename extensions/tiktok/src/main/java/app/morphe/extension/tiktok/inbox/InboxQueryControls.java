@@ -131,7 +131,7 @@ final class InboxQueryControls implements ViewTreeObserver.OnGlobalLayoutListene
 
     private FrameLayout resolveHost(View list) {
         Object fragment = owner.fragment.get();
-        Object root = Reflect.invoke(fragment, "getView"), spring = Reflect.invoke(fragment, "bY");
+        Object root = Reflect.invoke(fragment, "getView"), spring = Reflect.invoke(fragment, InboxQueryOwners.FRAGMENT_SPRING);
         // The native SpringLayout is itself a FrameLayout but permits only its header and
         // nested list. Its immediate framework FrameLayout parent is the verified overlay host.
         if (!(root instanceof View) || !(spring instanceof View) || list.getParent() != spring) return null;

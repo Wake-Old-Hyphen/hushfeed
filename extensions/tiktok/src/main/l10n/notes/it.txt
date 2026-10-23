@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed passa a TikTok 47.5.3 e la 47.4.3 viene tolta. Applica le patch all'APK 47.5.3 con la stessa chiave di firma e accesso e impostazioni restano. PineDrama resta sulla 47.4.3.
+
+* **TikTok:** Remove unused language packs ora funziona anche su PineDrama 47.4.3.
+
+* **TikTok:** Cerca nelle attività caricate mostra di nuovo la barra di ricerca nella pagina Attività della Posta in arrivo.
+
+* **TikTok:** Il nuovo interruttore Doppio tocco per angolo dà a ogni quarto del video la sua azione di doppio tocco. L'idea e la prima versione vengono da @OmerKurdi79 (#232).
+
+* **TikTok:** La ricerca nelle impostazioni ricorda le ultime dieci ricerche. Tocca una per rifarla, oppure toglila con il cestino (#232).
+
+* **TikTok:** Il nuovo interruttore Mantieni Vista pulita tra i video è attivo di default. Se lo spegni, una Vista pulita che accendi vale solo per quel video (#232).
+
+* **TikTok:** L'applicazione delle patch è più veloce. Un'esecuzione completa sul computer è passata da 89 a 60 secondi, e l'APK prodotto è lo stesso.
+
+* **TikTok:** Ordina i video caricati nelle griglie del profilo ordina i video caricati da una griglia del profilo o dei Mi piace per data, durata, visualizzazioni o mi piace (#180).
+
+* **TikTok:** Adatta il video allo schermo mostra intere le presentazioni di foto anche sugli schermi più quadrati (#188).
+
+* **TikTok:** Il nuovo interruttore Mantieni disponibili i sottotitoli riporta l'interruttore Sottotitoli di TikTok dove TikTok lo nasconde. Riavvia TikTok dopo averlo acceso (#217).
+
+* **TikTok:** Adatta lingua e fuso orario al paese ora dà a TikTok il fuso orario di quel paese fin dall'inizio, ora legale compresa (#184, #198).
+
+* **TikTok:** Il nuovo interruttore Barra di riproduzione nelle anteprime dei suoni aggiunge una barra che puoi toccare o trascinare mentre suona l'anteprima di un suono (#185).
+
+* **TikTok:** Mantieni i controlli attenuati nella vista pulita tiene di nuovo sullo schermo i pulsanti mi piace, commento, salva e condividi (#209).
+
+* **TikTok:** Il rapporto diagnostico non dice più che i controlli del video sono rotti sugli account senza il pulsante delle storie di Seguiti (#209).
+
+* **TikTok:** Con Registra la diagnostica attivo, ogni riga di commento LIVE indica la sua stanza con un codice breve invece dell'id della stanza (#110).
+
+* **TikTok:** Hushfeed ora richiede Morphe Manager 2.0.0 o successivo, oppure morphe-desktop 1.19.0 sul computer. Applicare le patch richiede circa la metà del tempo.
+
+* **TikTok:** Il nuovo interruttore Nascondi Saldo nel menu del profilo toglie Saldo dal menu che si apre con il pulsante in alto a destra del profilo (#194).
+
+* **TikTok:** Il nuovo interruttore Mantieni le foto come le invia TikTok salva le foto come il file HEIF o WebP inviato da TikTok invece di un JPEG (#229).
+
+* **TikTok:** Il nuovo interruttore Lente di vetro sulla scheda attuale mette un piccolo pezzo di vetro dietro la scheda in cui ti trovi (#231, #124).
+
+* **TikTok:** Il nuovo interruttore Nascondi le icone di TikTok Minis nel menu del profilo accorcia quel menu (#230).
+
+* **TikTok:** Il nuovo interruttore Disattiva lo scorrimento al menu laterale impedisce che uno scorrimento a destra su Per te apra il menu laterale di TikTok (#213).
+
+* **TikTok:** Il nuovo interruttore Non tradurre automaticamente i video lascia descrizioni e sottotitoli dei video nella lingua in cui sono stati fatti. Riavvia TikTok dopo averlo acceso (#194).
+
+* **TikTok:** Accent color ora colora anche il numero di non letti sulla scheda Posta in arrivo e i puntini dei non letti (#192).
+
+* **TikTok:** Il nuovo interruttore Apri i commenti a tutta altezza apre il foglio dei commenti fino in cima (#191).
+
+* **TikTok:** Il nuovo interruttore Mantieni la luminosità dello schermo nella fotocamera impedisce alla fotocamera di TikTok di rendere lo schermo più luminoso (#200).
+
+* **TikTok:** Il nuovo interruttore Tieni premuto su Profilo per la cronologia visualizzazioni apre la cronologia visualizzazioni quando tieni premuta la scheda Profilo (#199).
+
+* **TikTok:** In cinese semplificato, Profilo nelle impostazioni di Hushfeed ora si legge 个人主页 invece di "profilo aziendale".
+
+* **TikTok:** La nuova scelta Qualità di registrazione dei LIVE registra i LIVE alla qualità della stanza, la più alta o la più bassa (#203).
+
+* **TikTok:** Accendere Barra inferiore trasparente mentre TikTok è aperto non riporta più la striscia nera sotto i video dopo il primo scorrimento (#145).
+
+* **TikTok:** Il nuovo interruttore Nascondi il pulsante AI Cast toglie AI Cast dalla barra degli strumenti laterale della fotocamera.
+
+* **TikTok:** Il nuovo interruttore Prima i più recenti in Seguiti riproduce ogni gruppo di post di Seguiti dal più recente. Riavvia TikTok dopo averlo acceso (#226).
+
+* **TikTok:** Su un Galaxy con Usa il carattere di sistema attivo, il tuo carattere ora si vede anche nella cronologia visualizzazioni, nel Centro attività e nelle altre pagine web di TikTok (#7).
+
+* **TikTok:** Con Barra inferiore trasparente attiva da sola, i video verticali ora arrivano in fondo allo schermo dietro le schede (#145, #218).
+
+* **TikTok:** La nuova scelta Dove va il tempo può mettere il tempo sopra la barra di avanzamento nel feed (#173).
+
+* **TikTok:** Accent color ora colora anche le parole "Potrebbe piacerti" nella pagina di ricerca (#163).
+
+* **TikTok:** Download elenca i salvataggi in corso e gli ultimi cinque terminati, e Salvataggi contemporanei ne lascia andare fino a 3 insieme (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama passa alla 47.4.3 e la 47.1.4 viene tolta. Valgono le stesse 90 patch (#156).

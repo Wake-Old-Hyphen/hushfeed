@@ -21,12 +21,12 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * The native readers behind the scrolling comments and several-photos presets on TikTok 47.4.3
+ * The native readers behind the scrolling comments and several-photos presets on TikTok 47.5.3
  * (#98): which key each reads, through which AB read, and which values turn the feature on.
  */
 class FeatureGateRegionPresetFixturesTest {
     private val app by lazy {
-        val container = Fixtures.dexContainer(Fixtures.apkOf("47.4.3"), Opcodes.getDefault())
+        val container = Fixtures.dexContainer(Fixtures.apkOf("47.5.3"), Opcodes.getDefault())
         val owners = setOf(
             DANMAKU_READ, DANMAKU_HOLDER, DANMAKU_MASTER, LANDSCAPE_READ, DANMAKU_SERVICE, AWEME,
             PHOTOS_READ, PHOTOS_GATE, PUBLISH, KEYBOARD,
@@ -77,8 +77,8 @@ class FeatureGateRegionPresetFixturesTest {
         for (master in listOf(false, true)) for (value in -1..3) {
             assertEquals("master=$master value=$value", master && value == 1, run(read) { call, _ ->
                 when (call.toString()) {
-                    "LX/08lI;->LJIIIZ()Z" -> if (master) 1 else 0
-                    "LX/032O;->LJIIIZ()LX/032O;" -> Any()
+                    "LX/08XE;->LJIIIZ()Z" -> if (master) 1 else 0
+                    "LX/031i;->LJIIIZ()LX/031i;" -> Any()
                     AB_INT_READ -> value
                     "Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;" -> null
                     else -> error("Unexpected call: $call")
@@ -112,7 +112,7 @@ class FeatureGateRegionPresetFixturesTest {
                 }
             })
         }
-        for ((owner, name) in listOf(PUBLISH to "F33", KEYBOARD to "TI", KEYBOARD to "onViewCreated")) {
+        for ((owner, name) in listOf(PUBLISH to "r33", KEYBOARD to "II", KEYBOARD to "onViewCreated")) {
             assertTrue("$owner $name reads the gate", app.getValue(owner).methods.filter { it.name == name }
                 .any { candidate -> candidate.calls().any { it.toString() == "$PHOTOS_GATE->LIZ()Z" } })
         }
@@ -194,16 +194,16 @@ class FeatureGateRegionPresetFixturesTest {
     }
 
     private companion object {
-        const val AB_INT_READ = "LX/032O;->LJIIJJI(IILjava/lang/String;Z)I"
-        const val DANMAKU_READ = "LX/0IGg;"
-        const val DANMAKU_HOLDER = "LX/0IGf;"
-        const val DANMAKU_MASTER = "LX/0IGj;"
-        const val LANDSCAPE_READ = "Lkotlin/jvm/internal/AFwS170S0000000_30_I1;"
-        const val LANDSCAPE_METHOD = "invoke\$550"
+        const val AB_INT_READ = "LX/031i;->LJIIJJI(IILjava/lang/String;Z)I"
+        const val DANMAKU_READ = "LX/0G55;"
+        const val DANMAKU_HOLDER = "LX/0G54;"
+        const val DANMAKU_MASTER = "LX/0G58;"
+        const val LANDSCAPE_READ = "Lkotlin/jvm/internal/AFwS157S0000000_27_I1;"
+        const val LANDSCAPE_METHOD = "invoke\$519"
         const val DANMAKU_SERVICE = "Lcom/ss/android/ugc/aweme/service/DanmakuServiceImpl;"
         const val AWEME = "Lcom/ss/android/ugc/aweme/feed/model/Aweme;"
-        const val PHOTOS_READ = "LX/0HJj;"
-        const val PHOTOS_GATE = "LX/0HJi;"
+        const val PHOTOS_READ = "LX/0FWe;"
+        const val PHOTOS_GATE = "LX/0FWd;"
         const val PUBLISH = "Lcom/ss/android/ugc/aweme/commentv2/commentlist/viewmodel/CommentPublishViewModel;"
         const val KEYBOARD = "Lcom/ss/android/ugc/aweme/comment/keyboard/keyboardv2/refactor/PortraitInputKeyboard;"
     }

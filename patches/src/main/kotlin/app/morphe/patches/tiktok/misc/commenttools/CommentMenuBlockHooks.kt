@@ -69,14 +69,15 @@ internal object CommentMenuListFingerprint : Fingerprint(
 )
 
 /**
- * The coroutine that builds the comment menu's rows. It asks CommentLongPressRepository for them
- * and builds a Report row ("report") carrying the icon the block row matches. The whole literal
- * and a call filter, not the log's `loadLongPressItems` piece: the string index finds whole
+ * The method that builds the comment menu's rows, a Report row ("report") among them carrying the
+ * icon the block row matches. Through 47.4.3 a coroutine's `invokeSuspend` built them after asking
+ * CommentLongPressRepository; 47.5.3 moved the same body into a static List method on the
+ * repository itself, so neither the name nor the return type is pinned: the literal, a call into
+ * the repository (its own helpers count) and a Report row with one icon constant say which.
+ * The whole literal, not the log's `loadLongPressItems` piece: the string index finds whole
  * literals fast, and patcher 2.0 holds a `strings` entry to the whole literal.
  */
 internal object CommentMenuItemsFingerprint : Fingerprint(
-    name = "invokeSuspend",
-    returnType = "Ljava/lang/Object;",
     strings = listOf("report"),
     filters = listOf(methodCall(definingClass = "Lcom/ss/android/ugc/aweme/comment/longpresspanel/repo/CommentLongPressRepository;")),
     custom = { method, _ -> method.reportRowIcon() != null },

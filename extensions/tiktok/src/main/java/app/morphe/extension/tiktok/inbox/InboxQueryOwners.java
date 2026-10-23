@@ -20,6 +20,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /** Captures the notification cell's actual list, state and independently observed VM owners. */
 final class InboxQueryOwners {
     static final String FAMILY = "loaded Inbox query";
+    // TikTok 47.5.3 names. InboxQueryOwnerFixturesTest reads these lines and checks each on the fixture.
+    static final String FRAGMENT_LIST = "AX";
+    static final String FRAGMENT_SPRING = "zX";
+    static final String FRAGMENT_CONTAINER = "LLJJIJIL";
+    static final String ADAPTER_PRIMARY_STUB = "LLLLL";
+    static final String ADAPTER_DIFF = "LLLFZ";
+    static final String ADAPTER_PAGER = "LLJLIL";
+    static final String STUB_STATE = "LJIIZILJ";
+    static final String STUB_ADAPTER = "LLJJIII";
     private static final List<Owner> OWNERS = new CopyOnWriteArrayList<>();
     private static final List<Vm> VMS = new CopyOnWriteArrayList<>();
 
@@ -80,12 +89,12 @@ final class InboxQueryOwners {
             Object stub = Reflect.required(holder, "getStub", FAMILY);
             Object state = Reflect.required(list, "getState", FAMILY);
             Object adapter = Reflect.required(list, "getAdapter", FAMILY);
-            Object container = Reflect.requiredField(fragment, "LLJJJIL", FAMILY);
+            Object container = Reflect.requiredField(fragment, FRAGMENT_CONTAINER, FAMILY);
             if (!(root instanceof View) || !inside(list, (View) root)
-                    || Reflect.required(fragment, "cY", FAMILY) != list || state == null || adapter == null || stub == null
-                    || Reflect.required(stub, "LJIIZILJ", FAMILY) != state
+                    || Reflect.required(fragment, FRAGMENT_LIST, FAMILY) != list || state == null || adapter == null || stub == null
+                    || Reflect.required(stub, STUB_STATE, FAMILY) != state
                     || Reflect.required(holder, "getAdapterManager$powerlist_release", FAMILY) != adapter
-                    || Reflect.requiredField(stub, "LLJJIJIIJIL", FAMILY) != adapter) return false;
+                    || Reflect.requiredField(stub, STUB_ADAPTER, FAMILY) != adapter) return false;
 
             return register(list, state, adapter, fragment, stub, container);
         } catch (Exception failure) {
@@ -96,7 +105,7 @@ final class InboxQueryOwners {
 
     /** The exact fragment publication also owns empty pages, where no notification cell binds. */
     static void fragmentBound(Object fragment) {
-        Object found = Reflect.invoke(fragment, "cY");
+        Object found = Reflect.invoke(fragment, FRAGMENT_LIST);
         if (!(found instanceof View)) return;
         View list = (View) found;
         if (!captureFragment(fragment, list)) {
@@ -107,13 +116,13 @@ final class InboxQueryOwners {
 
     private static boolean captureFragment(Object fragment, View list) {
         if (Looper.myLooper() != Looper.getMainLooper() || !list.isAttachedToWindow()
-                || Reflect.invoke(fragment, "cY") != list) return false;
+                || Reflect.invoke(fragment, FRAGMENT_LIST) != list) return false;
         Object root = Reflect.invoke(fragment, "getView");
         Object state = Reflect.invoke(list, "getState"), adapter = Reflect.invoke(list, "getAdapter");
-        Object stub = Reflect.invoke(adapter, "LLLLLJIL"), container = Reflect.readField(fragment, "LLJJJIL");
+        Object stub = Reflect.invoke(adapter, ADAPTER_PRIMARY_STUB), container = Reflect.readField(fragment, FRAGMENT_CONTAINER);
         if (!(root instanceof View) || !inside(list, (View) root) || state == null || adapter == null
-                || stub == null || Reflect.invoke(stub, "LJIIZILJ") != state
-                || Reflect.readField(stub, "LLJJIJIIJIL") != adapter) return false;
+                || stub == null || Reflect.invoke(stub, STUB_STATE) != state
+                || Reflect.readField(stub, STUB_ADAPTER) != adapter) return false;
         return register(list, state, adapter, fragment, stub, container);
     }
 
@@ -169,12 +178,12 @@ final class InboxQueryOwners {
             return !closed && view != null && view.isAttachedToWindow()
                     && root instanceof View && inside(view, (View) root)
                     && currentState != null && currentAdapter != null && currentStub != null
-                    && Reflect.invoke(currentFragment, "cY") == view
+                    && Reflect.invoke(currentFragment, FRAGMENT_LIST) == view
                     && Reflect.invoke(view, "getState") == currentState
                     && Reflect.invoke(view, "getAdapter") == currentAdapter
-                    && Reflect.invoke(currentStub, "LJIIZILJ") == currentState
-                    && Reflect.readField(currentStub, "LLJJIJIIJIL") == currentAdapter
-                    && Reflect.readField(currentFragment, "LLJJJIL") == container.get();
+                    && Reflect.invoke(currentStub, STUB_STATE) == currentState
+                    && Reflect.readField(currentStub, STUB_ADAPTER) == currentAdapter
+                    && Reflect.readField(currentFragment, FRAGMENT_CONTAINER) == container.get();
         }
         @Override public boolean seamsReady() { return InboxQueryNative.ready(this); }
         @Override public boolean pagingIsolated() {
@@ -226,7 +235,7 @@ final class InboxQueryOwners {
     }
     static Owner forDiff(Object diff) {
         for (Owner owner : snapshot()) {
-            if (owner.current() && Reflect.readField(owner.adapter.get(), "LLLII") == diff) return owner;
+            if (owner.current() && Reflect.readField(owner.adapter.get(), ADAPTER_DIFF) == diff) return owner;
         }
         return null;
     }
@@ -235,7 +244,7 @@ final class InboxQueryOwners {
         for (Owner owner : snapshot()) {
             if (!owner.current()) continue;
             boolean matches = owner.container.get() == target
-                    || Reflect.readField(owner.adapter.get(), "LLJLL") == target;
+                    || Reflect.readField(owner.adapter.get(), ADAPTER_PAGER) == target;
             for (Vm observed : new ArrayList<>(VMS)) {
                 if ((observed.vm.get() == target || observed.widget.get() == target)
                         && widgetInside(observed.widget.get(), owner.container.get())) matches = true;
@@ -245,7 +254,7 @@ final class InboxQueryOwners {
         return result;
     }
     static boolean requestsIdle(Owner owner) {
-        if (InboxNativeRequests.busy(Reflect.readField(owner.adapter.get(), "LLJLL"))) return false;
+        if (InboxNativeRequests.busy(Reflect.readField(owner.adapter.get(), ADAPTER_PAGER))) return false;
         for (Vm observed : new ArrayList<>(VMS)) {
             if (widgetInside(observed.widget.get(), owner.container.get()) && InboxNativeRequests.busy(observed.vm.get())) return false;
         }

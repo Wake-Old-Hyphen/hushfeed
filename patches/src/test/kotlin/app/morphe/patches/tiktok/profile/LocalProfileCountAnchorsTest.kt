@@ -20,6 +20,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OffsetInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import org.junit.Assert.*
@@ -38,19 +39,19 @@ class LocalProfileCountAnchorsTest {
         private const val STRING = "Ljava/lang/String;"
     }
 
-    @Test fun `47 4 3 has one older count bind and four formatter results delivered to profile TextViews`() {
+    @Test fun `the declared build has one older count bind and four formatter results delivered to profile TextViews`() {
         Fixtures.forEachDeclared { apk ->
-            assertEquals("47.4.3", Fixtures.versionOf(apk))
             val found = find(apk)
-            assertEquals("gr", found.legacy.first.name)
             assertEquals("V", found.legacy.first.returnType)
             assertTrue(found.legacy.first.parameterTypes.isEmpty())
             assertEquals(mapOf(
-                ProfileCountMetric.FOLLOWERS to listOf("LJJLIL(Z)V", "LJLJJL(I)V"),
+                ProfileCountMetric.FOLLOWERS to listOf("(I)V", "(Z)V"),
                 ProfileCountMetric.FOLLOWING to listOf("LJJLIIIJJI()Z"),
                 ProfileCountMetric.LIKES to listOf("LJJLIIIJJI()Z"),
-            ), found.sites.mapValues { (_, sites) -> sites.map { (method, _) -> signature(method) }.sorted() })
-            assertEquals("LX/0OSF;->LIZ(I${NUMBER}${STRING})$TEXT", found.formatter.toString())
+            ), found.sites.mapValues { (_, sites) -> sites.map { (method, _) ->
+                // R8 renames the follower setters (47.4.3 LJJLIL and LJLJJL); the bind keeps its name.
+                if (method.name == "LJJLIIIJJI") signature(method) else signature(method).removePrefix(method.name) }.sorted() })
+            assertEquals("(I${NUMBER}${STRING})$TEXT", found.formatter.toString().substringAfter("->${found.formatter.name}"))
             val formatter = found.classes.getValue(found.formatter.definingClass).methods.single {
                 it.name == found.formatter.name && it.parameterTypes.map(CharSequence::toString) == listOf("I", NUMBER, STRING) && it.returnType == TEXT
             }
@@ -67,8 +68,8 @@ class LocalProfileCountAnchorsTest {
                 assertEquals(STRING, getName.returnType)
                 assertEquals(listOf(metric.component), getName.implementation!!.instructions.mapNotNull { it.getReference<StringReference>()?.string })
             }
-            assertEquals("uq", found.classes.getValue(BASE_UI_COMPONENT).commonInfoGetter()!!.name)
-            assertEquals("LJIJI", found.classes.getValue(PROFILE_PROTOCOL).commonInfoGetter()!!.name)
+            assertNotNull(found.classes.getValue(BASE_UI_COMPONENT).commonInfoGetter())
+            assertNotNull(found.classes.getValue(PROFILE_PROTOCOL).commonInfoGetter())
             for ((owner, name, type) in listOf(Triple(PROFILE_COMMON_INFO, "getUserProfileInfo", PROFILE_INFO), Triple(PROFILE_INFO, "getUid", STRING))) {
                 val method = found.classes.getValue(owner).methods.single { it.name == name && it.parameterTypes.isEmpty() }
                 assertEquals(type, method.returnType)
@@ -76,7 +77,7 @@ class LocalProfileCountAnchorsTest {
             }
             val identity = found.legacy.first.legacyCountIdentity()
             assertEquals("LLL", identity.attached.name)
-            assertEquals("LX/0ON5;", identity.attached.type)
+            assertEquals(identity.holder.definingClass, identity.attached.type)
             assertEquals("LLJJI", identity.holder.name)
             assertEquals("componentId", identity.key.name)
             assertEquals("LLJLLIL", identity.fallback.name)
@@ -90,10 +91,12 @@ class LocalProfileCountAnchorsTest {
                 it.name == found.formatter.name && it.parameterTypes.map(CharSequence::toString) == listOf("I", NUMBER, STRING) && it.returnType == TEXT
             }
             val code = method.implementation!!.instructions.toList()
-            assertTrue(code.none { it.opcode.name.startsWith("IPUT") || it.opcode.name.startsWith("SPUT") })
-            assertEquals(setOf("Ljava/lang/Number;", "LX/01Qa;", "LX/01OU;"),
-                code.mapNotNull { it.getReference<MethodReference>()?.definingClass }.toSet())
-            assertTrue(code.any { it.opcode == Opcode.NEW_INSTANCE })
+            assertTrue(code.none { it.getReference<FieldReference>() != null && !it.opcode.setsRegister() })
+            // R8 renames the options type and the formatting helper (47.4.3 LX/01Qa; and LX/01OU;).
+            val options = code.filter { it.opcode == Opcode.NEW_INSTANCE }.map { it.getReference<TypeReference>()!!.type }.distinct().single()
+            val owners = code.mapNotNull { it.getReference<MethodReference>()?.definingClass }.toSet()
+            assertEquals(3, owners.size)
+            assertTrue(NUMBER in owners && options in owners)
         }
     }
 
@@ -134,7 +137,7 @@ class LocalProfileCountAnchorsTest {
             assertEquals(original.implementation!!.registerCount, patched.implementation!!.registerCount)
             val call = after[site.index] as FiveRegisterInstruction
             assertEquals(3, call.registerCount)
-            assertEquals(15, call.registerC)
+            assertEquals(patched.implementation!!.registerCount - patched.numberOfParameterRegisters, call.registerC)
             assertEquals(site.view, call.registerD)
             assertEquals(site.text, call.registerE)
             assertEquals(listOf("Landroid/widget/TextView;", TEXT), after[site.index].getReference<MethodReference>()!!.parameterTypes.map(CharSequence::toString))
@@ -171,7 +174,7 @@ class LocalProfileCountAnchorsTest {
                 assertEquals(listOf(TEXT, TEXT, NUMBER, STRING, STRING), choose.parameterTypes.map(CharSequence::toString))
                 assertEquals(TEXT, choose.returnType)
                 assertEquals(if (legacy) 1 else 2, calls.count { it.toString() == found.formatter.toString() })
-                assertTrue(code.none { it.opcode.name.startsWith("IPUT") || it.opcode.name.startsWith("SPUT") })
+                assertTrue(code.none { it.getReference<FieldReference>() != null && !it.opcode.setsRegister() })
                 assertTrue(calls.none { it.name.startsWith("set") && it.name != "setText" })
                 assertTrue(calls.none { it.definingClass == RELATION_DATA || it.definingClass.endsWith("/User;") ||
                     it.definingClass.contains("retrofit") || it.definingClass.contains("Network") })
@@ -207,7 +210,8 @@ class LocalProfileCountAnchorsTest {
 
     private fun find(apk: File): Found = synchronized(cache) {
         cache.getOrPut(apk.absolutePath) {
-            val classes = Fixtures.dexContainer(apk, Opcodes.getDefault()).getEntry("classes12.dex")!!.dexFile.classes.associateBy { it.type }
+            val container = Fixtures.dexContainer(apk, Opcodes.getDefault())
+            val classes = container.dexEntryNames.flatMap { container.getEntry(it)!!.dexFile.classes }.associateBy { it.type }
             val legacy = classes.getValue(RELATION_COMPONENT).methods.flatMap { method -> method.profileCountTexts().map { method to it } }
             assertEquals("older count sites", 1, legacy.size)
             val sites = ProfileCountMetric.entries.associateWith { metric ->

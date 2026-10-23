@@ -9,6 +9,7 @@ import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.util.ControlFlow
 import app.morphe.util.RegisterLiveness
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.addInstructionsWithLabels
@@ -30,6 +31,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.WideLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
@@ -37,16 +39,21 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 internal const val LOCAL_APPEARANCE = "Lapp/morphe/extension/tiktok/profile/LocalProfileAppearance;"
 internal const val LEGACY_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/platform/business/header/business/info/business/userinfo/base/AccountNameInfoComponent;"
 internal const val NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/nickname/ProfileInfoNicknameProtocol;"
-internal const val NICKNAME_REPAINT = "LX/0Q4X;"
+internal const val NICKNAME_REPAINT = "LX/0SO8;"
 internal const val NAVBAR_NICKNAME_OWNER = "Lcom/ss/android/ugc/profile/business/ur/ProfileNavbarNickNameProtocol;"
-internal const val NAVBAR_NICKNAME_REPAINT = "LX/0Q4U;"
-internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0Q4V;"
+internal const val NAVBAR_NICKNAME_REPAINT = "LX/0SOW;"
+internal const val NAVBAR_ADD_NAME_REPAINT = "LX/0SOX;"
 internal const val NICKNAME_DATA = "Lcom/ss/android/ugc/profile/business/ur/platform/NickNameData;"
-internal const val ADD_NAME_VIEW = "LX/0XeG;"
-internal const val BADGE_ICON = "LX/040W;"
-internal const val BADGE_SPAN = "LX/0ERz;"
+internal const val ADD_NAME_VIEW = "LX/0cjt;"
+internal const val BADGE_ICON = "LX/03ka;"
+internal const val BADGE_SPAN = "LX/0ERE;"
+/** Kotlin's Ref.ObjectRef, which R8 renames (47.4.3 `LX/02xT;`). */
+internal const val OBJECT_REF = "LX/02wg;"
+/** The host's dp-to-pixel and pixel rounding helpers the native badge icon sizes itself with. */
+internal const val DIMENSION_DP = "LX/03kW;"
+internal const val PIXEL_ROUND = "LX/056C;"
 internal const val RESTRICTION_OWNER = "Lcom/ss/android/ugc/profile/business/pns/account/AccountAGSWarningProtocol;"
-internal const val NATIVE_BLUE_BADGE = 0x7f01026c
+internal const val NATIVE_BLUE_BADGE = 0x7f01026d
 internal const val APPEARANCE_SELECT = "hushfeedLocalNicknameBadge"
 internal const val APPEARANCE_RENDER = "hushfeedRenderNicknameBadge"
 internal const val APPEARANCE_LEGACY = "hushfeedLocalVerifiedNickname"
@@ -65,9 +72,9 @@ private const val SPANNABLE = "Landroid/text/SpannableStringBuilder;"
 private const val NATIVE_ICON = "Lcom/ss/android/ugc/profile/platform/base/data/Icon;"
 private const val CONTEXT = "Landroid/content/Context;"
 private const val TEXT_VIEW = "Lcom/bytedance/tux/input/TuxTextView;"
-private const val NAVBAR_CAPTURE_PARAMETERS = "$TEXT_VIEW" + "LX/02xT;" + NAVBAR_NICKNAME_OWNER + INTEGER + "I" + STRING
+private const val NAVBAR_CAPTURE_PARAMETERS = "$TEXT_VIEW" + OBJECT_REF + NAVBAR_NICKNAME_OWNER + INTEGER + "I" + STRING
 private const val APPEARANCE = "Local profile appearance"
-internal const val NOTICE_VISIBILITY = "LX/00ki;->LJLLILLLL(ILandroid/view/View;)V"
+internal const val NOTICE_VISIBILITY = "LX/00kd;->LJLLILLLL(ILandroid/view/View;)V"
 
 private fun MethodReference.descriptor() = "$definingClass->$name(${parameterTypes.joinToString("")})$returnType"
 private fun Instruction.calls(descriptor: String) = getReference<MethodReference>()?.descriptor() == descriptor
@@ -80,30 +87,71 @@ private fun Method.isInstance(name: String, result: String, parameters: List<Str
     this.name == name && returnType == result && parameterTypes.map(CharSequence::toString) == parameters &&
         !AccessFlags.STATIC.isSet(accessFlags) && implementation?.registerCount == registers
 
-internal data class LegacyAppearanceSite(val index: Int, val original: MethodReference)
+internal data class LegacyAppearanceSite(val index: Int, val original: MethodReference, val receiver: Int,
+    val value: Int, val expected: Int)
 internal data class NicknameAppearanceSite(val branch: Int, val target: Int, val render: Int, val capture: Int)
 internal data class NoticeAppearanceSite(val index: Int, val visibility: Int, val view: Int)
 internal data class NavbarAppearanceSite(val branch: Int, val target: Int, val render: Int,
     val capture: Int, val addNameCapture: Int, val cached: Int)
 
-/** The Boolean comparison controls only native nickname geometry and its native image span. */
+/** Whether some path leads from the instruction at [from] on to the one at [to]. */
+private fun ControlFlow.reaches(from: Int, to: Int): Boolean {
+    val seen = BooleanArray(instructions.size)
+    val pending = ArrayDeque(normal[from] + exceptional[from])
+    while (pending.isNotEmpty()) {
+        val at = pending.removeFirst()
+        if (at == to) return true
+        if (seen[at]) continue
+        seen[at] = true
+        pending += normal[at] + exceptional[at]
+    }
+    return false
+}
+
+/** Whether [register] still holds the copy the method's first instruction made whenever [site] runs. */
+private fun Method.keepsEntryCopy(register: Int, site: Int): Boolean {
+    val flow = ControlFlow.of(this)
+    return flow.instructions.indices.none { at ->
+        val instruction = flow.instructions[at]
+        val written = (instruction as? OneRegisterInstruction)?.registerA
+        at != 0 && instruction.opcode.setsRegister() && written != null &&
+            (written == register || (instruction.opcode.setsWideRegister() && written + 1 == register)) && flow.reaches(at, site)
+    }
+}
+
+/**
+ * The Boolean comparison controls only native nickname geometry and its native image span. R8 renames
+ * the bind (47.4.3 `Cr`, 47.5.3 `zr`) and moves its registers, so it's the owner's one ()V method that
+ * copies `this` first, uses the native blue badge and compares isVerified() with Boolean.TRUE.
+ */
 internal fun Method.legacyAppearanceSite(): LegacyAppearanceSite? {
-    if (definingClass != LEGACY_NICKNAME_OWNER || !isInstance("Cr", "V", emptyList(), 18)) return null
-    val code = implementation!!.instructions.toList()
-    val receiver = code.firstOrNull() as? TwoRegisterInstruction ?: return null
-    if (code[0].opcode != Opcode.MOVE_OBJECT_FROM16 || receiver.registerA != 2 || receiver.registerB != 17) return null
+    if (definingClass != LEGACY_NICKNAME_OWNER || returnType != "V" || parameterTypes.isNotEmpty() ||
+        AccessFlags.STATIC.isSet(accessFlags)) return null
+    val body = implementation ?: return null
+    val code = body.instructions.toList()
+    val entry = code.firstOrNull() as? TwoRegisterInstruction ?: return null
+    if (code[0].opcode != Opcode.MOVE_OBJECT_FROM16 || entry.registerB != body.registerCount - 1) return null
+    val receiver = entry.registerA
     if (code.none { (it as? WideLiteralInstruction)?.wideLiteral == NATIVE_BLUE_BADGE.toLong() }) return null
     return code.indices.mapNotNull { index ->
         if (index < 4 || index + 2 >= code.size || code[index].opcode != Opcode.INVOKE_STATIC ||
-            !code[index].calls("Lkotlin/jvm/internal/Intrinsics;->LJI($OBJECT$OBJECT)Z") ||
-            code[index].registers() != listOf(4, 0) ||
-            !code[index - 3].calls("Lcom/ss/android/ugc/profile/platform/base/data/UserAccountInfo;->isVerified()$BOOLEAN") ||
-            code[index - 2].opcode != Opcode.MOVE_RESULT_OBJECT || code[index - 2].namedRegisters() != listOf(4) ||
-            code[index - 1].opcode != Opcode.SGET_OBJECT ||
+            !code[index].calls("Lkotlin/jvm/internal/Intrinsics;->LJI($OBJECT$OBJECT)Z")) return@mapNotNull null
+        val arguments = code[index].registers()?.takeIf { it.size == 2 } ?: return@mapNotNull null
+        val (value, expected) = arguments
+        if (!code[index - 3].calls("Lcom/ss/android/ugc/profile/platform/base/data/UserAccountInfo;->isVerified()$BOOLEAN") ||
+            code[index - 2].opcode != Opcode.MOVE_RESULT_OBJECT || code[index - 2].namedRegisters() != listOf(value) ||
+            code[index - 1].opcode != Opcode.SGET_OBJECT || code[index - 1].namedRegisters() != listOf(expected) ||
             code[index - 1].getReference<FieldReference>()?.toString() != "$BOOLEAN->TRUE:$BOOLEAN" ||
-            code[index + 1].opcode != Opcode.MOVE_RESULT || code[index + 1].namedRegisters() != listOf(0) ||
-            code[index + 2].opcode != Opcode.IF_EQZ || code[index + 2].namedRegisters() != listOf(0)) return@mapNotNull null
-        LegacyAppearanceSite(index, code[index].getReference<MethodReference>()!!)
+            code[index + 1].opcode != Opcode.MOVE_RESULT) return@mapNotNull null
+        val result = (code[index + 1] as OneRegisterInstruction).registerA
+        // 47.5.3 reads another flag between the comparison and its branch.
+        val branch = (index + 2..minOf(index + 4, code.size - 1)).firstOrNull { at ->
+            code[at].opcode == Opcode.IF_EQZ && code[at].namedRegisters() == listOf(result)
+        } ?: return@mapNotNull null
+        if ((index + 2 until branch).any { at -> code[at] is OffsetInstruction ||
+                ((code[at] as? OneRegisterInstruction)?.registerA == result && code[at].opcode.setsRegister()) } ||
+            listOf(receiver, value, expected).any { it !in 0..15 } || !keepsEntryCopy(receiver, index)) return@mapNotNull null
+        LegacyAppearanceSite(index, code[index].getReference<MethodReference>()!!, receiver, value, expected)
     }.singleOrNull()
 }
 
@@ -142,7 +190,7 @@ internal fun Method.nicknameAppearanceSite(): NicknameAppearanceSite? {
     val nullValue = code.indices.singleOrNull { index -> code[index].opcode == Opcode.MOVE_OBJECT &&
         code[index].namedRegisters() == listOf(5, 6) && index + 1 < code.size && target(code, index + 1) == join
     } ?: return null
-    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0DxS;->LIZ:I" || nullValue <= capture) return null
+    if (boxed < 1 || code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0BSq;->LIZ:I" || nullValue <= capture) return null
     return NicknameAppearanceSite(branch, target(code, branch)!!, render, capture)
 }
 
@@ -200,7 +248,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     } ?: return null
     val branch = code.indices.singleOrNull { at -> at < render && code[at].opcode == Opcode.IF_EQZ &&
         code[at].namedRegisters() == listOf(10) && target(code, at)?.let { to -> to > render &&
-            code[to].calls("LX/03FD;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
+            code[to].calls("LX/03Hd;->LIZJ()Lcom/ss/android/ugc/aweme/ILoginService;") } == true
     } ?: return null
     if (6 in RegisterLiveness.of(this).liveInto(branch)) return null
     fun capture(owner: String) = code.indices.singleOrNull { at ->
@@ -219,7 +267,7 @@ internal fun Method.navbarAppearanceSite(): NavbarAppearanceSite? {
     val boxed = code.indices.singleOrNull { at -> code[at].calls("$INTEGER->valueOf(I)$INTEGER") &&
         code.getOrNull(at + 1)?.opcode == Opcode.MOVE_RESULT_OBJECT && code[at + 1].namedRegisters() == listOf(10)
     } ?: return null
-    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0DxS;->LIZ:I" ||
+    if (code[boxed - 1].getReference<FieldReference>()?.toString() != "LX/0BSq;->LIZ:I" ||
         code.indices.count { at -> code[at].opcode == Opcode.MOVE_OBJECT && code[at].namedRegisters() == listOf(10, 3) &&
             at + 1 < code.size && target(code, at + 1) == boxed + 2 } != 1 ||
         capture <= render || addCapture <= cached) return null
@@ -247,11 +295,11 @@ internal fun Method.navbarRepaintSite(): Int? {
 
 internal fun Method.nullableNavbarCapture(): Boolean {
     if (definingClass !in listOf(NAVBAR_NICKNAME_REPAINT, NAVBAR_ADD_NAME_REPAINT) ||
-        !isInstance("<init>", "V", listOf(TEXT_VIEW, "LX/02xT;", NAVBAR_NICKNAME_OWNER, INTEGER, "I", STRING), 7)) return false
+        !isInstance("<init>", "V", listOf(TEXT_VIEW, OBJECT_REF, NAVBAR_NICKNAME_OWNER, INTEGER, "I", STRING), 7)) return false
     val code = implementation!!.instructions.toList()
     if (code.map { it.opcode } != listOf(Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT, Opcode.IPUT_OBJECT,
             Opcode.IPUT_OBJECT, Opcode.IPUT, Opcode.IPUT_OBJECT, Opcode.INVOKE_DIRECT, Opcode.RETURN_VOID)) return false
-    val fields = listOf("LL:$TEXT_VIEW", "LLJJI:LX/02xT;", "LLJJIII:$NAVBAR_NICKNAME_OWNER",
+    val fields = listOf("LL:$TEXT_VIEW", "LLJJI:$OBJECT_REF", "LLJJIII:$NAVBAR_NICKNAME_OWNER",
         "LLJJIJI:$INTEGER", "LLJJIJIIJIL:I", "LLJJIJIL:$STRING")
     return fields.indices.all { at -> code[at].getReference<FieldReference>()?.toString() == "$definingClass->${fields[at]}" &&
         code[at].namedRegisters() == listOf(at + 1, 0) } && code[6].calls("$OBJECT-><init>()V") && code[6].registers() == listOf(0)
@@ -276,14 +324,17 @@ internal fun Method.navbarAddNameSite(): Int? {
     if (definingClass != NAVBAR_NICKNAME_OWNER || !isInstance("LLD", "V", listOf("I", STRING, STRING), 22)) return null
     val code = implementation!!.instructions.toList()
     if (code.none { it.opcode == Opcode.MOVE_OBJECT_FROM16 && it.namedRegisters() == listOf(2, 18) }) return null
+    // The navbar's action ability getter (47.4.3 `LJLJLLL`, 47.5.3 `LJLJL`).
     val at = code.indices.singleOrNull { index -> index >= 3 &&
-        code[index].calls("$NAVBAR_NICKNAME_OWNER->LJLJLLL()Lcom/ss/android/ugc/profile/platform/business/navbar/base/INavBarActionAbility;") &&
+        code[index].getReference<MethodReference>()?.let { getter -> getter.definingClass == NAVBAR_NICKNAME_OWNER &&
+            getter.parameterTypes.isEmpty() &&
+            getter.returnType == "Lcom/ss/android/ugc/profile/platform/business/navbar/base/INavBarActionAbility;" } == true &&
         code[index].registers() == listOf(2) && (index - 3 until index).all { before ->
             code[before].calls("$SPANNABLE->setSpan($OBJECT" + "III)V") && code[before].registers()?.first() == 4
         }
     } ?: return null
     val publication = code.indices.filter { code[it].getReference<FieldReference>()?.toString() in listOf(
-        "LX/0OQI;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLIL:$SPANNABLE", "LX/0OJU;->LIZJ:Ljava/lang/CharSequence;") }
+        "LX/0MSt;->LIZJ:$SPANNABLE", "$NAVBAR_NICKNAME_OWNER->LLLLIL:$SPANNABLE", "LX/0MMq;->LIZJ:Ljava/lang/CharSequence;") }
     if (publication.isEmpty() || publication.any { it <= at } ||
         code.indices.count { before -> before < at && code[before].opcode == Opcode.NEW_INSTANCE &&
             code[before].getReference<com.android.tools.smali.dexlib2.iface.reference.TypeReference>()?.type == SPANNABLE &&
@@ -291,13 +342,23 @@ internal fun Method.navbarAddNameSite(): Int? {
     return at
 }
 
-/** Constant provenance distinguishes VISIBLE attempts from the two native GONE calls. */
+/** The warning reads its text view by id (47.4.3 0x7f0a66a5, 47.5.3 0x7f0a66d0) and casts it straight to TextView. */
+private fun List<Instruction>.readsWarningText() = indices.any { at -> at + 2 < size &&
+    this[at].calls("$VIEW->findViewById(I)$VIEW") && this[at + 2].opcode == Opcode.CHECK_CAST &&
+    this[at + 2].getReference<TypeReference>()?.type == "Landroid/widget/TextView;"
+}
+
+/**
+ * Constant provenance distinguishes VISIBLE attempts from the two native GONE calls. The bind and the
+ * (View)V refresh (47.4.3 `LJJLIIIJLLLLLLLZ`, 47.5.3 `LJJLIIJ`) both read the warning text view.
+ */
 internal fun Method.noticeAppearanceSites(): List<NoticeAppearanceSite> {
     if (definingClass != RESTRICTION_OWNER || !(isInstance("LJJLIIIJJI", "Z", emptyList(), 7) ||
-            isInstance("LJJLIIIJLLLLLLLZ", "V", listOf(VIEW), 6))) return emptyList()
+            (returnType == "V" && parameterTypes.map(CharSequence::toString) == listOf(VIEW) &&
+                !AccessFlags.STATIC.isSet(accessFlags) && implementation?.registerCount == 6))) return emptyList()
     val code = implementation!!.instructions.toList()
     val calls = code.indices.filter { code[it].calls(NOTICE_VISIBILITY) && code[it].opcode == Opcode.INVOKE_STATIC }
-    if (calls.size != 2 || code.none { (it as? WideLiteralInstruction)?.wideLiteral == 0x7f0a66a5L }) return emptyList()
+    if (calls.size != 2 || !code.readsWarningText()) return emptyList()
     fun reads(value: Long) = code.indices.flatMap { index ->
         val constant = code[index] as? WideLiteralInstruction ?: return@flatMap emptyList<Int>()
         if (constant.wideLiteral != value || !code[index].opcode.name.startsWith("const")) return@flatMap emptyList<Int>()
@@ -340,13 +401,14 @@ private fun uidRead(getter: Method, register: Int, scratch: Int, fallback: Strin
     move-result-object v$register
 """
 
-internal fun legacyAppearanceBridge(getter: Method, original: MethodReference) = bridge(
+/** [identity] is the component's own "user_account_user_name" check (47.4.3 `zr`, 47.5.3 `yr`). */
+internal fun legacyAppearanceBridge(getter: Method, original: MethodReference, identity: String) = bridge(
     LEGACY_NICKNAME_OWNER, APPEARANCE_LEGACY, listOf(BOOLEAN, BOOLEAN), "Z", 5, instructions = """
         invoke-static { p1, p2 }, ${original.descriptor()}
         move-result v0
         if-nez v0, :native_badge
         if-eqz p1, :native_badge
-        invoke-virtual { p0 }, $LEGACY_NICKNAME_OWNER->zr()Z
+        invoke-virtual { p0 }, $LEGACY_NICKNAME_OWNER->$identity()Z
         move-result v1
         if-eqz v1, :native_badge
         ${uidRead(getter, 2, 4, "native_badge")}
@@ -444,9 +506,9 @@ internal fun nicknameAppendBridge(getter: Method, owner: String) = bridge(owner,
         const/16 v0, 0x10
         invoke-static { v0 }, $INTEGER->valueOf(I)$INTEGER
         move-result-object v0
-        invoke-static { v0 }, LX/03sU;->LIZIZ(Ljava/lang/Number;)F
+        invoke-static { v0 }, $DIMENSION_DP->LIZIZ(Ljava/lang/Number;)F
         move-result v0
-        invoke-static { v0 }, LX/05F3;->LIZJ(F)I
+        invoke-static { v0 }, $PIXEL_ROUND->LIZJ(F)I
         move-result v0
         iput v0, v2, $BADGE_ICON->LIZIZ:I
         iput v0, v2, $BADGE_ICON->LIZJ:I
@@ -512,7 +574,8 @@ internal fun noticeAppearanceBridge(getter: Method) = bridge(RESTRICTION_OWNER, 
 
 internal fun MutableMethod.replaceLegacyAppearance(site: LegacyAppearanceSite) {
     if (legacyAppearanceSite() != site) throw PatchException("$APPEARANCE: older nickname bind changed")
-    replaceInstruction(site.index, "invoke-direct { v2, v4, v0 }, $LEGACY_NICKNAME_OWNER->$APPEARANCE_LEGACY($BOOLEAN$BOOLEAN)Z")
+    replaceInstruction(site.index, "invoke-direct { v${site.receiver}, v${site.value}, v${site.expected} }, " +
+        "$LEGACY_NICKNAME_OWNER->$APPEARANCE_LEGACY($BOOLEAN$BOOLEAN)Z")
 }
 
 internal fun MutableMethod.replaceNicknameAppearance(site: NicknameAppearanceSite) {
@@ -618,6 +681,12 @@ private fun ClassDef.requireComponent(name: String) {
     }
 }
 
+/** The older nickname component's own "user_account_user_name" check (47.4.3 `zr`, 47.5.3 `yr`). */
+internal fun ClassDef.userNameIdentity(): Method? = methods.singleOrNull { method ->
+    method.returnType == "Z" && method.parameterTypes.isEmpty() && !AccessFlags.STATIC.isSet(method.accessFlags) &&
+        method.implementation?.instructions?.mapNotNull { it.getReference<StringReference>()?.string } == listOf("user_account_user_name")
+}
+
 internal fun BytecodePatchContext.hookLocalProfileAppearance() {
     val legacyOwner = classDefBy(LEGACY_NICKNAME_OWNER)
     val nicknameOwner = classDefBy(NICKNAME_OWNER)
@@ -668,10 +737,7 @@ internal fun BytecodePatchContext.hookLocalProfileAppearance() {
             throw PatchException("$APPEARANCE: missing explicit profile identity $name")
         }
     }
-    val legacyIdentity = legacyOwner.methods.singleOrNull { it.name == "zr" && it.parameterTypes.isEmpty() && it.returnType == "Z" }
-    if (legacyIdentity?.implementation?.instructions?.mapNotNull { it.getReference<StringReference>()?.string } != listOf("user_account_user_name")) {
-        throw PatchException("$APPEARANCE: missing native older nickname identity")
-    }
+    val legacyIdentity = legacyOwner.userNameIdentity() ?: throw PatchException("$APPEARANCE: missing native older nickname identity")
     if (nicknameOwner.methods.none { it.name == "LLII" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING) && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
         navbarOwner.methods.none { it.name == "LLFZ" && it.parameterTypes.map(CharSequence::toString) == listOf("I", "I", STRING, STRING) && it.returnType == "V" && AccessFlags.PUBLIC.isSet(it.accessFlags) } ||
         classDefBy(PROFILE_PROTOCOL).fields.none { it.name == "LLJJJJJIL" && it.type == VIEW && !AccessFlags.STATIC.isSet(it.accessFlags) }) {
@@ -684,8 +750,8 @@ internal fun BytecodePatchContext.hookLocalProfileAppearance() {
     }
     requireMethod(BADGE_ICON, "<init>", emptyList(), "V")
     requireMethod(BADGE_ICON, "LIZIZ", listOf("I", CONTEXT), BADGE_SPAN)
-    requireMethod("LX/03sU;", "LIZIZ", listOf("Ljava/lang/Number;"), "F", true)
-    requireMethod("LX/05F3;", "LIZJ", listOf("F"), "I", true)
+    requireMethod(DIMENSION_DP, "LIZIZ", listOf("Ljava/lang/Number;"), "F", true)
+    requireMethod(PIXEL_ROUND, "LIZJ", listOf("F"), "I", true)
     requireMethod(ADD_NAME_VIEW, "setAddNameText", listOf(STRING), "V")
     if (classDefBy(BADGE_SPAN).superclass != "Landroid/text/style/ReplacementSpan;" ||
         listOf("LIZ", "LIZIZ", "LIZJ").any { name -> classDefBy(BADGE_ICON).fields.none {
@@ -706,7 +772,7 @@ internal fun BytecodePatchContext.hookLocalProfileAppearance() {
         it.name == original.name && it.parameterTypes == original.parameterTypes && it.returnType == original.returnType
     }
     // Validate every original before edits. Writes below configure only a newly allocated native icon.
-    mutableClassDefBy(LEGACY_NICKNAME_OWNER).methods.add(legacyAppearanceBridge(legacyGetter, legacy.second.original))
+    mutableClassDefBy(LEGACY_NICKNAME_OWNER).methods.add(legacyAppearanceBridge(legacyGetter, legacy.second.original, legacyIdentity.name))
     for (owner in listOf(NICKNAME_OWNER, NAVBAR_NICKNAME_OWNER)) {
         mutableClassDefBy(owner).methods.add(nicknameAppearanceBridge(protocolGetter, owner))
         mutableClassDefBy(owner).methods.add(nicknameRenderBridge(owner))

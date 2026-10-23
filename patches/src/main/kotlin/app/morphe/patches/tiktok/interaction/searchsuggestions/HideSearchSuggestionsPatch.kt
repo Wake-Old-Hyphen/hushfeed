@@ -181,11 +181,25 @@ private object NativeGuessSearchFingerprint : Fingerprint(
     custom = { method, _ -> isNativeGuessSearchGate(method) },
 )
 
+private const val SEARCH_INTERMEDIATE_FRAGMENT =
+    "Lcom/ss/android/ugc/aweme/search/middle/DynamicSingleIntermediateFragmentNew;"
+
+/**
+ * The page's re-entry request: the one body holding both the `show_suggest_search_words` key and
+ * `searchTransferEnter` that works on the intermediate fragment. It is a method of the fragment
+ * itself on 47.4.3 and in PineDrama, and a lambda's `invoke` in a renamed class since 47.5.3 (the
+ * ecommerce suggest assem holds both strings too, but never touches the fragment).
+ */
+internal fun isSearchReentry(method: Method): Boolean =
+    method.definingClass == SEARCH_INTERMEDIATE_FRAGMENT ||
+        method.implementation?.instructions?.any {
+            it.getReference<FieldReference>()?.definingClass == SEARCH_INTERMEDIATE_FRAGMENT ||
+                it.getReference<MethodReference>()?.definingClass == SEARCH_INTERMEDIATE_FRAGMENT
+        } == true
+
 private object SearchReentryFingerprint : Fingerprint(
-    definingClass = "Lcom/ss/android/ugc/aweme/search/middle/DynamicSingleIntermediateFragmentNew;",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
-    returnType = "V",
     strings = listOf("show_suggest_search_words", "searchTransferEnter"),
+    custom = { method, _ -> isSearchReentry(method) },
 )
 
 private const val SUGGEST_WORD = "Lcom/ss/android/ugc/aweme/discover/model/suggest/Word;"

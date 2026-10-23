@@ -34,7 +34,7 @@ class LocalProfileAppearanceBridgeTypesTest {
     }
 
     @Test fun `every owned bridge passes the verifier's argument and return typing`() {
-        val bridges = listOf(legacyAppearanceBridge(legacyGetter, original), nicknameAddNameBridge(), nicknameCachedBridge(),
+        val bridges = listOf(legacyAppearanceBridge(legacyGetter, original, "yr"), nicknameAddNameBridge(), nicknameCachedBridge(),
             noticeAppearanceBridge(getter)) +
             listOf(NICKNAME_OWNER, NAVBAR_NICKNAME_OWNER).flatMap { owner ->
                 listOf(nicknameAppearanceBridge(getter, owner), nicknameRenderBridge(owner), nicknameBeginBridge(getter, owner),

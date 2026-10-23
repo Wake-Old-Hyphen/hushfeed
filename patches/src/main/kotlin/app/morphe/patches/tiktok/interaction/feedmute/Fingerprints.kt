@@ -59,8 +59,9 @@ internal object SimAudioFocusRequestFingerprint : Fingerprint(
 
 /**
  * A player session's give-up of that focus (47.0.3 `LX/03kc;->LIZ()V`, 47.1.3 `LX/03ho;`),
- * the one method with the manager's log tag that builds its checkStart callback. Its class
- * holds the session's request too.
+ * the one method with the manager's log tag that builds its checkStart callback. On 47.5.3 R8
+ * inlined the give-up into the player's release(), which this then takes; [readSessionAbandon]
+ * reads the session class and the block either way.
  */
 internal object SimAudioSessionAbandonFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),

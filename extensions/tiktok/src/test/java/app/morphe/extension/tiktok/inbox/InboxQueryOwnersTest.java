@@ -142,8 +142,8 @@ public class InboxQueryOwnersTest {
     @Test public void observedVmSharingAcrossWindowsRefusesIsolationWithoutInitializingDormantWidgets() {
         Surface main = surface(false), second = surface(true);
         Object sharedVm = new Object();
-        NativeWidget firstWidget = new NativeWidget(main.fragment.LLJJJIL);
-        NativeWidget secondWidget = new NativeWidget(second.fragment.LLJJJIL);
+        NativeWidget firstWidget = new NativeWidget(main.fragment.LLJJIJIL);
+        NativeWidget secondWidget = new NativeWidget(second.fragment.LLJJIJIL);
         firstWidget.cachedVm = sharedVm;
         secondWidget.cachedVm = sharedVm;
         // A native getter can return before either window binds its first notification.
@@ -161,7 +161,7 @@ public class InboxQueryOwnersTest {
         assertTrue(secondOwner.pagingIsolated());
         assertEquals(0, firstWidget.lazyReads);
         assertEquals(0, secondWidget.lazyReads);
-        secondWidget.parent = main.fragment.LLJJJIL;
+        secondWidget.parent = main.fragment.LLJJIJIL;
         assertFalse("a reparented widget must lose its former owner's mapping", secondOwner.pagingIsolated());
     }
 
@@ -222,15 +222,15 @@ public class InboxQueryOwnersTest {
     public static final class NativeFragment {
         final View root;
         final NativeList list;
-        public Object LLJJJIL = new Object();
+        public Object LLJJIJIL = new Object();
         NativeFragment(View root, NativeList list) { this.root = root; this.list = list; }
         public View getView() { return root; }
-        public NativeList cY() { return list; }
+        public NativeList AX() { return list; }
     }
     public static final class NativeStub {
         Object state;
-        public Object LLJJIJIIJIL;
-        NativeStub(NativeList list) { state = list.state; LLJJIJIIJIL = list.adapter; }
+        public Object LLJJIII;
+        NativeStub(NativeList list) { state = list.state; LLJJIII = list.adapter; }
         public Object LJIIZILJ() { return state; }
     }
     public static final class NativeHolder {

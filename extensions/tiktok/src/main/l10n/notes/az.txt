@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed TikTok 47.5.3-ə keçir, 47.4.3 isə çıxarılır. 47.5.3 APK-nı eyni imza açarı ilə yamalayın, giriş və ayarlarınız qalacaq. PineDrama 47.4.3-də qalır.
+
+* **TikTok:** Remove unused language packs indi PineDrama 47.4.3-də də işləyir.
+
+* **TikTok:** Yüklənmiş fəaliyyətdə axtarış yenidən Gələnlərin Fəaliyyət səhifəsində axtarış çubuğunu göstərir.
+
+* **TikTok:** Yeni Küncə görə iki dəfə toxunma açarı videonun hər dörddə birinə öz iki dəfə toxunma əməliyyatını verir. İdeya və ilk versiya @OmerKurdi79-dan gəlib (#232).
+
+* **TikTok:** Ayarlarda axtarış son on axtarışınızı xatırlayır. Birinə toxunub yenidən işlədin və ya zibil qutusu ilə silin (#232).
+
+* **TikTok:** Yeni Təmiz ekranı videolar arasında saxlayın açarı standart olaraq açıqdır. Söndürsəniz, yandırdığınız Təmiz ekran yalnız həmin video üçün qalır (#232).
+
+* **TikTok:** Yamalama daha sürətlidir. Tam masaüstü icra 89 saniyədən 60 saniyəyə düşdü, yaranan APK isə eynidir.
+
+* **TikTok:** Profil şəbəkələrində yüklənmiş videoları sıralayın profilin və ya Bəyənilənlər şəbəkəsinin yüklədiyi videoları tarix, uzunluq, baxış və ya bəyənmə üzrə düzür (#180).
+
+* **TikTok:** Videonu ekrana sığdırın indi daha kvadrata yaxın ekranlarda da foto slayd şoularını bütöv göstərir (#188).
+
+* **TikTok:** Yeni Başlıqları əlçatan saxlayın açarı TikTok-un gizlətdiyi yerdə onun Başlıqlar açarını geri qaytarır. Yandırdıqdan sonra TikTok-u yenidən başladın (#217).
+
+* **TikTok:** Dil mühitini və saat qurşağını ölkəyə uyğunlaşdırın indi TikTok-a həmin ölkənin saat qurşağını ilk andan verir, yay vaxtı da daxil (#184, #198).
+
+* **TikTok:** Yeni Səs önizləmələrində irəli-geri çəkmə zolağı açarı səsin önizləməsi oxunarkən toxunub və ya sürüşdürə biləcəyiniz zolaq əlavə edir (#185).
+
+* **TikTok:** Təmiz ekranda solğun idarəetmələri saxlayın yenidən bəyənmə, şərh, saxla və paylaş düymələrini ekranda saxlayır (#209).
+
+* **TikTok:** Diaqnostika hesabatı artıq İzlənilənlər hekayələri düyməsi olmayan hesablarda video idarəetmələrini sınıq saymır (#209).
+
+* **TikTok:** Diaqnostikanı qeyd edin açıq olanda hər LIVE şərh sətri otağı otaq identifikatoru əvəzinə qısa kodla göstərir (#110).
+
+* **TikTok:** Hushfeed indi Morphe Manager 2.0.0 və ya daha yenisini, kompüterdə isə morphe-desktop 1.19.0 tələb edir. Yamalama təxminən yarı vaxt aparır.
+
+* **TikTok:** Yeni Profil menyusunda Balansı gizlədin açarı profilinizin sağ yuxarıdakı düyməsinin açdığı menyudan Balansı çıxarır (#194).
+
+* **TikTok:** Yeni Fotoları TikTok-un göndərdiyi kimi saxla açarı fotoları JPEG əvəzinə TikTok-un göndərdiyi HEIF və ya WebP faylı kimi yadda saxlayır (#229).
+
+* **TikTok:** Yeni Cari tabda şüşə linza açarı olduğunuz tabın arxasına kiçik şüşə parça qoyur (#231, #124).
+
+* **TikTok:** Yeni Profil menyusunda TikTok Minis nişanlarını gizlədin açarı həmin menyunu qısaldır (#230).
+
+* **TikTok:** Yeni Yan menyuya sürüşdürməni söndürün açarı Sizin üçün-də sağa sürüşdürmənin TikTok-un yan menyusunu açmasının qarşısını alır (#213).
+
+* **TikTok:** Yeni Videoları avtomatik tərcümə etməyin açarı video təsvirlərini və başlıqlarını yaradıldığı dildə saxlayır. Yandırdıqdan sonra TikTok-u yenidən başladın (#194).
+
+* **TikTok:** Accent color indi Gələnlər tabındakı oxunmamış sayğacını və oxunmamış nöqtələri də rəngləyir (#192).
+
+* **TikTok:** Yeni Şərhləri tam hündürlükdə açın açarı şərh panelini tamamilə yuxarı açır (#191).
+
+* **TikTok:** Yeni Kamerada ekranın parlaqlığını saxlayın açarı TikTok kamerasının ekranı daha parlaq etməsinin qarşısını alır (#200).
+
+* **TikTok:** Yeni Baxış tarixçəsi üçün Profili uzun basın açarı Profil tabını basıb saxlayanda İzləmə tarixçəsini açır (#199).
+
+* **TikTok:** Sadələşdirilmiş çin dilində Hushfeed ayarlarında Profil indi "şirkət profili" əvəzinə 个人主页 kimi görünür.
+
+* **TikTok:** Yeni LIVE yazısının keyfiyyəti seçimi LIVE-ları otağın keyfiyyətində, ən yüksək və ya ən aşağı keyfiyyətdə yazır (#203).
+
+* **TikTok:** TikTok açıq ikən Şəffaf alt panel yandırılanda videoların altındakı qara zolaq artıq ilk sürüşdürmədən sonra geri qayıtmır (#145).
+
+* **TikTok:** Yeni AI Cast düyməsini gizlət açarı AI Cast-ı kameranın yan alət panelindən çıxarır.
+
+* **TikTok:** Yeni İzlənilənlər lentində ən yenilər əvvəl açarı İzlənilənlər paylaşımlarının hər dəstəsini ən yenidən başlayaraq oxudur. Yandırdıqdan sonra TikTok-u yenidən başladın (#226).
+
+* **TikTok:** Sistem şriftindən istifadə edin yandırılan Galaxy-də şriftiniz indi İzləmə tarixçəsində, Fəaliyyət mərkəzində və TikTok-un digər veb səhifələrində də görünür (#7).
+
+* **TikTok:** Şəffaf alt panel tək yandırılanda portret videolar indi tabların arxasında ekranın aşağısına qədər çatır (#145, #218).
+
+* **TikTok:** Yeni Vaxt harada görünsün seçimi lentdə vaxtı irəliləyiş zolağının üstündə göstərə bilir (#173).
+
+* **TikTok:** Accent color indi axtarış səhifəsindəki "Bəyənə bilərsiniz" sözlərini də rəngləyir (#163).
+
+* **TikTok:** Endirmələr gedən saxlamaları və bitən son beşini göstərir, Eyni anda saxlamalar isə eyni anda 3-ə qədər saxlamaya icazə verir (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama 47.4.3-ə keçir, 47.1.4 isə çıxarılır. Ona eyni 90 yama tətbiq olunur (#156).

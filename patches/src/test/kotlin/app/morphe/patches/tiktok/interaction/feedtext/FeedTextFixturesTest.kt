@@ -31,7 +31,7 @@ class FeedTextFixturesTest {
     @Test
     fun `all declared hosts resolve native owners and safely size before line breaking`() {
         val expected = mapOf(
-            "47.4.3" to Triple("LX/09Bg;", "LX/07Yl;", 0x7f0a206a to 0x7f0a882c),
+            "47.5.3" to Triple("LX/095y;", "LX/086l;", 0x7f0a2081 to 0x7f0a8872),
         )
         assertEquals(Fixtures.declaredVersions().toSet(), expected.keys)
         Fixtures.forEachDeclared { apk ->
@@ -49,21 +49,21 @@ class FeedTextFixturesTest {
             assertEquals(POST_TIME_IDS.toList(), resources.getValue("tv_post_time"))
             assertEquals(2, native.sizeInputs.size)
             assertEquals(listOf(2, 10), native.sizeInputs.map { it.builderRegister })
-            assertEquals(listOf(87, 277), native.sizeInputs.map { it.index })
+            assertEquals(listOf(85, 275), native.sizeInputs.map { it.index })
             assertEquals(29, native.layoutFactory.implementation!!.registerCount)
             assertEquals("LIZJ", native.builderPaint.name)
             assertEquals("LJIIJ", native.builderSize.name)
             assertEquals("LJFF", native.builderCache.name)
             assertEquals(6, native.layoutCaches.size)
-            assertEquals("LJLLL", native.refreshOriginal.name)
-            assertEquals("LJLLLLLL", native.refreshTranslated.name)
+            assertEquals("LJLLI", native.refreshOriginal.name)
+            assertEquals("LJLLJ", native.refreshTranslated.name)
             assertEquals("Oq", native.authorBind.name)
-            assertEquals("LLLIIIL", native.authorView.name)
+            assertEquals("LLLII", native.authorView.name)
             assertTrue(native.authorLoader.implementation!!.instructions.any {
                 it is NarrowLiteralInstruction && it.narrowLiteral == ids.second
             })
             // The post date beside the name: the same owner loads it, as the same kind of text view.
-            assertEquals("LLLIIL", native.dateView.name)
+            assertEquals("LLLIIII", native.dateView.name)
             assertEquals(AUTHOR, native.dateView.definingClass)
             assertEquals(native.authorView.type, native.dateView.type)
             val loaderCode = native.authorLoader.implementation!!.instructions.toList()

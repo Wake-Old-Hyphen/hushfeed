@@ -41,10 +41,10 @@ public final class InboxRenderedModels {
         // The probe has a different loader. Resolve all native owners from the captured adapter.
         ClassLoader loader = adapter.getClass().getClassLoader();
         return read(adapter, new Schema(type("com.bytedance.ies.powerlist.PowerAdapter", loader),
-                type("X.09Np", loader), type("X.09Nn", loader),
-                type("com.bytedance.ies.powerlist.PowerStub", loader), type("X.09NO", loader),
-                type("X.09NQ", loader), type("X.09NY", loader), type("X.09Ne", loader),
-                type("X.0H2C", loader), type("X.09Nd", loader)));
+                type("X.09EW", loader), type("X.09ET", loader),
+                type("com.bytedance.ies.powerlist.PowerStub", loader), type("X.09ED", loader),
+                type("X.09EE", loader), type("X.09EH", loader), type("X.09EM", loader),
+                type("X.0FIu", loader), type("X.09EL", loader)));
     }
 
     static Result read(Object adapter, Schema schema) throws ReflectiveOperationException {
@@ -100,16 +100,16 @@ public final class InboxRenderedModels {
                 throw invalid("loading type hierarchy changed");
             }
             this.adapter = adapter; this.stub = stub; refreshState = refresh; emptyState = empty;
-            this.diff = field(adapter, "LLLII", diff, false);
+            this.diff = field(adapter, "LLLFZ", diff, false);
             cached = field(diff, "LJIIJJI", List.class, false);
-            this.config = field(adapter, "LLLIIIIL", config, false);
+            this.config = field(adapter, "LLLII", config, false);
             useCache = field(config, "LJ", boolean.class, false);
-            primary = field(adapter, "LLJJJJLIIL", stub, false);
-            extras = field(adapter, "LLJJL", List.class, false);
-            stubModels = field(stub, "LLL", List.class, false);
-            loadingClass = field(adapter, "LLLIIL", Class.class, false);
-            this.loading = field(adapter, "LLJLLL", loading, false);
-            loadingModel = field(loading, "LLJJIJIIJIL", model, false);
+            primary = field(adapter, "LLJJJJ", stub, false);
+            extras = field(adapter, "LLJJJJJIL", List.class, false);
+            stubModels = field(stub, "LLJZ", List.class, false);
+            loadingClass = field(adapter, "LLLIIIIL", Class.class, false);
+            this.loading = field(adapter, "LLJLL", loading, false);
+            loadingModel = field(loading, "LLJJIII", model, false);
             loadingState = field(model, "LIZIZ", state, false);
             this.phase = field(state, "LIZIZ", phase, false);
             // Validate the enum schema without reading a static value or initializing a class.

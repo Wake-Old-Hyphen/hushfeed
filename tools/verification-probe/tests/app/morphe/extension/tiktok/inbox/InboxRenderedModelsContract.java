@@ -14,9 +14,9 @@ public final class InboxRenderedModelsContract {
     public static void main(String[] args) throws Exception {
         Object header = new Opaque(), body = new Opaque(), footer = new Opaque(), extra = new Opaque();
         Adapter adapter = new Adapter();
-        adapter.LLLII.LJIIJJI = Arrays.asList(header, body, footer);
-        adapter.LLJJJJLIIL = null; adapter.LLJJL = null;
-        adapter.LLLIIL = Object.class;
+        adapter.LLLFZ.LJIIJJI = Arrays.asList(header, body, footer);
+        adapter.LLJJJJ = null; adapter.LLJJJJJIL = null;
+        adapter.LLLIIIIL = Object.class;
         InboxRenderedModels.Result cached = read(adapter);
         require(cached.mode == InboxRenderedModels.Mode.DIFF_CACHE, "enabled cache mode");
         identities(cached.models, header, body, footer);
@@ -26,40 +26,40 @@ public final class InboxRenderedModelsContract {
         rejects(() -> cached.models.clear(), UnsupportedOperationException.class, "returned models are read-only");
 
         adapter = new Adapter();
-        adapter.LLLIIIIL.LJ = false;
-        adapter.LLLII.LJIIJJI = Collections.singletonList(extra);
-        adapter.LLJJJJLIIL.LLL = Arrays.asList(header, body);
-        adapter.LLJJL.add(new Stub(Collections.singletonList(footer)));
-        adapter.LLJJL.add(new Stub(Collections.singletonList(extra)));
+        adapter.LLLII.LJ = false;
+        adapter.LLLFZ.LJIIJJI = Collections.singletonList(extra);
+        adapter.LLJJJJ.LLJZ = Arrays.asList(header, body);
+        adapter.LLJJJJJIL.add(new Stub(Collections.singletonList(footer)));
+        adapter.LLJJJJJIL.add(new Stub(Collections.singletonList(extra)));
         InboxRenderedModels.Result fallback = read(adapter);
         require(fallback.mode == InboxRenderedModels.Mode.STUB_AGGREGATE, "disabled cache selects native stubs");
         identities(fallback.models, header, body, footer, extra);
         identities(fallback.differCached, extra);
         require(fallback.stubCount == 3 && fallback.loadingPhase.equals("DISABLED") && !fallback.loadingRow,
                 "ordered primary plus two extra stubs without a loading tail");
-        identities(adapter.LLJJJJLIIL.LLL, header, body);
-        require(adapter.LLJJL.size() == 2, "native extra list is unchanged");
-        adapter.LLLIIIIL = null;
+        identities(adapter.LLJJJJ.LLJZ, header, body);
+        require(adapter.LLJJJJJIL.size() == 2, "native extra list is unchanged");
+        adapter.LLLII = null;
         identities(read(adapter).models, header, body, footer, extra);
-        adapter.LLLII.LJIIJJI = Collections.emptyList();
+        adapter.LLLFZ.LJIIJJI = Collections.emptyList();
         identities(read(adapter).models, header, body, footer, extra);
 
         for (Phase phase : Phase.values()) {
             for (int kind = 0; kind < 3; kind++) {
                 adapter = new Adapter();
-                adapter.LLLIIIIL.LJ = false;
-                adapter.LLJJJJLIIL.LLL = Arrays.asList(header, body);
-                adapter.LLJJL.add(new Stub(Collections.singletonList(footer)));
-                adapter.LLLIIL = Object.class;
+                adapter.LLLII.LJ = false;
+                adapter.LLJJJJ.LLJZ = Arrays.asList(header, body);
+                adapter.LLJJJJJIL.add(new Stub(Collections.singletonList(footer)));
+                adapter.LLLIIIIL = Object.class;
                 State state = kind == 0 ? new State(phase) : kind == 1 ? new RefreshState(phase) : new EmptyState(phase);
                 Loading row = new Loading(new Model(state));
-                adapter.LLJLLL = row;
+                adapter.LLJLL = row;
                 InboxRenderedModels.Result result = read(adapter);
                 boolean expected = phase == Phase.Refresh ? kind == 1 : kind != 2;
                 require(result.loadingRow == expected && result.loadingPhase.equals(phase.name()), "phase/state loading selection");
                 if (expected) identities(result.models, header, body, footer, row);
                 else identities(result.models, header, body, footer);
-                require(adapter.LLJLLL.LLJJIJIIJIL.LIZIZ == state, "loading state is unchanged");
+                require(adapter.LLJLL.LLJJIII.LIZIZ == state, "loading state is unchanged");
             }
         }
         malformedContracts();
@@ -70,17 +70,17 @@ public final class InboxRenderedModelsContract {
 
     private static void malformedContracts() throws Exception {
         for (int kind = 0; kind < 7; kind++) {
-            Adapter adapter = new Adapter(); adapter.LLLIIIIL.LJ = false;
-            if (kind == 0) adapter.LLJJJJLIIL = null;
-            if (kind == 1) adapter.LLJJL = null;
-            if (kind == 2) adapter.LLJJL.add(new Object());
-            if (kind == 3) adapter.LLJJJJLIIL.LLL = null;
-            if (kind >= 4) adapter.LLLIIL = Object.class;
-            if (kind == 5) adapter.LLJLLL = new Loading(null);
-            if (kind == 6) adapter.LLJLLL = new Loading(new Model(null));
+            Adapter adapter = new Adapter(); adapter.LLLII.LJ = false;
+            if (kind == 0) adapter.LLJJJJ = null;
+            if (kind == 1) adapter.LLJJJJJIL = null;
+            if (kind == 2) adapter.LLJJJJJIL.add(new Object());
+            if (kind == 3) adapter.LLJJJJ.LLJZ = null;
+            if (kind >= 4) adapter.LLLIIIIL = Object.class;
+            if (kind == 5) adapter.LLJLL = new Loading(null);
+            if (kind == 6) adapter.LLJLL = new Loading(new Model(null));
             rejects(() -> read(adapter), IllegalStateException.class, "incomplete aggregate refuses explicitly");
         }
-        Adapter adapter = new Adapter(); adapter.LLLII.LJIIJJI = null;
+        Adapter adapter = new Adapter(); adapter.LLLFZ.LJIIJJI = null;
         rejects(() -> read(adapter), IllegalStateException.class, "null differ cache is not an empty list");
         rejects(() -> InboxRenderedModels.read(new Object(), schema()), IllegalStateException.class, "unowned adapter type refused");
         rejects(() -> new InboxRenderedModels.Schema(WrongAdapter.class, Diff.class, Config.class, Stub.class,
@@ -93,33 +93,33 @@ public final class InboxRenderedModelsContract {
 
     private static void boundedContracts() throws Exception {
         Adapter adapter = new Adapter();
-        adapter.LLLII.LJIIJJI = new AbstractList<Object>() {
+        adapter.LLLFZ.LJIIJJI = new AbstractList<Object>() {
             @Override public int size() { return 4097; }
             @Override public Object get(int index) { throw new AssertionError("oversized cache must not be traversed"); }
         };
         Adapter oversizedCache = adapter;
         rejects(() -> read(oversizedCache), IllegalStateException.class, "cache identity traversal is bounded");
-        adapter = new Adapter(); adapter.LLLIIIIL.LJ = false;
-        adapter.LLJJJJLIIL.LLL = Collections.nCopies(4096, null);
-        adapter.LLJJL.add(new Stub(Collections.singletonList(null)));
+        adapter = new Adapter(); adapter.LLLII.LJ = false;
+        adapter.LLJJJJ.LLJZ = Collections.nCopies(4096, null);
+        adapter.LLJJJJJIL.add(new Stub(Collections.singletonList(null)));
         Adapter combined = adapter;
         rejects(() -> read(combined), IllegalStateException.class, "combined stub rows share one bound");
-        adapter = new Adapter(); adapter.LLLIIIIL.LJ = false;
-        adapter.LLJJJJLIIL.LLL = Collections.nCopies(4096, null);
+        adapter = new Adapter(); adapter.LLLII.LJ = false;
+        adapter.LLJJJJ.LLJZ = Collections.nCopies(4096, null);
         identitiesCount(read(adapter).models, 4096);
-        adapter.LLLIIL = Object.class;
-        adapter.LLJLLL = new Loading(new Model(new RefreshState(Phase.Refresh)));
+        adapter.LLLIIIIL = Object.class;
+        adapter.LLJLL = new Loading(new Model(new RefreshState(Phase.Refresh)));
         Adapter loading = adapter;
         rejects(() -> read(loading), IllegalStateException.class, "loading tail participates in row bound");
-        adapter = new Adapter(); adapter.LLLIIIIL.LJ = false;
-        adapter.LLJJL = new AbstractList<Object>() {
+        adapter = new Adapter(); adapter.LLLII.LJ = false;
+        adapter.LLJJJJJIL = new AbstractList<Object>() {
             @Override public int size() { return 65; }
             @Override public Object get(int index) { throw new AssertionError("oversized stubs must not be traversed"); }
         };
         Adapter extras = adapter;
         rejects(() -> read(extras), IllegalStateException.class, "extra stub traversal is bounded independently");
         adapter = new Adapter();
-        adapter.LLLII.LJIIJJI = new AbstractList<Object>() {
+        adapter.LLLFZ.LJIIJJI = new AbstractList<Object>() {
             int reads;
             @Override public int size() { return ++reads == 1 ? 1 : 2; }
             @Override public Object get(int index) { return null; }
@@ -144,26 +144,26 @@ public final class InboxRenderedModelsContract {
 
     public interface Marker {}
     public static class Adapter {
-        public Diff LLLII = new Diff();
-        public Config LLLIIIIL = new Config();
-        public Stub LLJJJJLIIL = new Stub(Collections.emptyList());
-        public List<Object> LLJJL = new ArrayList<>();
-        public Class<?> LLLIIL;
-        public Loading LLJLLL;
+        public Diff LLLFZ = new Diff();
+        public Config LLLII = new Config();
+        public Stub LLJJJJ = new Stub(Collections.emptyList());
+        public List<Object> LLJJJJJIL = new ArrayList<>();
+        public Class<?> LLLIIIIL;
+        public Loading LLJLL;
         public int getItemCount() { throw new AssertionError("no native getters"); }
         public List<?> LLLLJ() { throw new AssertionError("no native aggregate getter"); }
     }
-    public static final class WrongAdapter { public Object LLLII; }
+    public static final class WrongAdapter { public Object LLLFZ; }
     public static final class InheritedAdapter extends Adapter {}
     public static final class Diff { public List<?> LJIIJJI = Collections.emptyList(); }
     public static final class Config { public boolean LJ = true; }
-    public static final class Stub { public List<?> LLL; Stub(List<?> rows) { LLL = rows; } }
+    public static final class Stub { public List<?> LLJZ; Stub(List<?> rows) { LLJZ = rows; } }
     public enum Phase { Refresh, Next, Prev }
     public static class State { public Phase LIZIZ; State(Phase phase) { LIZIZ = phase; } }
     public static final class RefreshState extends State { RefreshState(Phase phase) { super(phase); } }
     public static final class EmptyState extends State { EmptyState(Phase phase) { super(phase); } }
     public static final class Model { public State LIZIZ; Model(State state) { LIZIZ = state; } }
-    public static final class Loading { public Model LLJJIJIIJIL; Loading(Model model) { LLJJIJIIJIL = model; } }
+    public static final class Loading { public Model LLJJIII; Loading(Model model) { LLJJIII = model; } }
     private static final class Opaque {
         @Override public boolean equals(Object other) { throw new AssertionError("no model equality"); }
         @Override public int hashCode() { throw new AssertionError("no model hash"); }

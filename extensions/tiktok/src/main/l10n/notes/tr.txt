@@ -1,3 +1,77 @@
+## 0.78.0 (2026-10-22)
+
+* **TikTok:** Hushfeed TikTok 47.5.3'e geçiyor, 47.4.3 bırakılıyor. 47.5.3 APK'sını aynı imza anahtarıyla yamalarsan girişin ve ayarların kalır. PineDrama 47.4.3'te kalıyor.
+
+* **TikTok:** Remove unused language packs artık PineDrama 47.4.3'te de çalışıyor.
+
+* **TikTok:** Yüklenmiş etkinlikte ara, Gelen Kutusu'ndaki Etkinlik sayfasında arama çubuğunu yeniden gösteriyor.
+
+* **TikTok:** Yeni Köşeye göre çift dokunma anahtarı videonun her çeyreğine kendi çift dokunma eylemini veriyor. Fikir ve ilk sürüm @OmerKurdi79'dan geldi (#232).
+
+* **TikTok:** Ayar aramaları son on aramanı hatırlıyor. Birine dokunup yeniden çalıştırabilir ya da çöp kutusuyla silebilirsin (#232).
+
+* **TikTok:** Yeni Temiz ekranı videolar arasında koru anahtarı varsayılan olarak açık. Kapatırsan açtığın Temiz ekran yalnızca o video için geçerli olur (#232).
+
+* **TikTok:** Yamalama daha hızlı. Masaüstünde tam bir çalıştırma 89 saniyeden 60 saniyeye indi, ortaya çıkan APK aynı.
+
+* **TikTok:** Profil ızgaralarında yüklenen videoları sırala, bir profilin ya da Beğenilenler ızgarasının yüklediği videoları tarihe, uzunluğa, izlenmeye veya beğeniye göre sıralıyor (#180).
+
+* **TikTok:** Videoyu ekrana sığdır fotoğraf slayt gösterilerini daha kareye yakın ekranlarda da bütün gösteriyor (#188).
+
+* **TikTok:** Yeni Altyazıları kullanılabilir tut anahtarı TikTok'un gizlediği yerde Altyazılar anahtarını geri getiriyor. Açtıktan sonra TikTok'u yeniden başlat (#217).
+
+* **TikTok:** Yerel ayarı ve saat dilimini ülkeyle eşleştir artık TikTok'a o ülkenin saat dilimini baştan veriyor, yaz saati dahil (#184, #198).
+
+* **TikTok:** Yeni Ses önizlemelerinde sarma çubuğu anahtarı bir sesin önizlemesi çalarken dokunabileceğin ya da sürükleyebileceğin bir çubuk ekliyor (#185).
+
+* **TikTok:** Temiz ekranda soluk kontrolleri koru beğeni, yorum, kaydet ve paylaş düğmelerini yine ekranda tutuyor (#209).
+
+* **TikTok:** Tanılama raporu, Takip Edilenler hikâyeleri düğmesi olmayan hesaplarda video kontrollerine artık bozuk demiyor (#209).
+
+* **TikTok:** Tanılamayı günlüğe kaydet açıkken her LIVE yorum satırı odayı oda kimliği yerine kısa bir kodla belirtiyor (#110).
+
+* **TikTok:** Hushfeed artık Morphe Manager 2.0.0 ya da daha yenisini, bilgisayarda ise morphe-desktop 1.19.0 istiyor. Yamalama yaklaşık yarı sürede bitiyor.
+
+* **TikTok:** Yeni Profil menüsünde Bakiye'yi gizle anahtarı Bakiye'yi profilinin sağ üstündeki düğmenin açtığı menüden çıkarıyor (#194).
+
+* **TikTok:** Yeni Fotoğrafları TikTok'un gönderdiği gibi tut anahtarı fotoğrafları JPEG yerine TikTok'un gönderdiği HEIF ya da WebP dosyası olarak kaydediyor (#229).
+
+* **TikTok:** Yeni Geçerli sekmede cam mercek anahtarı içinde olduğun sekmenin arkasına küçük bir cam parçası koyuyor (#231, #124).
+
+* **TikTok:** Yeni Profil menüsündeki TikTok Minis simgelerini gizle anahtarı o menüyü kısaltıyor (#230).
+
+* **TikTok:** Yeni Yan menüye kaydırmayı kapat anahtarı Sana Özel'de sağa kaydırmanın TikTok'un yan menüsünü açmasını engelliyor (#213).
+
+* **TikTok:** Yeni Videoları otomatik çevirme anahtarı video açıklamalarını ve altyazılarını yapıldıkları dilde tutuyor. Açtıktan sonra TikTok'u yeniden başlat (#194).
+
+* **TikTok:** Accent color artık Gelen Kutusu sekmesindeki okunmamış sayısını ve okunmamış noktalarını da renklendiriyor (#192).
+
+* **TikTok:** Yeni Yorumları tam yükseklikte aç anahtarı yorum sayfasını en üste kadar açıyor (#191).
+
+* **TikTok:** Yeni Kamerada ekran parlaklığını koru anahtarı TikTok kamerasının ekranını daha parlak yapmasını engelliyor (#200).
+
+* **TikTok:** Yeni İzleme geçmişi için Profil'e basılı tut anahtarı Profil sekmesini basılı tuttuğunda İzleme geçmişini açıyor (#199).
+
+* **TikTok:** Basitleştirilmiş Çince'de Hushfeed ayarlarındaki Profil artık "şirket profili" yerine 个人主页 olarak görünüyor.
+
+* **TikTok:** Yeni LIVE kayıt kalitesi seçeneği LIVE'ları odanın kalitesinde, en yüksek ya da en düşük kalitede kaydediyor (#203).
+
+* **TikTok:** TikTok açıkken Şeffaf alt çubuk açıldığında videoların altındaki siyah şerit artık ilk kaydırmadan sonra geri gelmiyor (#145).
+
+* **TikTok:** Yeni AI Cast düğmesini gizle anahtarı AI Cast'i kameranın yan araç çubuğundan kaldırıyor.
+
+* **TikTok:** Yeni Takip Edilenler'de en yeniler önce anahtarı Takip Edilenler gönderilerinin her grubunu en yeniden başlayarak oynatıyor. Açtıktan sonra TikTok'u yeniden başlat (#226).
+
+* **TikTok:** Sistem yazı tipini kullan açıkken bir Galaxy'de yazı tipin artık İzleme geçmişinde, Etkinlik merkezinde ve TikTok'un diğer web sayfalarında da görünüyor (#7).
+
+* **TikTok:** Şeffaf alt çubuk tek başına açıkken dikey videolar artık sekmelerin arkasında ekranın altına kadar uzanıyor (#145, #218).
+
+* **TikTok:** Yeni Süre nerede görünsün seçeneği akışta süreyi ilerleme çubuğunun üstüne koyabiliyor (#173).
+
+* **TikTok:** Accent color artık arama sayfasındaki "Hoşuna gidebilir" sözlerini de renklendiriyor (#163).
+
+* **TikTok:** İndirilenler, süren kayıtları ve biten son beşini listeliyor, Aynı anda kayıt sayısı ise aynı anda 3 kayda kadar izin veriyor (#27).
+
 ## 0.77.0 (2026-10-20)
 
 * **TikTok:** PineDrama 47.4.3'e geçiyor ve 47.1.4 bırakılıyor. Aynı 90 yama onda da geçerli (#156).

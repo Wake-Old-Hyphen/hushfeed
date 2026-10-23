@@ -31,10 +31,10 @@ private const val TEXT_VIEW = "Landroid/widget/TextView;"
 private const val PAINT = "Landroid/graphics/Paint;"
 private const val VIDEO_ITEM_PARAMS = "Lcom/ss/android/ugc/aweme/feed/model/VideoItemParams;"
 private const val WHAT = "Feed text sizes"
-// 47.4.3's ids for the caption text, the creator name (`title`) and the post date beside it.
-internal val DESCRIPTION_IDS = setOf(0x7f0a206a)
-internal val TITLE_IDS = setOf(0x7f0a882c)
-internal val POST_TIME_IDS = setOf(0x7f0a93e9)
+// 47.5.3's ids for the caption text, the creator name (`title`) and the post date beside it.
+internal val DESCRIPTION_IDS = setOf(0x7f0a2081)
+internal val TITLE_IDS = setOf(0x7f0a8872)
+internal val POST_TIME_IDS = setOf(0x7f0a942a)
 
 internal data class SizeInput(val index: Int, val builderRegister: Int, val ownerLocal: Int, val argumentLocal: Int)
 internal data class CacheBypass(val index: Int, val fallback: Int, val ownerRegister: Int, val resultLocal: Int)
@@ -109,7 +109,8 @@ internal fun resolveFeedText(classOf: (String) -> ClassDef?): FeedTextMembers {
             it.returnType == "V" && it.hasLiteral(DESCRIPTION_IDS) && it.hasCall(AWEME, "getDesc")
     }.one("description component bind")
     val controller = descBind.calls().mapNotNull { reference ->
-        if (reference.parameterTypes != listOf(AWEME) || reference.returnType != "V") return@mapNotNull null
+        // The bind reaches the controller through a one-Aweme call on 47.4.3 and a no-argument one on 47.5.3.
+        if (reference.parameterTypes.let { it != listOf(AWEME) && it.isNotEmpty() } || reference.returnType != "V") return@mapNotNull null
         val owner = classOf(reference.definingClass) ?: return@mapNotNull null
         if (component.fields.none { it.type == owner.type } || owner.fields.none { it.type == DESCRIPTION } ||
             !owner.method(reference).isInstance()

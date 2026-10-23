@@ -7,6 +7,8 @@
 package app.morphe.patches.tiktok.misc.inbox
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.checkCast
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
@@ -19,17 +21,21 @@ import app.morphe.util.addInstructionsWithLabels
 import app.morphe.util.getReference
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.RegisterRangeInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
+import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 
 internal const val INBOX_QUERY_EXTENSION = "Lapp/morphe/extension/tiktok/inbox/InboxFilter;"
 internal const val INBOX_RESULT_FRAGMENT = "Lcom/ss/android/ugc/aweme/notification/v2/NotificationResultFragment;"
-internal const val INBOX_MERGED_CLOSURE = "Lkotlin/jvm/internal/AwS439S0200000_37_I1;"
+internal const val INBOX_LIST_CHANGE_CONFIG = "Lcom/ss/android/ugc/aweme/inbox/widget/change/InboxListChangeConfigModel;"
 internal const val INBOX_INDICES_GATE = "hushLoadedInboxIndicesEnabled"
 
 internal object InboxListPublication : Fingerprint(
@@ -40,32 +46,87 @@ internal object InboxStubPublication : Fingerprint(
     definingClass = "Lcom/bytedance/ies/powerlist/PowerStub;", name = "onChanged", returnType = "V",
     parameters = listOf("Ljava/lang/Object;"),
 )
+/**
+ * PowerList's diff submit, by its log line (47.4.3 and 47.5.3 keep the method name on a renamed
+ * class). Its last parameter is the list update's metadata, which [InboxDiffAcceptance] and
+ * PowerStub's publication share.
+ */
 internal object InboxDiffSubmission : Fingerprint(
-    definingClass = "LX/09Mk;", name = "LJ", returnType = "V",
-    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Ljava/util/List;", "LX/0Gy2;"),
+    returnType = "V",
+    parameters = listOf("Ljava/util/List;", "Ljava/util/List;", "Ljava/util/List;", "L"),
+    strings = listOf("notifyDiffer. useAsync:"),
 )
+/** The same differ dispatching an accepted diff: (diff result, metadata, update callback). */
 internal object InboxDiffAcceptance : Fingerprint(
-    definingClass = "LX/09Mk;", name = "LIZIZ", returnType = "V",
-    parameters = listOf("LX/00J8;", "LX/0Gy2;", "LX/00JY;"),
+    returnType = "V",
+    parameters = listOf("L", "L", "L"),
+    strings = listOf("[Start] dispatchAndNotifyUpdatesTo: time:"),
 )
+/** The result fragment's list publication (47.4.3 `tb`, 47.5.3 `bb`), by its log line. */
 internal object InboxFragmentPublication : Fingerprint(
-    definingClass = INBOX_RESULT_FRAGMENT, name = "tb", returnType = "V", parameters = listOf("Ljava/util/List;"),
+    definingClass = INBOX_RESULT_FRAGMENT, returnType = "V", parameters = listOf("Ljava/util/List;"),
+    strings = listOf("refreshList, dataList.size = "),
 )
+/**
+ * The merged Kotlin closure the fragment posts with each published list (a different `AwS`
+ * class and `invoke` number on each build): it asks the live config's enable switch first,
+ * casts its owner to the result fragment and hands the list and the visible range to the
+ * fragment's index helper.
+ */
 internal object InboxIndexedCallback : Fingerprint(
-    definingClass = INBOX_MERGED_CLOSURE, name = "invoke\$43", returnType = "Ljava/lang/Object;", parameters = listOf(INBOX_MERGED_CLOSURE),
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("L"),
+    filters = listOf(methodCall(returnType = INBOX_LIST_CHANGE_CONFIG), checkCast(INBOX_RESULT_FRAGMENT)),
+    custom = { method, classDef ->
+        AccessFlags.STATIC.isSet(method.accessFlags) && method.parameterTypes.single() == classDef.type &&
+            method.opensWithListChangeConfig() && method.implementation!!.instructions.count { it.isIndexedListCall() } == 1
+    },
 )
+/** The fragment's visible-range pass: it reads the last visible row and scrolls to an unread one. */
 internal object InboxVisibleIndices : Fingerprint(
-    definingClass = INBOX_RESULT_FRAGMENT, name = "DX", returnType = "V", parameters = listOf("Z"),
+    definingClass = INBOX_RESULT_FRAGMENT, returnType = "V", parameters = listOf("Z"),
+    filters = listOf(
+        methodCall(definingClass = "Landroidx/recyclerview/widget/LinearLayoutManager;", name = "findLastVisibleItemPosition"),
+        methodCall(name = "startSmoothScroll"),
+    ),
 )
 internal object InboxNotificationClick : Fingerprint(
     definingClass = TEMPLATE_NOTIFICATION_CELL, name = "onClick", returnType = "V", parameters = listOf("Landroid/view/View;"),
 )
+/**
+ * PowerList's pull-to-refresh layout (a renamed class on each build): the FrameLayout that keeps
+ * its own getManuallyRefreshAnimator(). Its setRefreshing(Z) keeps the real name.
+ */
 internal object InboxSpringRefresh : Fingerprint(
-    definingClass = "LX/09Ni;", name = "setRefreshing", returnType = "V", parameters = listOf("Z"),
+    name = "setRefreshing", returnType = "V", parameters = listOf("Z"),
+    custom = { _, classDef -> classDef.isInboxSpringLayout() },
 )
+/** The same layout's manual refresh: setRefreshing(true), its manual flag, then the animator. */
 internal object InboxSpringManualRefresh : Fingerprint(
-    definingClass = "LX/09Ni;", name = "LJ", returnType = "V", parameters = emptyList(),
+    returnType = "V", parameters = emptyList(),
+    filters = listOf(
+        methodCall(name = "setRefreshing", parameters = listOf("Z")),
+        methodCall(name = "getManuallyRefreshAnimator"),
+        methodCall(definingClass = "Landroid/animation/ValueAnimator;", name = "start"),
+    ),
+    custom = { _, classDef -> classDef.isInboxSpringLayout() },
 )
+
+internal fun ClassDef.isInboxSpringLayout() = superclass == "Landroid/widget/FrameLayout;" &&
+    methods.any { it.name == "getManuallyRefreshAnimator" && it.returnType == "Landroid/animation/ValueAnimator;" }
+
+/** Opens with the static live config getter, as the native enable check does. */
+internal fun Method.opensWithListChangeConfig(): Boolean {
+    val first = implementation?.instructions?.firstOrNull() ?: return false
+    val getter = first.getReference<MethodReference>() ?: return false
+    return first.opcode == Opcode.INVOKE_STATIC && getter.parameterTypes.isEmpty() && getter.returnType == INBOX_LIST_CHANGE_CONFIG
+}
+
+/** The index helper's (List, Pair) entry the indexed closure calls. */
+internal fun Instruction.isIndexedListCall(): Boolean =
+    (opcode == Opcode.INVOKE_VIRTUAL || opcode == Opcode.INVOKE_INTERFACE) && getReference<MethodReference>()?.let { ref ->
+        ref.returnType == "V" && ref.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Lkotlin/Pair;")
+    } == true
 
 /** Resolve and validate the complete group before the patch writes any instruction. */
 context(patchContext: BytecodePatchContext)
@@ -74,10 +135,16 @@ internal fun loadedInboxPublicationSeams(): InboxPublicationSeams {
     val owner = patchContext.mutableClassDefBy(INBOX_RESULT_FRAGMENT)
     check(owner.methods.none { it.name == INBOX_INDICES_GATE }) { "Loaded Inbox index gate already exists" }
     val gate = loadedIndicesGate(indexed)
+    val submit = InboxDiffSubmission.method
+    val accepted = InboxDiffAcceptance.method
+    val metadata = submit.parameterTypes[3].toString()
+    check(accepted.definingClass == submit.definingClass && accepted.parameterTypes[1].toString() == metadata) {
+        "Loaded Inbox diff submit and acceptance are not one differ"
+    }
     return InboxPublicationSeams(InboxListPublication.method,
-        InboxStubPublication.method, InboxDiffSubmission.method, InboxDiffAcceptance.method,
+        InboxStubPublication.method, submit, accepted,
         InboxFragmentPublication.method, indexed, InboxVisibleIndices.method, InboxNotificationClick.method,
-        InboxSpringRefresh.method, InboxSpringManualRefresh.method) { owner.methods.add(gate) }
+        InboxSpringRefresh.method, InboxSpringManualRefresh.method, metadata) { owner.methods.add(gate) }
 }
 
 internal class InboxPublicationSeams(
@@ -86,11 +153,11 @@ internal class InboxPublicationSeams(
     private val fragment: MutableMethod, private val indexed: MutableMethod,
     private val visible: MutableMethod, private val click: MutableMethod,
     private val refresh: MutableMethod, private val manualRefresh: MutableMethod,
-    private val installGate: () -> Unit,
+    private val metadata: String, private val installGate: () -> Unit,
 ) {
     init {
         publication.loadedPublicationHook(true)
-        stub.loadedStubHook(true)
+        stub.loadedStubHook(metadata, true)
         submit.loadedDiffSubmissionHook(true)
         accepted.loadedDiffAcceptanceHook(true)
         indexed.loadedIndexedHook(true)
@@ -101,7 +168,7 @@ internal class InboxPublicationSeams(
     }
     fun install() {
         publication.loadedPublicationHook()
-        stub.loadedStubHook()
+        stub.loadedStubHook(metadata)
         submit.loadedDiffSubmissionHook()
         accepted.loadedDiffAcceptanceHook()
         indexed.loadedIndexedHook()
@@ -119,11 +186,9 @@ internal fun loadedIndicesGate(indexed: MutableMethod): MutableMethod {
     val code = indexed.implementation!!.instructions.toList()
     val getter = code[0].getReference<MethodReference>()
     val enabled = code[2].getReference<FieldReference>()
-    check(code[0].opcode == Opcode.INVOKE_STATIC && getter?.definingClass == "LX/0ISl;"
-        && getter.name == "LIZ" && getter.parameterTypes.isEmpty()
-        && getter.returnType == "Lcom/ss/android/ugc/aweme/inbox/widget/change/InboxListChangeConfigModel;")
+    check(indexed.opensWithListChangeConfig() && getter != null)
     check(code[1].opcode == Opcode.MOVE_RESULT_OBJECT && code[2].opcode == Opcode.IGET_BOOLEAN
-        && enabled?.definingClass == getter.returnType && enabled.name == "enable" && enabled.type == "Z"
+        && enabled?.definingClass == INBOX_LIST_CHANGE_CONFIG && enabled.name == "enable" && enabled.type == "Z"
         && code[3].opcode == Opcode.IF_EQZ)
     return MutableMethod(ImmutableMethod(INBOX_RESULT_FRAGMENT, INBOX_INDICES_GATE, emptyList(), "Z",
         AccessFlags.PUBLIC.value or AccessFlags.FINAL.value or AccessFlags.SYNTHETIC.value, null, null,
@@ -138,14 +203,22 @@ internal fun loadedIndicesGate(indexed: MutableMethod): MutableMethod {
 }
 
 internal fun MutableMethod.loadedRefreshHook(checkOnly: Boolean = false) {
-    check(definingClass == "LX/09Ni;" && returnType == "V")
-    val manual = name == "LJ" && parameterTypes.isEmpty()
+    check(returnType == "V")
+    val manual = parameterTypes.isEmpty()
     check(manual || (name == "setRefreshing" && parameterTypes.map(CharSequence::toString) == listOf("Z")))
     requireLocals("Loaded Inbox refresh", 1)
-    val code = implementation!!.instructions
-    check(code.any { it.opcode == Opcode.IPUT_BOOLEAN && it.getReference<FieldReference>()?.let { field ->
-        field.definingClass == definingClass && field.name == if (manual) "LLLIIIIL" else "LLLIZZ"
-    } == true })
+    val code = implementation!!.instructions.toList()
+    // The layout's own flag: setRefreshing stores the state it reads first, and the manual
+    // refresh marks itself right after it calls setRefreshing(true).
+    val flag = if (manual) {
+        val call = code.indexOfFirst { it.getReference<MethodReference>()?.let { ref ->
+            ref.definingClass == definingClass && ref.name == "setRefreshing" } == true }
+        code.getOrNull(call + 1)?.takeIf { call >= 0 && it.opcode == Opcode.IPUT_BOOLEAN }
+    } else code.firstOrNull()?.takeIf { it.opcode == Opcode.IGET_BOOLEAN }
+    val field = flag?.getReference<FieldReference>()
+    check(field != null && field.definingClass == definingClass && field.type == "Z" && code.any {
+        it.opcode == Opcode.IPUT_BOOLEAN && it.getReference<FieldReference>() == field
+    }) { "Loaded Inbox refresh flag changed" }
     if (checkOnly) return
     if (manual) loadedGuard("allowLoadedManualRefresh")
     else loadedGuard("allowLoadedRefresh", "Ljava/lang/Object;Z", "p0 .. p1")
@@ -161,22 +234,22 @@ internal fun MutableMethod.loadedPublicationHook(checkOnly: Boolean = false) {
     """.trimIndent())
 }
 
-internal fun MutableMethod.loadedStubHook(checkOnly: Boolean = false) {
+internal fun MutableMethod.loadedStubHook(metadata: String, checkOnly: Boolean = false) {
     val constructors = implementation!!.instructions.withIndex().filter {
-        it.value.getReference<MethodReference>()?.let { ref -> ref.definingClass == "LX/0Gy2;" && ref.name == "<init>" } == true
+        it.value.getReference<MethodReference>()?.let { ref -> ref.definingClass == metadata && ref.name == "<init>" } == true
     }
     check(constructors.size == 1)
     val constructor = constructors.single()
-    val metadata = (constructor.value as RegisterRangeInstruction).startRegister
-    check(implementation!!.registerCount <= 16 && metadata <= 15)
+    val holder = (constructor.value as RegisterRangeInstruction).startRegister
+    check(implementation!!.registerCount <= 16 && holder <= 15)
     if (checkOnly) return
-    addInstruction(constructor.index + 1, "invoke-static {p0, p1, v$metadata}, " +
+    addInstruction(constructor.index + 1, "invoke-static {p0, p1, v$holder}, " +
         "$INBOX_QUERY_EXTENSION->onLoadedStubPublication(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V")
 }
 
 internal fun MutableMethod.loadedDiffSubmissionHook(checkOnly: Boolean = false) {
     val writes = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.IPUT &&
-        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/09Mk;" && ref.name == "LJIIJ" && ref.type == "I" } == true }
+        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == definingClass && ref.type == "I" } == true }
     check(writes.size == 1 && parameterTypes.size == 4)
     if (checkOnly) return
     addInstruction(writes.single().index + 1, "invoke-static/range {p0 .. p4}, " +
@@ -184,11 +257,14 @@ internal fun MutableMethod.loadedDiffSubmissionHook(checkOnly: Boolean = false) 
 }
 
 internal fun MutableMethod.loadedDiffAcceptanceHook(checkOnly: Boolean = false) {
+    // (diff result, metadata, update callback): the metadata's one List read is its completion
+    // list, and the dispatch is the diff result's call that takes the update callback.
+    val (result, metadata, callback) = parameterTypes.map(CharSequence::toString)
     val completion = implementation!!.instructions.withIndex().filter { it.value.getReference<FieldReference>()?.let { ref ->
-        ref.definingClass == "LX/0Gy2;" && ref.name == "LJ" && ref.type == "Ljava/util/List;" } == true }
+        ref.definingClass == metadata && ref.type == "Ljava/util/List;" } == true }
     check(completion.size == 1 && implementation!!.registerCount <= 16)
     val dispatch = implementation!!.instructions.indexOfFirst { it.getReference<MethodReference>()?.let { ref ->
-        ref.definingClass == "LX/00J8;" && ref.name == "LIZIZ" } == true }
+        ref.definingClass == result && ref.parameterTypes.map(CharSequence::toString) == listOf(callback) } == true }
     check(dispatch >= 0 && dispatch < completion.single().index)
     if (checkOnly) return
     val index = completion.single().index
@@ -199,8 +275,7 @@ internal fun MutableMethod.loadedDiffAcceptanceHook(checkOnly: Boolean = false) 
 }
 
 internal fun MutableMethod.loadedIndexedHook(checkOnly: Boolean = false) {
-    val calls = implementation!!.instructions.withIndex().filter { it.value.getReference<MethodReference>()?.let { ref ->
-        ref.definingClass == "LX/0NaB;" && ref.name == "LJFF" && ref.parameterTypes.map(CharSequence::toString) == listOf("Ljava/util/List;", "Lkotlin/Pair;") } == true }
+    val calls = implementation!!.instructions.withIndex().filter { it.value.isIndexedListCall() }
     check(calls.size == 1 && implementation!!.registerCount <= 16)
     val call = calls.single()
     val registers = call.value as FiveRegisterInstruction
@@ -211,8 +286,14 @@ internal fun MutableMethod.loadedIndexedHook(checkOnly: Boolean = false) {
 }
 
 internal fun MutableMethod.loadedVisibleHook(checkOnly: Boolean = false) {
-    val reads = implementation!!.instructions.withIndex().filter { it.value.opcode == Opcode.IGET_OBJECT &&
-        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass == "LX/0FXE;" && ref.name == "LIZ" && ref.type == "Ljava/util/List;" } == true }
+    // The list's live-data value is cast to its aggregate (a renamed class on each build) right
+    // after LiveData.getValue(); both reads of the aggregate's List are the rows.
+    val code = implementation!!.instructions.toList()
+    val aggregates = code.indices.filter { at -> at >= 2 && code[at].opcode == Opcode.CHECK_CAST &&
+        code[at - 2].getReference<MethodReference>()?.let { it.definingClass == "Landroidx/lifecycle/LiveData;" && it.name == "getValue" } == true
+    }.mapNotNull { code[it].getReference<TypeReference>()?.type }.toSet()
+    val reads = code.withIndex().filter { it.value.opcode == Opcode.IGET_OBJECT &&
+        it.value.getReference<FieldReference>()?.let { ref -> ref.definingClass in aggregates && ref.type == "Ljava/util/List;" } == true }
     check(reads.size == 2 && implementation!!.registerCount <= 16)
     requireLocals("Loaded Inbox search", 1)
     if (checkOnly) return

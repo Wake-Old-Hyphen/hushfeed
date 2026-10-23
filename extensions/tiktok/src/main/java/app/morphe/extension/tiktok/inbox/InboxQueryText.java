@@ -7,8 +7,12 @@
 package app.morphe.extension.tiktok.inbox;
 
 import app.morphe.extension.tiktok.blockauthor.Reflect;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,19 +20,43 @@ import java.util.regex.Pattern;
 final class InboxQueryText {
     private static final int MAX_TEXT = 16_384, MAX_PARTS = 128;
     private static final Pattern LINK = Pattern.compile("\\[\\[text_link_([0-9])]]");
+    private static final String NOTICE = "com.ss.android.ugc.aweme.notice.repo.list.bean.MusNotice";
+    private static final Object NO_NOTICE = new Object();
+    private static final Map<Class<?>, Object> NOTICE_FIELDS = new ConcurrentHashMap<>();
     static final LoadedInboxQuery.Matcher MATCHER = new LoadedInboxQuery.Matcher() {
         @Override public boolean notification(Object model) {
-            return model != null && model.getClass().getName().equals("X.1EH0")
-                    && template(Reflect.readField(model, "LL")) != null;
+            return template(notice(model)) != null;
         }
         @Override public boolean matches(Object model, String query) {
-            Object notice = Reflect.readField(model, "LL");
+            Object notice = notice(model);
             if (notice == null) throw new IllegalStateException("Missing native notification model");
             return textOfNotice(notice).contains(query);
         }
     };
 
     private InboxQueryText() {}
+
+    /** The row model's only MusNotice field, found by type because R8 renames the row and the field each build. */
+    static Object notice(Object model) {
+        if (model == null) return null;
+        Class<?> type = model.getClass();
+        Object cached = NOTICE_FIELDS.get(type);
+        if (cached == null) {
+            Field found = null;
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers()) || !field.getType().getName().equals(NOTICE)) continue;
+                if (found != null) { found = null; break; }
+                found = field;
+            }
+            try { if (found != null) found.setAccessible(true); }
+            catch (RuntimeException inaccessible) { found = null; }
+            cached = found != null ? found : NO_NOTICE;
+            NOTICE_FIELDS.put(type, cached);
+        }
+        if (cached == NO_NOTICE) return null;
+        try { return ((Field) cached).get(model); }
+        catch (IllegalAccessException | RuntimeException unreadable) { return null; }
+    }
 
     static String textOfNotice(Object notice) {
         Object template = template(notice);
