@@ -705,10 +705,12 @@ public class Settings extends BaseSettings {
     /**
      * Takes TikTok's own Auto scroll action out of the video panel (upstream #116). The patch
      * surfaces that action for accounts outside its rollout; a reader who only wants advance on
-     * end has no use for it, and it read as a second, unexplained switch.
+     * end has no use for it, and it read as a second, unexplained switch. It also takes the Auto
+     * scroll switch tablets and unfolded foldables show beside the video, and it works with
+     * Auto-advance off (#234).
      */
     public static final BooleanSetting AUTO_ADVANCE_HIDE_PANEL_ACTION = new BooleanSetting(
-            "auto_advance_hide_panel_action", FALSE, false, Setting.parent(AUTO_ADVANCE));
+            "auto_advance_hide_panel_action", FALSE, true);
     /**
      * Answers yes to TikTok's search_auto_scroll flag. Search results get auto scroll from that
      * flag rather than the For You one, and their feed runs the same component Auto-advance starts.

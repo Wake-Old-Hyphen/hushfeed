@@ -599,7 +599,10 @@ public class SeeThroughBottomBarTest {
 
             VideoOverlayHider.applyTo(activity);
             assertEquals(View.GONE, strip.getVisibility());
-            assertEquals("nothing moves before the pager has the room", 0f, layer.getTranslationY(), 0f);
+            // The pass gives the pager the room and lifts the layer by it before the frame is
+            // drawn; lifted a pass later, the caption sat 138 low over the bar in between (#232).
+            assertEquals("the pager didn't get the room", 2181, cell.getHeight());
+            assertEquals("the room came without the lift", -138f, layer.getTranslationY(), 0f);
 
             layOut(root);
             assertEquals(2181, cell.getHeight());

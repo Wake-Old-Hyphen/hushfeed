@@ -28,7 +28,7 @@ Most switches start off, so a freshly patched TikTok looks and works the way it 
 **[Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed)** | [Download the latest bundle](https://github.com/SysAdminDoc/hushfeed/releases/latest) | [Browse the 138 source patches](#patches)
 
 > [!IMPORTANT]
-> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/). Use that exact APK when patching. See [Supported target](#supported-target) for the build details.
+> Hushfeed targets the global TikTok package, `com.zhiliaoapp.musically`, version [47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/). Patch that exact build, as the bundle or the APK ([step 1](#install) says which). See [Supported target](#supported-target) for the build details.
 
 Hushfeed v0.78.0 contains 138 patches for TikTok 47.5.3. New in this one: it moves to TikTok 47.5.3, so patch that build instead of 47.4.3. PineDrama stays on 47.4.3. New switches add double taps by corner, sorting for profile grids, a seek bar on sound previews and a glass lens for the tab bar. It needs Morphe Manager 2.0.0 or newer.
 
@@ -52,12 +52,14 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 
 ## Install
 
-1. Get the TikTok 47.5.3 APK. Google Play only offers the newest build, so take it from APKMirror: [47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/). On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
+1. Get the TikTok 47.5.3 bundle or APK from APKMirror, since Google Play only offers the newest build. For Morphe Manager on a phone, take the file marked **BUNDLE** (an `.apkm`) from the [47.5.3 release page](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/). Manager needs less memory for it, and on a device with 3 GB it ran out of memory on the APK but patched the bundle in about a minute. On a computer, take the [47.5.3 APK](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/) (arm64-v8a + armeabi-v7a, nodpi) instead, since the desktop tool's merge of a bundle breaks three patches ([why](#why-you-have-to-fetch-that-apk-yourself)). If you already have the APK, Manager can still try it. Get the bundle if it runs out of memory.
+
+   On Android 11 and newer, Morphe Manager checks that TikTok's own key signed the file and warns you if it didn't. That warning means the file was changed after TikTok published it, so download it again.
 2. Use Morphe Manager 2.0.0 or newer. Hushfeed bundles after v0.77.0 are built against patcher 2.0.0, which Manager 2.0.0 was the first to ship, and older Managers won't load them. morphe-desktop 1.19.0 or newer works from a computer. Universal ReVanced Manager can't import a Morphe bundle at all ([its issue #733](https://github.com/Jman-Github/Universal-ReVanced-Manager/issues/733)).
 3. Add Hushfeed as a source. On the phone, open [Add Hushfeed to Morphe](https://morphe.software/add-source?github=SysAdminDoc%2Fhushfeed). If **Open in Morphe** leaves you in the browser, open Morphe Manager, tap **Sources**, tap **+**, and paste `https://github.com/SysAdminDoc/hushfeed`. You can also download the `.mpp` file from the [latest release](https://github.com/SysAdminDoc/hushfeed/releases/latest) and load it as a local bundle. It's a patch bundle, not a TikTok APK.
 4. Pick the patches. Simple mode in Morphe Manager selects 119 of the 138 Hushfeed patches. The other 19 need Expert mode in Manager settings, and [Patches](#patches) says why each one stays out. Manager 2.0.0 shows all 138 Hushfeed patches in eleven categories you can expand or collapse. Leave **Use embedded VM** on under **Settings > Patcher**, since it lets the patcher use whatever memory the phone can spare.
-5. Patch the original APK from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key, because an update only installs over your copy, with your login intact, when it's signed with the same key.
-6. Install the patched APK, open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
+5. Patch the original file from step 1. Hushfeed stops with an error on an APK it has already patched. Keep the manager's existing signing key, because an update only installs over your copy, with your login intact, when it's signed with the same key.
+6. Install the patched APK. If TikTok from Google Play is still on the phone, uninstall it first. Android won't put the patched app over it because they're signed with different keys. Uninstalling erases TikTok's data on the phone, so you'll log in again, and drafts you haven't posted go with it. Then open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
 
 The patches that take files out of TikTok do it while patching, so Pause and a settings import can't put those files back. Read the [native-language recovery steps](#tiktok-stays-in-english-after-removing-language-packs) before you remove languages.
 
@@ -279,7 +281,7 @@ Simple mode in Morphe Manager selects 119 of these patches. Each row says what t
 
 ### Patching stalls partway
 
-The manager has probably run short of memory. In Manager 2.0, check that **Use embedded VM** is on under **Settings > Patcher**, close other apps and start again. Every Hushfeed patch at once fits in about 1 GB. If it stops while Manager is in the background, allow it under **Battery optimization** on that same page. On an older Manager, set **Settings > Process runtime** to 1,024 MB instead, or 512 MB if it still stalls. Hide Play Store update offer, Change app name and Custom launcher icon decode resources too, so they're the ones to leave out if memory stays tight.
+The manager has probably run short of memory. If it says the patcher ran out of memory with a 1024 MB heap, patch the bundle (`.apkm`) from [step 1](#install) instead of the APK. It needs less memory, and on a 3 GB device it finished where the APK failed. In Manager 2.0, also check that **Use embedded VM** is on under **Settings > Patcher**, close other apps and start again. If it stops while Manager is in the background, allow it under **Battery optimization** on that same page. On an older Manager, set **Settings > Process runtime** to 1,024 MB instead, or 512 MB if it still stalls. Hide Play Store update offer, Change app name and Custom launcher icon decode resources too, so they're the ones to leave out if memory stays tight.
 
 You can select every patch at once. Each release is patched with all of them selected before it ships, so none refuse to go in together.
 
@@ -353,9 +355,9 @@ Hushfeed declares one TikTok build at a time, the newest stable one it's been ch
 
 ### Why you have to fetch that APK yourself
 
-Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.5.3, and Play can't be asked for an older one. Take the APK from APKMirror ([47.5.3](https://www.apkmirror.com/apk/tiktok-pte-ltd/tik-tok-including-musical-ly/tiktok-47-5-3-release/tiktok-47-5-3-2-android-apk-download/)) and patch that file, not the installed app.
+Google Play only ever serves the newest build it thinks your device can run, so the copy on your phone may not be 47.5.3, and Play can't be asked for an older one. Take the file from APKMirror (step 1 of [Install](#install) says which of its two) and patch that, not the installed app.
 
-APKMirror also offers some TikTok releases as bundles, using an `.apkm` file. Morphe Manager merges one into a single APK and keeps TikTok's file paths, so everything works on it. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.5.3 APK instead.
+APKMirror also offers some TikTok releases as bundles, using an `.apkm` file, and 47.5.3 has one beside the APK. Morphe Manager merges a bundle into a single APK and keeps TikTok's file paths, so everything works on it, and it needs less memory for the bundle than for the APK. The desktop CLI's merge moves the resource files around, and Accent color, AMOLED dark theme and Custom launcher icon refuse that result, so on a computer patch the plain 47.5.3 APK instead.
 
 ## Verify a download
 

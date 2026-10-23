@@ -851,41 +851,52 @@ internal fun roomThemeJoin(instructions: List<Instruction>): Int {
 }
 
 /**
- * TikTok's Spark theme lookup (X.0GrQ.LIZLLL on 47.4.3, #159): the light or dark answer Spark's
- * web pages and popups take for a context, read from TikTok's theme name attribute in the
- * context's theme ("TikTok Theme Dark" or "Const" is dark). Over a room the room hook darkened,
- * a shop room's Top customers popup asked it with the room, drew dark, and kept the light page's
- * dark tab titles (S22, 2026-10-20). Its answer's type is renamed each build, so it's found by
- * its Context parameter and the theme names it compares; the one other method comparing them
- * takes a String.
+ * Spark's light or dark decision for one page, SparkContext.LJIIZILJ(Context) on 47.5.3 (#159).
+ * It takes the page schema's force_theme_style first, then asks TikTok's theme name lookup with
+ * the page's own fragment, popup or activity context, and the page's container color (LJJJJI)
+ * and the theme its Lynx page reads (LJJJJ) both follow its answer. Over a room the room hook
+ * darkened, a shop room's viewer ranking with its Top customers tab drew dark with its native
+ * tab titles still dark (S22, 2026-10-20). SparkContext keeps its name; the decision is its one
+ * Context method reading the fix_spark_issues_when_recreate switch, and its answer's enum, whose
+ * constants keep their names, is renamed each build (X.0Grb on 47.4.3, X.0HD4 on 47.5.3).
  */
-internal object SparkThemeNameFingerprint : Fingerprint(
+internal object SparkPageThemeFingerprint : Fingerprint(
+    definingClass = SPARK_CONTEXT,
     parameters = listOf("Landroid/content/Context;"),
-    strings = listOf("TikTok Theme Light", "TikTok Theme Dark"),
+    strings = listOf("fix_spark_issues_when_recreate"),
 )
 
-/**
- * The same class's page color lookup, (Context)Integer, which resolves Spark's page background
- * against the context's theme the same way, so it came out dark over the darkened room too.
- */
-internal fun <M : Method> sparkThemeColor(methods: Iterable<M>): M? = methods.singleOrNull {
-    !AccessFlags.STATIC.isSet(it.accessFlags) && it.returnType == "Ljava/lang/Integer;" &&
-        it.parameterTypes.map(CharSequence::toString) == listOf("Landroid/content/Context;")
-}
+internal const val SPARK_CONTEXT = "Lcom/bytedance/hybrid/spark/SparkContext;"
 
-/** Hands the context a Spark theme lookup reads to the extension first, which can swap in the room's light one. */
-internal fun hookSparkTheme(lookup: MutableMethod) {
-    if (AccessFlags.STATIC.isSet(lookup.accessFlags) || lookup.implementation == null ||
-        lookup.parameterTypes.map(CharSequence::toString) != listOf("Landroid/content/Context;")
+/**
+ * Asks the extension first whether the page stays stock, and answers the theme enum's LIGHT for
+ * it before Spark decides; every other page goes on to Spark's own decision.
+ */
+internal fun hookSparkPage(decision: MutableMethod, theme: ClassDef) {
+    val implementation = decision.implementation
+    if (AccessFlags.STATIC.isSet(decision.accessFlags) || implementation == null ||
+        decision.definingClass != SPARK_CONTEXT ||
+        decision.parameterTypes.map(CharSequence::toString) != listOf("Landroid/content/Context;") ||
+        implementation.registerCount < 3
     ) {
-        throw PatchException("LIVE controls: ${lookup.definingClass}->${lookup.name} isn't a Spark theme lookup")
+        throw PatchException("LIVE controls: ${decision.definingClass}->${decision.name} isn't Spark's page theme decision")
     }
-    lookup.addInstructions(
+    if (theme.type != decision.returnType || theme.fields.none {
+            it.name == "LIGHT" && it.type == theme.type && AccessFlags.STATIC.isSet(it.accessFlags)
+        }
+    ) {
+        throw PatchException("LIVE controls: ${theme.type} has no LIGHT for Spark's page theme")
+    }
+    decision.addInstructionsWithLabels(
         0,
         """
-            invoke-static/range {p1 .. p1}, $PANEL_THEME->sparkContext(Landroid/content/Context;)Landroid/content/Context;
-            move-result-object p1
+            invoke-static/range {p0 .. p1}, $PANEL_THEME->sparkKeepsStock(Ljava/lang/Object;Landroid/content/Context;)Z
+            move-result v0
+            if-eqz v0, :morphe_spark_decides
+            sget-object v0, ${theme.type}->LIGHT:${theme.type}
+            return-object v0
         """,
+        ExternalLabel("morphe_spark_decides", decision.getInstruction(0)),
     )
 }
 
@@ -1777,16 +1788,12 @@ val liveControlsPatch = bytecodePatch(
         }.returnEarly(darkTheme)
         hookRoomTheme(LivePlayActivityThemeFingerprint.method)
         // TikTok's Spark pages read light or dark from the theme name of the context they open
-        // in, so over the darkened room a shop room's Top customers popup drew dark with dark tab
-        // titles (S22, 2026-10-20). Its theme and page color lookups hand their context to the
-        // extension first, which gives back one over the room's kept light theme, so the room's
-        // Spark popups stay stock.
-        val sparkTheme = SparkThemeNameFingerprint.method
-        hookSparkTheme(sparkTheme)
-        hookSparkTheme(
-            sparkThemeColor(mutableClassDefBy(sparkTheme.definingClass).methods)
-                ?: throw PatchException("LIVE controls: the Spark page color lookup wasn't found"),
-        )
+        // in, so over the darkened room they draw dark, which suits them, except a shop room's
+        // viewer ranking with a Top customers tab: its native tab titles kept their light colors
+        // on the dark sheet (S22, 2026-10-20). Spark's per-page decision asks the extension first,
+        // which answers light for that page alone, found by its schema.
+        val sparkPage = SparkPageThemeFingerprint.method
+        hookSparkPage(sparkPage, classDefBy(sparkPage.returnType))
         // A translated bio's "See original" link read dark on the dark profile card (Login2,
         // 2026-10-18): its replacement span draws it in the bio view's own light-theme text
         // color, skipping the link color. The extension makes the link color the view's text

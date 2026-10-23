@@ -58,6 +58,8 @@ public final class RememberClearDisplayPatch {
     private static WeakReference<Object> currentModel = new WeakReference<>(null);
     private static Condition activeCondition;
     private static String activeId;
+    /** The video a clear by hand was made on. Focus coming back to it doesn't end that clear (#232). */
+    private static String clearedByHandOn;
     private static final AtomicBoolean progressQueued = new AtomicBoolean();
     /** Players that have reported a first frame, or stood one in from progress. */
     private static final Map<Object, Boolean> FRAMED = Collections.synchronizedMap(new WeakHashMap<>());
@@ -263,10 +265,13 @@ public final class RememberClearDisplayPatch {
             // hidden until TikTok's own clear display bar was used (S22, 2026-09-23). The same
             // goes for a clear made by hand with Keep Clear display across videos off (#232).
             // Paused, that switch reads off like every other, and TikTok's own clear is left alone.
+            // Focus coming back to the video it was made on, as TikTok's long press panel
+            // closes, is not a new video: ended there, its own Clear display undid itself (#232).
             else if (automaticHidden || (clearNow && !Setting.isPaused()
-                    && !Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get())) {
+                    && !Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get() && !id.equals(clearedByHandOn))) {
                 emit(event, false);
             }
+            if (!id.equals(clearedByHandOn)) clearedByHandOn = null;
             // A remembered clear lands on every video as it starts, the way the automatic path
             // with no delay does, so it carries the same way: a video opened from Favorites
             // showed its controls for about a second until its clear landed (#84).
@@ -356,6 +361,7 @@ public final class RememberClearDisplayPatch {
         FRAMED.clear();
         activeCondition = null;
         activeId = null;
+        clearedByHandOn = null;
         nativeEvent = null;
         nativeCell = null;
         nativeController = null;
@@ -498,6 +504,7 @@ public final class RememberClearDisplayPatch {
         // press kept a video replayed from search from clearing again (#84).
         int kind = (Integer) type;
         if (kind == BACK_BUTTON || kind == OTHER_EXIT || kind == SCREEN_RECORD || kind == SWITCH_AD) return;
+        clearedByHandOn = (Boolean) clear ? activeId : null;
         long observed = generation;
         Runnable changed = () -> {
             if (observed != generation) return;
@@ -511,6 +518,27 @@ public final class RememberClearDisplayPatch {
         // Not kept for the next video: nothing is remembered, so turning the switch back on
         // later doesn't bring back a Clear display from before (#232).
         Settings.CLEAR_DISPLAY.save((Boolean) clear && Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get());
+    }
+
+    /**
+     * TikTok's video pager picked a new video, as a swipe lets go and the pager starts settling on
+     * it. With Keep Clear display across videos off, a clear by hand ends here: TikTok carries its
+     * Clear display over the swipe, and ended at the next video's first frame, the tabs, the
+     * caption and the bottom bar came back after that video had settled, and it jumped (#232).
+     * Posted, so TikTok's own listeners have the new video before the exit reaches it. Kept,
+     * Automatic or paused, the first frame decides as before.
+     */
+    public static void onFeedPageSelected(Object pager, int position, boolean dispatch) {
+        if (!dispatch) return;
+        MAIN.post(RememberClearDisplayPatch::endClearForNewPage);
+    }
+
+    static void endClearForNewPage() {
+        if (!clearNow || Setting.isPaused() || Settings.AUTOMATIC_CLEAR_DISPLAY.get()
+                || Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.get()) return;
+        Logger.printDebug(() -> "Clear display: a new video was picked, ending a clear that isn't kept");
+        clearedByHandOn = null;
+        emit(RememberClearDisplayPatch::postClear, false);
     }
 
     /** Whether the next video starts cleared because the last one was cleared by hand. */

@@ -212,6 +212,49 @@ public class AutomaticClearDisplayTest {
         }
     }
 
+    /** #232: with Keep off, the bars come back as the swipe starts, and a panel closing over the video leaves its clear. */
+    @Test public void withKeepOffTheSwipeEndsAClearByHand() {
+        Settings.AUTOMATIC_CLEAR_DISPLAY.save(false);
+        Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.save(false);
+        try {
+            RememberClearDisplayPatch.readerPost = clear ->
+                    RememberClearDisplayPatch.rememberClearDisplayEvent(new Event(clear, 0));
+            List<Boolean> events = new ArrayList<>();
+            RememberClearDisplayPatch.firstFrame("cleared", () -> true, events::add);
+            assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+
+            // Focus back on the same video, as TikTok's long press panel closes, keeps it.
+            events.clear();
+            RememberClearDisplayPatch.firstFrame("cleared", () -> true, events::add);
+            assertEquals("closing the panel undid its own Clear display", List.of(), events);
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+
+            // The pager settling on a video without telling its listeners isn't a new one.
+            RememberClearDisplayPatch.onFeedPageSelected(null, 1, false);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(RememberClearDisplayPatch.isClearDisplayNow());
+
+            // The pager picking the next video as the swipe lets go.
+            RememberClearDisplayPatch.onFeedPageSelected(null, 1, true);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertFalse("the bars waited for the next video's first frame", RememberClearDisplayPatch.isClearDisplayNow());
+            events.clear();
+            RememberClearDisplayPatch.firstFrame("next", () -> true, events::add);
+            assertEquals("the next video was told to leave a clear it never had", List.of(), events);
+
+            // Kept, the clear carries over the swipe as before.
+            Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.save(true);
+            assertTrue(RememberClearDisplayPatch.toggleFromGesture());
+            RememberClearDisplayPatch.onFeedPageSelected(null, 2, true);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("a kept clear ended with the swipe", RememberClearDisplayPatch.isClearDisplayNow());
+            assertTrue("the swipe's exit overwrote the kept choice", Settings.CLEAR_DISPLAY.get());
+        } finally {
+            Settings.REMEMBER_CLEAR_DISPLAY_ON_SCROLL.resetToDefault();
+            Settings.CLEAR_DISPLAY.resetToDefault();
+        }
+    }
+
     /** #136: like every other clear, a gesture doesn't take the tabs the daily hold needs. */
     @Test public void aGestureDoesNotClearUnderTheDailyHold() {
         org.robolectric.util.ReflectionHelpers.callStaticMethod(app.morphe.extension.tiktok.wellbeing.SessionBudget.class, "awaitWritesForTests");
