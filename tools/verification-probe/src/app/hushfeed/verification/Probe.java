@@ -897,6 +897,89 @@ public final class Probe extends Instrumentation {
                         Log.i(TAG, "ok addrs " + out);
                         break;
                     }
+                    case "covers": {
+                        // Every cover the current video's model holds, read from its fields so a
+                        // getter that swaps in another cover can't hide one: url count and frame
+                        // size only, which says whether Save cover could fetch a bigger image.
+                        Object aweme = loader.loadClass(
+                                "app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                .getMethod("getAweme").invoke(null);
+                        if (aweme == null) throw new IllegalStateException("no current video");
+                        Object video = optional(aweme, "getVideo");
+                        if (video == null) throw new IllegalStateException("no video model");
+                        StringBuilder out = new StringBuilder("video=")
+                                .append(optional(video, "getWidth")).append('x').append(optional(video, "getHeight"));
+                        for (String name : new String[]{"originCoverValue", "cover", "lowResCover", "dynamicCover",
+                                "animatedCover", "aiCover", "aiDynamicCover", "aiDynamicCoverBak", "cachedOuterCoverUrl"}) {
+                            Object model;
+                            try {
+                                Field field = video.getClass().getDeclaredField(name);
+                                field.setAccessible(true);
+                                model = field.get(video);
+                            } catch (NoSuchFieldException missing) {
+                                out.append(' ').append(name).append("=nofield");
+                                continue;
+                            }
+                            Object urls = optional(model, "getUrlList");
+                            out.append(' ').append(name).append('=').append(model == null ? "null"
+                                    : (urls instanceof List ? ((List<?>) urls).size() : -1) + "urls," + frame(model));
+                            // The image template the CDN renders, the part of the last path
+                            // segment after its '~': it names the size actually served.
+                            if (urls instanceof List && !((List<?>) urls).isEmpty()) {
+                                String segment = android.net.Uri.parse(String.valueOf(((List<?>) urls).get(0)))
+                                        .getLastPathSegment();
+                                int tilde = segment == null ? -1 : segment.indexOf('~');
+                                out.append(',').append(tilde < 0 ? "notemplate" : segment.substring(tilde + 1));
+                            }
+                        }
+                        Log.i(TAG, "ok covers " + out);
+                        break;
+                    }
+                    case "coversizes": {
+                        // Fetches each cover the current video's model holds and reads the size
+                        // the image server actually sent, off the main thread. Sizes only.
+                        Object aweme = loader.loadClass(
+                                "app.morphe.extension.tiktok.blockauthor.CurrentVideoAuthor")
+                                .getMethod("getAweme").invoke(null);
+                        if (aweme == null) throw new IllegalStateException("no current video");
+                        final Object video = optional(aweme, "getVideo");
+                        if (video == null) throw new IllegalStateException("no video model");
+                        new Thread(() -> {
+                            StringBuilder out = new StringBuilder();
+                            for (String name : new String[]{"originCoverValue", "cover", "dynamicCover"}) {
+                                try {
+                                    Field field = video.getClass().getDeclaredField(name);
+                                    field.setAccessible(true);
+                                    Object urls = optional(field.get(video), "getUrlList");
+                                    if (!(urls instanceof List) || ((List<?>) urls).isEmpty()) {
+                                        out.append(' ').append(name).append("=nourls");
+                                        continue;
+                                    }
+                                    java.net.HttpURLConnection connection = (java.net.HttpURLConnection)
+                                            new java.net.URL(String.valueOf(((List<?>) urls).get(0))).openConnection();
+                                    connection.setConnectTimeout(10000);
+                                    connection.setReadTimeout(15000);
+                                    byte[] body;
+                                    try (java.io.InputStream in = connection.getInputStream()) {
+                                        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+                                        byte[] chunk = new byte[16384];
+                                        for (int read; (read = in.read(chunk)) > 0; ) bytes.write(chunk, 0, read);
+                                        body = bytes.toByteArray();
+                                    }
+                                    android.graphics.BitmapFactory.Options bounds = new android.graphics.BitmapFactory.Options();
+                                    bounds.inJustDecodeBounds = true;
+                                    android.graphics.BitmapFactory.decodeByteArray(body, 0, body.length, bounds);
+                                    out.append(' ').append(name).append('=').append(connection.getResponseCode())
+                                            .append(',').append(bounds.outWidth).append('x').append(bounds.outHeight)
+                                            .append(',').append(bounds.outMimeType).append(',').append(body.length).append('B');
+                                } catch (Throwable failure) {
+                                    out.append(' ').append(name).append("=failed:").append(failure.getClass().getSimpleName());
+                                }
+                            }
+                            Log.i(TAG, "ok coversizes" + out);
+                        }).start();
+                        break;
+                    }
                     case "collect": {
                         // Adds or removes one favourite through TikTok's own AwemeCollectionAgent,
                         // found by its parameter shape since the method's name changes by build,
