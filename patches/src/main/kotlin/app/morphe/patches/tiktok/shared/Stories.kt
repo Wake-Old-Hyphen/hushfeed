@@ -1,3 +1,7 @@
+/*
+ * Copyright 2026 Hushfeed contributors
+ * https://github.com/SysAdminDoc/hushfeed
+ */
 package app.morphe.patches.tiktok.shared
 
 import app.morphe.patcher.patch.BytecodePatchContext

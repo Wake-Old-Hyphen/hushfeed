@@ -1,4 +1,4 @@
-## Unreleased
+## 0.79.0 (2026-10-24)
 
 * **TikTok:** On PineDrama, Hushfeed's settings now say to restart PineDrama instead of TikTok (#156).
 
@@ -12,7 +12,7 @@
 
 * **TikTok:** The Scrolling comments on videos preset in Feature Gate Lab now tells you it only works on videos TikTok turned it on for (#98).
 
-* **TikTok:** A new Allow photo comments patch for PineDrama brings back the gallery tab and the photo button in the comment box (#156).
+* **TikTok:** A new Allow photo comments patch for PineDrama lets the comment box ask TikTok's server about photo comments, like TikTok does (#156).
 
 * **TikTok:** PineDrama moves to 47.5.3. Six more patches run on it now, so Morphe Manager offers 95 patches for it (#156).
 

@@ -1,4 +1,4 @@
-## Unreleased
+## 0.79.0 (2026-10-24)
 
 * **TikTok:** PineDrama-da Hushfeed ayarları artıq TikTok əvəzinə PineDrama-nı yenidən başlatmağı deyir (#156).
 
@@ -12,7 +12,7 @@
 
 * **TikTok:** Feature Gate Lab-dakı Videoların üzərində sürüşən şərhlər hazır ayarı artıq yalnız TikTok-un aktivləşdirdiyi videolarda işlədiyini deyir (#98).
 
-* **TikTok:** PineDrama üçün yeni Allow photo comments yaması şərh qutusunda qalereya tabını və foto düyməsini geri qaytarır (#156).
+* **TikTok:** PineDrama üçün yeni Allow photo comments yaması şərh qutusunun foto şərhlər barədə TikTok serverindən TikTok kimi soruşmasına imkan verir (#156).
 
 * **TikTok:** PineDrama 47.5.3-ə keçir. Daha altı yama artıq onun üzərində işləyir, beləliklə Morphe Manager onun üçün 95 yama təklif edir (#156).
 

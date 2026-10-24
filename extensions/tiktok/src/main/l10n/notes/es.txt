@@ -1,4 +1,4 @@
-## Unreleased
+## 0.79.0 (2026-10-24)
 
 * **TikTok:** En PineDrama, los ajustes de Hushfeed ahora dicen que reinicies PineDrama en lugar de TikTok (#156).
 
@@ -12,7 +12,7 @@
 
 * **TikTok:** El ajuste predefinido Comentarios que se deslizan sobre los videos del Laboratorio de interruptores ahora avisa de que solo funciona en los vídeos en los que TikTok lo activó (#98).
 
-* **TikTok:** El nuevo parche Allow photo comments para PineDrama recupera la pestaña de galería y el botón de foto en el cuadro de comentarios (#156).
+* **TikTok:** El nuevo parche Allow photo comments para PineDrama hace que el cuadro de comentarios pregunte al servidor de TikTok por los comentarios con foto, como hace TikTok (#156).
 
 * **TikTok:** PineDrama pasa a la 47.5.3. Seis parches más funcionan ahora en él, así que Morphe Manager ofrece 95 parches para él (#156).
 

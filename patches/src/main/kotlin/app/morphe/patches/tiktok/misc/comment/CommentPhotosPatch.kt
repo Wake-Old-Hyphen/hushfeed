@@ -82,9 +82,8 @@ internal object DramaCreativePluginEntryFingerprint : Fingerprint(
 @Suppress("unused")
 val commentPhotosPatch = bytecodePatch(
     name = "Allow photo comments",
-    description = "Lets you bring back the gallery tab and photo button in PineDrama's comment box, " +
-        "so you can add a photo to a comment like on TikTok. PineDrama asks to see your photos the " +
-        "first time. TikTok's server still decides whether your account can post one. Starts off. " +
+    description = "Lets PineDrama's comment box ask TikTok's server about photo comments, like TikTok " +
+        "does. TikTok's server still decides whether your account can post one. Starts off. " +
         "Turn it on in Hushfeed settings > Comments.",
 ) {
     category("Comments")
