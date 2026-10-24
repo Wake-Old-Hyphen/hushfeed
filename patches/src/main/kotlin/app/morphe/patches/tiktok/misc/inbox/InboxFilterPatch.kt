@@ -71,7 +71,7 @@ val inboxFilterPatch = bytecodePatch(
     category("Inbox")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // Found and checked before anything is written: a patch that fails part way keeps

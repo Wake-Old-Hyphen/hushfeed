@@ -1737,7 +1737,7 @@ val liveControlsPatch = bytecodePatch(
         "and can add a Record button to a LIVE room that saves what you watch from when you tap it.",
 ) {
     category("Playback")
-    dependsOn(settingsPatch, sharedExtensionPatch, ownedShareActionsPatch)
+    dependsOn(settingsPatch, sharedExtensionPatch, ownedShareActionsPatch, screenRecordManifestPatch)
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {

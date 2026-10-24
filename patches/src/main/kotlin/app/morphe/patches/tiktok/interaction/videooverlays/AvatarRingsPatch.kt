@@ -86,7 +86,8 @@ val avatarRingsPatch = bytecodePatch(
     name = "Remove avatar rings",
     description = "Takes the story and LIVE rings off profile pictures, so tapping a picture " +
         "opens the profile instead of a story or LIVE. It can also open a LIVE creator's Story " +
-        "from their profile picture. Starts off. Turn it on in Hushfeed settings > Feed screen.",
+        "from their profile picture or their chat in the Inbox. Starts off. Turn it on in " +
+        "Hushfeed settings > Feed screen.",
     default = true,
 ) {
     category("Feed")
@@ -134,7 +135,7 @@ val avatarRingsPatch = bytecodePatch(
         SettingsStatusLoadFingerprint.method.addInstruction(0,
             "invoke-static {}, Lapp/morphe/extension/tiktok/settings/SettingsStatus;->enableAvatarRings()V")
 
-        // #233: the profile picture opens a LIVE creator's Story first, on its own switch.
+        // #233: the profile and Inbox pictures open a LIVE creator's Story first, on its own switch.
         hookStoryOverLiveOn(packageMetadata.versionName)
     }
 }

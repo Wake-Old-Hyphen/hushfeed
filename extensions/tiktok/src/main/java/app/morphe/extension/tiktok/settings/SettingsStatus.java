@@ -672,6 +672,13 @@ public class SettingsStatus {
         profileThoughtsEnabled = true;
     }
 
+    /** Hide profile shortcuts found TikTok's two Thoughts gates on this build and put the switch in front. */
+    public static boolean thoughtsSwitchEnabled = false;
+
+    public static void enableThoughtsSwitch() {
+        thoughtsSwitchEnabled = true;
+    }
+
     /** Hide profile shortcuts found the question your profile's menu asks about each cell, and hooked it. */
     public static boolean profileMenuCellsEnabled = false;
 
@@ -775,6 +782,8 @@ public class SettingsStatus {
     public static void enableCommentPublishDiagnostics() { commentPublishDiagnosticsEnabled = true; }
     public static boolean commentSendFixEnabled = false;
     public static void enableCommentSendFix() { commentSendFixEnabled = true; }
+    public static boolean savedStickersEnabled = false;
+    public static void enableSavedStickers() { savedStickersEnabled = true; }
     public static boolean followDiagnosticsEnabled = false;
     public static void enableFollowDiagnostics() { followDiagnosticsEnabled = true; }
     public static boolean repostDiagnosticsEnabled = false;

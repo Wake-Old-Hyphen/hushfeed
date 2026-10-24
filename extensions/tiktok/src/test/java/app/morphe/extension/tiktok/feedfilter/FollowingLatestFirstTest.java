@@ -249,6 +249,22 @@ public class FollowingLatestFirstTest {
         assertEquals(List.of("a", "b", "c", "d"), read(list, post("c", 2 * HOUR), post("d", HOUR)));
     }
 
+    @Test
+    public void onlyTheFirstReadIsAskedForMorePosts() {
+        Settings.FOLLOWING_LATEST_FIRST.save(true);
+
+        assertEquals(FollowingLatestFirst.FIRST_READ_COUNT, FollowingLatestFirst.requestCount(0, 0, 20));
+        // Load more keeps TikTok's size, and so does a count already past ours.
+        assertEquals(20, FollowingLatestFirst.requestCount(1760000000L, 0, 20));
+        assertEquals(60, FollowingLatestFirst.requestCount(0, 0, 60));
+        assertEquals(0, FollowingLatestFirst.requestCount(0, 0, 0));
+    }
+
+    @Test
+    public void offAsksForTikToksOwnCount() {
+        assertEquals(20, FollowingLatestFirst.requestCount(0, 0, 20));
+    }
+
     private static Item post(String aid, long ageSeconds) {
         Item item = new Item(aid);
         item.createTime = NOW_SECONDS - ageSeconds;

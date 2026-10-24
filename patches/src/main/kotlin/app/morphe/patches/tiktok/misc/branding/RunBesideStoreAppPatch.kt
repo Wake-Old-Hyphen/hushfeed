@@ -199,6 +199,7 @@ val runBesideStoreAppPatch = bytecodePatch(
 ) {
     category("Settings")
     dependsOn(sharedExtensionPatch)
+    // Not PineDrama: the copy registers as the store TikTok package, which would sign PineDrama in as TikTok.
     compatibleWith(*AppCompatibilities.tiktok())
 
     execute {

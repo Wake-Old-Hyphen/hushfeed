@@ -77,7 +77,7 @@ val showSeekbarPatch = bytecodePatch(
     category("Playback")
     dependsOn(settingsPatch, sharedExtensionPatch)
 
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 
     execute {
         // Checked before the first write: the predicate's injection writes v0 and then falls

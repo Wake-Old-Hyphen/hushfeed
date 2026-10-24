@@ -280,7 +280,7 @@ val advancedDownloadsPatch = bytecodePatch(
         "Hushfeed settings > Downloads.",
 ) {
     category("Downloads")
-    compatibleWith(*AppCompatibilities.tiktok())
+    compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
     // The grid cell's count, for the check mark on videos saved here. The native Report carrier,
     // for the share sheet's Save cover (#146).
     dependsOn(settingsPatch, sharedExtensionPatch, profileGridCountPatch, ownedShareActionsPatch)

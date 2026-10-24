@@ -7584,7 +7584,9 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/promobanners/HideProfileShortcutsPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/profile/ProfileShortcuts.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/ProfileShortcutChecklistPreference.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/settings/preference/ProfileShortcutChecklistPreference.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/promobanners/ThoughtsGates.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/profile/ThoughtsGate.java"
   ],
   "settings": [
    {
@@ -7610,6 +7612,13 @@
     "default": false,
     "type": "bool",
     "row": "Hide Thoughts on profiles",
+    "restart": true
+   },
+   {
+    "key": "enable_thoughts",
+    "default": false,
+    "type": "bool",
+    "row": "Turn on Thoughts",
     "restart": true
    },
    {
@@ -9789,7 +9798,7 @@
     "auto": true
    }
   ],
-  "notes": "Issue #200. The camera is a page inside SplashActivity, opened from the + tab, and Back doesn't close it (its X does). With the switch off, `dumpsys window windows` shows sbrt= on TikTok's window while the camera is open (0.39 on the S22 at system brightness 50: the phone's level plus TikTok's step, over 255); with it on there's no sbrt. Opening the camera needs a tap the audit doesn't script, so the device check is by hand."
+  "notes": "Issue #200. The camera is a page inside SplashActivity, opened from the + tab, and Back doesn't close it (its X does). With the switch off, `dumpsys window windows` shows sbrt= on TikTok's window while the camera is open (0.39 on the S22 at system brightness 50: the phone's level plus TikTok's step, over 255); with it on there's no sbrt. The front flash and fill light (47.5.3: the record screen's fill light and front flash, the flash button's screen flash, the Tako AI camera's flash and the avatar camera's flash) store their own full brightness: with the switch off, flash on with the front camera shows sbrt=1.0, and with it on the white overlay still comes up while sbrt stays where it was. Opening the camera needs a tap the audit doesn't script, so the device check is by hand."
  },
  {
   "name": "LIVE controls",
@@ -10123,6 +10132,36 @@
    }
   ],
   "notes": "The effect (TikTok stops loading upcoming videos ahead of time, \"videos may take a moment longer to start\") has no stable on-screen sign; a data counter or the startwatch probe's first-frame delay on a cold cache would show it. The decision hook is PerformanceSwitches.limitBackgroundTraffic()."
+ },
+ {
+  "name": "Load all saved stickers",
+  "category": "Comments",
+  "default": true,
+  "kind": "runtime",
+  "source": [
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/comment/SavedStickersPatch.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/SavedStickers.java"
+  ],
+  "settings": [],
+  "surface": "comments",
+  "checks": [
+   {
+    "id": "injected",
+    "what": "The patched dex carries the saved stickers count seam and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran.)",
+    "steps": [
+     {
+      "apk": "dex-string",
+      "expect": "Lapp/morphe/extension/tiktok/comment/SavedStickers;"
+     },
+     {
+      "probe": "report",
+      "expect": "registered_switches:[^\\n]*\\bsavedStickers\\b"
+     }
+    ],
+    "auto": true
+   }
+  ],
+  "notes": "The effect shows only on an account with more saved stickers than the server's first page (refreshCount, 100 by default): PineDrama's comment sticker panel never pages, so without the patch its Saved tab stops at 100. Natural check: with about 113 saved, a cold start's Saved tab ends on a row of 1 (113 cells) instead of a full row at 100."
  },
  {
   "name": "Location access governor",

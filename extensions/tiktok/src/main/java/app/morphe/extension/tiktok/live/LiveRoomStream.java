@@ -172,6 +172,20 @@ public final class LiveRoomStream {
         return rank == QUALITY_ORDER.length ? -1 : rank;
     }
 
+    /** What to record when the screen is the source (#37): the room's creator and id, no stream address. */
+    public static Pick screenTarget(Object room) {
+        if (room == null) return new Pick(null, "No room");
+        try {
+            Object owner = Reflect.readField(room, "owner");
+            String creator = owner == null ? null : Reflect.string(owner, "getUsername", "username");
+            Object id = Reflect.readField(room, "idStr");
+            return new Pick(new LiveRecorder.Target(null, LiveRecorder.Transport.SCREEN, creator,
+                    id instanceof String ? (String) id : null, "screen"), null);
+        } catch (Throwable failure) {
+            return new Pick(null, "Unreadable room");
+        }
+    }
+
     /** Reads the room off TikTok's room object. Never throws. */
     @SuppressWarnings("unchecked")
     public static Pick fromRoom(Object room, String preferred) {
