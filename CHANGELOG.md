@@ -4,6 +4,10 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Fixes
+
+* **TikTok:** Service+ cleanup now checks the first entry in a LIVE preview, matching TikTok's own display logic (#94).
+
 ## 0.79.0 (2026-10-24)
 
 ### Features and fixes

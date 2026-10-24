@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Service+ cleanup now checks the first entry in a LIVE preview, matching TikTok's own display logic (#94).
+
 ## 0.79.0 (2026-10-24)
 
 * **TikTok:** On PineDrama, Hushfeed's settings now say to restart PineDrama instead of TikTok (#156).

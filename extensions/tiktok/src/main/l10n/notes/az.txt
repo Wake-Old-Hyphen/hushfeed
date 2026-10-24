@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Service+ təmizlənməsi indi LIVE önizləməsinin ilk elementini TikTok-un göstərmə qaydasına uyğun yoxlayır (#94).
+
 ## 0.79.0 (2026-10-24)
 
 * **TikTok:** PineDrama-da Hushfeed ayarları artıq TikTok əvəzinə PineDrama-nı yenidən başlatmağı deyir (#156).

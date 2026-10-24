@@ -1,3 +1,7 @@
+## Unreleased
+
+* **TikTok:** Die Service+-Bereinigung prüft jetzt den ersten Eintrag einer LIVE-Vorschau, so wie TikTok selbst (#94).
+
 ## 0.79.0 (2026-10-24)
 
 * **TikTok:** Bei PineDrama sagen die Hushfeed-Einstellungen jetzt, dass du PineDrama neu starten sollst, nicht TikTok (#156).
