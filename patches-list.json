@@ -188,7 +188,7 @@
     },
     {
       "name": "Allow Duet and Stitch",
-      "description": "Shows the Duet and Stitch buttons on videos whose creator turned them off, so you can still make one, and Add to Story on a story whose creator turned off content reuse. TikTok may still refuse some videos or the upload. Starts off. Turn it on in Hushfeed settings > Share sheet.",
+      "description": "Shows the Duet and Stitch buttons on videos whose creator turned them off, so you can still make one, and Add to Story in the share sheet and on stories when the creator turned off content reuse. TikTok may still refuse some videos or the upload. Starts off. Turn it on in Hushfeed settings > Share sheet.",
       "category": "Downloads",
       "use": true,
       "dependencies": [
@@ -225,6 +225,45 @@
             }
           ]
         },
+        {
+          "name": "PineDrama",
+          "packageName": "com.ss.android.ttmd.video",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "e97ca0c8835c5a9e4f7702a0382b103ede9c5d51e5194c8db54f4c8833f54e18"
+          ],
+          "targets": [
+            {
+              "version": "47.4.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024704030,
+                "ARMEABI_V7A": 2024704030,
+                "X86": 2024704030,
+                "X86_64": 2024704030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Allow photo comments",
+      "description": "Lets you bring back the gallery tab in PineDrama's comment box, so you can add a photo to a comment like on TikTok. TikTok's server still decides whether your account can post one. Starts off. Turn it on in Hushfeed settings > Comments.",
+      "category": "Comments",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.ss.android.ttmd.video": [
+          "47.4.3"
+        ]
+      },
+      "compatibility": [
         {
           "name": "PineDrama",
           "packageName": "com.ss.android.ttmd.video",
@@ -5785,6 +5824,45 @@
       "dependencies": [
         "BytecodePatch",
         "RawResourcePatch"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.5.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.5.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024705030,
+                "ARMEABI_V7A": 2024705030,
+                "X86": 2024705030,
+                "X86_64": 2024705030
+              }
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Report a newer phone to effects",
+      "description": "Tells TikTok's effects server you have a newer phone, so effects it turns down on older phones get another chance. Starts off. Turn it on in Hushfeed settings > App.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "BytecodePatch",
+        "Settings"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [

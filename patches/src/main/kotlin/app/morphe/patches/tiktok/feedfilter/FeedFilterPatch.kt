@@ -260,6 +260,7 @@ val feedFilterPatch = bytecodePatch(
         }
 
         FollowFeedRequestFingerprint.method.raiseFollowFeedFirstReadCount()
+        FollowingCacheRestoreFingerprint.method.skipSavedFollowingFirstVideo()
 
         listOf(
             ProfileRefreshResultFingerprint.method,
@@ -1046,6 +1047,31 @@ internal fun MutableMethod.raiseFollowFeedFirstReadCount() {
             """,
         )
     }
+}
+
+/**
+ * Latest first on Following (#226): on a cold start TikTok restores the Following list it saved
+ * last run and shows that list's first post as the first video, then loads the fresh list under
+ * it, so the saved post played first and the newest posts were sorted below it. While the switch
+ * is on the extension answers true and the hook hands the restore a null cache, which is the path
+ * TikTok takes when nothing was saved: it logs "no_cache" and the fresh read fills the feed.
+ */
+internal fun MutableMethod.skipSavedFollowingFirstVideo() {
+    requireLocals("Following saved first video", 1)
+    if (parameterTypes.firstOrNull()?.toString() != FOLLOWING_CACHE_DESCRIPTOR) {
+        throw PatchException("Following saved first video: $name does not take the saved cache first")
+    }
+    addInstructionsWithLabels(
+        0,
+        """
+            invoke-static {}, $FOLLOWING_LATEST_FIRST_CLASS_DESCRIPTOR->skipSavedFirstVideo()Z
+            move-result v0
+            if-eqz v0, :morphe_keep_saved_following
+            const/4 v0, 0x0
+            move-object/from16 p1, v0
+        """,
+        ExternalLabel("morphe_keep_saved_following", getInstruction(0)),
+    )
 }
 
 internal fun selectRecUserCardInsertion(

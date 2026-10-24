@@ -37,6 +37,7 @@ $root = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'common.ps1')
 . (Join-Path $PSScriptRoot 'Resolve-Java.ps1')
 . (Join-Path $PSScriptRoot 'patch-report.ps1')
+. (Join-Path $PSScriptRoot 'patch-target.ps1')
 $java = Resolve-Java
 
 $jar = Resolve-DesktopCli -Explicit $DesktopJar -Root $root -Required
@@ -49,7 +50,8 @@ if (-not (Test-Path -LiteralPath $Bundle -PathType Leaf)) { throw "No bundle at 
 $Apk = (Resolve-Path -LiteralPath $Apk).Path
 $Bundle = (Resolve-Path -LiteralPath $Bundle).Path
 $jar = (Resolve-Path -LiteralPath $jar).Path
-$names = @((Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json).patches | ForEach-Object { $_.name })
+$catalog = Get-Content -LiteralPath (Join-Path $root 'patches-list.json') -Raw | ConvertFrom-Json
+$names = @(Get-PackagePatchNames -PatchList $catalog -PackageName (Get-PatchTarget -PatchList $catalog).PackageName)
 if ($names.Count -eq 0) { throw 'No patches listed in patches-list.json.' }
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null

@@ -214,9 +214,13 @@ public final class LiveControls {
     public static boolean hideStaleServicePlus(Object row, Object preview) {
         if (row == null || Setting.isPaused()) return false;
         try {
-            if (!Boolean.TRUE.equals(Reflect.invoke(row, "isShowing"))) return false;
+            boolean showing = Boolean.TRUE.equals(Reflect.invoke(row, "isShowing"));
             Object items = preview == null ? null : Reflect.readField(preview, "previewItem");
-            if (items instanceof List && !((List<?>) items).isEmpty()) return false;
+            int count = items instanceof List ? ((List<?>) items).size() : 0;
+            // Every bind, so a report shows whether a row under a LIVE was that LIVE's own (#94).
+            Logger.printDebug(() -> "LIVE preview: Service+ row bound, showing " + showing
+                    + ", this LIVE has " + count + " Service+ item" + (count == 1 ? "" : "s"));
+            if (!showing || count > 0) return false;
             Logger.printDebug(() -> "LIVE preview: hid a Service+ row left from the last LIVE");
             return true;
         } catch (Throwable failure) {

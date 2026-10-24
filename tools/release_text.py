@@ -313,9 +313,10 @@ def catalog_patches() -> list:
 
 
 def catalog() -> tuple[int, list[str]]:
-    """The patch count and the TikTok versions of the package every patch declares, as
+    """The patch count and the TikTok versions of the package the most patches declare, as
     scripts/patch-target.ps1 reads them. PineDrama is declared only by the patches that apply
-    to it (#156), so its build never joins the targets the index and README name."""
+    to it (#156), a few of them its own, so its build never joins the targets the index and
+    README name. A tie names no target."""
     patches = catalog_patches()
     versions: dict[str, set[str]] = {}
     declared_by: dict[str, int] = {}
@@ -325,11 +326,12 @@ def catalog() -> tuple[int, list[str]]:
             declared_by[package] = declared_by.get(package, 0) + 1
             versions.setdefault(package, set()).update(
                 t["version"] for t in app.get("targets") or [] if t.get("version") and not t.get("experimental"))
-    everywhere = [package for package, count in declared_by.items() if count == len(patches)]
-    if len(everywhere) != 1:
-        fail(f"patches-list.json has {len(everywhere)} packages every patch declares, not one: "
-             f"{', '.join(sorted(declared_by)) or 'none'}")
-    return len(patches), sorted(versions[everywhere[0]], key=lambda v: tuple(map(int, v.split("."))))
+    most = max(declared_by.values(), default=0)
+    leading = sorted(package for package, count in declared_by.items() if count == most)
+    if len(leading) != 1:
+        fail(f"patches-list.json has no one package the most patches declare, a tie among: "
+             f"{', '.join(leading) or 'none'}")
+    return len(patches), sorted(versions[leading[0]], key=lambda v: tuple(map(int, v.split("."))))
 
 
 def spoken(items: list[str]) -> str:
