@@ -24,9 +24,9 @@ internal const val COMMENT_PHOTOS_PLUGIN_ENTRY =
     "Lapp/morphe/extension/tiktok/comment/CommentPhotos;->allowPluginEntry(Ljava/lang/String;)Z"
 
 /**
- * What the album asks for on Android 13 and later. TikTok declares both; PineDrama 47.4.3 declares
- * neither, so Android turned the request down without a prompt and the album only said it couldn't
- * access photos (#156).
+ * What the album asks for on Android 13 and later. TikTok declares both; PineDrama 47.4.3 and 47.5.3
+ * declare neither, so Android turned the request down without a prompt and the album only said it
+ * couldn't access photos (#156).
  */
 internal val COMMENT_PHOTOS_PERMISSIONS = listOf(
     "android.permission.READ_MEDIA_IMAGES",

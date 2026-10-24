@@ -22,6 +22,7 @@ import app.morphe.patches.tiktok.misc.navigation.MainNewIntentFingerprint
 import app.morphe.patches.tiktok.misc.navigation.writes
 import app.morphe.patches.tiktok.misc.settings.SettingsStatusLoadFingerprint
 import app.morphe.patches.tiktok.misc.settings.settingsPatch
+import app.morphe.patches.tiktok.misc.theme.buildName
 import app.morphe.patches.tiktok.misc.theme.declaredVersions
 import app.morphe.patches.tiktok.privacy.invokeSitesOf
 import app.morphe.patches.tiktok.shared.callThroughLocals
@@ -318,7 +319,7 @@ val feedFilterPatch = bytecodePatch(
         // (this cell, item). All three are required on a build the patch is declared for, where
         // a missing one would let the block back in without a word; a build the patch is forced
         // onto keeps the rest of the feed filter without them.
-        val declaredBuild = packageMetadata.versionName in declaredVersions()
+        val declaredBuild = packageMetadata.buildName in declaredVersions()
         fun lynxBind(fingerprint: Fingerprint) = if (declaredBuild) fingerprint.method else fingerprint.methodOrNull
         val holderBound = "invoke-static/range {p0 .. p2}, $SEARCH_LYNX_CARDS_CLASS_DESCRIPTOR->onHolderBound(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V"
         lynxBind(SearchLynxHolderBindFingerprint)?.addInstructions(0, holderBound)

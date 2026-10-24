@@ -63,7 +63,7 @@ $argv = @('patch', '--exclusive', '--continue-on-error', '--unsigned', '-p', $Bu
     '-o', (Join-Path $OutDir 'output.apk'), '-t', $temp, '-r', (Join-Path $OutDir 'result.json'))
 foreach ($name in $names) { $argv += '-e'; $argv += $name }
 $argv += $Apk
-# A response file keeps 98 names off the command line, whose length Windows caps.
+# A response file keeps the patch names off the command line, whose length Windows caps.
 $bs = [string][char]92
 $argFile = Join-Path $OutDir 'cli.args'
 [IO.File]::WriteAllLines($argFile, @($argv | ForEach-Object { '"' + ([string]$_).Replace($bs, $bs + $bs).Replace('"', $bs + '"') + '"' }),

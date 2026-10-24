@@ -334,6 +334,24 @@ def catalog() -> tuple[int, list[str]]:
     return len(patches), sorted(versions[leading[0]], key=lambda v: tuple(map(int, v.split("."))))
 
 
+def beside_tiktok() -> tuple[int, list[str]]:
+    """How many patches declare TikTok, and each other app the catalog declares with its versions
+    ("PineDrama 47.4.3"). Once a patch is PineDrama's alone (#156), the catalog's count is no
+    longer the number TikTok takes, so the index names both."""
+    patches = catalog_patches()
+    on_tiktok = 0
+    others: dict[str, set[str]] = {}
+    for patch in patches:
+        apps = patch.get("compatibility") or []
+        on_tiktok += any(app.get("packageName") == "com.zhiliaoapp.musically" for app in apps)
+        for app in apps:
+            if app.get("packageName") != "com.zhiliaoapp.musically":
+                others.setdefault(str(app.get("name") or app.get("packageName")), set()).update(
+                    t["version"] for t in app.get("targets") or [] if t.get("version") and not t.get("experimental"))
+    return on_tiktok, [f"{name} {spoken(sorted(v, key=lambda x: tuple(map(int, x.split('.')))))}"
+                       for name, v in sorted(others.items()) if v]
+
+
 def spoken(items: list[str]) -> str:
     return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
 
@@ -464,11 +482,15 @@ def index(args) -> None:
         fail(f"CHANGELOG has no dated {args.version} heading. Run cut first.")
     groups = grouped_changelog(release_body, args.version)
     apks = "the supported APK" if len(targets) == 1 else f"all {counted(len(targets))} supported APKs"
+    on_tiktok, others = beside_tiktok()
+    beside = "".join(f" and {other}" for other in others)
+    applied = f"All {count} patches" if on_tiktok == count else f"All {on_tiktok} TikTok patches"
     description = (
-        f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically).\n\n"
+        f"Hushfeed v{args.version} has {count} patches for global TikTok {spoken(targets)} (com.zhiliaoapp.musically)"
+        + f"{beside}.\n\n"
         + bundle_summary + "\n\n"
         + f"Validation: {args.runtime} runtime tests passed and {args.patch} patch tests passed locally. Both Android "
-        + f"lint checks passed. All {count} patches applied to {apks} with resource and manifest checks. The "
+        + f"lint checks passed. {applied} applied to {apks} with resource and manifest checks. The "
         + "attached release receipt identifies the exact source and bundle."
         + (f" {args.device_line.strip()}" if args.device_line else "") + "\n\n"
         + f"Needs Morphe Manager {manager} or newer. Refresh the Hushfeed source to update. The .mpp is a patch "
@@ -488,7 +510,7 @@ def index(args) -> None:
     readme = ROOT / "README.md"
     edits = {readme: fold_next_release(read(readme), targets)}
     swap(edits, readme, r"^Hushfeed v\d+\.\d+\.\d+ contains \d+ patches for TikTok .*$",
-         f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}. New in this one: "
+         f"Hushfeed v{args.version} contains {count} patches for TikTok {spoken(targets)}{beside}. New in this one: "
          f"{readme_summary} It needs Morphe Manager {manager} or newer.")
     swap(edits, readme, r"^The main branch contains \d+ patches, .*$",
          f"The main branch contains {count} patches, the same set as v{args.version}.")

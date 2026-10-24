@@ -603,8 +603,8 @@
   "surface": "comments",
   "checks": [
    {
-    "id": "injected",
-    "what": "The patched dex carries the photo comments switch and the patch registered itself. (The dex-string step shows the extension class is shipped; the registered-switch step is what shows the patch ran.)",
+    "id": "stays-off-tiktok",
+    "what": "PineDrama only, so on TikTok the patch must not run: the shared extension still ships the switch's class, but the probe's registered switches list has no commentPhotos, and TikTok's own comment box is left as TikTok built it. (The PineDrama side was checked by hand on the S22, since this audit drives TikTok.)",
     "steps": [
      {
       "apk": "dex-string",
@@ -612,7 +612,8 @@
      },
      {
       "probe": "report",
-      "expect": "registered_switches:[^\\n]*\\bcommentPhotos\\b"
+      "expect": "registered_switches:",
+      "expectNot": "registered_switches:[^\\n]*\\bcommentPhotos\\b"
      }
     ],
     "auto": true
