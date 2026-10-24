@@ -63,6 +63,17 @@ public class CommentPhotosTest {
         assertFalse(CommentPhotos.isOn());
     }
 
+    @Test public void onlyTheCommentAlbumEntryIsReportedInstalled() {
+        assertFalse("off", CommentPhotos.allowPluginEntry("comment_photo_comment_panel_upload"));
+        Settings.PINEDRAMA_COMMENT_PHOTOS.save(true);
+        assertTrue(CommentPhotos.allowPluginEntry("comment_photo_comment_panel_upload"));
+        assertFalse("the photo editor keeps PineDrama's answer", CommentPhotos.allowPluginEntry("CommentImageEdit"));
+        assertFalse(CommentPhotos.allowPluginEntry("record"));
+        assertFalse(CommentPhotos.allowPluginEntry(null));
+        PausedProcess.set(true);
+        assertFalse("paused", CommentPhotos.allowPluginEntry("comment_photo_comment_panel_upload"));
+    }
+
     @Test public void theSwitchIsReachable() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

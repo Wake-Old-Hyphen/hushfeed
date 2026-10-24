@@ -40,6 +40,8 @@ val amoledThemePatch = resourcePatch(
     )
     // The cards on TikTok's Compose settings pages come from a palette in code, not resources (#152).
     dependsOn(amoledComposeCardsPatch { background })
+    // The comment bar under an opened post is see-through in every theme, so a photo showed through it (#171).
+    dependsOn(amoledInputBarPatch { background })
     execute {
         val packageRoot = get("res").parentFile
         val decodedRoots = decodedPackageRoots(packageRoot)

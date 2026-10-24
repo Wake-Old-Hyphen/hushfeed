@@ -565,6 +565,8 @@ Show poll results before voting	Oylamadan önce anket sonuçlarını göster
 A comment poll shows how many picked each answer before you vote. Tapping an answer still votes.	Yorum anketi, sen oy vermeden önce her cevabı kaç kişinin seçtiğini gösterir. Bir cevaba dokunmak yine oy verir.
 Hide comment popup ads	Yorumlardaki açılır reklamları gizle
 Hide comments made of an image or a sticker instead of words.	Kelimeler yerine bir görselden veya çıkartmadan oluşan yorumları gizle.
+Hide spam comments	Spam yorumları gizle
+Hide comments that send you to a profile, a bio link, a website or a messenger, or offer free followers. Your own comments stay, and so do the creator's and the ones they pinned or liked.	Seni bir profile, biyografideki bir bağlantıya, bir siteye veya bir mesajlaşma uygulamasına yönlendiren ya da ücretsiz takipçi vaat eden yorumları gizle. Kendi yorumların kalır, içerik üreticisinin yorumları ve onun sabitlediği veya beğendiği yorumlar da kalır.
 Hide comments that contain any of the words below, or that come from the accounts below.	Aşağıdaki kelimelerden herhangi birini içeren veya aşağıdaki hesaplardan gelen yorumları gizle.
 Hide controls after each video starts. Tap to restore them.	Her video başladıktan sonra kontrolleri gizle. Geri getirmek için dokun.
 Hide conversations	Sohbetleri gizle

@@ -290,6 +290,14 @@ public class CommentsPreferenceCategory extends ConditionalPreferenceCategory {
             ));
             addPreference(new TogglePreference(
                     context,
+                    "Hide spam comments",
+                    "Hide comments that send you to a profile, a bio link, a website or a "
+                            + "messenger, or offer free followers. Your own comments stay, and so "
+                            + "do the creator's and the ones they pinned or liked.",
+                    Settings.HIDE_SPAM_COMMENTS
+            ));
+            addPreference(new TogglePreference(
+                    context,
                     "Hide comment polls",
                     "Hide voting cards and poll results above the comments, including polls that have ended.",
                     Settings.HIDE_COMMENT_POLLS

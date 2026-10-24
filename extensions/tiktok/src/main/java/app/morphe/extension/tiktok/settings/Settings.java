@@ -1222,6 +1222,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_EXPORT = new BooleanSetting("comment_export", FALSE);
     public static final BooleanSetting COMMENT_LINKS = new BooleanSetting("comment_links", FALSE);
     public static final BooleanSetting HIDE_COMMENT_MEDIA = new BooleanSetting("hide_comment_media", FALSE);
+    /** Drops bot comments that point to a bio, a link or a messenger, or bait follows (#187). */
+    public static final BooleanSetting HIDE_SPAM_COMMENTS = new BooleanSetting("hide_spam_comments", FALSE);
     public static final BooleanSetting HIDE_COMMENT_POLLS = new BooleanSetting("hide_comment_polls", FALSE);
     /** Drops the reply TikTok opens under a comment before View replies is tapped (#193). */
     public static final BooleanSetting HIDE_COMMENT_REPLY_PREVIEWS = new BooleanSetting("hide_comment_reply_previews", FALSE);
