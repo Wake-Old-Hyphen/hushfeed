@@ -1,4 +1,115 @@
 # Shared by execution, read-only result validation and human verdict import.
+. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
+
+function Test-AuditExecutableInputPath([string]$Path) {
+    # Global scope until a reviewed patch-to-input map exists. Unknown paths stay included.
+    # Runtime resources, stubs, build tools, pins and verification metadata are all inputs.
+    if ($Path -cmatch '^(extensions|patches)/(.+/)?src/main/') { return $true }
+    if ($Path -cmatch '(^|/)src/(test|androidTest|testFixtures)/' -or
+        $Path -cmatch '^(scripts|audit)/test-[^/]+\.ps1$' -or
+        $Path -cmatch '^tools/(.*/)?test_[^/]+\.py$') { return $false }
+    # Catalog behavior has its own definition hashes. Evidence and receipt outputs must
+    # not invalidate the build whose execution they record.
+    if ($Path -ceq 'audit/catalog.json' -or $Path -cmatch '^audit/results/' -or
+        $Path -cmatch '^release-receipt-[^/]+\.json$' -or $Path -ceq 'patches-bundle.json') { return $false }
+    if ($Path -cmatch '\.md$' -or $Path -cmatch '^(docs|concepts)/' -or
+        $Path -cin @('LICENSE', 'NOTICE') -or $Path -cmatch '^assets/(readme-|screenshots/)') { return $false }
+    return $true
+}
+
+function Get-AuditWorkingInputProblem([string]$GitRoot, [string]$Commit = 'HEAD') {
+    if (-not $GitRoot) { $GitRoot = Split-Path -Parent $PSScriptRoot }
+    $head = [string](Invoke-RepoGit -Root $GitRoot -Arguments @('rev-parse', '--verify', 'HEAD'))
+    if ($LASTEXITCODE -ne 0 -or $head -cnotmatch '^[a-f0-9]{40}$') { throw 'Cannot read current audit source commit.' }
+    if ($Commit -cne 'HEAD') {
+        $target = [string](Invoke-RepoGit -Root $GitRoot -Arguments @('rev-parse', '--verify', "$Commit^{commit}"))
+        if ($LASTEXITCODE -ne 0 -or $target -cnotmatch '^[a-f0-9]{40}$') { throw 'Cannot resolve requested audit source commit.' }
+        # Historical qualification describes that exact committed tree, not this checkout.
+        if ($target -cne $head) { return $null }
+    }
+    $encodingBefore = [Console]::OutputEncoding
+    $paths = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    try {
+        [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+        foreach ($arguments in @(
+            @('diff', '--name-only', '--no-ext-diff', '--no-renames', '-z', $head, '--'),
+            @('ls-files', '--others', '--exclude-standard', '-z'),
+            @('ls-files', '--others', '--ignored', '--exclude-standard', '-z', '--',
+                ':(glob)extensions/**/src/main/**', ':(glob)patches/**/src/main/**')
+        )) {
+            $answer = @(Invoke-RepoGit -Root $GitRoot -Arguments $arguments) -join [char]10
+            if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect current executable input changes.' }
+            foreach ($path in $answer.Split([char]0)) {
+                if ($path -and (Test-AuditExecutableInputPath $path)) { [void]$paths.Add($path) }
+            }
+        }
+        $flags = @(Invoke-RepoGit -Root $GitRoot -Arguments @('ls-files', '-v', '-z')) -join [char]10
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect executable input index flags.' }
+        foreach ($flag in $flags.Split([char]0)) {
+            if ($flag -and $flag[0] -cne 'H' -and (Test-AuditExecutableInputPath $flag.Substring(2))) {
+                [void]$paths.Add($flag.Substring(2))
+            }
+        }
+    } finally { [Console]::OutputEncoding = $encodingBefore }
+    if ($paths.Count) {
+        return 'uncommitted or hidden executable inputs: ' + ((@($paths | Sort-Object) | Select-Object -First 5) -join ', ')
+    }
+    return $null
+}
+
+function Get-AuditExecutableInputs([string]$GitRoot, [string]$Commit = 'HEAD') {
+    if (-not $GitRoot) { $GitRoot = Split-Path -Parent $PSScriptRoot }
+    $resolved = @((Invoke-RepoGit -Root $GitRoot -Arguments @('rev-parse', '--verify', "$Commit^{commit}")))
+    if ($LASTEXITCODE -ne 0 -or $resolved.Count -ne 1 -or $resolved[0] -cnotmatch '^[a-f0-9]{40}$') {
+        throw 'Cannot resolve the audited executable-input commit.'
+    }
+    $commitId = [string]$resolved[0]
+    $key = [IO.Path]::GetFullPath($GitRoot) + '|' + $commitId
+    if (-not (Get-Variable auditInputCache -Scope Script -ErrorAction SilentlyContinue)) {
+        $script:auditInputCache = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
+    }
+    if ($script:auditInputCache.ContainsKey($key)) { return $script:auditInputCache[$key] }
+    $encodingBefore = [Console]::OutputEncoding
+    try {
+        [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+        $tree = @((Invoke-RepoGit -Root $GitRoot -Arguments @('ls-tree', '-rz', '--full-tree', $commitId))) -join [char]10
+        $treeExit = $LASTEXITCODE
+    } finally { [Console]::OutputEncoding = $encodingBefore }
+    if ($treeExit -ne 0 -or -not $tree) { throw 'Cannot read audited executable inputs.' }
+    $files = [Collections.Generic.SortedDictionary[string,object]]::new([StringComparer]::Ordinal)
+    foreach ($record in $tree.Split([char]0)) {
+        if (-not $record) { continue }
+        if ($record -cnotmatch '^(?<mode>[0-7]{6}) (?<type>blob|commit) (?<object>[a-f0-9]{40})\t(?<path>[\s\S]+)$') {
+            throw 'Unrecognized executable-input tree entry.'
+        }
+        $mode = $Matches.mode; $type = $Matches.type; $object = $Matches.object; $path = $Matches.path
+        if (-not (Test-AuditExecutableInputPath $path)) { continue }
+        $files.Add($path, [ordered]@{ mode = $mode; type = $type; object = $object })
+    }
+    if ($files.Count -eq 0) { throw 'No audited executable inputs were found.' }
+    $identity = [pscustomobject]@{
+        schemaVersion = 1; scope = 'global-executable-v1'; fileCount = $files.Count
+        sha256 = Get-AuditHash ([ordered]@{ scope = 'global-executable-v1'; files = $files })
+    }
+    $script:auditInputCache[$key] = $identity
+    return $identity
+}
+
+function Test-AuditExecutableInputBinding($Build, $ExpectedInputs, [string]$GitRoot) {
+    try {
+        $recorded = $Build.executionInputs
+        if ($null -eq $recorded -or $recorded.schemaVersion -ne 1 -or
+            [string]$recorded.scope -cne 'global-executable-v1' -or
+            [string]$recorded.sha256 -cnotmatch '^[a-f0-9]{64}$' -or [int]$recorded.fileCount -le 0 -or
+            [string]$Build.source.commit -cnotmatch '^[a-f0-9]{40}$') { return $false }
+        if ($null -eq $ExpectedInputs) { $ExpectedInputs = Get-AuditExecutableInputs $GitRoot }
+        # A stored digest must describe its own source as well as the release it qualifies.
+        $sourceInputs = Get-AuditExecutableInputs $GitRoot ([string]$Build.source.commit)
+        return (Get-AuditHash $recorded) -ceq (Get-AuditHash $sourceInputs) -and
+            (Get-AuditHash $recorded) -ceq (Get-AuditHash $ExpectedInputs)
+    } catch { return $false }
+}
+
 function ConvertTo-AuditJsonString([string]$Value) {
     # Windows PowerShell HTML-escapes characters that PS7 leaves literal. Own the encoding so
     # the same definition and persisted receipt keep their identity across both hosts.
@@ -105,7 +216,8 @@ function Set-AuditCheckReceipt($Result, [string]$Directory) {
     $Result.receiptId = Get-AuditHash $Result.receipt
 }
 
-function Test-AuditCheckBinding($Entry, $Check, $Result, [string]$ApkHash, [string]$Directory) {
+function Test-AuditCheckBinding($Entry, $Check, $Result, [string]$ApkHash, [string]$Directory, $ExecutableInputs, [string]$GitRoot) {
+    if (-not (Test-AuditExecutableInputBinding $Result.build $ExecutableInputs $GitRoot)) { return $false }
     if ($Result.definitionHash -cne (Get-AuditDefinitionHash $Entry $Check)) { return $false }
     if ($ApkHash -notmatch '^[a-fA-F0-9]{64}$' -or $Result.apkSha256 -cne $ApkHash) { return $false }
     if ($Result.receiptId -notmatch '^[a-f0-9]{64}$' -or $Result.build.status -cne 'verified' -or
@@ -139,9 +251,16 @@ function Test-AuditCheckBinding($Entry, $Check, $Result, [string]$ApkHash, [stri
     return $true
 }
 
-function Get-AuditResultValidation($Entries, $Run, [string]$Directory) {
+function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$GitRoot, [string]$Head = 'HEAD') {
     $expected = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
     $problems = [Collections.Generic.List[string]]::new()
+    $executableInputs = $null
+    try {
+        $executableInputs = Get-AuditExecutableInputs $GitRoot $Head
+        $workingProblem = Get-AuditWorkingInputProblem $GitRoot $Head
+        if ($workingProblem) { $problems.Add($workingProblem); $executableInputs = $null }
+    }
+    catch { $executableInputs = $null; $problems.Add("unavailable-executable-inputs: $($_.Exception.Message)") }
     foreach ($problem in @(Get-AuditCatalogProblems $Entries)) { $problems.Add($problem) }
     foreach ($entry in $Entries) {
         foreach ($check in $entry.checks) { $expected["$($entry.name)/$($check.id)"] = @($entry, $check) }
@@ -166,7 +285,8 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory) {
             if ($result.status -cnotin @('pass','fail','review','inconclusive','error','skipped')) { $unknown.Add($key); continue }
             $entry, $check = $expected[$key]
             if ($result.definitionHash -cne (Get-AuditDefinitionHash $entry $check)) { $changed.Add($key) }
-            if (Test-AuditCheckBinding $entry $check $result ([string]$Run.apk.sha256) $Directory) {
+            if ($null -ne $executableInputs -and
+                (Test-AuditCheckBinding $entry $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot)) {
                 $current++
                 if ($result.status -ceq 'pass') { $currentPass++ }
             } else { $historical.Add($key) }
@@ -180,6 +300,7 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory) {
     if ($digests.Count -gt 1) { $problems.Add("mixed-build: results come from $($digests.Count) APKs") }
     return [pscustomobject]@{
         state = if ($problems.Count -eq 0) { 'current-bound' } else { 'historical-or-incomplete' }
+        executionInputs = $executableInputs
         catalogChecks = $expected.Count; resultChecks = $seen.Count; currentChecks = $current; currentPass = $currentPass
         apkDigests = @($digests | Sort-Object); mixedBuild = $digests.Count -gt 1
         missing = @($missing | Sort-Object); duplicates = @($duplicates | Sort-Object); removed = @($removed | Sort-Object)
@@ -230,7 +351,10 @@ function ConvertFrom-AuditVerdictJson([string]$Json) {
     return $value
 }
 
-function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory) {
+function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory, [string]$GitRoot) {
+    $executableInputs = Get-AuditExecutableInputs $GitRoot
+    $workingProblem = Get-AuditWorkingInputProblem $GitRoot
+    if ($workingProblem) { throw $workingProblem }
     $catalogProblems = @(Get-AuditCatalogProblems $Entries)
     if ($catalogProblems.Count) { throw ($catalogProblems -join '; ') }
     $updates = @()
@@ -250,7 +374,7 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory) {
         if ($verdict.status -cnotin @('pass','fail') -or [string]::IsNullOrWhiteSpace([string]$verdict.note)) {
             throw "$($property.Name) needs pass/fail and a review note."
         }
-        if (-not (Test-AuditCheckBinding $entriesFound[0] $check $result ([string]$Run.apk.sha256) $Directory) -or
+        if (-not (Test-AuditCheckBinding $entriesFound[0] $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot) -or
             $verdict.receiptId -cne $result.receiptId) { throw "$($property.Name) has stale or unbound evidence." }
         $updates += , @($result, $verdict)
     }
@@ -264,7 +388,7 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory) {
     }
 }
 
-function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath) {
+function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot) {
     if (-not $ReceiptPath) { return [pscustomobject]@{ status = 'unbound'; reason = 'No device-build receipt supplied.' } }
     if (-not $BundlePath) { throw 'A build receipt requires -Bundle to verify its source manifest.' }
     . (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
@@ -279,5 +403,6 @@ function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string
     if (-not $sourceCheck.Valid -or (Get-AuditHash $manifest.source) -cne (Get-AuditHash $receipt.source)) {
         throw 'The build receipt source does not match a clean, unchanged bundle build.'
     }
-    return [pscustomobject]@{ status = 'verified'; receiptSha256 = (Get-FileHash -LiteralPath $ReceiptPath -Algorithm SHA256).Hash.ToLowerInvariant(); source = $manifest.source }
+    return [pscustomobject]@{ status = 'verified'; receiptSha256 = (Get-FileHash -LiteralPath $ReceiptPath -Algorithm SHA256).Hash.ToLowerInvariant(); source = $manifest.source
+        executionInputs = Get-AuditExecutableInputs $GitRoot ([string]$manifest.source.commit) }
 }

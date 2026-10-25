@@ -64,6 +64,13 @@ public final class LiveRecorder {
         FAILED
     }
 
+    /** Whether optional screen audio started; enabled does not guarantee the source is audible. */
+    public enum ScreenAudio {
+        NOT_APPLICABLE,
+        ENABLED,
+        VIDEO_ONLY
+    }
+
     /** What to record. */
     public static final class Target {
         public final String url;
@@ -95,14 +102,25 @@ public final class LiveRecorder {
         public final Object saved;
         /** A short English reason when something went wrong; may be null. */
         public final String detail;
+        public final ScreenAudio screenAudio;
 
         Result(Outcome outcome, End end, long durationMs, String fileName, Object saved, String detail) {
+            this(outcome, end, durationMs, fileName, saved, detail, ScreenAudio.NOT_APPLICABLE);
+        }
+
+        private Result(Outcome outcome, End end, long durationMs, String fileName, Object saved,
+                       String detail, ScreenAudio screenAudio) {
             this.outcome = outcome;
             this.end = end;
             this.durationMs = durationMs;
             this.fileName = fileName;
             this.saved = saved;
             this.detail = detail;
+            this.screenAudio = screenAudio;
+        }
+
+        Result withScreenAudio(ScreenAudio audio) {
+            return new Result(outcome, end, durationMs, fileName, saved, detail, audio);
         }
     }
 

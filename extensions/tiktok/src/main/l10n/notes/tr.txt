@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Ses başlarken ekran kaydının ilk karelerinin ayrı zaman damgaları korunur.
+* **TikTok:** Ses kodlayıcısı başlarken ekran kayıtlarının ilk video kareleri korunur.
+* **Derleme kontrolleri:** Çalıştırılabilir girdiler değiştiğinde yama denetimi artık derlemeyi doğrulamaz. Kısmi tekrarlar eski kontrolleri geçmiş kayıt olarak bırakır.
+* **TikTok:** Ses başlatılamadığında ekran kaydı ses kaynaklarını serbest bırakır. Kayıtta ses yoksa kaydetme bildirimi artık bunu belirtir.
 * **TikTok:** Ekran kaydı artık Android’den yalnızca yamalanmış uygulamanın sesini yakalamasını istiyor.
 * **TikTok:** Service+ temizliği artık LIVE önizlemesinin ilk öğesini TikTok'un kendi gösterim mantığına göre kontrol eder (#94).
 * **TikTok:** Yorumlar açıldığındaki duraklatma, ilk ilerleme bildirimi gelmeden önce oynatılan ilk kareyi belirleyebilir (#151).

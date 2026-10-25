@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** A gravação de tela mantém tempos distintos para os primeiros quadros enquanto o áudio inicia.
+* **TikTok:** As gravações de tela mantêm os primeiros quadros enquanto o codificador de áudio inicia.
+* **Verificações de compilação:** Uma auditoria de patches deixa de validar uma compilação quando suas entradas executáveis mudam. Execuções parciais mantêm as verificações anteriores como históricas.
+* **TikTok:** A gravação de tela libera os recursos de áudio quando o som não consegue iniciar. O aviso de salvamento agora informa quando a gravação está sem som.
 * **TikTok:** A gravação de tela agora pede ao Android para capturar apenas o som do aplicativo modificado.
 * **TikTok:** A limpeza do Service+ agora verifica a primeira entrada da prévia da LIVE, como o próprio TikTok (#94).
 * **TikTok:** A pausa dos comentários pode identificar o primeiro quadro em reprodução antes da primeira atualização de progresso (#151).

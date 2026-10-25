@@ -284,9 +284,13 @@ Simple mode in Morphe Manager selects 122 of these patches. Each row says what t
 
 ### Patching stalls partway
 
-The manager has probably run short of memory. If it says the patcher ran out of memory with a 1024 MB heap, patch the bundle (`.apkm`) from [step 1](#install) instead of the APK. It needs less memory, and on a 3 GB device it finished where the APK failed. In Manager 2.0, also check that **Use embedded VM** is on under **Settings > Patcher**, close other apps and start again. If it stops while Manager is in the background, allow it under **Battery optimization** on that same page. On an older Manager, set **Settings > Process runtime** to 1,024 MB instead, or 512 MB if it still stalls. Hide Play Store update offer, Change app name and Custom launcher icon decode resources too, so they're the ones to leave out if memory stays tight.
+The manager has probably run short of memory. If it says the patcher ran out of memory with a 1024 MB heap, patch the bundle (`.apkm`) from [step 1](#install) instead of the APK. It needs less memory, and on a 3 GB device it finished where the APK failed. In Manager 2.0, also check that **Use embedded VM** is on under **Settings > Patcher**, close other apps and start again. If it stops while Manager is in the background, allow it under **Battery optimization** on that same page. On an older Manager, set **Settings > Process runtime** to 1,024 MB instead, or 512 MB if it still stalls. Change app name, Custom launcher icon and Hide Play Store update offer decode resources too. You can leave them out if memory stays tight, except for Hide Play Store update offer when the installed copy already used it.
 
-You can select every patch at once. Each release is patched with all of them selected before it ships, so none refuse to go in together.
+### Choosing patches
+
+Start with the recommended patches in Simple mode. Optional removal patches come with the feature losses listed in their descriptions. The release checks apply all compatible patches together. They don't cover every sign-in method or runtime combination.
+
+Pause can't put removed files back. To restore them, patch the original file from [step 1](#install) with those removal patches left out. Use the same signing key and the same package name as the installed copy, including the Clone app package name if you used it. Install over your existing copy without uninstalling it. If that copy used Hide Play Store update offer, keep it selected so the version code doesn't drop.
 
 ### TikTok stays in English after removing language packs
 
@@ -386,7 +390,7 @@ For Android 17 emulator checks, use Android SDK Command-line Tools 23 and inspec
 
 To add a language to the settings screen, copy one of the tables under `extensions/tiktok/src/main/l10n/` (the tab separated `de.tsv` or the Weblate style `in.csv`) to your language code, translate the right column, then run `python scripts/gen-l10n.py` and `./gradlew :extensions:tiktok:test`. Use the code Android reports, so `in` rather than `id`. The tests fail on any settings text that's missing from a table.
 
-The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, plus unchanged evidence files. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
+The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, unchanged evidence files, and the same executable inputs as the build being qualified. Each check keeps its own input digest, so a partial rerun cannot qualify older checks. Documentation changes alone leave the digest unchanged. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
 
 On Windows, device builds, probe installation, the probe tools, the injected-register check and audit runs need `-LeaseDir <shared lease folder>` and `-ChatIdentity <task identifier>`, or `HUSHFEED_DEVICE_LEASE_DIR` and `HUSHFEED_CHAT_IDENTITY`. Every device command checks the exact serial and current ownership. Existing leases are never reclaimed automatically, including expired ones. Local builds and offline audit checks don't acquire a device lease.
 

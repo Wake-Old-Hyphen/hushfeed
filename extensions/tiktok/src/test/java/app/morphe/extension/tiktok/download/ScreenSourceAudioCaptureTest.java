@@ -64,7 +64,7 @@ public class ScreenSourceAudioCaptureTest {
     }
 
     /** The framework constructor starts its binder; the configuration builder checks audio consent. */
-    private static MediaProjection audioProjection() throws Exception {
+    static MediaProjection audioProjection() throws Exception {
         Class<?> service = Class.forName("android.media.projection.IMediaProjection");
         Binder binder = new Binder();
         Object implementation = Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[]{service},

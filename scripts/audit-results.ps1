@@ -8,10 +8,11 @@
 
     audit/results/tiktok-<version>.json is what audit/run-audit.ps1 left for a declared version.
     Its stored qualification was worked out against the run's evidence folder, which stays on the
-    machine that ran it, so that half is taken as recorded. What can still go stale after the run
-    is the catalog: a check whose steps, settings or patch classification changed has a result for
-    a definition that no longer exists. Every catalog check's definition hash is worked out again
-    and held to its result's, and a check added or dropped since the run counts as well.
+    machine that ran it, so that half is taken as recorded. Catalog definition hashes are checked
+    again. The versioned global executable-input digest also has to match each check's own build
+    source and the requested release commit. Documentation-only descendants remain eligible.
+    Missing legacy digests stay historical until their checks run against a bound build.
+
 
     Verdicts don't refuse. A fail, review or inconclusive result is carried into the receipt's
     counts, and ROADMAP.md holds the work behind it.
@@ -37,8 +38,15 @@ function Test-AuditResults {
     )
     function Fail([string]$Reason) { return [pscustomobject]@{ Valid = $false; Reason = $Reason; Facts = @() } }
     if (-not $GitRoot) { $GitRoot = $Root }
+    $targetCommit = if ($Head) { $Head } else { 'HEAD' }
+    try {
+        $executableInputs = Get-AuditExecutableInputs $GitRoot $targetCommit
+        $workingProblem = Get-AuditWorkingInputProblem $GitRoot $targetCommit
+        if ($workingProblem) { return Fail $workingProblem }
+    }
+    catch { return Fail "Cannot qualify executable inputs: $($_.Exception.Message)" }
 
-    $entries = @(Get-Content -LiteralPath (Join-Path $Root 'audit/catalog.json') -Raw -Encoding UTF8 | ConvertFrom-Json)
+    $entries = Get-Content -LiteralPath (Join-Path $Root 'audit/catalog.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $facts = [Collections.Generic.List[object]]::new()
     foreach ($version in $PackageVersions) {
         $relative = "audit/results/tiktok-$version.json"
@@ -85,9 +93,18 @@ function Test-AuditResults {
         $since = $null
         if ($Head) {
             if ($source -notmatch '^[0-9a-f]{40}$') { return Fail "$relative doesn't name the commit its build came from" }
-            & git -C $GitRoot merge-base --is-ancestor $source $Head 2>$null
+            Invoke-RepoGit -Root $GitRoot -Arguments @('merge-base', '--is-ancestor', $source, $Head) | Out-Null
             if ($LASTEXITCODE -ne 0) { return Fail "$relative audited a build of $source, which isn't in the history of $Head" }
-            $since = [int](& git -C $GitRoot rev-list --count "$source..$Head")
+            $since = [int](Invoke-RepoGit -Root $GitRoot -Arguments @('rev-list', '--count', "$source..$Head"))
+        }
+        if (-not (Test-AuditExecutableInputBinding $run.build $executableInputs $GitRoot)) {
+            return Fail "$relative has changed or unversioned executable inputs. Rerun the audit on a build of the current inputs."
+        }
+        $staleInputs = @($results.Keys | Where-Object {
+            -not (Test-AuditExecutableInputBinding $results[$_].build $executableInputs $GitRoot)
+        } | Sort-Object)
+        if ($staleInputs.Count) {
+            return Fail "$relative has historical executable inputs for $($staleInputs -join ', '). Rerun these checks on a build of the current inputs."
         }
         $facts.Add([ordered]@{
             results      = $relative
@@ -95,6 +112,7 @@ function Test-AuditResults {
             appVersion   = $version
             apkSha256    = [string]$run.apk.sha256
             sourceCommit = $source
+            executionInputs = $executableInputs
             commitsSince = $since
             # PowerShell 7 reads the ISO time as a DateTime and would print it in the local format.
             finished     = if ($run.finishedUtc -is [datetime]) { $run.finishedUtc.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ') } else { [string]$run.finishedUtc }

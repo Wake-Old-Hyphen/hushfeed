@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** Bildschirmaufnahmen behalten getrennte Zeitstempel für ihre ersten Bilder, während die Tonaufnahme startet.
+* **TikTok:** Bildschirmaufnahmen behalten ihre ersten Videobilder, während der Audio-Encoder startet.
+* **Build-Prüfungen:** Ein Patch-Audit gilt nicht mehr für einen Build, sobald sich dessen ausführbare Eingaben ändern. Teilweise Wiederholungen lassen ältere Prüfungen historisch.
+* **TikTok:** Die Bildschirmaufnahme gibt Audioressourcen frei, wenn der Ton nicht starten kann. Der Speicherhinweis meldet jetzt, wenn die Aufnahme keinen Ton hat.
 * **TikTok:** Die Bildschirmaufnahme fordert Android jetzt auf, nur den Ton der gepatchten App aufzunehmen.
 * **TikTok:** Die Service+-Bereinigung prüft jetzt den ersten Eintrag einer LIVE-Vorschau, so wie TikTok selbst (#94).
 * **TikTok:** Die Kommentarpause kann ein bereits laufendes erstes Bild erkennen, bevor die erste Fortschrittsmeldung eintrifft (#151).

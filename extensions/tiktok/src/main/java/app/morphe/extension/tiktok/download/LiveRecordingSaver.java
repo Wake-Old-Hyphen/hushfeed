@@ -60,13 +60,13 @@ public final class LiveRecordingSaver {
         File spool = MediaCache.createTempFile(app,
                 LiveSpoolRecovery.spoolPrefix(target.creator, System.currentTimeMillis()), ".scr");
         File work = MediaCache.createTempFile(app, "screen-work-", ".mp4");
-        LiveRecorder.Source source = new ScreenSource(app, work, app.getResources().getDisplayMetrics(), audio);
+        ScreenSource source = new ScreenSource(app, work, app.getResources().getDisplayMetrics(), audio);
         LiveRecorder.Finisher finisher = (file, wanted, startedAt) ->
                 publishMp4(app, file, wanted.creator, startedAt);
         return new LiveRecorder(target, spool, source, finisher, result -> {
             MediaCache.delete(spool);
             MediaCache.delete(work);
-            listener.onFinished(result);
+            listener.onFinished(result.withScreenAudio(source.screenAudio()));
         });
     }
 
@@ -133,6 +133,9 @@ public final class LiveRecordingSaver {
     }
 
     private static void saved(String message, LiveRecorder.Result result) {
+        if (result.screenAudio == LiveRecorder.ScreenAudio.VIDEO_ONLY) {
+            message += "\n" + L10n.t("This screen recording has no sound.");
+        }
         if (result.saved instanceof MediaFileWriter.Saved) {
             SaveNotice.saved(message, (MediaFileWriter.Saved) result.saved);
         } else {

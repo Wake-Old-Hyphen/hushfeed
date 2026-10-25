@@ -109,10 +109,10 @@ if ($ApplyVerdicts) {
         throw '-Results were recorded for a different APK than -Apk. No verdict was applied.'
     }
     $verdicts = ConvertFrom-AuditVerdictJson (Get-Content -LiteralPath $ApplyVerdicts -Raw -Encoding UTF8)
-    Set-AuditVerdicts $allCatalogEntries $run $verdicts $OutDir
+    Set-AuditVerdicts $allCatalogEntries $run $verdicts $OutDir $root
     $applied = @($verdicts.PSObject.Properties).Count
     $counts = Write-Summary $run
-    $run | Add-Member -NotePropertyName qualification -NotePropertyValue (Get-AuditResultValidation $allCatalogEntries $run $OutDir) -Force
+    $run | Add-Member -NotePropertyName qualification -NotePropertyValue (Get-AuditResultValidation $allCatalogEntries $run $OutDir $root) -Force
     $run | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $Results -Encoding utf8
     Write-Host "[audit] $applied verdicts merged: $(($counts.GetEnumerator() | ForEach-Object { "$($_.Key) $($_.Value)" }) -join ', ')"
     exit 0
@@ -123,7 +123,7 @@ if ($ValidateResults) {
     if (-not $OutDir) { throw '-ValidateResults needs -OutDir, the evidence folder of the saved run.' }
     $saved = Get-Content -LiteralPath $Results -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($Apk) { $saved.apk.sha256 = (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() }
-    $validation = Get-AuditResultValidation $allCatalogEntries $saved $OutDir
+    $validation = Get-AuditResultValidation $allCatalogEntries $saved $OutDir $root
     $validation | ConvertTo-Json -Depth 8
     if ($validation.problems.Count) { exit 1 }
     exit 0
@@ -1002,7 +1002,7 @@ $run = [ordered]@{
     app = [ordered]@{ package = $package; version = $versionName; versionCode = $versionCode }
     apk = [ordered]@{ file = (Split-Path -Leaf $Apk); sha256 = (Get-FileHash -LiteralPath $Apk -Algorithm SHA256).Hash.ToLowerInvariant() }
     runner = [ordered]@{ commit = "$(git -C $root rev-parse HEAD 2>$null)"; catalog = (Get-FileHash -LiteralPath $Catalog -Algorithm SHA256).Hash.ToLowerInvariant() }
-    build = Read-AuditBuildIdentity -ApkPath $Apk -ReceiptPath $BuildReceipt -BundlePath $Bundle
+    build = Read-AuditBuildIdentity -ApkPath $Apk -ReceiptPath $BuildReceipt -BundlePath $Bundle -GitRoot $root
     device = $null
     startedUtc = [DateTime]::UtcNow.ToString('o')
     finishedUtc = $null
@@ -1032,7 +1032,7 @@ function Save-Results {
     $run.patches = @($run.patches | Sort-Object { if ($catalogOrder.ContainsKey([string]$_.name)) { $catalogOrder[[string]$_.name] } else { 9999 } })
     $run.finishedUtc = [DateTime]::UtcNow.ToString('o')
     [void](Write-Summary $run)
-    $run.qualification = Get-AuditResultValidation $allCatalogEntries $run $OutDir
+    $run.qualification = Get-AuditResultValidation $allCatalogEntries $run $OutDir $root
     $run | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $Results -Encoding utf8
 }
 

@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** La grabación de pantalla conserva marcas de tiempo distintas para sus primeros fotogramas mientras se inicia el sonido.
+* **TikTok:** Las grabaciones de pantalla conservan sus primeros fotogramas mientras se inicia el codificador de audio.
+* **Comprobaciones de compilación:** Una auditoría de parches deja de validar una compilación cuando cambian sus entradas ejecutables. Las ejecuciones parciales mantienen las comprobaciones anteriores como históricas.
+* **TikTok:** La grabación de pantalla libera los recursos de audio si el sonido no puede iniciarse. El aviso al guardar ahora indica cuándo la grabación no tiene sonido.
 * **TikTok:** La grabación de pantalla ahora solicita a Android capturar solo el sonido de la aplicación parcheada.
 * **TikTok:** La limpieza de Service+ ahora comprueba la primera entrada de la vista previa del LIVE, igual que TikTok (#94).
 * **TikTok:** La pausa al abrir comentarios puede identificar el primer fotograma en reproducción antes de que llegue el primer informe de progreso (#151).

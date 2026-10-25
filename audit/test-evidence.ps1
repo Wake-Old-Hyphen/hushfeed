@@ -13,6 +13,22 @@ $temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
 $fixture = Join-Path $temporaryRoot ('hushfeed-audit-test-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $fixture | Out-Null
 try {
+    # Keep qualification fixtures independent of uncommitted changes to the scripts under test.
+    $inputRepo = Join-Path $fixture 'input-repo'
+    foreach ($relative in @('audit/evidence.ps1', 'audit/run-audit.ps1', 'scripts/release-receipt.ps1', 'scripts/device-lease.ps1')) {
+        $destination = Join-Path $inputRepo $relative
+        [void][IO.Directory]::CreateDirectory((Split-Path -Parent $destination))
+        [IO.File]::Copy((Join-Path (Split-Path -Parent $PSScriptRoot) $relative), $destination)
+    }
+    [IO.File]::WriteAllText((Join-Path $inputRepo 'Runtime.java'), 'fixture executable input')
+    Invoke-RepoGit -Root $inputRepo -Arguments @('init', '-q') | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot initialize the audit source fixture.' }
+    Invoke-RepoGit -Root $inputRepo -Arguments @('add', '--', '.') | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot stage the audit source fixture.' }
+    Invoke-RepoGit -Root $inputRepo -Arguments @('-c', 'user.name=SysAdminDoc', '-c', 'user.email=matt_parker@outlook.com', 'commit', '-qm', 'Audit source fixture') | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'Cannot commit the audit source fixture.' }
+    $inputCommit = [string](Invoke-RepoGit -Root $inputRepo -Arguments @('rev-parse', 'HEAD'))
+
 $entry = [pscustomobject]@{ name = 'Example'; kind = 'runtime'; category = 'Test'; settings = @(); checks = @(
     [pscustomobject]@{ id = 'screen'; what = 'A screen'; auto = $false; steps = @([pscustomobject]@{ shot = 'screen'; review = 'Readable' }) }
 ) }
@@ -54,40 +70,80 @@ $blank = Copy-Json $entry
 $blank.checks[0].id = ''
 Assert-Audit (@(Get-AuditCatalogProblems @($blank)).Count -gt 0) 'Blank check ID accepted.'
 $apkHash = 'a' * 64
-$source = [pscustomobject]@{ commit = 'b' * 40; clean = $true; startFingerprint = 'c' * 64; endFingerprint = 'c' * 64 }
-$build = [pscustomobject]@{ status = 'verified'; receiptSha256 = 'd' * 64; source = $source }
+. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
+$source = [pscustomobject]@{ commit = $inputCommit; clean = $true; startFingerprint = 'c' * 64; endFingerprint = 'c' * 64 }
+$build = [pscustomobject]@{ status = 'verified'; receiptSha256 = 'd' * 64; source = $source
+    executionInputs = Get-AuditExecutableInputs $inputRepo $source.commit }
 [IO.File]::WriteAllText((Join-Path $fixture 'screen.png'), 'original evidence')
 $result = [ordered]@{ id = 'screen'; auto = $false; status = 'review'; definitionHash = $hash; evidence = @('screen.png'); review = @(@{ shot = 'screen.png'; criteria = 'Readable' }); build = $build; apkSha256 = $apkHash; installedApkSha256 = $apkHash }
 Set-AuditCheckReceipt $result $fixture
 $result = Copy-Json $result
 $run = [pscustomobject]@{ apk = @{ sha256 = $apkHash }; patches = @([pscustomobject]@{ name = 'Example'; checks = @($result) }) }
-$report = Get-AuditResultValidation $catalog $run $fixture
+$report = Get-AuditResultValidation $catalog $run $fixture $inputRepo
 Assert-Audit ($report.problems.Count -eq 0 -and $report.currentChecks -eq 1) 'Current bound result rejected.'
+
+
+$runBeforeDirt = Get-AuditHash $run
+[IO.File]::WriteAllText((Join-Path $inputRepo 'Runtime.java'), 'dirty runtime')
+$dirtyReport = Get-AuditResultValidation $catalog $run $fixture $inputRepo
+Assert-Audit ($dirtyReport.state -eq 'historical-or-incomplete' -and $dirtyReport.currentChecks -eq 0) 'Dirty runtime qualified read-only current results.'
+Assert-Audit ((Get-AuditHash $run) -ceq $runBeforeDirt) 'Dirty input validation rewrote the stored verdict.'
+[IO.File]::WriteAllText((Join-Path $inputRepo 'Runtime.java'), 'fixture executable input')
+$untrackedInput = Join-Path $inputRepo 'untracked-generator.ps1'
+[IO.File]::WriteAllText($untrackedInput, 'untracked input')
+Assert-Audit ((Get-AuditResultValidation $catalog $run $fixture $inputRepo).currentChecks -eq 0) 'An untracked unknown input qualified read-only current results.'
+Remove-Item -LiteralPath $untrackedInput -Force
+$dirtyDoc = Join-Path $inputRepo 'README.md'
+[IO.File]::WriteAllText($dirtyDoc, 'uncommitted documentation')
+Assert-Audit ((Get-AuditResultValidation $catalog $run $fixture $inputRepo).currentChecks -eq 1) 'Documentation-only dirt made read-only results stale.'
+Remove-Item -LiteralPath $dirtyDoc -Force
+
+foreach ($historicalStatus in @('fail', 'review', 'inconclusive')) {
+    $legacy = Copy-Json $run
+    $legacyCheck = $legacy.patches[0].checks[0]
+    $legacyCheck.status = $historicalStatus
+    $legacyCheck.build.PSObject.Properties.Remove('executionInputs')
+    $beforeLegacy = Get-AuditHash $legacy
+    $legacyReport = Get-AuditResultValidation $catalog $legacy $fixture $inputRepo
+    Assert-Audit ($legacyReport.state -eq 'historical-or-incomplete' -and $legacyReport.currentChecks -eq 0) "Legacy $historicalStatus evidence was qualified without executable inputs."
+    Assert-Audit ((Get-AuditHash $legacy) -ceq $beforeLegacy) "Invalidation rewrote historical $historicalStatus evidence."
+}
+
+foreach ($badCount in @('not-a-count', '99999999999999999999999')) {
+    $malformedInputs = Copy-Json $run
+    $malformedInputs.patches[0].checks[0].build.executionInputs.fileCount = $badCount
+    Assert-Audit ((Get-AuditResultValidation $catalog $malformedInputs $fixture $inputRepo).currentChecks -eq 0) "Malformed input count $badCount escaped fail-closed handling."
+}
+
+$changedInputs = Copy-Json $run
+$changedInputs.patches[0].checks[0].build.executionInputs.sha256 = '0' * 64
+Assert-Audit ((Get-AuditResultValidation $catalog $changedInputs $fixture $inputRepo).currentChecks -eq 0) 'A changed per-check executable input digest remained current.'
+
 $missing = Copy-Json $run
 $missing.patches[0].checks = @()
-Assert-Audit ((Get-AuditResultValidation $catalog $missing $fixture).missing.Count -eq 1) 'Missing check not detected.'
+Assert-Audit ((Get-AuditResultValidation $catalog $missing $fixture $inputRepo).missing.Count -eq 1) 'Missing check not detected.'
 $twice = Copy-Json $run
 $twice.patches[0].checks += Copy-Json $result
-Assert-Audit ((Get-AuditResultValidation $catalog $twice $fixture).duplicates.Count -eq 1) 'Duplicate result not detected.'
+Assert-Audit ((Get-AuditResultValidation $catalog $twice $fixture $inputRepo).duplicates.Count -eq 1) 'Duplicate result not detected.'
 $mixed = Copy-Json $run
 $mixed.patches += [pscustomobject]@{ name = 'Other'; checks = @([pscustomobject]@{ id = 'other'; status = 'pass'; apkSha256 = 'e' * 64 }) }
-$mixedReport = Get-AuditResultValidation $catalog $mixed $fixture
+$mixedReport = Get-AuditResultValidation $catalog $mixed $fixture $inputRepo
 Assert-Audit ($mixedReport.mixedBuild -and @($mixedReport.problems | Where-Object { $_ -like 'mixed-build:*' }).Count -eq 1) 'Results from two APKs were not reported as a problem.'
 $stale = Copy-Json $run
 $stale.patches[0].checks[0].definitionHash = 'f' * 64
-Assert-Audit ((Get-AuditResultValidation $catalog $stale $fixture).changed.Count -eq 1) 'Changed definition counted current.'
+Assert-Audit ((Get-AuditResultValidation $catalog $stale $fixture $inputRepo).changed.Count -eq 1) 'Changed definition counted current.'
 $old = Copy-Json $run
 $old.patches[0].checks[0].apkSha256 = '0' * 64
-Assert-Audit ((Get-AuditResultValidation $catalog $old $fixture).currentChecks -eq 0) 'Mixed APK counted current.'
+Assert-Audit ((Get-AuditResultValidation $catalog $old $fixture $inputRepo).currentChecks -eq 0) 'Mixed APK counted current.'
 $unbound = Copy-Json $run
 $unbound.patches[0].checks[0].installedApkSha256 = ''
-Assert-Audit ((Get-AuditResultValidation $catalog $unbound $fixture).currentChecks -eq 0) 'Unbound installed APK counted current.'
+Assert-Audit ((Get-AuditResultValidation $catalog $unbound $fixture $inputRepo).currentChecks -eq 0) 'Unbound installed APK counted current.'
 $removed = Copy-Json $run
 $removed.patches[0].checks[0].id = 'removed'
-Assert-Audit ((Get-AuditResultValidation $catalog $removed $fixture).removed.Count -eq 1) 'Removed check not detected.'
+Assert-Audit ((Get-AuditResultValidation $catalog $removed $fixture $inputRepo).removed.Count -eq 1) 'Removed check not detected.'
 $unknown = Copy-Json $run
 $unknown.patches[0].checks[0].status = 'made-up'
-Assert-Audit ((Get-AuditResultValidation $catalog $unknown $fixture).unknown.Count -eq 1) 'Unknown status accepted.'
+Assert-Audit ((Get-AuditResultValidation $catalog $unknown $fixture $inputRepo).unknown.Count -eq 1) 'Unknown status accepted.'
 $verdict = [pscustomobject]@{ 'Example/screen' = [pscustomobject]@{ status = 'pass'; note = 'Readable'; receiptId = $result.receiptId } }
 $verdict = ConvertFrom-AuditVerdictJson ($verdict | ConvertTo-Json -Depth 8)
 Assert-Audit ($verdict.'Example/screen'.status -ceq 'pass') 'Unique verdict JSON was rejected.'
@@ -111,16 +167,16 @@ $tokenCases = ConvertFrom-AuditVerdictJson '{"one":{"note":"{\"status\":1}, /* t
 Assert-Audit ($tokenCases.one.extra.Count -eq 2 -and $tokenCases.two.note -ceq 'two') 'Independent objects or quoted punctuation were treated as duplicates.'
 $dateKeys = ConvertFrom-AuditVerdictJson '{"Example/screen":{"extra":{"2026-10-16T00:00:00Z":1,"2026-10-16T00:00:00.000Z":2}}}'
 Assert-Audit (@($dateKeys.'Example/screen'.extra.PSObject.Properties).Count -eq 2) 'Timestamp-shaped property names were converted to DateTime values.'
-Set-AuditVerdicts $catalog $run $verdict $fixture
+Set-AuditVerdicts $catalog $run $verdict $fixture $inputRepo
 Assert-Audit ($result.status -eq 'pass') 'Matching review verdict did not apply.'
-Assert-Audit ((Get-AuditResultValidation $catalog $run $fixture).currentPass -eq 1) 'Imported verdict lost its execution binding.'
+Assert-Audit ((Get-AuditResultValidation $catalog $run $fixture $inputRepo).currentPass -eq 1) 'Imported verdict lost its execution binding.'
 $forged = Copy-Json $run
 $forged.patches[0].checks[0].verdict.receiptId = '0' * 64
-Assert-Audit ((Get-AuditResultValidation $catalog $forged $fixture).currentPass -eq 0) 'A verdict for another execution remained current.'
+Assert-Audit ((Get-AuditResultValidation $catalog $forged $fixture $inputRepo).currentPass -eq 0) 'A verdict for another execution remained current.'
 $failed = [ordered]@{ status = 'fail'; failures = @('Failed expectation'); auto = $true; definitionHash = $hash; evidence = @(); review = @(); build = $build; apkSha256 = $apkHash; installedApkSha256 = $apkHash }
 Set-AuditCheckReceipt $failed $fixture
 $failed.status = 'pass'
-Assert-Audit (-not (Test-AuditCheckBinding $entry $check $failed $apkHash $fixture)) 'Changing a failed status reused its receipt.'
+Assert-Audit (-not (Test-AuditCheckBinding $entry $check $failed $apkHash $fixture $null $inputRepo)) 'Changing a failed status reused its receipt.'
 $failed.status = 'fail'; $failed.failures = @()
 Assert-Audit (-not (Test-AuditCheckBinding $entry $check $failed $apkHash $fixture)) 'Removing execution failures reused its receipt.'
 foreach ($case in 'wrongReceipt', 'automatic', 'staleDefinition', 'invalidStatus', 'missing', 'alreadyDecided', 'changedPayload', 'changedReview', 'changedFile', 'missingFile', 'wrongDirectory') {
@@ -142,12 +198,12 @@ foreach ($case in 'wrongReceipt', 'automatic', 'staleDefinition', 'invalidStatus
     $before = $attempt | ConvertTo-Json -Depth 30 -Compress
     $refused = $false
     $evidenceDirectory = if ($case -eq 'wrongDirectory') { Join-Path $fixture 'absent' } else { $fixture }
-    try { Set-AuditVerdicts $catalog $attempt $candidate $evidenceDirectory } catch { $refused = $true }
+    try { Set-AuditVerdicts $catalog $attempt $candidate $evidenceDirectory $inputRepo } catch { $refused = $true }
     Assert-Audit $refused "Unsafe verdict accepted: $case"
     Assert-Audit (($attempt | ConvertTo-Json -Depth 30 -Compress) -eq $before) "Rejected verdict mutated results: $case"
     [IO.File]::WriteAllText((Join-Path $fixture 'screen.png'), 'original evidence')
 }
-Assert-Audit ((Get-AuditResultValidation $catalog $run).currentChecks -eq 0) 'Missing evidence directory counted current.'
+Assert-Audit ((Get-AuditResultValidation $catalog $run $null $inputRepo).currentChecks -eq 0) 'Missing evidence directory counted current.'
 $reorderedStep = Copy-Json $check
 $reorderedStep.steps = @([pscustomobject]@{ review = 'Readable'; shot = 'screen' })
 Assert-Audit ($hash -ne (Get-AuditDefinitionHash $entry $reorderedStep)) 'Changing the step dispatcher retained definition identity.'
@@ -337,14 +393,16 @@ function New-FixtureZip([string]$Path, [string]$EntryName, [string]$Content) {
         bundle = @{ sha256 = (Get-FileHash $fixtureBundle -Algorithm SHA256).Hash.ToLowerInvariant() }
     }
     Write-FixtureJson $receiptPath $receipt
-    Assert-Audit ((Read-AuditBuildIdentity $fixtureApk $receiptPath $fixtureBundle).status -eq 'verified') 'Valid build receipt rejected.'
-    Assert-Audit ((Read-AuditBuildIdentity $fixtureApk '' '').status -eq 'unbound') 'Absent receipt invented source identity.'
+    Assert-Audit ((Read-AuditBuildIdentity $fixtureApk $receiptPath $fixtureBundle $inputRepo).status -eq 'verified') 'Valid build receipt rejected.'
+    Assert-Audit ((Get-AuditHash (Read-AuditBuildIdentity $fixtureApk $receiptPath $fixtureBundle $inputRepo).executionInputs) -ceq
+        (Get-AuditHash $build.executionInputs)) 'Build identity omitted its exact executable inputs.'
+    Assert-Audit ((Read-AuditBuildIdentity $fixtureApk '' '' $inputRepo).status -eq 'unbound') 'Absent receipt invented source identity.'
     foreach ($mutation in 'apk', 'bundle', 'source') {
         $invalid = Copy-Json $receipt
         if ($mutation -eq 'source') { $invalid.source.clean = $false } else { $invalid.$mutation.sha256 = '0' * 64 }
         Write-FixtureJson $receiptPath $invalid
         $rejected = $false
-        try { [void](Read-AuditBuildIdentity $fixtureApk $receiptPath $fixtureBundle) } catch { $rejected = $true }
+        try { [void](Read-AuditBuildIdentity $fixtureApk $receiptPath $fixtureBundle $inputRepo) } catch { $rejected = $true }
         Assert-Audit $rejected "Mismatched $mutation accepted."
     }
     Write-FixtureJson $receiptPath $receipt
@@ -358,7 +416,8 @@ function New-FixtureZip([string]$Path, [string]$EntryName, [string]$Content) {
     Write-FixtureJson $fixtureCatalog @($staticEntry)
     [IO.File]::WriteAllText($fakeAapt, 'Write-Output "package: name=''com.zhiliaoapp.musically'' versionCode=''1'' versionName=''47.1.4''"')
     $shell = (Get-Process -Id $PID).Path
-    $runner = Join-Path $PSScriptRoot 'run-audit.ps1'
+    $originalRunner = Join-Path $PSScriptRoot 'run-audit.ps1'
+    $runner = Join-Path $inputRepo 'audit/run-audit.ps1'
     & $shell -NoProfile -File $runner -NoDevice -Catalog $fixtureCatalog -Apk $fixtureApk -Aapt2 $fakeAapt -Results $fixtureResults -OutDir (Join-Path $fixture 'evidence') -BuildReceipt $receiptPath -Bundle $fixtureBundle
     Assert-Audit ($LASTEXITCODE -eq 0) 'Static CLI run failed.'
     $recorded = Get-Content $fixtureResults -Raw | ConvertFrom-Json
@@ -400,13 +459,13 @@ function New-FixtureZip([string]$Path, [string]$EntryName, [string]$Content) {
     }
     # -Validate holds every TikTok version a pattern spells out to the declared target, so a check
     # still asking for the old version after a retarget fails here instead of on every device run.
-    & $shell -NoProfile -File $runner -Validate 2>&1 | Out-Null
+    & $shell -NoProfile -File $originalRunner -Validate 2>&1 | Out-Null
     Assert-Audit ($LASTEXITCODE -eq 0) 'The shipped catalog failed -Validate.'
     $stale = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'catalog.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $stale[0].checks[0].steps += [pscustomobject]@{ probe = 'report'; expect = 'tiktok_version: 12\.3\.4' }
     $staleCatalog = Join-Path $fixture 'stale-catalog.json'
     Write-FixtureJson $staleCatalog $stale
-    $staleOutput = & $shell -NoProfile -File $runner -Validate -Catalog $staleCatalog 2>&1 | Out-String
+    $staleOutput = & $shell -NoProfile -File $originalRunner -Validate -Catalog $staleCatalog 2>&1 | Out-String
     Assert-Audit ($LASTEXITCODE -eq 1 -and $staleOutput -match 'names TikTok 12\.3\.4, not the declared') 'A pattern naming an undeclared TikTok version passed -Validate.'
     # Carry an unchanged historical result while running a different patch, then change its definition.
     $second = Copy-Json $staticEntry

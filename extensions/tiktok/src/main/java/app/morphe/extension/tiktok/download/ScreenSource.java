@@ -52,6 +52,7 @@ final class ScreenSource implements LiveRecorder.Source {
     private final int height;
     private final int dpi;
     private final boolean wantAudio;
+    private LiveRecorder.ScreenAudio screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
 
     ScreenSource(Context app, File video, DisplayMetrics metrics, boolean audio) {
         int[] size = captureSize(metrics.widthPixels, metrics.heightPixels);
@@ -85,6 +86,10 @@ final class ScreenSource implements LiveRecorder.Source {
                 .build();
     }
 
+    LiveRecorder.ScreenAudio screenAudio() {
+        return screenAudio;
+    }
+
     @Override
     public void pump(LiveRecorder.Output out, LiveRecorder.Control control) throws IOException {
         MediaProjection projection = ScreenCapture.take();
@@ -113,7 +118,7 @@ final class ScreenSource implements LiveRecorder.Source {
     }
 
     /** The encoders, the muxer and the display feeding them, driven by one loop. */
-    private final class Encoder implements Closeable {
+    final class Encoder implements Closeable {
         private final MediaProjection projection;
         private volatile boolean stopRequested;
         private MediaCodec videoCodec;
@@ -143,8 +148,8 @@ final class ScreenSource implements LiveRecorder.Source {
         }
 
         void run(LiveRecorder.Control control) throws IOException {
-            setUp();
             originUs = System.nanoTime() / 1000L;
+            setUp();
             ScreenCapture.whenEnded(this::close);
             MediaCodec.BufferInfo videoInfo = new MediaCodec.BufferInfo();
             MediaCodec.BufferInfo audioInfo = new MediaCodec.BufferInfo();
@@ -180,13 +185,14 @@ final class ScreenSource implements LiveRecorder.Source {
             muxer = new MediaMuxer(video.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             display = projection.createVirtualDisplay("hushfeed-live", width, height, dpi,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null);
-            if (wantAudio) setUpAudio(projection);
+            setUpAudio(projection);
             audioDone = audioCodec == null;
         }
 
         /** Sound is optional: any failure here leaves a recording of the picture alone. */
-        private void setUpAudio(MediaProjection projection) {
-            if (Build.VERSION.SDK_INT < 29) return;
+        void setUpAudio(MediaProjection projection) {
+            screenAudio = LiveRecorder.ScreenAudio.VIDEO_ONLY;
+            if (!wantAudio || Build.VERSION.SDK_INT < 29) return;
             try {
                 AudioPlaybackCaptureConfiguration capture = captureConfiguration(projection);
                 AudioFormat pcmFormat = new AudioFormat.Builder()
@@ -194,25 +200,26 @@ final class ScreenSource implements LiveRecorder.Source {
                         .setSampleRate(SAMPLE_RATE)
                         .setChannelMask(AudioFormat.CHANNEL_IN_STEREO)
                         .build();
-                AudioRecord record = new AudioRecord.Builder()
+                audioRecord = new AudioRecord.Builder()
                         .setAudioPlaybackCaptureConfig(capture)
                         .setAudioFormat(pcmFormat)
                         .setBufferSizeInBytes(SAMPLE_RATE * 4)
                         .build();
-                if (record.getState() != AudioRecord.STATE_INITIALIZED) {
-                    record.release();
-                    return;
+                if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
+                    throw new IllegalStateException("Playback capture was not initialized");
                 }
                 MediaFormat format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE, 2);
                 format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
                 format.setInteger(MediaFormat.KEY_BIT_RATE, AUDIO_BITRATE);
                 format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
-                MediaCodec codec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
-                codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-                codec.start();
-                record.startRecording();
-                audioRecord = record;
-                audioCodec = codec;
+                audioCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
+                audioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+                audioCodec.start();
+                audioRecord.startRecording();
+                if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
+                    throw new IllegalStateException("Playback capture did not start");
+                }
+                screenAudio = LiveRecorder.ScreenAudio.ENABLED;
             } catch (IOException | RuntimeException failure) {
                 Logger.printInfo(() -> "Screen recording without sound: " + failure);
                 releaseAudio();
@@ -223,6 +230,8 @@ final class ScreenSource implements LiveRecorder.Source {
             if (videoDone) return false;
             boolean moved = false;
             while (true) {
+                // Keep the first frames in the codec until both track formats can start the muxer.
+                if (videoTrack >= 0 && !muxerStarted) return moved;
                 int index = videoCodec.dequeueOutputBuffer(info, 0);
                 if (index == MediaCodec.INFO_TRY_AGAIN_LATER) return moved;
                 moved = true;
@@ -278,6 +287,7 @@ final class ScreenSource implements LiveRecorder.Source {
             if (audioDone) return false;
             boolean moved = false;
             while (true) {
+                if (audioTrack >= 0 && !muxerStarted) return moved;
                 int index = audioCodec.dequeueOutputBuffer(info, 0);
                 if (index == MediaCodec.INFO_TRY_AGAIN_LATER) return moved;
                 moved = true;
@@ -310,24 +320,34 @@ final class ScreenSource implements LiveRecorder.Source {
             muxerStarted = true;
         }
 
-        private void releaseAudio() {
-            if (audioRecord != null) {
+        void releaseAudio() {
+            AudioRecord record = audioRecord;
+            MediaCodec codec = audioCodec;
+            audioRecord = null;
+            audioCodec = null;
+            if (record != null) {
                 try {
-                    audioRecord.stop();
+                    record.stop();
                 } catch (RuntimeException ignored) {
                     // Not started.
                 }
-                audioRecord.release();
-                audioRecord = null;
+                try {
+                    record.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(() -> "Could not release playback capture: " + failure);
+                }
             }
-            if (audioCodec != null) {
+            if (codec != null) {
                 try {
-                    audioCodec.stop();
+                    codec.stop();
                 } catch (RuntimeException ignored) {
                     // Not started.
                 }
-                audioCodec.release();
-                audioCodec = null;
+                try {
+                    codec.release();
+                } catch (RuntimeException failure) {
+                    Logger.printInfo(() -> "Could not release a screen recording's audio encoder: " + failure);
+                }
             }
         }
 

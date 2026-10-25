@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **TikTok:** La registrazione dello schermo mantiene timestamp distinti per i primi fotogrammi mentre si avvia il suono.
+* **TikTok:** Le registrazioni dello schermo mantengono i primi fotogrammi mentre si avvia il codificatore audio.
+* **Controlli della build:** Una verifica delle patch non convalida più una build quando cambiano gli input eseguibili. Le ripetizioni parziali lasciano storici i controlli precedenti.
+* **TikTok:** La registrazione dello schermo libera le risorse audio se il suono non può avviarsi. L'avviso di salvataggio ora indica quando la registrazione è senza audio.
 * **TikTok:** La registrazione dello schermo ora chiede ad Android di acquisire solo l'audio dell'app modificata.
 * **TikTok:** La pulizia di Service+ ora controlla la prima voce dell'anteprima LIVE, come fa TikTok (#94).
 * **TikTok:** La pausa dei commenti può identificare il primo fotogramma in riproduzione prima che arrivi il primo aggiornamento di avanzamento (#151).
