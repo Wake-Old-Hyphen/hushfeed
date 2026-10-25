@@ -324,7 +324,9 @@ If you can't reach the settings at all, create an empty file named `hushfeed-saf
 
 ### A save didn't finish
 
-If TikTok closes while saves are still going, the next time you open it a banner names the ones that didn't finish, or that Hushfeed can't confirm, and how many of their files are missing. Files that already reached your gallery count as saved and are left alone. Nothing picks a save up again by itself, so save it again if you still want it. The note Hushfeed keeps for this stays inside TikTok's own storage and holds no links or tokens. On Android 9 and older, a file that's still being written is noted by its own path, which is the name it's saved under and can include the creator and the video ID, until it's confirmed. Each save's entry goes when the save ends or once the banner has named it.
+If TikTok closes while saves are still going, the next time you open it the download recovery banner names the ones that didn't finish, or that Hushfeed can't confirm, and how many of their files are missing. Files that already reached your gallery count as saved and are left alone. Nothing picks a save up again by itself, so save it again if you still want it. The note Hushfeed keeps for this stays inside TikTok's own storage and holds no links or tokens. On Android 9 and older, a file that's still being written is noted by its own path, which is the name it's saved under and can include the creator and the video ID, until it's confirmed. Each save's entry goes when the save ends or once the banner has named it.
+
+In unreleased source builds, LIVE recordings keep recovery files inside the app until Hushfeed verifies the saved copy. After an interruption, Hushfeed tries to save the complete part. If it can't, Retry opens the retained recording's actions. You can retry saving it, export its files or delete them. Older files with an unknown save history and damaged recovery records offer export or deletion. Finish that recovery before starting another recording. Clearing the app's data or uninstalling it removes these files.
 
 ### A photo post saved as a video still has TikTok's watermark
 

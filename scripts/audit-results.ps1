@@ -71,12 +71,18 @@ function Test-AuditResults {
         $keys = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
         $changed = [Collections.Generic.List[string]]::new()
         $missing = [Collections.Generic.List[string]]::new()
+        $nativeProblems = [Collections.Generic.List[string]]::new()
         foreach ($entry in $entries) {
             foreach ($check in @($entry.checks)) {
                 $key = "$($entry.name)/$($check.id)"
                 [void]$keys.Add($key)
                 if (-not $results.ContainsKey($key)) { $missing.Add($key) }
                 elseif ([string]$results[$key].definitionHash -cne (Get-AuditDefinitionHash $entry $check)) { $changed.Add($key) }
+                if ($results.ContainsKey($key)) {
+                    $nativeProblem = Get-AuditNativeBuildProblem $results[$key].build ([string]$run.apk.sha256) $run.app
+                    if (-not $nativeProblem) { $nativeProblem = Get-AuditPatchSelectionProblem $entry $check $results[$key].build }
+                    if ($nativeProblem) { $nativeProblems.Add("$key ($nativeProblem)") }
+                }
             }
         }
         $removed = @($results.Keys | Where-Object { -not $keys.Contains($_) } | Sort-Object)
@@ -96,6 +102,11 @@ function Test-AuditResults {
             Invoke-RepoGit -Root $GitRoot -Arguments @('merge-base', '--is-ancestor', $source, $Head) | Out-Null
             if ($LASTEXITCODE -ne 0) { return Fail "$relative audited a build of $source, which isn't in the history of $Head" }
             $since = [int](Invoke-RepoGit -Root $GitRoot -Arguments @('rev-list', '--count', "$source..$Head"))
+        }
+        $nativeProblem = Get-AuditNativeBuildProblem $run.build ([string]$run.apk.sha256) $run.app
+        if ($nativeProblem) { return Fail "$relative has incomplete native build identity: $nativeProblem" }
+        if ($nativeProblems.Count) {
+            return Fail "$relative has historical native build or selection facts: $($nativeProblems -join ', ')."
         }
         if (-not (Test-AuditExecutableInputBinding $run.build $executableInputs $GitRoot)) {
             return Fail "$relative has changed or unversioned executable inputs. Rerun the audit on a build of the current inputs."

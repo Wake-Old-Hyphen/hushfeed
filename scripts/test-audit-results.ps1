@@ -40,8 +40,13 @@ try {
     $head = Commit-Inputs @('README.md')
     $recordedInputs = Get-AuditExecutableInputs $work $parent
     function New-Build([string]$Commit = $parent) {
-        return [ordered]@{ status = 'verified'; source = [ordered]@{ commit = $Commit }
-            executionInputs = Get-AuditExecutableInputs $work $Commit }
+        return [ordered]@{ status = 'verified'; nativeBuildSchema = 2; receiptSha256 = 'd' * 64
+            source = [ordered]@{ commit = $Commit; clean = $true; startFingerprint = 'c' * 64; endFingerprint = 'c' * 64 }
+            executionInputs = Get-AuditExecutableInputs $work $Commit
+            apk = [ordered]@{ package = $package; versionName = '47.5.3'; versionCode = '1'; sha256 = 'a' * 64 }
+            sourceApk = [ordered]@{ package = $package; versionName = '47.5.3'; versionCode = '1'; sha256 = 'f' * 64 }
+            sourceApkSha256 = 'f' * 64; bundle = [ordered]@{ sha256 = 'b' * 64 }
+            patches = @('Alpha','Beta'); options = @(); patchReportSha256 = 'e' * 64 }
     }
     function New-Catalog {
         return @(
@@ -74,7 +79,7 @@ try {
             [ordered]@{ name = $entry.name; checks = @($checks) }
         }
         $run = [ordered]@{
-            app = [ordered]@{ package = $package; version = '47.5.3' }
+            app = [ordered]@{ package = $package; version = '47.5.3'; versionCode = '1' }
             apk = [ordered]@{ sha256 = ('a' * 64) }
             build = New-Build
             finishedUtc = '2026-10-23T10:01:58Z'
@@ -98,6 +103,26 @@ try {
         $fact.sourceCommit -ceq $parent -and $fact.finished -ceq '2026-10-23T10:01:58Z' -and $fact.summary.review -eq 1 -and
         $fact.sha256 -ceq (Get-FileHash -Algorithm SHA256 -LiteralPath $resultsPath).Hash.ToLowerInvariant()) `
         "The audit facts don't describe the results file: $($fact | ConvertTo-Json -Depth 4 -Compress)"
+
+    # A recorded current-bound label cannot cover a different or unknown native selection.
+    foreach ($nativeCase in @('missingIdentity','historicalBuild','wrongStock','missingReport','excludedPatch','wrongOption')) {
+        Write-Results
+        $nativeRun = Get-Content -LiteralPath $resultsPath -Raw | ConvertFrom-Json
+        $nativeCheck = $nativeRun.patches[0].checks[0]
+        switch ($nativeCase) {
+            missingIdentity { $nativeRun.build.PSObject.Properties.Remove('nativeBuildSchema') }
+            historicalBuild { $nativeCheck.build.status = 'historical' }
+            wrongStock { $nativeCheck.build.sourceApk.sha256 = '0' * 64 }
+            missingReport { $nativeCheck.build.patchReportSha256 = '' }
+            excludedPatch { $nativeCheck.build.patches = @('Beta') }
+            wrongOption { $nativeCheck.build.options = @('Unselected|value=true') }
+        }
+        [IO.File]::WriteAllText($resultsPath, ($nativeRun | ConvertTo-Json -Depth 20))
+        $beforeNative = [IO.File]::ReadAllText($resultsPath)
+        Assert-AuditContract (-not (Test-Here).Valid) "Read-only qualification accepted invalid native build facts: $nativeCase"
+        Assert-AuditContract ([IO.File]::ReadAllText($resultsPath) -ceq $beforeNative) 'Native identity validation rewrote saved verdicts.'
+    }
+    Write-Results
 
     # Patch notes aren't part of any check, so rewording them leaves the run current.
     $renoted = New-Catalog

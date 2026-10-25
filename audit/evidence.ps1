@@ -189,6 +189,10 @@ function Get-AuditCatalogProblems($Entries) {
         } elseif (-not $names.Add([string]$entry.name)) { "duplicate patch '$($entry.name)'" }
         $ids = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
         foreach ($check in @($entry.checks)) {
+            $selection = $check.PSObject.Properties['patchSelection']
+            if ($null -ne $selection -and ($selection.Value -isnot [string] -or $selection.Value -cnotin @('selected','absent'))) {
+                "invalid patch selection policy '$($entry.name)/$($check.id)'"
+            }
             if ([string]::IsNullOrWhiteSpace([string]$check.id) -or ([string]$check.id).Contains('/')) {
                 "invalid check ID '$($entry.name)/$($check.id)'"
             } elseif (-not $ids.Add([string]$check.id)) { "duplicate check '$($entry.name)/$($check.id)'" }
@@ -216,7 +220,71 @@ function Set-AuditCheckReceipt($Result, [string]$Directory) {
     $Result.receiptId = Get-AuditHash $Result.receipt
 }
 
-function Test-AuditCheckBinding($Entry, $Check, $Result, [string]$ApkHash, [string]$Directory, $ExecutableInputs, [string]$GitRoot) {
+function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
+    try {
+        if ($Build.status -cne 'verified') { return 'The native build identity is not verified.' }
+        if (($Build.nativeBuildSchema -isnot [int] -and $Build.nativeBuildSchema -isnot [long]) -or
+            $Build.nativeBuildSchema -ne 2) { return 'The build has no complete native APK identity.' }
+        $sourceCheck = Test-BuildSourceFacts -Source $Build.source -ExpectedCommit ([string]$Build.source.commit)
+        if (-not $sourceCheck.Valid) { return $sourceCheck.Reason }
+        if ([string]$Build.receiptSha256 -cnotmatch '^[a-f0-9]{64}$') { return 'The build has no device receipt identity.' }
+        if ($null -eq $App -or [string]$App.package -cne 'com.zhiliaoapp.musically') {
+            return 'This audit profile only qualifies the global TikTok package.'
+        }
+        foreach ($facts in @($Build.sourceApk, $Build.apk)) {
+            if ($null -eq $facts -or [string]$facts.package -cne [string]$App.package -or
+                [string]::IsNullOrWhiteSpace([string]$facts.versionName) -or
+                [string]$facts.versionCode -cnotmatch '^[0-9]+$' -or
+                [string]$facts.sha256 -cnotmatch '^[a-f0-9]{64}$') { return 'The build has malformed APK manifest or hash facts.' }
+            $code = 0L
+            if (-not [long]::TryParse([string]$facts.versionCode, [ref]$code) -or $code -le 0) {
+                return 'The build has an invalid APK version code.'
+            }
+        }
+        if ([string]$Build.apk.sha256 -cne $ApkHash -or
+            [string]$Build.apk.versionName -cne [string]$App.version -or
+            [string]$Build.apk.versionCode -cne [string]$App.versionCode -or
+            [string]$Build.sourceApk.versionName -cne [string]$Build.apk.versionName -or
+            [string]$Build.sourceApkSha256 -cne [string]$Build.sourceApk.sha256) {
+            return 'The build APK facts do not match the audited app and artifact.'
+        }
+        if ([string]$Build.bundle.sha256 -cnotmatch '^[a-f0-9]{64}$' -or
+            [string]$Build.patchReportSha256 -cnotmatch '^[a-f0-9]{64}$') {
+            return 'The build has no bundle or patch report identity.'
+        }
+        if ($Build.patches -isnot [Array] -or $Build.patches.Count -eq 0 -or
+            $Build.options -isnot [Array]) { return 'The build has no exact patch and option selection.' }
+        $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        foreach ($name in $Build.patches) {
+            if ($name -isnot [string] -or [string]::IsNullOrWhiteSpace($name) -or -not $names.Add($name)) {
+                return 'The build has a missing or duplicate selected patch.'
+            }
+        }
+        foreach ($option in $Build.options) {
+            if ($option -isnot [string] -or $option -cnotmatch '^([^|]+)\|([^=]+)=(.*)$' -or
+                -not $names.Contains($Matches[1])) { return 'A build option does not belong to a selected patch.' }
+        }
+        return $null
+    } catch { return 'The build has malformed native identity fields.' }
+}
+
+function Get-AuditPatchSelectionProblem($Entry, $Check, $Build) {
+    # Ordinary checks need the patch selected. Negative checks declare absence explicitly.
+    $policyProperty = $Check.PSObject.Properties['patchSelection']
+    $policy = if ($null -eq $policyProperty) { 'selected' } else { [string]$policyProperty.Value }
+    if (($null -ne $policyProperty -and $policyProperty.Value -isnot [string]) -or
+        $policy -cnotin @('selected', 'absent')) { return 'Unknown per-check patch selection policy.' }
+    if ($null -eq $Build -or $Build.patches -isnot [Array]) { return 'The check has no recorded patch selection.' }
+    $selected = [string]$Entry.name -cin $Build.patches
+    if ($selected -ne ($policy -ceq 'selected')) {
+        return "$($Entry.name)/$($Check.id) requires its patch $policy in the audited build."
+    }
+    return $null
+}
+
+function Test-AuditCheckBinding($Entry, $Check, $Result, [string]$ApkHash, [string]$Directory, $ExecutableInputs, [string]$GitRoot, $App) {
+    if ((Get-AuditNativeBuildProblem $Result.build $ApkHash $App) -or
+        (Get-AuditPatchSelectionProblem $Entry $Check $Result.build)) { return $false }
     if (-not (Test-AuditExecutableInputBinding $Result.build $ExecutableInputs $GitRoot)) { return $false }
     if ($Result.definitionHash -cne (Get-AuditDefinitionHash $Entry $Check)) { return $false }
     if ($ApkHash -notmatch '^[a-fA-F0-9]{64}$' -or $Result.apkSha256 -cne $ApkHash) { return $false }
@@ -286,7 +354,7 @@ function Get-AuditResultValidation($Entries, $Run, [string]$Directory, [string]$
             $entry, $check = $expected[$key]
             if ($result.definitionHash -cne (Get-AuditDefinitionHash $entry $check)) { $changed.Add($key) }
             if ($null -ne $executableInputs -and
-                (Test-AuditCheckBinding $entry $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot)) {
+                (Test-AuditCheckBinding $entry $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot $Run.app)) {
                 $current++
                 if ($result.status -ceq 'pass') { $currentPass++ }
             } else { $historical.Add($key) }
@@ -374,7 +442,7 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory, [strin
         if ($verdict.status -cnotin @('pass','fail') -or [string]::IsNullOrWhiteSpace([string]$verdict.note)) {
             throw "$($property.Name) needs pass/fail and a review note."
         }
-        if (-not (Test-AuditCheckBinding $entriesFound[0] $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot) -or
+        if (-not (Test-AuditCheckBinding $entriesFound[0] $check $result ([string]$Run.apk.sha256) $Directory $executableInputs $GitRoot $Run.app) -or
             $verdict.receiptId -cne $result.receiptId) { throw "$($property.Name) has stale or unbound evidence." }
         $updates += , @($result, $verdict)
     }
@@ -388,12 +456,13 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory, [strin
     }
 }
 
-function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot) {
+function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot, $App) {
     if (-not $ReceiptPath) { return [pscustomobject]@{ status = 'unbound'; reason = 'No device-build receipt supplied.' } }
     if (-not $BundlePath) { throw 'A build receipt requires -Bundle to verify its source manifest.' }
     . (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
     $receipt = Get-Content -LiteralPath $ReceiptPath -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($receipt.schemaVersion -ne 1 -or $receipt.kind -cne 'hushfeed-device-build') { throw 'Unsupported device-build receipt.' }
+    if (($receipt.schemaVersion -isnot [int] -and $receipt.schemaVersion -isnot [long]) -or
+        $receipt.schemaVersion -cnotin @(1,2) -or $receipt.kind -cne 'hushfeed-device-build') { throw 'Unsupported device-build receipt.' }
     if ($receipt.apk.sha256 -ine (Get-FileHash -LiteralPath $ApkPath -Algorithm SHA256).Hash -or
         $receipt.bundle.sha256 -ine (Get-FileHash -LiteralPath $BundlePath -Algorithm SHA256).Hash) {
         throw 'The build receipt does not match the APK and bundle.'
@@ -403,6 +472,20 @@ function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string
     if (-not $sourceCheck.Valid -or (Get-AuditHash $manifest.source) -cne (Get-AuditHash $receipt.source)) {
         throw 'The build receipt source does not match a clean, unchanged bundle build.'
     }
-    return [pscustomobject]@{ status = 'verified'; receiptSha256 = (Get-FileHash -LiteralPath $ReceiptPath -Algorithm SHA256).Hash.ToLowerInvariant(); source = $manifest.source
-        executionInputs = Get-AuditExecutableInputs $GitRoot ([string]$manifest.source.commit) }
+    $identity = [ordered]@{
+        status = 'historical'; receiptSha256 = (Get-FileHash -LiteralPath $ReceiptPath -Algorithm SHA256).Hash.ToLowerInvariant()
+        source = $manifest.source; executionInputs = Get-AuditExecutableInputs $GitRoot ([string]$manifest.source.commit)
+    }
+    if ($receipt.schemaVersion -eq 1) {
+        $identity.reason = 'The device-build receipt predates complete APK and selection identity.'
+        return [pscustomobject]$identity
+    }
+    foreach ($name in @('apk','sourceApk','sourceApkSha256','bundle','patches','options','patchReportSha256')) {
+        $identity[$name] = $receipt.$name
+    }
+    $identity.nativeBuildSchema = 2
+    $identity.status = 'verified'
+    $problem = Get-AuditNativeBuildProblem ([pscustomobject]$identity) ([string]$receipt.apk.sha256) $App
+    if ($problem) { throw $problem }
+    return [pscustomobject]$identity
 }

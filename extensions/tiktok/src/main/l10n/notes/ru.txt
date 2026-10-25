@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Проверки сборки:** Аудит проверяет полноту диагностики, прежде чем сообщать об отсутствующих переключателях. Без видео зависимые проверки остаются неопределёнными. Проверка региона комментатора использует текущие сообщения кэша.
 * **TikTok:** Запись экрана сохраняет отдельные временные метки первых кадров, пока запускается запись звука.
 * **TikTok:** Записи экрана сохраняют первые видеокадры, пока запускается кодировщик звука.
 * **Проверки сборки:** Аудит патчей перестаёт подтверждать сборку при изменении исполняемых входных данных. Частичный повторный запуск оставляет прежние проверки историческими.

@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Qurma yoxlamaları:** Yamaq auditi çatışmayan keçidləri bildirməzdən əvvəl diaqnostikanın tamlığını yoxlayır. Video yoxdursa, əlaqəli yoxlamalar qeyri-müəyyən qalır. Şərhçi bölgəsi cari keş izinə əsasən yoxlanılır.
 * **TikTok:** Səs işə düşərkən ekran yazısının ilk kadrları ayrı vaxt nişanlarını saxlayır.
 * **TikTok:** Səs kodlayıcısı işə düşərkən ekran yazılarının ilk video kadrları saxlanılır.
 * **Qurma yoxlamaları:** İcra olunan girişlər dəyişəndə yamaq auditi artıq qurmanı təsdiqləmir. Qismən təkrar yoxlamalar köhnə nəticələri tarixi saxlayır.

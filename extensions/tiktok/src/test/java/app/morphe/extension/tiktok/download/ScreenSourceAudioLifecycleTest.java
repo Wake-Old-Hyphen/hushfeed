@@ -13,7 +13,6 @@ import android.view.Surface;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class ScreenSourceAudioLifecycleTest {
 
     private static ScreenSource source(boolean audio) {
         var app = RuntimeEnvironment.getApplication();
-        return new ScreenSource(app, new File(app.getCacheDir(), "screen-audio-test.mp4"),
+        return new ScreenSource(app,
                 app.getResources().getDisplayMetrics(), audio);
     }
 

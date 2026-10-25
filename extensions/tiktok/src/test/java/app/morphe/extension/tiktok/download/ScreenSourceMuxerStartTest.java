@@ -1,319 +1,499 @@
 package app.morphe.extension.tiktok.download;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
-import android.media.MediaMuxer;
 
 import app.morphe.extension.tiktok.SettingsContextRule;
+import app.morphe.extension.tiktok.live.ScreenCapture;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.time.Duration;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
+import org.robolectric.*;
+import org.robolectric.annotation.*;
 import org.robolectric.shadows.ShadowMediaCodec;
-import org.robolectric.shadows.ShadowMediaMuxer;
 import org.robolectric.shadows.ShadowSystemClock;
 
-/** Exercise the real drains with independently delayed encoder format events. */
+import java.io.*;
+import java.lang.reflect.*;
+import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.util.*;
+
+/** The complete-tag capture path preserves the committed first-IDR/AAC startup guarantees. */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 29, shadows = {ScreenSourceMuxerStartTest.Codec.class,
-        ScreenSourceMuxerStartTest.Muxer.class})
+@Config(
+        manifest = Config.NONE,
+        sdk = 29,
+        shadows = {ScreenSourceMuxerStartTest.Codec.class})
 public class ScreenSourceMuxerStartTest {
-    @Rule public final SettingsContextRule settingsContext = new SettingsContextRule();
-    @Rule public final TemporaryFolder files = new TemporaryFolder();
-    private static final Map<String, Codec> codecs = new HashMap<>();
-    private static final List<String> tracks = new ArrayList<>();
-    private static final List<Sample> written = new ArrayList<>();
-    private static int starts;
-    private static ScreenSource.Encoder startupEncoder;
-    private static long startupOrigin;
-    private final List<ScreenSource.Encoder> encoders = new ArrayList<>();
+    @Rule public SettingsContextRule settings = new SettingsContextRule();
+    static final Map<String, Codec> codecs = new HashMap<>();
+    static ScreenSource.Encoder startup;
+    static long observedOrigin;
+    final List<ScreenSource.Encoder> owned = new ArrayList<>();
+    Sink sink;
+    static final byte[] IDR = {(byte) 0x65, (byte) 0xB8, 0x20},
+            P = {(byte) 0x41, (byte) 0xE0, 0x20};
 
-    @Before public void reset() {
+    @Before
+    public void reset() {
         codecs.clear();
-        tracks.clear();
-        written.clear();
-        starts = 0;
-        startupEncoder = null;
-        startupOrigin = 0;
+        startup = null;
+        observedOrigin = 0;
+        sink = new Sink();
     }
 
-    @Test public void runSetsTheCommonOriginBeforeConstructingTheFirstEncoder() throws Exception {
-        for (boolean audio : new boolean[]{false, true}) observeStartupOrigin(audio);
+    @After
+    public void release() {
+        for (ScreenSource.Encoder encoder : owned) encoder.release();
+        ScreenCapture.whenEnded(null);
     }
 
-    @Test public void framesQueuedDuringSetupKeepDistinctTimesOnTheSameAudioClock() throws Exception {
-        long origin = observeStartupOrigin(true);
-        ScreenSource.Encoder encoder = encoder(true);
-        set(encoder, "originUs", origin);
-        Codec video = codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
-        Codec audio = codecs.get(MediaFormat.MIMETYPE_AUDIO_AAC);
-        long[] times = new long[32];
-        byte[] bytes = new byte[32];
-        int[] flags = new int[32];
-        for (int i = 0; i < times.length; i++) {
-            times[i] = (i + 1L) * 33_333L;
-            bytes[i] = (byte) (i + 1);
-            flags[i] = i == 0 ? MediaCodec.BUFFER_FLAG_KEY_FRAME : 0;
-            // All these frames arrived before a simulated 1.365-second setup finished.
-            assertTrue(times[i] < 1_365_400L);
-            video.output.add(new Sample(origin + times[i], flags[i], bytes[i]));
-        }
-        audio.output.add(new Sample(42_800, 0, (byte) 71));
-        assertTrue(drain(encoder, true));
-        assertTrue(drain(encoder, false));
-        assertTrue(drain(encoder, true));
-        assertTrack(MediaFormat.MIMETYPE_VIDEO_AVC, times, bytes, flags);
-        assertTrack(MediaFormat.MIMETYPE_AUDIO_AAC, new long[]{42_800}, new byte[]{71}, new int[]{0});
-        assertEquals(origin, ((Number) get(encoder, "originUs")).longValue());
-    }
-
-    /** Stop setup at its first codec allocation, before any native display or audio capture. */
-    private long observeStartupOrigin(boolean audio) throws Exception {
+    @Test
+    public void commonOriginPrecedesTheFirstEncoderAllocation() throws Exception {
         ShadowSystemClock.advanceBy(Duration.ofSeconds(2));
-        var app = RuntimeEnvironment.getApplication();
-        ScreenSource source = new ScreenSource(app, files.newFile(),
-                app.getResources().getDisplayMetrics(), audio);
-        ScreenSource.Encoder encoder = source.new Encoder(null);
-        encoders.add(encoder);
-        startupEncoder = encoder;
+        ScreenSource.Encoder encoder = encoder(false);
+        startup = encoder;
         long before = System.nanoTime() / 1000L;
         try {
-            assertThrows(SetupObserved.class, () -> encoder.run(null));
-            long after = System.nanoTime() / 1000L;
-            assertTrue("the first codec was constructed before the clock origin was initialized",
-                    startupOrigin > 0 && startupOrigin >= before && startupOrigin <= after);
-            assertEquals(startupOrigin, ((Number) get(encoder, "originUs")).longValue());
-            return startupOrigin;
-        } finally {
-            startupEncoder = null;
+            encoder.run(null, new Control());
+            fail();
+        } catch (Observed expected) {
         }
+        assertTrue(observedOrigin >= before && observedOrigin <= System.nanoTime() / 1000L);
+        assertEquals(observedOrigin, ((Number) get(encoder, "originUs")).longValue());
+        startup = null;
     }
 
-    private static final class SetupObserved extends RuntimeException { }
-
-    @After public void releaseEncoders() {
-        for (ScreenSource.Encoder encoder : encoders) encoder.release();
-    }
-
-    @Test public void lateAudioFormatKeepsTheFirstVideoKeyFrameAndEveryFollowingSample() throws Exception {
+    @Test
+    public void lateAudioSettingsKeepTheFirstIdrAndAllSetupFramesCodecOwned() throws Exception {
         ScreenSource.Encoder encoder = encoder(true);
-        Codec video = codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
-        Codec audio = codecs.get(MediaFormat.MIMETYPE_AUDIO_AAC);
-        video.output.add(new Sample(0, MediaCodec.BUFFER_FLAG_CODEC_CONFIG, (byte) 90));
         set(encoder, "originUs", 1_000_000L);
-        video.output.add(new Sample(1_007_000, MediaCodec.BUFFER_FLAG_KEY_FRAME, (byte) 11));
-        video.output.add(new Sample(1_040_333, 0, (byte) 12));
-        audio.output.add(new Sample(9_000, 0, (byte) 21));
+        Codec video = video(), audio = audio();
         audio.formatReady = false;
-
-        assertTrue(drain(encoder, true));
-        assertWaiting(encoder, true, video, false);
-        assertEquals(0, written.size());
-        audio.formatReady = true;
-        assertTrue(drain(encoder, false));
-        assertTrue(drain(encoder, true));
-
-        assertTrack(MediaFormat.MIMETYPE_VIDEO_AVC, new long[]{7_000, 40_333},
-                new byte[]{11, 12}, new int[]{MediaCodec.BUFFER_FLAG_KEY_FRAME, 0});
-        assertTrack(MediaFormat.MIMETYPE_AUDIO_AAC, new long[]{9_000}, new byte[]{21}, new int[]{0});
-        assertEquals(3, video.releases);
-        assertEquals(1, audio.releases);
-        assertEquals(1, starts);
-    }
-
-    @Test public void lateVideoFormatKeepsTheFirstAacSample() throws Exception {
-        ScreenSource.Encoder encoder = encoder(true);
-        Codec video = codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
-        Codec audio = codecs.get(MediaFormat.MIMETYPE_AUDIO_AAC);
-        video.formatReady = false;
-        audio.output.add(new Sample(0, 0, (byte) 31));
-        audio.output.add(new Sample(23_220, 0, (byte) 32));
-        video.output.add(new Sample(5_000, MediaCodec.BUFFER_FLAG_KEY_FRAME, (byte) 41));
-
-        assertTrue(drain(encoder, false));
-        assertWaiting(encoder, false, audio, true);
-        video.formatReady = true;
-        assertTrue(drain(encoder, true));
-        assertTrue(drain(encoder, false));
-
-        assertTrack(MediaFormat.MIMETYPE_AUDIO_AAC, new long[]{0, 23_220},
-                new byte[]{31, 32}, new int[]{0, 0});
-        assertEquals(1, starts);
-    }
-
-    @Test public void stopWhileWaitingRetainsEosAndRepeatedCloseOrDrainDoesNotConsumeItTwice() throws Exception {
-        ScreenSource.Encoder encoder = encoder(true);
-        Codec video = codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
-        Codec audio = codecs.get(MediaFormat.MIMETYPE_AUDIO_AAC);
-        audio.formatReady = false;
-        video.output.add(new Sample(10_000,
-                MediaCodec.BUFFER_FLAG_KEY_FRAME | MediaCodec.BUFFER_FLAG_END_OF_STREAM, (byte) 51));
-        audio.output.add(new Sample(0, MediaCodec.BUFFER_FLAG_END_OF_STREAM));
-        assertTrue(drain(encoder, true));
-        encoder.close();
-        encoder.close();
-        assertTrue((Boolean) get(encoder, "stopRequested"));
-        assertWaiting(encoder, true, video, false);
-
-        audio.formatReady = true;
-        assertTrue(drain(encoder, false));
-        assertTrue(drain(encoder, true));
-        assertTrue((Boolean) get(encoder, "videoDone"));
-        assertTrue((Boolean) get(encoder, "audioDone"));
-        int videoCalls = video.dequeues;
-        int audioCalls = audio.dequeues;
-        encoder.close();
-        assertFalse(drain(encoder, true));
-        assertFalse(drain(encoder, false));
-        assertEquals(videoCalls, video.dequeues);
-        assertEquals(audioCalls, audio.dequeues);
-        assertEquals(1, video.releases);
-        assertEquals(1, audio.releases);
-        assertEquals(1, written.size());
-        assertEquals(1, starts);
-    }
-
-    @Test public void videoOnlyStartsImmediatelyAndRetainsItsFirstKeyFrameThroughEos() throws Exception {
-        ScreenSource.Encoder encoder = encoder(false);
-        Codec video = codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
-        video.output.add(new Sample(0, MediaCodec.BUFFER_FLAG_KEY_FRAME, (byte) 61));
-        video.output.add(new Sample(33_333, 0, (byte) 62));
-        video.output.add(new Sample(0, MediaCodec.BUFFER_FLAG_END_OF_STREAM));
-        assertTrue(drain(encoder, true));
-        assertFalse(drain(encoder, true));
-        assertTrack(MediaFormat.MIMETYPE_VIDEO_AVC, new long[]{0, 33_333},
-                new byte[]{61, 62}, new int[]{MediaCodec.BUFFER_FLAG_KEY_FRAME, 0});
-        assertEquals(1, tracks.size());
-        assertEquals(1, starts);
-        assertEquals(3, video.releases);
-        assertTrue((Boolean) get(encoder, "videoDone"));
-    }
-
-    /** Repeated worker iterations must leave the known-format codec's finite output queue alone. */
-    private static void assertWaiting(ScreenSource.Encoder encoder, boolean knownVideo,
-            Codec known, boolean missingVideo) throws Exception {
-        assertEquals("encoded samples were discarded before the other track format", 0, known.releases);
-        int calls = known.dequeues;
-        int queued = known.output.size();
+        video.output.add(new Sample(0, MediaCodec.BUFFER_FLAG_CODEC_CONFIG, new byte[] {90}));
+        video.output.add(new Sample(1_007_000, 1, annex(IDR)));
+        video.output.add(new Sample(1_040_333, 0, annex(P)));
+        video.output.add(new Sample(0, 4, new byte[0]));
+        audio.output.add(new Sample(9000, 0, new byte[] {21}));
+        audio.output.add(new Sample(0, 4, new byte[0]));
+        assertTrue(read(encoder, true));
+        int calls = video.dequeues;
         for (int i = 0; i < 32; i++) {
-            assertFalse(drain(encoder, knownVideo));
-            assertFalse(drain(encoder, missingVideo));
+            assertFalse(read(encoder, true));
+            assertFalse(read(encoder, false));
         }
-        assertEquals(calls, known.dequeues);
-        assertEquals(queued, known.output.size());
-        assertEquals(0, known.releases);
-        assertEquals(0, starts);
+        assertEquals(calls, video.dequeues);
+        assertEquals(0, video.releases);
+        assertEquals(4, video.output.size());
+        audio.formatReady = true;
+        assertTrue(read(encoder, false));
+        start(encoder, true);
+        drive(encoder);
+        assertEquals(Arrays.asList("v7000", "a9000", "v40000"), times());
+        assertEquals(4, video.releases);
+        assertEquals(2, audio.releases);
     }
 
-    private ScreenSource.Encoder encoder(boolean audio) throws Exception {
+    @Test
+    public void lateVideoSettingsKeepTheFirstAacFrame() throws Exception {
+        ScreenSource.Encoder encoder = encoder(true);
+        video().formatReady = false;
+        audio().output.add(new Sample(0, 0, new byte[] {31}));
+        audio().output.add(new Sample(23220, 0, new byte[] {32}));
+        audio().output.add(new Sample(0, 4, new byte[0]));
+        video().output.add(new Sample(5000, 1, annex(IDR)));
+        video().output.add(new Sample(0, 4, new byte[0]));
+        assertTrue(read(encoder, false));
+        int calls = audio().dequeues;
+        for (int i = 0; i < 32; i++) assertFalse(read(encoder, false));
+        assertEquals(calls, audio().dequeues);
+        assertEquals(0, audio().releases);
+        video().formatReady = true;
+        assertTrue(read(encoder, true));
+        start(encoder, true);
+        drive(encoder);
+        assertEquals(Arrays.asList("a0", "v5000", "a23000"), times());
+    }
+
+    @Test
+    public void codecOwnedWaitingIsBoundedToOneOutputPerTrack() throws Exception {
+        ScreenSource.Encoder encoder = encoder(true);
+        read(encoder, true);
+        read(encoder, false);
+        start(encoder, true);
+        video().output.add(new Sample(0, 1, annex(IDR)));
+        audio().output.add(new Sample(1000, 0, new byte[] {1}));
+        read(encoder, true);
+        read(encoder, false);
+        int v = video().dequeues, a = audio().dequeues;
+        for (int i = 0; i < 128; i++) {
+            assertFalse(read(encoder, true));
+            assertFalse(read(encoder, false));
+        }
+        assertEquals(v, video().dequeues);
+        assertEquals(a, audio().dequeues);
+        assertEquals(0, video().releases);
+        assertEquals(0, audio().releases);
+    }
+
+    @Test
+    public void eosAndRepeatedCloseNeverDoubleConsumeOrReleaseAnOutput() throws Exception {
+        ScreenSource.Encoder encoder = encoder(false);
+        video().output.add(new Sample(0, 5, annex(IDR)));
+        read(encoder, true);
+        start(encoder, false);
+        encoder.close();
+        encoder.close();
+        drive(encoder);
+        int calls = video().dequeues;
+        assertFalse(read(encoder, true));
+        assertEquals(calls, video().dequeues);
+        assertEquals(1, video().releases);
+        assertEquals(Arrays.asList("v0"), times());
+    }
+
+    @Test
+    public void negativeOrPartialVideoOutputIsRejectedAndReleased() throws Exception {
+        for (boolean partial : new boolean[] {false, true}) {
+            ScreenSource.Encoder encoder = encoder(false);
+            read(encoder, true);
+            start(encoder, false);
+            set(encoder, "originUs", 1000L);
+            video().output.add(new Sample(partial ? 2000 : 999, partial ? 9 : 1, annex(IDR)));
+            try {
+                read(encoder, true);
+                fail();
+            } catch (IOException expected) {
+            }
+            assertEquals(1, video().releases);
+        }
+    }
+
+    @Test
+    public void firstAacOutputFailureKeepsTheOwnedIdrForVideoOnlyFallback() throws Exception {
+        ScreenSource.Encoder encoder = encoder(true);
+        read(encoder, true);
+        read(encoder, false);
+        set(encoder, "formatsReady", true);
+        video().output.add(new Sample(0, 1, annex(IDR)));
+        assertTrue(read(encoder, true));
+        int released = video().releases;
+        Method check = ScreenSource.Encoder.class.getDeclaredMethod("checkStall", long.class);
+        check.setAccessible(true);
+        check.invoke(encoder, System.nanoTime() / 1_000_000L + 2000);
+        assertTrue((Boolean) get(encoder, "audioDone"));
+        assertNull(get(encoder, "audioCodec"));
+        assertEquals(released, video().releases);
+        assertNotNull(get(encoder, "videoFrame"));
+        start(encoder, false);
+        invoke(encoder, "emitReady");
+        assertEquals(Arrays.asList("v0"), times());
+        assertEquals(1, video().releases);
+    }
+
+    @Test
+    public void invalidFirstAacConfigurationFallsBackWithoutReleasingTheHeldIdr() throws Exception {
+        ScreenSource.Encoder encoder = encoder(true);
+        read(encoder, true);
+        read(encoder, false);
+        set(encoder, "formatsReady", true);
+        MediaFormat videoFormat = (MediaFormat) get(encoder, "videoFormat");
+        videoFormat.setByteBuffer(
+                "csd-0", ByteBuffer.wrap(annex(FlvFixtures.baselineSps(20, 15, 0))));
+        videoFormat.setByteBuffer("csd-1", ByteBuffer.wrap(annex(FlvFixtures.pps())));
+        ((MediaFormat) get(encoder, "audioFormat"))
+                .setByteBuffer("csd-0", ByteBuffer.wrap(new byte[] {0x2A, 0x10}));
+        video().output.add(new Sample(0, 1, annex(IDR)));
+        audio().output.add(new Sample(1000, 0, new byte[] {1}));
+        read(encoder, true);
+        read(encoder, false);
+        Codec audio = audio();
+        Method begin =
+                ScreenSource.Encoder.class.getDeclaredMethod(
+                        "beginWriter", LiveRecorder.Output.class);
+        begin.setAccessible(true);
+        begin.invoke(encoder, new Object[] {null});
+        assertNull(get(encoder, "audioCodec"));
+        assertEquals(1, audio.releases);
+        assertEquals(0, video().releases);
+        assertNotNull(get(encoder, "videoFrame"));
+        invoke(encoder, "emitReady");
+        assertEquals(Arrays.asList("v0"), times());
+    }
+
+    @Test
+    public void firstAdtsOrWrongAudioRateFallsBackToAVideoOnlyHeader() throws Exception {
+        for (boolean adts : new boolean[] {true, false}) {
+            sink = new Sink();
+            ScreenSource.Encoder encoder = encoder(true);
+            read(encoder, true);
+            read(encoder, false);
+            set(encoder, "formatsReady", true);
+            MediaFormat format = (MediaFormat) get(encoder, "videoFormat");
+            format.setByteBuffer(
+                    "csd-0", ByteBuffer.wrap(annex(FlvFixtures.baselineSps(20, 15, 0))));
+            format.setByteBuffer("csd-1", ByteBuffer.wrap(annex(FlvFixtures.pps())));
+            MediaFormat audioFormat = (MediaFormat) get(encoder, "audioFormat");
+            audioFormat.setByteBuffer(
+                    "csd-0",
+                    ByteBuffer.wrap(
+                            adts ? new byte[] {0x12, 0x10} : new byte[] {0x11, (byte) 0x90}));
+            if (!adts) audioFormat.setInteger(MediaFormat.KEY_SAMPLE_RATE, 48000);
+            video().output.add(new Sample(0, 1, annex(IDR)));
+            audio().output
+                    .add(
+                            new Sample(
+                                    1000,
+                                    0,
+                                    adts
+                                            ? new byte[] {(byte) 255, (byte) 0xF1, 1}
+                                            : new byte[] {1}));
+            read(encoder, true);
+            read(encoder, false);
+            Method begin =
+                    ScreenSource.Encoder.class.getDeclaredMethod(
+                            "beginWriter", LiveRecorder.Output.class);
+            begin.setAccessible(true);
+            begin.invoke(encoder, new Object[] {null});
+            invoke(encoder, "emitReady");
+            assertEquals(1, sink.bytes.toByteArray()[4]);
+            assertEquals(Arrays.asList("v0"), times());
+        }
+    }
+
+    @Test
+    public void aStaticPictureDoesNotBlockLaterAacAndCarriesAnExplicitEndTime() throws Exception {
+        ScreenSource.Encoder encoder = encoder(true);
+        read(encoder, true);
+        read(encoder, false);
+        start(encoder, true);
+        video().output.add(new Sample(0, 1, annex(IDR)));
+        audio().output.add(new Sample(0, 0, new byte[] {1}));
+        drive(encoder);
+        audio().output.add(new Sample(23000, 0, new byte[] {2}));
+        audio().output.add(new Sample(46000, 0, new byte[] {3}));
+        drive(encoder);
+        assertEquals(Arrays.asList("v0", "a0", "a23000", "a46000"), times());
+        Method check = ScreenSource.Encoder.class.getDeclaredMethod("checkStall", long.class);
+        check.setAccessible(true);
+        check.invoke(encoder, System.nanoTime() / 1000000 + 5000);
+        ((CaptureFlv.Writer) get(encoder, "writer")).end(6_000_000);
+        java.io.File file = java.io.File.createTempFile("capture-static-", ".flv");
+        try {
+            java.nio.file.Files.write(file.toPath(), sink.bytes.toByteArray());
+            CaptureFlv.Prefix prefix = CaptureFlv.prefix(file);
+            assertTrue(prefix.ended);
+            assertEquals(6_000_000, prefix.endTimeUs);
+            assertEquals(1, prefix.videoSamples);
+        } finally {
+            assertTrue(file.delete());
+        }
+    }
+
+    @Test
+    public void configuredAvcLevelFitsPhoneAndSquareCaptureMacroblockRates() {
+        assertEquals(
+                android.media.MediaCodecInfo.CodecProfileLevel.AVCLevel31,
+                ScreenSource.captureLevel(1280, 720));
+        assertEquals(
+                android.media.MediaCodecInfo.CodecProfileLevel.AVCLevel4,
+                ScreenSource.captureLevel(1080, 1920));
+        assertEquals(
+                android.media.MediaCodecInfo.CodecProfileLevel.AVCLevel5,
+                ScreenSource.captureLevel(1920, 1920));
+    }
+
+    @Test
+    public void pcmFrameClockUsesOneCommonOriginWithoutReadTimingDrift() throws Exception {
+        assertEquals(12000, ScreenSource.audioTimeUs(12000, 0, 44100));
+        assertEquals(35219, ScreenSource.audioTimeUs(12000, 1024, 44100));
+        assertEquals(1012000, ScreenSource.audioTimeUs(12000, 44100, 44100));
+        assertEquals(
+                12000 + 123456789L * 1_000_000L / 44100,
+                ScreenSource.audioTimeUs(12000, 123456789, 44100));
+        try {
+            ScreenSource.audioTimeUs(-1, 0, 44100);
+            fail();
+        } catch (IOException expected) {
+        }
+    }
+
+    ScreenSource.Encoder encoder(boolean audio) throws Exception {
         var app = RuntimeEnvironment.getApplication();
-        ScreenSource source = new ScreenSource(app, files.newFile(),
-                app.getResources().getDisplayMetrics(), audio);
+        android.util.DisplayMetrics metrics = new android.util.DisplayMetrics();
+        metrics.widthPixels = 320;
+        metrics.heightPixels = 240;
+        metrics.densityDpi = 160;
+        ScreenSource source = new ScreenSource(app, metrics, audio, (output, state) -> sink);
         ScreenSource.Encoder encoder = source.new Encoder(null);
-        encoders.add(encoder);
+        owned.add(encoder);
         set(encoder, "videoCodec", MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC));
-        if (audio) set(encoder, "audioCodec", MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC));
+        if (audio)
+            set(
+                    encoder,
+                    "audioCodec",
+                    MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC));
         set(encoder, "audioDone", !audio);
-        set(encoder, "muxer", new MediaMuxer(files.newFile().getAbsolutePath(),
-                MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4));
         return encoder;
     }
 
-    private static boolean drain(ScreenSource.Encoder encoder, boolean video) throws Exception {
-        Method method = ScreenSource.Encoder.class.getDeclaredMethod(
-                video ? "drainVideo" : "drainAudio", MediaCodec.BufferInfo.class);
-        method.setAccessible(true);
-        return (Boolean) method.invoke(encoder, new MediaCodec.BufferInfo());
+    void start(ScreenSource.Encoder encoder, boolean audio) throws Exception {
+        set(encoder, "formatsReady", true);
+        set(
+                encoder,
+                "writer",
+                new CaptureFlv.Writer(
+                        sink,
+                        new CaptureFlv.Config(
+                                ByteBuffer.wrap(annex(FlvFixtures.baselineSps(20, 15, 0))),
+                                ByteBuffer.wrap(annex(FlvFixtures.pps())),
+                                audio ? ByteBuffer.wrap(new byte[] {0x12, 0x10}) : null,
+                                44100,
+                                2)));
     }
 
-    private static void set(Object target, String name, Object value) throws Exception {
+    void drive(ScreenSource.Encoder encoder) throws Exception {
+        for (int i = 0; i < 100; i++) {
+            boolean moved = read(encoder, true);
+            if (get(encoder, "audioCodec") != null) moved |= read(encoder, false);
+            moved |= invoke(encoder, "emitReady");
+            if (!moved) break;
+        }
+    }
+
+    static boolean read(ScreenSource.Encoder encoder, boolean video) throws Exception {
+        return invoke(encoder, video ? "readVideo" : "readAudio");
+    }
+
+    static boolean invoke(Object target, String name) throws Exception {
+        Method method = target.getClass().getDeclaredMethod(name);
+        method.setAccessible(true);
+        try {
+            return (Boolean) method.invoke(target);
+        } catch (InvocationTargetException failure) {
+            if (failure.getCause() instanceof Exception) throw (Exception) failure.getCause();
+            throw failure;
+        }
+    }
+
+    static void set(Object target, String name, Object value) throws Exception {
         Field field = target.getClass().getDeclaredField(name);
         field.setAccessible(true);
         field.set(target, value);
     }
 
-    private static Object get(Object target, String name) throws Exception {
+    static Object get(Object target, String name) throws Exception {
         Field field = target.getClass().getDeclaredField(name);
         field.setAccessible(true);
         return field.get(target);
     }
 
-    private static void assertTrack(String mime, long[] times, byte[] payloads, int[] flags) {
-        List<Sample> samples = new ArrayList<>();
-        for (Sample sample : written) if (sample.track == tracks.indexOf(mime)) samples.add(sample);
-        assertEquals(times.length, samples.size());
-        for (int i = 0; i < times.length; i++) {
-            assertEquals(times[i], samples.get(i).timeUs);
-            assertArrayEquals(new byte[]{payloads[i]}, samples.get(i).bytes);
-            assertEquals(flags[i], samples.get(i).flags);
+    static Codec video() {
+        return codecs.get(MediaFormat.MIMETYPE_VIDEO_AVC);
+    }
+
+    static Codec audio() {
+        return codecs.get(MediaFormat.MIMETYPE_AUDIO_AAC);
+    }
+
+    static byte[] annex(byte[] bytes) {
+        byte[] out = new byte[bytes.length + 4];
+        out[3] = 1;
+        System.arraycopy(bytes, 0, out, 4, bytes.length);
+        return out;
+    }
+
+    List<String> times() throws Exception {
+        List<String> result = new ArrayList<>();
+        FlvReader.read(
+                new ByteArrayInputStream(sink.bytes.toByteArray()),
+                new FlvReader.Listener() {
+                    public void onVideoConfig(String a, byte[] b, byte[] c, int w, int h) {}
+
+                    public void onAudioConfig(byte[] a, int r, int c) {}
+
+                    public void onVideo(byte[] a, long p, boolean k) {
+                        result.add("v" + p);
+                    }
+
+                    public void onAudio(byte[] a, long p) {
+                        result.add("a" + p);
+                    }
+                },
+                true,
+                true);
+        return result;
+    }
+
+    static class Sink implements CaptureFlv.Sink {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        public void append(byte[] a, int b, int c) throws IOException {
+            bytes.write(a);
+        }
+
+        public void checkpoint(long a, boolean b) {}
+    }
+
+    static class Sample {
+        final long time;
+        final int flags;
+        final byte[] bytes;
+
+        Sample(long time, int flags, byte[] bytes) {
+            this.time = time;
+            this.flags = flags;
+            this.bytes = bytes;
         }
     }
 
-    private static final class Sample {
-        final long timeUs;
-        final int flags;
-        final byte[] bytes;
-        int track;
-        Sample(long timeUs, int flags, byte... bytes) {
-            this.timeUs = timeUs;
-            this.flags = flags;
-            this.bytes = bytes;
+    static class Observed extends RuntimeException {}
+
+    static class Control implements LiveRecorder.Control {
+        public boolean stopRequested() {
+            return false;
+        }
+
+        public void onStop(Closeable c) {}
+
+        public void release(Closeable c) {}
+
+        public boolean pause(long ms) {
+            return true;
         }
     }
 
     @Implements(MediaCodec.class)
     public static class Codec extends ShadowMediaCodec {
         final ArrayDeque<Sample> output = new ArrayDeque<>();
-        boolean formatReady = true;
-        boolean formatReported;
+        boolean formatReady = true, formatReported;
         String mime;
         Sample held;
         int dequeues, releases;
 
-        @Override @Implementation protected void __constructor__(String name, boolean byType, boolean encoder) {
-            if (startupEncoder != null) {
+        @Override
+        @Implementation
+        protected void __constructor__(String name, boolean byType, boolean encoder) {
+            if (startup != null) {
                 try {
-                    Field origin = ScreenSource.Encoder.class.getDeclaredField("originUs");
-                    origin.setAccessible(true);
-                    startupOrigin = origin.getLong(startupEncoder);
-                } catch (ReflectiveOperationException failure) {
-                    throw new AssertionError(failure);
+                    observedOrigin = ((Number) get(startup, "originUs")).longValue();
+                } catch (Exception e) {
+                    throw new AssertionError(e);
                 }
-                throw new SetupObserved();
+                throw new Observed();
             }
             super.__constructor__(name, byType, encoder);
             mime = name;
             codecs.put(name, this);
         }
 
-        @Implementation protected int dequeueOutputBuffer(MediaCodec.BufferInfo info, long timeoutUs) {
+        @Implementation
+        protected int dequeueOutputBuffer(MediaCodec.BufferInfo info, long timeout) {
             dequeues++;
-            assertEquals(0, timeoutUs);
-            assertTrue("a dequeued output was not released", held == null);
+            assertNull(held);
             if (!formatReported) {
                 if (!formatReady) return MediaCodec.INFO_TRY_AGAIN_LATER;
                 formatReported = true;
@@ -321,52 +501,31 @@ public class ScreenSourceMuxerStartTest {
             }
             held = output.poll();
             if (held == null) return MediaCodec.INFO_TRY_AGAIN_LATER;
-            info.set(1, held.bytes.length, held.timeUs, held.flags);
+            info.set(1, held.bytes.length, held.time, held.flags);
             return 0;
         }
 
-        @Implementation protected MediaFormat getOutputFormat() {
+        @Implementation
+        protected MediaFormat getOutputFormat() {
             return MediaFormat.MIMETYPE_VIDEO_AVC.equals(mime)
-                    ? MediaFormat.createVideoFormat(mime, 1080, 1920)
+                    ? MediaFormat.createVideoFormat(mime, 320, 240)
                     : MediaFormat.createAudioFormat(mime, 44100, 2);
         }
 
-        @Implementation protected ByteBuffer getOutputBuffer(int index) {
-            ByteBuffer buffer = ByteBuffer.allocate(held.bytes.length + 2);
-            buffer.position(1);
-            buffer.put(held.bytes);
-            return buffer;
+        @Implementation
+        protected ByteBuffer getOutputBuffer(int index) {
+            ByteBuffer out = ByteBuffer.allocate(held.bytes.length + 2);
+            out.position(1);
+            out.put(held.bytes);
+            return out;
         }
 
-        @Implementation protected void releaseOutputBuffer(int index, boolean render) {
+        @Implementation
+        protected void releaseOutputBuffer(int index, boolean render) {
+            assertNotNull(held);
             assertFalse(render);
             releases++;
             held = null;
-        }
-    }
-
-    @Implements(MediaMuxer.class)
-    public static class Muxer extends ShadowMediaMuxer {
-        @Implementation protected static int nativeAddTrack(long muxer, String[] keys, Object[] values) {
-            assertEquals("a track was added after starting", 0, starts);
-            for (int i = 0; i < keys.length; i++) {
-                if (MediaFormat.KEY_MIME.equals(keys[i])) tracks.add((String) values[i]);
-            }
-            return tracks.size() - 1;
-        }
-
-        @Implementation protected static void nativeStart(long muxer) { starts++; }
-
-        @Implementation protected static void nativeWriteSampleData(long muxer, int track, ByteBuffer data,
-                int offset, int size, long timeUs, int flags) {
-            assertEquals("sample was written before muxing started", 1, starts);
-            byte[] bytes = new byte[size];
-            ByteBuffer copy = data.duplicate();
-            copy.position(offset);
-            copy.get(bytes);
-            Sample sample = new Sample(timeUs, flags, bytes);
-            sample.track = track;
-            written.add(sample);
         }
     }
 }

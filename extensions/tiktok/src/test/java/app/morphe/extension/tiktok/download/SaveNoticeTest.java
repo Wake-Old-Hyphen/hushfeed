@@ -119,6 +119,29 @@ public class SaveNoticeTest {
         }
     }
 
+    @Test @Config(qualifiers = "en")
+    public void retainedVideoOnlyPartialSaveKeepsItsStopReasonAndBothActions() {
+        try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setActivity(activity);
+            MediaFileWriter.Saved saved = new MediaFileWriter.Saved("live.mp4",
+                    Uri.parse("content://media/external/video/media/79"));
+            LiveRecorder.Result result = new LiveRecorder.Result(LiveRecorder.Outcome.SAVED_PARTIAL,
+                    LiveRecorder.End.DISCONNECTED, 4_000, "live.mp4", saved, null)
+                    .withScreenAudio(LiveRecorder.ScreenAudio.VIDEO_ONLY).withRetainedId("a".repeat(32));
+
+            LiveRecordingSaver.announce(result);
+            idlePastTheSheetSettle();
+
+            ViewGroup root = activity.findViewById(android.R.id.content);
+            assertNotNull("the recovery banner lost the stop reason or audio status", find(root,
+                    "The LIVE ended or the connection dropped. What was recorded is saved to "
+                            + LiveRecordingSaver.folder() + "\nThis screen recording has no sound."));
+            assertNotNull("the saved recording cannot be opened", find(root, "Open"));
+            assertNotNull("the retained source has no recovery action", find(root, "Retry"));
+        }
+    }
+
     @Test public void aSaveWithoutARowStaysAToast() {
         try (var owner = Robolectric.buildActivity(HostActivity.class).setup().visible()) {
             Activity activity = owner.get();

@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
+* **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
+* **Derleme kontrolleri:** Yama denetimleri, eksik anahtar bildirmeden önce tanılama verilerinin tamlığını kontrol eder. Video yoksa ilgili kontroller sonuçsuz kalır. Yorumcu bölgesi kontrolü güncel önbellek kaydını kullanır.
 * **TikTok:** Ses başlarken ekran kaydının ilk karelerinin ayrı zaman damgaları korunur.
 * **TikTok:** Ses kodlayıcısı başlarken ekran kayıtlarının ilk video kareleri korunur.
 * **Derleme kontrolleri:** Çalıştırılabilir girdiler değiştiğinde yama denetimi artık derlemeyi doğrulamaz. Kısmi tekrarlar eski kontrolleri geçmiş kayıt olarak bırakır.
