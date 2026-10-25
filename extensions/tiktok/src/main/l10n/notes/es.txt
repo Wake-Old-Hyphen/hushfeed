@@ -1,6 +1,8 @@
 ## Unreleased
 
+* **TikTok:** La grabación de pantalla ahora solicita a Android capturar solo el sonido de la aplicación parcheada.
 * **TikTok:** La limpieza de Service+ ahora comprueba la primera entrada de la vista previa del LIVE, igual que TikTok (#94).
+* **TikTok:** La pausa al abrir comentarios puede identificar el primer fotograma en reproducción antes de que llegue el primer informe de progreso (#151).
 
 ## 0.79.0 (2026-10-24)
 

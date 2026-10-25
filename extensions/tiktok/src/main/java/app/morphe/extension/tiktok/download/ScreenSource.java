@@ -17,6 +17,7 @@ import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.os.Build;
+import android.os.Process;
 import android.util.DisplayMetrics;
 import android.view.Surface;
 
@@ -71,6 +72,17 @@ final class ScreenSource implements LiveRecorder.Source {
         int w = Math.max(2, (int) Math.round(screenWidth * scale)) & ~1;
         int h = Math.max(2, (int) Math.round(screenHeight * scale)) & ~1;
         return new int[]{w, h};
+    }
+
+    /** Limit playback capture to this installed app, including full-screen projection. */
+    @android.annotation.TargetApi(29)
+    static AudioPlaybackCaptureConfiguration captureConfiguration(MediaProjection projection) {
+        return new AudioPlaybackCaptureConfiguration.Builder(projection)
+                .addMatchingUid(Process.myUid())
+                .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
+                .addMatchingUsage(AudioAttributes.USAGE_GAME)
+                .addMatchingUsage(AudioAttributes.USAGE_UNKNOWN)
+                .build();
     }
 
     @Override
@@ -176,11 +188,7 @@ final class ScreenSource implements LiveRecorder.Source {
         private void setUpAudio(MediaProjection projection) {
             if (Build.VERSION.SDK_INT < 29) return;
             try {
-                AudioPlaybackCaptureConfiguration capture = new AudioPlaybackCaptureConfiguration.Builder(projection)
-                        .addMatchingUsage(AudioAttributes.USAGE_MEDIA)
-                        .addMatchingUsage(AudioAttributes.USAGE_GAME)
-                        .addMatchingUsage(AudioAttributes.USAGE_UNKNOWN)
-                        .build();
+                AudioPlaybackCaptureConfiguration capture = captureConfiguration(projection);
                 AudioFormat pcmFormat = new AudioFormat.Builder()
                         .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
                         .setSampleRate(SAMPLE_RATE)

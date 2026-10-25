@@ -1,6 +1,8 @@
 ## Unreleased
 
+* **TikTok:** Ekran yazısı indi Android-dən yalnız yamaqlanmış tətbiqin səsini yazmağı istəyir.
 * **TikTok:** Service+ təmizlənməsi indi LIVE önizləməsinin ilk elementini TikTok-un göstərmə qaydasına uyğun yoxlayır (#94).
+* **TikTok:** Şərhlər açılarkən fasilə funksiyası ilk irəliləyiş hesabatı gəlməzdən əvvəl oxunan ilk kadrı müəyyən edə bilir (#151).
 
 ## 0.79.0 (2026-10-24)
 

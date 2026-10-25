@@ -1,6 +1,8 @@
 ## Unreleased
 
+* **TikTok:** Die Bildschirmaufnahme fordert Android jetzt auf, nur den Ton der gepatchten App aufzunehmen.
 * **TikTok:** Die Service+-Bereinigung prüft jetzt den ersten Eintrag einer LIVE-Vorschau, so wie TikTok selbst (#94).
+* **TikTok:** Die Kommentarpause kann ein bereits laufendes erstes Bild erkennen, bevor die erste Fortschrittsmeldung eintrifft (#151).
 
 ## 0.79.0 (2026-10-24)
 

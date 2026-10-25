@@ -1,6 +1,8 @@
 ## Unreleased
 
+* **TikTok:** La registrazione dello schermo ora chiede ad Android di acquisire solo l'audio dell'app modificata.
 * **TikTok:** La pulizia di Service+ ora controlla la prima voce dell'anteprima LIVE, come fa TikTok (#94).
+* **TikTok:** La pausa dei commenti può identificare il primo fotogramma in riproduzione prima che arrivi il primo aggiornamento di avanzamento (#151).
 
 ## 0.79.0 (2026-10-24)
 
