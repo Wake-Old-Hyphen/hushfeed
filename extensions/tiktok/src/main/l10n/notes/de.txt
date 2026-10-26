@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **Diagnose:** Aufzeichnungen des ersten Bild-Callbacks behalten die Quellzuordnung und monotone Zeitstempel für Startprüfungen (#150).
+* **Build-Prüfungen:** Release-Prüfungen verlangen für jedes angegebene Paket passende APK- und native Prüfnachweise. Rundgänge prüfen den installierten Build und die Patch-Optionen.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
 * **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
 * **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
 * **Build-Prüfungen:** Patch-Audits prüfen vollständige Diagnosedaten, bevor sie fehlende Schalter melden. Fehlende Videos lassen abhängige Prüfungen offen. Die Prüfung der Kommentatorregion nutzt die aktuelle Cache-Ausgabe.

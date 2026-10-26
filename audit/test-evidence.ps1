@@ -15,7 +15,7 @@ New-Item -ItemType Directory -Path $fixture | Out-Null
 try {
     # Keep qualification fixtures independent of uncommitted changes to the scripts under test.
     $inputRepo = Join-Path $fixture 'input-repo'
-    foreach ($relative in @('audit/evidence.ps1', 'audit/run-audit.ps1', 'scripts/release-receipt.ps1', 'scripts/device-lease.ps1')) {
+    foreach ($relative in @('audit/evidence.ps1', 'audit/run-audit.ps1', 'scripts/release-receipt.ps1', 'scripts/release-qualification.ps1', 'scripts/device-lease.ps1')) {
         $destination = Join-Path $inputRepo $relative
         [void][IO.Directory]::CreateDirectory((Split-Path -Parent $destination))
         [IO.File]::Copy((Join-Path (Split-Path -Parent $PSScriptRoot) $relative), $destination)

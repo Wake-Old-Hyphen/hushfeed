@@ -49,7 +49,9 @@ public final class LiveRecorder {
         /** TikTok is closing. */
         APP_EXIT,
         /** Something else went wrong. */
-        ERROR
+        ERROR,
+        /** A retained recording has no known original stop reason. */
+        RECOVERED
     }
 
     /** What the viewer ended up with. */

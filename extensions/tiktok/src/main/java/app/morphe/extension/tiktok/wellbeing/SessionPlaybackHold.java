@@ -29,6 +29,45 @@ public final class SessionPlaybackHold {
     // two writers take the lock; native reads and playback commands stay outside it.
     private static final Object OWNER_LOCK = new Object();
     private static long progressRevision;
+
+    // Private, bounded callback receipts. Host owners stay weak; reading them calls no host code.
+    private static final Object FRAME_RECEIPT_LOCK = new Object();
+    private static final FirstFrameReceipt[] FRAME_RECEIPTS = new FirstFrameReceipt[32];
+    private static int nextFrameReceipt;
+
+    private static final class FirstFrameReceipt {
+        final WeakReference<Object> controller, aweme, manager;
+        final String sourceId;
+        final long elapsedRealtimeMs;
+
+        FirstFrameReceipt(Object controller, Object aweme, Object manager, String sourceId, long at) {
+            this.controller = new WeakReference<>(controller);
+            this.aweme = new WeakReference<>(aweme);
+            this.manager = new WeakReference<>(manager);
+            this.sourceId = sourceId;
+            this.elapsedRealtimeMs = at;
+        }
+    }
+
+    /** Reflection-only private verification access. Copying never asks the native player anything. */
+    private static FirstFrameReceipt[] snapshotFirstFrameReceipts() {
+        synchronized (FRAME_RECEIPT_LOCK) {
+            return FRAME_RECEIPTS.clone();
+        }
+    }
+
+    private static void rememberFirstFrame(
+            Object controller, Object aweme, Object manager, String aid, Object sourceAtEntry, long at) {
+        // mCurrentSourceId is the native 47.5.3 source key. A missing/renamed field is no evidence.
+        // Read it directly: never populate a native cache or substitute an unkeyed frame scalar.
+        if (at <= 0 || aid.length() > 128 || !aid.equals(sourceAtEntry)
+                || !sourceAtEntry.equals(Reflect.readField(controller, "mCurrentSourceId"))) return;
+        FirstFrameReceipt receipt = new FirstFrameReceipt(controller, aweme, manager, aid, at);
+        synchronized (FRAME_RECEIPT_LOCK) {
+            FRAME_RECEIPTS[nextFrameReceipt] = receipt;
+            nextFrameReceipt = (nextFrameReceipt + 1) % FRAME_RECEIPTS.length;
+        }
+    }
     // Accessed only on the main thread, where the panel changes and native playback is controlled.
     private static Target held;
     // Published by main-thread release; progress can prove an independent resume before focus returns.
@@ -248,19 +287,25 @@ public final class SessionPlaybackHold {
      */
     public static void onFirstFrame(Object controller) {
         if (controller == null) return;
+        // Callback receipt, before native reads or queued main work. Not a displayed-frame time.
+        long receivedAt = android.os.SystemClock.elapsedRealtime();
+        Object sourceAtEntry = Reflect.readField(controller, "mCurrentSourceId");
         long revision;
         synchronized (OWNER_LOCK) {
             revision = progressRevision;
         }
         Object aid;
+        Object aweme;
         Object manager;
         try {
-            aid = Reflect.invoke(currentAweme(controller), "getAid");
+            aweme = currentAweme(controller);
+            aid = Reflect.invoke(aweme, "getAid");
             manager = Reflect.invoke(controller, "getPlayerManager");
         } catch (RuntimeException notAController) {
             return;
         }
         if (!(aid instanceof String) || ((String) aid).isEmpty() || manager == null) return;
+        rememberFirstFrame(controller, aweme, manager, (String) aid, sourceAtEntry, receivedAt);
         // Snapshot identity now: a recycled controller can have another video or manager by the
         // time main runs. Neither the controller nor the manager is retained by the queued work.
         Target frame = new Target(controller, (String) aid);

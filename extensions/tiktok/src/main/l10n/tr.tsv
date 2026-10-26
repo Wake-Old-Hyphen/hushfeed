@@ -2304,3 +2304,6 @@ Recording files need recovery	Kayıt dosyalarının kurtarılması gerekiyor
 The recovery record is damaged. Export a copy of the recording files or delete them.	Kurtarma kaydı bozulmuş. Kayıt dosyalarının bir kopyasını dışa aktarın veya dosyaları silin.
 The export may be incomplete. The original recording files are still kept.	Dışa aktarma tamamlanmamış olabilir. Özgün kayıt dosyaları hâlâ saklanıyor.
 Some recording files remain. Try deleting them again.	Bazı kayıt dosyaları duruyor. Bunları yeniden silmeyi deneyin.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Kurtarılan kayıt %1$s konumuna kaydedildi

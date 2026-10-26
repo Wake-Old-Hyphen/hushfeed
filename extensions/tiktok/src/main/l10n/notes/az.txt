@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **Diaqnostika:** İlk kadr çağırışının qeydləri başlanğıc yoxlamaları üçün mənbə əlaqəsini və monoton vaxt nişanlarını saxlayır (#150).
+* **Qurma yoxlamaları:** Buraxılış yoxlamaları göstərilən hər paket üçün uyğun APK və tətbiqdaxili yoxlama sübutu tələb edir. Tətbiq gəzintisi quraşdırılmış qurmanı və yamaq seçimlərini yoxlayır.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
 * **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
 * **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
 * **Qurma yoxlamaları:** Yamaq auditi çatışmayan keçidləri bildirməzdən əvvəl diaqnostikanın tamlığını yoxlayır. Video yoxdursa, əlaqəli yoxlamalar qeyri-müəyyən qalır. Şərhçi bölgəsi cari keş izinə əsasən yoxlanılır.

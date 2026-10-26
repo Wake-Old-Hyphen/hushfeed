@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **Diagnostik:** Catatan callback frame pertama menyimpan keterkaitan sumber dan waktu monoton untuk pemeriksaan saat pemutaran dimulai (#150).
+* **Pemeriksaan build:** Pemeriksaan rilis mewajibkan bukti APK dan pengujian aplikasi yang sesuai untuk setiap paket yang dinyatakan. Penelusuran memverifikasi build terpasang dan opsi patch.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
 * **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
 * **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
 * **Pemeriksaan build:** Audit patch memeriksa kelengkapan diagnostik sebelum melaporkan sakelar yang hilang. Tanpa video, pemeriksaan terkait tetap tidak dapat disimpulkan. Pemeriksaan wilayah komentator memakai jejak cache saat ini.

@@ -74,7 +74,7 @@ try {
         $patches = foreach ($entry in $parsed) {
             $checks = foreach ($check in @($entry.checks)) {
                 if ("$($entry.name)/$($check.id)" -cin $Skip) { continue }
-                [ordered]@{ id = $check.id; status = 'pass'; definitionHash = Get-AuditDefinitionHash $entry $check; build = New-Build }
+                [ordered]@{ id = $check.id; status = 'pass'; definitionHash = Get-AuditDefinitionHash $entry $check; build = New-Build; installedApkSha256 = 'a' * 64 }
             }
             [ordered]@{ name = $entry.name; checks = @($checks) }
         }
@@ -104,8 +104,11 @@ try {
         $fact.sha256 -ceq (Get-FileHash -Algorithm SHA256 -LiteralPath $resultsPath).Hash.ToLowerInvariant()) `
         "The audit facts don't describe the results file: $($fact | ConvertTo-Json -Depth 4 -Compress)"
 
+    Assert-AuditContract ($fact.package -ceq $package -and $fact.nativeChecks -eq 3 -and $fact.installedApkSha256 -ceq ('a' * 64) -and
+        (Get-AuditHash $fact.nativeBuild) -ceq (Get-AuditHash (New-Build))) 'Release facts discarded package, native build or installed APK identity.'
+
     # A recorded current-bound label cannot cover a different or unknown native selection.
-    foreach ($nativeCase in @('missingIdentity','historicalBuild','wrongStock','missingReport','excludedPatch','wrongOption')) {
+    foreach ($nativeCase in @('missingIdentity','historicalBuild','wrongStock','missingReport','excludedPatch','wrongOption','missingInstalled','differentInstalled')) {
         Write-Results
         $nativeRun = Get-Content -LiteralPath $resultsPath -Raw | ConvertFrom-Json
         $nativeCheck = $nativeRun.patches[0].checks[0]
@@ -116,6 +119,8 @@ try {
             missingReport { $nativeCheck.build.patchReportSha256 = '' }
             excludedPatch { $nativeCheck.build.patches = @('Beta') }
             wrongOption { $nativeCheck.build.options = @('Unselected|value=true') }
+            missingInstalled { $nativeCheck.PSObject.Properties.Remove('installedApkSha256') }
+            differentInstalled { $nativeCheck.installedApkSha256 = '0' * 64 }
         }
         [IO.File]::WriteAllText($resultsPath, ($nativeRun | ConvertTo-Json -Depth 20))
         $beforeNative = [IO.File]::ReadAllText($resultsPath)
@@ -316,8 +321,8 @@ try {
 # goes public.
 $builder = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'build-release-receipt.ps1') -Raw
 $auditAt = $builder.IndexOf('Test-AuditResults ')
-$patchAt = $builder.IndexOf('Get-BundleManifestFacts -BundlePath $Bundle')
-Assert-AuditContract ($auditAt -gt 0 -and $patchAt -gt $auditAt -and $builder.Contains('audit         = @($audit.Facts)')) `
+$patchAt = $builder.IndexOf("$" + "arguments = @('patch'")
+Assert-AuditContract ($auditAt -gt 0 -and $patchAt -gt $auditAt -and $builder.Contains('audit         = $auditFacts.ToArray()')) `
     'build-release-receipt.ps1 no longer checks the device audit first or leaves it out of the receipt.'
 $release = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'release/release.ps1') -Raw
 $publishAt = $release.IndexOf("'publish' {")

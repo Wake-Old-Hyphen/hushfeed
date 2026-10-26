@@ -9,6 +9,7 @@ import android.content.Context;
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.L10n;
+import app.morphe.extension.tiktok.settings.preference.SettingsUi;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,10 +69,25 @@ public final class LiveRecordingSaver {
         };
     }
     private static void finished(RecordingRetention.Record record, LiveRecorder.Result result, LiveRecorder.Listener listener) {
+        rememberStopReason(record, result.end);
         close(record);
         boolean retained = !record.acknowledged() && !"DISCARDED".equals(record.get("state"));
         listener.onFinished(retained ? result.withRetainedId(record.id) : result);
     }
+    private static void rememberStopReason(RecordingRetention.Record record, LiveRecorder.End end) {
+        if (end == null || end == LiveRecorder.End.RECOVERED || record.quarantined || record.acknowledged()) return;
+        try {
+            // rawFiles checks the live lease even when publication evidence alone remains.
+            boolean payload = !record.rawFiles().isEmpty();
+            if (payload || !record.get("final").isEmpty() || !record.get("intentKey").isEmpty()
+                    || !record.get("uri").isEmpty() || !record.get("file").isEmpty()
+                    || !record.get("legacy").isEmpty()) record.update("stopReason", end.name());
+        } catch (IOException failure) {
+            // This extra receipt cannot change an already verified publication's outcome.
+            Logger.printException(() -> "Recording stop reason could not be retained", failure);
+        }
+    }
+
     private static void close(RecordingRetention.Record record) {
         try { record.close(); } catch (IOException failure) { Logger.printException(() -> "Recording recovery cleanup is pending", failure); }
     }
@@ -161,9 +177,9 @@ public final class LiveRecordingSaver {
                 Utils.runOnMainThread(() -> {
                     android.app.Activity activity = Utils.getVisibleActivity();
                     if (activity == null || activity.isFinishing() || activity.isDestroyed()) return;
-                    new android.app.AlertDialog.Builder(activity).setTitle(L10n.t("Record LIVEs you watch"))
+                    showRecoveryDialog(new android.app.AlertDialog.Builder(activity).setTitle(L10n.t("Record LIVEs you watch"))
                             .setItems(names.toArray(new String[0]), (dialog, index) -> chooseRetained(context, activity, idle.get(index), names.get(index)))
-                            .setNegativeButton(android.R.string.cancel, null).show();
+                            .setNegativeButton(android.R.string.cancel, null));
                 });
             } catch (IOException failure) { Logger.printException(() -> "Retained recordings could not be read", failure); }
         });
@@ -193,11 +209,30 @@ public final class LiveRecordingSaver {
                         if (action == 1) RecordingExport.open(activity, id);
                         else actOnRetained(context, id, action == 2);
                     });
-                    chooser.setNegativeButton(android.R.string.cancel, null).show();
+                    showRecoveryDialog(chooser.setNegativeButton(android.R.string.cancel, null));
                 });
             } catch (IOException failure) { Logger.printException(() -> "Recording recovery options are unavailable", failure); }
         });
     }
+    private static void showRecoveryDialog(android.app.AlertDialog.Builder builder) {
+        android.app.AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(ignored -> SettingsUi.styleStandardAlertDialog(dialog));
+        dialog.show();
+    }
+
+    private static LiveRecorder.Result retriedResult(RecordingRetention.Record record, LiveRecorder.Published published) {
+        LiveRecorder.End reason;
+        try { reason = LiveRecorder.End.valueOf(record.get("stopReason")); }
+        catch (IllegalArgumentException unknown) { reason = LiveRecorder.End.RECOVERED; }
+        boolean complete = (reason == LiveRecorder.End.STOPPED || reason == LiveRecorder.End.LEFT_ROOM)
+                && !"true".equals(record.get("captureIncomplete"));
+        LiveRecorder.Result result = new LiveRecorder.Result(
+                complete ? LiveRecorder.Outcome.SAVED : LiveRecorder.Outcome.SAVED_PARTIAL,
+                reason, 0, published.name, published.saved, null)
+                .withScreenAudio(LiveRecorder.ScreenAudio.valueOf(record.get("screenAudio")));
+        return record.acknowledged() ? result : result.withRetainedId(record.id);
+    }
+
     private static void actOnRetained(Context app, String id, boolean discard) {
         Utils.runOnOwnThread("hushfeed-recording-recovery-action", () -> {
             try {
@@ -207,8 +242,7 @@ public final class LiveRecordingSaver {
                     if (discard) {new RecordingPublication(app, record).discard();record.close();Utils.showToastShort(L10n.t("Done"));}
                     else {
                         LiveRecorder.Published published = publishRecord(app, record);
-                        announce(new LiveRecorder.Result(LiveRecorder.Outcome.SAVED_PARTIAL, LiveRecorder.End.APP_EXIT, 0, published.name, published.saved, null)
-                                .withScreenAudio(LiveRecorder.ScreenAudio.valueOf(record.get("screenAudio"))));
+                        announce(retriedResult(record, published));
                     }
                 } finally { close(record); }
             } catch (IOException | RuntimeException failure) {
@@ -284,6 +318,8 @@ public final class LiveRecordingSaver {
                 return L10n.f("The recording reached its size limit and was saved to %1$s", folder);
             case APP_EXIT:
                 return L10n.f("TikTok closed. What was recorded is saved to %1$s", folder);
+            case RECOVERED:
+                return L10n.f("Recovered recording saved to %1$s", folder);
             default:
                 return L10n.f("Recording stopped early. What was recorded is saved to %1$s", folder);
         }

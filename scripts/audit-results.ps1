@@ -117,7 +117,20 @@ function Test-AuditResults {
         if ($staleInputs.Count) {
             return Fail "$relative has historical executable inputs for $($staleInputs -join ', '). Rerun these checks on a build of the current inputs."
         }
+        $nativeChecks = 0
+        foreach ($entry in $entries) {
+            foreach ($check in @($entry.checks)) {
+                if (@($check.steps | Where-Object { @($_.PSObject.Properties.Name)[0] -ne 'apk' }).Count -gt 0) {
+                    $nativeChecks++
+                    if ($results["$($entry.name)/$($check.id)"].installedApkSha256 -cne [string]$run.apk.sha256) {
+                        return Fail "$relative has no exact installed APK identity for a native check."
+                    }
+                }
+            }
+        }
         $facts.Add([ordered]@{
+            package = $PackageName; nativeBuild = $run.build; nativeChecks = $nativeChecks
+            installedApkSha256 = if ($nativeChecks -gt 0) { [string]$run.apk.sha256 } else { '' }
             results      = $relative
             sha256       = (Get-FileHash -Algorithm SHA256 -LiteralPath $path).Hash.ToLowerInvariant()
             appVersion   = $version

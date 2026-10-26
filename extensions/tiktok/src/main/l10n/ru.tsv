@@ -2484,3 +2484,6 @@ Recording files need recovery	Файлы записи требуют восст�
 The recovery record is damaged. Export a copy of the recording files or delete them.	Запись восстановления повреждена. Экспортируйте копию файлов записи или удалите их.
 The export may be incomplete. The original recording files are still kept.	Экспорт может быть неполным. Исходные файлы записи по-прежнему сохранены.
 Some recording files remain. Try deleting them again.	Некоторые файлы записи остались. Попробуйте удалить их ещё раз.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Восстановленная запись сохранена в %1$s

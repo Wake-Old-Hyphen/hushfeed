@@ -1,5 +1,9 @@
 ## Unreleased
 
+* **Diagnostica:** I record della callback del primo fotogramma conservano la fonte e i tempi monotoni per controllare l’avvio (#150).
+* **Controlli della build:** I controlli di rilascio richiedono prove native e APK corrispondenti per ogni pacchetto dichiarato. I controlli nell’app verificano la build installata e le opzioni delle patch.
+* **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.
+* **TikTok:** Recovery Retry keeps the recording's original stop reason instead of saying TikTok closed. Recovery dialogs follow Hushfeed's theme.
 * **TikTok:** Screen recordings check storage as they run and keep recovery files until the saved copy is verified. Interrupted recordings can be retried, exported or deleted.
 * **Build checks:** Patch audits now check the installed APK and selected patches. Results from a different package or an excluded patch stay historical.
 * **Controlli della build:** Le verifiche controllano che la diagnostica sia completa prima di segnalare interruttori mancanti. Senza un video, i controlli dipendenti restano inconcludenti. La verifica della regione del commentatore usa la traccia attuale della cache.

@@ -2282,3 +2282,4 @@ Recording files need recovery,File rekaman perlu dipulihkan
 The recovery record is damaged. Export a copy of the recording files or delete them.,Catatan pemulihan rusak. Ekspor salinan file rekaman atau hapus file tersebut.
 The export may be incomplete. The original recording files are still kept.,Hasil ekspor mungkin tidak lengkap. File rekaman asli tetap disimpan.
 Some recording files remain. Try deleting them again.,Beberapa file rekaman masih tersisa. Coba hapus lagi.
+"Recovered recording saved to %1$s","Rekaman yang dipulihkan disimpan ke %1$s"

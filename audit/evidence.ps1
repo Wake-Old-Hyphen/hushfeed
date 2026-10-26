@@ -220,7 +220,7 @@ function Set-AuditCheckReceipt($Result, [string]$Directory) {
     $Result.receiptId = Get-AuditHash $Result.receipt
 }
 
-function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
+function Get-DeviceNativeBuildProblem($Build, [string]$ApkHash, $App) {
     try {
         if ($Build.status -cne 'verified') { return 'The native build identity is not verified.' }
         if (($Build.nativeBuildSchema -isnot [int] -and $Build.nativeBuildSchema -isnot [long]) -or
@@ -228,8 +228,8 @@ function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
         $sourceCheck = Test-BuildSourceFacts -Source $Build.source -ExpectedCommit ([string]$Build.source.commit)
         if (-not $sourceCheck.Valid) { return $sourceCheck.Reason }
         if ([string]$Build.receiptSha256 -cnotmatch '^[a-f0-9]{64}$') { return 'The build has no device receipt identity.' }
-        if ($null -eq $App -or [string]$App.package -cne 'com.zhiliaoapp.musically') {
-            return 'This audit profile only qualifies the global TikTok package.'
+        if ($null -eq $App -or [string]::IsNullOrWhiteSpace([string]$App.package)) {
+            return 'The device build has no app package identity.'
         }
         foreach ($facts in @($Build.sourceApk, $Build.apk)) {
             if ($null -eq $facts -or [string]$facts.package -cne [string]$App.package -or
@@ -266,6 +266,14 @@ function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
         }
         return $null
     } catch { return 'The build has malformed native identity fields.' }
+}
+
+function Get-AuditNativeBuildProblem($Build, [string]$ApkHash, $App) {
+    # Artifact identity is package-neutral; the existing audit catalog remains global-only.
+    if ($null -eq $App -or [string]$App.package -cne 'com.zhiliaoapp.musically') {
+        return 'This audit profile only qualifies the global TikTok package.'
+    }
+    return Get-DeviceNativeBuildProblem $Build $ApkHash $App
 }
 
 function Get-AuditPatchSelectionProblem($Entry, $Check, $Build) {
@@ -456,7 +464,7 @@ function Set-AuditVerdicts($Entries, $Run, $Verdicts, [string]$Directory, [strin
     }
 }
 
-function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot, $App) {
+function Read-DeviceBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot, $App) {
     if (-not $ReceiptPath) { return [pscustomobject]@{ status = 'unbound'; reason = 'No device-build receipt supplied.' } }
     if (-not $BundlePath) { throw 'A build receipt requires -Bundle to verify its source manifest.' }
     . (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts/release-receipt.ps1')
@@ -485,7 +493,16 @@ function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string
     }
     $identity.nativeBuildSchema = 2
     $identity.status = 'verified'
-    $problem = Get-AuditNativeBuildProblem ([pscustomobject]$identity) ([string]$receipt.apk.sha256) $App
+    $problem = Get-DeviceNativeBuildProblem ([pscustomobject]$identity) ([string]$receipt.apk.sha256) $App
     if ($problem) { throw $problem }
     return [pscustomobject]$identity
+}
+
+function Read-AuditBuildIdentity([string]$ApkPath, [string]$ReceiptPath, [string]$BundlePath, [string]$GitRoot, $App) {
+    $identity = Read-DeviceBuildIdentity $ApkPath $ReceiptPath $BundlePath $GitRoot $App
+    if ($identity.status -ceq 'verified') {
+        $problem = Get-AuditNativeBuildProblem $identity ([string]$identity.apk.sha256) $App
+        if ($problem) { throw $problem }
+    }
+    return $identity
 }

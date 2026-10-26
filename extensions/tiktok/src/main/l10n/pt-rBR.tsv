@@ -2304,3 +2304,6 @@ Recording files need recovery	Os arquivos de gravação precisam ser recuperados
 The recovery record is damaged. Export a copy of the recording files or delete them.	O registro de recuperação está danificado. Exporte uma cópia dos arquivos de gravação ou exclua-os.
 The export may be incomplete. The original recording files are still kept.	A exportação pode estar incompleta. Os arquivos originais da gravação continuam guardados.
 Some recording files remain. Try deleting them again.	Alguns arquivos de gravação ainda estão presentes. Tente excluí-los novamente.
+
+# context: Explicit recording Retry when the original stop reason was not retained.
+Recovered recording saved to %1$s	Gravação recuperada salva em %1$s
