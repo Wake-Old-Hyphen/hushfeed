@@ -81,6 +81,10 @@ class CommentSheetHeightAnchorsTest {
         assertTrue("the height is not guarded", source.contains("height.guardAtEntry("))
         assertTrue("the answer is not the switch's", source.contains("openAtFullHeight()Z"))
         assertTrue("the mode is not lifted", source.contains("heightMode(I)I"))
+        assertTrue(
+            "the full height is not kept below the status bar (#261)",
+            source.contains("belowStatusBar(\${CONTEXT}I)I"),
+        )
         assertTrue("the row's flag is not set", source.contains("SettingsStatus;->enableCommentsFullHeight()V"))
     }
 

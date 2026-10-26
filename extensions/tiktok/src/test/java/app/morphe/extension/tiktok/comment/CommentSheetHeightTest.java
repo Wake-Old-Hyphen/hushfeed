@@ -80,6 +80,34 @@ public class CommentSheetHeightTest {
         assertEquals(0, CommentSheetHeight.heightMode(0));
     }
 
+    @Test public void theFullHeightStopsAtTheSystemBars() {
+        // #261: TikTok's full height can be the display's whole height, status bar and all.
+        try (var controller = Robolectric.buildActivity(TestActivity.class).setup().visible()) {
+            var activity = controller.get();
+            var decor = activity.getWindow().getDecorView();
+            decor.measure(
+                    android.view.View.MeasureSpec.makeMeasureSpec(720, android.view.View.MeasureSpec.EXACTLY),
+                    android.view.View.MeasureSpec.makeMeasureSpec(1600, android.view.View.MeasureSpec.EXACTLY));
+            decor.layout(0, 0, 720, 1600);
+            android.graphics.Rect bars = app.morphe.extension.tiktok.settings.SystemBarInsets.current(decor);
+            int room = 1600 - bars.top - bars.bottom;
+
+            assertEquals("a height past the bars is trimmed to the room between them",
+                    room, CommentSheetHeight.belowStatusBar(activity, 1600 + 80));
+            assertEquals("a height that fits is left alone",
+                    room - 1, CommentSheetHeight.belowStatusBar(activity, room - 1));
+            // A wrapped context is the activity's all the same.
+            assertEquals(room, CommentSheetHeight.belowStatusBar(
+                    new android.content.ContextWrapper(activity), 5000));
+        }
+    }
+
+    @Test public void withNoWindowTheSiblingsHeightStands() {
+        assertEquals(2000, CommentSheetHeight.belowStatusBar(null, 2000));
+        assertEquals(2000, CommentSheetHeight.belowStatusBar(
+                org.robolectric.RuntimeEnvironment.getApplication(), 2000));
+    }
+
     @Test public void theSwitchIsReachable() {
         try (var controller = Robolectric.buildActivity(TestActivity.class).setup()) {
             var activity = controller.get();

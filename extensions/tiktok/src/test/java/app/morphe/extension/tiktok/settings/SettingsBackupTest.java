@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceGroup;
 import android.os.Looper;
 import android.util.AtomicFile;
 import app.morphe.extension.shared.BackgroundPoolSaturation;
@@ -1934,10 +1935,17 @@ public class SettingsBackupTest {
     }
 
     private static Preference backupRow(TikTokPreferenceFragment fragment, String title) {
-        var screen = fragment.getPreferenceScreen();
+        return backupRow(fragment.getPreferenceScreen(), title);
+    }
+
+    private static Preference backupRow(PreferenceGroup screen, String title) {
         for (int index = 0; index < screen.getPreferenceCount(); index++) {
             Preference row = screen.getPreference(index);
             if (title.equals(String.valueOf(row.getTitle()))) return row;
+            if (row instanceof PreferenceGroup) {
+                Preference child = backupRow((PreferenceGroup) row, title);
+                if (child != null) return child;
+            }
         }
         return null;
     }

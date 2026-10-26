@@ -369,8 +369,6 @@ Copy the sound link	Soundlink kopieren
 Copy the video link	Videolink kopieren
 Couldn't change the Lab settings. Try again.	Die Lab-Einstellungen ließen sich nicht ändern. Versuch es noch einmal.
 Couldn't clear the suggested accounts. Reopen the Inbox and try again.	Die Kontovorschläge ließen sich nicht entfernen. Öffne den Posteingang noch einmal und versuch es erneut.
-Couldn't open settings search. Reopen settings and try again.	Die Einstellungssuche ließ sich nicht öffnen. Öffne die Einstellungen noch einmal und versuch es erneut.
-Couldn't open that settings section. Reopen settings and try again.	Dieser Einstellungsbereich ließ sich nicht öffnen. Öffne die Einstellungen noch einmal und versuch es erneut.
 Couldn't open the file picker to export. Try again.	Die Dateiauswahl zum Exportieren ließ sich nicht öffnen. Versuch es noch einmal.
 Couldn't open the file picker to import. Try again.	Die Dateiauswahl zum Importieren ließ sich nicht öffnen. Versuch es noch einmal.
 Couldn't put back the diagnostic data. Try again.	Die Diagnosedaten ließen sich nicht zurückholen. Versuch es noch einmal.
@@ -2125,22 +2123,8 @@ Report a problem	Problem melden
 Opens a GitHub report with your versions and settings filled in. Add what happened.	Öffnet einen GitHub-Bericht, in dem deine Versionen und Einstellungen schon eingetragen sind. Ergänze, was passiert ist.
 Support Hushfeed	Hushfeed unterstützen
 No app on this phone opens web links	Keine App auf diesem Handy öffnet Weblinks
-Quick setups	Schnelleinstellungen
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	Ruhig blendet Werbung, Shop und LIVE aus. Datenschutz verbirgt deine Aufrufe und dein Tippen und stoppt das Tracking. Standard wiederherstellen setzt jeden Schalter zurück. Halte gedrückt, um diese Zeile auszublenden.
 # context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
-Quick setups hidden. Bring it back from %1$s.	Schnelleinstellungen ausgeblendet. Du holst sie unter %1$s zurück.
 # context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
-Quick setups on the home page	Schnelleinstellungen auf der Startseite
-Shown. Tap to hide it.	Angezeigt. Tippe zum Ausblenden.
-Hidden. Tap to show it again.	Ausgeblendet. Tippe, um sie wieder anzuzeigen.
-Quiet	Ruhig
-Back to defaults	Standard wiederherstellen
-Changed 1 setting	1 Einstellung geändert
-Changed %1$d settings	%1$d Einstellungen geändert
-Your settings already match	Deine Einstellungen passen schon
-That setup couldn't be applied. Nothing was changed.	Diese Einrichtung konnte nicht angewendet werden. Es wurde nichts geändert.
-Quick setups couldn't start. Try again in a moment.	Schnelleinstellungen konnten nicht starten. Versuch es gleich noch einmal.
-Your earlier settings are back	Deine vorherigen Einstellungen sind zurück
 # context: a heading on the settings home page, over Feed filter, Feed tabs, Feed screen, Playback and Screen time
 Your feed	Dein Feed
 # context: a heading on the settings home page, over Downloads and Share sheet
@@ -2312,5 +2296,8 @@ Recovered recording saved to %1$s	Wiederhergestellte Aufnahme in %1$s gespeicher
 
 # context: Settings search switch location action, gesture hint, and missing original row.
 Open setting location	Zur Einstellung springen
-Tap a switch to change it. Press and hold to open its page.	Tippe auf einen Schalter, um ihn zu ändern. Halte ihn gedrückt, um seine Seite zu öffnen.
-This setting isn't available on this page. Go back and search again.	Diese Einstellung ist auf dieser Seite nicht verfügbar. Geh zurück und suche erneut.
+Expanded	Ausgeklappt
+Collapsed	Eingeklappt
+This setting isn't available. Search for another setting.	Diese Einstellung ist nicht verfügbar. Suche nach einer anderen Einstellung.
+Hide the Hushfeed row	Hushfeed-Zeile ausblenden
+Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.	Nimmt Hushfeed aus TikToks Einstellungen und Datenschutz. Um diese Einstellungen zu öffnen, halte Für dich oben im Feed gedrückt, oder Startseite, wenn Startseite lange drücken für Hushfeed-Einstellungen an ist.

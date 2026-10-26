@@ -108,11 +108,15 @@ val commentSheetHeightPatch = bytecodePatch(
 
         // Switched on, the height is the sibling's, worked out fresh each time, so the cached
         // share is neither read nor written and switching off again gives TikTok's height back.
+        // The sibling's answer can take in the status bar, so it is trimmed to the room between
+        // the window's system bars before the sheet gets it (#261).
         height.guardAtEntry(
             PATCH,
             "invoke-static {}, $EXTENSION->openAtFullHeight()Z",
             """
                 invoke-static {p0}, ${sibling.definingClass}->${sibling.name}($CONTEXT)I
+                move-result v0
+                invoke-static {p0, v0}, $EXTENSION->belowStatusBar(${CONTEXT}I)I
                 move-result v0
                 return v0
             """,

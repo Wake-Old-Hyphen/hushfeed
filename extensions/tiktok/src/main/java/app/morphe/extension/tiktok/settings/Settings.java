@@ -334,6 +334,12 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_LAUNCHER_SHORTCUTS =
             new BooleanSetting("hide_launcher_shortcuts", FALSE);
     /**
+     * Leaves the Hushfeed row out of Settings and privacy (#264). Long pressing For You or Home
+     * still opens the page, and Pause brings the row back, since a paused setting reads stock.
+     */
+    public static final BooleanSetting HIDE_SETTINGS_ROW =
+            new BooleanSetting("hide_settings_row", FALSE);
+    /**
      * On by default: the setup runs before anyone can reach this switch, so picking the patch is
      * the choice. Off brings the screens back the next time TikTok runs its setup.
      */

@@ -1,11 +1,11 @@
 # The PineDrama profile is an inspection prerequisite, never a whole-app qualification.
 function Get-VerificationProbeProfile {
-    param([ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1')
+    param([ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1')
     if ($Profile -ceq 'tiktok-whole-app-v1') {
         return [pscustomobject]@{ Name = $Profile; Package = 'com.zhiliaoapp.musically'; ProbePackage = 'app.hushfeed.verification'
             Instrumentation = 'app.hushfeed.verification.Probe'; LogTag = 'HushfeedProbe'; Restricted = $false }
     }
-    if ($Profile -ceq 'pinedrama-47.5.3-core-walk-v1') {
+    if ($Profile -cin @('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2')) {
         return [pscustomobject]@{ Name = $Profile; Package = 'com.ss.android.ttmd.video'; Version = '47.5.3'
             ProbePackage = 'app.hushfeed.verification.pinedrama.core'; Instrumentation = 'app.hushfeed.verification.PineDramaCoreProbe'
             LogTag = 'HushfeedPineCore'; Restricted = $true }
@@ -144,7 +144,7 @@ function ConvertFrom-PineDramaInspection {
 
 function Write-VerificationProbeManifest {
     param([Parameter(Mandatory = $true)][string]$Template, [Parameter(Mandatory = $true)][string]$Destination,
-        [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1')
+        [ValidateSet('tiktok-whole-app-v1', 'pinedrama-47.5.3-capabilities-v1', 'pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)][string]$Profile = 'tiktok-whole-app-v1')
     $target = Get-VerificationProbeProfile $Profile
     $text = [IO.File]::ReadAllText($Template)
     if (-not $target.Restricted) { [IO.File]::WriteAllText($Destination, $text, [Text.UTF8Encoding]::new($false)); return }
@@ -155,7 +155,7 @@ function Write-VerificationProbeManifest {
     $instrumentation = $xml.CreateElement('instrumentation')
     [void]$instrumentation.SetAttribute('name', $android, $target.Instrumentation)
     [void]$instrumentation.SetAttribute('targetPackage', $android, $target.Package)
-    $label = if ($Profile -ceq 'pinedrama-47.5.3-core-walk-v1') { 'Hushfeed PineDrama core walk' } else { 'Hushfeed PineDrama capability inspection' }
+    $label = if ($Profile -cin @('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2')) { 'Hushfeed PineDrama core walk' } else { 'Hushfeed PineDrama capability inspection' }
     [void]$instrumentation.SetAttribute('label', $android, $label)
     [void]$xml.DocumentElement.InsertBefore($instrumentation, $xml.DocumentElement.SelectSingleNode('application'))
     # No audio fixture, storage instrumentation or foreground-service permission is reviewed here.

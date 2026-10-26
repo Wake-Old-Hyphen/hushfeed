@@ -267,7 +267,6 @@ Automatic (TikTok's file),自动（TikTok 的文件）
 Automatic Clear display,自动清除显示
 Avatar and follow button,头像和关注按钮
 Back,返回
-Back to defaults,恢复默认设置
 Back up settings,备份设置
 Backup and restore,备份和恢复
 Bigger progress bar handle,更大的进度条手柄
@@ -333,8 +332,6 @@ Captions,字幕
 Capture crash reports locally,本地捕获崩溃报告
 Capture the feed,捕获信息流
 Changed,改变了
-Changed %1$d settings,更改了 %1$d 设置
-Changed 1 setting,更改了 1 个设置
 Changes in Hushfeed %1$s,Hushfeed %1$s 的变化
 Changes to %1$s at %2$s,更改为 %1$s（位于 %2$s）
 Check for already-saved videos,检查已保存的视频
@@ -429,8 +426,6 @@ Couldn't find this LIVE's stream to record. Leave the room and open it again.,�
 Couldn't forget the saved videos. Try again.,无法忘记保存的视频。再试一次.
 Couldn't import watch history. Your saved history is unchanged.,无法导入观看历史记录。您保存的历史记录没有改变.
 Couldn't list your apps. Tap here to try again.,无法列出您的应用。点击此处重试.
-Couldn't open settings search. Reopen settings and try again.,无法打开设置搜索。重新打开设置并重试.
-Couldn't open that settings section. Reopen settings and try again.,无法打开该设置部分。重新打开设置并重试.
 Couldn't open the file picker to export. Try again.,无法打开要导出的文件选择器。再试一次.
 Couldn't open the file picker to import. Try again.,无法打开要导入的文件选择器。再试一次.
 Couldn't put back the diagnostic data. Try again.,无法恢复诊断数据。再试一次.
@@ -666,7 +661,6 @@ Handle or id,句柄或 ID
 Hidden %1$s on this phone,此手机上隐藏了 %1$s
 Hidden LIVE categories,隐藏的 LIVE 类别
 Hidden commenters,隐藏评论者
-Hidden. Tap to show it again.,隐藏。点击即可再次显示.
 Hidden: %1$s,隐藏：%1$s
 Hide,隐藏
 Hide AI-generated videos,隐藏 AI 生成的视频
@@ -1329,12 +1323,6 @@ Quality,品质
 "Quality, files, subtitles and hand-off",质量、文件、字幕和交接
 "Quality, speed and auto-advance",质量、速度和自动推进
 Quick setup,快速设置
-Quick setups,快速设置
-Quick setups couldn't start. Try again in a moment.,快速设置无法启动。稍后再试一次.
-Quick setups hidden. Bring it back from %1$s.,隐藏快速设置。从 %1$s 带回来.
-Quick setups on the home page,主页上的快速设置
-Quiet,安静
-"Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.",安静隐藏广告、商店和LIVE。隐私隐藏您的视图和打字并停止跟踪。返回默认值会重置每个开关。按住可隐藏该行.
 Read-only list. Accounts won't be opened or unblocked.,只读列表。帐户不会被开设或解锁.
 Reading,阅读
 Reading the font file,读取字体文件
@@ -1651,7 +1639,6 @@ Show when the camera or microphone is in use,显示何时使用摄像头或麦�
 Show where a video was posted,显示视频的发布位置
 Show where commenters are from,显示评论者来自哪里
 Showing %1$s again,再次显示 %1$s
-Shown. Tap to hide it.,显示。点击将其隐藏.
 "Shows TikTok's full sort menu on every post, with hot, newest, media and creator options, instead of the shorter one your account got. Restart TikTok to see the change.",在每篇文章上显示 TikTok 的完整排序菜单，包括热门、最新、媒体和创作者选项，而不是您帐户中较短的选项。重新启动 TikTok 以查看更改.
 "Shows TikTok's play, pause, previous and next buttons on the feed. TikTok normally shows them only to people who use a screen reader. TikTok can see when you use them.",在信息流上显示 TikTok 的播放、暂停、上一个和下一个按钮。 TikTok 通常仅向使用屏幕阅读器的人显示它们。 TikTok 可以在您使用它们时看到.
 "Shows TikTok's text in the font file you import below. While both are on, this one wins over Use system font. If the file is removed or can't be read, the text goes back to what Use system font shows.",显示您在下面导入的字体文件中的 TikTok 文本。当两者都打开时，这个胜过使用系统字体。如果文件被删除或无法读取，文本将返回到使用系统字体显示的内容.
@@ -1831,7 +1818,6 @@ That settings backup holds more Feature Gate Lab rules than the Lab takes. Nothi
 That settings backup is damaged or only partly downloaded. Nothing was altered.,该设置备份已损坏或仅下载了部分。一切都没有改变.
 "That settings backup is incomplete, so it may have been cut short. Nothing was altered.",该设置备份不完整，因此可能已被缩短。一切都没有改变.
 That settings change didn't go through. Nothing was altered.,该设置更改没有完成。一切都没有改变.
-That setup couldn't be applied. Nothing was changed.,无法应用该设置。一切都没有改变.
 That sticker is in a format Hushfeed can't read,该贴纸的格式为 Hushfeed 无法读取
 That watch-history file is damaged. Nothing was imported.,该观看历史文件已损坏。没有进口任何东西.
 The Activity row of likes and comments on your posts leaves the Inbox. Notifications about them still arrive.,对您帖子的点赞和评论的活动行会离开收件箱。关于他们的通知仍然会到达.
@@ -2188,7 +2174,6 @@ Your TikTok account changed. Choose the file again for this account.,您的 TikT
 Your account changed. Close this list and open it again.,您的帐户已更改。关闭此列表并再次打开它.
 Your account changed. Open the count editor again.,您的帐户已更改。再次打开计数编辑器.
 Your current settings already match Calm feed.,您当前的设置已与平静信息流匹配.
-Your earlier settings are back,您之前的设置已恢复
 Your feed,你的信息流
 Your feed. Your rules.,你的信息流。你的规则.
 Your filters hid everything TikTok just sent. Most were %1$s.,您的过滤器隐藏了刚刚发送的所有内容 TikTok。大多数是%1$s.
@@ -2201,7 +2186,6 @@ Your previous feed setup is back.,您之前的信息流设置又回来了.
 Your previous feed setup is back. Restart TikTok to apply all changes.,您之前的信息流设置又回来了。重新启动 TikTok 以应用所有更改.
 Your seen history changed before the import finished. Choose the file again.,在导入完成之前，您看到的历史记录发生了变化。再次选择该文件.
 Your settings,您的设置
-Your settings already match,您的设置已经匹配
 "Zero means no limit. Counts the videos Hushfeed advanced past for you, not the ones you swiped yourself, and starts again when the feed is rebuilt or you change this number.",零意味着没有限制。计算 Hushfeed 为您提前过去的视频，而不是您自己刷过的视频，并在重建信息流或您更改此数字时重新开始.
 "Zero means the way out of the hold is always there. Any other number is how many times a day it works. Once they're used up, the hold stays until the day starts over. Ignored while the budget is locked, which removes the way out.",零意味着脱离困境的出路始终存在。任何其他数字都是每天工作的次数。一旦用完，保留就会一直保留到新的一天开始。在预算被锁定时被忽略，从而消除了出路.
 "Zero shows the notice and leaves the feed alone. Anything else covers the feed for that many minutes once a budget is reached. Messages, profiles and search keep working, and nothing in the feed is thrown away.",零显示通知并保留信息流。一旦达到预算，其他任何内容都会覆盖那么多分钟的信息流。消息、个人资料和搜索继续运行，信息流中的任何内容都不会丢失.
@@ -2281,5 +2265,8 @@ The export may be incomplete. The original recording files are still kept.,导�
 Some recording files remain. Try deleting them again.,仍有录制文件未删除。请再次尝试删除.
 "Recovered recording saved to %1$s","已恢复的录制保存到 %1$s"
 "Open setting location","打开设置所在页面"
-"Tap a switch to change it. Press and hold to open its page.","点按开关以更改设置。长按可打开其所在页面."
-"This setting isn't available on this page. Go back and search again.","此设置在本页不可用。请返回并重新搜索."
+"Expanded","已展开"
+"Collapsed","已折叠"
+This setting isn't available. Search for another setting.,此设置不可用. 请搜索其他设置.
+Hide the Hushfeed row,隐藏 Hushfeed 入口
+"Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.",从 TikTok 的“设置和隐私”中移除 Hushfeed。要打开这些设置，请长按信息流顶部的“为你”，如果已开启“长按 Home 进行 Hushfeed 设置”，也可以长按 Home.

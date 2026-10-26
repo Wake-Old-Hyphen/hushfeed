@@ -4,11 +4,18 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* **Settings:** `Hide the Hushfeed row` takes Hushfeed out of TikTok's Settings and privacy. Press and hold For You at the top of the feed to open the settings after that, or Home when `Long-press Home for Hushfeed settings` is on. Pausing Hushfeed brings the row back (#264).
+
 ### Fixes
 
+* **Comments:** With `Open the comments at full height` on, the sheet stops below the status bar instead of running under the clock and battery icons (#261).
+* **Settings:** Categories expand and collapse beneath their main-list rows. Search reveals controls in the same list, and open categories survive rotation and a restart.
 * **Settings:** Replace large home cards with a compact full-width list. Remove Quick setups.
 * **TikTok:** Hushfeed now needs Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 on a computer.
-* **Build checks:** Add a PineDrama core walk for launch, settings navigation and return. Full qualification stays incomplete.
+* **Build checks:** Add a PineDrama core walk for launch, inline settings expansion and collapse, and return. Full qualification stays incomplete.
+* **Build checks:** Verify each LIVE preview and drama label used by See-through bottom bar against the supported TikTok APK.
 * **Feed:** Keep country flags and codes next to names written from right to left (#258).
 * **Feed:** With `See-through bottom bar` on, the name and "Tap to watch" line of LIVE previews and mini dramas stay above the tabs (#250).
 * **Grids:** Give the sort control a 48 dp touch target.
@@ -21,7 +28,7 @@ Every Hushfeed release, newest first.
 * **Diagnostics:** Notification reports count registration and posting stages without message contents (#126, #222, #86).
 * **Screen recording:** Keep TikTok in Android's recent-apps recording choices on Android 14 and newer.
 * **Build checks:** Auto-advance audits follow native playback without per-video labels. Unfinished clips and unavailable playback stay inconclusive.
-* **TikTok:** Hold a settings-search switch to open and highlight it on its original page. Back keeps the search and scroll position (#248).
+* **TikTok:** Hold a settings-search switch to reveal and highlight its control in the main list (#248).
 * **Diagnostics:** First-frame callback records keep source ownership and monotonic timestamps for startup checks (#150).
 * **Build checks:** Release checks require matching APK and native evidence for every advertised package. Walks verify the installed build and patch options.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

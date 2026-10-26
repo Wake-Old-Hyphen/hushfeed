@@ -361,8 +361,6 @@ Copy the sound link,Salin tautan suara
 Copy the video link,Salin tautan video
 Couldn't change the Lab settings. Try again.,Pengaturan Lab tidak bisa diubah. Coba lagi.
 Couldn't clear the suggested accounts. Reopen the Inbox and try again.,Akun yang disarankan tidak bisa dihapus. Buka lagi Kotak Masuk lalu coba lagi.
-Couldn't open settings search. Reopen settings and try again.,Pencarian pengaturan tidak bisa dibuka. Buka lagi pengaturan lalu coba lagi.
-Couldn't open that settings section. Reopen settings and try again.,Bagian pengaturan itu tidak bisa dibuka. Buka lagi pengaturan lalu coba lagi.
 Couldn't open the file picker to export. Try again.,Pemilih berkas untuk ekspor tidak bisa dibuka. Coba lagi.
 Couldn't open the file picker to import. Try again.,Pemilih berkas untuk impor tidak bisa dibuka. Coba lagi.
 Couldn't put back the diagnostic data. Try again.,Data diagnostik tidak bisa dikembalikan. Coba lagi.
@@ -2106,20 +2104,6 @@ Report a problem,Laporkan masalah
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Membuka laporan GitHub dengan versi dan pengaturanmu yang sudah terisi. Tambahkan apa yang terjadi.
 Support Hushfeed,Dukung Hushfeed
 No app on this phone opens web links,Tidak ada aplikasi di ponsel ini yang membuka tautan web
-Quick setups,Pengaturan cepat
-"Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.","Tenang menyembunyikan iklan, Toko, dan LIVE. Privasi menyembunyikan tontonan dan ketikanmu serta menghentikan pelacakan. Kembalikan default mengatur ulang setiap sakelar. Tekan lama untuk menyembunyikan baris ini."
-Quick setups hidden. Bring it back from %1$s.,Pengaturan cepat disembunyikan. Tampilkan lagi lewat %1$s.
-Quick setups on the home page,Pengaturan cepat di Beranda
-Shown. Tap to hide it.,Ditampilkan. Ketuk untuk menyembunyikan.
-Hidden. Tap to show it again.,Disembunyikan. Ketuk untuk menampilkannya lagi.
-Quiet,Tenang
-Back to defaults,Kembalikan default
-Changed 1 setting,1 pengaturan diubah
-Changed %1$d settings,%1$d pengaturan diubah
-Your settings already match,Pengaturanmu sudah sesuai
-That setup couldn't be applied. Nothing was changed.,Pengaturan itu tidak dapat diterapkan. Tidak ada yang diubah.
-Quick setups couldn't start. Try again in a moment.,Pengaturan cepat tidak dapat dimulai. Coba lagi sebentar lagi.
-Your earlier settings are back,Pengaturan sebelumnya sudah kembali
 "Your feed","Feed kamu"
 "Saving and sharing","Menyimpan dan berbagi"
 "Privacy and app","Privasi dan aplikasi"
@@ -2283,5 +2267,8 @@ The export may be incomplete. The original recording files are still kept.,Hasil
 Some recording files remain. Try deleting them again.,Beberapa file rekaman masih tersisa. Coba hapus lagi.
 "Recovered recording saved to %1$s","Rekaman yang dipulihkan disimpan ke %1$s"
 "Open setting location","Buka lokasi setelan"
-"Tap a switch to change it. Press and hold to open its page.","Ketuk sakelar untuk mengubahnya. Tekan lama untuk membuka halamannya."
-"This setting isn't available on this page. Go back and search again.","Setelan ini tidak tersedia di halaman ini. Kembali dan cari lagi."
+"Expanded","Diperluas"
+"Collapsed","Diciutkan"
+This setting isn't available. Search for another setting.,Setelan ini tidak tersedia. Cari setelan lain.
+Hide the Hushfeed row,Sembunyikan baris Hushfeed
+"Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.","Keluarkan Hushfeed dari Pengaturan dan privasi TikTok. Untuk membuka pengaturan ini, tekan lama Untuk Kamu di bagian atas feed, atau Beranda jika Tekan lama Beranda untuk pengaturan Hushfeed aktif."

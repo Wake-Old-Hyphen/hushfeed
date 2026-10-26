@@ -24,8 +24,11 @@ function Remove-PineDramaWalkLease {
 }
 
 function Get-PineDramaCoreDefinition {
-    param([string]$GitRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)), [string]$Commit = 'HEAD')
-    $text = @(Invoke-RepoGit -Root $GitRoot -Arguments @('show', ($Commit + ':audit/profiles/pinedrama-47.5.3-core-v1.json'))) -join [char]10
+    param([string]$GitRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)), [string]$Commit = 'HEAD',
+        [ValidateSet('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)]
+        [string]$Profile = 'pinedrama-47.5.3-core-walk-v2')
+    $file = $Profile.Replace('-walk-', '-') + '.json'
+    $text = @(Invoke-RepoGit -Root $GitRoot -Arguments @('show', ($Commit + ':audit/profiles/' + $file))) -join [char]10
     if ($LASTEXITCODE -ne 0) { throw 'The source tree has no reviewed PineDrama core profile.' }
     return $text | ConvertFrom-Json
 }
@@ -50,11 +53,12 @@ function Get-PineDramaCorePlanProblem {
     param($Plan, [string]$GitRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
     try {
         if ($Plan.kind -cne 'hushfeed-pinedrama-core-plan' -or ($Plan.schema -isnot [int] -and $Plan.schema -isnot [long]) -or $Plan.schema -ne 1 -or
-                $Plan.profile -cne 'pinedrama-47.5.3-core-walk-v1' -or $Plan.full -isnot [bool] -or $Plan.full -or
+                $Plan.profile -cnotin @('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2') -or $Plan.full -isnot [bool] -or $Plan.full -or
                 $Plan.eligibleForPublication -isnot [bool] -or $Plan.eligibleForPublication) { return 'PineDrama core plans must remain incomplete and ineligible for publication.' }
         $problem = Get-PineDramaInspectionProblem $Plan.inspection -GitRoot $GitRoot
         if ($problem) { return $problem }
-        $definition = Get-PineDramaCoreDefinition -GitRoot $GitRoot -Commit $Plan.inspection.build.source.commit
+        $definition = Get-PineDramaCoreDefinition -GitRoot $GitRoot -Commit $Plan.inspection.build.source.commit -Profile $Plan.profile
+        if ($definition.profile -cne $Plan.profile) { return 'The PineDrama core profile does not match its definition.' }
         if ((Get-AuditHash $definition) -cne (Get-AuditHash $Plan.definition)) { return 'The PineDrama core definition differs from its exact source tree.' }
         $problem = Get-PineDramaCoreCoverageProblem $definition $Plan.inspection.expectedPatches
         if ($problem) { return $problem }
@@ -79,7 +83,7 @@ function New-PineDramaCorePlan {
     if ($workingProblem) { throw $workingProblem }
     $inspection = New-PineDramaInspectionPlan -StockApk $StockApk -PatchedApk $PatchedApk -AuditBuild $AuditBuild `
         -Bundle $Bundle -GitRoot $GitRoot -Aapt2 $Aapt2 -ExpectedOptions $ExpectedOptions
-    $plan = [pscustomobject]@{ kind = 'hushfeed-pinedrama-core-plan'; schema = 1; profile = 'pinedrama-47.5.3-core-walk-v1'
+    $plan = [pscustomobject]@{ kind = 'hushfeed-pinedrama-core-plan'; schema = 1; profile = 'pinedrama-47.5.3-core-walk-v2'
         full = $false; eligibleForPublication = $false; inspection = $inspection
         definition = Get-PineDramaCoreDefinition -GitRoot $GitRoot -Commit $inspection.build.source.commit
         sourceBytes = (Get-Item -LiteralPath $StockApk).Length }
@@ -89,13 +93,19 @@ function New-PineDramaCorePlan {
 }
 
 function ConvertFrom-PineDramaCoreResponse {
-    param([Parameter(Mandatory = $true)][string[]]$Lines)
-    $responses = @($Lines | Where-Object { $_ -cmatch '^pine-core-v1 ' })
+    param([Parameter(Mandatory = $true)][string[]]$Lines,
+        [ValidateSet('pinedrama-47.5.3-core-walk-v1', 'pinedrama-47.5.3-core-walk-v2', IgnoreCase = $false)]
+        [string]$Profile = 'pinedrama-47.5.3-core-walk-v2')
+    $inline = $Profile -ceq 'pinedrama-47.5.3-core-walk-v2'
+    $prefix = if ($inline) { 'pine-core-v2 ' } else { 'pine-core-v1 ' }
+    $responses = @($Lines | Where-Object { $_ -cmatch '^pine-core-v[0-9]+ ' })
     if ($responses.Count -ne 1) { throw 'Expected one complete PineDrama core response.' }
+    if (-not $responses[0].StartsWith($prefix, [StringComparison]::Ordinal)) { throw 'The PineDrama response belongs to another route profile.' }
     $keys = @('requestAccepted','targetMatches','installedIdentityMatches','foregroundOwned','nativeMainForeground',
-        'settingsHomeForeground','commentsForeground','commentsRowPresent','nativeOwnerRestored','actionAccepted')
+        'settingsHomeForeground','commentsRowPresent','nativeOwnerRestored','actionAccepted')
+    $keys += if ($inline) { @('commentsExpanded','commentsCollapsed','settingsOwnerRetained') } else { @('commentsForeground') }
     $values = [ordered]@{}
-    foreach ($token in $responses[0].Substring('pine-core-v1 '.Length).Split(' ')) {
+    foreach ($token in $responses[0].Substring($prefix.Length).Split(' ')) {
         if ($token -cnotmatch '^([A-Za-z]+)=(true|false)$' -or $Matches[1] -cnotin $keys -or $values.Contains($Matches[1])) {
             throw 'PineDrama core responses permit only the exact boolean contract.'
         }
@@ -103,22 +113,32 @@ function ConvertFrom-PineDramaCoreResponse {
     }
     if ($values.Count -ne $keys.Count -or -not $values.requestAccepted -or -not $values.targetMatches -or
             -not $values.installedIdentityMatches -or -not $values.actionAccepted) { throw 'The PineDrama core request or native action was rejected.' }
-    $routes = @('nativeMainForeground','settingsHomeForeground','commentsForeground' | Where-Object { $values[$_] })
+    $routeKeys = @('nativeMainForeground','settingsHomeForeground')
+    if (-not $inline) { $routeKeys += 'commentsForeground' }
+    $routes = @($routeKeys | Where-Object { $values[$_] })
     if ($routes.Count -gt 1 -or ($routes.Count -gt 0 -and -not $values.foregroundOwned) -or
             ($values.commentsRowPresent -and -not $values.settingsHomeForeground) -or
             ($values.nativeOwnerRestored -and -not $values.nativeMainForeground)) { throw 'The PineDrama core response contains conflicting route evidence.' }
+    if ($inline -and (($values.commentsExpanded -and $values.commentsCollapsed) -or
+            (($values.commentsExpanded -or $values.commentsCollapsed) -and -not $values.commentsRowPresent) -or
+            ($values.settingsOwnerRetained -and -not $values.settingsHomeForeground))) {
+        throw 'The PineDrama core response contains conflicting inline settings evidence.'
+    }
     return [pscustomobject]$values
 }
 
 function Invoke-PineDramaCoreAction {
     param([Parameter(Mandatory = $true)][string]$Serial,
-        [Parameter(Mandatory = $true)][ValidateSet('snapshot','open-settings','open-comments','back-home','back-native', IgnoreCase = $false)][string]$Action,
+        [Parameter(Mandatory = $true)][ValidateSet('snapshot','open-settings','open-comments','back-home','expand-comments','collapse-comments','back-native', IgnoreCase = $false)][string]$Action,
         [Parameter(Mandatory = $true)]$Plan, [Parameter(Mandatory = $true)][AllowNull()]$Lease,
         [string]$GitRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)), [string]$Adb = 'adb', [int]$WaitMs = 2000,
         [ref]$RequestId)
     if ($null -ne $RequestId) { $RequestId.Value = $null }
     $problem = Get-PineDramaCorePlanProblem $Plan -GitRoot $GitRoot
     if ($problem) { throw $problem }
+    $inline = $Plan.profile -ceq 'pinedrama-47.5.3-core-walk-v2'
+    if (($inline -and $Action -cin @('open-comments','back-home')) -or
+            (-not $inline -and $Action -cin @('expand-comments','collapse-comments'))) { throw 'This action belongs to another PineDrama route profile.' }
     $workingProblem = Get-AuditWorkingInputProblem $GitRoot
     if ($workingProblem) { throw $workingProblem }
     $profile = Get-VerificationProbeProfile $Plan.profile
@@ -140,7 +160,7 @@ function Invoke-PineDramaCoreAction {
     $prefix = 'pine-core-response-' + $request + ' '
     $matching = @($answer | Where-Object { $_.StartsWith($prefix, [StringComparison]::Ordinal) })
     if ($matching.Count -ne 1) { throw 'No unique PineDrama core answer matches this request.' }
-    $proof = ConvertFrom-PineDramaCoreResponse @($matching[0].Substring($prefix.Length))
+    $proof = ConvertFrom-PineDramaCoreResponse @($matching[0].Substring($prefix.Length)) -Profile $Plan.profile
     if ($null -ne $RequestId) { $RequestId.Value = $request }
     return $proof
 }
@@ -177,9 +197,13 @@ function New-PineDramaCoreResult {
                 if ($_.Value -isnot [bool]) { throw 'PineDrama route proof must contain only booleans.' }
                 $_.Name + '=' + $_.Value.ToString().ToLowerInvariant()
             })
-            $proof = ConvertFrom-PineDramaCoreResponse @('pine-core-v1 ' + ($tokens -join ' '))
-            $field = @('nativeMainForeground','settingsHomeForeground','commentsForeground','settingsHomeForeground','nativeMainForeground')[$index]
-            if (-not $proof.$field -or ($index -eq 4 -and -not $proof.nativeOwnerRestored) -or
+            $inline = $Plan.profile -ceq 'pinedrama-47.5.3-core-walk-v2'
+            $prefix = if ($inline) { 'pine-core-v2 ' } else { 'pine-core-v1 ' }
+            $proof = ConvertFrom-PineDramaCoreResponse @($prefix + ($tokens -join ' ')) -Profile $Plan.profile
+            $field = if ($inline) { @('nativeMainForeground','commentsCollapsed','commentsExpanded','commentsCollapsed','nativeMainForeground')[$index] }
+                else { @('nativeMainForeground','settingsHomeForeground','commentsForeground','settingsHomeForeground','nativeMainForeground')[$index] }
+            if (-not $proof.$field -or ($inline -and $index -cin @(2,3) -and -not $proof.settingsOwnerRetained) -or
+                    ($index -eq 4 -and -not $proof.nativeOwnerRestored) -or
                     [string]::IsNullOrWhiteSpace([string]$check.evidence)) { throw 'PineDrama core pass has no observed destination or original native owner.' }
             if ($check.evidence -isnot [string] -or $check.evidence -cnotmatch
                     ('^[A-Za-z0-9_-]+-' + [regex]::Escape([string]$check.id) + '-' + $check.requestId + '\.json$')) {

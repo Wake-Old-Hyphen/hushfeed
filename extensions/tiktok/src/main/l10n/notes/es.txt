@@ -1,8 +1,12 @@
-* **Ajustes:** Las tarjetas grandes de inicio se sustituyen por una lista compacta de ancho completo. Se eliminan los ajustes rápidos.
 ## Unreleased
 
+* **Ajustes:** Un nuevo interruptor quita la fila de Hushfeed de Ajustes y privacidad de TikTok. Después, mantén pulsado Para ti para abrir los ajustes (#264).
+* **Comentarios:** Los comentarios a altura completa ahora se detienen debajo de la barra de estado en vez de tapar el reloj y la batería (#261).
+* **Ajustes:** Las categorías se abren y se cierran justo debajo de su fila en la lista principal. La búsqueda muestra los controles en esa misma lista, y las categorías abiertas siguen abiertas al girar la pantalla o reiniciar.
+* **Ajustes:** Las tarjetas grandes de inicio se sustituyen por una lista compacta de ancho completo. Se eliminan los ajustes rápidos.
 * **TikTok:** Hushfeed ahora necesita Morphe Manager 2.2.0 o superior, o morphe-desktop 1.19.1 en el ordenador.
-* **Comprobaciones:** Se añade un recorrido básico de PineDrama para el inicio, los ajustes y el regreso. La validación completa sigue pendiente.
+* **Comprobaciones:** Se añade un recorrido básico de PineDrama para el inicio, abrir y cerrar los ajustes en el mismo sitio y el regreso. La validación completa sigue pendiente.
+* **Comprobaciones:** Cada etiqueta de vista previa LIVE y de drama que usa la barra inferior transparente se comprueba con el APK de TikTok compatible.
 * **Feed:** Las banderas y los códigos de país permanecen junto a los nombres escritos de derecha a izquierda (#258).
 * **Feed:** Con la barra inferior transparente activada, el nombre y la línea "Toca para ver" de las vistas previas de LIVE y los minidramas quedan por encima de las pestañas (#250).
 * **Cuadrículas:** El control de orden tiene un área táctil de al menos 48 dp.
@@ -15,7 +19,7 @@
 * **Diagnóstico:** Los informes de notificaciones cuentan las etapas de registro y visualización sin incluir el contenido de los mensajes (#126, #222, #86).
 * **Grabación de pantalla:** TikTok sigue disponible entre las aplicaciones recientes al grabar una sola aplicación en Android 14 o posterior.
 * **Comprobaciones:** La auditoría del avance automático sigue la reproducción de TikTok sin etiquetar cada video. Los clips sin terminar y la reproducción no disponible quedan sin una conclusión.
-* **TikTok:** Mantén pulsado un interruptor en la búsqueda de ajustes para abrirlo y resaltarlo en su página original. Atrás conserva la búsqueda y la posición (#248).
+* **TikTok:** Mantén pulsado un interruptor en la búsqueda de ajustes para mostrar y resaltar su control en la lista principal (#248).
 * **Diagnóstico:** Los registros del primer fotograma conservan su fuente y marcas de tiempo monotónicas para comprobar el inicio (#150).
 * **Comprobaciones de compilación:** Las versiones requieren pruebas nativas y del APK de cada paquete anunciado. Los recorridos verifican la compilación instalada y las opciones de los parches.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

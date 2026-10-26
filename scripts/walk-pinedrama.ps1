@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Exercises PineDrama's native launcher, injected settings, Comments page and Back restoration.
+    Exercises PineDrama's native launcher, inline Comments controls and native Back restoration.
 .DESCRIPTION
     Walks an already installed, signed, merged PineDrama build. Build/install the separate probe
-    with tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-core-walk-v1 first. Requires
+    with tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-core-walk-v2 first. Requires
     the complete declared 95-patch selection and exact reviewed merged stock APK. Does not post,
     follow, message, change preferences or qualify any served-content or server entitlement flow.
     The result is always INCOMPLETE and publication-ineligible, even when every core step passes.
@@ -79,7 +79,7 @@ function Save-PineEvidence([string]$Step, $Observation, [string]$RequestId) {
     }
     return [IO.Path]::GetFileName($json)
 }
-function Wait-PineRoute([string]$Step, [string]$Field, [switch]$Restored) {
+function Wait-PineRoute([string]$Step, [string]$Field, [switch]$Restored, [switch]$Retained) {
     $answer = $null
     for ($attempt = 0; $attempt -lt 15; $attempt++) {
         Update-DeviceLease -Lease $script:pineLease -LeaseMinutes 30
@@ -87,7 +87,8 @@ function Wait-PineRoute([string]$Step, [string]$Field, [switch]$Restored) {
         $requestId = $null
         try { $answer = Invoke-PineDramaCoreAction -Serial $Serial -Action snapshot -Plan $plan -Lease $script:pineLease -GitRoot $root -Adb $Adb -RequestId ([ref]$requestId) }
         catch { if ($attempt -eq 14) { throw }; Start-Sleep -Milliseconds 500; continue }
-        if ($answer.$Field -and (-not $Restored -or $answer.nativeOwnerRestored)) {
+        if ($answer.$Field -and (-not $Restored -or $answer.nativeOwnerRestored) -and
+                (-not $Retained -or $answer.settingsOwnerRetained)) {
             $observationFile = Save-PineEvidence $Step $answer $requestId
             $checks.Add([pscustomobject]@{ id = $Step; status = 'pass'; observed = $true; requestId = $requestId; proof = $answer; evidence = $observationFile })
             return
@@ -119,11 +120,11 @@ try {
         -a android.intent.action.MAIN -c android.intent.category.LAUNCHER | Out-Null
     Wait-PineRoute launch nativeMainForeground
     Send-PineAction open-settings
-    Wait-PineRoute settings-home settingsHomeForeground
-    Send-PineAction open-comments
-    Wait-PineRoute comments-page commentsForeground
-    Send-PineAction back-home
-    Wait-PineRoute settings-return settingsHomeForeground
+    Wait-PineRoute settings-home commentsCollapsed
+    Send-PineAction expand-comments
+    Wait-PineRoute comments-expanded commentsExpanded -Retained
+    Send-PineAction collapse-comments
+    Wait-PineRoute comments-collapsed commentsCollapsed -Retained
     Send-PineAction back-native
     Wait-PineRoute native-return nativeMainForeground -Restored
 } catch { $problems.Add($_.Exception.Message); Write-Warning $_.Exception.Message }

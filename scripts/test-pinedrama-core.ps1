@@ -72,8 +72,16 @@ try {
     Assert-PineCore (-not (Get-PineDramaCorePlanProblem $plan -GitRoot $Root)) 'Exact source/subset core plan rejected.'
     Assert-PineCore (-not (Get-PineDramaCoreCoverageProblem $definition $target.PatchNames)) 'Coverage map does not cover the exact 95.'
     Assert-PineCore ($build.patches.Count -eq 95) 'PineDrama declared subset count changed.'
+    $legacyPlan = Copy-PineValue $plan
+    $legacyPlan.profile = 'pinedrama-47.5.3-core-walk-v1'
+    $legacyPlan.definition = Get-PineDramaCoreDefinition -GitRoot $Root -Profile $legacyPlan.profile
+    Assert-PineCore (-not (Get-PineDramaCorePlanProblem $legacyPlan -GitRoot $Root)) 'Historical v1 core plan rejected.'
+    Assert-PineCore ($legacyPlan.definition.coreSteps[2] -ceq 'comments-page' -and
+        $legacyPlan.definition.coreSteps[3] -ceq 'settings-return' -and $definition.coreSteps[2] -ceq 'comments-expanded' -and
+        $definition.coreSteps[3] -ceq 'comments-collapsed') 'The inline profile rewrote historical route semantics.'
     foreach ($mutation in @(
         { param($p) $p.profile = 'tiktok-whole-app-v1' },
+        { param($p) $p.profile = 'pinedrama-47.5.3-core-walk-v1' },
         { param($p) $p.full = $true },
         { param($p) $p.schema = '1' },
         { param($p) $p.eligibleForPublication = $true },
@@ -100,16 +108,23 @@ try {
     $badCoverage = Copy-PineValue $definition; $badCoverage.coverage[0].patches = @('Settings')
     Assert-PineCore ([bool](Get-PineDramaCoreCoverageProblem $badCoverage $target.PatchNames)) 'Omitted selected runtime patches accepted.'
 
-    $response = 'pine-core-v1 requestAccepted=true targetMatches=true installedIdentityMatches=true foregroundOwned=true nativeMainForeground=true settingsHomeForeground=false commentsForeground=false commentsRowPresent=false nativeOwnerRestored=false actionAccepted=true'
+    $legacyResponse = 'pine-core-v1 requestAccepted=true targetMatches=true installedIdentityMatches=true foregroundOwned=true nativeMainForeground=true settingsHomeForeground=false commentsForeground=false commentsRowPresent=false nativeOwnerRestored=false actionAccepted=true'
+    $legacyProof = ConvertFrom-PineDramaCoreResponse @($legacyResponse) -Profile $legacyPlan.profile
+    Assert-PineCore ($legacyProof.nativeMainForeground -and @($legacyProof.PSObject.Properties).Count -eq 10) 'Historical v1 ten-boolean response changed.'
+    $response = 'pine-core-v2 requestAccepted=true targetMatches=true installedIdentityMatches=true foregroundOwned=true nativeMainForeground=true settingsHomeForeground=false commentsExpanded=false commentsCollapsed=false commentsRowPresent=false settingsOwnerRetained=false nativeOwnerRestored=false actionAccepted=true'
     Assert-PineCore ((ConvertFrom-PineDramaCoreResponse @($response)).nativeMainForeground) 'Exact native main observation rejected.'
+    Assert-PineThrows { ConvertFrom-PineDramaCoreResponse @($response) -Profile $legacyPlan.profile } 'Inline proof qualified a legacy route.'
     foreach ($lines in @(
-        @($response,$response), @($response + ' privateText=anything'), @($response + ' actionAccepted=true'),
+        @($legacyResponse), @($response,$legacyResponse), @($response,$response), @($response + ' privateText=anything'), @($response + ' actionAccepted=true'),
         @($response.Replace('installedIdentityMatches=true','installedIdentityMatches=false')),
         @($response.Replace('actionAccepted=true','actionAccepted=false')),
         @($response.Replace('settingsHomeForeground=false','settingsHomeForeground=true')),
         @($response.Replace('foregroundOwned=true','foregroundOwned=false')),
         @($response.Replace('nativeOwnerRestored=false','nativeOwnerRestored=unknown')),
         @($response.Replace('commentsRowPresent=false','commentsRowPresent=true')),
+        @($response.Replace('commentsExpanded=false','commentsExpanded=true')),
+        @($response.Replace('commentsCollapsed=false','commentsCollapsed=true')),
+        @($response.Replace('settingsOwnerRetained=false','settingsOwnerRetained=true')),
         @($response.Replace('nativeOwnerRestored=false',''))
     )) { Assert-PineThrows { ConvertFrom-PineDramaCoreResponse $lines | Out-Null } 'Malformed/conflicting native response accepted.' }
 
@@ -130,9 +145,10 @@ try {
             'pine-core-response-' + $token + ' ' + $response
         }
     }
-    foreach ($action in @('dump','set','tap','follow','send','publish','OPEN-SETTINGS','open-page')) {
+    foreach ($action in @('dump','set','tap','follow','send','publish','OPEN-SETTINGS','open-page','open-comments','back-home')) {
         Assert-PineThrows { Invoke-PineDramaCoreAction -Serial fixture-serial -Action $action -Plan $plan -Lease $null -GitRoot $Root -Adb Invoke-PineFixtureDevice } 'Unsupported UI/global action accepted.'
     }
+    Assert-PineThrows { Invoke-PineDramaCoreAction -Serial fixture-serial -Action expand-comments -Plan $legacyPlan -Lease $null -GitRoot $Root -Adb Invoke-PineFixtureDevice } 'Inline action entered a historical v1 route.'
     $bad = Copy-PineValue $plan; $bad.inspection.build.sourceApk.sha256 = 'e' * 64
     Assert-PineThrows { Invoke-PineDramaCoreAction -Serial fixture-serial -Action open-settings -Plan $bad -Lease $null -GitRoot $Root -Adb Invoke-PineFixtureDevice } 'Wrong source reached a device action.'
     Assert-PineCore ($script:deviceCalls.Count -eq 0) 'Rejected requests ran device commands.'
@@ -148,7 +164,7 @@ try {
     $answer = Invoke-PineDramaCoreAction -Serial fixture-serial -Action snapshot -Plan $plan -Lease $null -GitRoot $Root -Adb Invoke-PineFixtureDevice -WaitMs 1 -RequestId ([ref]$requestId)
     Assert-PineCore ($answer.nativeMainForeground -and $script:deviceCalls.Count -eq 3) 'Marked PineDrama observation failed.'
     Assert-PineCore ($requestId -ceq $script:request -and $requestId -cmatch '^[a-f0-9]{32}$' -and
-        @($answer.PSObject.Properties).Count -eq 10) 'The request token is unbound or changed the ten-boolean proof.'
+        @($answer.PSObject.Properties).Count -eq 12) 'The request token is unbound or changed the v2 twelve-boolean proof.'
     $broadcast = $script:deviceCalls[1] -join ' '
     Assert-PineCore ($broadcast.Contains('-a app.hushfeed.verification.PINE_CORE -p com.ss.android.ttmd.video') -and
         $broadcast.Contains('-e profile ' + $plan.profile) -and $broadcast.Contains('-e apkSha256 ' + $build.apk.sha256)) 'Core request lost package or APK identity.'
@@ -179,7 +195,7 @@ try {
         Wait-PineRoute launch nativeMainForeground
         $saved = Get-Content -LiteralPath (Join-Path $work $checks[0].evidence) -Raw | ConvertFrom-Json
         Assert-PineCore ($checks[0].requestId -ceq ('b' * 32) -and $saved.requestId -ceq $checks[0].requestId -and
-            $saved.step -ceq 'launch' -and @($saved.proof.PSObject.Properties).Count -eq 10 -and
+            $saved.step -ceq 'launch' -and @($saved.proof.PSObject.Properties).Count -eq 12 -and
             $evidence[1].file -ceq [IO.Path]::ChangeExtension($checks[0].evidence, 'png')) 'The driver did not retain the actual request with its observation and screenshot.'
     }
 
@@ -187,8 +203,10 @@ try {
     for ($index = 0; $index -lt $definition.coreSteps.Count; $index++) {
         $proof = ConvertFrom-PineDramaCoreResponse @($response)
         $proof.nativeMainForeground = $index -eq 0 -or $index -eq 4
-        $proof.settingsHomeForeground = $index -eq 1 -or $index -eq 3
-        $proof.commentsForeground = $index -eq 2
+        $proof.settingsHomeForeground = $index -cin @(1,2,3)
+        $proof.commentsExpanded = $index -eq 2
+        $proof.commentsCollapsed = $index -cin @(1,3)
+        $proof.settingsOwnerRetained = $index -cin @(2,3)
         $proof.commentsRowPresent = $proof.settingsHomeForeground
         $proof.nativeOwnerRestored = $index -eq 4
         $requestId = [guid]::NewGuid().ToString('N')
@@ -208,6 +226,29 @@ try {
     $result = New-PineDramaCoreResult @resultArgs
     Assert-PineCore ($result.coreResult -ceq 'PASS' -and $result.status -ceq 'INCOMPLETE' -and -not $result.full -and -not $result.eligibleForPublication) 'Core PASS became whole-app qualification.'
     Assert-PineCore (-not (Get-PineDramaCoreResultProblem $plan $result -Directory $directory -GitRoot $Root)) 'Bound package-specific core result rejected.'
+    $legacyChecks = @(); $legacyEvidence = @()
+    for ($index = 0; $index -lt $legacyPlan.definition.coreSteps.Count; $index++) {
+        $proof = ConvertFrom-PineDramaCoreResponse @($legacyResponse) -Profile $legacyPlan.profile
+        $proof.nativeMainForeground = $index -cin @(0,4)
+        $proof.settingsHomeForeground = $index -cin @(1,3)
+        $proof.commentsForeground = $index -eq 2
+        $proof.commentsRowPresent = $proof.settingsHomeForeground
+        $proof.nativeOwnerRestored = $index -eq 4
+        $request = [guid]::NewGuid().ToString('N'); $step = $legacyPlan.definition.coreSteps[$index]
+        $file = 'legacy-' + $step + '-' + $request + '.json'; $path = Join-Path $directory $file
+        [pscustomobject]@{ step = $step; requestId = $request; proof = $proof } | ConvertTo-Json | Set-Content -LiteralPath $path -Encoding UTF8
+        $image = [IO.Path]::ChangeExtension($file, 'png')
+        [IO.File]::Copy((Join-Path $directory ([IO.Path]::ChangeExtension($checks[$index].evidence, 'png'))), (Join-Path $directory $image))
+        $legacyChecks += [pscustomobject]@{ id = $step; status = 'pass'; observed = $true; requestId = $request; proof = $proof; evidence = $file }
+        foreach ($name in @($file,$image)) {
+            $legacyEvidence += [pscustomobject]@{ file = $name; sha256 = (Get-FileHash (Join-Path $directory $name) -Algorithm SHA256).Hash.ToLowerInvariant() }
+        }
+    }
+    $legacyArgs = @{} + $resultArgs
+    $legacyArgs.Plan = $legacyPlan; $legacyArgs.Checks = $legacyChecks; $legacyArgs.Evidence = $legacyEvidence
+    $legacyResult = New-PineDramaCoreResult @legacyArgs
+    Assert-PineCore (-not (Get-PineDramaCoreResultProblem $legacyPlan $legacyResult -Directory $directory -GitRoot $Root)) 'Saved historical v1 evidence no longer validates.'
+    Assert-PineCore ([bool](Get-PineDramaCoreResultProblem $plan $legacyResult -Directory $directory -GitRoot $Root)) 'Historical screenshots qualified the inline route.'
     $returnPath = Join-Path $directory $checks[3].evidence
     $returnImage = [IO.Path]::ChangeExtension($returnPath, 'png')
     $returnBytes = [IO.File]::ReadAllBytes($returnPath); $imageBytes = [IO.File]::ReadAllBytes($returnImage)
@@ -257,7 +298,10 @@ try {
         { param($r) $r.status = 'PASS' }, { param($r) $r.full = $true }, { param($r) $r.eligibleForPublication = $true },
         { param($r) $r.app.package = 'com.zhiliaoapp.musically' }, { param($r) $r.build.sourceApk.sha256 = 'e' * 64 },
         { param($r) $r.missingCoverage = @() }, { param($r) $r.coverage[0].status = 'qualified' },
-        { param($r) $r.checks[4].proof.nativeOwnerRestored = $false }, { param($r) $r.checks[2].proof.commentsForeground = $false },
+        { param($r) $r.checks[4].proof.nativeOwnerRestored = $false }, { param($r) $r.checks[2].proof.commentsExpanded = $false },
+        { param($r) $r.checks[2].proof.commentsCollapsed = $true }, { param($r) $r.checks[3].proof.commentsCollapsed = $false },
+        { param($r) $r.checks[2].proof.settingsOwnerRetained = $false }, { param($r) $r.checks[3].proof.settingsOwnerRetained = $false },
+        { param($r) $r.checks[2].id = 'comments-page' }, { param($r) $r.checks[3].id = 'settings-return' },
         { param($r) $r.checks[1].id = 'launch' }, { param($r) $r.evidence[0].sha256 = 'e' * 64 },
         { param($r) $r.installedAfter.sha256 = 'e' * 64 }, { param($r) $r.coreResult = 'QUALIFIED' },
         { param($r) $r.evidence = @($r.evidence | Where-Object { $_.file -cnotmatch '\.png$' }) }

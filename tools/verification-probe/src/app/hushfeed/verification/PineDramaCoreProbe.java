@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -32,6 +33,7 @@ public final class PineDramaCoreProbe extends Instrumentation {
     private static final AtomicBoolean STARTED = new AtomicBoolean();
     private static final AtomicBoolean BUSY = new AtomicBoolean();
     private static WeakReference<Activity> nativeOwner = new WeakReference<>(null);
+    private static WeakReference<PreferenceFragment> settingsOwner = new WeakReference<>(null);
 
     @Override public Application newApplication(ClassLoader loader, String name, Context context)
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -66,8 +68,14 @@ public final class PineDramaCoreProbe extends Instrumentation {
                             // Hash off the UI thread. A failed identity never reaches a UI operation.
                             NativeFacts facts = new NativeFacts(context, intent);
                             runOnMainSync(() -> {
-                                try { Log.i(TAG, "pine-core-response-" + request + " "
-                                        + PineDramaCoreState.run(facts, intent.getStringExtra("profile"), intent.getStringExtra("action"))); }
+                                try {
+                                    String profile = intent.getStringExtra("profile");
+                                    String action = intent.getStringExtra("action");
+                                    Log.i(TAG, "pine-core-response-" + request + " "
+                                            + (PineDramaInlineCoreState.PROFILE.equals(profile)
+                                            ? PineDramaInlineCoreState.run(facts, profile, action)
+                                            : PineDramaCoreState.run(facts, profile, action)));
+                                }
                                 catch (RuntimeException | LinkageError unavailable) { Log.i(TAG, "pine-core-unavailable=true"); }
                             });
                         } catch (Exception | LinkageError unavailable) { Log.i(TAG, "pine-core-unavailable=true"); }
@@ -84,7 +92,7 @@ public final class PineDramaCoreProbe extends Instrumentation {
         } catch (Exception | LinkageError unavailable) { Log.i(TAG, "pine-core-ready=false"); }
     }
 
-    private static final class NativeFacts implements PineDramaCoreState.Facts {
+    private static final class NativeFacts implements PineDramaInlineCoreState.Facts {
         final Context context;
         final PackageInfo info;
         final boolean identity;
@@ -131,10 +139,11 @@ public final class PineDramaCoreProbe extends Instrumentation {
         @Override public boolean homeVisible() {
             PreferenceFragment fragment = current();
             if (fragment == null) return false;
-            Bundle arguments = fragment.getArguments();
-            return (arguments == null || (arguments.getString("morphe_settings_section") == null
-                    && arguments.getString("morphe_settings_hub") == null && !arguments.getBoolean("morphe_settings_search", false)))
-                    && fragment.findPreference("action_search_settings") != null;
+            try {
+                java.lang.reflect.Method page = fragment.getClass().getDeclaredMethod("pageKey");
+                page.setAccessible(true);
+                return "home".equals(page.invoke(fragment)) && fragment.findPreference("action_search_settings") != null;
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError unavailable) { return false; }
         }
         @Override public boolean commentsVisible() {
             PreferenceFragment fragment = current();
@@ -149,17 +158,61 @@ public final class PineDramaCoreProbe extends Instrumentation {
                     && "app.morphe.extension.tiktok.settings.preference.SettingsMenuPreference".equals(row.getClass().getName());
         }
         @Override public boolean nativeOwnerRestored() { return nativeOwner.get() != null && nativeOwner.get() == visible(); }
+        @Override public boolean settingsOwnerRetained() { return settingsOwner.get() != null && settingsOwner.get() == current(); }
+        private Boolean expanded(Preference row) {
+            if (!(row instanceof PreferenceGroup)) return null;
+            try {
+                if (!Boolean.TRUE.equals(row.getClass().getMethod("isExpandable").invoke(row))) return null;
+                Object value = row.getClass().getMethod("isExpanded").invoke(row);
+                return value instanceof Boolean ? (Boolean) value : null;
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError unavailable) { return null; }
+        }
+        private boolean commentsState(boolean expectedExpanded) {
+            PreferenceFragment fragment = current();
+            Preference row = fragment == null ? null : fragment.findPreference("section_comments");
+            Boolean state = expanded(row);
+            if (state == null || state != expectedExpanded) return false;
+            PreferenceGroup group = (PreferenceGroup) row;
+            ListView list = fragment.getView().findViewById(android.R.id.list);
+            if (list == null || list.getAdapter() == null || (expectedExpanded && group.getPreferenceCount() == 0)) return false;
+            boolean visibleChild = false;
+            for (int child = 0; child < group.getPreferenceCount(); child++) {
+                boolean inAdapter = false;
+                for (int index = 0; index < list.getAdapter().getCount(); index++) {
+                    if (list.getAdapter().getItem(index) != group.getPreference(child)) continue;
+                    inAdapter = true;
+                    View view = list.getChildAt(index - list.getFirstVisiblePosition());
+                    visibleChild |= view != null && view.isShown();
+                    break;
+                }
+                if (inAdapter != expectedExpanded) return false;
+            }
+            return !expectedExpanded || visibleChild;
+        }
+        @Override public boolean commentsExpanded() { return commentsState(true); }
+        @Override public boolean commentsCollapsed() { return commentsState(false); }
         @Override public boolean openSettings() {
             try {
                 nativeOwner = new WeakReference<>(visible());
+                settingsOwner = new WeakReference<>(null);
                 context.getClassLoader().loadClass("app.morphe.extension.tiktok.settings.TikTokActivityHook")
                         .getMethod("openSettings").invoke(null);
                 return true;
             } catch (ReflectiveOperationException | RuntimeException | LinkageError unavailable) { return false; }
         }
         @Override public boolean openComments() {
+            return clickComments(false);
+        }
+        @Override public boolean toggleComments() {
+            return clickComments(true);
+        }
+        private boolean clickComments(boolean inline) {
             PreferenceFragment fragment = current();
             if (fragment == null || !commentsRowPresent()) return false;
+            Preference row = fragment.findPreference("section_comments");
+            Boolean state = expanded(row);
+            if (inline && state == null) return false;
+            if (inline && state && !settingsOwnerRetained()) return false;
             ListView list = fragment.getView().findViewById(android.R.id.list);
             if (list == null || list.getAdapter() == null) return false;
             for (int position = 0; position < list.getAdapter().getCount(); position++) {
@@ -167,12 +220,14 @@ public final class PineDramaCoreProbe extends Instrumentation {
                 if (!(item instanceof Preference) || !"section_comments".equals(((Preference) item).getKey())) continue;
                 final int index = position;
                 final Preference selected = (Preference) item;
+                if (inline && !state) settingsOwner = new WeakReference<>(fragment);
                 list.setSelection(index);
                 list.postOnAnimation(new Runnable() {
                     int attempts;
                     @Override public void run() {
                         // A fresh row after layout on the still-owned home page.
                         if (!foregroundOwned() || !homeVisible() || current() != fragment || !commentsRowPresent()) return;
+                        if (inline && (!settingsOwnerRetained() || !state.equals(expanded(selected)))) return;
                         if (list.getAdapter() == null || index >= list.getAdapter().getCount()
                                 || list.getAdapter().getItem(index) != selected) return;
                         View child = list.getChildAt(index - list.getFirstVisiblePosition());

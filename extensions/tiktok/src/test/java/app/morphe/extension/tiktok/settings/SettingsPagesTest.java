@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.Preference;
+import android.preference.PreferenceGroup;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.CheckedTextView;
@@ -16,6 +17,8 @@ import app.morphe.extension.shared.diagnostics.HookStatus;
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.UiCapture;
 import app.morphe.extension.tiktok.settings.preference.TikTokPreferenceFragment;
+import app.morphe.extension.tiktok.settings.preference.SettingsMenuPreference;
+import app.morphe.extension.tiktok.settings.preference.SettingsSearchEntryPreference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
@@ -429,13 +432,7 @@ public class SettingsPagesTest {
         return built.getPreferenceCount();
     }
 
-    /**
-     * Every page is a row on the home page itself, under the heading it belongs with, and
-     * Hushfeed's own rows come last with the Ko-fi row at the very end. No row opens another
-     * menu: the Hush standard allows one level below the home page (Matt, 2026-10-12), and the
-     * four groups that sat between it and Feed filter, Comments, Downloads or Region were a
-     * second one.
-     */
+    /** Every category stays on the main list, followed by Hushfeed's status and actions. */
     @Test @Config(qualifiers = "w390dp-h708dp-night-mdpi")
     public void theHomePageListsEveryPageUnderItsHeading() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
@@ -498,6 +495,63 @@ public class SettingsPagesTest {
                     activity.getFragmentManager().findFragmentById(android.R.id.content));
             assertTrue("the compact status didn't bring the status card into view",
                     list.getFirstVisiblePosition() <= card && card <= list.getLastVisiblePosition());
+        }
+    }
+
+    @Test public void categoryRowsExpandTheirOwnControlsInlineAndCollapseIndependently() {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            TikTokPreferenceFragment home = attachHome(activity);
+            ListView list = home.getView().findViewById(android.R.id.list);
+            SettingsMenuPreference playback = menuGroup(home, "section_playback");
+            SettingsMenuPreference downloads = menuGroup(home, "section_downloads");
+            assertFalse(playback.isExpanded());
+            assertFalse(downloads.isExpanded());
+            assertEquals(-1, positionOf(list, Settings.AUTO_ADVANCE.key));
+            assertEquals(-1, positionOf(list, "download_video_quality"));
+
+            openMenu(activity, home, playback.getKey());
+            assertTrue(playback.isExpanded());
+            assertTrue(positionOf(list, Settings.AUTO_ADVANCE.key) > positionOf(list, playback.getKey()));
+            assertSame("expanded controls are not directly under their category", playback.getPreference(0),
+                    list.getItemAtPosition(positionOf(list, playback.getKey()) + 1));
+
+            openMenu(activity, home, downloads.getKey());
+            assertTrue(playback.isExpanded());
+            assertTrue(downloads.isExpanded());
+            assertTrue(positionOf(list, "download_video_quality") > positionOf(list, downloads.getKey()));
+            assertTrue("Playback controls crossed the next category row",
+                    positionOf(list, Settings.AUTO_ADVANCE.key) < positionOf(list, "section_screen_time"));
+
+            collapseMenu(activity, home, playback.getKey());
+            assertEquals(-1, positionOf(list, Settings.AUTO_ADVANCE.key));
+            assertTrue(downloads.isExpanded());
+            assertTrue(positionOf(list, "download_video_quality") >= 0);
+            assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+            assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
+        }
+    }
+
+    @Test public void tappingACategoryDuringSearchExpandsItsVisibleCollapsedRow() {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            TikTokPreferenceFragment home = attachHome(activity);
+            for (String key : new String[]{"section_playback", "hub_about"}) {
+                openMenu(activity, home, key);
+                Preference search = home.findPreference("action_search_settings");
+                assertTrue(search instanceof SettingsSearchEntryPreference);
+                assertTrue(search.getOnPreferenceClickListener().onPreferenceClick(search));
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertFalse("search did not collapse the visible category", menuGroup(home, key).isExpanded());
+
+                openMenu(activity, home, key);
+                assertTrue("the tap toggled restored state instead of the visible row", menuGroup(home, key).isExpanded());
+                assertTrue(home.findPreference("action_search_settings") instanceof SettingsSearchEntryPreference);
+                assertTrue(menuGroup(home, "section_playback").isExpanded());
+            }
+            assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
         }
     }
 
@@ -601,8 +655,7 @@ public class SettingsPagesTest {
             layout(playback.getView(), 390, 844);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             UiCapture.save(playback.getView(), "reference/" + theme + "/playback.png", 390, 844);
-            assertTrue(activity.getFragmentManager().popBackStackImmediate());
-            assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+            collapseMenu(activity, home, "section_playback");
         }
     }
 
@@ -662,18 +715,17 @@ public class SettingsPagesTest {
             homeList.setSelection(0);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             TikTokPreferenceFragment about = openMenu(activity, home, "hub_about");
-            assertEquals("ABOUT", about.getArguments().getString("morphe_settings_hub"));
+            assertTrue(menuGroup(about, "hub_about").isExpanded());
             UiCapture.save(about.getView(), "pages/" + theme + "/hub-about.png");
-            assertTrue(activity.getFragmentManager().popBackStackImmediate());
-            Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+            collapseMenu(activity, home, "hub_about");
             for (int i = 0; i < SECTIONS.length; i++) {
                 Preference menu = home.findPreference("section_" + SECTIONS[i].toLowerCase(java.util.Locale.ROOT));
                 assertNotNull("Missing menu: " + SECTIONS[i], menu);
                 assertEquals(TITLES[i], String.valueOf(menu.getTitle()));
                 TikTokPreferenceFragment page = openMenu(activity, home, menu.getKey());
-                assertEquals(SECTIONS[i], page.getArguments().getString("morphe_settings_section"));
-                assertTrue(page.getPreferenceScreen().getPreferenceCount() > 2);
+                SettingsMenuPreference group = menuGroup(page, menu.getKey());
+                assertTrue(group.isExpanded());
+                assertTrue(group.getPreferenceCount() > 0);
                 if ("BACKUP".equals(SECTIONS[i])) {
                     assertNull("Quick setups recovery returned to Backup", page.findPreference("action_quick_setups_home"));
                     for (int action = 7311; action <= 7314; action++)
@@ -708,12 +760,10 @@ public class SettingsPagesTest {
                     Shadows.shadowOf(Looper.getMainLooper()).idle();
                     UiCapture.save(page.getView(), name + "-sound.png");
                 }
-                list.setSelection(list.getCount() - 1);
+                list.setSelection(positionOf(list, group.getKey()) + group.getPreferenceCount());
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 UiCapture.save(page.getView(), name + "-end.png");
-                activity.getFragmentManager().popBackStackImmediate();
-                Shadows.shadowOf(Looper.getMainLooper()).idle();
-                assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+                collapseMenu(activity, home, menu.getKey());
             }
         }
     }
@@ -978,14 +1028,29 @@ public class SettingsPagesTest {
             ListView list = page.getView().findViewById(android.R.id.list);
             int autoAdvancePosition = positionOf(list, "auto_advance");
             assertTrue(autoAdvancePosition >= 0);
-            assertTrue(list.performItemClick(list.getChildAt(autoAdvancePosition), autoAdvancePosition,
+            list.setSelection(autoAdvancePosition);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(list.performItemClick(list.getChildAt(autoAdvancePosition - list.getFirstVisiblePosition()), autoAdvancePosition,
                     list.getAdapter().getItemId(autoAdvancePosition)));
+            // Restart feedback changes the root hierarchy. Let the adapter rebuild before
+            // looking up the next row's position.
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(Settings.AUTO_ADVANCE.get());
             int defaultSpeedPosition = positionOf(list, "default_speed");
             assertTrue(defaultSpeedPosition >= 0);
-            list.performItemClick(list.getChildAt(defaultSpeedPosition), defaultSpeedPosition,
-                    list.getAdapter().getItemId(defaultSpeedPosition));
+            list.setSelection(defaultSpeedPosition);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Preference speed = (Preference) list.getItemAtPosition(defaultSpeedPosition);
+            assertEquals("default_speed", speed.getKey());
+            assertTrue(speed instanceof android.preference.ListPreference);
+            assertTrue("the speed picker is disabled despite its enabled parent", speed.isEnabled());
+            View speedRow = list.getChildAt(defaultSpeedPosition - list.getFirstVisiblePosition());
+            assertNotNull("the speed picker was not laid out", speedRow);
+            assertTrue(list.performItemClick(speedRow, defaultSpeedPosition,
+                    list.getAdapter().getItemId(defaultSpeedPosition)));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             android.app.AlertDialog dialog = (android.app.AlertDialog) org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            assertNotNull("the speed picker did not open its native dialog", dialog);
             assertTrue(dialog.isShowing());
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             UiCapture.save(dialog.getWindow().getDecorView(), "pages/dark/speed-picker.png");
@@ -1040,7 +1105,10 @@ public class SettingsPagesTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             TikTokPreferenceFragment targetPage = (TikTokPreferenceFragment) activity.getFragmentManager()
                     .findFragmentById(android.R.id.content);
-            assertEquals("FEED_FILTER", targetPage.getArguments().getString("morphe_settings_section"));
+            assertSame(home, targetPage);
+            assertTrue(menuGroup(targetPage, "section_feed_filter").isExpanded());
+            assertTrue(targetPage.findPreference("action_search_settings") instanceof SettingsSearchEntryPreference);
+            assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
             ListView list = targetPage.getView().findViewById(android.R.id.list);
             int targetPosition = positionOf(list, "max_video_seconds");
             assertTrue(targetPosition >= 0);
@@ -1079,8 +1147,7 @@ public class SettingsPagesTest {
     }
 
     /**
-     * Pause keeps its stable setting key, and its search result opens the page the row is on,
-     * the home page, aimed at the row, with Back going to the results like any other result.
+     * Pause keeps its stable setting key, and locating it closes search on the same main list.
      */
     @Test public void settingsSearchOpensPauseHushfeedOnTheMasterMenu() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
@@ -1105,26 +1172,20 @@ public class SettingsPagesTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             TikTokPreferenceFragment targetPage = (TikTokPreferenceFragment) activity.getFragmentManager()
                     .findFragmentById(android.R.id.content);
-            assertNotSame("the result left the results page up", page, targetPage);
-            assertNull(targetPage.getArguments().getString("morphe_settings_section"));
-            assertNull(targetPage.getArguments().getString("morphe_settings_hub"));
-            assertEquals(app.morphe.extension.shared.settings.BaseSettings.PAUSED.key,
-                    targetPage.getArguments().getString("morphe_settings_target_key"));
+            assertSame(home, targetPage);
+            assertTrue(targetPage.findPreference("action_search_settings") instanceof SettingsSearchEntryPreference);
+            assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
             ListView list = targetPage.getView().findViewById(android.R.id.list);
             assertTrue(positionOf(list, app.morphe.extension.shared.settings.BaseSettings.PAUSED.key) >= 0);
 
-            // The page's own Back arrow, not only the system Back: on this copy of the home page
-            // it has to go to the results rather than close settings.
+            // Search has closed, so the main header's Back leaves settings.
             list.setSelection(0);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             android.view.ViewGroup toolbar = targetPage.getView().findViewWithTag("hushfeed_toolbar");
             assertTrue(toolbar.getChildAt(0).performClick());
             activity.getFragmentManager().executePendingTransactions();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertFalse("the Back arrow closed settings", activity.isFinishing());
-            assertTrue("Back from the row didn't go to the results", ((TikTokPreferenceFragment) activity
-                    .getFragmentManager().findFragmentById(android.R.id.content)).getArguments()
-                    .getBoolean("morphe_settings_search"));
+            assertTrue("the Back arrow returned to a stale search destination", activity.isFinishing());
         }
     }
 
@@ -1158,6 +1219,8 @@ public class SettingsPagesTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("", input.getText().toString());
             assertNotNull(findPreference(page.getPreferenceScreen(), "Tippe zum Suchen"));
+            ((ListView) page.getView().findViewById(android.R.id.list)).setSelection(0);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             View toolbar = page.getView().findViewWithTag("hushfeed_toolbar");
             assertNotNull(toolbar);
             assertTrue(((android.view.ViewGroup) toolbar).getChildAt(0).performClick());
@@ -1319,7 +1382,9 @@ public class SettingsPagesTest {
             ListView list = page.getView().findViewById(android.R.id.list);
             int position = positionOf(list, "local_hidden_creators");
             assertTrue(position >= 0);
-            assertTrue(list.performItemClick(list.getChildAt(position), position,
+            list.setSelection(position);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(list.performItemClick(list.getChildAt(position - list.getFirstVisiblePosition()), position,
                     list.getAdapter().getItemId(position)));
             Shadows.shadowOf(Looper.getMainLooper()).idle();
 
@@ -1348,24 +1413,24 @@ public class SettingsPagesTest {
     }
 
     @Test @Config(qualifiers = "de-rDE-w360dp-h800dp-night-mdpi")
-    public void longGermanLabelsWrapAtLargeTextSize() throws Exception {
+    public void longGermanLabelsStayReadableAtLargeTextSize() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
             var configuration = activity.getResources().getConfiguration();
             configuration.fontScale = 1.3f;
             activity.getResources().updateConfiguration(configuration, activity.getResources().getDisplayMetrics());
-            // Backup and restore: "Sichern und wiederherstellen" is the longest page title in
-            // German now that Comments is one word, so it is the one that has to wrap cleanly.
+            // The compact category label can fit on one line. It must stay whole, and any
+            // wrapping must keep words intact.
             TikTokPreferenceFragment page = attachSection(activity, "BACKUP");
             layout(page.getView(), 360, 800);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             UiCapture.save(page.getView(), "pages/dark/backup-german-large.png", 360, 800);
-            android.widget.TextView heading = page.getView().findViewWithTag("hushfeed_page_title");
+            TextView heading = menuTitle(page, "section_backup");
             assertNotNull(heading);
             assertEquals("the page title is not in German, so this proves nothing",
                     "Sichern und wiederherstellen", heading.getText().toString());
-            assertTrue(heading.getLineCount() > 1);
+            assertTextFits(heading);
             assertEquals(0, heading.getLayout().getEllipsisCount(heading.getLineCount() - 1));
             assertTrue(heading.getHeight() >= heading.getLayout().getHeight());
             String renderedTitle = heading.getText().toString();
@@ -1404,13 +1469,14 @@ public class SettingsPagesTest {
             layout(page.getView(), 320, 800);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
 
-            TextView heading = page.getView().findViewWithTag("hushfeed_page_title");
+            TextView heading = menuTitle(page, "section_comments");
             assertNotNull(heading);
             assertEquals("the page title is not in Spanish, so this proves nothing",
                     "Comentarios", heading.getText().toString());
             assertTextFits(heading);
             TextView caption = findTextViewContaining(page.getView(), "Filtros, traducción");
-            assertNull("the removed duplicate page description returned", caption);
+            assertNotNull("the expanded category lost its description", caption);
+            assertTextFits(caption);
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
             assertTrue("no switch row was on screen, so this proves nothing",
                     assertSwitchRowsReflowed(page.getView().findViewById(android.R.id.list), false) > 0);
@@ -1430,8 +1496,9 @@ public class SettingsPagesTest {
             layout(page.getView(), 320, 800);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             TextView caption = findTextViewContaining(page.getView(), "Filter, Übersetzung");
-            assertNull("the removed duplicate page description returned", caption);
-            TextView title = page.getView().findViewWithTag("hushfeed_page_title");
+            assertNotNull("the expanded category lost its description", caption);
+            assertTextFits(caption);
+            TextView title = menuTitle(page, "section_comments");
             assertNotNull(title);
             assertTextFits(title);
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
@@ -1470,7 +1537,7 @@ public class SettingsPagesTest {
                 TikTokPreferenceFragment page = attachSection(activity, section);
                 layout(page.getView(), 320, 800);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
-                TextView heading = page.getView().findViewWithTag("hushfeed_page_title");
+                TextView heading = menuTitle(page, "section_" + section.toLowerCase(java.util.Locale.ROOT));
                 assertNotNull(section, heading);
                 assertTextFits(heading);
                 assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
@@ -1508,7 +1575,7 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
             assertTrue("no switch row was on screen, so this proves nothing",
                     assertSwitchRowsReflowed(page.getView().findViewById(android.R.id.list), true) > 0);
-            TextView heading = page.getView().findViewWithTag("hushfeed_page_title");
+            TextView heading = menuTitle(page, "section_comments");
             assertNotNull(heading);
             assertTextFits(heading);
             UiCapture.save(page.getView(), "pages/dark/rtl-large.png", 320, 800);
@@ -1521,7 +1588,7 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
                 layout(other.getView(), 320, 800);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 forceRtl(other.getView());
-                TextView title = other.getView().findViewWithTag("hushfeed_page_title");
+                TextView title = menuTitle(other, "section_" + section.toLowerCase(java.util.Locale.ROOT));
                 assertNotNull(section, title);
                 assertTextFits(title);
                 assertRowsReadable(other.getView().findViewById(android.R.id.list), 48);
@@ -1556,7 +1623,7 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             layout(page.getView(), 320, 800);
 assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             assertBackArrowPointsTheWayTheReaderReads(page.getView());
-            TextView heading = page.getView().findViewWithTag("hushfeed_page_title");
+            TextView heading = menuTitle(page, "section_comments");
             assertNotNull(heading);
             assertTextFits(heading);
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
@@ -1954,19 +2021,19 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
                 assertTrue("the page came back at its top", list.getFirstVisiblePosition() > 0);
                 assertTrue("the row the restart was pressed at is off screen",
                         position >= list.getFirstVisiblePosition() && position <= list.getLastVisiblePosition());
-                // Scrolled back up by hand, the page stays there after a page opened from it is
-                // closed: Back brings this same page back with a fresh list, and the restart's row
-                // was for coming back from the restart, not for every return after it.
+                // The restart's saved row is used once, not after later category changes.
                 list.setSelection(0);
                 layout(home.getView(), 480, 960);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 openMenu(activity, home, "section_privacy");
-                assertTrue(activity.getFragmentManager().popBackStackImmediate());
+                collapseMenu(activity, home, "section_privacy");
                 assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+                list.setSelection(0);
+                home.onResume();
                 layout(home.getView(), 480, 960);
                 Shadows.shadowOf(Looper.getMainLooper()).idle();
                 layout(home.getView(), 480, 960);
-                assertEquals("Back from a page jumped home down to the restart's row again", 0,
+                assertEquals("changing a category jumped down to the restart's row again", 0,
                         ((ListView) home.getView().findViewById(android.R.id.list)).getFirstVisiblePosition());
                 // Still the page settings opened on: its Back arrow closes settings.
                 android.view.ViewGroup toolbar = home.getView().findViewWithTag("hushfeed_toolbar");
@@ -2023,6 +2090,11 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         activity.getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
         activity.getFragmentManager().executePendingTransactions();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
+        String key = "section_" + section.toLowerCase(java.util.Locale.ROOT);
+        if (fragment.findPreference(key) instanceof SettingsMenuPreference) {
+            assertTrue(menuGroup(fragment, key).isExpanded());
+            scrollToMenu(fragment, key);
+        }
         return fragment;
     }
 
@@ -2043,7 +2115,45 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
                 route.getOnPreferenceClickListener().onPreferenceClick(route));
         activity.getFragmentManager().executePendingTransactions();
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        return (TikTokPreferenceFragment) activity.getFragmentManager().findFragmentById(android.R.id.content);
+        assertSame("category expansion replaced the main fragment", parent,
+                activity.getFragmentManager().findFragmentById(android.R.id.content));
+        assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
+        assertTrue(menuGroup(parent, key).isExpanded());
+        scrollToMenu(parent, key);
+        return parent;
+    }
+
+    private static SettingsMenuPreference menuGroup(TikTokPreferenceFragment page, String key) {
+        Preference row = page.findPreference(key);
+        assertTrue("missing category " + key, row instanceof SettingsMenuPreference);
+        return (SettingsMenuPreference) row;
+    }
+
+    private static void collapseMenu(Activity activity, TikTokPreferenceFragment page, String key) {
+        SettingsMenuPreference group = menuGroup(page, key);
+        assertTrue(group.isExpanded());
+        assertTrue(group.getOnPreferenceClickListener().onPreferenceClick(group));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertFalse(group.isExpanded());
+        assertSame(page, activity.getFragmentManager().findFragmentById(android.R.id.content));
+        assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
+    }
+
+    private static void scrollToMenu(TikTokPreferenceFragment page, String key) {
+        ListView list = page.getView().findViewById(android.R.id.list);
+        int position = positionOf(list, key);
+        assertTrue("category is missing from the list " + key, position >= 0);
+        list.setSelectionFromTop(position, 0);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+    }
+
+    private static TextView menuTitle(TikTokPreferenceFragment page, String key) {
+        ListView list = page.getView().findViewById(android.R.id.list);
+        View row = list.getChildAt(positionOf(list, key) - list.getFirstVisiblePosition());
+        assertNotNull("the expanded category header is outside the viewport " + key, row);
+        TextView title = row.findViewById(android.R.id.title);
+        assertNotNull("the expanded category has no title " + key, title);
+        return title;
     }
 
     /** The titles of the home page's rows, which is every page there is a way into. */
@@ -2053,11 +2163,15 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         return titles;
     }
 
-    private static Preference findPreference(android.preference.PreferenceScreen screen, String title) {
+    private static Preference findPreference(PreferenceGroup screen, String title) {
         for (int index = 0; index < screen.getPreferenceCount(); index++) {
             Preference preference = screen.getPreference(index);
             if (title.equals(String.valueOf(preference.getTitle()))) {
                 return preference;
+            }
+            if (preference instanceof PreferenceGroup) {
+                Preference child = findPreference((PreferenceGroup) preference, title);
+                if (child != null) return child;
             }
         }
         return null;
@@ -2147,7 +2261,9 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             if (list.getAdapter().getItem(i) == target) position = i;
         }
         assertTrue(position >= 0);
-        assertTrue(list.performItemClick(list.getChildAt(position), position, list.getAdapter().getItemId(position)));
+        list.setSelection(position);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        assertTrue(list.performItemClick(list.getChildAt(position - list.getFirstVisiblePosition()), position, list.getAdapter().getItemId(position)));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         android.app.Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
         assertNotNull(dialog);
@@ -2184,6 +2300,13 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
      * nothing.
      */
     private static void assertBackArrowPointsTheWayTheReaderReads(View root) {
+        ListView list = root.findViewById(android.R.id.list);
+        int first = list.getFirstVisiblePosition();
+        int top = list.getChildCount() == 0 ? 0 : list.getChildAt(0).getTop();
+        list.setSelection(0);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        forceRtl(root);
+        layout(root, root.getWidth(), root.getHeight());
         View toolbar = root.findViewWithTag("hushfeed_toolbar");
         assertNotNull("the page has no toolbar, so this proves nothing", toolbar);
         View back = ((android.view.ViewGroup) toolbar).getChildAt(0);
@@ -2193,6 +2316,10 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         assertNotNull("the back button carries no glyph", arrow);
         assertEquals("the arrow in the captured picture still points the other way",
                 View.LAYOUT_DIRECTION_RTL, arrow.getLayoutDirection());
+        list.setSelectionFromTop(first, top);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        forceRtl(root);
+        layout(root, root.getWidth(), root.getHeight());
     }
 
     private static void forceRtl(View view) {
@@ -2216,7 +2343,9 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             ListView list = page.getView().findViewById(android.R.id.list);
             int position = positionOf(list, "action_included_diagnostics");
             assertTrue("the Included diagnostics row is gone", position >= 0);
-            list.performItemClick(list.getChildAt(position), position,
+            list.setSelection(position);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            list.performItemClick(list.getChildAt(position - list.getFirstVisiblePosition()), position,
                     list.getAdapter().getItemId(position));
 
             android.app.AlertDialog dialog =
@@ -2373,6 +2502,8 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
                             android.content.Context.INPUT_METHOD_SERVICE));
             assertTrue("the keyboard was not asked for", keyboard.isSoftInputVisible());
 
+            ((ListView) page.getView().findViewById(android.R.id.list)).setSelection(0);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             View back = viewWithContentDescription(page.getView(), "Back");
             assertNotNull("the search page has no Back in its header", back);
             assertTrue(back.performClick());
@@ -2380,6 +2511,9 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
             Shadows.shadowOf(Looper.getMainLooper()).idle();
 
             assertFalse("Back left the keyboard up over the next page", keyboard.isSoftInputVisible());
+            assertFalse("Back left settings instead of closing inline search", activity.isFinishing());
+            assertTrue(home.findPreference("action_search_settings") instanceof SettingsSearchEntryPreference);
+            assertEquals(0, activity.getFragmentManager().getBackStackEntryCount());
             assertSame("Back did not return to the settings home", home,
                     activity.getFragmentManager().findFragmentById(android.R.id.content));
         }
@@ -2505,7 +2639,7 @@ assertEquals(View.LAYOUT_DIRECTION_RTL, configuration.getLayoutDirection());
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
-            android.preference.PreferenceScreen screen = attachSection(activity, "PLAYBACK").getPreferenceScreen();
+            PreferenceGroup screen = menuGroup(attachSection(activity, "PLAYBACK"), "section_playback");
             for (String title : new String[]{"Pause the video while comments are open", "Stay on the video in full screen"}) {
                 String heading = null;
                 for (int index = 0; index < screen.getPreferenceCount(); index++) {

@@ -24,6 +24,11 @@ public final class SectionHeadingPreference extends Preference {
         return new SectionHeadingPreference(context, title);
     }
 
+    /** Retains the constructor used by existing add-ons; headings now share one compact style. */
+    public SectionHeadingPreference(Context context, String title, boolean compact) {
+        this(context, title);
+    }
+
     @Override
     protected View onCreateView(ViewGroup parent) {
         Context context = getContext();

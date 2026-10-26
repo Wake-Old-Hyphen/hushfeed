@@ -772,10 +772,11 @@ public final class VideoOverlayHider {
                     pairDetailCommentBar(hidden, found, TRAVERSAL.selected, ids, detailPager, stripForBar);
                     List<View> strips = selectedViews(found, TRAVERSAL.selected, DETAIL_COMMENT_STRIP_TARGET);
                     int layerId = seeThroughBar ? identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID) : 0;
-                    int[] infoIds = new int[seeThroughBar ? CELL_INFO_IDS.length : 0];
-                    for (int i = 0; i < infoIds.length; i++) {
-                        infoIds[i] = resolveIdentifier(activity, activity.getPackageName(), CELL_INFO_IDS[i], false);
-                    }
+                    int[] infoIds = seeThroughBar ? new int[] {
+                            resolveIdentifier(activity, activity.getPackageName(), LIVE_PREVIEW_NAME_ID, false),
+                            resolveIdentifier(activity, activity.getPackageName(), LIVE_PREVIEW_TIPS_ID, false),
+                            resolveIdentifier(activity, activity.getPackageName(), DRAMA_TIPS_ID, false),
+                    } : new int[0];
                     List<View> roomLayers = selectedViews(found, TRAVERSAL.selected, WIDGET_LAYER_TARGET);
                     // Before the guard, so it measures the caption where this pass leaves it.
                     liftWidgetLayers(strips, seeThroughBar, layerId, cellId, infoIds, roomLayers, roomAbove);
@@ -1479,7 +1480,9 @@ public final class VideoOverlayHider {
      * its own laid out against the cell's bottom (#250, S23 Ultra layout: `ilt` 2316 tall holding
      * the card at 1977 to 2282), so it went down behind the tabs with the strip's room.
      */
-    private static final String[] CELL_INFO_IDS = {"tv_live_nickname", "tv_live_tips", "tv_drama_tips"};
+    private static final String LIVE_PREVIEW_NAME_ID = "tv_live_nickname";
+    private static final String LIVE_PREVIEW_TIPS_ID = "tv_live_tips";
+    private static final String DRAMA_TIPS_ID = "tv_drama_tips";
     /** Widget layers lifted over the see-through bar, with the offset written. */
     private static final Map<View, Float> WIDGETS_LIFTED = new WeakHashMap<>();
 

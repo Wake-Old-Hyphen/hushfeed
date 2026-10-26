@@ -366,8 +366,6 @@ Copy the sound link	Copiar el enlace del sonido
 Copy the video link	Copiar el enlace del vídeo
 Couldn't change the Lab settings. Try again.	No se pudieron cambiar los ajustes del Lab. Inténtalo de nuevo.
 Couldn't clear the suggested accounts. Reopen the Inbox and try again.	No se pudieron borrar las cuentas sugeridas. Vuelve a abrir la bandeja de entrada e inténtalo de nuevo.
-Couldn't open settings search. Reopen settings and try again.	No se pudo abrir la búsqueda de ajustes. Vuelve a abrir los ajustes e inténtalo de nuevo.
-Couldn't open that settings section. Reopen settings and try again.	No se pudo abrir esa sección de ajustes. Vuelve a abrir los ajustes e inténtalo de nuevo.
 Couldn't open the file picker to export. Try again.	No se pudo abrir el selector de archivos para exportar. Inténtalo de nuevo.
 Couldn't open the file picker to import. Try again.	No se pudo abrir el selector de archivos para importar. Inténtalo de nuevo.
 Couldn't put back the diagnostic data. Try again.	No se pudieron recuperar los datos de diagnóstico. Inténtalo de nuevo.
@@ -2122,22 +2120,8 @@ Report a problem	Informar de un problema
 Opens a GitHub report with your versions and settings filled in. Add what happened.	Abre un informe en GitHub con tus versiones y ajustes ya rellenados. Añade lo que pasó.
 Support Hushfeed	Apoya Hushfeed
 No app on this phone opens web links	Ninguna app de este teléfono abre enlaces web
-Quick setups	Ajustes rápidos
-Quiet hides ads, Shop and LIVE. Privacy hides your views and typing and stops tracking. Back to defaults resets every switch. Press and hold to hide this row.	Tranquilo oculta anuncios, Tienda y LIVE. Privacidad oculta tus visualizaciones y lo que escribes y detiene el rastreo. Restablecer devuelve cada interruptor a su valor original. Mantén pulsado para ocultar esta fila.
 # context: toast after a long press hides the Quick setups card from the settings home page; the page name is the one holding the row that brings it back
-Quick setups hidden. Bring it back from %1$s.	Ajustes rápidos ocultos. Puedes recuperarlos en %1$s.
 # context: row on the Backup and restore page; shows or hides the Quick setups card on the settings home page
-Quick setups on the home page	Ajustes rápidos en la página de inicio
-Shown. Tap to hide it.	Se muestran. Toca para ocultarlos.
-Hidden. Tap to show it again.	Ocultos. Toca para mostrarlos de nuevo.
-Quiet	Tranquilo
-Back to defaults	Restablecer
-Changed 1 setting	Se cambió 1 ajuste
-Changed %1$d settings	Se cambiaron %1$d ajustes
-Your settings already match	Tus ajustes ya coinciden
-That setup couldn't be applied. Nothing was changed.	No se pudo aplicar esa configuración. No se cambió nada.
-Quick setups couldn't start. Try again in a moment.	Los ajustes rápidos no pudieron iniciarse. Vuelve a intentarlo en un momento.
-Your earlier settings are back	Tus ajustes anteriores han vuelto
 # context: a heading on the settings home page, over Feed filter, Feed tabs, Feed screen, Playback and Screen time
 Your feed	Tu feed
 # context: a heading on the settings home page, over Downloads and Share sheet
@@ -2309,5 +2293,8 @@ Recovered recording saved to %1$s	Grabación recuperada guardada en %1$s
 
 # context: Settings search switch location action, gesture hint, and missing original row.
 Open setting location	Ir a la ubicación del ajuste
-Tap a switch to change it. Press and hold to open its page.	Toca un interruptor para cambiarlo. Mantenlo pulsado para abrir su página.
-This setting isn't available on this page. Go back and search again.	Este ajuste no está disponible en esta página. Vuelve atrás y busca de nuevo.
+Expanded	Expandido
+Collapsed	Contraído
+This setting isn't available. Search for another setting.	Este ajuste no está disponible. Busca otro ajuste.
+Hide the Hushfeed row	Ocultar la fila de Hushfeed
+Take Hushfeed out of TikTok's Settings and privacy. To open these settings, press and hold For You at the top of the feed, or Home if Long-press Home for Hushfeed settings is on.	Quita Hushfeed de Ajustes y privacidad de TikTok. Para abrir estos ajustes, mantén pulsado Para ti arriba del feed, o Inicio si Mantener pulsado Inicio para abrir los ajustes de Hushfeed está activado.
