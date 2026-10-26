@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Akış:** Ülke bayrakları ve kodları, sağdan sola yazılan adların yanında kalır (#258).
+* **Izgaralar:** Sıralama denetiminin dokunma alanı en az 48 dp olur.
+* **Izgaralar:** Izgara görünümden ayrıldığında sıralama denetimi gizlenir, geri döndüğünde yeniden görünür.
+* **Izgaralar:** Sıralama değişikliği kaydedilemezse mevcut sıra korunur.
+* **Izgaralar:** Orijinal sıra seçildiğinde mevcut ızgaranın sıralama menüsü kullanılabilir kalır (#180).
+* **Yorumlar:** Videonun yanındaki yorumlar, yerleşim ve yeniden oluşturma kontrollerinde aynı genişliği kullanır (#253).
+* **Gelen kutusu:** Önce Hikaye seçeneği açıkken yeniden kullanılan sohbet resmi, ilk dokunuşta o an gösterilen içerik üreticisinin Hikayesini açar (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Tanılama:** Bildirim raporları, mesaj içeriğini kaydetmeden kayıt ve gösterim aşamalarını sayar (#126, #222, #86).
 * **Ekran kaydı:** TikTok, Android 14 ve sonraki sürümlerde kayıt için son uygulamalar arasında seçilebilir.
 * **Kontroller:** Otomatik geçiş denetimi, videoları tek tek etiketlemeden TikTok oynatımını izler. Bitmemiş klipler ve izlenemeyen oynatım için sonuç belirsiz kalır.
 * **TikTok:** Ayar aramasındaki bir anahtarı basılı tutarak asıl sayfasında açıp vurgulayın. Geri, aramayı ve kaydırma konumunu korur (#248).

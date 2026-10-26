@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Länderflaggen und Ländercodes bleiben neben Namen, die von rechts nach links geschrieben werden (#258).
+* **Raster:** Das Sortierfeld hat eine Berührungsfläche von mindestens 48 dp.
+* **Raster:** Das Sortierfeld wird ausgeblendet, solange sein Raster entfernt ist, und erscheint bei dessen Rückkehr wieder.
+* **Raster:** Wenn eine neue Sortierung nicht gespeichert werden kann, bleibt die bisherige Reihenfolge erhalten.
+* **Raster:** Bei Auswahl der ursprünglichen Reihenfolge bleibt das Sortiermenü des aktuellen Rasters erreichbar (#180).
+* **Kommentare:** Kommentare neben dem Video verwenden für Layout und Neuaufbau dieselbe Breite (#253).
+* **Posteingang:** Bei aktivierter Story-Priorität öffnet ein wiederverwendetes Chatbild beim ersten Tippen die Story des aktuell angezeigten Erstellers (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnose:** Benachrichtigungsberichte zählen die Schritte bei Registrierung und Anzeige, ohne Nachrichteninhalte aufzunehmen (#126, #222, #86).
 * **Bildschirmaufnahme:** TikTok bleibt ab Android 14 in der Auswahl der zuletzt verwendeten Apps für die Aufnahme verfügbar.
 * **Prüfungen:** Der Audit für den automatischen Videowechsel verfolgt TikToks Wiedergabe ohne einzelne Videos zu kennzeichnen. Nicht beendete Clips und nicht verfügbare Wiedergabedaten bleiben unentschieden.
 * **TikTok:** Halte einen Schalter in der Einstellungssuche gedrückt, um ihn auf seiner ursprünglichen Seite zu öffnen und hervorzuheben. Zurück behält Suche und Scrollposition bei (#248).

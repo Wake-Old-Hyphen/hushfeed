@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Keep country flags and codes next to names written from right to left (#258).
+* **Grids:** Give the sort control a 48 dp touch target.
+* **Grids:** Hide the sort control while its grid is detached, then restore it when the grid returns.
+* **Grids:** Leave the current order in place when a sort change can't be saved.
+* **Grids:** Choosing Original order keeps the current grid's sort menu available (#180).
+* **Comments:** Comments beside the video uses the same width for its layout and rebuild checks (#253).
+* **Inbox:** A reused chat picture now opens the current creator's Story on its first tap when Story-first is enabled (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnostics:** Notification reports count registration and posting stages without message contents (#126, #222, #86).
 * **Screen recording:** Keep TikTok in Android's recent-apps recording choices on Android 14 and newer.
 * **Build checks:** Auto-advance audits follow native playback without per-video labels. Unfinished clips and unavailable playback stay inconclusive.
 * **TikTok:** Hold a settings-search switch to open and highlight it on its original page. Back keeps the search and scroll position (#248).

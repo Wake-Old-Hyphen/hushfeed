@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Bendera dan kode negara tetap berada di samping nama yang ditulis dari kanan ke kiri (#258).
+* **Kisi:** Kontrol pengurutan memiliki area sentuh minimal 48 dp.
+* **Kisi:** Kontrol pengurutan disembunyikan saat kisi dilepas dari tampilan dan ditampilkan kembali saat kisi kembali.
+* **Kisi:** Urutan saat ini tetap dipertahankan jika perubahan pengurutan gagal disimpan.
+* **Kisi:** Memilih Urutan asli membuat menu pengurutan kisi saat ini tetap tersedia (#180).
+* **Komentar:** Komentar di samping video memakai lebar yang sama untuk tata letak dan pemeriksaan pembentukan ulang (#253).
+* **Kotak masuk:** Jika Cerita didahulukan, foto chat yang digunakan ulang kini membuka Cerita kreator yang sedang ditampilkan pada ketukan pertama (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnostik:** Laporan notifikasi menghitung tahap pendaftaran dan penayangan tanpa menyertakan isi pesan (#126, #222, #86).
 * **Perekaman layar:** TikTok tetap tersedia dalam pilihan aplikasi terbaru untuk perekaman di Android 14 dan yang lebih baru.
 * **Pemeriksaan:** Audit perpindahan otomatis mengikuti pemutaran TikTok tanpa memberi label pada tiap video. Klip yang belum selesai dan pemutaran yang tidak tersedia tetap tidak dapat disimpulkan.
 * **TikTok:** Tahan sakelar di pencarian pengaturan untuk membuka dan menyorotnya di halaman asal. Kembali mempertahankan pencarian dan posisi gulir (#248).

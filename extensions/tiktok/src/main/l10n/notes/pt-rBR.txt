@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Bandeiras e códigos de país ficam ao lado dos nomes escritos da direita para a esquerda (#258).
+* **Grades:** O controle de ordenação tem uma área de toque de pelo menos 48 dp.
+* **Grades:** O controle de ordenação fica oculto enquanto a grade está fora da tela e reaparece quando ela retorna.
+* **Grades:** Se não for possível salvar uma mudança de ordenação, a ordem atual é mantida.
+* **Grades:** Ao escolher a ordem original, o menu de ordenação da grade atual continua disponível (#180).
+* **Comentários:** Os comentários ao lado do vídeo usam a mesma largura para o layout e a reconstrução da tela (#253).
+* **Caixa de entrada:** Com a opção de abrir Stories primeiro, uma foto de conversa reutilizada abre o Story do criador atual no primeiro toque (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnóstico:** Os relatórios de notificações contam as etapas de registro e exibição sem incluir o conteúdo das mensagens (#126, #222, #86).
 * **Gravação de tela:** O TikTok continua disponível entre os apps recentes para gravação no Android 14 ou mais recente.
 * **Verificações:** A auditoria do avanço automático acompanha a reprodução do TikTok sem rotular cada vídeo. Clipes não concluídos e reprodução indisponível ficam sem um resultado conclusivo.
 * **TikTok:** Mantenha pressionado um interruptor na busca de configurações para abri-lo e destacá-lo na página original. Voltar mantém a busca e a posição de rolagem (#248).

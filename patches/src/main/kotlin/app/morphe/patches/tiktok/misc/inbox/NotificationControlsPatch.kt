@@ -101,7 +101,7 @@ val notificationControlsPatch = bytecodePatch(
 ) {
     category("Inbox")
     // The notify filter carries the drawer half of Turn off push notifications.
-    dependsOn(settingsPatch, sharedExtensionPatch, notificationFilterPatch)
+    dependsOn(settingsPatch, sharedExtensionPatch, notificationFilterPatch, pushDeliveryDiagnosticsPatch)
 
     compatibleWith(*AppCompatibilities.tiktokAndPineDrama())
 

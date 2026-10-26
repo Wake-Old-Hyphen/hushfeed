@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Bandiere e codici paese restano accanto ai nomi scritti da destra a sinistra (#258).
+* **Griglie:** Il controllo di ordinamento ha un’area toccabile di almeno 48 dp.
+* **Griglie:** Il controllo di ordinamento si nasconde quando la griglia viene rimossa dalla vista e riappare al suo ritorno.
+* **Griglie:** Se il nuovo ordinamento non può essere salvato, resta quello attuale.
+* **Griglie:** Scegliendo Ordine originale, il menu di ordinamento della griglia attuale resta disponibile (#180).
+* **Commenti:** I commenti accanto al video usano la stessa larghezza per il layout e la ricostruzione della vista (#253).
+* **Posta in arrivo:** Con la priorità alle Storie attiva, una foto della chat riutilizzata apre la Storia del creator attuale al primo tocco (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnostica:** I rapporti sulle notifiche contano le fasi di registrazione e visualizzazione senza includere il contenuto dei messaggi (#126, #222, #86).
 * **Registrazione schermo:** TikTok resta tra le app recenti selezionabili per la registrazione su Android 14 e versioni successive.
 * **Controlli:** La verifica dell’avanzamento automatico segue la riproduzione di TikTok senza etichettare i singoli video. I filmati non terminati e la riproduzione non disponibile restano senza un esito conclusivo.
 * **TikTok:** Tieni premuto un interruttore nella ricerca delle impostazioni per aprirlo ed evidenziarlo nella sua pagina. Indietro conserva ricerca e posizione (#248).

@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Feed:** Las banderas y los códigos de país permanecen junto a los nombres escritos de derecha a izquierda (#258).
+* **Cuadrículas:** El control de orden tiene un área táctil de al menos 48 dp.
+* **Cuadrículas:** El control de orden se oculta mientras su cuadrícula está separada de la vista y reaparece cuando vuelve.
+* **Cuadrículas:** Si no se puede guardar un cambio de orden, se conserva el orden actual.
+* **Cuadrículas:** Al elegir el orden original, el menú para ordenar la cuadrícula actual sigue disponible (#180).
+* **Comentarios:** Los comentarios junto al video usan el mismo ancho para el diseño y la reconstrucción de la vista (#253).
+* **Bandeja de entrada:** Con la opción de abrir primero las historias, una imagen de chat reutilizada abre la historia del creador actual al primer toque (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diagnóstico:** Los informes de notificaciones cuentan las etapas de registro y visualización sin incluir el contenido de los mensajes (#126, #222, #86).
 * **Grabación de pantalla:** TikTok sigue disponible entre las aplicaciones recientes al grabar una sola aplicación en Android 14 o posterior.
 * **Comprobaciones:** La auditoría del avance automático sigue la reproducción de TikTok sin etiquetar cada video. Los clips sin terminar y la reproducción no disponible quedan sin una conclusión.
 * **TikTok:** Mantén pulsado un interruptor en la búsqueda de ajustes para abrirlo y resaltarlo en su página original. Atrás conserva la búsqueda y la posición (#248).

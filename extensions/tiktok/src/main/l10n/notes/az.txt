@@ -1,5 +1,14 @@
 ## Unreleased
 
+* **Lent:** Ölkə bayraqları və kodları sağdan sola yazılan adların yanında qalır (#258).
+* **Tor görünüşü:** Sıralama düyməsinin toxunma sahəsi ən azı 48 dp olur.
+* **Tor görünüşü:** Tor ayrıldıqda sıralama düyməsi gizlənir, tor qayıdanda yenidən görünür.
+* **Tor görünüşü:** Yeni sıralama yadda saxlanmasa, cari sıra dəyişmir.
+* **Tor görünüşü:** İlkin sıra seçildikdə cari torun sıralama menyusu əlçatan qalır (#180).
+* **Şərhlər:** Videonun yanındakı şərhlər düzən və yenidən qurma yoxlamalarında eyni eni istifadə edir (#253).
+* **Gələnlər:** Hekayəni əvvəl aç seçimi aktiv olduqda, təkrar istifadə edilən söhbət şəkli ilk toxunuşda cari müəllifin Hekayəsini açır (#233).
+* **Playback:** Keep the source video paused when a comment link opens another page. Leaving the tap-to-start cover for another tab also keeps its feed paused (#257).
+* **Diaqnostika:** Bildiriş hesabatları mesaj məzmununu daxil etmədən qeydiyyat və göstərilmə mərhələlərini sayır (#126, #222, #86).
 * **Ekran qeydi:** Android 14 və daha yeni versiyalarda TikTok ekran qeydi üçün son tətbiqlər siyahısında qalır.
 * **Yoxlamalar:** Avtomatik keçid auditi videolara ayrıca etiket vermədən yerli oynatmanı izləyir. Bitməyən videolar və izlənə bilməyən oynatma üçün nəticə qeyri-müəyyən qalır.
 * **TikTok:** Ayar axtarışında keçidi basılı saxlayın ki, öz səhifəsində açılsın və vurğulansın. Geri düyməsi axtarışı və sürüşdürmə yerini saxlayır (#248).
