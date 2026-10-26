@@ -67,15 +67,7 @@ The patches that take files out of TikTok do it while patching, so Pause and a s
 
 Besides the row at the top of TikTok's **Settings and privacy**, two shortcuts skip Profile and work while you're signed out: press and hold **For You** at the top of the feed, or long-press **Home** on the bottom bar. A quick tap on either still does what it always did. The Home shortcut needs **Feed tab navigation** selected along with **Settings** when you patch, and it's the one to use if you've hidden the tab names at the top of the feed.
 
-The home page has a search box, which finds any row by its title or description and flips a plain switch right in the results. In unreleased builds, hold a result switch to open its original page and highlight the setting. Back restores the search. Screen readers offer **Open setting location**. Under it, Quick setups turns on Quiet or Privacy, or puts every switch back to its default, in one tap with Undo. Every settings page sits right on the home page under a small heading, so nothing is more than one tap away:
-
-| Heading | Pages |
-| --- | --- |
-| Your feed | Feed filter, Feed tabs, Feed screen, Playback and Screen time |
-| Conversations | Comments and Inbox |
-| Saving and sharing | Downloads and Share sheet |
-| Privacy and app | Privacy, App, Region, Backup and restore, and Feature Gate Lab when it's installed |
-| Hushfeed | Status, Pause Hushfeed, Diagnostics, About Hushfeed, Report a problem and Support Hushfeed |
+The home page has a search box, which finds any row by its title or description and flips a plain switch right in the results. In unreleased builds, hold a result switch to open its original page and highlight the setting. Back restores the search. Screen readers offer **Open setting location**. Unreleased builds put every available page in one compact list beneath search. Quick setups has been removed.
 
 The status chip next to the Hushfeed title scrolls down to the full status card. About Hushfeed has the build details and the license notices. **Report a problem** opens a GitHub bug report with your versions and the switches you have on filled in, and **Support Hushfeed** opens Ko-fi. A few pages you'll want to know about:
 
@@ -87,7 +79,7 @@ The status chip next to the Hushfeed title scrolls down to the full status card.
 Unreleased builds add a PUSH DELIVERY section to exported diagnostics. Its counters cover stages observed in the current process. Zero means unobserved. During timed capture, actual notification attempts also record Android permission and channel state. Native registration tracing covers global TikTok 47.5.3; PineDrama marks it unsupported. Shared upload counters cover all transports, and cache hits aren't fresh server acknowledgments. Tokens and message contents stay out of the report.
 - **Feature Gate Lab** changes values TikTok reads for its own features. Its reviewed presets show each value before you apply it, and Undo last Lab change puts the old ones back. A gate outside those presets can break sign-in or the feed, so leave it alone unless you know what it does.
 
-Settings use the same rounded panels and controls across every page, in dark and light mode. The [page mockups and implementation notes](concepts/patch-development.md#settings-design-concepts) show the design behind them.
+Unreleased settings use flat rows with the same controls in dark and light mode.
 
 <img src="assets/settings/settings.png" alt="Hushfeed settings home" width="260" /> <img src="assets/settings/playback-sound.png" alt="The Player card on the Playback page" width="260" /> <img src="assets/settings/playback-sound-light.png" alt="The Player card on the Playback page in light mode" width="260" />
 
@@ -398,7 +390,13 @@ To add a language to the settings screen, copy one of the tables under `extensio
 
 The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, unchanged evidence files, and the same executable inputs as the build being qualified. Each check keeps its own input digest, so a partial rerun cannot qualify older checks. Documentation changes alone leave the digest unchanged. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
 
-Unreleased release checks require a separate fixture and native audit for every package and version in the catalog. Each record includes the source APK's manifest and hash, the selected patches and options, and the exact bundle and source commit. A whole-app walk also verifies the installed APK before and after navigation. Older published receipts remain readable as historical records. PineDrama still needs its own native audit and walk profiles before these checks can permit another publication.
+Unreleased release checks require a separate fixture and native audit for every package and version in the catalog. Each record includes the source APK's manifest and hash, the selected patches and options, and the exact bundle and source commit. A whole-app walk also verifies the installed APK before and after navigation. Older published receipts remain readable as historical records. PineDrama still needs a complete native audit and whole-app walk before these checks can permit another publication.
+
+PineDrama's partial `pinedrama-47.5.3-core-walk-v1` profile follows five routes. It launches the native MainActivity, opens Hushfeed with `TikTokActivityHook.openSettings()`, opens the Comments settings page through its menu row, then uses Back to return home and to the original native activity. Each destination needs a fresh boolean observation and a screenshot. The result retains installed APK identities before and after the walk and rejects a process change or native crash. Even if all five steps pass, it stays `INCOMPLETE`, with `full=false` and `eligibleForPublication=false`. Native Profile/settings entry, served comments and photo gallery or posting flows still need their own checks.
+
+Build and install the separate probe with `tools/verification-probe/build.ps1 -Profile pinedrama-47.5.3-core-walk-v1`, the target APK's signing arguments and `-Install -Serial <device>`. Run `scripts/walk-pinedrama.ps1 -Serial <device> -StockApk <merged stock apk> -PatchedApk <signed apk> -AuditBuild <device build receipt> -Bundle <mpp> -Aapt2 <aapt2> -Out <new result path>`. The driver requires the reviewed merged source and all 95 declared patches. Never install the split-required base alone. Pass any exact patch options as an `-ExpectedOptions` array in an in-process call.
+
+An in-process controller can pass its live owned object to the walk with `-Lease`. The controller handles startup, installation and rollback under the same lease. The walk validates and renews it without releasing it. Standalone runs acquire and release their own lease. The [PineDrama coverage profile](audit/profiles/pinedrama-47.5.3-core-v1.json) lists the native routes and prerequisites still needed for every selected patch. `Get-PineDramaCoreResultProblem` in `tools/verification-probe/pinedrama-core.ps1` validates a saved result against its plan and retained evidence.
 
 On Windows, device builds, probe installation, the probe tools, the injected-register check and audit runs need `-LeaseDir <shared lease folder>` and `-ChatIdentity <task identifier>`, or `HUSHFEED_DEVICE_LEASE_DIR` and `HUSHFEED_CHAT_IDENTITY`. Every device command checks the exact serial and current ownership. Existing leases are never reclaimed automatically, including expired ones. Local builds and offline audit checks don't acquire a device lease.
 

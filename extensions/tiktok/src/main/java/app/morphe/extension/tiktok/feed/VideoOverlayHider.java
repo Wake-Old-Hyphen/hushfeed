@@ -772,9 +772,13 @@ public final class VideoOverlayHider {
                     pairDetailCommentBar(hidden, found, TRAVERSAL.selected, ids, detailPager, stripForBar);
                     List<View> strips = selectedViews(found, TRAVERSAL.selected, DETAIL_COMMENT_STRIP_TARGET);
                     int layerId = seeThroughBar ? identifier(activity, activity.getPackageName(), WIDGET_LAYER_ID) : 0;
+                    int[] infoIds = new int[seeThroughBar ? CELL_INFO_IDS.length : 0];
+                    for (int i = 0; i < infoIds.length; i++) {
+                        infoIds[i] = resolveIdentifier(activity, activity.getPackageName(), CELL_INFO_IDS[i], false);
+                    }
                     List<View> roomLayers = selectedViews(found, TRAVERSAL.selected, WIDGET_LAYER_TARGET);
                     // Before the guard, so it measures the caption where this pass leaves it.
-                    liftWidgetLayers(strips, seeThroughBar, layerId, cellId, roomLayers, roomAbove);
+                    liftWidgetLayers(strips, seeThroughBar, layerId, cellId, infoIds, roomLayers, roomAbove);
                     guardBottomSpacer(hidden, found, TRAVERSAL.selected, seeThroughBar, cellId);
                     gateClearControls(hidden, found, TRAVERSAL.selected, carry);
                     applySelectedTargets(ids, hidden, found, TRAVERSAL.selected,
@@ -787,7 +791,7 @@ public final class VideoOverlayHider {
                     // frame is drawn, or the caption, the buttons and the search bar sat a strip's
                     // height low over the tabs until a later layout (#232).
                     if (settleStripColumns(strips) && seeThroughBar) {
-                        liftWidgetLayers(strips, true, layerId, cellId, roomLayers, roomAbove);
+                        liftWidgetLayers(strips, true, layerId, cellId, infoIds, roomLayers, roomAbove);
                     }
                     if (detailPager && detailCommentBar) noteColumnChildren(strips);
                     alignBarRows(found, TRAVERSAL.selected, hidden, cellId);
@@ -1468,6 +1472,14 @@ public final class VideoOverlayHider {
      * against the cell's bottom (S22, 2026-10-13: 2175 tall in a 2043 cell, bottom margin -132).
      */
     private static final String WIDGET_LAYER_ID = "widget_container";
+    /**
+     * Views that only sit in the bottom info a cell keeps outside its widget layer: a LIVE
+     * preview's name and its "Tap to watch LIVE" line, and a mini drama's "Tap to watch this
+     * drama" line, the same row in TikTok's layouts. That info lies in a cell-wide layer of
+     * its own laid out against the cell's bottom (#250, S23 Ultra layout: `ilt` 2316 tall holding
+     * the card at 1977 to 2282), so it went down behind the tabs with the strip's room.
+     */
+    private static final String[] CELL_INFO_IDS = {"tv_live_nickname", "tv_live_tips", "tv_drama_tips"};
     /** Widget layers lifted over the see-through bar, with the offset written. */
     private static final Map<View, Float> WIDGETS_LIFTED = new WeakHashMap<>();
 
@@ -1486,13 +1498,13 @@ public final class VideoOverlayHider {
      * counts the strip's height when both are on: the layer takes the larger of the two.
      */
     private static void liftWidgetLayers(List<View> strips, boolean seeThroughBar, int layerId, int cellId,
-                                         List<View> roomLayers, int room) {
+                                         int[] infoIds, List<View> roomLayers, int room) {
         Map<View, Float> lifts = new HashMap<>();
         if (seeThroughBar && layerId != 0 && cellId != 0) {
             for (View strip : strips) {
                 if (!HIDDEN_HERE.containsKey(strip) || !(strip.getParent() instanceof View)) continue;
                 List<View> layers = new ArrayList<>();
-                collectWidgetLayers((View) strip.getParent(), layerId, cellId, 0, layers);
+                collectWidgetLayers((View) strip.getParent(), layerId, cellId, infoIds, 0, layers);
                 for (View layer : layers) {
                     if (!(layer.getParent() instanceof View)) continue;
                     float gained = roomReached(strip, (View) layer.getParent());
@@ -1590,8 +1602,13 @@ public final class VideoOverlayHider {
         return Math.max(0, Math.min(params.height, cell.getHeight() - slot));
     }
 
-    /** Each cell's widget layer under {@code view}: column, wrapper, pager, cell at the most. */
-    private static void collectWidgetLayers(View view, int layerId, int cellId, int depth, List<View> out) {
+    /**
+     * Each cell's widget layer under {@code view}: column, wrapper, pager, cell at the most. A
+     * cell without one (a LIVE preview, a mini drama) gives the layer that holds its bottom info
+     * instead, the cell's child around one of {@code infoIds} (#250).
+     */
+    private static void collectWidgetLayers(View view, int layerId, int cellId, int[] infoIds, int depth,
+                                            List<View> out) {
         if (!(view instanceof ViewGroup)) return;
         ViewGroup group = (ViewGroup) view;
         if (view.getId() == cellId) {
@@ -1599,12 +1616,31 @@ public final class VideoOverlayHider {
                 View child = group.getChildAt(i);
                 if (child.getId() == layerId) out.add(child);
             }
+            View info = cellInfoLayer(group, layerId, infoIds);
+            if (info != null) out.add(info);
             return;
         }
         if (depth >= 4) return;
         for (int i = 0; i < group.getChildCount(); i++) {
-            collectWidgetLayers(group.getChildAt(i), layerId, cellId, depth + 1, out);
+            collectWidgetLayers(group.getChildAt(i), layerId, cellId, infoIds, depth + 1, out);
         }
+    }
+
+    /**
+     * The child of {@code cell} outside its widget layer that holds a shown one of
+     * {@code infoIds}, null where none does.
+     */
+    @Nullable
+    private static View cellInfoLayer(ViewGroup cell, int layerId, int[] infoIds) {
+        for (int i = 0; i < cell.getChildCount(); i++) {
+            View child = cell.getChildAt(i);
+            if (child.getVisibility() == View.GONE || child.getId() == layerId) continue;
+            for (int id : infoIds) {
+                View info = id != 0 ? child.findViewById(id) : null;
+                if (info != null && info.getVisibility() != View.GONE) return child;
+            }
+        }
+        return null;
     }
 
     private static List<View> selectedViews(List<List<View>> found, int[] selected, int target) {

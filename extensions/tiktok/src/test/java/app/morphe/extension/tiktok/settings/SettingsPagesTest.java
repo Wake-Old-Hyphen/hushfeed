@@ -44,14 +44,14 @@ public class SettingsPagesTest {
             "Screen time", "Comments", "Downloads", "Share sheet", "Inbox", "Privacy", "Region", "App",
             "Diagnostics", "Backup and restore"};
     /**
-     * The home page under search and Quick setups: each heading and the rows under it, with the
+     * The continuous home list under search, followed by Hushfeed status and actions, with the
      * two rows that leave settings, the report and Ko-fi, last.
      */
     private static final String[] HOME_LAYOUT = {
-            "# Your feed", "Feed filter", "Feed tabs", "Feed screen", "Playback", "Screen time",
-            "# Conversations", "Comments", "Inbox",
-            "# Saving and sharing", "Downloads", "Share sheet",
-            "# Privacy and app", "Privacy", "App", "Region", "Backup and restore",
+            "Feed filter", "Feed tabs", "Feed screen", "Playback", "Screen time",
+            "Comments", "Inbox",
+            "Downloads", "Share sheet",
+            "Privacy", "App", "Region", "Backup and restore",
             "# Hushfeed", "[status card]", "[Pause Hushfeed]", "Diagnostics", "About Hushfeed",
             "Report a problem", "Support Hushfeed"};
     private final Map<Field, Boolean> statuses = new LinkedHashMap<>();
@@ -436,7 +436,8 @@ public class SettingsPagesTest {
      * four groups that sat between it and Feed filter, Comments, Downloads or Region were a
      * second one.
      */
-    @Test public void theHomePageListsEveryPageUnderItsHeading() throws Exception {
+    @Test @Config(qualifiers = "w390dp-h708dp-night-mdpi")
+    public void theHomePageListsEveryPageUnderItsHeading() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
@@ -472,14 +473,14 @@ public class SettingsPagesTest {
             assertTrue("Search is not above the first destination",
                     preferenceIndex(screen, search) < preferenceIndex(screen, menuRows(home).get(0)));
             TextView heading = home.getView().findViewWithTag("hushfeed_page_title");
-            assertEquals("Make it yours.", heading.getText().toString());
+            assertEquals("Hushfeed", heading.getText().toString());
             TextView subtitle = home.getView().findViewWithTag("hushfeed_home_subtitle");
-            assertNotNull("the home introduction is missing", subtitle);
-            assertEquals("Your feed. Your rules.", subtitle.getText().toString());
+            assertNull("the removed promotional introduction returned", subtitle);
+            assertNull("Quick setups returned to home", home.findPreference("quick_setups"));
 
             // The status line in the header takes the reader down to the status card, which is
             // below the fold, without leaving the page.
-            layout(home.getView(), 480, 960);
+            layout(home.getView(), 390, 708);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             ListView list = home.getView().findViewById(android.R.id.list);
             int card = positionOf(list, "hushfeed_status");
@@ -492,7 +493,7 @@ public class SettingsPagesTest {
             assertTrue("the compact status ignored the press", status.performClick());
             activity.getFragmentManager().executePendingTransactions();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            layout(home.getView(), 480, 960);
+            layout(home.getView(), 390, 708);
             assertSame("the compact status left the home page", home,
                     activity.getFragmentManager().findFragmentById(android.R.id.content));
             assertTrue("the compact status didn't bring the status card into view",
@@ -579,6 +580,32 @@ public class SettingsPagesTest {
         captureQuietIndex("light");
     }
 
+    @Test @Config(sdk = 29, qualifiers = "w390dp-h844dp-night-mdpi")
+    public void compactReferencePagesRenderInDarkTheme() throws Exception { captureReferencePages("dark"); }
+
+    @Test @Config(sdk = 29, qualifiers = "w390dp-h844dp-notnight-mdpi")
+    public void compactReferencePagesRenderInLightTheme() throws Exception { captureReferencePages("light"); }
+
+    private void captureReferencePages(String theme) throws Exception {
+        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
+            Activity activity = owner.get();
+            Utils.setContext(activity);
+            TikTokPreferenceFragment home = attachHome(activity);
+            layout(home.getView(), 390, 844);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertNull(home.findPreference("quick_setups"));
+            View header = home.getView().findViewWithTag("hushfeed_page_header");
+            assertTrue("the oversized home header returned", header.getHeight() <= 64);
+            UiCapture.save(home.getView(), "reference/" + theme + "/home.png", 390, 844);
+            TikTokPreferenceFragment playback = openMenu(activity, home, "section_playback");
+            layout(playback.getView(), 390, 844);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            UiCapture.save(playback.getView(), "reference/" + theme + "/playback.png", 390, 844);
+            assertTrue(activity.getFragmentManager().popBackStackImmediate());
+            assertSame(home, activity.getFragmentManager().findFragmentById(android.R.id.content));
+        }
+    }
+
     private void captureQuietIndex(String theme) throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
@@ -587,12 +614,8 @@ public class SettingsPagesTest {
             layout(home.getView(), 390, 844);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             ListView list = home.getView().findViewById(android.R.id.list);
-            // Search, Quick setups and the first destination open the page. The rest of the
-            // destinations, Report a problem and the Ko-fi row are a short scroll below them.
-            int quickSetups = positionOf(list, "quick_setups");
-            assertTrue("Quick setups is missing from the home page", quickSetups >= 0);
-            assertTrue("Quick setups is not right under the search field",
-                    quickSetups == positionOf(list, "action_search_settings") + 1);
+            assertNull("Quick setups returned to home", home.findPreference("quick_setups"));
+            assertEquals("the removed preset row still occupies the list", -1, positionOf(list, "quick_setups"));
             assertTrue("the first destination no longer shows without scrolling",
                     positionOf(list, menuRows(home).get(0).getKey()) <= list.getLastVisiblePosition());
             for (var row : menuRows(home)) {
@@ -601,6 +624,8 @@ public class SettingsPagesTest {
             TextView heading = home.getView().findViewWithTag("hushfeed_page_title");
             assertTextFits(heading);
             assertRootRowsReadable(list);
+            assertTrue("the saving and sharing destinations still need a scroll on a standard phone",
+                    positionOf(list, "section_share") <= list.getLastVisiblePosition());
             UiCapture.save(home.getView(), "pages/" + theme + "/settings-quiet-index.png", 390, 844);
         }
     }
@@ -649,6 +674,11 @@ public class SettingsPagesTest {
                 TikTokPreferenceFragment page = openMenu(activity, home, menu.getKey());
                 assertEquals(SECTIONS[i], page.getArguments().getString("morphe_settings_section"));
                 assertTrue(page.getPreferenceScreen().getPreferenceCount() > 2);
+                if ("BACKUP".equals(SECTIONS[i])) {
+                    assertNull("Quick setups recovery returned to Backup", page.findPreference("action_quick_setups_home"));
+                    for (int action = 7311; action <= 7314; action++)
+                        assertNotNull("a backup action was removed", page.findPreference("settings_backup_" + action));
+                }
                 String name = "pages/" + theme + "/" + SECTIONS[i].toLowerCase(java.util.Locale.ROOT);
                 UiCapture.save(page.getView(), name + ".png");
                 ListView list = page.getView().findViewById(android.R.id.list);
@@ -697,7 +727,7 @@ public class SettingsPagesTest {
             Activity activity = owner.get();
             Utils.setContext(activity);
             float radius = app.morphe.extension.tiktok.settings.preference.SettingsUi
-                    .dp(activity, app.morphe.extension.tiktok.settings.preference.SettingsUi.RADIUS_SETTINGS_CARD);
+                    .dp(activity, 0);
 
             for (boolean[] ends : new boolean[][]{{true, false}, {false, true},
                     {true, true}, {false, false}}) {
@@ -705,7 +735,7 @@ public class SettingsPagesTest {
                         app.morphe.extension.tiktok.settings.preference.SettingsUi
                                 .groupRowMask(activity, ends[0], ends[1]);
                 float[] radii = mask.getCornerRadii();
-                assertNotNull("the mask went back to a plain rectangle", radii);
+                assertNotNull("the flat row mask is missing", radii);
                 float top = ends[0] ? radius : 0f;
                 float bottom = ends[1] ? radius : 0f;
                 assertEquals("the top of a first=" + ends[0] + " row", top, radii[0], 0.01f);
@@ -837,7 +867,7 @@ public class SettingsPagesTest {
             float original = configuration.fontScale;
             try {
                 configuration.fontScale = 1.0f;
-                assertEquals("the ordinary scale should match the display heading", 34,
+                assertEquals("the ordinary scale should match the compact heading", 22,
                         app.morphe.extension.tiktok.settings.preference.SettingsHeaderPreference
                                 .headingSizeSp(activity));
 
@@ -1380,8 +1410,7 @@ public class SettingsPagesTest {
                     "Comentarios", heading.getText().toString());
             assertTextFits(heading);
             TextView caption = findTextViewContaining(page.getView(), "Filtros, traducción");
-            assertNotNull("the page description is not in Spanish", caption);
-            assertTextFits(caption);
+            assertNull("the removed duplicate page description returned", caption);
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
             assertTrue("no switch row was on screen, so this proves nothing",
                     assertSwitchRowsReflowed(page.getView().findViewById(android.R.id.list), false) > 0);
@@ -1401,8 +1430,10 @@ public class SettingsPagesTest {
             layout(page.getView(), 320, 800);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             TextView caption = findTextViewContaining(page.getView(), "Filter, Übersetzung");
-            assertNotNull(caption);
-            assertTextFits(caption);
+            assertNull("the removed duplicate page description returned", caption);
+            TextView title = page.getView().findViewWithTag("hushfeed_page_title");
+            assertNotNull(title);
+            assertTextFits(title);
             assertRowsReadable(page.getView().findViewById(android.R.id.list), 48);
             assertTrue("no switch row was on screen, so this proves nothing",
                     assertSwitchRowsReflowed(page.getView().findViewById(android.R.id.list), false) > 0);

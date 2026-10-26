@@ -134,8 +134,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     private String shownSearch = "";
     private SettingsSearchInputPreference searchInput;
     private SettingsHeaderPreference masterHeader;
-    /** The home page's Quick setups card, which a long press takes off the page. Null off the home page. */
-    private QuickSetupsPreference quickSetupsRow;
 
     /**
      * Each section carries one sentence, used both as the subtitle on the home row and as the
@@ -740,7 +738,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
             list.setCacheColorHint(SettingsUi.background());
             list.setDivider(null);
             list.setDividerHeight(0);
-            int side = 16;
+            int side = 0;
             list.setPadding(SettingsUi.dp(getActivity(), side), 0,
                     SettingsUi.dp(getActivity(), side), SettingsUi.dp(getActivity(), 24));
             list.setClipToPadding(false);
@@ -1194,78 +1192,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         searchScreen.addPreference(state);
     }
 
-    /**
-     * The settings one section binds, worked out once and remembered.
-     *
-     * <p>Building the page is how this knows what is on it, and building every page each time
-     * Quick setups runs is about 184 preferences of work. The pages do not gain or lose rows
-     * while the screen is open: what changes is the values, and those are read again every time.
-     */
-    private List<Setting<?>> settingsOn(Context context, Section section) {
-        List<Setting<?>> known = sectionSettings.get(section);
-        if (known != null) {
-            return known;
-        }
-        List<Setting<?>> found = new ArrayList<>();
-        PreferenceScreen scratch = getPreferenceManager().createPreferenceScreen(context);
-        PreferenceCategory category = createCategory(context, scratch, section);
-        if (category != null) {
-            collectSettings(category, found, new java.util.HashSet<>());
-            scratch.removePreference(category);
-        }
-        sectionSettings.put(section, found);
-        return found;
-    }
-
-    /**
-     * Every setting on Hushfeed's pages that this build can reach, for Quick setups, which
-     * changes only what a reader could find and change back by hand.
-     */
-    private java.util.Collection<Setting<?>> settingsOnPages() {
-        java.util.Set<Setting<?>> all = new java.util.LinkedHashSet<>();
-        Context context = getActivity();
-        if (context == null) return all;
-        for (Section section : Section.values()) {
-            try {
-                for (Setting<?> setting : settingsOn(context, section)) {
-                    if (setting.isAvailable()) all.add(setting);
-                }
-            } catch (RuntimeException unreadable) {
-                app.morphe.extension.shared.Logger.printException(
-                        () -> "Couldn't read the settings on " + section + " for Quick setups", unreadable);
-            }
-        }
-        return all;
-    }
-
-    private static void collectSettings(PreferenceGroup group, List<Setting<?>> found,
-            java.util.Set<String> seen) {
-        for (int index = 0; index < group.getPreferenceCount(); index++) {
-            Preference preference = group.getPreference(index);
-            if (preference instanceof PreferenceGroup) {
-                collectSettings((PreferenceGroup) preference, found, seen);
-                continue;
-            }
-            // A checklist row stands for several switches and has no setting of its own.
-            if (preference instanceof SwitchListPreference) {
-                for (Setting<?> setting : ((SwitchListPreference) preference).settings()) {
-                    if (seen.add(setting.key)) found.add(setting);
-                }
-                continue;
-            }
-            if (!preference.hasKey()) {
-                continue;
-            }
-            Setting<?> setting = Setting.getSettingFromPath(preference.getKey());
-            // A row with no setting behind it is an action. Two rows can share one setting, and
-            // a page can bind the same row twice.
-            if (setting == null || !seen.add(setting.key)) {
-                continue;
-            }
-            found.add(setting);
-        }
-    }
-
     /** Set by tests, which see Utils' empty release version and so never a pending What's new. */
     private static volatile String releaseVersionForTests;
 
@@ -1574,7 +1500,7 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     }
 
     /**
-     * The home page: search and Quick setups, then every page as a row of its own under five
+     * The home page: search, then every page as a row of its own under five
      * headings, Hushfeed's own rows last with the Ko-fi row at the very end. Nothing sits behind
      * a second menu (Matt, 2026-10-12). The status card and Pause are in the Hushfeed group
      * rather than up top, so the first page still shows without scrolling; the header's status
@@ -1597,16 +1523,13 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         search.setKey("action_search_settings");
         search.setOrder(-900);
         screen.addPreference(search);
-        quickSetupsRow = new QuickSetupsPreference(context, this::settingsOnPages, this::hideQuickSetups);
-        quickSetupsRow.setOrder(-850);
-        if (!BaseSettings.HIDE_QUICK_SETUPS.get()) screen.addPreference(quickSetupsRow);
 
-        addGroup(context, screen, "Your feed", Section.FEED_FILTER, Section.FEED_NAVIGATION,
-                Section.INTERFACE, Section.PLAYBACK, Section.SCREEN_TIME);
-        addGroup(context, screen, "Conversations", Section.COMMENTS, Section.INBOX);
-        addGroup(context, screen, "Saving and sharing", Section.DOWNLOADS, Section.SHARE);
-        addGroup(context, screen, "Privacy and app", Section.PRIVACY, Section.BEHAVIOR,
-                Section.REGION, Section.BACKUP);
+        for (Section section : new Section[]{Section.FEED_FILTER, Section.FEED_NAVIGATION,
+                Section.INTERFACE, Section.PLAYBACK, Section.SCREEN_TIME, Section.COMMENTS,
+                Section.INBOX, Section.DOWNLOADS, Section.SHARE, Section.PRIVACY, Section.BEHAVIOR,
+                Section.REGION, Section.BACKUP}) {
+            if (section.isAvailable()) addMenu(screen, section);
+        }
         if (FeatureGateLabRuntime.isInstalled()) addFeatureGateLab(screen);
 
         screen.addPreference(SectionHeadingPreference.compact(context, "Hushfeed"));
@@ -1620,40 +1543,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         addAbout(screen);
         addReportProblem(screen);
         addSupport(screen);
-    }
-
-    /** The long press on the Quick setups card: it leaves the home page now, and the banner says where it comes back. */
-    private void hideQuickSetups() {
-        BaseSettings.HIDE_QUICK_SETUPS.save(true);
-        syncQuickSetupsRow();
-        Context context = getActivity();
-        if (context == null) return;
-        SettingsActionBanner.showNotice(context, L10n.f(context,
-                "Quick setups hidden. Bring it back from %1$s.", L10n.t(context, Section.BACKUP.title)));
-    }
-
-    /** Puts the home page's Quick setups card on the page or takes it off to match the saved choice. */
-    private void syncQuickSetupsRow() {
-        PreferenceScreen screen = getPreferenceScreen();
-        if (quickSetupsRow == null || screen == null) return;
-        boolean onPage = screen.findPreference(QuickSetupsPreference.KEY) != null;
-        boolean hidden = BaseSettings.HIDE_QUICK_SETUPS.get();
-        if (hidden && onPage) screen.removePreference(quickSetupsRow);
-        else if (!hidden && !onPage) screen.addPreference(quickSetupsRow);
-    }
-
-    /** A home heading and its pages, or nothing when the bundle left out every one of them. */
-    private void addGroup(Context context, PreferenceScreen screen, String heading,
-            Section... sections) {
-        boolean headed = false;
-        for (Section section : sections) {
-            if (!section.isAvailable()) continue;
-            if (!headed) {
-                screen.addPreference(SectionHeadingPreference.compact(context, heading));
-                headed = true;
-            }
-            addMenu(screen, section);
-        }
     }
 
     /** Report a problem, just above the Ko-fi row: a GitHub bug report with the facts filled in. */
@@ -1929,10 +1818,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
         if (masterHeader != null) masterHeader.refreshStatus();
     }
 
-    /** What each section binds, so Quick setups does not build the pages again. */
-    private final java.util.Map<Section, List<Setting<?>>> sectionSettings =
-            new java.util.EnumMap<>(Section.class);
-
     /** A page's row on the home page, in the compact layout. */
     private void addMenu(PreferenceScreen screen, Section section) {
         String description = L10n.t(getActivity(), section == Section.SCREEN_TIME
@@ -1957,7 +1842,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
 
     private void createSectionMenu(Context context, PreferenceScreen screen, Section section) {
         screen.addPreference(SettingsHeaderPreference.section(context, section.title, this::navigateBack));
-        screen.addPreference(SettingsHeaderPreference.caption(context, section.description));
 
         PreferenceCategory category = createCategory(context, screen, section);
         flattenCategory(screen, category);
@@ -2133,8 +2017,6 @@ public class TikTokPreferenceFragment extends AbstractPreferenceFragment {
     public void onResume() {
         super.onResume();
         activeFragment = this;
-        // Back from Backup and restore, where the card is shown or hidden again.
-        syncQuickSetupsRow();
         refreshStatusCard();
         // Back from a section onto the master menu: whatever was changed there is owed here.
         refreshRestartPending();

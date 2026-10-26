@@ -81,7 +81,7 @@ public final class SettingsMenuPreference extends Preference {
     public void setCompact(boolean compact) {
         if (this.compact == compact) return;
         this.compact = compact;
-        setIcon(new MenuIconDrawable(getContext(), menuIcon));
+        setIcon(new MenuIconDrawable(getContext(), menuIcon, compact));
         notifyChanged();
     }
 
@@ -99,12 +99,12 @@ public final class SettingsMenuPreference extends Preference {
         LinearLayout row = new LinearLayout(context);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setMinimumHeight(SettingsUi.dp(context, compact ? 72 : 80));
+        row.setMinimumHeight(SettingsUi.dp(context, compact ? 52 : 80));
         row.setPadding(
-                SettingsUi.dp(context, compact ? 14 : 16),
-                SettingsUi.dp(context, 12),
-                SettingsUi.dp(context, compact ? 14 : 16),
-                SettingsUi.dp(context, 12)
+                SettingsUi.dp(context, 16),
+                SettingsUi.dp(context, compact ? 6 : 12),
+                SettingsUi.dp(context, 16),
+                SettingsUi.dp(context, compact ? 6 : 12)
         );
 
         FrameLayout iconFrame = new FrameLayout(context);
@@ -113,13 +113,13 @@ public final class SettingsMenuPreference extends Preference {
         icon.setId(android.R.id.icon);
         icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         iconFrame.addView(icon, new FrameLayout.LayoutParams(
-                SettingsUi.dp(context, 40),
-                SettingsUi.dp(context, 40),
+                SettingsUi.dp(context, compact ? 24 : 40),
+                SettingsUi.dp(context, compact ? 24 : 40),
                 Gravity.CENTER
         ));
         row.addView(iconFrame, new LinearLayout.LayoutParams(
-                SettingsUi.dp(context, 40),
-                SettingsUi.dp(context, 40)
+                SettingsUi.dp(context, compact ? 24 : 40),
+                SettingsUi.dp(context, compact ? 24 : 40)
         ));
 
         LinearLayout labels = new LinearLayout(context);
@@ -156,7 +156,7 @@ public final class SettingsMenuPreference extends Preference {
     protected void onBindView(View view) {
         super.onBindView(view);
         SettingsUi.styleTitleAndSummary(view);
-        view.setMinimumHeight(SettingsUi.dp(getContext(), compact ? 72 : 80));
+        view.setMinimumHeight(SettingsUi.dp(getContext(), compact ? 52 : 80));
         styleText(view);
         styleIcon(view);
         addAccessory(view);
@@ -187,7 +187,7 @@ public final class SettingsMenuPreference extends Preference {
         if (icon == null) {
             return;
         }
-        int size = SettingsUi.dp(getContext(), 40);
+        int size = SettingsUi.dp(getContext(), compact ? 24 : 40);
         View iconFrame = view.findViewById(android.R.id.icon_frame);
         if (iconFrame != null) {
             ViewGroup.LayoutParams frameParams = iconFrame.getLayoutParams();
@@ -325,8 +325,7 @@ public final class SettingsMenuPreference extends Preference {
             border.setColor(SettingsUi.border());
             border.setStyle(Paint.Style.STROKE);
             border.setStrokeWidth(SettingsUi.strokePx(context, 1f));
-            line.setColor(icon == Icon.SEARCH ? SettingsUi.textSecondary()
-                    : compact ? SettingsUi.textPrimary() : SettingsUi.accent());
+            line.setColor(icon == Icon.SEARCH ? SettingsUi.textSecondary() : SettingsUi.accent());
             line.setStyle(Paint.Style.STROKE);
             line.setStrokeWidth(SettingsUi.strokePx(context, 1.8f));
             line.setStrokeCap(Paint.Cap.ROUND);

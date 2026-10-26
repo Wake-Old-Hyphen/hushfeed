@@ -1,6 +1,10 @@
+* **Ajustes:** Las tarjetas grandes de inicio se sustituyen por una lista compacta de ancho completo. Se eliminan los ajustes rápidos.
 ## Unreleased
 
+* **TikTok:** Hushfeed ahora necesita Morphe Manager 2.2.0 o superior, o morphe-desktop 1.19.1 en el ordenador.
+* **Comprobaciones:** Se añade un recorrido básico de PineDrama para el inicio, los ajustes y el regreso. La validación completa sigue pendiente.
 * **Feed:** Las banderas y los códigos de país permanecen junto a los nombres escritos de derecha a izquierda (#258).
+* **Feed:** Con la barra inferior transparente activada, el nombre y la línea "Toca para ver" de las vistas previas de LIVE y los minidramas quedan por encima de las pestañas (#250).
 * **Cuadrículas:** El control de orden tiene un área táctil de al menos 48 dp.
 * **Cuadrículas:** El control de orden se oculta mientras su cuadrícula está separada de la vista y reaparece cuando vuelve.
 * **Cuadrículas:** Si no se puede guardar un cambio de orden, se conserva el orden actual.

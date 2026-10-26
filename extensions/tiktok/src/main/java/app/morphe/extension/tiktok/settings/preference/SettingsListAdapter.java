@@ -56,8 +56,7 @@ final class SettingsListAdapter extends BaseAdapter implements WrapperListAdapte
                 || item instanceof SettingsStatusPreference
                 || item instanceof SettingsSearchInputPreference
                 || item instanceof SettingsSearchEntryPreference
-                || item instanceof CalmFeedPresetPreference
-                || item instanceof QuickSetupsPreference;
+                || item instanceof CalmFeedPresetPreference;
     }
 
     /** The recovery page's message, which is drawn as the page's title rather than as a row. */

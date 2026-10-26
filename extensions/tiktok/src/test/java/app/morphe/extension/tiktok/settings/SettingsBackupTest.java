@@ -1276,14 +1276,23 @@ public class SettingsBackupTest {
         JSONObject root = new JSONObject(SettingsBackup.create(false));
         root.getJSONObject("settings").put("comment_translation_excluded_languages", "es");
         root.getJSONArray("setting_keys").put("comment_translation_excluded_languages");
+        root.getJSONObject("settings").put("hushfeed_hide_quick_setups", true);
+        root.getJSONArray("setting_keys").put("hushfeed_hide_quick_setups");
         Settings.MAX_VIDEO_SECONDS.save(0);
 
         SettingsBackup.restore(Utils.getContext(), root.toString(), true);
 
         assertEquals(81, (int) Settings.MAX_VIDEO_SECONDS.get());
-        assertEquals(1, SettingsBackup.settingsSkipped(root.toString()));
+        assertEquals(2, SettingsBackup.settingsSkipped(root.toString()));
         assertEquals(0, SettingsBackup.settingsNotInFile(root.toString()));
         assertFalse(Setting.preferences.preferences.contains("comment_translation_excluded_languages"));
+        assertNull(Setting.getSettingFromPath("hushfeed_hide_quick_setups"));
+        assertFalse(Setting.preferences.preferences.contains("hushfeed_hide_quick_setups"));
+        assertFalse(SettingsBackup.create(false).contains("hushfeed_hide_quick_setups"));
+
+        SettingsBackup.undo(Utils.getContext());
+        assertEquals(0, (int) Settings.MAX_VIDEO_SECONDS.get());
+        assertFalse(Setting.preferences.preferences.contains("hushfeed_hide_quick_setups"));
     }
 
     @Test public void skippedKeysAndMissingCurrentSettingsStaySeparateAcrossHostsAndUndo() throws Exception {

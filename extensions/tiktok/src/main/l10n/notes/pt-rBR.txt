@@ -1,6 +1,10 @@
+* **Configurações:** Os cartões grandes da página inicial dão lugar a uma lista compacta de largura total. As configurações rápidas foram removidas.
 ## Unreleased
 
+* **TikTok:** O Hushfeed agora exige o Morphe Manager 2.2.0 ou mais novo, ou o morphe-desktop 1.19.1 no computador.
+* **Verificações:** Adicionado um percurso básico do PineDrama para abertura, navegação nas configurações e retorno. A validação completa continua pendente.
 * **Feed:** Bandeiras e códigos de país ficam ao lado dos nomes escritos da direita para a esquerda (#258).
+* **Feed:** Com a barra inferior transparente ligada, o nome e a linha "Toque para assistir" das prévias de LIVE e dos minidramas ficam acima das abas (#250).
 * **Grades:** O controle de ordenação tem uma área de toque de pelo menos 48 dp.
 * **Grades:** O controle de ordenação fica oculto enquanto a grade está fora da tela e reaparece quando ela retorna.
 * **Grades:** Se não for possível salvar uma mudança de ordenação, a ordem atual é mantida.

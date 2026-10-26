@@ -728,6 +728,149 @@ public class SeeThroughBottomBarTest {
         }
     }
 
+    private static final int LIVE_NAME_ID = 0x7f0a0c27;
+
+    /**
+     * A LIVE preview in For You (#250, the reporter's S23 Ultra layout): the cell has no widget
+     * layer, and the room's name and card sit in a cell-wide layer of their own, laid out against
+     * the cell's bottom. That layer goes up by the strip's height like a video's widget layer, the
+     * picture behind it stays where it is, and off puts it back.
+     */
+    @Test
+    public void aLivePreviewsCardStaysAboveTheBar() {
+        VideoOverlayHider.resolveForTests("47.5.3:cmy", STRIP_ID);
+        VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
+        VideoOverlayHider.resolveForTests("tv_live_nickname", LIVE_NAME_ID);
+        Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setId(COLUMN_ID);
+            column.setOrientation(LinearLayout.VERTICAL);
+            FrameLayout cell = new FrameLayout(activity);
+            cell.setId(CELL_ID);
+            column.addView(cell, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+            View strip = new View(activity);
+            strip.setId(STRIP_ID);
+            column.addView(strip, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 138));
+            View picture = new FrameLayout(activity);
+            cell.addView(picture);
+            FrameLayout info = new FrameLayout(activity);
+            cell.addView(info);
+            FrameLayout card = new FrameLayout(activity);
+            info.addView(card, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 305, android.view.Gravity.BOTTOM));
+            View name = new View(activity);
+            name.setId(LIVE_NAME_ID);
+            card.addView(name, new FrameLayout.LayoutParams(191, 62));
+            root.addView(column);
+            View bar = new FrameLayout(activity);
+            bar.setId(BAR_ID);
+            bar.setBackgroundColor(Color.BLACK);
+            root.addView(bar, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 138, android.view.Gravity.BOTTOM));
+            activity.setContentView(root);
+            layOut(root);
+            assertEquals(2043, card.getBottom());
+
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, strip.getVisibility());
+            assertEquals(2181, cell.getHeight());
+            assertEquals("the LIVE card went under the bar with the room", -138f, info.getTranslationY(), 0f);
+            assertEquals("the picture fills the room", 0f, picture.getTranslationY(), 0f);
+
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals("the card ends where it did, on the bar's top edge",
+                    2043f, card.getBottom() + info.getTranslationY(), 0f);
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.VISIBLE, strip.getVisibility());
+            assertEquals(0f, info.getTranslationY(), 0f);
+        } finally {
+            VideoOverlayHider.resolveForTests("47.5.3:cmy", 0);
+            VideoOverlayHider.resolveForTests("viewpager_container", 0);
+            VideoOverlayHider.resolveForTests("widget_container", 0);
+            VideoOverlayHider.resolveForTests("tv_live_nickname", 0);
+        }
+    }
+
+    private static final int DRAMA_TIPS_ID = 0x7f0a0c28;
+
+    /**
+     * A mini drama in For You (#250): its "Tap to watch this drama" row and title sit in a layer
+     * beside the widget layer, so both go up by the strip's height, and a cell whose drama row
+     * TikTok left gone keeps that layer where it is.
+     */
+    @Test
+    public void aDramasInfoBesideTheWidgetLayerGoesUpWithIt() {
+        VideoOverlayHider.resolveForTests("47.5.3:cmy", STRIP_ID);
+        VideoOverlayHider.resolveForTests("viewpager_container", COLUMN_ID);
+        VideoOverlayHider.resolveForTests("widget_container", LAYER_ID);
+        VideoOverlayHider.resolveForTests("tv_drama_tips", DRAMA_TIPS_ID);
+        Settings.SEE_THROUGH_BOTTOM_BAR.save(true);
+        try (var controller = Robolectric.buildActivity(Activity.class).setup().visible()) {
+            Activity activity = controller.get();
+            Utils.setContext(activity);
+            FrameLayout root = new FrameLayout(activity);
+            LinearLayout column = new LinearLayout(activity);
+            column.setId(COLUMN_ID);
+            column.setOrientation(LinearLayout.VERTICAL);
+            StackedPager pager = new StackedPager(activity);
+            column.addView(pager, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f));
+            View strip = new View(activity);
+            strip.setId(STRIP_ID);
+            column.addView(strip, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 138));
+            FrameLayout[] layers = new FrameLayout[2];
+            FrameLayout[] infos = new FrameLayout[2];
+            View[] tips = new View[2];
+            for (int i = 0; i < 2; i++) {
+                FrameLayout cell = new FrameLayout(activity);
+                cell.setId(CELL_ID);
+                layers[i] = new FrameLayout(activity);
+                layers[i].setId(LAYER_ID);
+                cell.addView(layers[i]);
+                infos[i] = new FrameLayout(activity);
+                cell.addView(infos[i]);
+                tips[i] = new View(activity);
+                tips[i].setId(DRAMA_TIPS_ID);
+                infos[i].addView(tips[i], new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT, 62, android.view.Gravity.BOTTOM));
+                pager.addView(cell);
+            }
+            tips[1].setVisibility(View.GONE);
+            root.addView(column);
+            View bar = new FrameLayout(activity);
+            bar.setId(BAR_ID);
+            bar.setBackgroundColor(Color.BLACK);
+            root.addView(bar, new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, 138, android.view.Gravity.BOTTOM));
+            activity.setContentView(root);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            layOut(root);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(View.GONE, strip.getVisibility());
+            assertEquals(-138f, layers[0].getTranslationY(), 0f);
+            assertEquals("the drama row went under the bar with the room", -138f, infos[0].getTranslationY(), 0f);
+            assertEquals("a layer with no drama row shown stays put", 0f, infos[1].getTranslationY(), 0f);
+
+            Settings.SEE_THROUGH_BOTTOM_BAR.save(false);
+            VideoOverlayHider.applyTo(activity);
+            assertEquals(0f, infos[0].getTranslationY(), 0f);
+            assertEquals(0f, layers[0].getTranslationY(), 0f);
+        } finally {
+            VideoOverlayHider.resolveForTests("47.5.3:cmy", 0);
+            VideoOverlayHider.resolveForTests("viewpager_container", 0);
+            VideoOverlayHider.resolveForTests("widget_container", 0);
+            VideoOverlayHider.resolveForTests("tv_drama_tips", 0);
+        }
+    }
+
     /**
      * The switch turned on with TikTok running (S22, 2026-10-20): the guard had measured the
      * caption clear of the bar, so it was armed, and TikTok then showed the strip again. The pass

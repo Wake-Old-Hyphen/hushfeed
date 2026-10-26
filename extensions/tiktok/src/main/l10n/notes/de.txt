@@ -1,6 +1,10 @@
+* **Einstellungen:** Große Karten auf der Startseite weichen einer kompakten Liste über die volle Breite. Die Schnelleinstellungen wurden entfernt.
 ## Unreleased
 
+* **TikTok:** Hushfeed braucht jetzt Morphe Manager 2.2.0 oder neuer, am Computer morphe-desktop 1.19.1.
+* **Prüfungen:** Ein PineDrama-Kernablauf prüft Start, Einstellungsnavigation und Rückkehr. Die vollständige Prüfung bleibt offen.
 * **Feed:** Länderflaggen und Ländercodes bleiben neben Namen, die von rechts nach links geschrieben werden (#258).
+* **Feed:** Mit durchsichtiger unterer Leiste bleiben Name und "Zum Ansehen tippen"-Zeile von LIVE-Vorschauen und Mini-Dramen über den Tabs (#250).
 * **Raster:** Das Sortierfeld hat eine Berührungsfläche von mindestens 48 dp.
 * **Raster:** Das Sortierfeld wird ausgeblendet, solange sein Raster entfernt ist, und erscheint bei dessen Rückkehr wieder.
 * **Raster:** Wenn eine neue Sortierung nicht gespeichert werden kann, bleibt die bisherige Reihenfolge erhalten.

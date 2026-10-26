@@ -14,24 +14,14 @@ import android.widget.TextView;
 
 @SuppressWarnings("deprecation")
 public final class SectionHeadingPreference extends Preference {
-    private final boolean homeGroup;
-    private boolean compact;
-
     public SectionHeadingPreference(Context context, String title) {
-        this(context, title, false);
-    }
-
-    public SectionHeadingPreference(Context context, String title, boolean homeGroup) {
         super(context);
-        this.homeGroup = homeGroup;
         setTitle(L10n.t(context, title));
         setSelectable(false);
     }
 
     public static SectionHeadingPreference compact(Context context, String title) {
-        SectionHeadingPreference heading = new SectionHeadingPreference(context, title, true);
-        heading.compact = true;
-        return heading;
+        return new SectionHeadingPreference(context, title);
     }
 
     @Override
@@ -39,8 +29,8 @@ public final class SectionHeadingPreference extends Preference {
         Context context = getContext();
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        int side = SettingsUi.dp(context, 8);
-        layout.setPadding(side, SettingsUi.dp(context, compact ? 20 : 16),
+        int side = SettingsUi.dp(context, 16);
+        layout.setPadding(side, SettingsUi.dp(context, 14),
                 side, SettingsUi.dp(context, 8));
 
         TextView title = new TextView(context);
@@ -48,8 +38,8 @@ public final class SectionHeadingPreference extends Preference {
         title.setTextColor(SettingsUi.textSecondary());
         title.setTextSize(12);
         title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
-        title.setAllCaps(true);
-        title.setLetterSpacing(homeGroup ? 0.08f : 0.1f);
+        title.setAllCaps(false);
+        title.setLetterSpacing(0f);
         title.setText(getTitle());
         SettingsUi.markHeading(title);
         layout.addView(title, new LinearLayout.LayoutParams(

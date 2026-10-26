@@ -1,6 +1,10 @@
+* **Pengaturan:** Kartu besar di halaman utama diganti daftar ringkas selebar layar. Pengaturan cepat dihapus.
 ## Unreleased
 
+* **TikTok:** Hushfeed kini butuh Morphe Manager 2.2.0 atau yang lebih baru, atau morphe-desktop 1.19.1 di komputer.
+* **Pemeriksaan:** Tambahkan pengujian alur dasar PineDrama untuk peluncuran, navigasi pengaturan, dan kembali. Verifikasi lengkap belum selesai.
 * **Feed:** Bendera dan kode negara tetap berada di samping nama yang ditulis dari kanan ke kiri (#258).
+* **Feed:** Dengan bilah bawah tembus pandang aktif, nama dan baris "Ketuk untuk menonton" pada pratinjau LIVE dan drama mini tetap di atas tab (#250).
 * **Kisi:** Kontrol pengurutan memiliki area sentuh minimal 48 dp.
 * **Kisi:** Kontrol pengurutan disembunyikan saat kisi dilepas dari tampilan dan ditampilkan kembali saat kisi kembali.
 * **Kisi:** Urutan saat ini tetap dipertahankan jika perubahan pengurutan gagal disimpan.

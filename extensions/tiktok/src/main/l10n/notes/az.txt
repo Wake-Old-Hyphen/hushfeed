@@ -1,6 +1,10 @@
+* **Parametrlər:** Böyük ana səhifə kartları yığcam, tam enli siyahı ilə əvəz edilib. Sürətli quruluşlar silinib.
 ## Unreleased
 
+* **TikTok:** Hushfeed indi Morphe Manager 2.2.0 və ya daha yenisini, kompüterdə isə morphe-desktop 1.19.1 tələb edir.
+* **Yoxlamalar:** PineDrama üçün açılış, ayarlar və geri qayıtma üzrə əsas yoxlama əlavə edilib. Tam uyğunluq yoxlaması tamamlanmayıb.
 * **Lent:** Ölkə bayraqları və kodları sağdan sola yazılan adların yanında qalır (#258).
+* **Lent:** Şəffaf alt panel açıq olanda LIVE önizləmələrinin və mini dramların adı və "Baxmaq üçün toxunun" sətri tabların üstündə qalır (#250).
 * **Tor görünüşü:** Sıralama düyməsinin toxunma sahəsi ən azı 48 dp olur.
 * **Tor görünüşü:** Tor ayrıldıqda sıralama düyməsi gizlənir, tor qayıdanda yenidən görünür.
 * **Tor görünüşü:** Yeni sıralama yadda saxlanmasa, cari sıra dəyişmir.
