@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **Perekaman layar:** TikTok tetap tersedia dalam pilihan aplikasi terbaru untuk perekaman di Android 14 dan yang lebih baru.
+* **Pemeriksaan:** Audit perpindahan otomatis mengikuti pemutaran TikTok tanpa memberi label pada tiap video. Klip yang belum selesai dan pemutaran yang tidak tersedia tetap tidak dapat disimpulkan.
+* **TikTok:** Tahan sakelar di pencarian pengaturan untuk membuka dan menyorotnya di halaman asal. Kembali mempertahankan pencarian dan posisi gulir (#248).
 * **Diagnostik:** Catatan callback frame pertama menyimpan keterkaitan sumber dan waktu monoton untuk pemeriksaan saat pemutaran dimulai (#150).
 * **Pemeriksaan build:** Pemeriksaan rilis mewajibkan bukti APK dan pengujian aplikasi yang sesuai untuk setiap paket yang dinyatakan. Penelusuran memverifikasi build terpasang dan opsi patch.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

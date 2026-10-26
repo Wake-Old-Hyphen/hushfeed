@@ -1027,7 +1027,6 @@ Search hidden creators	Gizlədilən yaradıcıları axtarın
 Search settings	Ayarlarda axtarın
 Search share actions	Paylaşma əməliyyatlarını axtarın
 Search these comments	Bu şərhlərdə axtarın
-Search translated titles and descriptions, then open the original setting.	Tərcümə olunmuş başlıqları və təsvirləri axtarın, sonra orijinal ayarı açın.
 Search within comments	Şərhlər daxilində axtarın
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Saniyə. Sıfır bütün uzunluqları saxlayır. Lentin göndərdiyi hər şey süzüləcəksə, lent boş qalmasın deyə limitinizə ən yaxın video saxlanılır.
 Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.	Saniyə. Sıfır bütün uzunluqları saxlayır. Foto paylaşımlar və uzunluğu bilinməyən videolar qalır. Lentin göndərdiyi hər şey süzüləcəksə, limitinizə ən yaxın video saxlanılır.
@@ -2307,3 +2306,8 @@ Some recording files remain. Try deleting them again.	Bəzi yazı faylları qal�
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Bərpa edilmiş çəkiliş %1$s qovluğunda saxlanıldı
+
+# context: Settings search switch location action, gesture hint, and missing original row.
+Open setting location	Parametrin yerini aç
+Tap a switch to change it. Press and hold to open its page.	Dəyişmək üçün açara toxunun. Səhifəsini açmaq üçün basılı saxlayın.
+This setting isn't available on this page. Go back and search again.	Bu parametr bu səhifədə əlçatan deyil. Geri qayıdıb yenidən axtarın.

@@ -1027,7 +1027,6 @@ Search hidden creators	Gizlenen içerik üreticilerinde ara
 Search settings	Ayarlarda ara
 Search share actions	Paylaşım eylemlerinde ara
 Search these comments	Bu yorumlarda ara
-Search translated titles and descriptions, then open the original setting.	Çevrilmiş başlık ve açıklamalarda ara, sonra asıl ayarı aç.
 Search within comments	Yorumların içinde ara
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Saniye. Sıfır, her uzunluğu tutar. Akışın az önce gönderdiği her şey filtrelenecekse akış boş kalmasın diye sınırına en yakın video tutulur.
 Seconds. Zero keeps every length. Photo posts and videos without a known length stay. If everything the feed just sent would be filtered out, the video closest to your limit is kept.	Saniye. Sıfır, her uzunluğu tutar. Fotoğraf gönderileri ve uzunluğu bilinmeyen videolar kalır. Akışın az önce gönderdiği her şey filtrelenecekse sınırına en yakın video tutulur.
@@ -2307,3 +2306,8 @@ Some recording files remain. Try deleting them again.	Bazı kayıt dosyaları du
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Kurtarılan kayıt %1$s konumuna kaydedildi
+
+# context: Settings search switch location action, gesture hint, and missing original row.
+Open setting location	Ayarın konumunu aç
+Tap a switch to change it. Press and hold to open its page.	Bir anahtarı değiştirmek için dokunun. Sayfasını açmak için basılı tutun.
+This setting isn't available on this page. Go back and search again.	Bu ayar bu sayfada kullanılamıyor. Geri dönüp yeniden arayın.

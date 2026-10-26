@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **Gravação de tela:** O TikTok continua disponível entre os apps recentes para gravação no Android 14 ou mais recente.
+* **Verificações:** A auditoria do avanço automático acompanha a reprodução do TikTok sem rotular cada vídeo. Clipes não concluídos e reprodução indisponível ficam sem um resultado conclusivo.
+* **TikTok:** Mantenha pressionado um interruptor na busca de configurações para abri-lo e destacá-lo na página original. Voltar mantém a busca e a posição de rolagem (#248).
 * **Diagnóstico:** Os registros da chamada do primeiro quadro mantêm a origem e tempos monotônicos para verificar o início da reprodução (#150).
 * **Verificações da compilação:** As verificações de lançamento exigem APK e testes nativos correspondentes para cada pacote anunciado. Os testes de navegação verificam a compilação instalada e as opções dos patches.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

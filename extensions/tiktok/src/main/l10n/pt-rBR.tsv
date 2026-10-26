@@ -991,7 +991,6 @@ Search settings	Buscar nas configurações
 Search share actions	Buscar ações de compartilhamento
 Search within comments	Pesquisar nos comentários
 Search these comments	Buscar nestes comentários
-Search translated titles and descriptions, then open the original setting.	Buscar entre os títulos e descrições traduzidos e depois abrir a configuração original.
 Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.	Peça ao TikTok resultados de pesquisa que não sejam personalizados para sua conta. Isso muda os resultados, não os botões nem as sugestões de pesquisa.
 Search by name or gate key	Buscar por nome ou chave do gate
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Segundos. Zero aceita qualquer duração. Se tudo o que o feed acabou de enviar fosse filtrado, o vídeo mais perto do seu limite fica para o feed não ficar vazio.
@@ -2307,3 +2306,8 @@ Some recording files remain. Try deleting them again.	Alguns arquivos de gravaç
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Gravação recuperada salva em %1$s
+
+# context: Settings search switch location action, gesture hint, and missing original row.
+Open setting location	Abrir local da configuração
+Tap a switch to change it. Press and hold to open its page.	Toque em um interruptor para alterá-lo. Toque e segure para abrir a página dele.
+This setting isn't available on this page. Go back and search again.	Esta configuração não está disponível nesta página. Volte e pesquise novamente.

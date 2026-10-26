@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **Bildschirmaufnahme:** TikTok bleibt ab Android 14 in der Auswahl der zuletzt verwendeten Apps für die Aufnahme verfügbar.
+* **Prüfungen:** Der Audit für den automatischen Videowechsel verfolgt TikToks Wiedergabe ohne einzelne Videos zu kennzeichnen. Nicht beendete Clips und nicht verfügbare Wiedergabedaten bleiben unentschieden.
+* **TikTok:** Halte einen Schalter in der Einstellungssuche gedrückt, um ihn auf seiner ursprünglichen Seite zu öffnen und hervorzuheben. Zurück behält Suche und Scrollposition bei (#248).
 * **Diagnose:** Aufzeichnungen des ersten Bild-Callbacks behalten die Quellzuordnung und monotone Zeitstempel für Startprüfungen (#150).
 * **Build-Prüfungen:** Release-Prüfungen verlangen für jedes angegebene Paket passende APK- und native Prüfnachweise. Rundgänge prüfen den installierten Build und die Patch-Optionen.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

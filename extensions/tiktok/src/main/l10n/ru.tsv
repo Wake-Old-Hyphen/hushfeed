@@ -1069,7 +1069,6 @@ Search settings	Поиск по настройкам
 Search share actions	Поиск по действиям «Поделиться»
 Search within comments	Поиск по комментариям
 Search these comments	Поиск по этим комментариям
-Search translated titles and descriptions, then open the original setting.	Искать по переведённым заголовкам и описаниям, а затем открывать нужную настройку.
 Ask TikTok for search results that aren't personalized to your account. This changes results, not search buttons or suggestions.	Запрашивать у TikTok результаты поиска, не персонализированные под ваш аккаунт. Это меняет результаты, а не кнопки поиска или подсказки.
 Search by name or gate key	Поиск по названию или ключу переключателя
 Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.	Секунды. Ноль сохраняет любую длину. Если бы всё, что лента только что прислала, оказалось отфильтровано, остаётся видео, ближе всего подходящее к вашему лимиту, чтобы лента не была пустой.
@@ -2487,3 +2486,8 @@ Some recording files remain. Try deleting them again.	Некоторые фай�
 
 # context: Explicit recording Retry when the original stop reason was not retained.
 Recovered recording saved to %1$s	Восстановленная запись сохранена в %1$s
+
+# context: Settings search switch location action, gesture hint, and missing original row.
+Open setting location	Перейти к настройке
+Tap a switch to change it. Press and hold to open its page.	Нажмите на переключатель, чтобы изменить его. Нажмите и удерживайте, чтобы открыть его страницу.
+This setting isn't available on this page. Go back and search again.	Эта настройка недоступна на этой странице. Вернитесь назад и повторите поиск.

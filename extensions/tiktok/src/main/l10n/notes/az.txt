@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **Ekran qeydi:** Android 14 və daha yeni versiyalarda TikTok ekran qeydi üçün son tətbiqlər siyahısında qalır.
+* **Yoxlamalar:** Avtomatik keçid auditi videolara ayrıca etiket vermədən yerli oynatmanı izləyir. Bitməyən videolar və izlənə bilməyən oynatma üçün nəticə qeyri-müəyyən qalır.
+* **TikTok:** Ayar axtarışında keçidi basılı saxlayın ki, öz səhifəsində açılsın və vurğulansın. Geri düyməsi axtarışı və sürüşdürmə yerini saxlayır (#248).
 * **Diaqnostika:** İlk kadr çağırışının qeydləri başlanğıc yoxlamaları üçün mənbə əlaqəsini və monoton vaxt nişanlarını saxlayır (#150).
 * **Qurma yoxlamaları:** Buraxılış yoxlamaları göstərilən hər paket üçün uyğun APK və tətbiqdaxili yoxlama sübutu tələb edir. Tətbiq gəzintisi quraşdırılmış qurmanı və yamaq seçimlərini yoxlayır.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

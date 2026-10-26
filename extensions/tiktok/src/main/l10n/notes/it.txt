@@ -1,5 +1,8 @@
 ## Unreleased
 
+* **Registrazione schermo:** TikTok resta tra le app recenti selezionabili per la registrazione su Android 14 e versioni successive.
+* **Controlli:** La verifica dell’avanzamento automatico segue la riproduzione di TikTok senza etichettare i singoli video. I filmati non terminati e la riproduzione non disponibile restano senza un esito conclusivo.
+* **TikTok:** Tieni premuto un interruttore nella ricerca delle impostazioni per aprirlo ed evidenziarlo nella sua pagina. Indietro conserva ricerca e posizione (#248).
 * **Diagnostica:** I record della callback del primo fotogramma conservano la fonte e i tempi monotoni per controllare l’avvio (#150).
 * **Controlli della build:** I controlli di rilascio richiedono prove native e APK corrispondenti per ogni pacchetto dichiarato. I controlli nell’app verificano la build installata e le opzioni delle patch.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

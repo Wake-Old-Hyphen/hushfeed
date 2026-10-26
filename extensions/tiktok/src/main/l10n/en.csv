@@ -1219,6 +1219,7 @@ Open comments,Open comments
 Open external links directly,Open external links directly
 Open messages,Open messages
 Open profile and story website links in your system browser instead of TikTok's in-app browser.,Open profile and story website links in your system browser instead of TikTok's in-app browser.
+Open setting location,Open setting location
 Open shared videos alone,Open shared videos alone
 Open the Story when a creator is LIVE,Open the Story when a creator is LIVE
 Open the comments at full height,Open the comments at full height
@@ -1562,7 +1563,6 @@ Search loaded activity,Search loaded activity
 Search settings,Search settings
 Search share actions,Search share actions
 Search these comments,Search these comments
-"Search translated titles and descriptions, then open the original setting.","Search translated titles and descriptions, then open the original setting."
 Search within comments,Search within comments
 Seconds per photo,Seconds per photo
 "Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty.","Seconds. Zero keeps every length. If everything the feed just sent would be filtered out, the video closest to your limit is kept so the feed isn't empty."
@@ -1832,6 +1832,7 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.,Tap Repost on the bar under a video twice within %1$d seconds. A repost with a note is left alone.
 Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.,Tap a comment's heart twice within %1$d seconds. A double tap on the comment needs a second one too. Removing a like stays immediate.
 Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.,Tap a story's heart twice within %1$d seconds. Removing a like stays immediate.
+Tap a switch to change it. Press and hold to open its page.,Tap a switch to change it. Press and hold to open its page.
 Tap again to follow,Tap again to follow
 Tap again to like,Tap again to like
 Tap again to repost,Tap again to repost
@@ -2007,6 +2008,7 @@ This preset isn't available for your installed TikTok version.,This preset isn't
 This profile picture isn't available to save,This profile picture isn't available to save
 "This quality isn't available as a complete file, so TikTok's own save runs instead","This quality isn't available as a complete file, so TikTok's own save runs instead"
 This screen recording has no sound.,This screen recording has no sound.
+This setting isn't available on this page. Go back and search again.,This setting isn't available on this page. Go back and search again.
 "This setting's value can't be copied on this build, so it can't be overridden. Reset the override.","This setting's value can't be copied on this build, so it can't be overridden. Reset the override."
 This story isn't available to save,This story isn't available to save
 This value is required.,This value is required.

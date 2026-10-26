@@ -6,6 +6,9 @@ Every Hushfeed release, newest first.
 
 ### Fixes
 
+* **Screen recording:** Keep TikTok in Android's recent-apps recording choices on Android 14 and newer.
+* **Build checks:** Auto-advance audits follow native playback without per-video labels. Unfinished clips and unavailable playback stay inconclusive.
+* **TikTok:** Hold a settings-search switch to open and highlight it on its original page. Back keeps the search and scroll position (#248).
 * **Diagnostics:** First-frame callback records keep source ownership and monotonic timestamps for startup checks (#150).
 * **Build checks:** Release checks require matching APK and native evidence for every advertised package. Walks verify the installed build and patch options.
 * **TikTok:** Recording recovery exports use bulk writes to avoid long waits when saving large files.

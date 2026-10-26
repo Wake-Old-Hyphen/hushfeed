@@ -67,7 +67,7 @@ The patches that take files out of TikTok do it while patching, so Pause and a s
 
 Besides the row at the top of TikTok's **Settings and privacy**, two shortcuts skip Profile and work while you're signed out: press and hold **For You** at the top of the feed, or long-press **Home** on the bottom bar. A quick tap on either still does what it always did. The Home shortcut needs **Feed tab navigation** selected along with **Settings** when you patch, and it's the one to use if you've hidden the tab names at the top of the feed.
 
-The home page has a search box, which finds any row by its title or description and flips a plain switch right in the results. Under it, Quick setups turns on Quiet or Privacy, or puts every switch back to its default, in one tap with Undo. Every settings page sits right on the home page under a small heading, so nothing is more than one tap away:
+The home page has a search box, which finds any row by its title or description and flips a plain switch right in the results. In unreleased builds, hold a result switch to open its original page and highlight the setting. Back restores the search. Screen readers offer **Open setting location**. Under it, Quick setups turns on Quiet or Privacy, or puts every switch back to its default, in one tap with Undo. Every settings page sits right on the home page under a small heading, so nothing is more than one tap away:
 
 | Heading | Pages |
 | --- | --- |
@@ -327,6 +327,8 @@ If you can't reach the settings at all, create an empty file named `hushfeed-saf
 If TikTok closes while saves are still going, the next time you open it the download recovery banner names the ones that didn't finish, or that Hushfeed can't confirm, and how many of their files are missing. Files that already reached your gallery count as saved and are left alone. Nothing picks a save up again by itself, so save it again if you still want it. The note Hushfeed keeps for this stays inside TikTok's own storage and holds no links or tokens. On Android 9 and older, a file that's still being written is noted by its own path, which is the name it's saved under and can include the creator and the video ID, until it's confirmed. Each save's entry goes when the save ends or once the banner has named it.
 
 In unreleased source builds, LIVE recordings keep recovery files inside the app until Hushfeed verifies the saved copy. After an interruption, Hushfeed tries to save the complete part. If it can't, Retry opens the retained recording's actions. You can retry saving it, export its files or delete them. Older files with an unknown save history and damaged recovery records offer export or deletion. Finish that recovery before starting another recording. Clearing the app's data or uninstalling it removes these files.
+
+For one-app recording on Android 14 or newer, unreleased builds keep TikTok in the recording prompt's recent-apps list. Choose its preview there. Each new recording opens Android's permission prompt again.
 
 ### A photo post saved as a video still has TikTok's watermark
 
