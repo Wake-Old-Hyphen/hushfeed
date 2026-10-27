@@ -794,9 +794,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
             List<String> tapLabels = new ArrayList<>(Arrays.asList("TikTok default", "Do nothing", "Open comments",
                     "Save the original sound", "Copy the video link", "Copy the sound link",
                     "Find the sound on YouTube Music", "Set a sleep timer that closes TikTok",
-                    "Save the frame on screen as a photo", "Save the video's cover"));
+                    "Save the frame on screen as a photo", "Save the video's cover", "Open the search page"));
             List<String> tapValues = new ArrayList<>(Arrays.asList("default", "nothing", "comments", "original_sound",
-                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover"));
+                    "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame", "save_cover",
+                    "open_search"));
             if (SettingsStatus.liveSpeedEnabled) {
                 tapLabels.add("Speed up this video, double tap again to undo");
                 tapValues.add("speed_toggle");
@@ -833,10 +834,10 @@ public final class InterfacePreferenceCategory extends ConditionalPreferenceCate
                     "Do nothing", "Like the video", "Open comments", "Save the original sound",
                     "Copy the video link", "Copy the sound link", "Find the sound on YouTube Music",
                     "Set a sleep timer that closes TikTok", "Save the frame on screen as a photo",
-                    "Save the video's cover"));
+                    "Save the video's cover", "Open the search page"));
             List<String> pressValues = new ArrayList<>(Arrays.asList("default", "nothing", "like", "comments",
                     "original_sound", "copy_link", "copy_sound_link", "youtube_music", "sleep_timer", "save_frame",
-                    "save_cover"));
+                    "save_cover", "open_search"));
             if (SettingsStatus.automaticClearDisplayEnabled) {
                 pressLabels.add("Turn Clear display on or off");
                 pressValues.add("clear_display");

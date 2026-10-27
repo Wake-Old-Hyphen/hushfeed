@@ -8,12 +8,18 @@ Every Hushfeed release, newest first.
 
 * **Settings:** Every Hushfeed title (the settings bar, its dialogs, the Feature Gate Lab and the lock screen) now wears TikTok's cyan and red in a slow moving gradient, and it keeps moving even with Android's animations turned off.
 * **Settings:** The Calm feed preset is gone from the top of Feed filter. The filters it used to flip are all still there, and whatever you turned on with it stays on.
+* **Gestures:** `Double tap` and `Long press` can open TikTok's search page now. It works with `Hide feed search button` on too, so you can hide the button and still get to Search (#251).
+* **Comments:** `Fold the search into a button` puts a magnifier at the top left of the comments in place of the search box. Tap it to search, and searching (or another tap) folds the box away again. Your search keeps filtering, and the result line stays so you can tell (#254).
 * **Settings:** `Hide the Hushfeed row` takes Hushfeed out of TikTok's Settings and privacy. Press and hold For You at the top of the feed to open the settings after that, or Home when `Long-press Home for Hushfeed settings` is on. Pausing Hushfeed brings the row back (#264).
+* **Profiles:** An @username typed into someone's bio is a link now, like the ones TikTok already links. Tap it and that profile opens. Tapping the rest of the bio still translates it, and a long press still copies it. A name right after "IG:" or "Snap" stays plain, since it belongs to another app. Turn it off with `Tap @names in bios` (#247).
 * **Feed:** Add a floating glass pill to the main feed's bottom bar with a lens that slides across the tabs, a slide-along gesture, optional haptics, and new Interface settings for blur strength, glass opacity, pill height and corners (#259).
 * **Patching:** Every patch with settings now has Morphe options that pick its starting values, so a build can ship with the switches you want already on. Saved choices still win, and Reset goes back to the value you picked. Thanks to @XEGARE (#256).
 
 ### Fixes
 
+* **Theme:** With `AMOLED dark theme` on, the activity center's card is black (or your picked color) instead of TikTok's dark gray. Those history pages are web pages inside TikTok, so the theme never reached them before (#263).
+* **Feed:** `Hide unverified content notices` also takes the "Caution · May contain inaccurate information" strip off videos people share with you in messages. That label travels inside the message itself, so the switch didn't reach it before (#258).
+* **Profiles:** A long press on someone else's bio copies it now. Before, it only got TikTok's translate bubble, because TikTok draws other people's bios with a different part of the app than your own (#247).
 * **Comments:** With `Open the comments at full height` on, the sheet stops below the status bar instead of running under the clock and battery icons, and the first video after opening TikTok gets the full height too instead of the usual two thirds (#261).
 * **Settings:** Categories expand and collapse beneath their main-list rows. Search reveals controls in the same list, and open categories survive rotation and a restart.
 * **Settings:** Replace large home cards with a compact full-width list. Remove Quick setups.

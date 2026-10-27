@@ -119,6 +119,7 @@
       "BLOCK_FROM_COMMENT_MENU",
       "COMMENT_SEARCH",
       "COMMENT_EXPORT",
+      "COMMENT_SEARCH_FOLDED",
       "COMMENT_LINKS",
       "HIDE_COMMENT_MEDIA",
       "HIDE_SPAM_COMMENTS",
@@ -142,7 +143,8 @@
     ],
     "Copy bio and IDs": [
       "COPY_IDS",
-      "ACCOUNT_FACTS"
+      "ACCOUNT_FACTS",
+      "BIO_MENTION_LINKS"
     ],
     "Copy comments without username": [
       "COPY_COMMENTS_WITHOUT_USERNAME"

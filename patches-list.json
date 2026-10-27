@@ -2071,6 +2071,15 @@
           "values": null
         },
         {
+          "key": "comment_search_folded",
+          "title": "Default: comment search folded",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "comment_links",
           "title": "Default: comment links",
           "description": null,
@@ -2331,6 +2340,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "bio_mention_links",
+          "title": "Default: bio mention links",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]

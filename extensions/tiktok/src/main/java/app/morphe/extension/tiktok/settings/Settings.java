@@ -1263,6 +1263,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COMMENT_SEARCH = new BooleanSetting("comment_search", FALSE);
     /** Adds Export CSV and Export JSON under the comment search box. */
     public static final BooleanSetting COMMENT_EXPORT = new BooleanSetting("comment_export", FALSE);
+    /** Keeps the comment search box behind a button in the sheet's header until it's tapped (#254). */
+    public static final BooleanSetting COMMENT_SEARCH_FOLDED = new BooleanSetting("comment_search_folded", FALSE);
     public static final BooleanSetting COMMENT_LINKS = new BooleanSetting("comment_links", FALSE);
     public static final BooleanSetting HIDE_COMMENT_MEDIA = new BooleanSetting("hide_comment_media", FALSE);
     /** Drops bot comments that point to a bio, a link or a messenger, or bait follows (#187). */
@@ -1341,6 +1343,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting COPY_IDS = new BooleanSetting("copy_ids", TRUE);
     // An Account facts button on a profile's share sheet, from what TikTok already sent about the account.
     public static final BooleanSetting ACCOUNT_FACTS = new BooleanSetting("account_facts", FALSE);
+    // @usernames in a profile's bio open those profiles on a tap (#247).
+    public static final BooleanSetting BIO_MENTION_LINKS = new BooleanSetting("bio_mention_links", TRUE);
     // Package names of the apps added to the Share via row, comma separated, in the order picked.
     public static final StringSetting SHARE_ADDED_APPS = new StringSetting("share_added_apps", "");
     public static final BooleanSetting DISABLE_LONG_PRESS_QUICK_SHARE =
