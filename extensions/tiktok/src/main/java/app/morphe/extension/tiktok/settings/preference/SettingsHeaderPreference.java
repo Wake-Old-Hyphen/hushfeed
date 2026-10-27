@@ -197,6 +197,7 @@ public final class SettingsHeaderPreference extends Preference {
         heading.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         heading.setHyphenationFrequency(android.text.Layout.HYPHENATION_FREQUENCY_NONE);
         SettingsUi.markHeading(heading);
+        ShimmerTitle.wear(heading);
         boolean stacked = !compact && context.getResources().getConfiguration().fontScale >= 1.3f;
         if (!stacked) {
             LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(0, -2, 1);

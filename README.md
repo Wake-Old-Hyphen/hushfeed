@@ -36,7 +36,7 @@ The main branch contains 141 patches, the same set as v0.79.0. Bundles built fro
 
 ## What it changes
 
-- **Feed:** Start with the Calm feed preset, or hide ads, Shop, LIVEs, stories, photo posts and any creator or video that matches your own rules. Your own posts are never hidden. TikTok can open on Following, Friends, Inbox or Profile instead of For You.
+- **Feed:** Hide ads, Shop, LIVEs, stories, photo posts and any creator or video that matches your own rules. Your own posts are never hidden. TikTok can open on Following, Friends, Inbox or Profile instead of For You.
 - **Touch controls:** Ask for a second tap before Follow, Like or a quick repost goes through. Remap or turn off long press and double tap, and keep For You where it is when you tap Home.
 - **Playback:** Choose the speed and quality, stop loops, pick up where you left off or move on by itself. A video can keep playing after you leave the app.
 - **Downloads:** Save videos without the watermark, full-size photos, the sound on its own and SRT subtitles, into folders and file names you choose. Saving works even when the creator turned downloads off.
@@ -62,6 +62,16 @@ The block, hide, sound and Not interested buttons Hushfeed can put on a video:
 6. Install the patched APK. If TikTok from Google Play is still on the phone, uninstall it first. Android won't put the patched app over it because they're signed with different keys. Uninstalling erases TikTok's data on the phone, so you'll log in again, and drafts you haven't posted go with it. Then open TikTok and go to **Settings and privacy**. Hushfeed is the first row, and [Settings](#settings) has two quicker ways in.
 
 The patches that take files out of TikTok do it while patching, so Pause and a settings import can't put those files back. Read the [native-language recovery steps](#tiktok-stays-in-english-after-removing-language-packs) before you remove languages.
+
+## Choose defaults while patching
+
+Each patch with settings has Morphe options that set the patched app's starting values. They apply until you change a setting, and Reset goes back to them. An update keeps whatever you already saved. For example, to show an author's country as a flag:
+
+```powershell
+java -jar morphe-desktop-all.jar patch -p patches.mpp -e "Show author region" -Oshow_author_region=true -Oregion_as_flag=true tiktok.apk
+```
+
+For repeat builds, `options-create -p patches.mpp -o options.json` writes every option to a file you can edit and pass back with `--options-file`. A setting shared by two patches needs the same value in both, or patching stops and says which one conflicts. The keys are in [the patch catalog](patches-list.json).
 
 ## Settings
 
@@ -377,9 +387,11 @@ The release also carries `release-receipt-<version>.json`. It records the tag an
 You need JDK 21 or newer, an Android SDK set in `local.properties`, and `GITHUB_ACTOR` plus a `GITHUB_TOKEN` with `read:packages` for the Morphe dependencies on GitHub Packages. On Windows, run the runtime tests on JDK 25, since JDK 21 there couldn't replace a file through `File.renameTo`.
 
 ```bash
+pwsh -File scripts/gen-patch-defaults.ps1
+./gradlew :patches:generatePatchesList
+pwsh -File scripts/test-patch-defaults.ps1
 ./gradlew :extensions:tiktok:test
 ./gradlew :patches:test
-./gradlew :patches:generatePatchesList
 pwsh -File scripts/validate-release-facts.ps1
 ./gradlew :patches:buildAndroid
 ```

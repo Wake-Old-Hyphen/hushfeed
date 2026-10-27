@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Ayarlar:** Yeni bir anahtar Hushfeed satırını TikTok'un Ayarlar ve gizlilik listesinden çıkarır. Ondan sonra ayarları açmak için Senin İçin'e basılı tut (#264).
-* **Yorumlar:** Tam yükseklikteki yorumlar artık saati ve pili kapatmak yerine durum çubuğunun altında duruyor (#261).
+* **Yorumlar:** Tam yükseklikteki yorumlar artık saati ve pili kapatmak yerine durum çubuğunun altında duruyor, TikTok açıldıktan sonraki ilk videoda da tam yükseklikte açılıyor (#261).
+* **Akış:** Ana akışın alt çubuğuna sekmeler arasında kayan bir mercek, parmakla kaydırma hareketi, isteğe bağlı titreşim ve Arayüz bölümünde bulanıklık, cam şeffaflığı, kapsül yüksekliği ve köşeler için yeni ayarlar içeren yüzen bir cam kapsül eklendi (#259).
+* **Yamalama:** Ayarı olan yamaların artık başlangıç değerlerini seçen Morphe seçenekleri var, böylece bir derleme istediğin anahtarlar açık olarak gelebilir. @XEGARE'ye teşekkürler (#256).
 * **Ayarlar:** Kategoriler ana listedeki satırlarının hemen altında açılıp kapanır. Arama denetimleri aynı listede gösterir, açık kategoriler ekran döndürüldüğünde veya yeniden başlatıldığında açık kalır.
 * **Ayarlar:** Ana sayfadaki büyük kartlar yerine tam genişlikte kompakt bir liste kullanılır. Hızlı kurulumlar kaldırıldı.
 * **TikTok:** Hushfeed artık Morphe Manager 2.2.0 ya da daha yenisini, bilgisayarda ise morphe-desktop 1.19.1 istiyor.

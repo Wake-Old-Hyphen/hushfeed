@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SystemBarInsets;
 
@@ -53,15 +54,57 @@ public final class CommentSheetHeight {
      */
     public static int belowStatusBar(Context context, int height) {
         try {
-            View decor = decorView(context);
-            if (decor == null || decor.getHeight() <= 0) return height;
-            Rect bars = SystemBarInsets.current(decor);
-            int room = decor.getHeight() - bars.top - bars.bottom;
+            int room = room(context);
             return room > 0 && room < height ? room : height;
         } catch (Throwable failure) {
             Logger.printException(() -> "belowStatusBar failure", failure);
             return height;
         }
+    }
+
+    /**
+     * Injection point, on the panel height the sheet's second sizing pass writes (#261). That pass
+     * runs when the sheet opens with no comment source or with the video's description on top, the
+     * first video after a cold start among them, and sets the panel to a share of the screen after
+     * the first pass gave it the full height. With the switch on the panel gets the room between the
+     * window's system bars instead. TikTok can build the panel on a context that leads to no
+     * activity, so the window is also looked for through the panel's root view and the activity in
+     * front. Off, no window to measure, or a failure, and TikTok's height stands. Never throws.
+     */
+    public static int panelHeight(View panel, int height) {
+        try {
+            if (panel == null || !openAtFullHeight()) return height;
+            int room = room(panel.getContext());
+            String from = "panel context";
+            if (room <= 0 && panel.isAttachedToWindow()) {
+                room = room(panel.getRootView());
+                from = "panel root";
+            }
+            if (room <= 0) {
+                Activity front = Utils.getVisibleActivity();
+                room = front == null ? 0 : room(front);
+                from = "front activity";
+            }
+            final int measured = room;
+            final String source = from;
+            Logger.printDebug(() -> "Comment panel height " + height + ", room " + measured + " from " + source);
+            return room > 0 ? room : height;
+        } catch (Throwable failure) {
+            Logger.printException(() -> "panelHeight failure", failure);
+            return height;
+        }
+    }
+
+    /** The window's height less its system bars, or 0 with no laid-out window. */
+    private static int room(Context context) {
+        return room(decorView(context));
+    }
+
+    /** The view's height less the system bars it is drawn under, or 0 when it isn't laid out. */
+    private static int room(View root) {
+        if (root == null || root.getHeight() <= 0) return 0;
+        Rect bars = SystemBarInsets.current(root);
+        return root.getHeight() - bars.top - bars.bottom;
     }
 
     private static View decorView(Context context) {

@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Configurações:** Um novo interruptor tira a linha do Hushfeed de Configurações e privacidade do TikTok. Depois disso, toque e segure Para você para abrir as configurações (#264).
-* **Comentários:** Os comentários em altura total agora param abaixo da barra de status em vez de cobrir o relógio e a bateria (#261).
+* **Comentários:** Os comentários em altura total agora param abaixo da barra de status em vez de cobrir o relógio e a bateria, e abrem em altura total também no primeiro vídeo depois de abrir o TikTok (#261).
+* **Feed:** A barra inferior do feed principal ganha uma pílula de vidro flutuante com uma lente que desliza entre as abas, um gesto de deslizar, vibração opcional e novas configurações em Interface para desfoque, opacidade do vidro, altura da pílula e cantos (#259).
+* **Patch:** Patches com configurações agora têm opções do Morphe para os valores iniciais, então uma build pode vir com seus botões já ligados. Valeu, @XEGARE (#256).
 * **Configurações:** As categorias abrem e fecham logo abaixo da sua linha na lista principal. A busca mostra os controles nessa mesma lista, e as categorias abertas continuam abertas depois de girar a tela ou reiniciar.
 * **Configurações:** Os cartões grandes da página inicial dão lugar a uma lista compacta de largura total. As configurações rápidas foram removidas.
 * **TikTok:** O Hushfeed agora exige o Morphe Manager 2.2.0 ou mais novo, ou o morphe-desktop 1.19.1 no computador.

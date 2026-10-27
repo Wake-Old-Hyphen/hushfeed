@@ -1274,27 +1274,15 @@ public class SettingsPagesTest {
         }
     }
 
-    @Test public void calmFeedPresetComesBeforeIndividualFeedFilters() throws Exception {
-        boolean shop = Settings.HIDE_SHOP.get();
-        CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
-        Settings.HIDE_SHOP.save(false);
+    @Test public void theFeedFilterPageOpensOnItsFiltersWithNoPreset() throws Exception {
         try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
             Activity activity = owner.get();
             Utils.setContext(activity);
             TikTokPreferenceFragment page = attachSection(activity, "FEED_FILTER");
-            Preference preset = page.findPreference("calm_feed_preset");
-            assertNotNull("the Feed filter page has no calm starting point", preset);
-            assertEquals("Calm feed", preset.getTitle());
-            assertTrue(String.valueOf(preset.getSummary()).contains("ads"));
-
-            ListView list = page.getView().findViewById(android.R.id.list);
-            int presetPosition = positionOf(list, "calm_feed_preset");
-            int firstFilterPosition = positionOf(list, Settings.REMOVE_ADS.key);
-            assertTrue("the preset is buried below the switches",
-                    presetPosition >= 0 && presetPosition < firstFilterPosition);
-        } finally {
-            Settings.HIDE_SHOP.save(shop);
-            CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
+            assertNull("the Calm feed preset is back on the page", page.findPreference("calm_feed_preset"));
+            assertNull("the Quick setup heading is back on the page",
+                    findPreference(page.getPreferenceScreen(), "Quick setup"));
+            assertNotNull(page.findPreference(Settings.REMOVE_ADS.key));
         }
     }
 
@@ -1327,48 +1315,6 @@ public class SettingsPagesTest {
             assertEquals("Hide the rewards shortcut", rewards.getTitle());
             assertTrue(String.valueOf(rewards.getSummary()).contains("Add friends"));
         }
-    }
-
-    @Test @Config(qualifiers = "de-rDE-w320dp-h800dp-night-mdpi", fontScale = 2f)
-    public void calmFeedPresetStacksAndKeepsAnAccessibleActionAtLargeText() throws Exception {
-        boolean shop = Settings.HIDE_SHOP.get();
-        CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
-        Settings.HIDE_SHOP.save(false);
-        try (var owner = Robolectric.buildActivity(PageActivity.class).setup().visible()) {
-            Activity activity = owner.get();
-            Utils.setContext(activity);
-            Preference preset = new app.morphe.extension.tiktok.settings.preference
-                    .CalmFeedPresetPreference(activity);
-            app.morphe.extension.tiktok.settings.preference.SettingsUi.syncDarkMode(activity);
-            View view = preset.getView(null, null);
-            android.widget.LinearLayout heading = view.findViewWithTag(
-                    "calm_feed_preset_heading");
-            assertNotNull(heading);
-            assertEquals("large text kept the status beside the title",
-                    android.widget.LinearLayout.VERTICAL, heading.getOrientation());
-            assertAccessibleButton(activity,
-                    view.findViewWithTag("calm_feed_preset_action"),
-                    "„Ruhiger Feed“ verwenden");
-            view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.AT_MOST));
-            view.layout(0, 0, 320, view.getMeasuredHeight());
-            String theme = app.morphe.extension.tiktok.settings.preference.SettingsUi.isDarkMode()
-                    ? "dark" : "light";
-            UiCapture.save(view, "audit/calm-feed-large-text-" + theme + ".png", 320, view.getMeasuredHeight());
-            TextView title = (TextView) heading.getChildAt(0);
-            assertTrue("the stacked heading measured its title at zero width", title.getWidth() > 0);
-            assertTrue("the title did not render any text", title.getLayout().getLineCount() > 0);
-            assertEquals("the heading clipped its last line", title.getText().length(),
-                    title.getLayout().getLineEnd(title.getLayout().getLineCount() - 1));
-        } finally {
-            Settings.HIDE_SHOP.save(shop);
-            CalmFeedPreset.clearForTests(org.robolectric.RuntimeEnvironment.getApplication());
-        }
-    }
-
-    @Test @Config(qualifiers = "de-rDE-w320dp-h800dp-notnight-mdpi", fontScale = 2f)
-    public void theLightCalmFeedPresetKeepsItsLargeTextHeadingAndAction() throws Exception {
-        calmFeedPresetStacksAndKeepsAnAccessibleActionAtLargeText();
     }
 
     @Test public void localCreatorEditorFiltersAndRemovesIndividualEntries() throws Exception {

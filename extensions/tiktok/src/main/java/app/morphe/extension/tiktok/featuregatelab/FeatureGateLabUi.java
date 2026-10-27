@@ -31,6 +31,7 @@ import java.lang.reflect.Proxy;
 
 import app.morphe.extension.shared.Utils;
 import app.morphe.extension.tiktok.settings.preference.SettingsUi;
+import app.morphe.extension.tiktok.settings.preference.ShimmerTitle;
 
 final class FeatureGateLabUi {
     private FeatureGateLabUi() {
@@ -47,7 +48,9 @@ final class FeatureGateLabUi {
     }
 
     static TextView heading(Context context, String text) {
-        return text(context, text, 20, SettingsUi.textPrimary(), Typeface.BOLD);
+        TextView heading = text(context, text, 20, SettingsUi.textPrimary(), Typeface.BOLD);
+        ShimmerTitle.wear(heading);
+        return heading;
     }
 
     static FrameLayout header(Context context, String title, Runnable onBack) {

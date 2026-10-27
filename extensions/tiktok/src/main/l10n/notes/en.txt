@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Settings:** A new switch takes the Hushfeed row out of TikTok's Settings and privacy. Press and hold For You to open the settings after that (#264).
-* **Comments:** Full-height comments now stop below the status bar instead of covering the clock and battery (#261).
+* **Comments:** Full-height comments now stop below the status bar instead of covering the clock and battery, and they open full height on the first video after starting TikTok too (#261).
+* **Feed:** Add a floating glass pill to the main feed's bottom bar with a lens that slides across the tabs, a slide-along gesture, optional haptics, and new Interface settings for blur strength, glass opacity, pill height and corners (#259).
+* **Patching:** Patches with settings now have Morphe options that set their starting values, so a build can come with your switches already on. Thanks to @XEGARE (#256).
 * **Settings:** Categories expand and collapse right under their rows in the main list. Search shows controls in that same list, and open categories stay open after rotation or a restart.
 * **Settings:** Replace large home cards with a compact full-width list. Remove Quick setups.
 * **TikTok:** Hushfeed now needs Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 on a computer.

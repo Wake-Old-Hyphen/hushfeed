@@ -6,11 +6,15 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* **Settings:** Every Hushfeed title (the settings bar, its dialogs, the Feature Gate Lab and the lock screen) now wears TikTok's cyan and red in a slow moving gradient, and it keeps moving even with Android's animations turned off.
+* **Settings:** The Calm feed preset is gone from the top of Feed filter. The filters it used to flip are all still there, and whatever you turned on with it stays on.
 * **Settings:** `Hide the Hushfeed row` takes Hushfeed out of TikTok's Settings and privacy. Press and hold For You at the top of the feed to open the settings after that, or Home when `Long-press Home for Hushfeed settings` is on. Pausing Hushfeed brings the row back (#264).
+* **Feed:** Add a floating glass pill to the main feed's bottom bar with a lens that slides across the tabs, a slide-along gesture, optional haptics, and new Interface settings for blur strength, glass opacity, pill height and corners (#259).
+* **Patching:** Every patch with settings now has Morphe options that pick its starting values, so a build can ship with the switches you want already on. Saved choices still win, and Reset goes back to the value you picked. Thanks to @XEGARE (#256).
 
 ### Fixes
 
-* **Comments:** With `Open the comments at full height` on, the sheet stops below the status bar instead of running under the clock and battery icons (#261).
+* **Comments:** With `Open the comments at full height` on, the sheet stops below the status bar instead of running under the clock and battery icons, and the first video after opening TikTok gets the full height too instead of the usual two thirds (#261).
 * **Settings:** Categories expand and collapse beneath their main-list rows. Search reveals controls in the same list, and open categories survive rotation and a restart.
 * **Settings:** Replace large home cards with a compact full-width list. Remove Quick setups.
 * **TikTok:** Hushfeed now needs Morphe Manager 2.2.0 or newer, or morphe-desktop 1.19.1 on a computer.

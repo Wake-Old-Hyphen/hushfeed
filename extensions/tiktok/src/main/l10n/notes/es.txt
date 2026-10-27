@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Ajustes:** Un nuevo interruptor quita la fila de Hushfeed de Ajustes y privacidad de TikTok. Después, mantén pulsado Para ti para abrir los ajustes (#264).
-* **Comentarios:** Los comentarios a altura completa ahora se detienen debajo de la barra de estado en vez de tapar el reloj y la batería (#261).
+* **Comentarios:** Los comentarios a altura completa ahora se detienen bajo la barra de estado en vez de tapar la hora y la batería, y también se abren a altura completa en el primer video tras abrir TikTok (#261).
+* **Feed:** La barra inferior del feed principal gana una píldora de cristal flotante con una lente que se desliza entre las pestañas, un gesto de deslizar, vibración opcional y nuevos ajustes en Interfaz para el desenfoque, la opacidad del cristal, la altura de la píldora y las esquinas (#259).
+* **Parcheo:** Los parches con ajustes ahora tienen opciones de Morphe para sus valores iniciales, así que una compilación puede venir con tus interruptores ya activados. Gracias a @XEGARE (#256).
 * **Ajustes:** Las categorías se abren y se cierran justo debajo de su fila en la lista principal. La búsqueda muestra los controles en esa misma lista, y las categorías abiertas siguen abiertas al girar la pantalla o reiniciar.
 * **Ajustes:** Las tarjetas grandes de inicio se sustituyen por una lista compacta de ancho completo. Se eliminan los ajustes rápidos.
 * **TikTok:** Hushfeed ahora necesita Morphe Manager 2.2.0 o superior, o morphe-desktop 1.19.1 en el ordenador.

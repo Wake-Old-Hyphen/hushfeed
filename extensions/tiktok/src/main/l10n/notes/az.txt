@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Parametrlər:** Yeni keçid Hushfeed sətrini TikTok-un Parametrlər və məxfilik siyahısından çıxarır. Bundan sonra ayarları açmaq üçün Sənin üçün düyməsini basılı saxlayın (#264).
-* **Şərhlər:** Tam hündürlükdə şərhlər indi saat və batareya ikonlarının üstünə çıxmır, status panelinin altında dayanır (#261).
+* **Şərhlər:** Tam hündürlükdə şərhlər artıq saat və batareyanın üstünə çıxmır, status panelinin altında dayanır, TikTok-u açandan sonrakı ilk videoda da tam hündürlükdə açılır (#261).
+* **Lent:** Əsas lentin alt panelinə şüşə kapsul əlavə olunur: tablar arasında sürüşən linza, barmaqla sürüşdürmə jesti, istəyə görə titrəmə və Interfeys bölməsində bulanıqlıq, şüşə şəffaflığı, kapsul hündürlüyü və künclər üçün yeni parametrlər (#259).
+* **Yamaqlama:** Ayarları olan yamaqların indi başlanğıc dəyərlərini seçən Morphe seçimləri var, belə ki, quraşdırma istədiyiniz açarlar artıq açıq halda gələ bilər. @XEGARE-ə təşəkkürlər (#256).
 * **Parametrlər:** Kateqoriyalar əsas siyahıdakı sətirlərinin altında açılıb bağlanır. Axtarış idarəetmələri elə həmin siyahıda göstərir, açıq kateqoriyalar ekran dönəndə və yenidən başladanda açıq qalır.
 * **Parametrlər:** Böyük ana səhifə kartları yığcam, tam enli siyahı ilə əvəz edilib. Sürətli quruluşlar silinib.
 * **TikTok:** Hushfeed indi Morphe Manager 2.2.0 və ya daha yenisini, kompüterdə isə morphe-desktop 1.19.1 tələb edir.

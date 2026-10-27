@@ -323,6 +323,7 @@ public final class SettingsUi {
             title.setMaxLines(Integer.MAX_VALUE);
             title.setEllipsize(null);
             markHeading(title);
+            ShimmerTitle.wear(title);
         }
         TextView summary = row.findViewById(android.R.id.summary);
         if (summary != null) {
@@ -906,9 +907,13 @@ public final class SettingsUi {
         return title;
     }
 
-    /** Marks a title in a hand-built dialog as a heading for accessibility services. */
+    /**
+     * Marks a title in a hand-built dialog as a heading for accessibility services, and puts it
+     * in the moving cyan and red every Hushfeed title wears.
+     */
     public static void markDialogHeading(TextView title) {
         markHeading(title);
+        ShimmerTitle.wear(title);
     }
 
     /**
@@ -1209,6 +1214,7 @@ public final class SettingsUi {
         boolean radio = list != null && list.getChoiceMode() == ListView.CHOICE_MODE_SINGLE;
         makeDialogPanelsTransparent(window.getDecorView(), dialog.getContext());
         styleDialogText(window.getDecorView(), radio);
+        wearDialogTitle(dialog);
 
         if (list != null) {
             list.setBackgroundColor(Color.TRANSPARENT);
@@ -1238,6 +1244,21 @@ public final class SettingsUi {
         styleActionButton(dialog.getButton(DialogInterface.BUTTON_POSITIVE), true);
         styleActionButton(dialog.getButton(DialogInterface.BUTTON_NEGATIVE), false);
         styleActionButton(dialog.getButton(DialogInterface.BUTTON_NEUTRAL), false);
+    }
+
+    /**
+     * Puts a shown AlertDialog's own title in the moving cyan and red. The title takes this
+     * theme's text colour first, so the gradient is picked for the surface the frame painted
+     * rather than for TikTok's dialog theme.
+     */
+    public static void wearDialogTitle(Dialog dialog) {
+        Window window = dialog.getWindow();
+        if (window == null) return;
+        int id = dialog.getContext().getResources().getIdentifier("alertTitle", "id", "android");
+        View title = id == 0 ? null : window.getDecorView().findViewById(id);
+        if (!(title instanceof TextView) || ShimmerTitle.wears((TextView) title)) return;
+        ((TextView) title).setTextColor(textPrimary());
+        ShimmerTitle.wear((TextView) title);
     }
 
     public static int dialogListHeight(Context context, int preferredDp) {
@@ -1313,7 +1334,7 @@ public final class SettingsUi {
             }
         } else if (view instanceof Button) {
             ((Button) view).setTextColor(accent());
-        } else if (view instanceof TextView) {
+        } else if (view instanceof TextView && !ShimmerTitle.wears((TextView) view)) {
             ((TextView) view).setTextColor(textPrimary());
         }
 

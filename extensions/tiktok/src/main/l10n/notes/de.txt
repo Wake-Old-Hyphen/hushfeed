@@ -1,7 +1,9 @@
 ## Unreleased
 
 * **Einstellungen:** Ein neuer Schalter nimmt die Hushfeed-Zeile aus TikToks Einstellungen und Datenschutz. Danach öffnest du die Einstellungen, indem du Für dich gedrückt hältst (#264).
-* **Kommentare:** Kommentare in voller Höhe enden jetzt unter der Statusleiste, statt Uhr und Akku zu verdecken (#261).
+* **Kommentare:** Kommentare in voller Höhe enden jetzt unter der Statusleiste statt Uhr und Akku zu verdecken, und sie öffnen auch beim ersten Video nach dem Start von TikTok in voller Höhe (#261).
+* **Feed:** Die untere Leiste des Haupt-Feeds bekommt eine schwebende Glaskapsel mit einer Linse, die über die Tabs gleitet, einer Wischgeste, optionalem Haptik-Feedback und neuen Einstellungen unter Oberfläche für Unschärfe, Glasdurchsichtigkeit, Kapselhöhe und Ecken (#259).
+* **Patchen:** Patches mit Einstellungen haben jetzt Morphe-Optionen für ihre Startwerte, damit ein Build deine Schalter schon eingeschaltet mitbringt. Danke an @XEGARE (#256).
 * **Einstellungen:** Kategorien klappen direkt unter ihrer Zeile in der Hauptliste auf und zu. Die Suche zeigt Bedienelemente in derselben Liste, und offene Kategorien bleiben nach Drehen oder Neustart offen.
 * **Einstellungen:** Große Karten auf der Startseite weichen einer kompakten Liste über die volle Breite. Die Schnelleinstellungen wurden entfernt.
 * **TikTok:** Hushfeed braucht jetzt Morphe Manager 2.2.0 oder neuer, am Computer morphe-desktop 1.19.1.
