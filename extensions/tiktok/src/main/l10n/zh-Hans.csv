@@ -751,7 +751,11 @@ Hide Balance from the menu your profile's top right button opens. Your coins and
 "Hide the Check sources banner TikTok puts on videos it marks as unverified, and the warnings it shows when you share one.",隐藏 TikTok 在其标记为未经验证的视频上放置的“检查来源”横幅，以及在您共享视频时显示的警告.
 "Hide the Check your sources banner TikTok puts across the top of some videos, and the prompt it shows when you share one.",隐藏某些视频顶部的“检查来源”横幅 TikTok 以及共享视频时显示的提示.
 Hide the Clear display controls,隐藏清除显示控件
+Keep the progress bar,保留进度条
+"Hide the Clear display controls leaves the progress bar in sight, so you can still see and drag it.",隐藏清除显示控件时保留进度条，你仍然可以看到并拖动它.
 Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.,隐藏附有注释的视频上显示的脚注横幅 TikTok。视频及其评论保持原样.
+Hide the LIVE row on Following,隐藏“正在关注”的 LIVE 行
+"Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.",隐藏“正在关注”标签页顶部的 LIVE 和快拍圆圈行，以及统计它们数量的胶囊. “为你”保持不变.
 Hide the Full screen button,隐藏全屏按钮
 Hide the Full screen button over videos. Playback and automatic rotation keep working as before.,隐藏视频上的全屏按钮。播放和自动旋转继续像以前一样工作.
 Hide the Inbox search button,隐藏收件箱搜索按钮
@@ -966,6 +970,7 @@ Licenses,许可证
 Lift text length limits,解除文本长度限制
 Like,喜欢
 Like the video,喜欢视频
+Like or unlike the video,喜欢或取消喜欢视频
 Liked videos,喜欢的视频
 Likes aren't available for this video,此视频无法点赞
 Likes range,喜欢范围
@@ -1560,6 +1565,8 @@ Show TikTok's feed buttons,显示 TikTok 的信息流按钮
 Show TikTok's own progress bar on videos where it's normally hidden.,在通常隐藏的视频上显示 TikTok 自己的进度条.
 Show a LIVE under the status bar,在状态栏下显示 LIVE
 Show a progress bar while a video saves.,保存视频时显示进度条.
+Skip the Share to sheet after a save,保存后跳过分享面板
+TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.,TikTok 保存视频几秒后会打开分享面板。开启后就不再打开。分享按钮和已保存提示保持不变.
 Show a verified badge on your own profile on this phone. Other people see your real status.,在此手机上您自己的个人资料中显示经过验证的徽章。别人看到你的真实状态.
 Show a video preview thumbnail while dragging the progress bar.,拖动进度条时显示视频预览缩略图.
 Show chosen counts on your own profile on this phone. Other people see the real counts.,在这部手机上显示您自己的个人资料中选择的计数。其他人看到了真正的数字.
@@ -1687,6 +1694,8 @@ Speed,速度
 Speed menu choices,速度菜单选项
 "Speed up this video, double tap again to undo",加快该视频的速度，再次双击即可撤消
 Speed while you hold the video,按住视频时速度
+Slide to change the hold speed,滑动更改按住时的速度
+"While you hold a video, slide left or right to change its speed, and a bubble shows it. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.",按住视频时向左或向右滑动可更改速度，气泡会显示当前速度。松手后恢复正常。下拉锁定会保留你滑到的速度.
 Spin the music disc,旋转音乐光盘
 Split comment minimum width,分割评论最小宽度
 Start each new video at your default. A manual choice lasts until the video changes.,以默认值开始每个新视频。手动选择将持续到视频发生变化为止.
@@ -2245,6 +2254,8 @@ Least viewed first,播放最少的在前
 Most liked first,点赞最多的在前
 Least liked first,点赞最少的在前
 "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.",对个人资料或喜欢网格排序，置顶视频仍排在最前。选择排序后，网格会自动继续加载，最多 300 个视频，让排序覆盖的不只是第一屏。网格顶部角落的按钮可直接更改排序.
+Sort loaded videos on Liked grids,对“喜欢”网格中已加载的视频排序
+Same as profile grids,与个人资料网格相同
 Sort this grid,排序此网格
 Blur the video behind the bar,模糊栏后面的视频
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.",在主信息流上，模糊玻璃条后面的那部分视频，让它看起来像磨砂玻璃。需要液态玻璃外观和 Android 12 及以上版本.
@@ -2282,3 +2293,9 @@ Fold the search into a button,将搜索收起为按钮
 Put the comment search away,收起评论搜索
 Tap @names in bios,点按简介中的 @用户名
 An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,点按主页简介中的 @用户名即可打开该用户的主页。点按简介的其他部分仍会翻译.
+autoplay auto play,自动播放
+picture in picture PiP,画中画 PiP
+search suggestions,搜索建议
+AI chat,AI 聊天
+AI Tako,AI Tako
+save photos,保存照片

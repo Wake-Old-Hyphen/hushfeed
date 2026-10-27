@@ -1398,6 +1398,8 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs	Alt sekmelerdeki okunmamış rozetlerini gizle
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Gelen Kutusu ve Profil dahil tüm alt sekmelerdeki kırmızı sayaçları ve noktaları, ayrıca Gelen Kutusu'nun üstünde yeni beğenileri, takipçileri, yorumları ve kimin LIVE'da olduğunu sayan baloncuğu gizler. Gelen kutusunun kendisi gelenleri göstermeye devam eder.
 Speed while you hold the video	Videoyu basılı tutarken hız
+Slide to change the hold speed	Basılı tutma hızını kaydırarak değiştir
+While you hold a video, slide left or right to change its speed, and a bubble shows it. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.	Bir videoyu basılı tutarken hızını değiştirmek için sola veya sağa kaydır. Hızı bir balon gösterir. Bıraktığında normale döner. Aşağı çekerek kilitlersen seçtiğin hız kalır.
 Hide mini dramas	Mini dizileri gizle
 Hide TikTok's short drama episodes and the cards that promote them.	TikTok'un kısa dizi bölümlerini ve onları tanıtan kartları gizle.
 Mini dramas	Mini diziler
@@ -1492,6 +1494,8 @@ The video was saved, but its record couldn't be updated. A later save may make a
 The already-saved check failed. Try again.	Önceden kaydedilen videolar kontrol edilemedi. Yeniden deneyin.
 Show download progress	İndirme ilerlemesini göster
 Show a progress bar while a video saves.	Video kaydedilirken ilerleme çubuğu gösterir.
+Skip the Share to sheet after a save	Kaydettikten sonra paylaşım menüsünü atla
+TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.	TikTok bir videoyu kaydettikten birkaç saniye sonra bir paylaşım menüsü açar. Bu ayar onu engeller. Paylaş düğmesi ve kaydedildi bildirimi olduğu gibi kalır.
 Saving video	Video kaydediliyor
 Waiting to save video	Video kaydedilmeyi bekliyor
 Saving video: %1$s	Video kaydediliyor: %1$s
@@ -1568,6 +1572,8 @@ LIVE followers range	CANLI takipçi aralığı
 Show only LIVEs from creators with this many followers.	Yalnızca bu kadar takipçisi olan içerik üreticilerinin CANLI yayınlarını göster.
 Hide the comment bar on opened videos	Açılan videolarda yorum çubuğunu gizle
 Hide the Clear display controls	Temiz ekran kontrollerini gizle
+Keep the progress bar	İlerleme çubuğunu koru
+Hide the Clear display controls leaves the progress bar in sight, so you can still see and drag it.	Temiz ekran kontrollerini gizle, ilerleme çubuğunu görünür bırakır, böylece onu görmeye ve sürüklemeye devam edebilirsin.
 While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	Temiz ekran açıkken alttaki ilerleme çubuğunu, kapatma düğmesini, duraklatma ve hız düğmelerini de gizle. Videoda ileri geri gitmek için yine de alt kenar boyunca sürükleyebilirsin. Temiz ekrandan çıkmak için videoya basılı tut ve Ekranı geri yükle'ye dokun. Ekranda iki parmağını birbirine yaklaştırarak da çıkabilirsin.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Bir profilden, hashtag'den, sesten veya aramadan açtığın videolardaki yorum yazma çubuğunu kaldır, böylece video ekranı en alta kadar doldurur. Sağdaki yorum düğmesi yorumları açmaya devam eder.
 Build details	Derleme ayrıntıları
@@ -1925,6 +1931,7 @@ Username last changed	Kullanıcı adı son değişikliği
 Display name last changed	Görünen ad son değişikliği
 Private account	Gizli hesap
 Like the video	Videoyu beğen
+Like or unlike the video	Videoyu beğen veya beğeniyi geri al
 Liked videos	Beğenilen videolar
 Public	Herkese açık
 Copy	Kopyala
@@ -1950,6 +1957,8 @@ Hide TikTok's wind-down screens	TikTok'un dinlenme ekranlarını gizle
 Stops the bedtime wind-down, the breathing exercise and the daily limit screen TikTok puts over the feed. Works only on accounts TikTok knows belong to adults. Teen accounts, and ones a parent links with Family Pairing, keep them. With Leave when TikTok says time is up on, the daily limit screen still shows so that switch can work.	TikTok'un akışın üstüne koyduğu uyku öncesi sakinleşme, nefes egzersizi ve günlük sınır ekranını durdurur. Yalnızca TikTok'un yetişkin olduğunu bildiği hesaplarda çalışır. Genç hesapları ve bir ebeveynin Family Pairing ile bağladığı hesaplar bunları korur. “TikTok süre doldu deyince uygulamadan çık” açıkken günlük sınır ekranı yine görünür, böylece o anahtar çalışabilir.
 Hide Footnotes	Footnotes'u gizle
 Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.	TikTok'un notu olan bir videoda gösterdiği Footnotes bannerını gizle. Video ve yorumları olduğu gibi kalır.
+Hide the LIVE row on Following	Takip Edilenler'de CANLI satırını gizle
+Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.	Takip Edilenler sekmesinin üstündeki CANLI ve hikâye daireleri satırını ve onları sayan hapı gizle. Senin İçin olduğu gibi kalır.
 Hide Bulletin board	Bulletin board'u gizle
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.	TikTok'un Gelen Kutusu'na eklediği Bulletin board satırları listeden kalkar. Sohbetler ve diğer satırlar yerinde kalır.
 Hide the group chat prompt	Grup sohbeti önerisini gizle
@@ -2269,6 +2278,8 @@ Least viewed first	Önce en az izlenen
 Most liked first	Önce en çok beğenilen
 Least liked first	Önce en az beğenilen
 Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.	Bir profil veya Beğenilenler ızgarasını sıralar, sabitlenen videolar başta kalır. Bir sıra seçiliyken ızgara 300 videoya kadar kendiliğinden yüklemeye devam eder, böylece sıra ilk ekrandan fazlasını kapsar. Izgaranın üst köşesindeki düğme sırayı orada değiştirir.
+Sort loaded videos on Liked grids	Beğenilenler ızgaralarında yüklenen videoları sırala
+Same as profile grids	Profil ızgaralarıyla aynı
 Sort this grid	Bu ızgarayı sırala
 Blur the video behind the bar	Çubuğun arkasındaki videoyu bulanıklaştır
 Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.	Ana akışta cam hapın arkasında kalan video bölümünü bulanıklaştırır, böylece buzlu cam gibi görünür. Sıvı cam görünümü ve Android 12 veya üstü gerekir.
@@ -2310,3 +2321,9 @@ Shows a search button at the top left of the comments instead of the box, so the
 Put the comment search away	Yorum aramasını kaldır
 Tap @names in bios	Biyografilerdeki @adlara dokun
 An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Bir profilin biyografisindeki @kullanıcıadı, dokunduğunda o profili açar. Biyografinin geri kalanı dokununca yine çevrilir.
+autoplay auto play	otomatik oynatma
+picture in picture PiP	resim içinde resim PiP
+search suggestions	arama önerileri
+AI chat	yapay zeka sohbeti
+AI Tako	yapay zeka Tako
+save photos	fotoğrafları kaydet

@@ -6,6 +6,10 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* **Clear display:** `Hide the Clear display controls` has a new `Keep the progress bar` switch under it. The exit and pause buttons still go, but the progress bar stays on screen so you can see where you are and drag it (#237).
+* **Gestures:** `Double tap` has a new `Like or unlike the video` choice. A double tap on a video you've already liked takes the like back off, the same as tapping the heart, and `Confirm before liking` still asks first. TikTok's default double tap still only likes, and it works for each corner with `Double tap by corner` too (#248).
+* **Playback:** `Slide to change the hold speed` lets you pick the speed while you hold a video. Slide left or right and it moves a quarter step at a time, anywhere from 0.5x to 3x, with a bubble near the top showing the speed. Let go and the video goes back to its usual speed. With `Lock the hold speed with a pull down` on, pulling down locks the speed you slid to. It's off by default and sits right under `Speed while you hold the video`. The idea comes from OmerKurdi79's fork (#248).
+* **Profile:** Liked grids get their own sort. `Sort loaded videos on Liked grids` starts at `Same as profile grids`, so nothing changes until you pick something else, and the sort button on a Liked grid now changes only the Liked order. Posts, Favorites and private videos still follow the profile setting, and other kinds of grids keep TikTok's order (#180).
 * **Settings:** Every Hushfeed title (the settings bar, its dialogs, the Feature Gate Lab and the lock screen) now wears TikTok's cyan and red in a slow moving gradient, and it keeps moving even with Android's animations turned off.
 * **Settings:** The Calm feed preset is gone from the top of Feed filter. The filters it used to flip are all still there, and whatever you turned on with it stays on.
 * **Gestures:** `Double tap` and `Long press` can open TikTok's search page now. It works with `Hide feed search button` on too, so you can hide the button and still get to Search (#251).
@@ -14,9 +18,15 @@ Every Hushfeed release, newest first.
 * **Profiles:** An @username typed into someone's bio is a link now, like the ones TikTok already links. Tap it and that profile opens. Tapping the rest of the bio still translates it, and a long press still copies it. A name right after "IG:" or "Snap" stays plain, since it belongs to another app. Turn it off with `Tap @names in bios` (#247).
 * **Feed:** Add a floating glass pill to the main feed's bottom bar with a lens that slides across the tabs, a slide-along gesture, optional haptics, and new Interface settings for blur strength, glass opacity, pill height and corners (#259).
 * **Patching:** Every patch with settings now has Morphe options that pick its starting values, so a build can ship with the switches you want already on. Saved choices still win, and Reset goes back to the value you picked. Thanks to @XEGARE (#256).
+* **Feed:** `Hide the LIVE row on Following` takes away the row of LIVE and story circles at the top of Following, along with the Story pill that opens it. The video starts right under the tabs with no empty band, and it stays that way after a swipe or Clear display. For You and the LIVE tab look the same as before (#262).
+* **Downloads:** `Skip the Share to sheet after a save` stops the Share to sheet TikTok pops up a few seconds after its own downloader saves a video. The share button works like before and the saved notice still shows. PineDrama gets it too.
+* **Settings:** Search knows the everyday names for a few features now. Try "autoplay", "PiP", "AI" or "save photos". It also finds a choice row by any of its options, not only the one it's set to. Search "save the frame" and `Double tap` comes up, and tapping it opens its list of choices. Titles that match what you typed still come first.
 
 ### Fixes
 
+* **Settings:** Opening a search result that lives far down a page, like `Double tap` or the Liked grid sort in Feed screen, now lands on that row. It used to open the page at its top, so you had to scroll a long way to find it.
+* **Feed:** With `See-through bottom bar` on, the "Swipe up to skip" line on a suggested account card in For You sits above the tabs again instead of behind them (#261).
+* **Interface:** The floating tab pill is a little taller now. It reaches just above the bar and the tabs sit in its middle, so the Home icon and its name stay inside the highlight instead of poking out over it. The caption and the video's progress line move up to match, so the line no longer rides on the pill (#259).
 * **Theme:** With `AMOLED dark theme` on, the activity center's card is black (or your picked color) instead of TikTok's dark gray. Those history pages are web pages inside TikTok, so the theme never reached them before (#263).
 * **Feed:** `Hide unverified content notices` also takes the "Caution · May contain inaccurate information" strip off videos people share with you in messages. That label travels inside the message itself, so the switch didn't reach it before (#258).
 * **Profiles:** A long press on someone else's bio copies it now. Before, it only got TikTok's translate bubble, because TikTok draws other people's bios with a different part of the app than your own (#247).

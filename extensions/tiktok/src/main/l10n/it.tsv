@@ -1398,6 +1398,8 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs	Nascondi i badge non letti sulle schede in basso
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Nasconde i contatori rossi e i puntini su tutte le schede in basso, inclusi Posta in arrivo e Profilo, e la bolla sopra Posta in arrivo che conta nuovi Mi piace, follower, commenti e chi è in LIVE. La posta in arrivo continua comunque a mostrare cosa è arrivato.
 Speed while you hold the video	Velocità mentre tieni premuto il video
+Slide to change the hold speed	Scorri per cambiare la velocità di pressione
+While you hold a video, slide left or right to change its speed, and a bubble shows it. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.	Mentre tieni premuto un video, scorri a sinistra o a destra per cambiarne la velocità. Una bolla la mostra. Quando lasci torna normale. Il blocco tirando giù mantiene la velocità scelta.
 Hide mini dramas	Nascondi i mini drama
 Hide TikTok's short drama episodes and the cards that promote them.	Nasconde gli episodi dei mini drama di TikTok e le schede che li promuovono.
 Mini dramas	Mini drama
@@ -1492,6 +1494,8 @@ The video was saved, but its record couldn't be updated. A later save may make a
 The already-saved check failed. Try again.	Il controllo dei video già salvati non è riuscito. Riprova.
 Show download progress	Mostra l'avanzamento del download
 Show a progress bar while a video saves.	Mostra una barra di avanzamento durante il salvataggio di un video.
+Skip the Share to sheet after a save	Salta il menu di condivisione dopo il salvataggio
+TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.	TikTok apre un menu di condivisione qualche secondo dopo aver salvato un video. Questa opzione lo impedisce. Il pulsante di condivisione e l'avviso di salvataggio restano come sono.
 Saving video	Salvataggio del video in corso
 Waiting to save video	Video in attesa di essere salvato
 Saving video: %1$s	Salvataggio del video in corso: %1$s
@@ -1568,6 +1572,8 @@ LIVE followers range	Intervallo dei follower LIVE
 Show only LIVEs from creators with this many followers.	Mostra solo i LIVE dei creator con questo numero di follower.
 Hide the comment bar on opened videos	Nascondi la barra dei commenti nei video aperti
 Hide the Clear display controls	Nascondi i controlli della vista pulita
+Keep the progress bar	Mantieni la barra di avanzamento
+Hide the Clear display controls leaves the progress bar in sight, so you can still see and drag it.	Nascondi i controlli della vista pulita lascia visibile la barra di avanzamento, così puoi ancora vederla e trascinarla.
 While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.	Con la vista pulita attiva, nascondi anche la barra di avanzamento, il pulsante di chiusura e i pulsanti di pausa e velocità in basso. Puoi comunque trascinare lungo il bordo inferiore per spostarti nel video. Per uscire dalla vista pulita, tieni premuto il video e tocca Ripristina visualizzazione, oppure pizzica lo schermo.
 Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.	Togli la barra per scrivere un commento dai video che apri da un profilo, un hashtag, un audio o dalla ricerca, così il video riempie lo schermo fino in fondo. Il pulsante dei commenti a destra continua ad aprire i commenti.
 Build details	Dettagli della build
@@ -1925,6 +1931,7 @@ Username last changed	Ultimo cambio del nome utente
 Display name last changed	Ultimo cambio del nome visualizzato
 Private account	Account privato
 Like the video	Metti Mi piace al video
+Like or unlike the video	Metti o togli Mi piace al video
 Liked videos	Video con Mi piace
 Public	Pubblici
 Copy	Copia
@@ -1950,6 +1957,8 @@ Hide TikTok's wind-down screens	Nascondi le schermate di relax di TikTok
 Stops the bedtime wind-down, the breathing exercise and the daily limit screen TikTok puts over the feed. Works only on accounts TikTok knows belong to adults. Teen accounts, and ones a parent links with Family Pairing, keep them. With Leave when TikTok says time is up on, the daily limit screen still shows so that switch can work.	Blocca la pausa serale, l'esercizio di respirazione e la schermata del limite giornaliero che TikTok mette sopra il feed. Funziona solo sugli account che TikTok sa essere di adulti. Gli account di adolescenti, e quelli che un genitore collega con Family Pairing, li mantengono. Con «Esci quando TikTok dice che il tempo è scaduto» attivo, la schermata del limite giornaliero compare comunque così quell'interruttore può agire.
 Hide Footnotes	Nascondi Footnotes
 Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.	Nascondi il banner Footnotes che TikTok mostra su un video con una nota allegata. Il video e i suoi commenti restano come sono.
+Hide the LIVE row on Following	Nascondi la fila LIVE in Seguiti
+Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.	Nascondi la fila di cerchi LIVE e storie in cima alla scheda Seguiti, e la pillola che li conta. “Per te” resta com’è.
 Hide Bulletin board	Nascondi Bulletin board
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.	Le righe Bulletin board che TikTok aggiunge alla Posta in arrivo escono dall'elenco. Le chat e le altre righe restano dove sono.
 Hide the group chat prompt	Nascondi l'invito alla chat di gruppo
@@ -2269,6 +2278,8 @@ Least viewed first	Prima i meno visti
 Most liked first	Prima i più piaciuti
 Least liked first	Prima i meno piaciuti
 Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.	Ordina una griglia del profilo o dei Mi piace, con i video in evidenza davanti. Finché è scelto un ordine, la griglia continua a caricare da sola fino a 300 video, così l'ordine copre più della prima schermata. Un pulsante nell'angolo in alto della griglia cambia l'ordine lì stesso.
+Sort loaded videos on Liked grids	Ordina i video caricati nelle griglie dei Mi piace
+Same as profile grids	Come le griglie del profilo
 Sort this grid	Ordina questa griglia
 Blur the video behind the bar	Sfoca il video dietro la barra
 Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.	Sfoca nel feed principale la parte del video che sta dietro la pillola di vetro, così sembra vetro smerigliato. Richiede Aspetto vetro liquido e Android 12 o successivo.
@@ -2310,3 +2321,9 @@ Shows a search button at the top left of the comments instead of the box, so the
 Put the comment search away	Chiudi la ricerca nei commenti
 Tap @names in bios	Tocca i @nomi nelle bio
 An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Un @nomeutente nella bio di un profilo apre quel profilo quando lo tocchi. Il resto della bio si traduce ancora con un tocco.
+autoplay auto play	riproduzione automatica autoplay
+picture in picture PiP	picture in picture PiP
+search suggestions	suggerimenti di ricerca
+AI chat	chat IA
+AI Tako	IA Tako
+save photos	salva foto

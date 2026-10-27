@@ -765,6 +765,12 @@
     "default": "off",
     "type": "string",
     "row": "Sort loaded videos on profile grids"
+   },
+   {
+    "key": "liked_grid_sort",
+    "default": "profile",
+    "type": "string",
+    "row": "Sort loaded videos on Liked grids"
    }
   ],
   "surface": "feed",
@@ -3739,6 +3745,12 @@
     "default": false,
     "type": "bool",
     "row": "Show download progress"
+   },
+   {
+    "key": "skip_post_download_share_sheet",
+    "default": false,
+    "type": "bool",
+    "row": "Skip the Share to sheet after a save"
    }
   ],
   "surface": "downloads",
@@ -8277,6 +8289,12 @@
     "default": false,
     "type": "bool",
     "row": "Hide Footnotes"
+   },
+   {
+    "key": "hide_following_live_row",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the LIVE row on Following"
    },
    {
     "key": "hide_feed_report_button",

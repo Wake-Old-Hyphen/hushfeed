@@ -800,6 +800,15 @@
           "type": "kotlin.String",
           "default": "off",
           "values": null
+        },
+        {
+          "key": "liked_grid_sort",
+          "title": "Default: liked grid sort",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "profile",
+          "values": null
         }
       ]
     },
@@ -3361,6 +3370,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
+          "values": null
+        },
+        {
+          "key": "skip_post_download_share_sheet",
+          "title": "Default: skip post download share sheet",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]
@@ -6431,6 +6449,15 @@
         {
           "key": "hide_footnotes",
           "title": "Default: hide footnotes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_following_live_row",
+          "title": "Default: hide following live row",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

@@ -1394,6 +1394,8 @@ Takes TikTok's own Auto scroll action out of the video panel and the Auto scroll
 Hide the unread badges on the bottom tabs,Sembunyikan lencana belum dibaca di tab bawah
 "Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.","Menyembunyikan angka dan titik merah di semua tab bawah, termasuk Kotak Masuk dan Profil, serta gelembung di atas Kotak Masuk yang menghitung suka, pengikut, dan komentar baru, juga siapa yang sedang LIVE. Kotak masuk sendiri tetap menampilkan yang masuk."
 Speed while you hold the video,Kecepatan saat video ditahan
+Slide to change the hold speed,Geser untuk mengubah kecepatan tahan
+"While you hold a video, slide left or right to change its speed, and a bubble shows it. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.","Saat menahan video, geser ke kiri atau kanan untuk mengubah kecepatannya. Gelembung menampilkan kecepatannya. Saat dilepas, kembali normal. Kunci dengan tarik ke bawah mempertahankan kecepatan yang dipilih."
 Hide mini dramas,Sembunyikan drama mini
 Hide TikTok's short drama episodes and the cards that promote them.,Sembunyikan episode drama pendek TikTok dan kartu yang mempromosikannya.
 Mini dramas,Drama mini
@@ -1487,6 +1489,8 @@ Video and details saved to %1$s,Video dan detail disimpan ke %1$s
 The already-saved check failed. Try again.,Pemeriksaan video tersimpan gagal. Coba lagi.
 Show download progress,Tampilkan progres unduhan
 Show a progress bar while a video saves.,Tampilkan bilah progres saat video disimpan.
+Skip the Share to sheet after a save,Lewati lembar berbagi setelah menyimpan
+TikTok opens a Share to sheet a few seconds after it saves a video. This stops it. The share button and the saved notice stay as they are.,TikTok membuka lembar berbagi beberapa detik setelah menyimpan video. Ini mencegahnya. Tombol bagikan dan pemberitahuan tersimpan tetap seperti biasa.
 Saving video,Menyimpan video
 Waiting to save video,Menunggu untuk menyimpan video
 Saving video: %1$s,Menyimpan video: %1$s
@@ -1563,6 +1567,8 @@ LIVE followers range,Rentang pengikut LIVE
 Show only LIVEs from creators with this many followers.,Hanya tampilkan LIVE dari kreator dengan jumlah pengikut sebanyak ini.
 Hide the comment bar on opened videos,Sembunyikan bilah komentar di video yang dibuka
 Hide the Clear display controls,Sembunyikan kontrol Tampilan bersih
+Keep the progress bar,Pertahankan bilah progres
+"Hide the Clear display controls leaves the progress bar in sight, so you can still see and drag it.","Sembunyikan kontrol Tampilan bersih membiarkan bilah progres tetap terlihat, jadi kamu masih bisa melihat dan menggesernya."
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","Saat Tampilan bersih aktif, sembunyikan juga bilah progres, tombol tutup, serta tombol jeda dan kecepatan di bagian bawah. Kamu tetap bisa menggeser di sepanjang tepi bawah untuk berpindah di dalam video. Untuk keluar dari Tampilan bersih, tekan lama video lalu ketuk Pulihkan tampilan, atau cubit layar."
 "Take the Add comment bar off videos you open from a profile, a hashtag, a sound or search, so the video fills the screen down to the bottom. The comment button on the right still opens comments.","Sembunyikan bilah untuk menulis komentar di video yang kamu buka dari profil, hashtag, suara, atau pencarian, agar video memenuhi layar sampai ke bawah. Tombol komentar di kanan tetap membuka komentar."
 Build details,Detail build
@@ -1912,6 +1918,7 @@ Username last changed,Nama pengguna terakhir diubah
 Display name last changed,Nama tampilan terakhir diubah
 Private account,Akun privat
 Like the video,Sukai video
+Like or unlike the video,Sukai atau batal sukai video
 Liked videos,Video yang disukai
 Public,Publik
 Copy,Salin
@@ -1937,6 +1944,8 @@ Hide TikTok's wind-down screens,Sembunyikan layar penenang TikTok
 "Stops the bedtime wind-down, the breathing exercise and the daily limit screen TikTok puts over the feed. Works only on accounts TikTok knows belong to adults. Teen accounts, and ones a parent links with Family Pairing, keep them. With Leave when TikTok says time is up on, the daily limit screen still shows so that switch can work.","Menghentikan jeda sebelum tidur, latihan napas, dan layar batas harian yang ditaruh TikTok di atas feed. Hanya berfungsi di akun yang TikTok tahu milik orang dewasa. Akun remaja, dan akun yang dihubungkan orang tua lewat Family Pairing, tetap memilikinya. Saat “Keluar saat TikTok bilang waktunya habis” menyala, layar batas harian tetap muncul agar sakelar itu bisa bekerja."
 Hide Footnotes,Sembunyikan Footnotes
 Hide the Footnotes banner TikTok shows on a video that has a note attached. The video and its comments stay as they are.,Sembunyikan banner Footnotes yang TikTok tampilkan pada video yang memiliki catatan. Video dan komentarnya tetap seperti semula.
+Hide the LIVE row on Following,Sembunyikan baris LIVE di Mengikuti
+"Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.","Sembunyikan baris lingkaran LIVE dan cerita di bagian atas tab Mengikuti, beserta pil yang menghitungnya. Untuk Kamu tetap seperti semula."
 Hide Bulletin board,Sembunyikan Bulletin board
 The Bulletin board rows TikTok adds to the Inbox leave the list. Chats and the other rows stay where they are.,Baris Bulletin board yang ditambahkan TikTok ke Kotak Masuk hilang dari daftar. Obrolan dan baris lainnya tetap di tempatnya.
 Hide the group chat prompt,Sembunyikan ajakan obrolan grup
@@ -2247,6 +2256,8 @@ Least viewed first,Paling sedikit ditonton dulu
 Most liked first,Paling banyak disukai dulu
 Least liked first,Paling sedikit disukai dulu
 "Sorts a profile or Liked grid with pinned videos first. While an order is on, the grid keeps loading by itself up to 300 videos, so the order covers more than the first screen. A button in the grid's top corner changes the order right there.","Mengurutkan kisi profil atau Disukai, dan video yang disematkan tetap di depan. Selama urutan dipilih, kisi terus memuat sendiri hingga 300 video, jadi urutannya mencakup lebih dari layar pertama. Tombol di sudut atas kisi mengubah urutan langsung di sana."
+Sort loaded videos on Liked grids,Urutkan video yang dimuat di kisi Disukai
+Same as profile grids,Sama seperti kisi profil
 Sort this grid,Urutkan kisi ini
 Blur the video behind the bar,Buramkan video di belakang bilah
 "Blur the part of the video that sits behind the glass pill on the main feed, so it looks like frosted glass. Needs Liquid glass look and Android 12 and up.","Buramkan bagian video di feed utama yang ada di belakang pil kaca, sehingga terlihat seperti kaca buram. Perlu Tampilan kaca cair dan Android 12 ke atas."
@@ -2284,3 +2295,9 @@ Fold the search into a button,Lipat pencarian jadi tombol
 Put the comment search away,Tutup pencarian komentar
 Tap @names in bios,Ketuk @nama di bio
 An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Bagian bio lainnya tetap diterjemahkan saat diketuk.
+autoplay auto play,putar otomatis autoplay
+picture in picture PiP,gambar dalam gambar PiP
+search suggestions,saran pencarian
+AI chat,chat AI
+AI Tako,AI Tako
+save photos,simpan foto

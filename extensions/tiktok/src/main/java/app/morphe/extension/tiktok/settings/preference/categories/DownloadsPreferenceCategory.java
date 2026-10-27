@@ -129,6 +129,15 @@ public class DownloadsPreferenceCategory extends ConditionalPreferenceCategory {
                         Settings.REMOVE_DOWNLOAD_WATERMARK
                 ));
             }
+            if (SettingsStatus.postDownloadShareSheetEnabled) {
+                addPreference(new TogglePreference(
+                        context,
+                        "Skip the Share to sheet after a save",
+                        "TikTok opens a Share to sheet a few seconds after it saves a video. This stops "
+                                + "it. The share button and the saved notice stay as they are.",
+                        Settings.SKIP_POST_DOWNLOAD_SHARE_SHEET
+                ));
+            }
         }
         if (SettingsStatus.advancedDownloadsEnabled) {
             addPreference(new SectionHeadingPreference(context, "Video"));
