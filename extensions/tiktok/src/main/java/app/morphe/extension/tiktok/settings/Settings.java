@@ -169,6 +169,8 @@ public class Settings extends BaseSettings {
             new BooleanSetting("skip_post_download_share_sheet", FALSE);
     /** How many of Hushfeed's saves run at once, "1" to "3"; the rest wait in line (#27). */
     public static final StringSetting DOWNLOAD_SAVES_AT_ONCE = new StringSetting("download_saves_at_once", "3");
+    /** Network saves wait for an unmetered network and stop when it turns metered; local saves still run. */
+    public static final BooleanSetting DOWNLOAD_UNMETERED_ONLY = new BooleanSetting("download_unmetered_only", FALSE);
     public static final BooleanSetting DOWNLOAD_DETAILS =new BooleanSetting("download_details", FALSE);
     /** The details file as JSON rather than plain text. */
     public static final BooleanSetting DOWNLOAD_DETAILS_JSON = new BooleanSetting(
@@ -843,6 +845,12 @@ public class Settings extends BaseSettings {
      * every setting answers its unpatched value, so this is off then like the rest. See FeedLock.
      */
     public static final BooleanSetting FEED_LOCK = new BooleanSetting("feed_lock", FALSE);
+    /**
+     * Weekly hours the feed lock applies by itself, on the phone's clock, as typed: "Mon-Fri
+     * 21:00-07:00; Sat Sun 13:00-15:00". Empty by default, which locks nothing, and empty while
+     * paused like the rest. See FeedSchedule.
+     */
+    public static final StringSetting FEED_LOCK_HOURS = new StringSetting("feed_lock_hours", "");
     /**
      * A link to one video plays that video alone: the feed's swipe is turned down while it is the
      * one playing, and Auto-advance doesn't move on from it. Off by default, and off while

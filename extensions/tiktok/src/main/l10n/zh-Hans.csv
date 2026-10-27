@@ -1459,7 +1459,8 @@ Saved videos put back,保存的视频放回
 Saved. Restart TikTok to apply this.,已保存。重新启动 TikTok 以应用此操作.
 Saves TikTok's latest crash report on this phone so it can go in the diagnostic report.,在此手机上保存 TikTok 的最新崩溃报告，以便将其纳入诊断报告中.
 "Saves subtitle (SRT) files with the video. They go to Movies on Android 11 and newer, Download on Android 10, and your video folder on older versions. On Android 11 and newer with Save details on, the video moves to Download or Documents and the subtitles stay in Movies.",与视频一起保存字幕 (SRT) 文件。他们会在 Android 11 及更高版本上转到“电影”，在 Android 10 上转到“下载”，在旧版本上会转到您的视频文件夹。在 Android 11 及更高版本上，如果打开“保存详细信息”，视频将移至“下载”或“文档”，而字幕仍保留在“电影”中.
-"Saves the caption, creator, link and post date in a text file next to the video. On Android 10 and later, the pair goes in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",将标题、创建者、链接和发布日期保存在视频旁边的文本文件中。在 Android 10 及更高版本上，该对将进入同一文件夹名称下的“下载”或“文档”。适用于 Hushfeed 进行的保存.
+"Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.",将标题、创建者、链接和发布日期保存在视频旁边的文本文件中，图片帖子的原图则共用一个文件。在 Android 10 及更高版本上，它们会进入同一文件夹名称下的“下载”或“文档”。适用于 Hushfeed 进行的保存.
+"The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.",照片已保存，但无法写入它们的详情文件。请检查存储空间，然后重新保存该帖子以获取它.
 Saves the details file in JSON format instead of plain text. Useful if another tool will read it.,以 JSON 格式而不是纯文本格式保存详细信息文件。如果其他工具可以读取它，则很有用.
 Saves your Hushfeed settings and Feature Gate Lab rules to a file.,将 Hushfeed 设置和功能门实验室规则保存到文件中.
 Saving,节省
@@ -2120,6 +2121,7 @@ Value: %1$s to %2$s,值：%1$s 至 %2$s
 Verified accounts,已验证帐户
 Version %1$s,版本%1$s
 Version %1$s for TikTok %2$s,TikTok %2$s 的版本 %1$s
+Version %1$s for PineDrama %2$s,PineDrama %2$s 的版本 %1$s
 "Version, changes and licenses",版本、变更和许可
 Video,视频
 Video (MP4),视频 (MP4)
@@ -2299,3 +2301,18 @@ search suggestions,搜索建议
 AI chat,AI 聊天
 AI Tako,AI Tako
 save photos,保存照片
+Lock the feed at set times,在设定时间锁定信息流
+"The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.",信息流会在这些时间按手机时钟自动锁定。像这样填写日期和时间：Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00。不写日期表示每天。结束早于开始的时间段会跨过午夜.
+Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,无法读取 %1$s。请像 Mon-Fri 21:00-07:00 这样填写日期和时间.
+%1$s starts and ends at the same time. Give it a different end time.,%1$s 的开始和结束时间相同。请换一个结束时间.
+Locked all week,整周锁定
+"Locked now, until %1$s",现已锁定，直到 %1$s
+Next lock starts %1$s,下次锁定开始于 %1$s
+"The feed is locked until %1$s. Messages, profiles and search still work.",信息流锁定到 %1$s。私信、个人主页和搜索仍可使用.
+Save only on Wi-Fi,仅在 Wi-Fi 下保存
+"Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.",保存会等待 Wi-Fi 或其他不计流量的网络，最多 30 分钟，离开该网络就会停止。保存画面在任何网络下都可以.
+Waiting for Wi-Fi,正在等待 Wi-Fi
+The last one is still waiting for Wi-Fi,上一个还在等待 Wi-Fi
+Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,等待 Wi-Fi 30 分钟后已停止。连上 Wi-Fi 后再保存一次.
+Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,已保存 %1$s 个，共 %2$s 个。其余的在你离开 Wi-Fi 时停止了。请在 Wi-Fi 下再保存一次.
+The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,你离开 Wi-Fi 时保存停止了。请在 Wi-Fi 下再保存一次.

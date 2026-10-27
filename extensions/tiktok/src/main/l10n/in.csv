@@ -1295,6 +1295,7 @@ Value to return,Nilai yang dikembalikan
 Verified accounts,Akun terverifikasi
 Version %1$s,Versi %1$s
 Version %1$s for TikTok %2$s,Versi %1$s untuk TikTok %2$s
+Version %1$s for PineDrama %2$s,Versi %1$s untuk PineDrama %2$s
 Video,Video
 Video (MP4),Video (MP4)
 Video destination,Lokasi simpan video
@@ -1462,7 +1463,8 @@ This preset doesn't match the installed gates. Nothing changed.,Preset ini tidak
 About overrides,Tentang penggantian
 "Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.","Pakai {creator}, {date}, dan {video_id} untuk menyusun nama. Awali dengan {creator}/ agar setiap kreator masuk ke foldernya sendiri. Ekstensi file ditambahkan otomatis."
 Save details beside the video,Simpan detail di samping video
-"Saves the caption, creator, link and post date in a text file next to the video. On Android 10 and later, the pair goes in Download or Documents under the same folder name. Applies to saves made by Hushfeed.","Menyimpan keterangan, kreator, tautan, dan tanggal unggah dalam file teks di samping video. Di Android 10 ke atas, pasangan file itu masuk ke Download atau Documents dengan nama folder yang sama. Berlaku untuk penyimpanan yang dilakukan Hushfeed."
+"Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.","Menyimpan keterangan, kreator, tautan, dan tanggal unggah dalam file teks di samping video, atau satu file untuk foto asli dari unggahan foto. Di Android 10 ke atas, file itu masuk ke Download atau Documents dengan nama folder yang sama. Berlaku untuk penyimpanan yang dilakukan Hushfeed."
+"The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.","Foto sudah tersimpan, tetapi file detailnya tidak dapat ditulis. Periksa penyimpanan dan simpan unggahan lagi untuk mendapatkannya."
 Check for already-saved videos,Periksa video yang sudah disimpan
 Forget saved videos,Lupakan video tersimpan
 Undo forgetting saved videos,Batalkan melupakan video tersimpan
@@ -2301,3 +2303,18 @@ search suggestions,saran pencarian
 AI chat,chat AI
 AI Tako,AI Tako
 save photos,simpan foto
+Lock the feed at set times,Kunci feed pada waktu tertentu
+"The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.","Feed terkunci sendiri selama jam-jam ini, menurut jam ponselmu. Tulis hari dan jam seperti Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Kosongkan hari agar berlaku setiap hari. Waktu yang berakhir lebih awal dari mulainya berlanjut melewati tengah malam."
+Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.,Tidak dapat membaca %1$s. Tulis hari dan jam seperti Mon-Fri 21:00-07:00.
+%1$s starts and ends at the same time. Give it a different end time.,%1$s mulai dan berakhir pada waktu yang sama. Beri waktu selesai yang berbeda.
+Locked all week,Terkunci sepanjang minggu
+"Locked now, until %1$s","Terkunci sekarang, sampai %1$s"
+Next lock starts %1$s,Kunci berikutnya mulai %1$s
+"The feed is locked until %1$s. Messages, profiles and search still work.","Feed terkunci sampai %1$s. Pesan, profil, dan pencarian tetap berfungsi."
+Save only on Wi-Fi,Simpan hanya lewat Wi-Fi
+"Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.","Penyimpanan menunggu Wi-Fi atau jaringan lain yang tidak berkuota hingga 30 menit, dan berhenti jika kamu keluar darinya. Menyimpan bingkai tetap bisa di mana saja."
+Waiting for Wi-Fi,Menunggu Wi-Fi
+The last one is still waiting for Wi-Fi,Yang sebelumnya masih menunggu Wi-Fi
+Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.,Berhenti menunggu Wi-Fi setelah 30 menit. Simpan lagi saat kamu terhubung ke Wi-Fi.
+Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.,Tersimpan %1$s dari %2$s. Sisanya berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.
+The save stopped when you left Wi-Fi. Save it again on Wi-Fi.,Penyimpanan berhenti saat kamu keluar dari Wi-Fi. Simpan lagi lewat Wi-Fi.

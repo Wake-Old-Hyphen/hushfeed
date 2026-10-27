@@ -1317,6 +1317,7 @@ Value to return	Qaytarılacaq dəyər
 Verified accounts	Təsdiqlənmiş hesablar
 Version %1$s	Versiya %1$s
 Version %1$s for TikTok %2$s	Versiya %1$s, TikTok %2$s üçün
+Version %1$s for PineDrama %2$s	Versiya %1$s, PineDrama %2$s üçün
 Video	Video
 Video (MP4)	Video (MP4)
 Video destination	Video təyinatı
@@ -1467,7 +1468,8 @@ This preset doesn't match the installed gates. Nothing changed.	Bu hazır ayar q
 About overrides	Əvəzləmələr haqqında
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Adı qurmaq üçün {creator}, {date} və {video_id} istifadə edin. Hər yaradıcını ayrıca qovluğa qoymaq üçün {creator}/ ilə başlayın. Fayl uzantısı sizin üçün əlavə olunur.
 Save details beside the video	Təfərrüatları videonun yanında saxlayın
-Saves the caption, creator, link and post date in a text file next to the video. On Android 10 and later, the pair goes in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Başlığı, yaradıcını, linki və paylaşım tarixini videonun yanında mətn faylında saxlayır. Android 10 və daha yenisində cüt Download və ya Documents içində eyni qovluq adı ilə qalır. Hushfeed-in etdiyi saxlamalara aiddir.
+Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Başlığı, yaradıcını, linki və paylaşım tarixini videonun yanında mətn faylında, foto paylaşımının orijinal fotoları üçün isə bir faylda saxlayır. Android 10 və daha yenisində onlar Download və ya Documents içində eyni qovluq adı ilə qalır. Hushfeed-in etdiyi saxlamalara aiddir.
+The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.	Fotolar saxlanıldı, amma onların təfərrüat faylı yazıla bilmədi. Yaddaşı yoxlayın və onu almaq üçün paylaşımı yenidən saxlayın.
 Check for already-saved videos	Artıq saxlanılmış videoları yoxlayın
 Forget saved videos	Saxlanılmış videoları unudun
 Undo forgetting saved videos	Saxlanılmış videoların unudulmasını geri qaytarın
@@ -2327,3 +2329,18 @@ search suggestions	axtarış təklifləri
 AI chat	Sİ söhbəti
 AI Tako	Sİ Tako
 save photos	fotoları saxla
+Lock the feed at set times	Lenti müəyyən saatlarda kilidlə
+The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	Lent bu saatlarda telefonunun saatına görə özü kilidlənir. Günləri və saatları belə yaz: Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Hər gün üçün günləri yazma. Başladığından tez bitən vaxt gecə yarısını keçir.
+Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	%1$s oxuna bilmədi. Günləri və saatları Mon-Fri 21:00-07:00 kimi yaz.
+%1$s starts and ends at the same time. Give it a different end time.	%1$s eyni vaxtda başlayır və bitir. Başqa bitmə vaxtı ver.
+Locked all week	Bütün həftə kilidlidir
+Locked now, until %1$s	İndi kilidlidir, açılır: %1$s
+Next lock starts %1$s	Növbəti kilid: %1$s
+The feed is locked until %1$s. Messages, profiles and search still work.	Lent kilidlidir, açılır: %1$s. Mesajlar, profillər və axtarış yenə işləyir.
+Save only on Wi-Fi	Yalnız Wi-Fi ilə saxla
+Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.	Saxlamalar 30 dəqiqəyədək Wi-Fi və ya limitsiz başqa şəbəkə gözləyir, ondan çıxsanız dayanır. Kadrın saxlanması hər yerdə işləyir.
+Waiting for Wi-Fi	Wi-Fi gözlənilir
+The last one is still waiting for Wi-Fi	Sonuncu hələ Wi-Fi gözləyir
+Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	30 dəqiqədən sonra Wi-Fi gözləməsi dayandırıldı. Wi-Fi-a qoşulanda yenidən saxlayın.
+Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%2$s fayldan %1$s saxlanıldı. Qalanları Wi-Fi-dan çıxanda dayandı. Wi-Fi ilə yenidən saxlayın.
+The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Wi-Fi-dan çıxanda saxlama dayandı. Wi-Fi ilə yenidən saxlayın.

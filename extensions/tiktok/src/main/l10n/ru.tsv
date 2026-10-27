@@ -1392,6 +1392,7 @@ Value to return	Возвращаемое значение
 Verified accounts	Верифицированные аккаунты
 Version %1$s	Версия %1$s
 Version %1$s for TikTok %2$s	Версия %1$s для TikTok %2$s
+Version %1$s for PineDrama %2$s	Версия %1$s для PineDrama %2$s
 Video	Видео
 Video (MP4)	Видео (MP4)
 Video destination	Папка для видео
@@ -1605,7 +1606,8 @@ This preset doesn't match the installed gates. Nothing changed.	Эта пред�
 About overrides	О переопределениях
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Составьте имя из {creator}, {date} и {video_id}. Начните с {creator}/, чтобы класть каждого автора в отдельную папку. Расширение файла добавляется само.
 Save details beside the video	Сохранять детали рядом с видео
-Saves the caption, creator, link and post date in a text file next to the video. On Android 10 and later, the pair goes in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Сохраняет описание, автора, ссылку и дату публикации в текстовом файле рядом с видео. На Android 10 и новее эта пара попадает в Download или Documents под тем же именем папки. Действует для сохранений, сделанных Hushfeed.
+Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Сохраняет описание, автора, ссылку и дату публикации в текстовом файле рядом с видео или в одном файле для оригинальных фото фотопоста. На Android 10 и новее они попадают в Download или Documents под тем же именем папки. Действует для сохранений, сделанных Hushfeed.
+The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.	Фото сохранены, но файл с их данными записать не удалось. Проверьте память и сохраните публикацию ещё раз, чтобы получить его.
 Check for already-saved videos	Проверять уже сохранённые видео
 Forget saved videos	Забыть сохранённые видео
 Undo forgetting saved videos	Отменить забывание сохранённых видео
@@ -2504,3 +2506,18 @@ search suggestions	подсказки поиска
 AI chat	чат ИИ
 AI Tako	ИИ Tako
 save photos	сохранить фото
+Lock the feed at set times	Блокировать ленту по расписанию
+The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	Лента блокируется сама в эти часы, по часам телефона. Пишите дни и часы так: Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Без дней значит каждый день. Время, которое заканчивается раньше, чем начинается, переходит через полночь.
+Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	Не удалось прочитать %1$s. Пишите дни и часы так: Mon-Fri 21:00-07:00.
+%1$s starts and ends at the same time. Give it a different end time.	%1$s начинается и заканчивается в одно время. Укажите другое время окончания.
+Locked all week	Заблокировано всю неделю
+Locked now, until %1$s	Заблокировано сейчас, до %1$s
+Next lock starts %1$s	Следующая блокировка начнётся %1$s
+The feed is locked until %1$s. Messages, profiles and search still work.	Лента заблокирована до %1$s. Сообщения, профили и поиск работают как обычно.
+Save only on Wi-Fi	Сохранять только по Wi-Fi
+Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.	Сохранения ждут Wi-Fi или другую безлимитную сеть до 30 минут и останавливаются, если вы из неё выйдете. Сохранение кадра работает везде.
+Waiting for Wi-Fi	Ожидание Wi-Fi
+The last one is still waiting for Wi-Fi	Последнее всё ещё ждёт Wi-Fi
+Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Ожидание Wi-Fi прекращено через 30 минут. Сохраните снова, когда будете в сети Wi-Fi.
+Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	Сохранено %1$s из %2$s. Остальное остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.
+The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	Сохранение остановилось, когда вы вышли из Wi-Fi. Сохраните снова по Wi-Fi.

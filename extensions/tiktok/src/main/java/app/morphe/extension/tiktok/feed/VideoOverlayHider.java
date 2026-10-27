@@ -639,7 +639,8 @@ public final class VideoOverlayHider {
             fadedClear = clearLive && chosenFade > 0 && chosenFade < 100 && Settings.FADE_IN_CLEAR_DISPLAY.get();
             fadeLevel = BurnInGuard.pass(activity, chosenFade, overlaysOn);
             boolean carryHides = carry && !fadedClear;
-            topBarHeld = carryHides && !RememberClearDisplayPatch.isClearDisplayNow();
+            topBarHeld = carryHides && (!RememberClearDisplayPatch.isClearDisplayNow()
+                    || RememberClearDisplayPatch.isPageUncleared());
             boolean tabStrip = !detailPager && clearLive;
             // The comment bar is the opened post's own; the main feed has the tabs there. TikTok
             // leaves it up in Clear display on a photo or video opened from search or a profile

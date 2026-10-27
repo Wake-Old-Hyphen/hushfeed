@@ -472,7 +472,7 @@ public final class Probe extends Instrumentation {
                             throw new IllegalStateException("no copied TikTok video URL");
                         }
                         Intent video = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(link));
-                        video.setPackage("com.zhiliaoapp.musically");
+                        video.setPackage(app.getPackageName());
                         video.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         app.startActivity(video);
                         Log.i(TAG, "ok open-copied-video");
@@ -492,7 +492,7 @@ public final class Probe extends Instrumentation {
                             throw new IllegalStateException("no copied TikTok photo URL");
                         }
                         Intent photo = new Intent(Intent.ACTION_VIEW, uri);
-                        photo.setPackage("com.zhiliaoapp.musically");
+                        photo.setPackage(app.getPackageName());
                         photo.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         app.startActivity(photo);
                         Log.i(TAG, "ok open-copied-photo");
@@ -502,8 +502,8 @@ public final class Probe extends Instrumentation {
                         String aid = required(intent, "aid");
                         if (!aid.matches("[0-9]+")) throw new IllegalArgumentException("invalid public video id");
                         Intent video = new Intent(Intent.ACTION_VIEW,
-                                android.net.Uri.parse("snssdk1233://aweme/detail/" + aid));
-                        video.setPackage("com.zhiliaoapp.musically");
+                                android.net.Uri.parse(deepLinkScheme(app) + "://aweme/detail/" + aid));
+                        video.setPackage(app.getPackageName());
                         video.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         app.startActivity(video);
                         Log.i(TAG, "ok open-public-video");
@@ -517,7 +517,7 @@ public final class Probe extends Instrumentation {
                         }
                         String link = "https://www.tiktok.com/@" + user + "/video/" + aid;
                         Intent video = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(link));
-                        video.setPackage("com.zhiliaoapp.musically");
+                        video.setPackage(app.getPackageName());
                         video.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         app.startActivity(video);
                         Log.i(TAG, "ok open-video");
@@ -1105,7 +1105,7 @@ public final class Probe extends Instrumentation {
                         Object aid = optional(aweme, "getAid");
                         if (blank(aid)) throw new IllegalStateException("no current video");
                         android.content.Intent open = new android.content.Intent(android.content.Intent.ACTION_VIEW,
-                                android.net.Uri.parse("snssdk1233://aweme/detail/" + aid));
+                                android.net.Uri.parse(deepLinkScheme(context) + "://aweme/detail/" + aid));
                         open.setPackage(context.getPackageName());
                         open.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(open);
@@ -4574,6 +4574,11 @@ public final class Probe extends Instrumentation {
 
         private static boolean blank(Object value) {
             return value == null || String.valueOf(value).trim().isEmpty();
+        }
+
+        /** The app's own deep-link scheme: PineDrama answers snssdk845221, TikTok snssdk1233. */
+        private static String deepLinkScheme(Context context) {
+            return "com.ss.android.ttmd.video".equals(context.getPackageName()) ? "snssdk845221" : "snssdk1233";
         }
 
         /** Whether the author has a LIVE room open, from the room id their model carries. */

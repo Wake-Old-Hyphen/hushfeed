@@ -1296,6 +1296,7 @@ Value to return	Valor devolvido
 Verified accounts	Contas verificadas
 Version %1$s	Versão %1$s
 Version %1$s for TikTok %2$s	Versão %1$s para TikTok %2$s
+Version %1$s for PineDrama %2$s	Versão %1$s para PineDrama %2$s
 Video	Vídeo
 Video (MP4)	Vídeo (MP4)
 Video destination	Destino dos vídeos
@@ -1467,7 +1468,8 @@ This preset doesn't match the installed gates. Nothing changed.	Esta predefiniç
 About overrides	Sobre as substituições
 Use {creator}, {date} and {video_id} to build the name. Start with {creator}/ to put each creator in a folder. The file ending is added for you.	Use {creator}, {date} e {video_id} para montar o nome. Comece com {creator}/ para colocar cada criador em uma pasta. A extensão do arquivo é adicionada automaticamente.
 Save details beside the video	Salvar detalhes junto ao vídeo
-Saves the caption, creator, link and post date in a text file next to the video. On Android 10 and later, the pair goes in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Salva a legenda, o criador, o link e a data de publicação em um arquivo de texto ao lado do vídeo. No Android 10 e posteriores, o par vai para Download ou Documents com o mesmo nome de pasta. Vale para os salvamentos feitos pelo Hushfeed.
+Saves the caption, creator, link and post date in a text file next to the video, or one file for a photo post's original photos. On Android 10 and later, they go in Download or Documents under the same folder name. Applies to saves made by Hushfeed.	Salva a legenda, o criador, o link e a data de publicação em um arquivo de texto ao lado do vídeo, ou em um único arquivo para as fotos originais de uma publicação de fotos. No Android 10 e posteriores, eles vão para Download ou Documents com o mesmo nome de pasta. Vale para os salvamentos feitos pelo Hushfeed.
+The photos saved, but their details file couldn't be written. Check your storage and save the post again to get it.	As fotos foram salvas, mas não foi possível gravar o arquivo de detalhes delas. Verifique o armazenamento e salve a publicação de novo para obtê-lo.
 Check for already-saved videos	Verificar vídeos já salvos
 Forget saved videos	Esquecer os vídeos salvos
 Undo forgetting saved videos	Desfazer o esquecimento dos vídeos salvos
@@ -2327,3 +2329,18 @@ search suggestions	sugestões de pesquisa
 AI chat	chat de IA
 AI Tako	IA Tako
 save photos	salvar fotos
+Lock the feed at set times	Bloquear o feed em horários definidos
+The feed locks by itself during these hours, on your phone's clock. Write days and hours like Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Leave the days out for every day. A time that ends earlier than it starts runs past midnight.	O feed se bloqueia sozinho nesses horários, pelo relógio do seu celular. Escreva dias e horários como Mon-Fri 21:00-07:00; Sat Sun 13:00-15:00. Deixe os dias de fora para valer todos os dias. Um horário que termina antes de começar passa da meia-noite.
+Couldn't read %1$s. Write days and hours like Mon-Fri 21:00-07:00.	Não foi possível ler %1$s. Escreva dias e horários como Mon-Fri 21:00-07:00.
+%1$s starts and ends at the same time. Give it a different end time.	%1$s começa e termina no mesmo horário. Dê outro horário de término.
+Locked all week	Bloqueado a semana toda
+Locked now, until %1$s	Bloqueado agora, até %1$s
+Next lock starts %1$s	O próximo bloqueio começa %1$s
+The feed is locked until %1$s. Messages, profiles and search still work.	O feed está bloqueado até %1$s. Mensagens, perfis e busca continuam funcionando.
+Save only on Wi-Fi	Salvar só no Wi-Fi
+Saves wait for Wi-Fi or another network that isn't metered, for up to 30 minutes, and stop if you leave it. Saving a frame still works anywhere.	Os salvamentos esperam até 30 minutos por Wi-Fi ou outra rede sem limite de dados, e param se você sair dela. Salvar um quadro funciona em qualquer rede.
+Waiting for Wi-Fi	Esperando Wi-Fi
+The last one is still waiting for Wi-Fi	O anterior ainda está esperando Wi-Fi
+Stopped waiting for Wi-Fi after 30 minutes. Save it again when you're on Wi-Fi.	Parou de esperar o Wi-Fi depois de 30 minutos. Salve de novo quando estiver no Wi-Fi.
+Saved %1$s of %2$s. The rest stopped when you left Wi-Fi. Save again on Wi-Fi.	%1$s de %2$s salvos. O resto parou quando você saiu do Wi-Fi. Salve de novo no Wi-Fi.
+The save stopped when you left Wi-Fi. Save it again on Wi-Fi.	O salvamento parou quando você saiu do Wi-Fi. Salve de novo no Wi-Fi.
