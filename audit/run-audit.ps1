@@ -450,7 +450,11 @@ function Invoke-AuditProbe([string]$Action, $Extras, [int]$WaitMs = 3000, [strin
     }
     Invoke-DeviceShell ($parts -join ' ') | Out-Null
     $done = if ($Until) { $Until } else { "^(ok|failed) $([regex]::Escape($Action))\b" }
-    $deadline = [DateTime]::UtcNow.AddMilliseconds([Math]::Max($WaitMs, 800) + 4000)
+    # The report runs to dozens of pieces, and on a busy phone its completion line landed after
+    # a 7 second wait (two "registered" checks, S22 2026-10-27). The loop stops at that line, so a
+    # longer ceiling only costs time when the answer never comes.
+    $floorMs = if ($Action -eq 'report') { 20000 } else { 800 }
+    $deadline = [DateTime]::UtcNow.AddMilliseconds([Math]::Max($WaitMs, $floorMs) + 4000)
     $answer = @()
     do {
         Start-Sleep -Milliseconds 400

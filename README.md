@@ -1,7 +1,7 @@
 ![Hushfeed. Take back your feed with focused controls for filtering, gestures, playback, downloads and privacy.](assets/readme-hero.png)
 
 <p align="center">
-  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.79.0-6f42c1.svg" /></a>
+  <a href="CHANGELOG.md"><img alt="version" src="https://img.shields.io/badge/version-0.80.0-6f42c1.svg" /></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-GPLv3-blue.svg" /></a>
   <a href="https://www.android.com/"><img alt="platform" src="https://img.shields.io/badge/platform-Android-3ddc84.svg" /></a>
   <a href="https://github.com/MorpheApp/morphe-manager"><img alt="Morphe" src="https://img.shields.io/badge/works%20with-Morphe-00b894.svg" /></a>
@@ -404,7 +404,7 @@ To add a language to the settings screen, copy one of the tables under `extensio
 
 The patch audit's catalog check is `pwsh -File audit/run-audit.ps1 -Validate`. To check a saved report without changing it, use `-ValidateResults -Results <report> -OutDir <evidence folder>`. A current result needs its exact definition, build receipt and APK identity, unchanged evidence files, and the same executable inputs as the build being qualified. Each check keeps its own input digest, so a partial rerun cannot qualify older checks. Documentation changes alone leave the digest unchanged. Old or mixed-build records stay historical. The [audit routine](concepts/patch-development.md#patch-audit) covers the device builder's `.audit-build.json`, shared device leases and receipt-bound screenshot verdicts.
 
-Unreleased release checks require a separate fixture and native audit for every package and version in the catalog. Each record includes the source APK's manifest and hash, the selected patches and options, and the exact bundle and source commit. A whole-app walk also verifies the installed APK before and after navigation. Older published receipts remain readable as historical records. PineDrama still needs a complete native audit and whole-app walk before these checks can permit another publication.
+Unreleased release checks require a separate fixture and native audit for every package and version in the catalog. Each record includes the source APK's manifest and hash, the selected patches and options, and the exact bundle and source commit. A whole-app walk also verifies the installed APK before and after navigation. Older published receipts remain readable as historical records. Walk PineDrama with `scripts/walk-app.ps1 -Package com.ss.android.ttmd.video` and its own `-Out`, and pass publish both receipts, comma separated, to `-Walk`. PineDrama's arm64 code barely runs on an x86_64 emulator, so its audit and walk go on a phone.
 
 PineDrama's partial `pinedrama-47.5.3-core-walk-v2` profile follows five steps. It launches the native MainActivity and opens Hushfeed with `TikTokActivityHook.openSettings()`. The Comments row expands its controls inline, then collapses them on the same settings page. Back returns to the original native activity. Each step needs a fresh boolean observation and a screenshot. The result retains installed APK identities before and after the walk and rejects a process change or native crash. Even if all five steps pass, it stays `INCOMPLETE`, with `full=false` and `eligibleForPublication=false`. Historical v1 page-navigation evidence remains tied to v1. Native Profile/settings entry, served comments and photo gallery or posting flows still need their own checks.
 

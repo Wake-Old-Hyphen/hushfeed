@@ -981,7 +981,7 @@
    },
    {
     "id": "blocks-contacts-query",
-    "what": "With the switch on, opening Discover and the Inbox makes PineDrama query the contacts provider and the blocker logs that it answered with an empty cursor.",
+    "what": "The blocker TikTok's rewired contact queries go through answers the contacts provider with an empty cursor and logs it while the switch is on, and passes the query to the provider when it's off. TikTok reads contacts on its own schedule, so the check calls that entry point with the arguments those call sites pass.",
     "steps": [
      {
       "set": {
@@ -989,28 +989,37 @@
       }
      },
      {
-      "restart": true
-     },
-     {
       "open": "feed"
      },
      {
-      "open": "discover"
-     },
-     {
-      "wait": 8000
-     },
-     {
-      "open": "inbox"
-     },
-     {
-      "wait": 8000
+      "probe": "privacy-call",
+      "extras": {
+       "which": "contacts"
+      },
+      "expect": "^ok privacy-call contacts rows=0 cursor=MatrixCursor$",
+      "waitMs": 2000
      },
      {
       "log": "Contact list blocker: blocked a query to content://com\\.android\\.contacts",
-      "fromStep": 2,
-      "within": 3000,
-      "precondition": true
+      "fromStep": 3,
+      "within": 3000
+     },
+     {
+      "set": {
+       "block_contact_list": "false"
+      }
+     },
+     {
+      "probe": "privacy-call",
+      "extras": {
+       "which": "contacts"
+      },
+      "expect": "^ok privacy-call contacts rows=\\d+ cursor=(?!MatrixCursor$)\\w+$",
+      "waitMs": 2000
+     },
+     {
+      "logNot": "Contact list blocker: blocked",
+      "within": 2000
      }
     ],
     "auto": true
@@ -1074,7 +1083,7 @@
    },
    {
     "id": "blocks-package-listing",
-    "what": "With the switch on from the start, the diagnostic export records that TikTok's package-list calls were answered empty.",
+    "what": "The blocker TikTok's rewired app-list calls go through answers the package list, the application list and the launcher enumeration empty while the switch is on, and still finds the share targets the share sheet needs. With it off the same calls see the phone's apps. TikTok scans on its own schedule, so the check calls those entry points with the arguments the call sites pass.",
     "steps": [
      {
       "set": {
@@ -1082,25 +1091,37 @@
       }
      },
      {
-      "restart": true
-     },
-     {
       "open": "feed"
      },
      {
-      "wait": 8000
+      "probe": "privacy-call",
+      "extras": {
+       "which": "apps"
+      },
+      "expect": "^ok privacy-call apps packages=0 applications=0 launcher=0 share=[1-9]\\d*$",
+      "waitMs": 2000
      },
      {
-      "open": "profile"
+      "log": "Installed apps blocker: blocked the launcher enumeration",
+      "fromStep": 3,
+      "within": 3000
      },
      {
-      "wait": 4000
+      "set": {
+       "block_installed_apps": "false"
+      }
      },
      {
-      "probe": "report",
-      "expect": "Installed apps blocker: blocked (getInstalledPackages|getInstalledApplications|the launcher enumeration)",
-      "waitMs": 10000,
-      "precondition": true
+      "probe": "privacy-call",
+      "extras": {
+       "which": "apps"
+      },
+      "expect": "^ok privacy-call apps packages=[1-9]\\d* applications=[1-9]\\d* launcher=[1-9]\\d* share=[1-9]\\d*$",
+      "waitMs": 2000
+     },
+     {
+      "logNot": "Installed apps blocker: blocked",
+      "within": 2000
      }
     ],
     "auto": true
@@ -3297,7 +3318,7 @@
    },
    {
     "id": "fit-decision-recorded",
-    "what": "With Fit on, the feed cell sizing goes through VideoFit and the export records a Fit decision with TikTok's size, the space and the outcome.",
+    "what": "With Fit on, the feed cell sizing goes through VideoFit and the export records a Fit decision with TikTok's size, the space and the outcome. It swipes three times, since a photo post records no decision.",
     "steps": [
      {
       "set": {
@@ -3315,6 +3336,18 @@
       "wait": 2000
      },
      {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
       "probe": "report",
       "expect": "Fit, feed: TikTok\\'s size \\d+x\\d+, space \\d+x\\d+, (left as it was|made \\d+x\\d+)",
       "waitMs": 10000
@@ -3324,13 +3357,25 @@
    },
    {
     "id": "fill-decision-recorded",
-    "what": "With Fill on (and Fit off) the export records a Fill decision instead.",
+    "what": "With Fill on (and Fit off) the export records a Fill decision instead. It swipes three times, since a photo post records no decision.",
     "steps": [
      {
       "set": {
        "fit_video_to_screen": "false",
        "fill_video_to_screen": "true"
       }
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
+     },
+     {
+      "swipe": "up"
+     },
+     {
+      "wait": 2000
      },
      {
       "swipe": "up"
