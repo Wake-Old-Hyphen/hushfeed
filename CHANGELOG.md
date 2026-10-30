@@ -4,6 +4,15 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* **TikTok:** `Let other apps play until a video starts` sits under `Mute feed videos` in Playback. With it on, opening TikTok or going back and forth to your messages doesn't pause music from another app anymore. TikTok takes the sound once a video actually plays. It's off by default (#283).
+
+### Fixes
+
+* **TikTok:** Opening TikTok links from Telegram one after another no longer piles a whole For You feed under every profile. Memory stayed high and grew with each link, and Back went from feed to feed instead of out of TikTok. Now each link replaces the pages you'd opened from the last one, so Back from the profile goes to the main feed and TikTok's usual quick double Back leaves from there (#276).
+* **TikTok:** `Auto translate comments` works again on accounts TikTok moved to its newer comment list, where nothing got translated. Foreign comments switch to your language as they scroll in, and one you've flipped back with See original stays that way (#282).
+
 ## 0.80.0 (2026-10-27)
 
 ### Features
