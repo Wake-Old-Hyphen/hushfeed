@@ -11,7 +11,7 @@
     page. On PineDrama it's Short Video, Following and Drama, the same sheets and search, and the
     Discover, Rewards, Inbox and Profile tabs. Both then expand every Hushfeed settings section,
     scroll it to its end and collapse it, plus Search settings. Hushfeed opens from Profile's
-    menu, or from a long press on Home when an app's menu has no Hushfeed row. After each step
+    menu or gear, or from a long press on Home when that route has no Hushfeed row. After each step
     the app has to still be the foreground app on the same process. Logcat's crash lines for it
     decide the rest.
 
@@ -330,10 +330,11 @@ function Get-WalkSectionView([string]$Label, [int]$Width, [int]$Height, [string]
     $row = Find-WalkRow $Label $Width $Height $Name 'title'
     if (-not $row) { return $null }
     if ($row.Top -gt $Height * 0.4) {
-        # Leave room below the header. Refresh the dump before the next tap.
+        # Leave room below the header. Refresh the dump before the next tap. The swipe is slow
+        # because a fast one flings on, 1107 px for 711 asked, and carries the row off the top.
         $distance = [int][Math]::Min($row.Top - $Height * 0.25, $Height * 0.45)
         Invoke-WalkAdb shell input swipe ([int]($Width / 2)) ([int]($Height * 0.7)) `
-            ([int]($Width / 2)) ([int]($Height * 0.7) - $distance) 450 | Out-Null
+            ([int]($Width / 2)) ([int]($Height * 0.7) - $distance) ($distance * 4) | Out-Null
         Start-Sleep -Milliseconds 1300
     }
     $nodes = Get-WalkScreen $Name
@@ -379,11 +380,14 @@ function Open-WalkHushfeed([string]$HubLabel, [int]$Width, [int]$Height) {
     if (-not $menu) { Write-WalkLog 'no Profile menu button' }
     else {
         Invoke-WalkTap $menu 'Profile menu' 2500
-        $sheet = Get-WalkScreen 'profile menu'
-        $settings = @(Find-UiNode -Nodes $sheet -Label $WalkLabels.SettingsAndPrivacy) | Select-Object -First 1
-        if (-not $settings) { Write-WalkLog 'no Settings and privacy in the profile menu' }
+        $settings = $null
+        if (-not $appProfile.GearOpensSettings) {
+            $sheet = Get-WalkScreen 'profile menu'
+            $settings = @(Find-UiNode -Nodes $sheet -Label $WalkLabels.SettingsAndPrivacy) | Select-Object -First 1
+        }
+        if (-not $settings -and -not $appProfile.GearOpensSettings) { Write-WalkLog 'no Settings and privacy in the profile menu' }
         else {
-            Invoke-WalkTap $settings 'Settings and privacy' 3000
+            if ($settings) { Invoke-WalkTap $settings 'Settings and privacy' 3000 }
             $row = Find-WalkRow '^Hushfeed$' $Width $Height 'settings and privacy'
             if (-not $row) { Write-WalkLog 'no Hushfeed row in Settings and privacy' }
             else {
@@ -406,7 +410,8 @@ function Open-WalkHushfeed([string]$HubLabel, [int]$Width, [int]$Height) {
 }
 
 $hushfeedPages = @('Feed filter', 'Feed tabs', 'Feed screen', 'Playback', 'Screen time', 'Comments', 'Downloads',
-    'Share sheet', 'Inbox', 'Privacy', 'Region', 'App', 'Diagnostics', 'Backup and restore', 'About Hushfeed')
+    'Share sheet', 'Inbox', 'Privacy', 'Region', 'App', 'Diagnostics', 'Backup and restore', 'About Hushfeed') |
+    Where-Object { $_ -notin $appProfile.HiddenPages }
 foreach ($screen in Get-WalkPlannedScreens -AppProfile $appProfile -HushfeedPages $hushfeedPages) { $planned.Add($screen) }
 
 $started = [DateTimeOffset]::UtcNow
@@ -520,6 +525,18 @@ try {
         $nav = Find-WalkNav $nodes $WalkLabels[$tab] $H
         if (-not $nav) { Write-WalkLog "no $tab tab"; continue }
         Invoke-WalkTap $nav $tab 3500
+        if ($tab -in $appProfile.LynxTabs) {
+            # With no dump there's nothing to tap from, and PineDrama's Rewards opens on a terms
+            # dialog nothing here may answer. The view tree shows the page, and Back leaves it.
+            $lynx = $false
+            for ($i = 0; $i -lt 6 -and -not $lynx; $i++) {
+                $lynx = [bool]@(Invoke-WalkAdb shell dumpsys activity top | Where-Object { $_ -match 'com\.lynx\.tasm' })
+                if (-not $lynx) { Start-Sleep -Seconds 2 }
+            }
+            if ($lynx) { Complete-WalkScreen "tab: $tab" } else { Write-WalkLog "$tab opened no Lynx page" }
+            Invoke-WalkBack $tab
+            continue
+        }
         $page = Get-WalkScreen "tab $tab" -AllowPause
         if ($page) { Complete-WalkScreen "tab: $tab" }
         if ($tab -eq 'Inbox' -and $appProfile.Activity) {
