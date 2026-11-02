@@ -4,7 +4,18 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* **TikTok:** `Hide read receipts` keeps the "seen" mark off the chats you open, so the other person doesn't see that you've read their message. It starts off, and it lives in Hushfeed settings > Inbox. Thanks to @maayan080 (#295).
+* **TikTok:** The settings screen and What's new now come in Vietnamese. Thanks to @hautv404 (#306).
+* **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
+* **TikTok:** `Copy bio and IDs` has a `Copy name` button now, so a profile's share sheet copies the display name as well as the username. Buttons that don't fit move down to a second line instead of running off the sheet.
+* **TikTok:** `Background play in the long-press menu` adds TikTok's own background play row to the long-press menu, so one video can keep playing while the others stop as usual. It starts off, and it's under Playback.
+* **TikTok:** `Keep LIVEs from these creators` lets the LIVEs of creators you pick stay in the feed while `Hide LIVE videos` is on. Add as many as you like, by handle or user ID. It keeps what TikTok sends you, so it won't bring in a LIVE TikTok didn't serve.
+
 ### Bug Fixes
+* **TikTok:** `Network proxy` works with a proxy that has a user name and password now, for both HTTP and SOCKS5. Before, TikTok's own traffic couldn't sign in, so the app acted like it had no connection.
+* **TikTok:** `Network proxy` no longer says a working proxy is down because one website behind it failed. It asks the proxy first, and gives a slow proxy a second try. A wrong password gets its own message.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 

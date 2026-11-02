@@ -215,6 +215,7 @@
       "BLOCKED_CREATORS",
       "LOCAL_HIDDEN_CREATORS",
       "CREATOR_FILTER_EXCEPTIONS",
+      "LIVE_KEPT_CREATORS",
       "REGION_ONLY_FROM",
       "CAPTION_LANGUAGES",
       "REGION_NEVER_FROM",
@@ -446,6 +447,9 @@
     "In-app browser privacy guard": [
       "BLOCK_WEBVIEW_JS_INTERFACES"
     ],
+    "Hide read receipts": [
+      "HIDE_READ_RECEIPTS"
+    ],
     "Keep a streak going": [
       "AUTO_STREAK",
       "AUTO_STREAK_RECIPIENT",
@@ -454,6 +458,7 @@
     ],
     "Keep playing in the background": [
       "BACKGROUND_PLAY",
+      "BACKGROUND_PLAY_MENU",
       "BACKGROUND_REPLAY"
     ],
     "Keep pulled sounds": [

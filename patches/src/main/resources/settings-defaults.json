@@ -215,6 +215,7 @@
       "blocked_creators",
       "local_hidden_creators",
       "creator_filter_exceptions",
+      "live_kept_creators",
       "region_only_from",
       "caption_languages",
       "region_never_from",
@@ -375,6 +376,9 @@
       "hide_profile_thoughts",
       "enable_thoughts"
     ],
+    "Hide read receipts": [
+      "hide_read_receipts"
+    ],
     "Hide search suggestions": [
       "hide_search_rewards",
       "hide_search_suggestions"
@@ -454,6 +458,7 @@
     ],
     "Keep playing in the background": [
       "background_play",
+      "background_play_menu",
       "background_replay"
     ],
     "Keep pulled sounds": [
@@ -863,6 +868,12 @@
     "background_play": {
       "field": "BACKGROUND_PLAY",
       "key": "background_play",
+      "type": "boolean",
+      "default": false
+    },
+    "background_play_menu": {
+      "field": "BACKGROUND_PLAY_MENU",
+      "key": "background_play_menu",
       "type": "boolean",
       "default": false
     },
@@ -2332,6 +2343,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_read_receipts": {
+      "field": "HIDE_READ_RECEIPTS",
+      "key": "hide_read_receipts",
+      "type": "boolean",
+      "default": false
+    },
     "hide_root": {
       "field": "HIDE_ROOT",
       "key": "hide_root",
@@ -2681,6 +2698,12 @@
       "key": "live_hide_verified",
       "type": "boolean",
       "default": false
+    },
+    "live_kept_creators": {
+      "field": "LIVE_KEPT_CREATORS",
+      "key": "live_kept_creators",
+      "type": "string",
+      "default": ""
     },
     "live_min_max_followers": {
       "field": "LIVE_MIN_MAX_FOLLOWERS",
