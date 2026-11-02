@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## 0.80.0 (2026-11-01)
 
+* **TikTok:** PineDrama kendi yama setine, HushPine'a taşındı. Hushfeed artık yalnızca TikTok'a yama uyguluyor.
+* **TikTok:** Artık desteklenen tek derleme TikTok 47.6.3. APKMirror'dan indirin ve girişiniz ile ayarlarınız korunsun diye aynı imzalama anahtarını kullanın.
 * **TikTok:** Temiz ekran kontrollerini gizle için yeni bir anahtar var. İlerleme çubuğunu ekranda tutuyor, böylece onu hâlâ görüp sürükleyebilirsin (#237).
 * **TikTok:** Çift dokunma artık beğenebiliyor ve beğeniyi geri alabiliyor. Zaten beğendiğin bir videoya çift dokunmak beğeniyi kaldırır (#248).
 * **TikTok:** Bir videoyu basılı tutarken sola veya sağa kaydırarak Hız menüsü seçeneklerin arasında geçiş yap. Varsayılan olarak kapalı (#248).
@@ -85,7 +87,7 @@
 * **TikTok:** Bir hikâyeyi Otomatik ile kaydetmek daha küçük 720p kopya yerine en net kopyayı alır. @jutochoppa'ya teşekkürler (#287, #155).
 * **TikTok:** Bir LIVE'ın ekranını kaydetmek artık Kaydet düğmesini görüntüye almıyor ve bildirimde bir Durdur düğmesi var (#265).
 * **TikTok:** Geçiş anahtarı olmadan giriş yap, TikTok'un 2 adımlı doğrulaması yalnızca geçiş anahtarı istediğinde ne yapacağını söyler (#102).
-* **TikTok:** Oluşturma araçlarını kaldır, APKMirror'ın bölünmüş paketine dokunmaz, böylece yüz efektleri ve Beauty yüzünü yeniden bulur (#285).
+* **TikTok:** Oluşturma araçlarını kaldır artık APKMirror'ın bölünmüş paketinde de çalışıyor, çünkü TikTok 47.6.3 paketinde düzenleyici dosyaları yeniden var. Oluştur sekmesi çalışmayı bırakır, video yapıyorsan bu yamayı seçme (#285).
 * **TikTok:** TikTok bir beğeniyi reddettiğinde Hushfeed her oturumda ilk seferinde nedenini gösterir (#269).
 * **TikTok:** Beğendiğin ya da kaydettiğin videolar reklam işareti taşısa bile Beğenilenler ve Favoriler ızgaralarında kalır (#269).
 * **TikTok:** Reddedilen takip için Çince mesaj artık doğru kelimeyi kullanıyor.
@@ -97,12 +99,13 @@
 * **TikTok:** Kullanılamayan bir indirme klasörü seçmek, klasör kutusunu altında nedeniyle birlikte yeniden açar.
 * **TikTok:** Şeffaf alt çubuğun taşıdığı her LIVE önizlemesi ve dizi etiketi, desteklenen TikTok derlemesinde kontrol ediliyor.
 * **TikTok:** Otomatik ilerleme denetimi, tek tek video etiketleri yerine video oynatıcının kendisini izliyor.
-* **TikTok:** Bir sürüm, desteklediği her uygulama için eşleşen kanıt istiyor.
+* **TikTok:** Tüm uygulama turu yüklü derlemeyi ve yama seçeneklerini kontrol ediyor.
 * **TikTok:** Yama denetimleri yüklü uygulamayı ve hangi yamaların seçildiğini kontrol ediyor.
 * **TikTok:** Bir yama denetimi, bir anahtarı eksik demeden önce tam tanılama raporunu bekliyor.
 * **TikTok:** Bir yama denetimi, üzerinde çalıştığı kod değişince o derleme için sayılmayı bırakıyor.
 * **TikTok:** Yama paketi Gson 2.15.0 içeriyor.
 * **TikTok:** Lisanslar sayfası ve NOTICE dosyası De-Vanced'i anıyor, kaynak bağlantıları da gerçekten kullanılan kopyalara gidiyor.
+* **TikTok:** Sürümler artık makbuz dosyası içermiyor. Paket bayt bayt yeniden üretilebiliyor, yani etiketi kendiniz derleyip sağlama toplamını karşılaştırabilirsiniz.
 
 ## 0.79.0 (2026-10-24)
 

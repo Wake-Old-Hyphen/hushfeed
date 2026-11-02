@@ -1,5 +1,7 @@
-## 0.80.0 (2026-10-31)
+## 0.80.0 (2026-11-01)
 
+* **TikTok:** PineDrama moved to its own patch set, HushPine. Hushfeed patches TikTok only from here on.
+* **TikTok:** TikTok 47.6.3 is the only supported build now. Get it from APKMirror and keep the same signing key so your login and settings carry over.
 * **TikTok:** Hide the Clear display controls has a new switch that keeps the progress bar on screen, so you can still see and drag it (#237).
 * **TikTok:** Double tap can like or unlike now. A double tap on a video you already liked takes the like back off (#248).
 * **TikTok:** Slide left or right while you hold a video to step through your speed menu choices. It's off by default (#248).
@@ -85,7 +87,7 @@
 * **TikTok:** Saving a story on Automatic takes the sharpest copy instead of a smaller 720p one. Thanks to @jutochoppa (#287, #155).
 * **TikTok:** Recording a LIVE's screen no longer films the Record button, and the notification has a Stop button (#265).
 * **TikTok:** Sign in without a passkey says what to do when TikTok's 2-step check asks only for a passkey (#102).
-* **TikTok:** Remove creation tools leaves APKMirror's split bundle alone, so face effects and Beauty find your face again (#285).
+* **TikTok:** Remove creation tools now works on APKMirror's split bundle too, because TikTok 47.6.3's bundle carries the editor files again. The Create tab stops working, so leave it out if you make videos (#285).
 * **TikTok:** When TikTok refuses a like, Hushfeed shows the reason the first time each session (#269).
 * **TikTok:** Videos you liked or saved stay on your Liked and Favorites grids, even with an ad mark (#269).
 * **TikTok:** The Chinese message for a refused follow uses the right word now.
@@ -97,12 +99,13 @@
 * **TikTok:** Picking a download folder that can't be used reopens the folder box with the reason under it.
 * **TikTok:** Every LIVE preview and drama label that See-through bottom bar moves is checked against the supported TikTok build.
 * **TikTok:** The auto-advance audit follows the video player itself instead of per-video labels.
-* **TikTok:** A release needs matching evidence for every app it supports.
+* **TikTok:** The whole-app walk checks the installed build and its patch options.
 * **TikTok:** Patch audits check the installed app and which patches were picked.
 * **TikTok:** A patch audit waits for the full diagnostics report before it calls a switch missing.
 * **TikTok:** A patch audit stops counting for a build once the code it ran against changes.
 * **TikTok:** The patch bundle carries Gson 2.15.0.
 * **TikTok:** The Licenses page and the NOTICE file credit De-Vanced, and credited links point at the copies actually used.
+* **TikTok:** Releases don't carry a receipt file anymore. The bundle is byte reproducible, so you can build the tag yourself and compare the checksum.
 
 ## 0.79.0 (2026-10-24)
 
