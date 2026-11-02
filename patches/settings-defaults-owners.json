@@ -1,6 +1,8 @@
 {
   "patches": {
     "Advanced downloads": [
+      "DOWNLOAD_BUTTON",
+      "DOWNLOAD_BUTTON_POSITION",
       "DOWNLOAD_VIDEO_QUALITY",
       "DOWNLOAD_ASK_QUALITY",
       "DOWNLOAD_ORIGINAL_PHOTOS",
@@ -118,6 +120,8 @@
       "COMMENT_BLOCKED_USERS",
       "BLOCK_FROM_COMMENT",
       "BLOCK_FROM_COMMENT_MENU",
+      "HIDE_COMMENT_LIKE_COUNT",
+      "HIDE_COMMENT_DISLIKE",
       "COMMENT_SEARCH",
       "COMMENT_EXPORT",
       "COMMENT_SEARCH_FOLDED",
@@ -296,7 +300,9 @@
     ],
     "Feed text sizes": [
       "FEED_DESCRIPTION_TEXT_SIZE",
-      "FEED_AUTHOR_TEXT_SIZE"
+      "FEED_AUTHOR_TEXT_SIZE",
+      "FEED_TEXT_COLOR",
+      "FEED_TEXT_BACKDROP"
     ],
     "Fit the video to the screen": [
       "FIT_VIDEO_TO_SCREEN",
@@ -397,6 +403,9 @@
       "HIDE_FEED_SURVEYS",
       "HIDE_FOOTNOTES",
       "HIDE_FOLLOWING_LIVE_ROW",
+      "HIDE_FOLLOWING_ALL_BUTTON",
+      "HIDE_STORY_CREATE",
+      "HIDE_REPOST_CHIP",
       "HIDE_DETAIL_COMMENT_BAR",
       "HIDE_CLEAR_DISPLAY_CONTROLS",
       "KEEP_CLEAR_DISPLAY_SEEK_BAR",
@@ -564,6 +573,7 @@
       "CUSTOM_SPEEDS",
       "HOLD_SPEED",
       "HOLD_SPEED_SLIDE",
+      "HIDE_SPEED_TOASTS",
       "REMEMBERED_SPEED"
     ],
     "Prefer H.264 playback": [

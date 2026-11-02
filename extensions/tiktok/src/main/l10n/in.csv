@@ -904,7 +904,6 @@ Remove feed ads,Hapus iklan di feed
 "Hide voting cards and poll results above the comments, including polls that have ended.","Sembunyikan kartu jajak pendapat dan hasilnya di atas komentar, termasuk jajak pendapat yang sudah berakhir."
 Hide the Share via row.,Sembunyikan baris Bagikan lewat.
 Hide the actions row of the share sheet.,Sembunyikan baris aksi di menu bagikan.
-Hide the row of friends at the top of the share sheet.,Sembunyikan baris teman di bagian atas menu bagikan.
 Cuts the tracking bits out of links you share.,Menghapus bagian pelacak dari tautan yang kamu bagikan.
 Remove watermark,Hapus tanda air
 Removed %1$s,%1$s dihapus
@@ -1041,7 +1040,6 @@ Sound on,Suara aktif
 Sound,Suara
 "Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.","Putar video feed tanpa suara dan biarkan volume ponsel tetap. Musik dari aplikasi lain tetap diputar selama ini aktif. DM, cerita, dan LIVE tetap bersuara."
 Let other apps play until a video starts,Biarkan aplikasi lain tetap diputar sampai video mulai
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,Membuka TikTok atau pesanmu tidak lagi menjeda musik dari aplikasi lain. TikTok baru mengambil suara saat video mulai diputar.
 Show the mute button on videos,Tampilkan tombol senyap di video
 Add a button beside the block control that turns the feed's sound off and on.,Tambahkan tombol di samping kontrol blokir yang mematikan dan menyalakan suara feed.
 Show the country a video was posted from next to the creator's name.,Tampilkan negara asal unggahan video di sebelah nama kreator.
@@ -1190,7 +1188,6 @@ The smallest value is above the largest,Nilai terkecil lebih besar daripada yang
 The sound couldn't be saved. Try again.,Suara tidak bisa disimpan. Coba lagi.
 The sticker couldn't be saved. Try again.,Sticker tidak bisa disimpan. Coba lagi.
 The story couldn't be saved. Try again.,Story-nya tidak bisa disimpan.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","Tombol tidak suka di setiap komentar memblokir komentator alih-alih tidak menyukai. Komentar meredup, banner batalkan mengikuti, dan ketukan kedua membuka blokir."
 "Couldn't save. Try again, or choose Automatic.","Gagal menyimpan. Coba lagi, atau pilih Otomatis."
 There is no Lab change to undo.,Tidak ada perubahan Lab yang bisa dibatalkan.
 There is no diagnostic data to clear,Tidak ada data diagnostik yang perlu dihapus
@@ -1400,7 +1397,6 @@ Hide the unread badges on the bottom tabs,Sembunyikan lencana belum dibaca di ta
 "Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.","Menyembunyikan angka dan titik merah di semua tab bawah, termasuk Kotak Masuk dan Profil, serta gelembung di atas Kotak Masuk yang menghitung suka, pengikut, dan komentar baru, juga siapa yang sedang LIVE. Kotak masuk sendiri tetap menampilkan yang masuk."
 Speed while you hold the video,Kecepatan saat video ditahan
 Slide to change the hold speed,Geser untuk mengubah kecepatan tahan
-"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.","Saat menahan video, geser ke kiri atau kanan untuk berpindah di antara kecepatan di menu kecepatan. Gelembung menampilkan kecepatan saat ini. Tahanan berikutnya dimulai dari sana. Saat dilepas, kembali normal. Kunci dengan tarik ke bawah mempertahankan kecepatan yang dipilih."
 Hide mini dramas,Sembunyikan drama mini
 Hide TikTok's short drama episodes and the cards that promote them.,Sembunyikan episode drama pendek TikTok dan kartu yang mempromosikannya.
 Mini dramas,Drama mini
@@ -2300,7 +2296,6 @@ Fold the search into a button,Lipat pencarian jadi tombol
 "Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.","Menampilkan tombol pencarian di kiri atas komentar sebagai ganti kotaknya, jadi komentar mendapat ruang itu kembali. Ketuk untuk mencari, lalu ketuk lagi untuk menyimpan kotaknya. “Cari dalam komentar” harus menyala."
 Put the comment search away,Tutup pencarian komentar
 Tap @names in bios,Ketuk @nama di bio
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Bagian bio lainnya tetap diterjemahkan saat diketuk.
 autoplay auto play,putar otomatis autoplay
 picture in picture PiP,gambar dalam gambar PiP
 search suggestions,saran pencarian
@@ -2367,3 +2362,35 @@ Keep LIVEs from these creators,Pertahankan LIVE dari kreator ini
 "Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.","Opsional. Kosongkan untuk proxy tanpa kata sandi. TikTok masuk melalui relai kecil di ponsel ini, yang bisa dijangkau aplikasi lain di sini selama TikTok terbuka."
 Proxy %1$s needs a user name and password,Proxy %1$s perlu nama pengguna dan kata sandi
 Proxy %1$s refused your user name or password,Proxy %1$s menolak nama pengguna atau sandi
+Save this video,Simpan video ini
+Show the save button on videos,Tampilkan tombol simpan di video
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,Tambahkan tombol di samping kontrol blokir yang menyimpan video di layar dengan satu ketukan. Seret ke mana pun Anda suka.
+Couldn't save this one. Try again.,Tidak dapat disimpan. Coba lagi.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,Membuka TikTok atau pesanmu tidak lagi menjeda musik dari aplikasi lain. TikTok mengambil suara saat video diputar dan mengembalikannya saat kamu meninggalkan video.
+"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.","Saat menahan video, geser ke kiri atau kanan untuk berpindah di antara kecepatan di menu kecepatan. Gelembung menampilkan kecepatan saat ini. Tahanan berikutnya dimulai dari sana. Saat dilepas, kembali normal. Kunci dengan tarik ke bawah mempertahankan kecepatan yang dipilih. Pada video yang terkunci, melepas akan mengunci kecepatan baru."
+Hide speed messages,Sembunyikan pesan kecepatan
+"Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.","Menyembunyikan pesan TikTok saat kamu memilih kecepatan dari menu, atau mengunci atau membuka kunci kecepatan dengan menahan."
+Hide the All button on Following,Sembunyikan tombol Semua di Mengikuti
+Hide the Create circle in story rows,Sembunyikan lingkaran Buat di baris story
+Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,Menyembunyikan tombol Semua di ujung baris story di Mengikuti. Baris dan story-nya tetap ada.
+Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,Menyembunyikan lingkaran Buat di awal baris story di Mengikuti dan Kotak Masuk. Story milikmu tetap muncul di sana setelah kamu mempostingnya.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,Tombol tidak suka di setiap komentar memblokir pengomentar alih-alih tidak menyukai. Komentar mereka langsung hilang dari daftar dan banner batalkan muncul setelahnya.
+Hide like counts on comments,Sembunyikan jumlah suka pada komentar
+Hide the number beside the heart on each comment. The heart still works.,Sembunyikan angka di samping ikon hati pada setiap komentar. Ikon hati tetap berfungsi.
+Hide the thumbs down on comments,Sembunyikan tombol tidak suka pada komentar
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Sembunyikan tombol tidak suka di samping ikon hati pada setiap komentar. Tombol tetap ada selama Jempol ke bawah memblokir pengomentar aktif.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Sembunyikan deretan teman di bagian atas lembar berbagi dan di menu yang terbuka saat komentar ditekan lama.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,@nama pengguna di bio profil membuka profil itu saat diketuk. Nama lengkap yang ditulis setelah @ membuka pencarian nama itu. Bagian bio lainnya tetap diterjemahkan saat diketuk.
+Hide the repost chip,Sembunyikan label repost
+TikTok's color,Warna TikTok
+White,Putih
+Light gray,Abu-abu muda
+Gray,Abu-abu
+Dark gray,Abu-abu tua
+Yellow,Kuning
+None,Tidak ada
+Video text color,Warna teks video
+Backdrop behind video text,Latar di belakang teks video
+"Colors the description, the author's name and the post date on videos.","Mewarnai deskripsi, nama pembuat, dan tanggal posting pada video."
+"Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Menaruh pita warna di belakang deskripsi, nama pembuat, dan tanggal posting agar tetap terbaca pada video yang terang."
+"Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Menghapus bilah kecil di atas bilah progres yang menunjukkan teman memposting ulang video ini atau meminta Anda memposting ulang.

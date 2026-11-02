@@ -910,7 +910,6 @@ Remove feed ads, creator commission posts, paid partnerships, and branded conten
 Hide voting cards and poll results above the comments, including polls that have ended.	Blende Abstimmungen und ihre Ergebnisse über den Kommentaren aus, auch wenn die Abstimmung bereits beendet ist.
 Hide the Share via row.	Die Zeile „Teilen über“ ausblenden.
 Hide the actions row of the share sheet.	Die Aktionszeile des Teilen-Menüs ausblenden.
-Hide the row of friends at the top of the share sheet.	Die Freundesreihe oben im Teilen-Menü ausblenden.
 Cuts the tracking bits out of links you share.	Entfernt die Tracking-Teile aus Links, die du teilst.
 Remove watermark	Wasserzeichen entfernen
 Removed %1$s	%1$s entfernt
@@ -1047,7 +1046,6 @@ Sound on	Ton an
 Sound	Ton
 Play feed videos without sound and leave the phone's volume alone. Music from another app keeps playing while it's on. DMs, stories and LIVE keep their sound.	Feed-Videos ohne Ton abspielen und die Lautstärke des Telefons unverändert lassen. Musik aus einer anderen App läuft weiter, solange das an ist. DMs, Stories und LIVE behalten ihren Ton.
 Let other apps play until a video starts	Andere Apps spielen lassen, bis ein Video startet
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.	Wenn du TikTok oder deine Nachrichten öffnest, pausiert Musik aus einer anderen App nicht mehr. TikTok übernimmt den Ton erst, wenn ein Video abgespielt wird.
 Show the mute button on videos	Stummschalt-Schaltfläche auf Videos anzeigen
 Add a button beside the block control that turns the feed's sound off and on.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die den Ton des Feeds aus- und einschaltet.
 Show the country a video was posted from next to the creator's name.	Das Land, aus dem ein Video veröffentlicht wurde, neben dem Namen des Creators anzeigen.
@@ -1196,7 +1194,6 @@ The smallest value is above the largest	Der kleinste Wert liegt über dem größ
 The sound couldn't be saved. Try again.	Sound nicht gespeichert. Versuch es erneut.
 The sticker couldn't be saved. Try again.	Sticker nicht gespeichert. Versuch es erneut.
 The story couldn't be saved. Try again.	Die Story konnte nicht gespeichert werden.
-The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.	Der Daumen runter bei jedem Kommentar blockiert den Kommentator statt zu disliken. Der Kommentar wird gedimmt, ein Rückgängig-Banner folgt, und ein zweites Tippen entsperrt.
 Couldn't save. Try again, or choose Automatic.	Nicht gespeichert. Nochmal oder Automatisch wählen.
 There is no Lab change to undo.	Es gibt keine Lab-Änderung, die sich rückgängig machen ließe.
 There is no diagnostic data to clear	Es gibt keine Diagnosedaten zum Löschen
@@ -1407,7 +1404,6 @@ Hide the unread badges on the bottom tabs	Ungelesen-Abzeichen auf den unteren Ta
 Hide the red counts and dots on every bottom tab, Inbox and Profile included, and the bubble over Inbox that counts new likes, followers, comments and who's LIVE. The inbox itself still shows what came in.	Blendet die roten Zähler und Punkte auf allen unteren Tabs aus, Posteingang und Profil eingeschlossen, dazu die Blase über dem Posteingang, die neue Likes, Follower, Kommentare und laufende LIVEs zählt. Der Posteingang selbst zeigt weiterhin, was angekommen ist.
 Speed while you hold the video	Geschwindigkeit, solange du das Video gedrückt hältst
 Slide to change the hold speed	Haltegeschwindigkeit durch Wischen ändern
-While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.	Während du ein Video gedrückt hältst, wisch nach links oder rechts, um durch die Geschwindigkeiten im Geschwindigkeitsmenü zu gehen. Eine Blase zeigt die aktuelle an. Dein nächstes Halten beginnt dort. Beim Loslassen geht es zurück auf normal. Eine Sperre per Herunterziehen behält die gewählte Geschwindigkeit.
 Hide mini dramas	Mini-Dramen ausblenden
 Hide TikTok's short drama episodes and the cards that promote them.	TikToks kurze Drama-Folgen und die Karten, die dafür werben, ausblenden.
 Mini dramas	Mini-Dramen
@@ -2329,7 +2325,6 @@ Fold the search into a button	Suche in einen Knopf falten
 Shows a search button at the top left of the comments instead of the box, so the comments get that room back. Tap it to search, and tap it again to put the box away. Search within comments must be on.	Zeigt oben links in den Kommentaren einen Suchknopf statt des Felds, damit die Kommentare den Platz zurückbekommen. Tippe ihn zum Suchen an und noch einmal, um das Feld wegzuräumen. „In Kommentaren suchen“ muss an sein.
 Put the comment search away	Kommentarsuche wegräumen
 Tap @names in bios	@Namen in Bios antippen
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.	Ein @Nutzername in der Bio eines Profils öffnet beim Antippen dieses Profil. Der Rest der Bio wird beim Antippen weiterhin übersetzt.
 autoplay auto play	automatische Wiedergabe Autoplay
 picture in picture PiP	Bild-im-Bild PiP
 search suggestions	Suchvorschläge
@@ -2399,3 +2394,35 @@ With Hide LIVE videos on, these creators' LIVEs stay when TikTok sends them. Sep
 Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.	Optional. Bei einem Proxy ohne Passwort leer lassen. TikTok meldet sich über ein kleines Relay auf diesem Telefon an, das andere Apps hier erreichen können, solange TikTok offen ist.
 Proxy %1$s needs a user name and password	Proxy %1$s braucht Name und Passwort
 Proxy %1$s refused your user name or password	Proxy %1$s lehnt Name oder Passwort ab
+Save this video	Dieses Video speichern
+Show the save button on videos	Speichern-Schaltfläche auf Videos anzeigen
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.	Neben der Blockieren-Schaltfläche eine Schaltfläche hinzufügen, die das Video auf dem Bildschirm mit einem Tippen speichert. Zieh sie, wohin du möchtest.
+Couldn't save this one. Try again.	Nicht gespeichert. Versuch es erneut.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.	Wenn du TikTok oder deine Nachrichten öffnest, pausiert Musik aus einer anderen App nicht mehr. TikTok übernimmt den Ton, während ein Video läuft, und gibt ihn zurück, sobald du das Video verlässt.
+While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.	Während du ein Video gedrückt hältst, wisch nach links oder rechts, um durch die Geschwindigkeiten im Geschwindigkeitsmenü zu gehen. Eine Blase zeigt die aktuelle an. Dein nächstes Halten beginnt dort. Beim Loslassen geht es zurück auf normal. Eine Sperre per Herunterziehen behält die gewählte Geschwindigkeit. Bei einem gesperrten Video sperrt das Loslassen die neue Geschwindigkeit.
+Hide speed messages	Geschwindigkeitsmeldungen ausblenden
+Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.	Blendet die Meldung von TikTok aus, wenn du im Menü eine Geschwindigkeit wählst oder beim Halten eine sperrst oder entsperrst.
+Hide the All button on Following	„Alle“-Schaltfläche bei „Gefolgt“ ausblenden
+Hide the Create circle in story rows	Kreis „Erstellen“ in Story-Leisten ausblenden
+Hide the All button at the end of the story row on the Following feed. The row and its stories stay.	Blendet die Schaltfläche „Alle“ am Ende der Story-Leiste bei „Gefolgt“ aus. Die Leiste und ihre Storys bleiben.
+Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.	Blendet den Kreis „Erstellen“ am Anfang der Story-Leiste bei „Gefolgt“ und im Posteingang aus. Deine eigene Story erscheint dort weiterhin, sobald du eine postest.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.	Der Daumen runter bei jedem Kommentar blockiert den Kommentierenden statt zu disliken. Seine Kommentare verschwinden sofort aus der Liste und ein Rückgängig-Banner folgt.
+Hide like counts on comments	Like-Zahlen bei Kommentaren ausblenden
+Hide the number beside the heart on each comment. The heart still works.	Blendet die Zahl neben dem Herz bei jedem Kommentar aus. Das Herz funktioniert weiterhin.
+Hide the thumbs down on comments	Daumen runter bei Kommentaren ausblenden
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.	Blendet den Daumen runter neben dem Herz bei jedem Kommentar aus. Er bleibt, solange „Daumen runter blockiert den Kommentierenden“ an ist.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.	Die Freundesreihe oben im Teilen-Menü und im Menü, das ein langes Drücken auf einen Kommentar öffnet, ausblenden.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.	Ein @Nutzername in der Bio eines Profils öffnet beim Antippen dieses Profil. Ein voller Name nach einem @ öffnet die Suche nach diesem Namen. Der Rest der Bio wird beim Antippen weiterhin übersetzt.
+Hide the repost chip	Repost-Chip ausblenden
+TikTok's color	TikToks Farbe
+White	Weiß
+Light gray	Hellgrau
+Gray	Grau
+Dark gray	Dunkelgrau
+Yellow	Gelb
+None	Keine
+Video text color	Farbe des Videotexts
+Backdrop behind video text	Hintergrund hinter dem Videotext
+Colors the description, the author's name and the post date on videos.	Färbt die Beschreibung, den Namen des Autors und das Veröffentlichungsdatum auf Videos.
+Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.	Legt ein farbiges Band hinter die Beschreibung, den Namen des Autors und das Veröffentlichungsdatum, damit sie auf hellen Videos lesbar bleiben.
+Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.	Entfernt die kleine Leiste über der Fortschrittsleiste, die anzeigt, dass ein Freund das Video erneut gepostet hat, oder dich dazu auffordert.

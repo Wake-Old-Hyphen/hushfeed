@@ -231,7 +231,6 @@ Always show publish date,Luôn hiển thị ngày đăng
 Always show the publish date in video author information. Restart TikTok to apply this.,Luôn hiển thị ngày đăng trong thông tin tác giả video. Khởi động lại TikTok để áp dụng.
 Always upload in HD,Luôn tải lên ở độ phân giải HD
 Amazon Appstore,Kho ứng dụng Amazon
-An @username in a profile's bio opens that profile when you tap it. The rest of the bio still translates on a tap.,Chạm vào một @username trong tiểu sử trang cá nhân để mở trang cá nhân đó. Các phần khác của tiểu sử vẫn hoạt động bình thường (như dịch thuật khi chạm).
 "An exception names one creator, so a pattern can't be one: %1$s","Một ngoại lệ chỉ định một nhà sáng tạo, do đó một mẫu không thể là: %1$s"
 "An exception takes a handle or id, not a display name: %1$s",Một ngoại lệ nhận handle hoặc ID thay vì tên hiển thị: %1$s
 "An operator code is five or six digits, like 310260","Mã nhà mạng gồm 5 hoặc 6 chữ số, ví dụ như 310260"
@@ -854,7 +853,6 @@ Hide the restriction notice on your own profile on this phone. TikTok's restrict
 Hide the rewards shortcut,Ẩn lối tắt phần thưởng
 Hide the right column,Ẩn cột bên phải
 "Hide the row of LIVE and story circles across the top of the Following feed, and the pill that counts them. For You is left as it is.","Ẩn hàng vòng tròn LIVE và tin ở đầu bảng tin Đang theo dõi, cùng với thanh đếm số lượng. Thẻ Dành cho bạn được giữ nguyên."
-Hide the row of friends at the top of the share sheet.,Ẩn hàng bạn bè ở đầu bảng chia sẻ.
 Hide the save button in the right column. Ticking Save in the list above hides it too.,"Ẩn nút lưu ở cột bên phải. Tích chọn ""Lưu"" trong danh sách phía trên cũng sẽ ẩn nút này."
 Hide the save button on the feed,Ẩn nút lưu trên bảng tin
 "Hide the search bar at the top of videos you open from search, a profile or your watch history. The Back button stays.","Ẩn thanh tìm kiếm ở đầu các video bạn mở từ mục tìm kiếm, trang cá nhân hoặc lịch sử xem. Nút Quay lại vẫn được giữ nguyên."
@@ -1292,7 +1290,6 @@ Open the profile again and try once more,Hãy mở lại trang cá nhân và th�
 Open the search page,Mở trang tìm kiếm
 Open the story again and try once more,Hãy mở lại tin (story) và thử lại một lần nữa
 "Open your profile once, then return here to choose its shortcuts.",Hãy mở trang cá nhân của bạn một lần rồi quay lại đây để chọn các lối tắt.
-Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound once a video starts playing.,Mở TikTok hoặc tin nhắn của bạn sẽ không còn làm tạm dừng nhạc từ ứng dụng khác. TikTok chỉ chiếm quyền âm thanh khi một video bắt đầu phát.
 "Opens TikTok's own profile background editor in Edit profile, and shows the backgrounds other profiles have set. TikTok's servers may still refuse to save one for an account TikTok hasn't offered it to yet.",Mở trình chỉnh sửa ảnh nền trang cá nhân của TikTok trong mục Chỉnh sửa trang cá nhân và hiển thị ảnh nền mà các trang cá nhân khác đã đặt. Máy chủ của TikTok vẫn có thể từ chối lưu ảnh nền cho tài khoản chưa được bổ sung tính năng này.
 Opens a GitHub report with your versions and settings filled in. Add what happened.,Mở báo cáo GitHub với thông tin phiên bản và cài đặt của bạn được điền sẵn. Hãy mô tả thêm sự cố đã xảy ra.
 Opens github.com in your browser,Mở github.com trong trình duyệt của bạn
@@ -2040,7 +2037,6 @@ The sound couldn't be saved. Try again.,Không thể lưu âm thanh. Vui lòng t
 The sticker couldn't be saved. Try again.,Không thể lưu nhãn dán. Vui lòng thử lại.
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,Biểu ngữ gợi ý nhãn dán sẽ dừng hiển thị trong đoạn chat. Nhãn dán của riêng bạn vẫn nằm trong trình chọn nhãn dán.
 The story couldn't be saved. Try again.,Không thể lưu tin (story). Vui lòng thử lại.
-"The thumbs down on each comment blocks the commenter instead of disliking. The comment dims, an undo banner follows, and a second tap unblocks.","Nút không thích (ngón tay hướng xuống) ở mỗi bình luận sẽ chuyển thành nút chặn người bình luận thay vì không thích. Bình luận sẽ mờ đi, hiển thị thanh hoàn tác và chạm lần thứ hai để bỏ chặn."
 The tick on the main feed's tabs. Short pulse is one quick tap of the motor. Phone's click is the click your phone makes elsewhere. Soft tick rings a little longer. Full tick is the phone's strongest tick.,Kiểu rung trên các thẻ của bảng tin chính. Xung ngắn là một lực gõ nhanh của mô tơ. Nhấp chuột theo máy là tiếng nhấp máy bạn dùng ở nơi khác. Rung nhẹ ngân lâu hơn một chút. Rung đầy đủ là lực rung mạnh nhất của điện thoại.
 The time of day the message goes out.,Thời điểm trong ngày mà tin nhắn được gửi đi.
 "The video you're watching keeps playing to its end after you leave TikTok or turn the screen off, with TikTok's own media notification to pause it. TikTok's background play switch stays on while this is on. Restart TikTok to apply this.","Video bạn đang xem vẫn tiếp tục phát đến hết sau khi bạn thoát TikTok hoặc tắt màn hình, đi kèm thông báo phương tiện của TikTok để tạm dừng. Công tắc phát ngầm của TikTok vẫn bật khi tùy chọn này đang hoạt động. Khởi động lại TikTok để áp dụng."
@@ -2301,7 +2297,6 @@ When to send,Thời điểm gửi
 Where the time goes,Vị trí hiển thị thời gian
 "While Clear display is on, also hide the progress bar, the close button and the pause and speed buttons at the bottom. You can still drag along the bottom edge to move through the video. To leave Clear display, press and hold the video and tap Restore display, or pinch the screen.","Khi chế độ Hiển thị rõ ràng đang bật, ẩn thêm thanh tiến trình, nút đóng, nút tạm dừng và nút tốc độ ở phía dưới. Bạn vẫn có thể kéo dọc theo mép dưới để tua video. Để thoát chế độ này, hãy nhấn giữ video rồi chạm vào Khôi phục hiển thị hoặc dùng cử chỉ chụm hai ngón tay trên màn hình."
 "While diagnostic logging is on, a message names the part of Hushfeed that failed. Off keeps failures in the report only.","Khi bật ghi nhật ký chẩn đoán, một thông báo sẽ chỉ định phần nào của Hushfeed gặp lỗi. Khi tắt, lỗi sẽ chỉ được ghi lại trong báo cáo."
-"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to.","Khi nhấn giữ video, trượt sang trái hoặc phải để chuyển qua các mức tốc độ, bong bóng sẽ hiển thị tốc độ hiện tại. Lần nhấn giữ tiếp theo sẽ bắt đầu từ mức đó. Thả tay ra sẽ trở về tốc độ bình thường. Vuốt xuống để khóa mức tốc độ đã trượt tới."
 Who to message,Gửi tin nhắn cho ai
 Window width needed to enable the layout. Restart TikTok to apply this.,Chiều rộng cửa sổ cần thiết để bật bố cục này. Khởi động lại TikTok để áp dụng.
 "Wipe TikTok's data and give it a new Android ID and advertising ID on the next start, so it sees a phone it hasn't met. You'll be signed out and lose your drafts. Hushfeed's settings stay.","Xóa dữ liệu của TikTok và cấp cho ứng dụng ID Android cùng ID quảng cáo mới khi khởi động lần tới, khiến ứng dụng nhận diện đây là một thiết bị hoàn toàn mới. Bạn sẽ bị đăng xuất và mất các bản nháp, nhưng cài đặt của Hushfeed được giữ nguyên."
@@ -2365,3 +2360,35 @@ Keep LIVEs from these creators,Giữ LIVE của các nhà sáng tạo này
 "Optional. Leave empty for a proxy without a password. TikTok signs in through a small relay on this phone, which other apps here could reach while TikTok is open.","Không bắt buộc. Để trống nếu proxy không có mật khẩu. TikTok đăng nhập qua một trạm chuyển tiếp nhỏ trên điện thoại này, các ứng dụng khác trên máy có thể truy cập trạm đó khi TikTok đang mở."
 Proxy %1$s needs a user name and password,Proxy %1$s cần tên người dùng và mật khẩu
 Proxy %1$s refused your user name or password,Proxy %1$s từ chối tên hoặc mật khẩu
+Save this video,Lưu video này
+Show the save button on videos,Hiển thị nút lưu trên video
+Add a button beside the block control that saves the video on screen in one tap. Drag it wherever you like.,Thêm một nút bên cạnh điều khiển chặn để lưu video trên màn hình chỉ với một lần chạm. Bạn có thể kéo nút đến bất kỳ đâu.
+Couldn't save this one. Try again.,Không thể lưu. Vui lòng thử lại.
+Opening TikTok or your messages no longer pauses music from another app. TikTok takes the sound while a video plays and gives it back when you leave the video.,Mở TikTok hoặc tin nhắn của bạn sẽ không còn làm tạm dừng nhạc từ ứng dụng khác. TikTok chỉ chiếm âm thanh khi video đang phát và trả lại khi bạn rời khỏi video.
+"While you hold a video, slide left or right to step through the speed menu's speeds, and a bubble shows the one you're on. Your next hold starts there. Letting go goes back to normal. A pull-down lock keeps the speed you slid to. On a locked video, letting go locks the new speed.","Khi nhấn giữ video, trượt sang trái hoặc phải để chuyển qua các mức tốc độ, bong bóng sẽ hiển thị tốc độ hiện tại. Lần nhấn giữ tiếp theo sẽ bắt đầu từ mức đó. Thả tay ra sẽ trở về tốc độ bình thường. Vuốt xuống để khóa mức tốc độ đã trượt tới. Với video đã khóa, thả tay sẽ khóa tốc độ mới."
+Hide speed messages,Ẩn thông báo tốc độ
+"Hides TikTok's message when you pick a speed from the menu, or lock or unlock one with a hold.","Ẩn thông báo của TikTok khi bạn chọn tốc độ từ menu, hoặc khóa hay mở khóa tốc độ bằng cách giữ."
+Hide the All button on Following,Ẩn nút Tất cả trên mục Đang theo dõi
+Hide the Create circle in story rows,Ẩn vòng tròn Tạo trong các hàng tin
+Hide the All button at the end of the story row on the Following feed. The row and its stories stay.,Ẩn nút Tất cả ở cuối hàng tin trên mục Đang theo dõi. Hàng tin và các tin vẫn còn.
+Hide the Create circle at the start of the story row on the Following feed and in the Inbox. Your own Story still shows there once you post one.,Ẩn vòng tròn Tạo ở đầu hàng tin trên mục Đang theo dõi và trong Hộp thư đến. Tin của bạn vẫn hiện ở đó sau khi bạn đăng.
+The thumbs down on each comment blocks the commenter instead of disliking. Their comments leave the list right away and an undo banner follows.,Nút không thích ở mỗi bình luận sẽ chặn người bình luận thay vì không thích. Bình luận của họ sẽ biến mất khỏi danh sách ngay lập tức và một biểu ngữ hoàn tác sẽ xuất hiện sau đó.
+Hide like counts on comments,Ẩn số lượt thích trên bình luận
+Hide the number beside the heart on each comment. The heart still works.,Ẩn con số bên cạnh biểu tượng trái tim ở mỗi bình luận. Trái tim vẫn hoạt động.
+Hide the thumbs down on comments,Ẩn nút không thích trên bình luận
+Hide the thumbs down beside the heart on each comment. It stays while Thumbs down blocks the commenter is on.,Ẩn nút không thích bên cạnh trái tim ở mỗi bình luận. Nút vẫn giữ nguyên khi Nút không thích giúp chặn người bình luận đang bật.
+Hide the row of friends at the top of the share sheet and in the menu a long press on a comment opens.,Ẩn hàng bạn bè ở đầu bảng chia sẻ và trong menu mở ra khi nhấn giữ một bình luận.
+An @username in a profile's bio opens that profile when you tap it. A full name typed after an @ opens a search for that name. The rest of the bio still translates on a tap.,Chạm vào một @username trong tiểu sử trang cá nhân để mở trang cá nhân đó. Tên đầy đủ viết sau @ sẽ mở tìm kiếm tên đó. Các phần khác của tiểu sử vẫn hoạt động bình thường (như dịch thuật khi chạm).
+Hide the repost chip,Ẩn nhãn đăng lại
+TikTok's color,Màu của TikTok
+White,Màu trắng
+Light gray,Màu xám nhạt
+Gray,Màu xám
+Dark gray,Màu xám đậm
+Yellow,Màu vàng
+None,Không có
+Video text color,Màu chữ trên video
+Backdrop behind video text,Nền phía sau chữ trên video
+"Colors the description, the author's name and the post date on videos.","Tô màu phần mô tả, tên tác giả và ngày đăng trên video."
+"Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Đặt một dải màu phía sau phần mô tả, tên tác giả và ngày đăng để chúng vẫn dễ đọc trên video sáng."
+"Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Bỏ thanh nhỏ phía trên thanh tiến trình cho biết bạn bè đã đăng lại video hoặc nhắc bạn đăng lại.

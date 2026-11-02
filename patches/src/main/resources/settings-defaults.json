@@ -1,6 +1,8 @@
 {
   "patches": {
     "Advanced downloads": [
+      "download_button",
+      "download_button_position",
       "download_video_quality",
       "download_ask_quality",
       "download_original_photos",
@@ -118,6 +120,8 @@
       "comment_blocked_users",
       "block_from_comment",
       "block_from_comment_menu",
+      "hide_comment_like_count",
+      "hide_comment_dislike",
       "comment_search",
       "comment_export",
       "comment_search_folded",
@@ -296,7 +300,9 @@
     ],
     "Feed text sizes": [
       "feed_description_text_size",
-      "feed_author_text_size"
+      "feed_author_text_size",
+      "feed_text_color",
+      "feed_text_backdrop"
     ],
     "Fit the video to the screen": [
       "fit_video_to_screen",
@@ -400,6 +406,9 @@
       "hide_feed_surveys",
       "hide_footnotes",
       "hide_following_live_row",
+      "hide_following_all_button",
+      "hide_story_create",
+      "hide_repost_chip",
       "hide_detail_comment_bar",
       "hide_clear_display_controls",
       "keep_clear_display_seek_bar",
@@ -564,6 +573,7 @@
       "custom_speeds",
       "hold_speed",
       "hold_speed_slide",
+      "hide_speed_toasts",
       "remembered_speed_v2"
     ],
     "Prefer H.264 playback": [
@@ -1657,6 +1667,18 @@
       "type": "string",
       "default": ""
     },
+    "download_button": {
+      "field": "DOWNLOAD_BUTTON",
+      "key": "download_button",
+      "type": "boolean",
+      "default": false
+    },
+    "download_button_position": {
+      "field": "DOWNLOAD_BUTTON_POSITION",
+      "key": "download_button_position",
+      "type": "string",
+      "default": ""
+    },
     "feed_mute_button": {
       "field": "FEED_MUTE_BUTTON",
       "key": "feed_mute_button",
@@ -1692,6 +1714,18 @@
       "key": "feed_navigation_tabs",
       "type": "string",
       "default": "HOT,EXPLORE,FOLLOWING,MALL,NEARBY,FRIENDS,LIVE,POPULAR,STEM,SERIES"
+    },
+    "feed_text_backdrop": {
+      "field": "FEED_TEXT_BACKDROP",
+      "key": "feed_text_backdrop",
+      "type": "string",
+      "default": "off"
+    },
+    "feed_text_color": {
+      "field": "FEED_TEXT_COLOR",
+      "key": "feed_text_color",
+      "type": "string",
+      "default": "off"
     },
     "fill_video_to_screen": {
       "field": "FILL_VIDEO_TO_SCREEN",
@@ -1905,9 +1939,21 @@
       "type": "boolean",
       "default": false
     },
+    "hide_comment_dislike": {
+      "field": "HIDE_COMMENT_DISLIKE",
+      "key": "hide_comment_dislike",
+      "type": "boolean",
+      "default": false
+    },
     "hide_comment_eggs": {
       "field": "HIDE_COMMENT_EGGS",
       "key": "hide_comment_eggs",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_comment_like_count": {
+      "field": "HIDE_COMMENT_LIKE_COUNT",
+      "key": "hide_comment_like_count",
       "type": "boolean",
       "default": false
     },
@@ -2028,6 +2074,12 @@
     "hide_follower_notifications": {
       "field": "HIDE_FOLLOWER_NOTIFICATIONS",
       "key": "hide_follower_notifications",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_following_all_button": {
+      "field": "HIDE_FOLLOWING_ALL_BUTTON",
+      "key": "hide_following_all_button",
       "type": "boolean",
       "default": false
     },
@@ -2349,6 +2401,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_repost_chip": {
+      "field": "HIDE_REPOST_CHIP",
+      "key": "hide_repost_chip",
+      "type": "boolean",
+      "default": false
+    },
     "hide_root": {
       "field": "HIDE_ROOT",
       "key": "hide_root",
@@ -2433,6 +2491,12 @@
       "type": "boolean",
       "default": false
     },
+    "hide_speed_toasts": {
+      "field": "HIDE_SPEED_TOASTS",
+      "key": "hide_speed_toasts",
+      "type": "boolean",
+      "default": false
+    },
     "hide_status_bar": {
       "field": "HIDE_STATUS_BAR",
       "key": "hide_status_bar",
@@ -2448,6 +2512,12 @@
     "hide_story": {
       "field": "HIDE_STORY",
       "key": "hide_story",
+      "type": "boolean",
+      "default": false
+    },
+    "hide_story_create": {
+      "field": "HIDE_STORY_CREATE",
+      "key": "hide_story_create",
       "type": "boolean",
       "default": false
     },

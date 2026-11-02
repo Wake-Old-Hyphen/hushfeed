@@ -168,6 +168,12 @@
   ],
   "settings": [
    {
+    "key": "download_button",
+    "default": false,
+    "type": "bool",
+    "row": "Show the save button on videos"
+   },
+   {
     "key": "download_video_quality",
     "default": "auto",
     "type": "string",
@@ -2369,6 +2375,20 @@
     "default": false,
     "type": "bool",
     "row": "Thumbs down blocks the commenter"
+   },
+   {
+    "key": "hide_comment_like_count",
+    "default": false,
+    "type": "bool",
+    "row": "Hide like counts on comments",
+    "restart": true
+   },
+   {
+    "key": "hide_comment_dislike",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the thumbs down on comments",
+    "restart": true
    }
   ],
   "surface": "comments",
@@ -5453,6 +5473,18 @@
     "default": 0,
     "type": "int",
     "row": "Author text size"
+   },
+   {
+    "key": "feed_text_color",
+    "default": "off",
+    "type": "string",
+    "row": "Video text color"
+   },
+   {
+    "key": "feed_text_backdrop",
+    "default": "off",
+    "type": "string",
+    "row": "Backdrop behind video text"
    }
   ],
   "surface": "feed",
@@ -8330,7 +8362,9 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/HideVideoOverlaysPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/FeedOverlayControls.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/MusicDiscSpin.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/MusicDiscSpin.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/videooverlays/StoryRowButtons.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/StoryRowButtons.java"
   ],
   "settings": [
    {
@@ -8368,6 +8402,24 @@
     "default": false,
     "type": "bool",
     "row": "Hide the LIVE row on Following"
+   },
+   {
+    "key": "hide_following_all_button",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the All button on Following"
+   },
+   {
+    "key": "hide_story_create",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the Create circle in story rows"
+   },
+   {
+    "key": "hide_repost_chip",
+    "default": false,
+    "type": "bool",
+    "row": "Hide the repost chip"
    },
    {
     "key": "hide_feed_report_button",
