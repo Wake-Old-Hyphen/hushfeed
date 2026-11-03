@@ -322,7 +322,8 @@
     "Hide already seen videos": [
       "hide_seen_videos",
       "seen_video_retention_days",
-      "seen_video_mark_percent"
+      "seen_video_mark_percent",
+      "local_watch_history"
     ],
     "Hide comment popup ads": [
       "hide_comment_eggs"
@@ -588,6 +589,7 @@
       "region_request_spoof",
       "simspoof",
       "simspoof_iso",
+      "simspoof_time_zone",
       "simspoof_mccmnc",
       "simspoof_op_name",
       "simspoof_feed_real"
@@ -2841,6 +2843,12 @@
       "type": "boolean",
       "default": false
     },
+    "local_watch_history": {
+      "field": "LOCAL_WATCH_HISTORY",
+      "key": "local_watch_history",
+      "type": "boolean",
+      "default": false
+    },
     "long_press_action": {
       "field": "LONG_PRESS_ACTION",
       "key": "long_press_action",
@@ -3690,6 +3698,12 @@
       "key": "simspoof_op_name",
       "type": "string",
       "default": "T-Mobile"
+    },
+    "simspoof_time_zone": {
+      "field": "SIM_SPOOF_TIME_ZONE",
+      "key": "simspoof_time_zone",
+      "type": "string",
+      "default": ""
     },
     "skip_first_launch_setup": {
       "field": "SKIP_FIRST_LAUNCH_SETUP",

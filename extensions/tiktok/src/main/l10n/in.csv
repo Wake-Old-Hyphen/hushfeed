@@ -2394,3 +2394,14 @@ Backdrop behind video text,Latar di belakang teks video
 "Colors the description, the author's name and the post date on videos.","Mewarnai deskripsi, nama pembuat, dan tanggal posting pada video."
 "Puts a band of color behind the description, the author's name and the post date, so they stay readable on bright videos.","Menaruh pita warna di belakang deskripsi, nama pembuat, dan tanggal posting agar tetap terbaca pada video yang terang."
 "Takes out the small bar above the progress bar that says a friend reposted the video, or asks you to repost it.",Menghapus bilah kecil di atas bilah progres yang menunjukkan teman memposting ulang video ini atau meminta Anda memposting ulang.
+Time zone,Zona waktu
+"A zone name like Europe/Belgrade, used in place of the country's. Daylight saving follows by itself. Empty means the country's own zone.","Nama zona seperti Europe/Belgrade, dipakai menggantikan zona negara. Waktu musim panas mengikuti dengan sendirinya. Kosong berarti zona negara itu sendiri."
+Enter a zone like Asia/Tokyo,Masukkan zona seperti Asia/Tokyo
+Keep my own watch history,Simpan riwayat tontonan sendiri
+"Lists the videos you watch on this phone, with who posted each one and its caption. It stays on your phone.","Mencatat video yang kamu tonton di ponsel ini, beserta pengunggah dan keterangannya. Daftarnya tetap di ponselmu."
+My watch history,Riwayat tontonan saya
+Find and reopen the videos you've watched on this phone,Cari dan buka lagi video yang sudah kamu tonton di ponsel ini
+Videos you watch show up here,Video yang kamu tonton muncul di sini
+No videos match,Tidak ada video yang cocok
+Watch history cleared,Riwayat tontonan dihapus
+Couldn't open that video. Try again.,Video itu tidak bisa dibuka. Coba lagi.

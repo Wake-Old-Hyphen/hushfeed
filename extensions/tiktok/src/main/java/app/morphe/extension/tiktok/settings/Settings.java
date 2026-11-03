@@ -1185,6 +1185,8 @@ public class Settings extends BaseSettings {
      */
     public static final IntegerSetting SEEN_VIDEO_MARK_PERCENT =
             new IntegerSetting("seen_video_mark_percent", 0).withRange(0, 90);
+    /** A list of the videos watched, with who posted them and their captions, on the phone (#172). */
+    public static final BooleanSetting LOCAL_WATCH_HISTORY = new BooleanSetting("local_watch_history", FALSE);
     public static final BooleanSetting HIDE_PLAYLIST_BAR = new BooleanSetting("hide_playlist_bar", FALSE, true);
     public static final BooleanSetting HIDE_EVENT_BADGE = new BooleanSetting("hide_event_badge", FALSE, true);
     public static final BooleanSetting HIDE_INSERTED_CARDS = new BooleanSetting("hide_inserted_cards", FALSE, true);
@@ -1448,6 +1450,20 @@ public class Settings extends BaseSettings {
             new BooleanSetting("enable_live_search", FALSE, true);
     public static final BooleanSetting SIM_SPOOF = new BooleanSetting("simspoof", FALSE, true);
     public static final StringSetting SIM_SPOOF_ISO = new StringSetting("simspoof_iso", "us");
+    // The same two switches as the store row, and the row names the one to turn on the same way.
+    public static final StringSetting SIM_SPOOF_TIME_ZONE = new StringSetting(
+            "simspoof_time_zone",
+            "",
+            new Setting.Availability() {
+                @Override public boolean isAvailable() {
+                    return SIM_SPOOF.savedValue() && REGION_SPOOF.savedValue();
+                }
+
+                @Override public java.util.List<Setting<?>> getParentSettings() {
+                    return java.util.Collections.singletonList(REGION_SPOOF.savedValue() ? SIM_SPOOF : REGION_SPOOF);
+                }
+            }
+    );
     public static final StringSetting SIMSPOOF_MCCMNC = new StringSetting("simspoof_mccmnc", "310260");
     public static final StringSetting SIMSPOOF_OP_NAME = new StringSetting("simspoof_op_name", "T-Mobile");
     // Read by the region patch's request hooks as each For You request is built, so no restart.

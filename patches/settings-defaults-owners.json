@@ -319,7 +319,8 @@
     "Hide already seen videos": [
       "HIDE_SEEN_VIDEOS",
       "SEEN_VIDEO_RETENTION_DAYS",
-      "SEEN_VIDEO_MARK_PERCENT"
+      "SEEN_VIDEO_MARK_PERCENT",
+      "LOCAL_WATCH_HISTORY"
     ],
     "Hide CAPTCHA popups": [
       "HIDE_CAPTCHA_POPUPS"
@@ -588,6 +589,7 @@
       "REGION_REQUEST_SPOOF",
       "SIM_SPOOF",
       "SIM_SPOOF_ISO",
+      "SIM_SPOOF_TIME_ZONE",
       "SIMSPOOF_MCCMNC",
       "SIMSPOOF_OP_NAME",
       "SIM_SPOOF_FEED_REAL"
