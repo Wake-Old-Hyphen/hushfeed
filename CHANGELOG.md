@@ -26,6 +26,13 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
+* **TikTok:** Saves work again after one that was cut off while Hushfeed was writing its first record of files still to be published. That half-written record used to count as damaged, and every save after it failed. Now it's thrown away, since nothing was published under it, and the next save goes through.
+* **TikTok:** A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.
+* **TikTok:** With `Send TikTok through a proxy` set up with a password, the relay that signs in for TikTok turns down a site name with a line break or a space in it instead of passing it to the proxy, and it sends an IPv6 address the way a proxy expects it, in square brackets.
+* **TikTok:** When Feature Gate Lab can't read TikTok's values, the message on screen no longer carries the error's technical text. That goes to the log, and the screen keeps to what to do next.
+* **TikTok:** The delete button next to each recent settings search is a full-size tap target now, and a screen reader calls it a button.
+* **TikTok:** The Clear button on the Inbox search bar dims while there's nothing to clear.
+* **TikTok:** Deleting the files of a LIVE recording says `Recording files deleted` rather than `Done`.
 * **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
 * **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.
 * **TikTok:** What you type in a LIVE room's comment box is readable under `Dark LIVE panels in dark mode` now, on a recommended build too. The fix used to come only with `AMOLED dark theme`, so everyone else typed dark text on a dark bar. With the switch off, the box keeps TikTok's own colors.
@@ -41,12 +48,17 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Network proxy` works with a proxy that has a user name and password now, for both HTTP and SOCKS5. Before, TikTok's own traffic couldn't sign in, so the app acted like it had no connection.
 * **TikTok:** `Network proxy` no longer says a working proxy is down because one website behind it failed. It asks the proxy first, and gives a slow proxy a second try. A wrong password gets its own message.
 * **TikTok:** `Speed menu choices` and the offline video limit no longer ask you to restart TikTok twice in a row when the settings are in another language.
+* **TikTok:** `Network proxy` with a user name and password keeps working when Android won't give TikTok another thread. The connection that didn't get one is dropped and TikTok tries it again. Before, that could close TikTok outright.
+* **TikTok:** A Hushfeed dialog that's still open when TikTok closes the screen under it closes along with that screen now. Before, it hung on to the screen after it was gone.
+* **TikTok:** The hold that covers the feed scrolls when it doesn't fit, like at Android's largest text and display sizes or in split screen, so you can always get to the buttons at the bottom. They used to get squeezed off the bottom with no way to reach them, and now the text fades at an edge when there's more past it.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 
 ### Build
 
 * **TikTok:** The release walk keeps its device reserved from the install until Android's code check is done, so another job can't take the phone in between and cost a walk that passed. It cold boots the emulator it starts and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past instead of tapped, since a tap opens the LIVE room. It turns off an emulator's system animations for the walk and puts them back after, because a creator's animated avatar ring kept the screen from being read.
+* **TikTok:** Editing the release scripts no longer makes the saved patch audit results look out of date. They run after the APK is built, so they don't count as audit inputs anymore.
+* **TikTok:** When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches also scores each method by how much it looks like the one the fingerprint took there.
 
 ## 0.80.0 (2026-11-01)
 

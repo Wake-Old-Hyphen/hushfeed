@@ -1182,6 +1182,13 @@ public final class SettingsUi {
             new java.util.HashMap<>();
     private static final java.util.Map<String, java.lang.ref.WeakReference<Context>> OPENED_ON =
             new java.util.HashMap<>();
+    /**
+     * Every dialog the rows opened, with the screen under it, for {@link #closeDialogsOn}. The
+     * maps above keep one dialog a row, and a row opened again on another screen would push out
+     * the first one's dialog, which then outlived its screen.
+     */
+    private static final java.util.Map<Dialog, java.lang.ref.WeakReference<android.app.Activity>> SCREEN_DIALOGS =
+            new java.util.WeakHashMap<>();
 
     /**
      * Whether the dialog this row opened on this screen is still showing. A second tap can land
@@ -1200,6 +1207,77 @@ public final class SettingsUi {
     public static void dialogOpened(String key, Context context, Dialog dialog) {
         OPEN_DIALOGS.put(key, new java.lang.ref.WeakReference<>(dialog));
         OPENED_ON.put(key, new java.lang.ref.WeakReference<>(context));
+        android.app.Activity screen = activityOf(context);
+        if (screen != null) SCREEN_DIALOGS.put(dialog, new java.lang.ref.WeakReference<>(screen));
+        watchScreens(context);
+    }
+
+    /** The app whose screens {@link #watchScreens} already hears about. */
+    private static java.lang.ref.WeakReference<android.app.Application> watchedApp =
+            new java.lang.ref.WeakReference<>(null);
+
+    /**
+     * A dialog still up when its screen is destroyed is a leaked window: Android logs it, and the
+     * dialog's listeners keep the screen reachable until it's collected. A rotation TikTok doesn't
+     * handle or TikTok finishing the screen did that. So a screen's end closes what opened on it.
+     */
+    private static void watchScreens(Context context) {
+        android.app.Activity activity = activityOf(context);
+        if (activity == null) return;
+        android.app.Application app = activity.getApplication();
+        if (app == null || watchedApp.get() == app) return;
+        watchedApp = new java.lang.ref.WeakReference<>(app);
+        app.registerActivityLifecycleCallbacks(new android.app.Application.ActivityLifecycleCallbacks() {
+            @Override public void onActivityCreated(android.app.Activity screen, android.os.Bundle state) {}
+            @Override public void onActivityStarted(android.app.Activity screen) {}
+            @Override public void onActivityResumed(android.app.Activity screen) {}
+            @Override public void onActivityPaused(android.app.Activity screen) {}
+            @Override public void onActivityStopped(android.app.Activity screen) {}
+            @Override public void onActivitySaveInstanceState(android.app.Activity screen, android.os.Bundle state) {}
+            @Override public void onActivityDestroyed(android.app.Activity screen) {
+                closeDialogsOn(screen);
+            }
+        });
+    }
+
+    /** Dismisses and forgets every dialog opened on this screen, and drops entries already collected. */
+    private static void closeDialogsOn(android.app.Activity destroyed) {
+        java.util.Iterator<java.util.Map.Entry<String, java.lang.ref.WeakReference<Context>>> entries =
+                OPENED_ON.entrySet().iterator();
+        while (entries.hasNext()) {
+            java.util.Map.Entry<String, java.lang.ref.WeakReference<Context>> entry = entries.next();
+            Context on = entry.getValue().get();
+            if (on != null && activityOf(on) != destroyed) continue;
+            entries.remove();
+            OPEN_DIALOGS.remove(entry.getKey());
+        }
+        java.util.Iterator<java.util.Map.Entry<Dialog, java.lang.ref.WeakReference<android.app.Activity>>> opened =
+                SCREEN_DIALOGS.entrySet().iterator();
+        while (opened.hasNext()) {
+            java.util.Map.Entry<Dialog, java.lang.ref.WeakReference<android.app.Activity>> entry = opened.next();
+            android.app.Activity on = entry.getValue().get();
+            if (on != null && on != destroyed) continue;
+            opened.remove();
+            Dialog dialog = entry.getKey();
+            if (on == null || dialog == null || !dialog.isShowing()) continue;
+            try {
+                dialog.dismiss();
+            } catch (IllegalArgumentException | IllegalStateException alreadyGone) {
+                // Its window went with the screen first. Forgetting it is all that's left.
+            }
+        }
+    }
+
+    @androidx.annotation.Nullable
+    private static android.app.Activity activityOf(Context context) {
+        for (int depth = 0; depth < 8 && context != null; depth++) {
+            if (context instanceof android.app.Activity) return (android.app.Activity) context;
+            if (!(context instanceof android.content.ContextWrapper)) return null;
+            Context base = ((android.content.ContextWrapper) context).getBaseContext();
+            if (base == context) return null;
+            context = base;
+        }
+        return null;
     }
 
     public static void styleStandardAlertDialog(AlertDialog dialog) {
