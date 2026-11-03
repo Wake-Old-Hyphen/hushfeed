@@ -10,6 +10,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Keep the next videos in full screen` fixes full screen stopping dead on most pages. TikTok opens it with only the video you were on, so there was nothing to swipe to and it couldn't move on by itself. With the switch on, the videos after it come along. It starts off, and it lives in Hushfeed settings > Playback (#286).
 * **TikTok:** `Keep my own watch history` lists the videos you watch on this phone with who posted them and their captions, in Hushfeed settings > Feed filter. `My watch history` searches the list and a tap opens the video again. It starts off and stays on your phone (#172).
 * **TikTok:** A new `Time zone` row under Region lets you type a zone like Europe/Belgrade to use in place of the country's. Daylight saving follows by itself, and leaving it empty keeps the country's zone (#198).
+* **TikTok:** Ghost mode has a switch for each thing it holds back now. `Hide story views`, `Hide profile visits` and `Hide typing` sit under it in Hushfeed settings > Privacy, so you can let one of them through and keep the rest hidden. They all start on, which keeps Ghost mode working the way it did.
 * **TikTok:** `Hide read receipts` keeps the "seen" mark off the chats you open, so the other person doesn't see that you've read their message. It starts off, and it lives in Hushfeed settings > Inbox. Thanks to @maayan080 (#295).
 * **TikTok:** The settings screen and What's new now come in Vietnamese. Thanks to @hautv404 (#306).
 * **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
@@ -26,6 +27,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
+* **TikTok:** `Hide message streaks` takes the streak button off chats, the share panel, Friends and stories, and the streak reminder off your chat list. Before, it hid nothing, since TikTok no longer asks the spot Hushfeed was answering.
 * **TikTok:** Saves work again after one that was cut off while Hushfeed was writing its first record of files still to be published. That half-written record used to count as damaged, and every save after it failed. Now it's thrown away, since nothing was published under it, and the next save goes through.
 * **TikTok:** A save that runs TikTok out of memory while it copies the file ends as a failed save. Before, the error got past the save and took TikTok down with it.
 * **TikTok:** With `Send TikTok through a proxy` set up with a password, the relay that signs in for TikTok turns down a site name with a line break or a space in it instead of passing it to the proxy, and it sends an IPv6 address the way a proxy expects it, in square brackets.
@@ -36,6 +38,7 @@ Every Hushfeed release, newest first.
 * **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
 * **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.
 * **TikTok:** What you type in a LIVE room's comment box is readable under `Dark LIVE panels in dark mode` now, on a recommended build too. The fix used to come only with `AMOLED dark theme`, so everyone else typed dark text on a dark bar. With the switch off, the box keeps TikTok's own colors.
+* **TikTok:** Under `Dark LIVE panels in dark mode`, the heart and emoji buttons on a LIVE room's comment bar are white now. With a custom `AMOLED dark theme` color they came out nearly the same shade as the bar and disappeared. The white boxes behind the emoji picker's send and delete buttons take the room's dark color too (your AMOLED color when you picked one), and colored buttons, photos and emoji keep their look (#329).
 * **TikTok:** `Auto-advance videos` now moves on from videos you open from a profile or a list, where TikTok has no auto scroll of its own. Before, the first one just looped at its end.
 * **TikTok:** A sorted profile or Liked grid stays out of sight while its pages load, with a small spinner and a running count, then shows once in its final order. Before, you watched it reshuffle page by page, and a pull to refresh looked like it had dropped the order.
 * **TikTok:** The Inbox doesn't flicker when it opens with `Hide stories tray` on. The tray used to go a moment too late, so the chats jumped down and back up. The same fix covers every other row the Inbox hides.
@@ -51,14 +54,18 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Network proxy` with a user name and password keeps working when Android won't give TikTok another thread. The connection that didn't get one is dropped and TikTok tries it again. Before, that could close TikTok outright.
 * **TikTok:** A Hushfeed dialog that's still open when TikTok closes the screen under it closes along with that screen now. Before, it hung on to the screen after it was gone.
 * **TikTok:** The hold that covers the feed scrolls when it doesn't fit, like at Android's largest text and display sizes or in split screen, so you can always get to the buttons at the bottom. They used to get squeezed off the bottom with no way to reach them, and now the text fades at an edge when there's more past it.
+* **TikTok:** Your recent settings searches stay put while Hushfeed is paused. The list used to come up empty, and the next search you sent wiped out the ones before it.
 
 * **TikTok:** The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
+* **TikTok:** `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
 
 ### Build
 
 * **TikTok:** The release walk keeps its device reserved from the install until Android's code check is done, so another job can't take the phone in between and cost a walk that passed. It cold boots the emulator it starts and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past instead of tapped, since a tap opens the LIVE room. It turns off an emulator's system animations for the walk and puts them back after, because a creator's animated avatar ring kept the screen from being read.
 * **TikTok:** Editing the release scripts no longer makes the saved patch audit results look out of date. They run after the APK is built, so they don't count as audit inputs anymore.
 * **TikTok:** When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches also scores each method by how much it looks like the one the fingerprint took there.
+* **TikTok:** Nine more TikTok lookups find their method faster while patching: the follow feed, the sticker rows, the photo slide fit and the profile menu. Each one now names a call, a field it reads, a type check or a cast that the patcher keeps an index of. Every one of them used to take 140 to 630 ms on 47.6.3, and now none is slow enough to show up in `--validate`.
+* **TikTok:** Patching 47.6.3 spends about a second less looking for methods. The read receipts and clear display lookups now name a field they read or write. `Use system font` and `AMOLED dark theme` find the web page callbacks in one pass instead of two, and the tab badge dot is looked up inside its count's class rather than across the whole app.
 
 ## 0.80.0 (2026-11-01)
 
