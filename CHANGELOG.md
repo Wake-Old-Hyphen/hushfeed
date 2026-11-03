@@ -6,11 +6,14 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* **TikTok:** With `Save photo posts as a video` on, a photo story saves as one MP4 with its sound, running about as long as it does in TikTok. Before, its save kept the photos and left the sound out (#327).
+* **TikTok:** `Keep the next videos in full screen` fixes full screen stopping dead on most pages. TikTok opens it with only the video you were on, so there was nothing to swipe to and it couldn't move on by itself. With the switch on, the videos after it come along. It starts off, and it lives in Hushfeed settings > Playback (#286).
 * **TikTok:** `Keep my own watch history` lists the videos you watch on this phone with who posted them and their captions, in Hushfeed settings > Feed filter. `My watch history` searches the list and a tap opens the video again. It starts off and stays on your phone (#172).
 * **TikTok:** A new `Time zone` row under Region lets you type a zone like Europe/Belgrade to use in place of the country's. Daylight saving follows by itself, and leaving it empty keeps the country's zone (#198).
 * **TikTok:** `Hide read receipts` keeps the "seen" mark off the chats you open, so the other person doesn't see that you've read their message. It starts off, and it lives in Hushfeed settings > Inbox. Thanks to @maayan080 (#295).
 * **TikTok:** The settings screen and What's new now come in Vietnamese. Thanks to @hautv404 (#306).
 * **TikTok:** The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
+* **TikTok:** A LIVE recording keeps going while the same LIVE plays in Android's picture-in-picture window, and when you come back to it. Closing the window, leaving or moving to another LIVE stops and saves the file. A recording of the screen still stops when you leave. Thanks to @Hiiva (#324).
 * **TikTok:** `Copy bio and IDs` has a `Copy name` button now, so a profile's share sheet copies the display name as well as the username. Buttons that don't fit move down to a second line instead of running off the sheet.
 * **TikTok:** `Background play in the long-press menu` adds TikTok's own background play row to the long-press menu, so one video can keep playing while the others stop as usual. It starts off, and it's under Playback.
 * **TikTok:** `Keep LIVEs from these creators` lets the LIVEs of creators you pick stay in the feed while `Hide LIVE videos` is on. Add as many as you like, by handle or user ID. It keeps what TikTok sends you, so it won't bring in a LIVE TikTok didn't serve.
@@ -23,6 +26,8 @@ Every Hushfeed release, newest first.
 * **TikTok:** `Hide the repost chip` under Feed screen takes out the small bar above the progress bar that says someone you follow reposted the video, or asks you to repost it.
 
 ### Bug Fixes
+* **TikTok:** The save picker lists a taller copy the video carries on its own when TikTok's gears stop at 720p. Before, it only looked past the gears when they stopped lower than that, so a 1080p copy never made the list (#240).
+* **TikTok:** `New device identity` says outright that it's off until you tap it and runs once, and it shows when an identity is in use. A new `Use this phone's own IDs` row takes TikTok back to the phone's real IDs. If a step of the wipe keeps failing it gives up after three starts, where before it could've carried on with new IDs at every launch. The diagnostic report lists how many wipes ran, without the IDs.
 * **TikTok:** What you type in a LIVE room's comment box is readable under `Dark LIVE panels in dark mode` now, on a recommended build too. The fix used to come only with `AMOLED dark theme`, so everyone else typed dark text on a dark bar. With the switch off, the box keeps TikTok's own colors.
 * **TikTok:** `Auto-advance videos` now moves on from videos you open from a profile or a list, where TikTok has no auto scroll of its own. Before, the first one just looped at its end.
 * **TikTok:** A sorted profile or Liked grid stays out of sight while its pages load, with a small spinner and a running count, then shows once in its final order. Before, you watched it reshuffle page by page, and a pull to refresh looked like it had dropped the order.
