@@ -120,6 +120,8 @@ public class SettingsStatus {
         backgroundPlayEnabled = true;
     }
     public static boolean inboxFilterEnabled = false;
+    public static boolean inboxFilterTabsEnabled = false;
+    public static boolean messageSearchRebuildEnabled = false;
     public static boolean videoFitEnabled = false;
     public static boolean refreshRateEnabled = false;
     public static boolean cameraBrightnessEnabled = false;
@@ -573,6 +575,14 @@ public class SettingsStatus {
         inboxFilterEnabled = true;
     }
 
+    public static void enableInboxFilterTabs() {
+        inboxFilterTabsEnabled = true;
+    }
+
+    public static void enableMessageSearchRebuild() {
+        messageSearchRebuildEnabled = true;
+    }
+
     public static void enableCommentTools() {
         commentToolsEnabled = true;
     }
@@ -669,6 +679,13 @@ public class SettingsStatus {
 
     public static void enableLikedGridSort() {
         likedGridSortEnabled = true;
+    }
+
+    /** The detail page grid adapter hands over its label, so a sound's page can be sorted (#180). */
+    public static boolean soundGridSortEnabled = false;
+
+    public static void enableSoundGridSort() {
+        soundGridSortEnabled = true;
     }
 
     public static void enableFeedSidebarSwipe() {
@@ -874,6 +891,9 @@ public class SettingsStatus {
     public static void enableNetworkRequestReport() { networkRequestReportEnabled = true; }
     public static boolean featureGateLabEnabled = false;
     public static void enableFeatureGateLab() { featureGateLabEnabled = true; }
+
+    public static boolean accountCleanupEnabled = false;
+    public static void enableAccountCleanup() { accountCleanupEnabled = true; }
 
     private static final String SWITCH_SUFFIX = "Enabled";
 
