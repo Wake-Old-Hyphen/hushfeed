@@ -1412,10 +1412,35 @@ public final class Probe extends Instrumentation {
                         String clicked = "";
                         if (click) {
                             android.view.View target = found;
+                            android.view.View row = null;
                             while (target != null && !target.isClickable()) {
+                                row = target;
                                 target = target.getParent() instanceof android.view.View ? (android.view.View) target.getParent() : null;
                             }
-                            clicked = target == null ? " clicked=no clickable ancestor" : " clicked=" + target.performClick();
+                            if (target instanceof android.widget.AbsListView && row != null) {
+                                // A row of a ListView (the Hushfeed settings list) isn't clickable
+                                // itself: the list takes the tap and calls its item listener, and
+                                // performClick on the list answers false without picking a row.
+                                // A Spinner is clickable too but opens its own dropdown, so it
+                                // keeps performClick below. The answer leads with the result so
+                                // the audit's clicked=true patterns read list rows too.
+                                android.widget.AbsListView list = (android.widget.AbsListView) target;
+                                int position = list.getPositionForView(row);
+                                android.widget.Adapter adapter = list.getAdapter();
+                                if (position == android.widget.AdapterView.INVALID_POSITION) {
+                                    clicked = " clicked=false row not in its list";
+                                } else if (adapter instanceof android.widget.ListAdapter
+                                        && !((android.widget.ListAdapter) adapter).isEnabled(position)) {
+                                    // A greyed-out row: a finger on it does nothing, while
+                                    // performItemClick would still run the listener.
+                                    clicked = " clicked=false item=" + position + " disabled";
+                                } else {
+                                    clicked = " clicked=" + list.performItemClick(row, position, list.getItemIdAtPosition(position))
+                                            + " item=" + position;
+                                }
+                            } else {
+                                clicked = target == null ? " clicked=no clickable ancestor" : " clicked=" + target.performClick();
+                            }
                         }
                         if (holdMs > 0) {
                             android.view.View root = found.getRootView();
@@ -3535,13 +3560,51 @@ public final class Probe extends Instrumentation {
             // single pixel: the deepest view that gives the colour while its children don't is
             // the one painting it, background or onDraw. A hardware bitmap can't be drawn this
             // way and says so.
-            out.append(" draws=").append(drawnAt(view, x - where[0], y - where[1]));
+            // Both draws below render in the view's scrolled content space, so the point moves
+            // with its scroll (0 for TikTok's frames, not for a ScrollView).
+            int contentX = x - where[0] + view.getScrollX();
+            int contentY = y - where[1] + view.getScrollY();
+            out.append(" draws=").append(drawnAt(view, contentX, contentY));
             out.append('\n');
             if (view instanceof android.view.ViewGroup) {
                 android.view.ViewGroup group = (android.view.ViewGroup) view;
                 for (int i = 0; i < group.getChildCount(); i++) {
-                    describeBackgroundsAt(group.getChildAt(i), x, y, depth + 1, out, resources);
+                    android.view.View child = group.getChildAt(i);
+                    describeBackgroundsAt(child, x, y, depth + 1, out, resources);
+                    // A child whose bounds miss the point can still paint it: a scale or a
+                    // translation moves its drawing, and an unclipped parent lets it draw past its
+                    // edge. Drawn the way its parent draws it, transform and clip included.
+                    int[] at = new int[2];
+                    child.getLocationOnScreen(at);
+                    boolean inside = x >= at[0] && y >= at[1] && x < at[0] + child.getWidth() && y < at[1] + child.getHeight();
+                    if (inside || !child.isShown()) continue;
+                    String paints = drawnThrough(group, child, contentX, contentY);
+                    if ("0".equals(paints)) continue;
+                    out.append(depth + 1).append(' ').append(child.getClass().getName())
+                            .append(" id=").append(idName(child, resources))
+                            .append(" at=").append(at[0]).append(',').append(at[1])
+                            .append(" size=").append(child.getWidth()).append('x').append(child.getHeight())
+                            .append(" bg=").append(describeDrawable(child.getBackground(), 0))
+                            .append(" outside draws=").append(paints).append('\n');
                 }
+            }
+        }
+
+        /** The colour {@code child} paints at a point in {@code group}'s coordinates when the group draws it. */
+        private static String drawnThrough(android.view.ViewGroup group, android.view.View child, int x, int y) {
+            try {
+                java.lang.reflect.Method drawChild = android.view.ViewGroup.class.getDeclaredMethod("drawChild",
+                        android.graphics.Canvas.class, android.view.View.class, long.class);
+                drawChild.setAccessible(true);
+                android.graphics.Bitmap pixel = android.graphics.Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888);
+                android.graphics.Canvas canvas = new android.graphics.Canvas(pixel);
+                canvas.translate(-x, -y);
+                drawChild.invoke(group, canvas, child, group.getDrawingTime());
+                int color = pixel.getPixel(0, 0);
+                pixel.recycle();
+                return Integer.toHexString(color);
+            } catch (Throwable error) {
+                return error.getClass().getSimpleName();
             }
         }
 
@@ -3910,10 +3973,13 @@ public final class Probe extends Instrumentation {
                 android.view.View child = parent.getChildAt(i);
                 out.append(" child ").append(depth).append('.').append(i).append(' ')
                         .append(child.getClass().getSimpleName()).append(" id=")
-                        .append(idName(child, resources)).append(" size=")
+                        .append(idName(child, resources)).append(" vis=").append(child.getVisibility()).append(" size=")
                         .append(child.getWidth()).append('x').append(child.getHeight())
                         // A video surface carries no id, and See-through status bar grows it.
-                        .append(" top=").append(child.getTop()).append(" scale=").append(child.getScaleY());
+                        .append(" top=").append(child.getTop()).append(" scale=").append(child.getScaleY())
+                        // A scaled surface grows about its pivot; a moved one shows where it went.
+                        .append(" pivot=").append(child.getPivotX()).append(',').append(child.getPivotY())
+                        .append(" shift=").append(child.getTranslationX()).append(',').append(child.getTranslationY());
                 appendLayoutInfo(child, out);
                 out.append('\n');
                 if (depth < 2 && child instanceof android.view.ViewGroup) {
