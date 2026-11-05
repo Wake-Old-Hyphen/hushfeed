@@ -63,8 +63,9 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     Settings.AUTO_ADVANCE_LIMIT, "%1$s video", "%1$s videos").zeroMeansOff());
             addPreference(new TogglePreference(context, "Hide TikTok's Auto scroll button",
                     "Takes TikTok's own Auto scroll action out of the video panel and the Auto "
-                            + "scroll switch beside videos on tablets and unfolded foldables. "
-                            + "Works with Auto-advance off too.",
+                            + "scroll label off the top of videos. Tablets and unfolded foldables "
+                            + "also lose the Auto scroll switch beside videos. Works with "
+                            + "Auto-advance off too.",
                     Settings.AUTO_ADVANCE_HIDE_PANEL_ACTION));
             addPreference(new TogglePreference(context, "Auto-advance in search results",
                     "Also turns on TikTok's own Auto scroll for videos opened from search. "
@@ -381,6 +382,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                         new String[]{HoldSpeedHud.PILL, HoldSpeedHud.CIRCLE})
                         .withNote("Pill is the wide bubble with a row of dots under the speed. Circle is a small "
                                 + "round dial with a notch for each speed around its edge."));
+                addPreference(new ChoicePreference(context, "Hold speed slide direction", Settings.HOLD_SPEED_SLIDE_AXIS,
+                        new String[]{"Sideways", "Up and down"},
+                        new String[]{HoldSpeedHud.SIDEWAYS, HoldSpeedHud.UP_DOWN})
+                        .withNote("With Sideways, slide left or right to change the speed and pull down to lock it. "
+                                + "With Up and down, slide up for faster and down for slower, and slide to the side "
+                                + "to lock it, so a hold near the edge still reaches every speed."));
             }
             if (SettingsStatus.hideSpeedToastsEnabled) {
                 addPreference(new TogglePreference(context, "Hide speed messages",
