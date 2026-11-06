@@ -6,6 +6,17 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
+
+### Bug Fixes
+
+* A bio handle with a period and a date stuck to it, like @john.doe11/30/24, stays plain text now. In 0.81.0 it linked only the part before the period, which opened a different account (#247).
+* With `Long-press Profile for Watch history` on, holding Profile opens Watch history again after you remove your second account. Before, the hold did nothing until TikTok rebuilt its tab bar (#341).
+
+## 0.81.0 (2026-11-05)
+
+### Features
+
 * Hushfeed now supports TikTok 47.7.2, and only that one. 47.6.3 isn't supported anymore. Grab the 47.7.2 bundle or APK from APKMirror and patch it with the same signing key, so your login and settings carry over.
 * On the 47.7.2 bundle (the `.apkm`), `Remove creation tools` leaves TikTok's files alone. That bundle doesn't ship the effects libraries it takes out, and emptying the face model by itself would break face effects again. `Block P2P video relay` has nothing to remove there either, since the bundle leaves the relay out. Both still work as before on the APK.
 * With `Save photo posts as a video` on, a photo story saves as one MP4 with its sound, running about as long as it does in TikTok. Before, its save kept the photos and left the sound out (#327).
@@ -16,7 +27,7 @@ Every Hushfeed release, newest first.
 * Ghost mode has a switch for each thing it holds back now. `Hide story views`, `Hide profile visits` and `Hide typing` sit under it in Hushfeed settings > Privacy, so you can let one of them through and keep the rest hidden. They all start on, which keeps Ghost mode working the way it did.
 * `Hide read receipts` keeps the "seen" mark off the chats you open, so the other person doesn't see that you've read their message. It starts off, and it lives in Hushfeed settings > Inbox. Thanks to @maayan080 (#295).
 * The settings screen and What's new now come in Vietnamese. Thanks to @hautv404 (#298, #306).
-* `Show inbox filters` in Hushfeed settings > Inbox puts TikTok's Main, Requests, Unread and Starred tabs above your chats on any account, not just creator accounts (#331).
+* `Show inbox filters` in Hushfeed settings > Inbox puts TikTok's Main, Requests, Unread and Starred tabs above your chats on any account. TikTok used to show them to creator accounts only (#331).
 * `Rebuild message search` in Hushfeed settings > Inbox clears TikTok's message search and indexes every message saved on your phone again, so older messages show up in results. It keeps going even after you close search (#331).
 * The LIVE record button hides along with everything else when you turn on TikTok's LIVE Clear screen, and it comes back when you turn it off. A recording that's running keeps going. Thanks to @Hiiva (#297).
 * A LIVE recording keeps going while the same LIVE plays in Android's picture-in-picture window, and when you come back to it. Closing the window, leaving or moving to another LIVE stops and saves the file. A recording of the screen still stops when you leave. Thanks to @Hiiva (#324, #337).
@@ -54,6 +65,7 @@ Every Hushfeed release, newest first.
 * Hushfeed builds on Morphe patcher 2.2.0 now, so it needs Morphe Manager 2.4.0 or newer, or morphe-desktop 2.0.0 on a computer. Older Managers refuse the bundle.
 
 ### Bug Fixes
+
 * Turning off `Long-press Profile for Watch history` gives the Profile tab its account switcher back. On some phones holding Profile did nothing at all once the switch was off (#341).
 * Screen recordings of a LIVE no longer stop short with "Recording stopped early". When the picture barely moved, a small frame looked damaged to the step that checks the recording before saving it, so the saved video ended at that frame, often a few seconds in (#37).
 * The sound in a screen recording of a LIVE no longer cuts out early or drifts away from the picture when the phone is busy. Android throws away sound an app doesn't pick up within about a second, and the recorder ran at background priority, so a busy phone kept it waiting longer than that. Now the sound is picked up on its own thread as it arrives, and the recorder runs at normal priority while it records, which also keeps the picture from skipping (#37).
@@ -74,7 +86,9 @@ Every Hushfeed release, newest first.
 * A sorted profile or Liked grid stays out of sight while its pages load, with a small spinner and a running count, then shows once in its final order. Before, you watched it reshuffle page by page, and a pull to refresh looked like it had dropped the order.
 * The Inbox doesn't flicker when it opens with `Hide stories tray` on. The tray used to go a moment too late, so the chats jumped down and back up. The same fix covers every other row the Inbox hides.
 * A full name typed after an @ in a bio, like @First Last, is one link now and opens a search for that name. Before, only the first word lit up, and it opened a stranger's profile or nothing. A name like @José no longer links as @Jos.
+* A name in a bio with a date stuck to it, like @Hannahraines11/30/24, searches for the whole thing now instead of opening whatever account matches the part before the slash. Mentions picked from TikTok's own list in the bio editor keep TikTok's link, which opens the exact person (#247).
 * `Thumbs down blocks the commenter` takes that person's comments out of the list right away now. Before, the comment only dimmed and stayed where it was.
+* `Pause the video while comments are open` stops a video opened from a profile or from Activity as soon as the comments open, even when it has no comments yet. It used to wait for the first comment to load there, so a video with none kept playing (#316).
 * `Hide the Send to row` and `Hide people and options by name` reach the row of friends in the menu a long press on a comment opens. They only reached the share sheet's row before.
 * `AMOLED dark theme` turns the gray cards in the comment menu and the long-press video menu black, along with the panel behind them.
 * The "Saving video" message no longer sits under the "Video saved" banner on a quick save. The banner takes its place.
@@ -86,18 +100,20 @@ Every Hushfeed release, newest first.
 * A Hushfeed dialog that's still open when TikTok closes the screen under it closes along with that screen now. Before, it hung on to the screen after it was gone.
 * The hold that covers the feed scrolls when it doesn't fit, like at Android's largest text and display sizes or in split screen, so you can always get to the buttons at the bottom. They used to get squeezed off the bottom with no way to reach them, and now the text fades at an edge when there's more past it.
 * Your recent settings searches stay put while Hushfeed is paused. The list used to come up empty, and the next search you sent wiped out the ones before it.
-* Comments in your own language get Hushfeed's comment controls again on TikTok 47.6.3. Since 47.5.3 only the comments TikTok offered to translate got them, so on most rows `Thumbs down blocks the commenter` left TikTok's thumbs down alone. Now every row's thumbs down blocks, and `Hide like counts on comments` and `Hide the thumbs down on comments` reach every row, replies included.
-* The README's install steps point at TikTok 47.6.3 now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
+* Comments in your own language get Hushfeed's comment controls again. Since TikTok 47.5.3 only the comments TikTok offered to translate got them, so on most rows `Thumbs down blocks the commenter` left TikTok's thumbs down alone. Now every row's thumbs down blocks, and `Hide like counts on comments` and `Hide the thumbs down on comments` reach every row, replies included.
+* The README's install steps point at the TikTok build Hushfeed patches now. After v0.80.0 went out they still sent you to 47.5.3, which v0.80.0 doesn't patch.
 * The README's install steps say what to do where Morphe Manager runs as a 32-bit app. There it gives the patcher only 1 GB, which Hushfeed fits in by itself but not with patches from several other sources beside it (#339). The README's patch count also includes `Account cleanup` now.
 * `Keep the screen's refresh rate` says up front that TikTok doesn't ask for a rate on every phone. Where it doesn't, the switch has nothing to stop.
 * `Keep a streak going` finds a friend you enter by the name your Inbox shows for them, emoji and all, like "Lina 🌸". Until now a name like that was only looked for among group chats, so a one to one streak needed the @username. A group with the same name still wins, and two friends who share a name are left alone (#289).
-* `See-through bottom bar` shows the video behind the tabs on TikTok 47.6.3 again. That build nudges the video up a little, and since the picture grew from its middle, its bottom edge stopped short and a black strip sat under the tabs on every video.
+* `See-through bottom bar` shows the video behind the tabs again. TikTok 47.6.3 started nudging the video up a little, and since the picture grew from its middle, its bottom edge stopped short and a black strip sat under the tabs on every video.
+* `Hide TikTok's Auto scroll button` also hides the Auto scroll label at the top of the video. With Auto-advance on, it used to show up anyway (#342).
+* The hold speed bubble shows on videos opened from search, a profile or a chat. The speed still changed there, but the bubble was drawn behind the video where you couldn't see it (#248).
 
 ### Build
 
 * The release walk keeps its device reserved from the install until Android's code check is done, so another job can't take the phone in between and cost a walk that passed. It cold boots the emulator it starts and waits for a paused video to settle before it reads the screen. A LIVE that never sits still gets swiped past instead of tapped, since a tap opens the LIVE room. It turns off an emulator's system animations for the walk and puts them back after, because a creator's animated avatar ring kept the screen from being read.
 * Editing the release scripts no longer makes the saved patch audit results look out of date. They run after the APK is built, so they don't count as audit inputs anymore.
-* Running a release again after it stopped partway through its first step finishes that step now. It used to find the half-made edits, decide the release was already prepared and skip the commit. A walk that stops early can't be read through the walk before it anymore, and a failed repo description update stops the run instead of passing quietly.
+* Running a release again after it stopped partway through its first step finishes that step now. It used to find the half-made edits, decide the release was already prepared and skip the commit. A walk that stops early can't be read through the walk before it anymore, and a failed repo description update stops the run instead of passing without a word.
 * What's new keeps a release in English when its translated notes were drafted against a different list than the English one, so no language shows its own, shorter set of changes.
 * When a fingerprint stops matching on a new TikTok build, `NearestMethodsReport` lists the three methods closest to it on each supported build, with the parts each one misses. Name the fingerprint in `HUSHFEED_NEAREST`. Pointing `HUSHFEED_NEAREST_FROM` at an older APK it still matches also scores each method by how much it looks like the one the fingerprint took there.
 * Nine more TikTok lookups find their method faster while patching: the follow feed, the sticker rows, the photo slide fit and the profile menu. Each one now names a call, a field it reads, a type check or a cast that the patcher keeps an index of. Every one of them used to take 140 to 630 ms on 47.6.3, and now none is slow enough to show up in `--validate`.
@@ -162,8 +178,6 @@ Every Hushfeed release, newest first.
 
 ### Fixes
 
-* `Hide TikTok's Auto scroll button` also hides the Auto scroll label at the top of the video. With Auto-advance on, it used to show up anyway (#342).
-* The hold speed bubble shows on videos opened from search, a profile or a chat. The speed still changed there, but the bubble was drawn behind the video where you couldn't see it (#248).
 * Opening a search result that lives far down a page, like `Double tap` or the Liked grid sort in Feed screen, now lands on that row. It used to open the page at its top, so you had to scroll a long way to find it.
 * With `See-through bottom bar` on, the "Swipe up to skip" line on a suggested account card in For You sits above the tabs again instead of behind them (#261).
 * The floating tab pill is a little taller now. It reaches just above the bar and the tabs sit in its middle, so the Home icon and its name stay inside the highlight instead of poking out over it. The caption and the video's progress line move up to match, so the line no longer rides on the pill (#259).
