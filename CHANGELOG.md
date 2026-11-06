@@ -7,11 +7,16 @@ Every Hushfeed release, newest first.
 ### Features
 
 * `Show where commenters are from` also checks the country field on a commenter's account, and uses it only when it holds a two letter code (#201).
+* `Long press on Profile opens my watch history` makes holding the Profile tab show the watch history kept on your phone, so the long press on For You can keep opening Hushfeed settings. A tap on Profile works as before. It starts off, and it sits under `Keep my own watch history` (#172).
+* `Discover in the bottom bar` puts Discover where Friends sits in the bottom bar, the layout TikTok gives Indonesia, and your region and feed stay as they are. It starts off, lives in Hushfeed settings > Feed tabs and takes a TikTok restart (#98).
+* The Feature Gate Lab can override experiments TikTok reads as a whole object, like the home tab layout. It couldn't reach those before. An override changes only the fields you give it, and it still applies when TikTok sent your account nothing for that experiment (#98).
+* The diagnostic export has a Font section. It shows which font TikTok's text went out in, whether an imported font loaded (and if it didn't, why), and the Samsung font style on Galaxy phones (#346).
 
 ### Bug Fixes
 
 * A bio handle with a period and a date stuck to it, like @john.doe11/30/24, stays plain text now. In 0.81.0 it linked only the part before the period, which opened a different account (#247).
 * With `Long-press Profile for Watch history` on, holding Profile opens Watch history again after you remove your second account. Before, the hold did nothing until TikTok rebuilt its tab bar (#341).
+* Hushfeed adds less lag when a video opens from Search or Explore. The part that hides buttons on videos rebuilt its whole lookup list on every screen layout while the page opened, and now builds it once. With `Playback quality` set, each video's addresses get checked once too, instead of again in every place the player asks (#344).
 
 ## 0.81.0 (2026-11-05)
 

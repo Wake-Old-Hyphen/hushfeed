@@ -2447,6 +2447,8 @@ Hide streak pop-ups,隐藏连续互动弹窗
 Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.,停止在 TikTok 上方滑入的连续互动提醒，以及它加入聊天的连续互动消息和提示.
 Long press on For You opens my watch history,长按“为你推荐”打开我的观看历史
 Instead of these settings. The list has a button that brings you back here.,代替这些设置。列表里有一个按钮可以带你回到这里.
+Long press on Profile opens my watch history,长按“个人主页”打开我的观看历史
+"Instead of TikTok's Watch history. A tap on Profile works as before. If holding Profile switches accounts for you, this takes that press.",代替 TikTok 的观看历史。点击“个人主页”仍像以前一样工作。如果按住“个人主页”会为你切换账号，此选项会接管该操作.
 Auto tap in LIVE rooms,LIVE 房间自动点击
 "Adds an Auto tap button to LIVE rooms. Tap it to send taps to the stream at a steady pace, and tap it again to stop. It also stops when you leave or swipe to another room, leave TikTok or lock the screen.",在 LIVE 房间添加一个自动点击按钮。点击它即可以稳定的节奏点击直播画面，再次点击即可停止。当你离开或滑到其他房间、离开 TikTok 或锁屏时，它也会停止.
 Auto tap speed,自动点击速度
@@ -2493,3 +2495,5 @@ Offer Audio only in LIVE quality,在 LIVE 画质中提供仅音频
 Audio only,仅音频
 "Adds Audio only to a LIVE's Video quality list. The room plays its sound without the picture, which uses much less data, until you pick another quality or leave. Recording from the stream still saves the video.",在 LIVE 的视频画质列表中加入仅音频。直播间只播放声音、不显示画面，流量少得多，直到你选择其他画质或离开。从直播流录制仍会保存视频.
 Pick a video quality to record the screen,请选择视频画质再录屏
+Discover in the bottom bar,底部栏显示“发现”
+"Discover takes the place of Friends in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.",在底部栏中用“发现”替换“好友”，与 TikTok 在部分国家的布局相同。你的地区和推荐内容保持不变.
