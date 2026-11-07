@@ -246,6 +246,8 @@ public class FeedScreenCoverageTest {
         put("fade_in_clear_display", YES, YES, NONE);
         // The tab bar belongs to the main feed; an opened video has none (#145).
         put("see_through_bottom_bar", YES, NONE, NONE);
+        // How the video under that same bar is drawn (#232).
+        put("see_through_video_in_window", YES, NONE, NONE);
         // Only the look of that same bar (#124).
         put("floating_bottom_bar", YES, NONE, NONE);
         // And of that pill (#218).
@@ -254,6 +256,8 @@ public class FeedScreenCoverageTest {
         put("glass_tab_lens", YES, NONE, NONE);
         // And of the blur behind that pill (#231).
         put("glass_video_blur", YES, NONE, NONE);
+        // And of the bent edge of that blur (#231).
+        put("glass_refraction", YES, NONE, NONE);
         // The pill's height, corners, opacity and blur strength, and the lens's slide and ticks.
         put("glass_bar_height", YES, NONE, NONE);
         put("glass_corners", YES, NONE, NONE);
@@ -448,14 +452,14 @@ public class FeedScreenCoverageTest {
         int cellId = 0x7f0a1c01;
         Map<String, Integer> ids = new LinkedHashMap<>();
         ids.put("desc", 0x7f0a1c02);
-        ids.put("47.7.2:o93", 0x7f0a1c03);
-        ids.put("47.7.2:lkj", 0x7f0a1c04);
-        ids.put("47.7.2:f9j", 0x7f0a1c05);
+        ids.put("47.7.3:o93", 0x7f0a1c03);
+        ids.put("47.7.3:lkj", 0x7f0a1c04);
+        ids.put("47.7.3:f9j", 0x7f0a1c05);
         Map<BooleanSetting, String> switches = new LinkedHashMap<>();
         switches.put(Settings.HIDE_FEED_CAPTION, "desc");
-        switches.put(Settings.HIDE_FEED_MUSIC, "47.7.2:o93");
-        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.7.2:lkj");
-        switches.put(Settings.HIDE_FEED_SURVEYS, "47.7.2:f9j");
+        switches.put(Settings.HIDE_FEED_MUSIC, "47.7.3:o93");
+        switches.put(Settings.HIDE_FEED_ACTION_BAR, "47.7.3:lkj");
+        switches.put(Settings.HIDE_FEED_SURVEYS, "47.7.3:f9j");
         for (BooleanSetting setting : switches.keySet()) {
             Coverage coverage = TABLE.get(setting.key);
             assertNotNull(setting.key, coverage);
