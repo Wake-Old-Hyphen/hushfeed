@@ -2216,7 +2216,7 @@
     },
     {
       "name": "Create stickers",
-      "description": "Adds a Create button to the Saved page of the comment sticker panel. Pick a photo and it turns into one of your saved stickers. Make sticker in a video's share sheet does the same with its cover. Works as soon as you patch it in, with no switch.",
+      "description": "Adds a Create button to the Saved page of the comment sticker panel. Pick a photo and it turns into one of your saved stickers. Make sticker in a video's share sheet opens TikTok's sticker editor for any video, or uses its cover when the editor can't open. Profiles that have stickers keep their Stickers tab, and it opens their sticker sets. Works as soon as you patch it in, with no switch.",
       "category": "Comments",
       "use": true,
       "dependencies": [
@@ -8768,7 +8768,7 @@
     },
     {
       "name": "Remove creation tools",
-      "description": "Removes TikTok's camera, editing and effects files, saving about 38 MB of storage. The catch: the Create tab and every recording, editing and effects tool stop working, and opening one, like effect search, can close TikTok. Leave it out if you make videos.",
+      "description": "Removes two effects engine libraries TikTok doesn't load for the camera, effects, Retouch or the video editor, saving about 45 MB. Those all keep working. If a creation tool ever closes TikTok, repatch without this one.",
       "category": "Performance",
       "use": false,
       "dependencies": [
@@ -9297,7 +9297,8 @@
       "use": true,
       "dependencies": [
         "BytecodePatch",
-        "RawResourcePatch"
+        "RawResourcePatch",
+        "ResourcePatch"
       ],
       "compatiblePackages": {
         "com.zhiliaoapp.musically": [
@@ -9475,6 +9476,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": true,
+          "values": null
+        },
+        {
+          "key": "check_for_updates",
+          "title": "Default: check for updates",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         }
       ]
