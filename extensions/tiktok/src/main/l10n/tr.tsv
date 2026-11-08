@@ -634,7 +634,7 @@ Hide the floating promotional badge over the feed.	Akışın üzerindeki yüzen 
 Hide the follow button on the feed	Akıştaki takip et düğmesini gizle
 Hide the friend recommendation card and the other cards TikTok slots between videos.	Arkadaş öneri kartını ve TikTok'un videoların arasına yerleştirdiği diğer kartları gizle.
 Hide the launcher shortcuts	Başlatıcı kısayollarını gizle
-Hide the magnifying glass at the top right of the feed. Search in Inbox and suggestions above comments stay unchanged.	Akışın sağ üstündeki büyüteci gizle. Gelen Kutusu'ndaki arama ve yorumların üzerindeki öneriler değişmez.
+Hide the magnifying glass at the top right of the feed and the one over the video while comments are open. Search in Inbox and suggestions above comments stay unchanged.	Akışın sağ üstündeki büyüteci ve yorumlar açıkken videonun üstündeki büyüteci gizle. Gelen Kutusu'ndaki arama ve yorumların üzerindeki öneriler değişmez.
 Hide the music line	Müzik satırını gizle
 Hide the playlist bar	Oynatma listesi çubuğunu gizle
 Hide the playlist bar along the bottom of videos that belong to a series.	Bir seriye ait videoların alt kısmındaki oynatma listesi çubuğunu gizle.
@@ -2609,3 +2609,20 @@ Hide the expand button in comments	Yorumlarda genişletme düğmesini gizle
 Hides the X at the top of the comments, and the buttons next to it move over to fill the gap. Use Back or swipe down to close comments.	Yorumların üstündeki X'i gizler, yanındaki düğmeler boşluğu doldurmak için kayar. Yorumları kapatmak için Geri'yi kullan veya aşağı kaydır.
 # context: Summary under the expand button switch; Open the comments at full height is another switch's title
 Hides the button that stretches the comments over the whole screen. Turn on Open the comments at full height to have them open that way.	Yorumları tüm ekrana yayan düğmeyi gizler. Yorumların hep böyle açılması için Yorumları tam yükseklikte aç'ı aç.
+# context: Switch title in the Clear display section; the button is a small eye drawn over the main feed
+Invisible controls button	Görünmez kontroller düğmesi
+A small eye button at the top left of the main feed. Tap it and the buttons, caption and tabs go invisible but still take taps, which helps against burn-in on OLED screens. Tap it again to bring them back. They stay the way you left them across videos and restarts. Videos you open from a profile or search keep their controls.	Ana akışın sol üstünde küçük bir göz düğmesi. Dokununca düğmeler, açıklama ve sekmeler görünmez olur ama dokunuşları almaya devam eder, bu da OLED ekranlarda ekran yanmasına karşı yardımcı olur. Geri getirmek için tekrar dokun. Videolar ve yeniden başlatmalar boyunca bıraktığın gibi kalırlar. Bir profilden veya aramadan açtığın videolar kontrollerini korur.
+Keep the caption in sight	Açıklamayı görünür tut
+While the controls are invisible on the main feed, the creator's name, the caption and the music line stay in sight.	Ana akışta kontroller görünmezken içerik üreticisinin adı, açıklama ve müzik satırı görünür kalır.
+# context: Spoken label of that eye button while the controls show
+Make the controls invisible	Kontrolleri görünmez yap
+# context: Spoken label of that eye button while the controls are invisible
+Show the controls	Kontrolleri göster
+# context: Share sheet settings row; hides TikTok's gray Send to new group button that shows beside Send separately once two or more people are picked (#375)
+Hide Send to new group	Yeni gruba gönder düğmesini gizle
+# context: summary of Hide Send to new group; Send separately is TikTok's red button that stays (#375)
+Hides the button that turns the people you picked into a new group chat. Send separately stays.	Seçtiğin kişilerden yeni bir grup sohbeti oluşturan düğmeyi gizler. Ayrı ayrı gönder kalır.
+# context: Switch in Hushfeed settings > App > Appearance (#372)
+AMOLED dark mode	AMOLED karanlık mod
+# context: Summary under the AMOLED dark mode switch
+Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Karanlık modu yama sırasında seçilen renkle doldurur, başka bir renk seçilmediyse tam siyah. TikTok'un kendi koyu grileri için kapat. Aydınlık mod değişmez. Değişikliği görmek için TikTok'u yeniden başlat.
