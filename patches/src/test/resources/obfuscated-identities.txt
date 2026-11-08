@@ -3,14 +3,14 @@
 # a line here that no longer matches, so this list can only shrink. See that test for why.
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|LIZIZ
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.16gI
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.16gB
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tb
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tc
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02to
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.0E1m
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVm
-extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVn
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r1
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.18r0
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tX
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.02tk
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.0E1o
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVY
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountLists.java|X.1TVZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJIIZILJ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LJJIIJ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/accountmanagement/NativeAccountOwner.java|LLLLZI
@@ -25,8 +25,11 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyl
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java|dnn
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/RememberClearDisplayPatch.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/cleardisplay/RememberClearDisplayPatch.java|LIZIZ
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|btm
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentHeaderButtons.java|i0i
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|k2g
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|mof
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/comment/CommentTools.java|im8
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/AnimatedWebpGifConverter.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/AnimatedWebpGifConverter.java|LIZIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/AnimatedWebpMp4Converter.java|LIZ
@@ -75,6 +78,7 @@ extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHid
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|wb5
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|wey
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|wo4
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|wwo
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/VideoOverlayHider.java|wwp
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/follow/FollowDiagnostics.java|LIZ
 extensions/tiktok/src/main/java/app/morphe/extension/tiktok/follow/FollowDiagnostics.java|LIZIZ
@@ -230,6 +234,9 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2f
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2h
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/AmoledThemePatch.kt|a2p
+# The liked heart's vector drawable, declared per build in LIKE_FILES and held to each declared
+# build's fixture by ReactionColorsFixtureTest; a new build gets its own entry.
+patches/src/main/kotlin/app/morphe/patches/tiktok/misc/theme/ReactionColors.kt|c01
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LJII
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/DmTranslationAccountHooks.kt|LX/
@@ -303,7 +310,6 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTra
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCf;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCg;
 patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|LX/1NCh;
-patches/src/main/kotlin/app/morphe/patches/tiktok/misc/translation/ReceivedDmTranslationHooks.kt|wq
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZIZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LIZJ
@@ -328,3 +334,5 @@ patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearance
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLIIII
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLJJLIIIJLLLLLLLZ
 patches/src/main/kotlin/app/morphe/patches/tiktok/profile/LocalProfileAppearanceHooks.kt|LLJLLL
+# Not a TikTok name: SimpleDateFormat's stand-alone full month pattern, used for the Liked grid's month labels.
+extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/LikedJump.java|LLLL

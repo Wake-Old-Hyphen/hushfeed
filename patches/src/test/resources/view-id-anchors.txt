@@ -44,7 +44,7 @@ feed/VideoOverlayHider.java|LIVE_ENTRANCE_IDS|47.7.3:kau|app|com.bytedance.tikto
 feed/VideoOverlayHider.java|LIVE_CAPTION_IDS|47.7.3:o5n|app|com.ss.android.ugc.aweme.feed.adapter.widget.enterroom.EnterRoomDecisionWidget|-
 feed/VideoOverlayHider.java|CAPTION_IDS|desc|app|com.ss.android.ugc.aweme.feed.assem.desc.VideoDescAssem|on:View
 feed/VideoOverlayHider.java|MUSIC_IDS|47.7.3:o93|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicTitleAssem|on:LinearLayout#1
-feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.7.3:lkj|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#8
+feed/VideoOverlayHider.java|ACTION_BAR_IDS|47.7.3:lkj|app|com.ss.android.ugc.feed.platform.cell.interact.InteractAreaComponent|on:View#4
 feed/VideoOverlayHider.java|SURVEY_IDS|47.7.3:f9j|app|layout:com.by.andInflater.common_feed_item_feed|tag:RelativeLayout#1
 feed/VideoOverlayHider.java|TAB_STRIP_IDS|47.7.3:v1f|app|com.ss.android.ugc.aweme.homepage.ui.view.tab.top.TopTabLayoutAbility|on:View
 feed/VideoOverlayHider.java|BOTTOM_TABS_IDS|47.7.3:opn|app|com.ss.android.ugc.aweme.main.assems.mainfragment.BottomTabAssemBase|-
@@ -64,6 +64,7 @@ feed/VideoOverlayHider.java|STATUS_BAR_SCRIM_IDS|47.7.3:wo4|app|com.by.andInflat
 feed/VideoOverlayHider.java|PLAYER_VIEW_IDS|player_view|app|com.by.andInflater.common_feed_video_container_area_feed|at:5
 feed/VideoOverlayHider.java|COVER_STILL_ID|cover|app|com.by.andInflater.common_feed_video_container_area_feed|at:8
 feed/VideoOverlayHider.java|BOTTOM_SPACER_IDS|47.7.3:dve|app|com.by.andInflater.common_feed_video_container_area_feed|on:View#2
+feed/VideoOverlayHider.java|FOLLOWING_BAND_IDS|47.7.3:wwo|app|com.ss.android.ugc.aweme.feed.ui.FeedFollowFragment|on:View#2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_BAR_IDS|47.7.3:qqp|app|com.ss.android.ugc.aweme.comment.service.CommentDetailInputLayoutIdsImpl|at:2
 feed/VideoOverlayHider.java|DETAIL_COMMENT_STRIP_IDS|47.7.3:col|app|com.by.andInflater.common_feed_fragment_feed_base_opt|on:View#2
 feed/VideoOverlayHider.java|DETAIL_MESSAGE_BAR_IDS|47.7.3:l00|app|com.ss.android.ugc.aweme.im.sdk.chat.feature.reply.feature.feed.DetailFeedQuickDMFragment|at:1
@@ -78,7 +79,7 @@ feed/VideoOverlayHider.java|WIDGET_LAYER_ID|widget_container|app|com.by.andInfla
 feed/VideoOverlayHider.java|LIVE_PREVIEW_NAME_ID|tv_live_nickname|app|com.ss.android.ugc.aweme.feed.adapter.widget.LivePreviewInteractionLayerWidget|on:View#5
 feed/VideoOverlayHider.java|LIVE_PREVIEW_TIPS_ID|tv_live_tips|app|class-method:getTvLiveTipsFromXml|at:14
 feed/VideoOverlayHider.java|DRAMA_TIPS_ID|tv_drama_tips|app|com.ss.android.ugc.aweme.series.commonfeed.holder.PaidContentImmersiveViewHolder|on:TuxTextView#1
-feed/VideoOverlayHider.java|CARD_SWIPE_HINT_ID|tv_swipe_up|app|com.ss.android.ugc.aweme.relation.feed.v4.RecSwipeUserCardRootAssem|at:7
+feed/VideoOverlayHider.java|CARD_SWIPE_HINT_ID|tv_swipe_up|app|com.ss.android.ugc.aweme.relation.feed.v4.RecSwipeUserCardRootAssem|at:8
 feed/VideoOverlayHider.java|LIKE_COUNT_ROW_IDS|47.7.3:g_4|app|com.by.andInflater.common_feed_layout_video_digg|on:InteractRelativeLayout
 feed/VideoOverlayHider.java|COMMENT_COUNT_ROW_IDS|47.7.3:ekn|app|com.by.andInflater.common_feed_layout_video_comment_count|on:InteractRelativeLayout
 feed/VideoOverlayHider.java|FAVORITE_COUNT_ROW_IDS|47.7.3:i_0|app|com.by.andInflater.common_feed_layout_video_favorite|on:InteractRelativeLayout
@@ -93,7 +94,7 @@ feed/VideoOverlayHider.java|COMMENT_BUTTON_IDS|47.7.3:eqn|app|com.ss.android.ugc
 feed/VideoOverlayHider.java|FAVORITE_BUTTON_IDS|47.7.3:ia1|app|com.ss.android.ugc.aweme.feed.favorite.VideoFavoriteAssem|to:ScrollHardwareLayerDelegateKt
 feed/VideoOverlayHider.java|MUSIC_BUTTON_IDS|47.7.3:pq_|app|com.ss.android.ugc.aweme.feed.assem.music.VideoMusicCoverAssem|on:RelativeLayout
 feed/VideoOverlayHider.java|SHARE_BUTTON_IDS|47.7.3:wey|app|com.ss.android.ugc.aweme.feed.assem.share.VideoShareAssem|to:ScrollHardwareLayerDelegateKt
-feed/VideoOverlayHider.java|RAIL_SLOT_ID|47.7.3:ey8|app|com.ss.android.ugc.feed.platform.cell.RootCellComponent|at:5
+feed/VideoOverlayHider.java|RAIL_SLOT_ID|47.7.3:ey8|app|com.ss.android.ugc.feed.platform.cell.RootCellComponent|at:1
 feed/FeedOverlayControls.java|inline|view_rootview|app|com.ss.android.ugc.aweme.feed.adapter.VideoViewCell|at:3
 feed/FeedOverlayControls.java|inline|feed_multi_tag_layout|app|com.ss.android.ugc.aweme.fcpanchor.access.VideoFeedMultiTagAssem|at:1
 feed/AuthorRegion.java|NAME_ID|title|app|com.by.andInflater.common_feed_layout_video_title|at:4
@@ -127,6 +128,10 @@ blockauthor/FeedVisibility.java|STORY_PAGER_RESOURCE_NAME|vp_story_collection|ap
 comment/CommentTools.java|DISLIKE_BUTTON_IDS|47.7.3:k2g|app|class-method:setHateVisibility|to:RelativeLayout$LayoutParams
 comment/CommentTools.java|DISLIKE_ICON_IDS|47.7.3:mof|app|class-method:setHateVisibility|on:TuxIconView#4
 comment/CommentTools.java|LIKE_COUNT_IDS|tv_like_count|app|com.ss.android.ugc.aweme.comment.photocomment.CommentInnerDiggAssem|on:TuxTextView
+comment/CommentTools.java|AVATAR_IDS|47.7.3:im8|app|com.ss.android.ugc.aweme.commentv2.commentlist.powercell.BaseCommentCell|on:FrameLayout#3
+comment/CompactCommentHeader.java|BUTTON_ROW_ANCHOR|translate_intro_anchor|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:FrameLayout
+comment/CommentHeaderButtons.java|CLOSE_BUTTON_ID|47.7.3:btm|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#4
+comment/CommentHeaderButtons.java|EXPAND_BUTTON_ID|47.7.3:i0i|app|com.ss.android.ugc.aweme.commentv2.actionbar.CommentPageActionBarAssem|on:TuxIconView#5
 captions/CaptionStyle.java|TEXT_IDS|47.7.3:dnn|app|method-string:caption_balancer|at:1
 captions/CaptionStyle.java|BACKGROUND_IDS|47.7.3:dng|app|layout-method-string:caption_balancer|tag:ConstraintLayout
 feedfilter/TakoAiFilter.java|SEARCH_TAB_ENTRANCE_ID|tv_tab_tako_entrance|app|layout:com.ss.android.ugc.aweme.search.pages.core.ui.fragment.SearchContainerFragment|tag:TuxTextView
