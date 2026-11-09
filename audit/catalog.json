@@ -886,6 +886,12 @@
     "default": false,
     "type": "bool",
     "row": "Jump to a date on Liked grids"
+   },
+   {
+    "key": "grid_position_controls",
+    "default": false,
+    "type": "bool",
+    "row": "Drag handle and jump buttons on grids"
    }
   ],
   "surface": "feed",
@@ -5391,6 +5397,12 @@
     "default": "tiktok",
     "type": "string",
     "row": "Open TikTok on"
+   },
+   {
+    "key": "bottom_tab_icon_style",
+    "default": "tiktok",
+    "type": "string",
+    "row": "Bottom bar icons"
    },
    {
     "key": "home_tab_opens_settings",

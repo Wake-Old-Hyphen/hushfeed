@@ -2566,3 +2566,13 @@ Dismiss,Bỏ qua
 Adds a Record button to LIVE rooms. Tap it to start or stop recording. Leaving the room also stops a recording.,Thêm nút Ghi vào phòng LIVE. Chạm để bắt đầu hoặc dừng ghi. Rời phòng cũng sẽ dừng ghi.
 Automatically record LIVEs you enter,Tự động ghi LIVE khi vào phòng
 Start recording a LIVE's stream when you enter the room. Stop won't restart it until you leave and enter again. Screen recordings still need a tap and Android's permission.,"Bắt đầu ghi luồng LIVE khi bạn vào phòng. Sau khi nhấn Dừng, tính năng sẽ không ghi lại cho đến khi bạn rời phòng rồi vào lại. Ghi màn hình vẫn cần thao tác chạm và quyền Android."
+Drag handle and jump buttons on grids,Tay cầm kéo và nút chuyển nhanh trên lưới
+"On long profile, Liked and sound grids, scrolling brings up a handle you can drag through what's loaded, plus Top, Back and End buttons. Back returns to where you were.","Trên lưới trang cá nhân, video đã thích và âm thanh dài, khi cuộn sẽ hiện tay cầm để kéo qua phần đã tải, cùng các nút Đầu, Quay lại và Cuối. Quay lại đưa bạn về chỗ cũ."
+Top,Đầu
+End,Cuối
+Bottom bar icons,Biểu tượng thanh dưới
+"TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok.",TikTok đang thử nhiều bộ biểu tượng cho thanh dưới. Chọn một bộ ở đây hoặc để TikTok quyết định.
+New style 1,Kiểu mới 1
+New style 2,Kiểu mới 2
+Friends in the top tabs,Bạn bè ở các thẻ trên cùng
+"Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.","Bạn bè được thêm vào các thẻ ở đầu bảng tin, cạnh Đang theo dõi, giống cách TikTok sắp xếp ở một số quốc gia. Khu vực và bảng tin của bạn vẫn giữ nguyên."

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.preference.PreferenceScreen;
 
 import app.morphe.extension.shared.settings.StringSetting;
+import app.morphe.extension.tiktok.navigation.BottomTabIcons;
 import app.morphe.extension.tiktok.navigation.StartPage;
 import app.morphe.extension.tiktok.settings.Settings;
 import app.morphe.extension.tiktok.settings.SettingsStatus;
@@ -85,6 +86,13 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                             + "out in some countries. Your region and your feed stay as they are.",
                     Settings.DISCOVER_BOTTOM_TAB
             ));
+            addPreference(new TogglePreference(
+                    context,
+                    "Friends in the top tabs",
+                    "Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it "
+                            + "out in some countries. Your region and your feed stay as they are.",
+                    Settings.FRIENDS_TOP_TAB
+            ));
         }
         addPreference(new ChoicePreference(context, "Open TikTok on", Settings.START_PAGE,
                 new String[]{"TikTok default", "For You", "Following", "Friends", "Discover", "Inbox", "Profile"},
@@ -155,6 +163,13 @@ public class FeedNavigationPreferenceCategory extends ConditionalPreferenceCateg
                         + "The inbox itself still shows what came in.",
                 Settings.HIDE_TAB_BADGES
         ));
+        // Left out on a build where the getter for TikTok's icon experiment wasn't found.
+        if (SettingsStatus.bottomTabIconsEnabled) {
+            addPreference(new ChoicePreference(context, "Bottom bar icons", Settings.BOTTOM_TAB_ICON_STYLE,
+                    new String[]{"TikTok default", "Original", "New style 1", "New style 2"},
+                    new String[]{BottomTabIcons.TIKTOK, BottomTabIcons.ORIGINAL, BottomTabIcons.NEW_STYLE_1, BottomTabIcons.NEW_STYLE_2})
+                    .withNote("TikTok tests more than one set of icons for the bottom bar. Pick one here, or leave it to TikTok."));
+        }
         // Left out with their hooks on a build where the tab icons' names weren't found.
         if (SettingsStatus.bottomTabLabelsEnabled) {
             addPreference(new TogglePreference(
