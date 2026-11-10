@@ -2097,7 +2097,7 @@ Load more	Carica altri
 TikTok's total: %1$s. Filtered accounts: %2$s.	Totale secondo TikTok: %1$s. Account filtrati: %2$s.
 Your account changed. Close this list and open it again.	Il tuo account è cambiato. Chiudi questo elenco e riaprilo.
 Loading cancelled. The list is incomplete.	Caricamento annullato. L'elenco è incompleto.
-Loading page %1$s...	Caricamento della pagina %1$s...
+Loading page %1$s…	Caricamento della pagina %1$s…
 TikTok reports no more items in this list.	TikTok indica che non ci sono altri elementi in questo elenco.
 More items are available.	Sono disponibili altri elementi.
 Sign in to view this list	Accedi per vedere questo elenco
@@ -2519,7 +2519,7 @@ Stop tapping this LIVE	Smetti di toccare questo LIVE
 Auto tap stopped	Tocco automatico interrotto
 Clean up your account	Ripulisci il tuo account
 Remove all reposts	Rimuovi tutte le ripubblicazioni
-Deletes all reposts from your account sequentially.	Elimina una alla volta tutte le ripubblicazioni del tuo account.
+Removes every repost from your account one after another.	Elimina una alla volta tutte le ripubblicazioni del tuo account.
 Remove all likes	Rimuovi tutti i Mi piace
 Unlikes every video one after another.	Toglie il Mi piace a ogni video, uno dopo l'altro.
 Clear Favorites	Svuota Preferiti
@@ -2661,4 +2661,4 @@ New style 2	Nuovo stile 2
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	Amici nelle schede in alto
 # context: Summary under that switch; Friends and Following are TikTok's tab names
-Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Amici si aggiunge alle schede in alto nel feed, accanto a Seguiti, come fa TikTok in alcuni paesi. La tua regione e il tuo feed restano come sono.
+Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	Amici passa alle schede in alto nel feed, accanto a Seguiti, e Scopri prende il suo posto nella barra in basso, come fa TikTok in alcuni paesi. La tua regione e il tuo feed restano come sono.

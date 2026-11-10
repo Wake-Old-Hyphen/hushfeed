@@ -2265,7 +2265,7 @@ Load more	Загрузить ещё
 TikTok's total: %1$s. Filtered accounts: %2$s.	Всего по данным TikTok: %1$s. Отфильтровано аккаунтов: %2$s.
 Your account changed. Close this list and open it again.	Аккаунт изменился. Закройте этот список и откройте его снова.
 Loading cancelled. The list is incomplete.	Загрузка отменена. Список неполный.
-Loading page %1$s...	Загрузка страницы %1$s...
+Loading page %1$s…	Загрузка страницы %1$s…
 TikTok reports no more items in this list.	По данным TikTok, в этом списке больше нет элементов.
 More items are available.	Доступны ещё элементы.
 Sign in to view this list	Войдите, чтобы посмотреть этот список
@@ -2696,7 +2696,7 @@ Stop tapping this LIVE	Остановить нажатия в этом LIVE
 Auto tap stopped	Автонажатие остановлено
 Clean up your account	Очистка аккаунта
 Remove all reposts	Удалить все репосты
-Deletes all reposts from your account sequentially.	Удаляет все репосты с аккаунта по одному.
+Removes every repost from your account one after another.	Удаляет все репосты с аккаунта по одному.
 Remove all likes	Удалить все лайки
 Unlikes every video one after another.	Снимает лайк с каждого видео по очереди.
 Clear Favorites	Очистить Избранное
@@ -2838,4 +2838,4 @@ New style 2	Новый стиль 2
 # context: Row title of the Feed tabs switch that adds Friends to the row of tabs along the top of the feed
 Friends in the top tabs	«Друзья» во вкладках сверху
 # context: Summary under that switch; Friends and Following are TikTok's tab names
-Friends joins the tabs at the top of the feed, next to Following, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» появляется среди вкладок вверху ленты, рядом с «Подписки», как TikTok делает в некоторых странах. Регион и лента остаются прежними.
+Friends moves up to the tabs at the top of the feed, next to Following, and Discover takes its spot in the bottom bar, the way TikTok lays it out in some countries. Your region and your feed stay as they are.	«Друзья» переходит к вкладкам вверху ленты, рядом с «Подписки», а «Интересное» занимает её место в нижней панели, как TikTok делает в некоторых странах. Регион и лента остаются прежними.
