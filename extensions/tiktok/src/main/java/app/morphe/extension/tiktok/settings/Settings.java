@@ -227,6 +227,9 @@ public class Settings extends BaseSettings {
     /** Hushfeed's own Save media box after a received chat sticker's tap (#274). */
     public static final BooleanSetting DM_STICKER_SAVE_BOX = new BooleanSetting("dm_sticker_save_box", TRUE);
     public static final BooleanSetting SAVE_PROFILE_PICTURE = new BooleanSetting("save_profile_picture", FALSE);
+    /** Holding a profile picture shows it full screen with a Save button instead of saving it at once (#467). */
+    public static final BooleanSetting PROFILE_PICTURE_VIEWER = new BooleanSetting("profile_picture_viewer", FALSE,
+            false, Setting.parent(SAVE_PROFILE_PICTURE));
     public static final BooleanSetting SAVE_STORY = new BooleanSetting("save_story", FALSE);
     public static final BooleanSetting SAVE_STORY_FROM_SHARE = new BooleanSetting("save_story_from_share", FALSE);
     /** A story save asks which of the person's stories to keep, with the one on screen checked (#393). */
@@ -960,6 +963,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
     /** How loaded profile and Liked grids are ordered (#180): off, or one of the orders in GridSort. */
     public static final StringSetting PROFILE_GRID_SORT = new StringSetting("profile_grid_sort", "off");
+    /** A sorted grid puts pinned videos in the chosen order with the rest instead of first (#466). */
+    public static final BooleanSetting SORT_PINNED_WITH_REST = new BooleanSetting("sort_pinned_with_rest", FALSE);
     /** The Liked tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
     public static final StringSetting LIKED_GRID_SORT = new StringSetting("liked_grid_sort", "profile");
     /** The Favorites tab's own order (#180): "profile" follows PROFILE_GRID_SORT, otherwise one of GridSort's orders. */
@@ -1447,6 +1452,9 @@ public class Settings extends BaseSettings {
     // only a new bind collapses one.
     public static final BooleanSetting HIDE_INBOX_SUGGESTED_ACCOUNTS =
             new BooleanSetting("hide_inbox_suggested_accounts", FALSE, true);
+    /** A profile's own Suggested accounts panel stays while Hide suggested accounts is on (#462). */
+    public static final BooleanSetting KEEP_PROFILE_SUGGESTED_ACCOUNTS = new BooleanSetting(
+            "keep_profile_suggested_accounts", FALSE, false, Setting.parent(HIDE_INBOX_SUGGESTED_ACCOUNTS));
     public static final BooleanSetting HIDE_INBOX_MESSAGE_REQUESTS =
             new BooleanSetting("hide_inbox_message_requests", FALSE);
     public static final BooleanSetting HIDE_INBOX_CONVERSATIONS =
@@ -1822,8 +1830,12 @@ public class Settings extends BaseSettings {
     // Profile tabs: the checklist rows picked to hide (private, repost, favorite and the rest). Read
     // whenever a profile lays out its tabs, so a profile opened after a change follows it.
     public static final StringSetting PROFILE_TAB_PICKS = new StringSetting("profile_tab_picks", "");
+    // The same checklist's rows in the order picked for the strip (#466). Empty keeps TikTok's.
+    public static final StringSetting PROFILE_TAB_ORDER = new StringSetting("profile_tab_order", "");
     /** The Thoughts bubble above a profile picture (#122). Read when a profile's picture is built. */
     public static final BooleanSetting HIDE_PROFILE_THOUGHTS = new BooleanSetting("hide_profile_thoughts", FALSE, true);
+    /** The "+ Add bio" prompt on your own profile when it has no bio (#466). Read whenever the header binds. */
+    public static final BooleanSetting HIDE_ADD_BIO = new BooleanSetting("hide_add_bio", FALSE);
     /** TikTok's two Thoughts gates answer yes (#186). A restart, since TikTok keeps what it built. */
     public static final BooleanSetting ENABLE_THOUGHTS = new BooleanSetting("enable_thoughts", FALSE, true);
     // Popup labels (TikTok's own popup layer): the labels ticked in the checklist, and the ones
