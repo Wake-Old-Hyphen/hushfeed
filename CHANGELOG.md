@@ -21,10 +21,12 @@ Every Hushfeed release, newest first.
 * `Video bitrate limit` keeps a heavy video from eating your data. Anything over the limit plays a lighter version, and videos under it aren't touched (#454).
 * Double tap and Long press can mark the video on screen as not interested, with the same follow-up choices as the button. It needs the Not interested patch (#452).
 * The diagnostic report says when TikTok's main screen starts over while the app is still running, and what happened to the screen before it. That's what a feed jumping back to the top with no crash looks like (#419).
+* With `Stop recording watch history` in the patch set, the diagnostic report counts TikTok's view reports, the ones Watch history is built from. It shows how many were made and how many TikTok groups into one send. Then it counts the ones sent on their own, sent together, dropped because TikTok's server told the app to slow down, held back by `Keep videos out of Watch history` or failed, with the last failure's reason (#448).
 * Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
 
 ### Bug Fixes
 
+* With `Auto-advance videos` and `Keep playing in the background` both on, a creator's videos keep coming after you start one from their profile and leave the app. TikTok used to play that first video and stop. `Auto-advance session limit` counts these too, and screen-time holds stop them the same way (D292).
 * A copy made with Morphe's `Clone app` can log in with the default selection now. `Run beside the store app` is part of Simple mode, and it does nothing on a copy that keeps TikTok's own package name. Without it, TikTok's servers wouldn't give the renamed copy a device ID, so every login said you'd hit the maximum number of attempts (#455, #284).
 * The date and length on profile grids don't get cut in half anymore. The label's bar now grows when it needs a third line (#449, #462).
 * Patching no longer stops at `Settings` when TikTok's Open Debug row can't be found. You lose only the Hushfeed row in TikTok's settings, and holding Home still opens the page (#460).
@@ -37,6 +39,7 @@ Every Hushfeed release, newest first.
 * `Keep captions in Clear display` shows a video's first caption right away, sits near TikTok's own caption spot when it hasn't seen one yet, and stays above the progress bar (#456).
 * The country and date line doesn't get cut off anymore when you open a long caption, and the caption above it keeps every line after you open or close it with more and less (#457).
 * `Show the country and date under the caption` keeps the two together on photo posts and on videos with no caption. With no caption they go right under the creator's name (#453).
+* A sorted profile grid loads up to 1,000 videos on its own before it sorts, up from 300, so a long profile's oldest and longest videos make it into the order. On a long profile that takes around 35 seconds. Tap the loading grid to see the order it has right away, and your scrolling loads the rest. A slow connection stops after 45 seconds the same way. The notes under the profile and sound page sort settings say 1,000 now too, where they still said 300 (#180).
 
 ### Build
 
