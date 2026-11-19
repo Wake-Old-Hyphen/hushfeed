@@ -9,12 +9,13 @@ Every Hushfeed release, newest first.
 * `Show the picture before saving`, under `Save a profile picture on a long press`, opens a held profile picture full screen at full size first. Save under it saves the picture, and a tap anywhere else closes it. It starts off (#467).
 * `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
+* A video made from a post with just one photo runs as long as the post's sound now, up to five minutes, so the music plays to its end instead of stopping when `Seconds per photo` runs out (#469).
 * `Sort pinned videos with the rest` lets a profile's sort put pinned videos in the order with everything else, so Newest first shows them at the date they were posted instead of at the top. It starts off (#466).
 * `Hide or reorder profile tabs` (it used to be `Hide profile tabs`) now has arrows on each tab. Move Liked to the top and it's first on your profile, while the tabs you didn't touch stay where TikTok puts them. `Original order` puts TikTok's back (#466).
 * `Hide Add bio` under App takes the Add bio prompt off your own profile while it has no bio. Edit profile still lets you add one. It starts off (#466).
 * `Hide the people you may know tag` under Feed screen takes that tag away from beside a creator's name. The Friends and Following labels stay (#462).
 * `Hide stories from accounts you don't follow` clears the recommended stories TikTok mixes into the Inbox's stories tray. Stories from accounts you follow, and your own, stay (#462).
-* `LIVE buttons in the long-press menu` takes Record and Auto tap off the video and puts them in the menu you get by holding the middle of a LIVE (#359).
+* `LIVE buttons in the long-press menu` takes Record and Auto tap off the video and puts them in the menu you get by holding the middle of a LIVE. TikTok won't open that menu right after a like, so while Auto tap runs, holding the LIVE stops it instead. Hold again and the menu opens (#359).
 * `Fade the name, date and caption` gives the creator's name, the date, the caption and the music line their own opacity over the video (#462).
 * `Write the month as a word` shows TikTok's date by the creator's name as Oct 12, or 12 Oct with `Day before month` on (#461).
 * `Use an imported emoji font` draws emoji in a font file you pick, separately from the text font. It's part of `Use system font` and needs Android 12 or newer (#458).
@@ -22,10 +23,15 @@ Every Hushfeed release, newest first.
 * Double tap and Long press can mark the video on screen as not interested, with the same follow-up choices as the button. It needs the Not interested patch (#452).
 * The diagnostic report says when TikTok's main screen starts over while the app is still running, and what happened to the screen before it. That's what a feed jumping back to the top with no crash looks like (#419).
 * With `Stop recording watch history` in the patch set, the diagnostic report counts TikTok's view reports, the ones Watch history is built from. It shows how many were made and how many TikTok groups into one send. Then it counts the ones sent on their own, sent together, dropped because TikTok's server told the app to slow down, held back by `Keep videos out of Watch history` or failed, with the last failure's reason (#448).
-* Hushfeed moves to TikTok 47.9.1, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.1 bundle or APK from APKMirror and patch it with your usual signing key.
+* The diagnostic report's IMAGE LOADS section counts failed images by how they failed, not one line per picture, so a few hundred refusals from one server read as one line with a count. Request headers in a failure show their names only, never their values. The section also says which country TikTok has placed your phone in and how it decided, next to the SIM country Hushfeed is showing it, so a report can tell when the two don't match (#415).
+* Hushfeed moves to TikTok 47.9.2, and only that one. 47.8.3 isn't supported anymore. Get the 47.9.2 bundle or APK from APKMirror and patch it with your usual signing key.
 
 ### Bug Fixes
 
+* `Show account country` and `Block this commenter` show up when you hold a comment on accounts where TikTok is trying out its newer share-style comment menu. That menu never got the rows. With either switch on, TikTok opens its regular menu instead, and the share button on comments stays (#417).
+* With `Keep the middle unstretched` on, search results play in the app's window like the feed does. A search video on a layer of its own used to leave every video cropped and stretched until the next restart (#468).
+* With `Keep the middle unstretched` on, a video's cover picture keeps the same size as its video. When TikTok played a video on a layer of its own, the cover could still take the whole screen, so it showed at the wrong size and flickered as the video replaced it. Once that happens the video and its cover are both cropped and stretched evenly, and the diagnostic report says so (#468).
+* Searching the settings for `SIM country preset`, or just "preset", finds that row now. It used to find nothing.
 * With `Auto-advance videos` and `Keep playing in the background` both on, a creator's videos keep coming after you start one from their profile and leave the app. TikTok used to play that first video and stop. `Auto-advance session limit` counts these too, and screen-time holds stop them the same way (D292).
 * A copy made with Morphe's `Clone app` can log in with the default selection now. `Run beside the store app` is part of Simple mode, and it does nothing on a copy that keeps TikTok's own package name. Without it, TikTok's servers wouldn't give the renamed copy a device ID, so every login said you'd hit the maximum number of attempts (#455, #284).
 * The date and length on profile grids don't get cut in half anymore. The label's bar now grows when it needs a third line (#449, #462).
