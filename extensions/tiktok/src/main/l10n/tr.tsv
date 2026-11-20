@@ -237,7 +237,7 @@ An operator code is five or six digits, like 310260	Operatör kodu beş veya alt
 An override changes the value TikTok reads from this gate. It doesn't change TikTok's saved copy or prove the named feature changed.	Bir geçersiz kılma, TikTok'un bu geçitten okuduğu değeri değiştirir. TikTok'un kayıtlı kopyasını değiştirmez ve adı geçen özelliğin değiştiğini kanıtlamaz.
 Animated sticker format	Hareketli çıkartma biçimi
 Save box for chat stickers	Sohbet çıkartmaları için kaydetme kutusu
-Tapping a sticker someone sent you in a chat opens a box with Save media. Turn this off to skip it.	Sohbette birinin gönderdiği bir çıkartmaya dokununca Medyayı kaydet düğmesi olan bir kutu açılır. Atlamak için bunu kapatın.
+Tapping a sticker someone sent you in a chat opens a box with Save media. Holding one of TikTok's own stickers in a chat puts Save media in its menu too. Turn this off to skip both.	Sohbette birinin gönderdiği bir çıkartmaya dokununca Medyayı kaydet düğmesi olan bir kutu açılır. Sohbette TikTok'un kendi çıkartmalarından birini basılı tutunca menüsünde de Medyayı kaydet çıkar. İkisini de atlamak için bunu kapatın.
 TikTok gets no location from your phone. The Region settings change your country and time zone. This switch stops the exact position.	TikTok telefonundan hiçbir konum almaz. Bölge ayarları ülkeni ve saat dilimini değiştirir. Bu anahtar tam konumu durdurur.
 TikTok sees an empty contact list instead of yours. Find Friends and People you may know can no longer use your contacts.	TikTok seninkinin yerine boş bir kişi listesi görür. Arkadaşlarını bul ve Tanıyor olabileceğin kişiler artık kişilerini kullanamaz.
 TikTok sees an empty list of apps instead of the apps on your phone. Checks for one specific app, such as when TikTok opens an app you tap, still work.	TikTok, telefonundaki uygulamalar yerine boş bir uygulama listesi görür. Belirli bir uygulamayı kontrol etmek, örneğin TikTok'un dokunduğun bir uygulamayı açması, yine çalışır.
@@ -2332,7 +2332,7 @@ On the main feed, a raised bubble of glass sits behind the tab you're on and sli
 Slide across the tabs	Sekmeler boyunca kaydır
 On the main feed, slide a finger along the tabs and the lens follows it. Let go and that tab opens. Taps and long presses work as before. Needs Glass lens on the current tab.	Ana akışta parmağını sekmeler boyunca kaydır, mercek onu takip eder. Bırakınca o sekme açılır. Dokunmalar ve uzun basmalar eskisi gibi çalışır. Geçerli sekmede cam mercek açık olmalıdır.
 Liquid glass when held	Basılı tutunca sıvı cam
-On the main feed, hold a finger on the tabs and the glass lens swells, then wobbles back when you let go. With Blur the video behind the bar on Android 13 and up, the video under it bends harder and splits into color at its edge. Needs Glass lens on the current tab.	Ana akışta parmağını sekmelerin üzerinde tut, cam mercek şişer ve bırakınca sallanarak geri döner. Android 13 ve üzerinde Çubuğun arkasındaki videoyu bulanıklaştır açıkken, altındaki video daha çok bükülür ve kenarında renklere ayrılır. Geçerli sekmede cam mercek açık olmalıdır.
+On the main feed, hold a finger on the tabs and the glass lens slides under it and swells, the tab beneath it grows, and they wobble back when you let go. On Android 13 and up the tabs bend at the lens's edge and split into color, and with Blur the video behind the bar so does the video. Needs Glass lens on the current tab.	Ana akışta parmağını sekmelerin üzerinde tut, cam mercek altına kayar ve şişer, altındaki sekme büyür ve bırakınca sallanarak geri dönerler. Android 13 ve üzerinde sekmeler merceğin kenarında bükülür ve renklere ayrılır, Çubuğun arkasındaki videoyu bulanıklaştır açıkken video da. Geçerli sekmede cam mercek açık olmalıdır.
 Haptics on the tabs	Sekmelerde titreşim
 On the main feed, a light tick each time the glass lens passes a tab, as it slides after a tap or under your finger. Needs Glass lens on the current tab.	Ana akışta cam mercek her sekmenin üzerinden geçtiğinde, bir dokunuştan sonra ya da parmağının altında kayarken hafif bir tık. Geçerli sekmede cam mercek açık olmalıdır.
 Haptic style	Titreşim stili
@@ -2916,6 +2916,10 @@ Cover the whole window without cropping anything. The video gets a little taller
 Sort loaded videos on Favorites grids	Favoriler ızgaralarında yüklenen videoları sırala
 Show the country and date under the caption	Ülkeyi ve tarihi açıklamanın altında göster
 Moves the country and the post date off the creator's row onto a line of their own below the caption.	Ülkeyi ve paylaşım tarihini içerik üreticisinin satırından alıp açıklamanın altındaki ayrı bir satıra taşır.
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Previous LIVE	Önceki LIVE
+# context: picture-in-picture window button that moves TikTok's LIVE rooms
+Next LIVE	Sonraki LIVE
 # context: picture-in-picture window button that moves TikTok's feed
 Previous video	Önceki video
 # context: picture-in-picture window button that moves TikTok's feed

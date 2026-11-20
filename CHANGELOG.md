@@ -6,6 +6,12 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Liquid glass when held` brings the glass lens to your finger now, and it swells more. The tab under it grows, and on Android 13 and up the tabs bend and split into color at the lens's edge, the way the video does with `Blur the video behind the bar` (#440).
+* With `Keep watching in a small window` on, a LIVE's small window now has previous and next buttons, like a video's. They move to the LIVE above or below the way a swipe does, Record (or TikTok's own button) sits between them, and the one with no LIVE its way shows dimmed (#413).
+* A save that a server turns down now shows up in the diagnostic report's new SAVE REFUSALS section. It names the server, says how it refused (like HTTP 403), and tells whether the save's link had already expired. Before, each refused address only read "url omitted" (#464).
+* The diagnostic report's DOWNLOAD PICKER section also lists what's in the video models TikTok keeps beside a video's qualities, each rendition by name and height, so a report can show whether one of them is taller than what Save offers (#471).
+* When TikTok freezes ("isn't responding") or crashes in native code, the last exits in the diagnostic report now show the stack Android kept. A freeze lists the main thread's top 40 frames, and a native crash lists its signal and the crashing thread. Android 17's memory limiter and anomaly exits are named too, where the report used to show a bare number.
+* Holding one of TikTok's own stickers in a chat now shows Save media in the menu that opens. It saves the full sticker the same way Save in the sticker box does, and turning off `Save box for chat stickers` takes it away too (#470).
 * `Show the picture before saving`, under `Save a profile picture on a long press`, opens a held profile picture full screen at full size first. Save under it saves the picture, and a tap anywhere else closes it. It starts off (#467).
 * `Report a newer phone to game LIVE` under App tells TikTok's LIVE server you have a Galaxy S25 Ultra while you set up a LIVE. If the server keeps a game LIVE under 1080p 60fps because of your phone, this gives it another chance. It starts off (#459).
 * `Seconds per photo` now goes up to 300, so a photo can stay on screen for up to five minutes in a video made from a photo post (#465).
@@ -28,6 +34,10 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* With `Log diagnostics` on, Hushfeed settings no longer log a failure for the App icon row each time the page opens or refreshes. It stays out of the diagnostic report, and `Show failures on screen` doesn't pop an error for it anymore. That row saves nothing, so it was never a missing setting.
+* `Copy quick report` puts the report together in the background, so the settings page no longer stalls while it reads saved crashes. The other patch bundles line is filled in on the first copy too, where it used to ask you to copy again.
+* Native crash lines in the diagnostic report keep their function names. A name like `HttpNetworkSession::GetSocketPool` read as a session value and was blanked.
+* The Feature gate lab's list of TikTok settings is right where TikTok's code branches. A few entries were named after a setting loaded on another path, or showed another setting's default, and some settings read after a jump weren't listed at all.
 * `Show account country` and `Block this commenter` show up when you hold a comment on accounts where TikTok is trying out its newer share-style comment menu. That menu never got the rows. With either switch on, TikTok opens its regular menu instead, and the share button on comments stays (#417).
 * With `Keep the middle unstretched` on, search results play in the app's window like the feed does. A search video on a layer of its own used to leave every video cropped and stretched until the next restart (#468).
 * With `Keep the middle unstretched` on, a video's cover picture keeps the same size as its video. When TikTok played a video on a layer of its own, the cover could still take the whole screen, so it showed at the wrong size and flickered as the video replaced it. Once that happens the video and its cover are both cropped and stretched evenly, and the diagnostic report says so (#468).
@@ -50,6 +60,10 @@ Every Hushfeed release, newest first.
 ### Build
 
 * The GitHub release notes leave out the Build changes and the What was checked list now. Build changes are still listed here in the changelog.
+* The build runs on Gradle 9.9.1, which fixes the three Gradle security advisories published on November 10. The wrapper jar and the distribution checksum come from services.gradle.org.
+* The scripts that move the patches to a new TikTok build are in `scripts/retarget/` now. `retarget.ps1` takes the old and new fixture folders and runs the whole renaming pass, and concepts/patch-development.md says how to read what it reports.
+* `Custom offline videos limit` stops the patch with an error if TikTok ever puts a branch between its clean-up answer and the return the patch rewrites. The check for that never matched an if or a goto before.
+* The README's advice for a 32-bit Manager now says to leave out `AMOLED dark theme`, where it used to say to pick only one of AMOLED and `Region spoof`. In 1 GB tests on TikTok 47.9.2 every other patch fit together, Region spoof included, while AMOLED ran out of memory even beside Simple mode's patches.
 
 ## 0.83.0 (2026-11-17)
 
