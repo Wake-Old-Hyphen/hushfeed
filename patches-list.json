@@ -867,6 +867,15 @@
           "values": null
         },
         {
+          "key": "rounded_grid_corners",
+          "title": "Default: rounded grid corners",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "profile_grid_sort",
           "title": "Default: profile grid sort",
           "description": null,
@@ -4191,6 +4200,15 @@
           "values": null
         },
         {
+          "key": "hide_playable_games",
+          "title": "Default: hide playable games",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "live_feed_filter",
           "title": "Default: live feed filter",
           "description": null,
@@ -4543,6 +4561,15 @@
           "required": false,
           "type": "kotlin.String",
           "default": "tiktok",
+          "values": null
+        },
+        {
+          "key": "exit_with_one_back",
+          "title": "Default: exit with one back",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
           "values": null
         },
         {
@@ -6531,6 +6558,15 @@
           "values": null
         },
         {
+          "key": "hide_pause_icon",
+          "title": "Default: hide pause icon",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "hide_following_live_row",
           "title": "Default: hide following live row",
           "description": null,
@@ -7775,6 +7811,15 @@
           "values": null
         },
         {
+          "key": "live_room_info",
+          "title": "Default: live room info",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "offer_live_quality",
           "title": "Default: offer live quality",
           "description": null,
@@ -7822,6 +7867,96 @@
         {
           "key": "dark_live_panels",
           "title": "Default: dark live panels",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "live_card_background",
+          "title": "Default: live card background",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "live_card_text",
+          "title": "Default: live card text",
+          "description": null,
+          "required": false,
+          "type": "kotlin.String",
+          "default": "off",
+          "values": null
+        },
+        {
+          "key": "hide_live_card_events",
+          "title": "Default: hide live card events",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_products",
+          "title": "Default: hide live card products",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_shop",
+          "title": "Default: hide live card shop",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_shop_rating",
+          "title": "Default: hide live card shop rating",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_group_chat",
+          "title": "Default: hide live card group chat",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_bulletin_board",
+          "title": "Default: hide live card bulletin board",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_gift_gallery",
+          "title": "Default: hide live card gift gallery",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_card_fest_honors",
+          "title": "Default: hide live card fest honors",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -11440,6 +11575,64 @@
       ]
     },
     {
+      "name": "Smaller text sizes",
+      "description": "Adds three stops below the smallest size on TikTok's own Text size slider, for smaller text and more on screen. Starts off. Turn it on in Hushfeed settings > App, then pick a stop in Settings and privacy > Accessibility > Text size and restart TikTok.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709030,
+                "ARMEABI_V7A": 2024709030,
+                "X86": 2024709030,
+                "X86_64": 2024709030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "smaller_text_sizes",
+          "title": "Default: smaller text sizes",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "smaller_text_size_level",
+          "title": "Default: smaller text size level",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 0,
+          "values": null
+        }
+      ]
+    },
+    {
       "name": "Split activity list",
       "description": "Shows the Inbox's Activity page as two lists, your newest comments on top and likes below, each scrolling on its own, with a bar between them that swaps them or hides the lower one. Starts off. Turn it on in Hushfeed settings > Inbox.",
       "category": "Inbox",
@@ -12300,6 +12493,55 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "UI scale",
+      "description": "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. Starts at 100%, which changes nothing. Pick a size in Hushfeed settings > App, then restart TikTok.",
+      "category": "Interface",
+      "use": true,
+      "dependencies": [
+        "Patch",
+        "Settings"
+      ],
+      "compatiblePackages": {
+        "com.zhiliaoapp.musically": [
+          "47.9.3"
+        ]
+      },
+      "compatibility": [
+        {
+          "name": "TikTok",
+          "packageName": "com.zhiliaoapp.musically",
+          "description": null,
+          "appIconColor": 16657493,
+          "signatures": [
+            "9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba"
+          ],
+          "targets": [
+            {
+              "version": "47.9.3",
+              "experimental": false,
+              "versionCodes": {
+                "ARM64_V8A": 2024709030,
+                "ARMEABI_V7A": 2024709030,
+                "X86": 2024709030,
+                "X86_64": 2024709030
+              }
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "ui_scale_percent",
+          "title": "Default: ui scale percent",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Int",
+          "default": 100,
           "values": null
         }
       ]

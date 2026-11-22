@@ -2207,11 +2207,9 @@ Shows a small count under TikTok's top tabs of what the feed filter has removed 
 %1$d filtered out|few	Отфильтровано: %1$d
 %1$d filtered out|many	Отфильтровано: %1$d
 Account facts on profiles	Сведения об аккаунте в профилях
-A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
 Account facts	Сведения об аккаунте
 TikTok account facts	Сведения об аккаунте TikTok
 Account facts copied	Сведения об аккаунте скопированы
-Not sent	Не прислано
 Joined	Создан
 Account region	Регион аккаунта
 Language	Язык
@@ -3334,3 +3332,46 @@ Always show the expand button in comments	Всегда показывать кн
 Puts the button that stretches the comments over the whole screen on every video. TikTok only gives it to some accounts. Hide the expand button in comments wins if both are on.	Добавляет кнопку, которая растягивает комментарии на весь экран, к каждому видео. TikTok даёт её только некоторым аккаунтам. Если включены оба переключателя, побеждает «Скрывать кнопку развёртывания в комментариях».
 Keep the video full size under comments	Оставлять видео в полный размер под комментариями
 The video keeps its size when you open the comments, and the comments cover its lower part instead of pushing it up into a smaller box.	Видео сохраняет размер, когда вы открываете комментарии, и комментарии закрывают его нижнюю часть, а не сдвигают его вверх в окно поменьше.
+# context: Always show publish date grid switch; rounds each profile grid cell's corners
+Round the corners on profile grids	Скруглять углы в сетке профиля
+Gives each video on profile grids rounded corners, on your own profile and on Liked and Favorites too.	Скругляет углы каждого видео в сетке профиля, в вашем профиле, а также в понравившихся и в избранном.
+# context: Account facts sheet on a profile's share sheet: the gifter level (pay_grade) and SecUID lines, the value shown for a detail TikTok left out, and the switch summary
+Gifter level	Уровень дарителя
+SecUID	SecUID
+Unknown (TikTok didn't send it)	Неизвестно (TikTok не прислал)
+A profile's share sheet gets an Account facts button. It shows what TikTok already sent about the account: when it joined, its region and language, its gifter level and SecUID, when its username and display name last changed, whether it's private and whether its liked videos are public. Nothing extra is fetched.	В меню «Поделиться» профиля появляется кнопка «Сведения об аккаунте». Она показывает то, что TikTok уже прислал об аккаунте: когда он создан, его регион и язык, уровень дарителя и SecUID, когда последний раз менялись имя пользователя и отображаемое имя, закрыт ли он и открыты ли понравившиеся видео. Ничего дополнительно не загружается.
+# context: LIVE controls: a small line in a LIVE room with the room ID and the viewer's own connection (ping, latency, download speed) from TikTok's player; a tap copies the room ID
+Show the room ID and your connection	Показывать ID комнаты и ваше соединение
+Adds a small line to LIVE rooms with the room's ID and how your own connection to the stream is doing, as TikTok's player measures it: ping, latency and download speed. Tap the line to copy the room ID.	Добавляет в комнаты LIVE небольшую строку с ID комнаты и состоянием вашего собственного соединения с трансляцией, как его измеряет плеер TikTok: пинг, задержка и скорость загрузки. Нажмите на строку, чтобы скопировать ID комнаты.
+Room ID %1$s	ID комнаты %1$s
+Ping %1$s ms	Пинг %1$s мс
+Latency %1$s s	Задержка %1$s с
+Room ID copied	ID комнаты скопирован
+LIVE room ID	ID комнаты LIVE
+Hide playable games	Скрывать игры, в которые можно играть
+Hide the mini games you can play right in the For You feed.	Скрывать мини-игры, в которые можно играть прямо в ленте Рекомендации.
+Playable games	Игры, в которые можно играть
+Hide the pause icon	Скрывать значок паузы
+A tap still pauses and plays the video, but the big play icon doesn't show over it.	Нажатие по-прежнему ставит видео на паузу и запускает его, но большой значок воспроизведения поверх него не появляется.
+Exit with one Back	Выход одним нажатием Назад
+Back on Home leaves TikTok right away, with no "Tap again to exit" message. From another tab, Back still takes you to Home first, or to the tab Open TikTok on picks.	Назад на Главной сразу закрывает TikTok, без сообщения «Нажмите ещё раз, чтобы выйти». На другой вкладке Назад по-прежнему сначала ведёт на Главную или на вкладку, выбранную в «Открыть TikTok на».
+# context: LIVE controls: colors and hidden rows for the profile card a tap on a name opens in a LIVE room
+LIVE profile card background	Фон карточки профиля в LIVE
+Colors the card a tap on a name opens in a LIVE room. Chips, buttons and boxes on it keep their own colors, and while a color is picked the card skips Dark LIVE panels.	Красит карточку, которая открывается по нажатию на имя в LIVE. Метки, кнопки и блоки на ней сохраняют свои цвета, а пока цвет выбран, карточка не использует тёмные панели LIVE.
+LIVE profile card text	Текст карточки профиля в LIVE
+Colors the text drawn on the card itself. Automatic picks white or black, whichever stands out from the card.	Красит текст на самой карточке. «Автоматически» выбирает белый или чёрный, смотря что лучше видно на карточке.
+Hide rows on LIVE profile cards	Скрывать строки в карточках профиля в LIVE
+Pick the rows to take off the card a tap on a name opens in a LIVE room. The rest stay where they are.	Выберите строки, которые нужно убрать с карточки, открывающейся по нажатию на имя в LIVE. Остальные остаются на месте.
+Upcoming LIVE events	Предстоящие события LIVE
+Products in the LIVE	Товары в LIVE
+Shop rating	Рейтинг магазина
+Group chat	Групповой чат
+Bulletin board	Доска объявлений
+Gift gallery	Галерея подарков
+Festival honors	Награды фестивалей
+# context: an Appearance switch and its summary (#476). Text size, Settings and privacy and Accessibility are TikTok's own labels (its NxString entries 13899, 2691 and 2892 on 47.9.3): the slider page, the menu, and the menu row that holds the page. Use TikTok's label for each in this language
+Smaller text sizes	Уменьшенные размеры текста
+Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.	Добавляет три деления ниже самого маленького размера на собственный ползунок TikTok Размер текста в разделе Настройки и конфиденциальность > Универсальный доступ. Выберите там одно из них и перезапустите TikTok.
+# context: a number row under Appearance and its summary (#477). The number is a percent of TikTok's own size, from 50 to 100, and the row shows it as 80% and so on
+UI size	Размер интерфейса
+Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	Уменьшает весь интерфейс TikTok, и текст, и кнопки, чтобы на экране помещалось больше. При 100 всё остаётся как есть. Перезапустите TikTok, чтобы увидеть изменения.
