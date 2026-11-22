@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* With `Watch LIVEs unseen` on, letting a host see you now lasts for that visit only. Leave the LIVE and you're hidden again the next time you open it. Tap the open eye to stay hidden on your next visit without leaving.
 * Three new LIVE options in Playback change the profile card a tap on a name opens in a LIVE room. `LIVE profile card background` paints the card black, dark gray, light gray or white, and `LIVE profile card text` picks the color of its text, or Automatic for whichever of white and black stands out. Chips, buttons and boxes on the card keep TikTok's colors. `Hide rows on LIVE profile cards` takes off the rows you pick: upcoming LIVE events, products, the shop and its rating, group chat, the bulletin board, the gift gallery and festival honors. They all start off and apply the next time a card opens (#487).
 * `UI scale` is new on the App page. Set its `UI size` below 100 to make TikTok's whole interface smaller, text and buttons alike, so more fits on screen. It takes 50 to 100 and needs a restart, and 100 changes nothing. It works together with `Smaller text sizes`. inxomnyaa sent it in a pull request (#477).
 * `Smaller text sizes` is new on the App page. It adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility, so text and everything around it can be smaller than TikTok allows. Pick one there, then restart TikTok. Turning the switch off puts TikTok back on its own smallest size. It starts off. inxomnyaa sent it in a pull request (#476).
@@ -61,6 +62,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* On a tablet held sideways, opening a profile from search or a picture in the comments no longer flips the screen to portrait. The new `Turn profiles and comment pictures on tablets` patch has both turn with the rest of TikTok wherever TikTok's own check lets its main screen turn. Phones aren't affected (#490).
 * With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).
 * `Translate button in comments` now offers the restart button when you flip it. TikTok keeps one comment sheet for the whole feed and only checks for the button when it builds that sheet, so the change waited for a restart anyway.
 * `Remove feed ads` takes another kind of search ad out of the results. Some search ads carry their video tucked inside the card rather than on it, and TikTok itself doesn't call them ads when asked, so they stayed in the grid (#484).
