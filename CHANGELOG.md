@@ -6,6 +6,7 @@ Every Hushfeed release, newest first.
 
 ### Features
 
+* `Long press` and `Double tap` can now be set to `Save this video`. It saves the video on screen the way the save button does, with your download settings, mini drama episodes included. It's offered when Advanced downloads is patched in (#463).
 * With `Watch LIVEs unseen` on, letting a host see you now lasts for that visit only. Leave the LIVE and you're hidden again the next time you open it. Tap the open eye to stay hidden on your next visit without leaving.
 * Three new LIVE options in Playback change the profile card a tap on a name opens in a LIVE room. `LIVE profile card background` paints the card black, dark gray, light gray or white, and `LIVE profile card text` picks the color of its text, or Automatic for whichever of white and black stands out. Chips, buttons and boxes on the card keep TikTok's colors. `Hide rows on LIVE profile cards` takes off the rows you pick: upcoming LIVE events, products, the shop and its rating, group chat, the bulletin board, the gift gallery and festival honors. They all start off and apply the next time a card opens (#487).
 * `UI scale` is new on the App page. Set its `UI size` below 100 to make TikTok's whole interface smaller, text and buttons alike, so more fits on screen. It takes 50 to 100 and needs a restart, and 100 changes nothing. It works together with `Smaller text sizes`. inxomnyaa sent it in a pull request (#477).
@@ -62,6 +63,7 @@ Every Hushfeed release, newest first.
 
 ### Bug Fixes
 
+* Searching for a product no longer logs an error, or shows an error toast with diagnostic logging on, when TikTok or the videos themselves mark every result on a page as an advert. The page still shows as TikTok sent it, and the diagnostic report says why. A page where every card carries an advert's shape still counts as an error, since that points at a broken check.
 * On a tablet held sideways, opening a profile from search or a picture in the comments no longer flips the screen to portrait. The new `Turn profiles and comment pictures on tablets` patch has both turn with the rest of TikTok wherever TikTok's own check lets its main screen turn. Phones aren't affected (#490).
 * With `Translate button in comments` on, the suggested search at the top of the comments stops before the translate button instead of running under it (#479).
 * `Translate button in comments` now offers the restart button when you flip it. TikTok keeps one comment sheet for the whole feed and only checks for the button when it builds that sheet, so the change waited for a restart anyway.
@@ -112,7 +114,7 @@ Every Hushfeed release, newest first.
 * The register check that runs after patching accepts the 47.9.3 APK. It still expected 47.9.2's checksum, and moving to a new TikTok build now swaps that checksum along with the version.
 * The scripts that move the patches to a new TikTok build are in `scripts/retarget/` now. `retarget.ps1` takes the old and new fixture folders and runs the whole renaming pass, and concepts/patch-development.md says how to read what it reports.
 * `Custom offline videos limit` stops the patch with an error if TikTok ever puts a branch between its clean-up answer and the return the patch rewrites. The check for that never matched an if or a goto before.
-* The README's advice for a 32-bit Manager now says to leave out `AMOLED dark theme`, where it used to say to pick only one of AMOLED and `Region spoof`. In 1 GB tests on TikTok 47.9.2 every other patch fit together, Region spoof included, while AMOLED ran out of memory even beside Simple mode's patches.
+* The README's advice for a 32-bit Manager now says to patch the bundle and leave out the patches you don't need. It used to say every patch fits once AMOLED dark theme's `Switch in Hushfeed settings` is off, which came from 1 GB tests on a computer. On a phone running a 32-bit Manager 2.7.0 (1.5 GB for the patcher), TikTok 47.9.3's APK ran out of memory about halfway through every patch with that option on or off.
 
 ## 0.83.0 (2026-11-17)
 
