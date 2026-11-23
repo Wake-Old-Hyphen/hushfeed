@@ -4,6 +4,25 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+### Features
+
+* On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
+* When the diagnostic report says the phone destroyed TikTok's main screen, it now says why it might have. Either Don't keep activities is on in Developer options, or it gives how full TikTok's memory was, since Android closes an app's screens in the background once three quarters of it is used (#419).
+* `Show how long a LIVE has been on`, with the other LIVE options in Playback, adds how long the host has been live to the small line in LIVE rooms, counted from when the room started and ticking every second. It sits under the room ID when that's on too. A room opened from the LIVE feed shows it once TikTok has that room's start time. It starts off (#494).
+* `Show exact LIVE battle scores` shows a battle's whole score where TikTok caps it for viewers at 1M+ (or at the server's own limit with a + after it) and only the host sees the number. It covers the battle bar, the co-host windows and the high score notice. The supporters list is a page TikTok's server draws, so it isn't covered. It starts off (#495).
+* `Start LIVEs at` is new under `Offer LIVE quality in more rooms`. Pick a quality there and every LIVE room opens at it until you pick another one in a room, and that pick then carries to the next rooms until TikTok closes. A room whose stream doesn't have the quality opens at TikTok's choice. It starts at `The quality you picked last`, which is how rooms opened before (#57).
+* `Skip promo lines` is new under Feed filter, with its own `Promo words` list. When a line of a video's captions has one of your words, like casino or promo code, the video jumps past it and shows Undo, which goes back and lets that part play. It reads the video's own captions, so a video without any plays as usual. It's part of Subtitle tools and starts off (#493).
+
+### Bug Fixes
+
+* `Remove feed ads` now takes out the sponsored block some searches open with, the "Ad" banner for a brand with its videos and a Follow button. Searching "wildwood" showed one for a movie (#484).
+* New patch, `Fix notifications on OPPO, OnePlus and realme`. On those phones TikTok also signs up for OPPO's push service, and OPPO only delivers to TikTok as TikTok signed it, so notifications sent that way can't reach a patched TikTok. TikTok now uses Google's push service there, the way it does on a Samsung or a Pixel. Other phones don't change. It's in the default selection, with no switch (#496).
+* With `SIM spoof` on, pictures and thumbnails could stay grey unless a VPN was on. TikTok's network stack picked its image and API servers by the preset's country while the phone was on another country's network. The network stack now gets your real SIM's country and carrier, and the rest of TikTok still sees the preset (#415).
+* With `Keep captions available` on, a video whose caption tracks don't include the one in its original language now shows one of the others. TikTok used to say the video had no captions even though it carried some. The export's Captions line counts those videos as `tracks:unmatched` (#217).
+* `Show the country and date under the caption` no longer sits on the progress bar on videos without a search line under the caption. The line now goes right under the caption and keeps the gap TikTok leaves above the bar. It's white like the name and caption too, not the post time's grey (#498).
+* `Hold TikTok's save button to download` works wherever you press on the save button. TikTok gives some accounts a check that only starts the long press when the press lands right on the icon or its count, and a hold beside them did nothing at all (#499).
+* Record in a LIVE's small window used to do nothing when the room it belonged to had gone away in the meantime. Now it says "No stream found to record. Reopen the LIVE." and writes which part was missing to the log (#413).
+
 ### Build
 
 * The release tools name only global TikTok's version in the README, the Manager text and the update steps. With TikTok Lite declared too, v0.84.0 went out saying "TikTok 47.8.2 and 47.9.3", and the README still pointed at 47.8.3.

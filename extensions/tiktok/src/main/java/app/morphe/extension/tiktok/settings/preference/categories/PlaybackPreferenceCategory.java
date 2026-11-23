@@ -133,11 +133,19 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                     "A LIVE room shows how many people are watching as a rounded number like 1.2K. "
                             + "This shows the exact count instead.",
                     Settings.SHOW_EXACT_LIVE_VIEWERS));
+            addPreference(new TogglePreference(context, "Show exact LIVE battle scores",
+                    "In a LIVE battle, TikTok caps the big scores viewers see while the host sees the "
+                            + "whole number. This shows the whole score in the battle bar and the co-host windows.",
+                    Settings.SHOW_EXACT_BATTLE_SCORES));
             addPreference(new TogglePreference(context, "Show the room ID and your connection",
                     "Adds a small line to LIVE rooms with the room's ID and how your own connection "
                             + "to the stream is doing, as TikTok's player measures it: ping, latency and "
                             + "download speed. Tap the line to copy the room ID.",
                     Settings.LIVE_ROOM_INFO));
+            addPreference(new TogglePreference(context, "Show how long a LIVE has been on",
+                    "Adds a small line to LIVE rooms with how long the host has been live, counted from "
+                            + "when the room started. With the room ID on too, it goes under that.",
+                    Settings.LIVE_RUNNING_TIME));
             addPreference(new TogglePreference(context, "Offer LIVE quality in more rooms",
                     "TikTok lets you pick a LIVE's quality only in some rooms. This adds Video "
                             + "quality to the menu in most of the others, and the next room opens at the quality "
@@ -148,6 +156,12 @@ public final class PlaybackPreferenceCategory extends ConditionalPreferenceCateg
                             + "that quality again after a restart. A room whose stream doesn't have it "
                             + "opens at TikTok's choice.",
                     Settings.REMEMBER_LIVE_QUALITY));
+            addPreference(new ChoicePreference(context, "Start LIVEs at", Settings.LIVE_START_QUALITY,
+                    app.morphe.extension.tiktok.live.LiveControls.START_QUALITY_LABELS,
+                    app.morphe.extension.tiktok.live.LiveControls.START_QUALITY_VALUES)
+                    .withNote("A LIVE room opens at this quality until you pick another one, and that pick "
+                            + "carries to the next rooms until TikTok closes. A room whose stream doesn't have "
+                            + "it opens at TikTok's choice."));
             addPreference(new TogglePreference(context, "Offer Audio only in LIVE quality",
                     "Adds Audio only to a LIVE's Video quality list. The room plays its sound without "
                             + "the picture, which uses much less data, until you pick another quality or "

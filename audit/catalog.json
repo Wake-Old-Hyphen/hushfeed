@@ -11059,16 +11059,34 @@
     "row": "Show exact LIVE viewer counts"
    },
    {
+    "key": "show_exact_battle_scores",
+    "default": false,
+    "type": "bool",
+    "row": "Show exact LIVE battle scores"
+   },
+   {
     "key": "live_room_info",
     "default": false,
     "type": "bool",
     "row": "Show the room ID and your connection"
    },
    {
+    "key": "live_running_time",
+    "default": false,
+    "type": "bool",
+    "row": "Show how long a LIVE has been on"
+   },
+   {
     "key": "offer_live_quality",
     "default": false,
     "type": "bool",
     "row": "Offer LIVE quality in more rooms"
+   },
+   {
+    "key": "live_start_quality",
+    "default": "last",
+    "type": "string",
+    "row": "Start LIVEs at"
    },
    {
     "key": "offer_live_clear_screen",
@@ -14215,7 +14233,9 @@
   "source": [
    "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/spoof/sim/SpoofSimPatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SpoofSimPatch.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SimPresets.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/SimPresets.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/misc/spoof/sim/NetworkStackSim.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/spoof/sim/NetworkStackSim.java"
   ],
   "settings": [
    {
@@ -17204,7 +17224,10 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/CaptionsAvailable.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionStyle.java",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionTools.java",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionsAvailable.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/CaptionsAvailable.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/captions/PromoSkip.kt",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/captions/PromoSkip.java",
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/download/CaptionCues.java"
   ],
   "settings": [
    {
@@ -17255,6 +17278,18 @@
     "type": "bool",
     "row": "Keep captions available",
     "restart": true
+   },
+   {
+    "key": "skip_promo_lines",
+    "default": false,
+    "type": "bool",
+    "row": "Skip promo lines"
+   },
+   {
+    "key": "skip_promo_words",
+    "default": "",
+    "type": "string",
+    "row": "Promo words"
    },
    {
     "key": "download_subtitles",

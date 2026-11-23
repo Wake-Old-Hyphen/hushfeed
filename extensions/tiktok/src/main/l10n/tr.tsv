@@ -3174,3 +3174,16 @@ Adds three stops below the smallest size on TikTok's own Text size slider, in Se
 # context: a number row under Appearance and its summary (#477). The number is a percent of TikTok's own size, from 50 to 100, and the row shows it as 80% and so on
 UI size	Arayüz boyutu
 Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.	TikTok'un tüm arayüzünü, metni de düğmeleri de küçültür, böylece ekrana daha çok şey sığar. 100 onu olduğu gibi bırakır. Değişikliği görmek için TikTok'u yeniden başlat.
+Show how long a LIVE has been on	Bir LIVE'ın ne kadardır yayında olduğunu göster
+Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.	LIVE odalarına, sunucunun ne kadardır canlı yayında olduğunu odanın başladığı andan itibaren sayan küçük bir satır ekler. Oda kimliği de açıksa onun altında durur.
+LIVE for %1$s	%1$s süredir LIVE
+Show exact LIVE battle scores	Tam LIVE savaş puanlarını göster
+In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.	Bir LIVE savaşında TikTok, izleyicilerin gördüğü yüksek puanları sınırlar, sunucu ise sayının tamamını görür. Bu, tam puanı savaş çubuğunda ve ortak sunucu pencerelerinde gösterir.
+Start LIVEs at	LIVE'ları şu kalitede başlat
+The quality you picked last	En son seçtiğin kalite
+A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.	Bir LIVE odası, başka bir kalite seçene kadar bu kalitede açılır ve o seçim TikTok kapanana kadar sonraki odalara geçer. Yayınında bu kalite olmayan bir oda TikTok'un seçimiyle açılır.
+Skip promo lines	Tanıtım satırlarını atla
+Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.	Videonun bir altyazı satırında Tanıtım kelimelerinden biri geçen kısmını, örneğin bir casino ya da promosyon kodu reklamını atlar ve Geri al gösterir. Videonun kendi altyazılarını okur, bu yüzden altyazısı olmayan bir video her zamanki gibi oynar.
+Promo words	Tanıtım kelimeleri
+Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and "a" & "b" or "a" !& "b" work as they do for Blocked caption words.	Kelimeleri veya ifadeleri virgülle ayırın, örneğin casino, promo code. Büyük harf fark etmez, "a" & "b" veya "a" !& "b" de Engellenen açıklama kelimelerindeki gibi çalışır.
+Skipped a promo line	Tanıtım satırı atlandı

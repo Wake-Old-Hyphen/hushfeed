@@ -545,6 +545,10 @@ public class Settings extends BaseSettings {
     public static final StringSetting BLOCKED_CAPTION_WORDS =
             new FeedRuleStringSetting("blocked_caption_words", false);
     public static final BooleanSetting BLOCKED_WORDS_IN_STICKERS = new BooleanSetting("blocked_words_in_stickers", FALSE);
+    /** Skip promo lines (#493): seek past caption lines holding a word from the list below. */
+    public static final BooleanSetting SKIP_PROMO_LINES = new BooleanSetting("skip_promo_lines", FALSE);
+    public static final StringSetting SKIP_PROMO_WORDS =
+            new FeedRuleStringSetting("skip_promo_words", false);
     public static final StringSetting BLOCKED_CREATORS =
             new FeedRuleStringSetting("blocked_creators", true);
     public static final StringSetting LOCAL_HIDDEN_CREATORS =
@@ -828,10 +832,21 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SHOW_EXACT_LIVE_VIEWERS = new BooleanSetting("show_exact_live_viewers", FALSE);
     /**
+     * Shows a LIVE battle's scores whole past the server's high score cap ("1M+") in the battle
+     * bar, the co-host windows and the high score notice (#495); the LIVE controls patch. Read
+     * each time a score is written and as a battle takes its cap, so no restart.
+     */
+    public static final BooleanSetting SHOW_EXACT_BATTLE_SCORES = new BooleanSetting("show_exact_battle_scores", FALSE);
+    /**
      * A small line in a LIVE room with the room's ID and your own connection to the stream as
      * TikTok's player measures it (#487); the LIVE controls patch. Read every second, so no restart.
      */
     public static final BooleanSetting LIVE_ROOM_INFO = new BooleanSetting("live_room_info", FALSE);
+    /**
+     * How long the LIVE has been running, on the same line (#494), counted from the room's own
+     * start time; the LIVE controls patch. Read every second, so no restart.
+     */
+    public static final BooleanSetting LIVE_RUNNING_TIME = new BooleanSetting("live_running_time", FALSE);
     /**
      * Offers TikTok's quality picker in more LIVE rooms and carries the last pick to the next
      * room; the LIVE controls patch. Read when a room builds its menu and picks its starting
@@ -851,6 +866,14 @@ public class Settings extends BaseSettings {
             "remember_live_quality", TRUE, false, Setting.parent(OFFER_LIVE_QUALITY));
     /** TikTok's key for that pick ("hd", "origin" and so on), saved from its picker. Never shown. */
     public static final StringSetting REMEMBERED_LIVE_QUALITY = new StringSetting("remembered_live_quality", "");
+    /**
+     * The quality every LIVE room starts at until a pick is made this run (#57): "last" keeps
+     * the last pick, otherwise one of TikTok's keys ("origin", "uhd", "hd", "sd", "ld"). The LIVE
+     * controls patch, under {@link #OFFER_LIVE_QUALITY}. Read as each room picks its starting
+     * quality, so no restart.
+     */
+    public static final StringSetting LIVE_START_QUALITY = new StringSetting(
+            "live_start_quality", "last", false, Setting.parent(OFFER_LIVE_QUALITY));
     /**
      * Adds Audio only to a LIVE room's Video quality list when the room's stream has its sound on
      * its own (#265); the LIVE controls patch. Read as the list opens and as the player switches,

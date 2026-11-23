@@ -3010,3 +3010,16 @@ Smaller text sizes,Cỡ chữ nhỏ hơn
 "Adds three stops below the smallest size on TikTok's own Text size slider, in Settings and privacy > Accessibility. Pick one there, then restart TikTok.","Thêm ba mức nhỏ hơn cỡ nhỏ nhất vào thanh trượt Cỡ chữ của chính TikTok, trong Cài đặt và quyền riêng tư > Trợ năng. Chọn một mức ở đó, sau đó khởi động lại TikTok."
 UI size,Kích thước giao diện
 "Makes TikTok's whole interface smaller, text and buttons alike, so more fits on screen. 100 leaves it as it is. Restart TikTok to see the change.","Thu nhỏ toàn bộ giao diện TikTok, cả chữ lẫn nút, để màn hình chứa được nhiều hơn. Mức 100 giữ nguyên như cũ. Khởi động lại TikTok để xem thay đổi."
+Show how long a LIVE has been on,Hiện LIVE đã phát được bao lâu
+"Adds a small line to LIVE rooms with how long the host has been live, counted from when the room started. With the room ID on too, it goes under that.","Thêm một dòng nhỏ vào phòng LIVE cho biết chủ phòng đã phát trực tiếp bao lâu, tính từ lúc phòng bắt đầu. Nếu ID phòng cũng đang bật, dòng này nằm bên dưới."
+LIVE for %1$s,Đã LIVE %1$s
+Show exact LIVE battle scores,Hiện điểm đấu LIVE chính xác
+"In a LIVE battle, TikTok caps the big scores viewers see while the host sees the whole number. This shows the whole score in the battle bar and the co-host windows.","Trong một trận đấu LIVE, TikTok giới hạn điểm số lớn mà người xem thấy, còn chủ phòng thấy con số đầy đủ. Tùy chọn này hiện điểm đầy đủ trên thanh trận đấu và trong cửa sổ đồng chủ phòng."
+Start LIVEs at,Bắt đầu LIVE ở chất lượng
+The quality you picked last,Chất lượng bạn chọn lần cuối
+"A LIVE room opens at this quality until you pick another one, and that pick carries to the next rooms until TikTok closes. A room whose stream doesn't have it opens at TikTok's choice.","Phòng LIVE mở ở chất lượng này cho đến khi bạn chọn chất lượng khác, và lựa chọn đó áp dụng cho các phòng tiếp theo cho đến khi TikTok đóng. Phòng mà luồng phát không có chất lượng này sẽ mở theo lựa chọn của TikTok."
+Skip promo lines,Bỏ qua dòng quảng cáo
+"Skips the part of a video where a caption line has a word from Promo words, like a casino or promo code plug, and shows Undo. It reads the video's own captions, so a video without any plays as usual.","Bỏ qua đoạn video có dòng phụ đề chứa một từ trong Từ quảng cáo, như quảng cáo sòng bạc hay mã khuyến mãi, và hiện Hoàn tác. Tính năng này đọc phụ đề của chính video, nên video không có phụ đề vẫn phát như bình thường."
+Promo words,Từ quảng cáo
+"Separate words or phrases with commas, like casino, promo code. Capital letters don't matter, and ""a"" & ""b"" or ""a"" !& ""b"" work as they do for Blocked caption words.","Phân tách các từ hoặc cụm từ bằng dấu phẩy, như casino, promo code. Chữ hoa không quan trọng, và ""a"" & ""b"" hoặc ""a"" !& ""b"" hoạt động như trong Từ khóa tiêu đề bị chặn."
+Skipped a promo line,Đã bỏ qua dòng quảng cáo

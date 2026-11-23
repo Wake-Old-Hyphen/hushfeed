@@ -22,6 +22,8 @@ public class SettingsStatus {
     public static void enableSubtitleTools() { subtitleToolsEnabled = true; }
     public static boolean captionsAvailableEnabled;
     public static void enableCaptionsAvailable() { captionsAvailableEnabled = true; }
+    public static boolean promoSkipEnabled;
+    public static void enablePromoSkip() { promoSkipEnabled = true; }
     public static boolean screenCaptureEnabled;
     public static void enableScreenCapture() { screenCaptureEnabled = true; }
     // Volatile because FeatureGateLearnMode reads it before taking its monitor, on TikTok's own
@@ -1036,6 +1038,8 @@ public class SettingsStatus {
     public static void enableRunBesideStoreApp() { runBesideStoreAppEnabled = true; }
     public static boolean tabletRotationEnabled = false;
     public static void enableTabletRotation() { tabletRotationEnabled = true; }
+    public static boolean oppoPushFixEnabled = false;
+    public static void enableOppoPushFix() { oppoPushFixEnabled = true; }
     public static boolean commentPublishDiagnosticsEnabled = false;
     public static void enableCommentPublishDiagnostics() { commentPublishDiagnosticsEnabled = true; }
     public static boolean commentSendFixEnabled = false;

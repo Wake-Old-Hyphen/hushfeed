@@ -590,9 +590,12 @@
       "hide_live_service_plus",
       "hide_live_ai_summary",
       "show_exact_live_viewers",
+      "show_exact_battle_scores",
       "live_room_info",
+      "live_running_time",
       "offer_live_quality",
       "remember_live_quality",
+      "live_start_quality",
       "offer_live_clear_screen",
       "keep_live_clear_screen",
       "offer_live_full_screen",
@@ -892,7 +895,9 @@
       "keep_captions_clear_display",
       "caption_clear_display_offset",
       "caption_clear_display_spot",
-      "keep_captions_available"
+      "keep_captions_available",
+      "skip_promo_lines",
+      "skip_promo_words"
     ],
     "Swipe-left controls": [
       "swipe_left_action"
@@ -3515,6 +3520,18 @@
       "type": "boolean",
       "default": false
     },
+    "live_running_time": {
+      "field": "LIVE_RUNNING_TIME",
+      "key": "live_running_time",
+      "type": "boolean",
+      "default": false
+    },
+    "live_start_quality": {
+      "field": "LIVE_START_QUALITY",
+      "key": "live_start_quality",
+      "type": "string",
+      "default": "last"
+    },
     "live_under_status_bar": {
       "field": "LIVE_UNDER_STATUS_BAR",
       "key": "live_under_status_bar",
@@ -4499,6 +4516,12 @@
       "type": "boolean",
       "default": false
     },
+    "show_exact_battle_scores": {
+      "field": "SHOW_EXACT_BATTLE_SCORES",
+      "key": "show_exact_battle_scores",
+      "type": "boolean",
+      "default": false
+    },
     "show_exact_counts": {
       "field": "SHOW_EXACT_COUNTS",
       "key": "show_exact_counts",
@@ -4624,6 +4647,18 @@
       "key": "skip_post_download_share_sheet",
       "type": "boolean",
       "default": false
+    },
+    "skip_promo_lines": {
+      "field": "SKIP_PROMO_LINES",
+      "key": "skip_promo_lines",
+      "type": "boolean",
+      "default": false
+    },
+    "skip_promo_words": {
+      "field": "SKIP_PROMO_WORDS",
+      "key": "skip_promo_words",
+      "type": "string",
+      "default": ""
     },
     "skip_splash_ad": {
       "field": "SKIP_SPLASH_AD",
