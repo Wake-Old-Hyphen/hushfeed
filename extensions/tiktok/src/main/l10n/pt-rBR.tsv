@@ -3217,3 +3217,18 @@ Random time each day	Horário aleatório todo dia
 Sends at a different time each day, somewhere between When to send and Latest time.	Envia em um horário diferente a cada dia, em algum momento entre Quando enviar e Horário mais tarde.
 Latest time	Horário mais tarde
 The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	O fim da janela aleatória, no mesmo dia de Quando enviar. Se não for mais tarde, a mensagem sai no horário de Quando enviar.
+# context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
+Jump to a date on Favorites grids	Ir para uma data nas grades de Favoritos
+Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Adiciona um botão no canto superior da grade de Favoritos que começa seus vídeos salvos no ano ou mês que você escolher, para que os mais antigos carreguem sem rolar pelos mais novos. Escolha Favoritos mais recentes ali para voltar.
+Newest saves	Favoritos mais recentes
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	Escolher uma fonte incluída
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Escolha uma das %1$s fontes que vêm com o Hushfeed. Cada uma aparece no próprio estilo.
+Built-in fonts	Fontes incluídas
+Delete	Excluir
+Delete your picked posts	Excluir suas publicações escolhidas
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Adiciona um botão de lixeira à barra de seleção quando todas as publicações escolhidas são suas. Faz uma contagem regressiva a partir de 5 para você poder parar e depois as exclui da sua conta uma por uma. Uma publicação excluída não pode ser recuperada.
+Posts to delete: %1$d. Starting in %2$d	Publicações para excluir: %1$d. Começa em %2$d
+Posts deleted: %1$d of %2$d	Publicações excluídas: %1$d de %2$d
+Swipe LIVEs in your Following row's order	Passar os LIVEs na ordem da sua fileira de Seguindo
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	Depois de um LIVE que você abre pela fileira no topo de Seguindo, deslizar leva você pelos outros LIVEs dessa fileira na ordem em que aparecem, começando pelo próximo. As sugestões do TikTok vêm depois deles.

@@ -3488,3 +3488,18 @@ Random time each day	وقت عشوائي كل يوم
 Sends at a different time each day, somewhere between When to send and Latest time.	يرسل في وقت مختلف كل يوم، في وقت ما بين وقت الإرسال وآخر وقت.
 Latest time	آخر وقت
 The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	نهاية النافذة العشوائية، في نفس يوم وقت الإرسال. إذا لم يكن لاحقًا، تُرسل الرسالة في وقت الإرسال.
+# context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
+Jump to a date on Favorites grids	الانتقال إلى تاريخ في شبكات المفضلات
+Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	يضيف زرًا إلى الزاوية العلوية لشبكة المفضلات يبدأ عرض فيديوهاتك المحفوظة من سنة أو شهر تختاره، بحيث يتم تحميل المحفوظات القديمة دون التمرير عبر الأحدث. اختر أحدث المحفوظات هناك للعودة.
+Newest saves	أحدث المحفوظات
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	اختر خطًا مدمجًا
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	اختر واحدًا من %1$s خطًا مضمّنة مع Hushfeed. يظهر كل خط بأسلوبه الخاص.
+Built-in fonts	الخطوط المدمجة
+Delete	حذف
+Delete your picked posts	حذف منشوراتك المختارة
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	يضيف زر سلة المهملات إلى شريط الاختيار عندما تكون كل المنشورات المختارة منشوراتك. يعدّ تنازليًا من 5 لتتمكن من إيقافه، ثم يحذفها من حسابك واحدًا تلو الآخر. لا يمكن استعادة المنشور المحذوف.
+Posts to delete: %1$d. Starting in %2$d	منشورات للحذف: %1$d. البدء خلال %2$d
+Posts deleted: %1$d of %2$d	المنشورات المحذوفة: %1$d من %2$d
+Swipe LIVEs in your Following row's order	التمرير بين LIVE بترتيب صف أتابعه
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	بعد LIVE تفتحه من الصف أعلى أتابعه، ينقلك التمرير بين بقية LIVE في ذلك الصف بالترتيب الذي تظهر به، بدءًا من التالي. تأتي اختيارات TikTok بعدها.

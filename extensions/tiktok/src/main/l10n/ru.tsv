@@ -3418,3 +3418,18 @@ Random time each day	Случайное время каждый день
 Sends at a different time each day, somewhere between When to send and Latest time.	Отправляет каждый день в разное время, где-то между «Когда отправлять» и «Самое позднее время».
 Latest time	Самое позднее время
 The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	Конец случайного окна, в тот же день, что и «Когда отправлять». Если оно не позже, сообщение уходит во время «Когда отправлять».
+# context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
+Jump to a date on Favorites grids	Переход к дате в сетках «Избранное»
+Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Добавляет кнопку в верхний угол сетки «Избранное», которая начинает список сохранённых видео с выбранного года или месяца, чтобы старые загружались без прокрутки мимо новых. Чтобы вернуться, выберите там «Последние в избранном».
+Newest saves	Последние в избранном
+# context: App > Use system font: fonts that come with Hushfeed (#487); a picked one becomes the imported font
+Pick a built-in font	Выбрать встроенный шрифт
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.	Выберите один из %1$s шрифтов, которые входят в Hushfeed. Каждый показан в своём стиле.
+Built-in fonts	Встроенные шрифты
+Delete	Удалить
+Delete your picked posts	Удалять выбранные свои публикации
+Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.	Добавляет кнопку корзины на панель выбора, когда все выбранные публикации ваши. Отсчитывает от 5, чтобы вы могли остановить, затем удаляет их из аккаунта по одной. Удалённую публикацию нельзя вернуть.
+Posts to delete: %1$d. Starting in %2$d	Публикаций для удаления: %1$d. Начало через %2$d
+Posts deleted: %1$d of %2$d	Удалено публикаций: %1$d из %2$d
+Swipe LIVEs in your Following row's order	Листать LIVE в порядке ряда «Подписок»
+After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.	После LIVE, открытого из ряда вверху «Подписок», свайп ведёт по остальным LIVE этого ряда в том порядке, в каком они там стоят, начиная со следующего. Подборка TikTok идёт после них.

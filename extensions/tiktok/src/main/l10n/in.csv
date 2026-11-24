@@ -3050,3 +3050,16 @@ Random time each day,Waktu acak setiap hari
 "Sends at a different time each day, somewhere between When to send and Latest time.","Mengirim pada waktu berbeda setiap hari, di antara Kapan dikirim dan Waktu paling lambat."
 Latest time,Waktu paling lambat
 "The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","Akhir rentang acak, pada hari yang sama dengan Kapan dikirim. Jika tidak lebih lambat, pesan dikirim pada waktu Kapan dikirim."
+Jump to a date on Favorites grids,Lompat ke tanggal di kisi Favorit
+"Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Menambahkan tombol di sudut atas kisi Favorit yang memulai video tersimpan Anda dari tahun atau bulan yang Anda pilih, sehingga yang lebih lama dimuat tanpa harus menggulir melewati yang lebih baru. Pilih Favorit terbaru di sana untuk kembali."
+Newest saves,Favorit terbaru
+Pick a built-in font,Pilih font bawaan
+Pick one of %1$s fonts that come with Hushfeed. Each is shown in its own style.,Pilih salah satu dari %1$s font bawaan Hushfeed. Setiap font ditampilkan dengan gayanya sendiri.
+Built-in fonts,Font bawaan
+Delete,Hapus
+Delete your picked posts,Hapus postingan pilihanmu
+"Adds a trash button to the picking bar while every picked post is your own. It counts down from 5 so you can stop it, then deletes them from your account one at a time. A deleted post can't be brought back.","Menambahkan tombol tempat sampah ke bilah pilihan selama semua postingan yang dipilih adalah milikmu. Menghitung mundur dari 5 agar kamu bisa menghentikannya, lalu menghapusnya dari akunmu satu per satu. Postingan yang dihapus tidak bisa dikembalikan."
+Posts to delete: %1$d. Starting in %2$d,Postingan yang akan dihapus: %1$d. Mulai dalam %2$d
+Posts deleted: %1$d of %2$d,Postingan dihapus: %1$d dari %2$d
+Swipe LIVEs in your Following row's order,Geser LIVE sesuai urutan baris Mengikuti
+"After a LIVE you open from the row at the top of Following, swiping takes you through the row's other LIVEs in the order they sit there, starting with the next one. TikTok's own picks come after them.","Setelah LIVE yang kamu buka dari baris di atas Mengikuti, menggeser membawamu ke LIVE lain di baris itu sesuai urutannya, mulai dari yang berikutnya. Pilihan TikTok sendiri muncul setelahnya."
