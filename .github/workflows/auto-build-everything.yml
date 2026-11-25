@@ -99,14 +99,19 @@ jobs:
       - name: Fetch Nai64 version (GitLab)
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
         id: nai64
+        env:
+          NAI64_META_URL: https://gitlab.com/api/v4/projects/kmru%2Fnai64extrapatches/repository/files/patches-bundle.json/raw?ref=main
         run: |
           set -euo pipefail
           mkdir -p nai64-meta
           curl --fail --show-error --silent --location \
-            "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json" \
-            -o nai64-meta/bundle.json
+            "$NAI64_META_URL" -o nai64-meta/bundle.json
+
           NAI64_VER=$(jq -er '.version // "unknown"' nai64-meta/bundle.json)
+          NAI64_URL=$(jq -er '.download_url | strings | select(length > 0)' nai64-meta/bundle.json)
+
           echo "NAI64_VERSION=$NAI64_VER" >> "$GITHUB_OUTPUT"
+          echo "NAI64_DOWNLOAD_URL=$NAI64_URL" >> "$GITHUB_OUTPUT"
           echo "Nai64 version: $NAI64_VER"      
 
       - name: Upload changelog for publish job
@@ -193,17 +198,23 @@ jobs:
           mkdir -p bundles
           curl -L -o bundles/hushfeed.mpp "https://github.com/${{ github.repository }}/releases/download/v${{ needs.build-mpp.outputs.VERSION }}/patches-${{ needs.build-mpp.outputs.VERSION }}.mpp"
 
-      - name: Download Nai64 bundle (GitLab)
+      - name: Fetch Nai64 version (GitLab)
+        if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
+        id: nai64
+        env:
+          NAI64_META_URL: https://gitlab.com/api/v4/projects/kmru%2Fnai64extrapatches/repository/files/patches-bundle.json/raw?ref=main
         run: |
-          mkdir -p bundles nai64-meta
-          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
-          NAI64_URL=$(jq -r '.download_url' nai64-meta/bundle.json)
-          if [ -z "$NAI64_URL" ] || [ "$NAI64_URL" == "null" ]; then
-            echo "Could not find Nai64 download URL"
-            exit 1
-          fi
-          curl -L -o bundles/nai64.mpp "$NAI64_URL"
-          echo "Nai64 bundle downloaded: $(du -h bundles/nai64.mpp | cut -f1)"
+          set -euo pipefail
+          mkdir -p nai64-meta
+          curl --fail --show-error --silent --location \
+            "$NAI64_META_URL" -o nai64-meta/bundle.json
+
+          NAI64_VER=$(jq -er '.version // "unknown"' nai64-meta/bundle.json)
+          NAI64_URL=$(jq -er '.download_url | strings | select(length > 0)' nai64-meta/bundle.json)
+
+          echo "NAI64_VERSION=$NAI64_VER" >> "$GITHUB_OUTPUT"
+          echo "NAI64_DOWNLOAD_URL=$NAI64_URL" >> "$GITHUB_OUTPUT"
+          echo "Nai64 version: $NAI64_VER"
 
       - name: Download kveld9 bundle and hosts blocklist
         run: |
