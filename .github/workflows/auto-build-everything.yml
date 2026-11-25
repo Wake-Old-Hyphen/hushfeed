@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       UPSTREAM_CHANGED: ${{ steps.sync.outputs.UPSTREAM_CHANGED }}
-      VERSIONHere’s the complete workflow with the Nai64 metadata fetched once in `build-mpp`, then its version and download URL passed to the downstream jobs. If the GitLab API returns 404, confirm the project path, branch, and metadata file path.
+      VERSIONHereâ€™s the complete workflow with the Nai64 metadata fetched once in `build-mpp`, then its version and download URL passed to the downstream jobs. If the GitLab API returns 404, confirm the project path, branch, and metadata file path.
 
 ```yaml
 name: Auto Sync, Build MPP, Patch APKs
@@ -230,7 +230,7 @@ jobs:
           mv build/com.zhiliaoapp.musically_\${{ matrix.version }}-*.apk build/base.apk
           FILE\_SIZE=\$(stat -c%s build/base.apk)
           if [ "\$FILE\_SIZE" -lt 100000000 ]; then
-            echo "Base APK too small (\$FILE\_SIZE bytes) — download failed."
+            echo "Base APK too small (\$FILE\_SIZE bytes) â€” download failed."
             exit 1
           fi
 
@@ -355,7 +355,7 @@ jobs:
       - name: Verify at least one APK exists
         run: |
           if ! ls build/TikTok-*.apk >/dev/null 2>&1; then
-            echo "No APK artifacts found — every matrix leg failed."
+            echo "No APK artifacts found â€” every matrix leg failed."
             exit 1
           fi
           ls -lah build/TikTok-*.apk
