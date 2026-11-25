@@ -96,15 +96,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Nai64 version (GitLab)
+            - name: Fetch Nai64 version (GitLab)
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
         id: nai64
         run: |
+          set -euo pipefail
           mkdir -p nai64-meta
-          curl -sL "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json?ref_type=heads" -o nai64-meta/bundle.json
-          NAI64_VER=$(jq -r '.version // "unknown"' nai64-meta/bundle.json)
-          echo "NAI64_VERSION=$NAI64_VER" >> $GITHUB_OUTPUT
+          curl --fail --show-error --silent --location \
+            "https://gitlab.com/kmru/nai64extrapatches/-/raw/main/patches-bundle.json" \
+            -o nai64-meta/bundle.json
+          NAI64_VER=$(jq -er '.version // "unknown"' nai64-meta/bundle.json)
+          echo "NAI64_VERSION=$NAI64_VER" >> "$GITHUB_OUTPUT"
           echo "Nai64 version: $NAI64_VER"
+
 
       - name: Upload changelog for publish job
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
