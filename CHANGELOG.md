@@ -4,8 +4,11 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+## 0.85.0 (2026-11-24)
+
 ### Features
 
+* `Remember saved videos` is new in Feed screen, next to the Favorites grid options. As your Favorites load, Hushfeed keeps each video's cover, creator, caption and post date on your phone. When TikTok later marks a saved video as deleted or unplayable, its grey tile shows the kept cover and creator instead, and a tap shows the rest. `Unavailable saved videos` lists them all with a search box. It can only keep what it saw while a video was still up, so tiles that were already grey stay grey (#516).
 * `Fill wide videos too`, right under `Fill the screen with the video`, crops landscape and square videos to cover the screen as well. Fill on its own still leaves those whole, so you see all of a landscape video with bars above and below it. Turn this on and every video fills the screen, showing the middle of a wide one (#505).
 * `Keep your place in chats` stops a chat you've scrolled up in from jumping to the bottom on its own. Coming back from a video you opened in the chat leaves you where you were, and so does sending a reply to an older message. A plain message you send and the down arrow still take you to the newest. It starts off and sits under `Show message times` in Hushfeed settings > Inbox (#503).
 * On the floating bottom bar, `Glass lens on the current tab` is the same thin outline as on TikTok's own bar now, with nothing filled inside, so the video shows through it like it does around it. The glass and see-through bars keep the glass bubble (#483).
@@ -30,6 +33,7 @@ Every Hushfeed release, newest first.
 * `Export followers and following` can save a JSON or plain text file as well as CSV. Tapping it lists each choice, like `Followers (JSON)` or `Following (Plain text)`. The JSON file has the same details as the CSV, and the plain text one is a username on each line (#487).
 * TikTok Lite's settings no longer list switches that did nothing there. Lite's feed filter works on the videos in the feed and nothing else, so its Feed filter page drops `Hide TikTok Shop in search`, the search tab list, `Show only mutual friends on the Friends tab`, `Latest first on Following`, both offline video switches and `Show how many were filtered`. Its Feed screen page drops `Hide the search bar below videos`, `Hide the playlist bar` and `Hide the event badge`. Every rule that hides a kind of video stays, and so does `Hide inserted cards` (#48).
 * `Swipe LIVEs in your Following row's order` is new with the other LIVE options in Playback. Open a LIVE from the row at the top of Following, and swiping up takes you through the row's other LIVEs in the order they sit there, starting with the next one and then going round to the ones before it. TikTok's own picks come after them, and the row's LIVEs don't show up a second time among those (#511).
+* The Feature Gate Lab leaves TikTok's paid features alone. Gates tied to subscriptions, Super Fan, paid series, LIVE gifts, coins and the like aren't listed any more and can't be saved. A backup or shared profile holding one restores everything else, and a rule saved on one before this stays stored but does nothing.
 
 ### Bug Fixes
 
