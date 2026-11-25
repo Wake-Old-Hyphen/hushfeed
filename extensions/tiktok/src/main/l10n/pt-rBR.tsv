@@ -1879,6 +1879,10 @@ Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. Ti
 Keep clear screen in the next LIVE	Manter a tela limpa na próxima LIVE
 # context: summary of Keep clear screen in the next LIVE; a room is a LIVE stream page, swiping moves to the next one (#354)
 A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.	Uma LIVE para a qual você desliza volta a mostrar o chat, os presentes e os botões. Isso mantém a tela limpa de sala em sala até você desativá-la.
+# context: LIVE settings row under Keep clear screen in the next LIVE; hides the list of viewers' messages over a LIVE stream (#525)
+Hide LIVE chat	Ocultar o chat da LIVE
+# context: summary of Hide LIVE chat; the comment box is where you type a comment, the room's buttons are gifts, share and the rest (#525)
+Hides the chat messages that scroll over a LIVE's video. The comment box and the room's buttons stay.	Oculta as mensagens do chat que passam sobre o vídeo de uma LIVE. A caixa de comentário e os botões da sala continuam.
 # context: LIVE settings row under Keep clear screen in the next LIVE; adds TikTok's full screen button (turns the phone sideways for a wide stream) to LIVE rooms that lack it (#57)
 Offer full screen in more LIVEs	Oferecer tela cheia em mais LIVEs
 # context: summary of Offer full screen in more LIVEs; streamed from a computer means TikTok LIVE Studio, a wide video is a landscape stream (#57)
@@ -3220,7 +3224,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	Horário aleatório todo dia
 Sends at a different time each day, somewhere between When to send and Latest time.	Envia em um horário diferente a cada dia, em algum momento entre Quando enviar e Horário mais tarde.
 Latest time	Horário mais tarde
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	O fim da janela aleatória, no mesmo dia de Quando enviar. Se não for mais tarde, a mensagem sai no horário de Quando enviar.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	O fim da janela aleatória. Se for antes de Quando enviar, a janela passa da meia-noite.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	Ir para uma data nas grades de Favoritos
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	Adiciona um botão no canto superior da grade de Favoritos que começa seus vídeos salvos no ano ou mês que você escolher, para que os mais antigos carreguem sem rolar pelos mais novos. Escolha Favoritos mais recentes ali para voltar.

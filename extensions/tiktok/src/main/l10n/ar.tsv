@@ -2070,6 +2070,10 @@ Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. Ti
 Keep clear screen in the next LIVE	أبق شاشة نظيفة في LIVE التالي
 # context: summary of Keep clear screen in the next LIVE; a room is a LIVE stream page, swiping moves to the next one (#354)
 A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.	يعود LIVE الذي تنتقل إليه بالتمرير مع ظهور المحادثة والهدايا والأزرار. هذا يحافظ على الشاشة نظيفة من غرفة إلى غرفة حتى توقفه.
+# context: LIVE settings row under Keep clear screen in the next LIVE; hides the list of viewers' messages over a LIVE stream (#525)
+Hide LIVE chat	إخفاء دردشة LIVE
+# context: summary of Hide LIVE chat; the comment box is where you type a comment, the room's buttons are gifts, share and the rest (#525)
+Hides the chat messages that scroll over a LIVE's video. The comment box and the room's buttons stay.	يخفي رسائل الدردشة التي تمر فوق فيديو LIVE. يبقى مربع التعليق وأزرار الغرفة.
 # context: LIVE settings row under Keep clear screen in the next LIVE; adds TikTok's full screen button (turns the phone sideways for a wide stream) to LIVE rooms that lack it (#57)
 Offer full screen in more LIVEs	عرض ملء الشاشة في المزيد من بث LIVE
 # context: summary of Offer full screen in more LIVEs; streamed from a computer means TikTok LIVE Studio, a wide video is a landscape stream (#57)
@@ -3491,7 +3495,7 @@ With the switch above on, landscape and square videos are cropped to cover the s
 Random time each day	وقت عشوائي كل يوم
 Sends at a different time each day, somewhere between When to send and Latest time.	يرسل في وقت مختلف كل يوم، في وقت ما بين وقت الإرسال وآخر وقت.
 Latest time	آخر وقت
-The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.	نهاية النافذة العشوائية، في نفس يوم وقت الإرسال. إذا لم يكن لاحقًا، تُرسل الرسالة في وقت الإرسال.
+The end of the random window. If it's earlier than When to send, the window runs past midnight.	نهاية النافذة العشوائية. إذا كانت أبكر من وقت الإرسال، تمتد النافذة إلى ما بعد منتصف الليل.
 # context: Jump to a date on Favorites grids (#508): the Favorites tab holds the videos you saved with the bookmark icon
 Jump to a date on Favorites grids	الانتقال إلى تاريخ في شبكات المفضلات
 Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.	يضيف زرًا إلى الزاوية العلوية لشبكة المفضلات يبدأ عرض فيديوهاتك المحفوظة من سنة أو شهر تختاره، بحيث يتم تحميل المحفوظات القديمة دون التمرير عبر الأحدث. اختر أحدث المحفوظات هناك للعودة.

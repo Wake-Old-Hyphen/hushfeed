@@ -4,6 +4,14 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* `Random time each day` can now run past midnight. Set `Latest time` earlier than `When to send`, like 11 PM to 2 AM, and each day's message goes out late that evening or early that morning (rimixyz's idea, from their pull request, #507).
+* New `Hide LIVE chat` switch under LIVE controls. It hides the messages that scroll over a LIVE so you only see the stream, and the comment box stays where it was (#525).
+* `SIM spoof` no longer leaves TikTok saying "No internet connection" on a phone with a SIM from China, Hong Kong, India and the other places TikTok isn't offered, or while a VPN is on. TikTok's network side keeps the preset there instead of going back to the real SIM (#523).
+* A LIVE recording now carries on when the stream's connection drops for a moment. It reconnects and keeps writing to the same file instead of stopping with `Nothing was recorded` or a cut-off video (#526).
+* `Hide search rewards` now also hides the points bubble by the search icon ("Type 12 searches to get 864 points") (#522).
+* With `Keep suggestions on profiles` on, `View all` above a profile's suggestions opens a full list again instead of an empty page (#462).
+* `Save episodes` only saves whole episodes you can already watch. An episode of a drama you haven't unlocked saves as the short preview TikTok shows, since the rest is what TikTok sells (#527).
+
 ## 0.85.0 (2026-11-24)
 
 ### Features

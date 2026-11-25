@@ -1846,6 +1846,8 @@ Offer clear screen in every LIVE room,Tawarkan layar bersih di setiap ruang LIVE
 "Clear screen hides a LIVE's chat, gifts and buttons so only the stream shows. TikTok puts it in the menu of only some rooms. This adds it to the others.","Layar bersih menyembunyikan obrolan, hadiah, dan tombol LIVE sehingga hanya siarannya yang terlihat. TikTok hanya menaruhnya di menu beberapa ruang. Ini menambahkannya ke ruang lainnya."
 Keep clear screen in the next LIVE,Pertahankan layar bersih di LIVE berikutnya
 "A LIVE you swipe to comes back with its chat, gifts and buttons showing. This keeps clear screen on from room to room until you turn it off.","LIVE yang kamu geser akan kembali menampilkan obrolan, hadiah, dan tombolnya. Ini membuat layar bersih tetap aktif dari ruang ke ruang sampai kamu mematikannya."
+Hide LIVE chat,Sembunyikan obrolan LIVE
+Hides the chat messages that scroll over a LIVE's video. The comment box and the room's buttons stay.,Menyembunyikan pesan obrolan yang bergulir di atas video LIVE. Kotak komentar dan tombol ruang tetap ada.
 Offer full screen in more LIVEs,Tawarkan layar penuh di lebih banyak LIVE
 TikTok shows its full screen button only in LIVEs streamed from a computer or a shared screen. This shows it in every other LIVE with a wide video.,TikTok hanya menampilkan tombol layar penuh di LIVE yang disiarkan dari komputer atau layar yang dibagikan. Ini menampilkannya di setiap LIVE lain dengan video lebar.
 Keep watching in a small window,Tetap menonton di jendela kecil
@@ -3051,7 +3053,7 @@ Fill wide videos too,Penuhi juga dengan video lebar
 Random time each day,Waktu acak setiap hari
 "Sends at a different time each day, somewhere between When to send and Latest time.","Mengirim pada waktu berbeda setiap hari, di antara Kapan dikirim dan Waktu paling lambat."
 Latest time,Waktu paling lambat
-"The end of the random window, on the same day as When to send. If it isn't later, the message goes at When to send.","Akhir rentang acak, pada hari yang sama dengan Kapan dikirim. Jika tidak lebih lambat, pesan dikirim pada waktu Kapan dikirim."
+"The end of the random window. If it's earlier than When to send, the window runs past midnight.","Akhir rentang acak. Jika lebih awal dari Kapan dikirim, rentangnya berlanjut melewati tengah malam."
 Jump to a date on Favorites grids,Lompat ke tanggal di kisi Favorit
 "Adds a button to the Favorites grid's top corner that starts your saved videos at a year or month you pick, so older saves load without scrolling past newer ones. Pick Newest saves there to go back.","Menambahkan tombol di sudut atas kisi Favorit yang memulai video tersimpan Anda dari tahun atau bulan yang Anda pilih, sehingga yang lebih lama dimuat tanpa harus menggulir melewati yang lebih baru. Pilih Favorit terbaru di sana untuk kembali."
 Newest saves,Favorit terbaru
