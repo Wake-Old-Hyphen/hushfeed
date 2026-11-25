@@ -96,7 +96,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Fetch Nai64 version (GitLab)
+      - name: Fetch Nai64 version (GitLab)
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
         id: nai64
         run: |
@@ -107,8 +107,7 @@ jobs:
             -o nai64-meta/bundle.json
           NAI64_VER=$(jq -er '.version // "unknown"' nai64-meta/bundle.json)
           echo "NAI64_VERSION=$NAI64_VER" >> "$GITHUB_OUTPUT"
-          echo "Nai64 version: $NAI64_VER"
-
+          echo "Nai64 version: $NAI64_VER"      
 
       - name: Upload changelog for publish job
         if: steps.sync.outputs.UPSTREAM_CHANGED == 'true'
