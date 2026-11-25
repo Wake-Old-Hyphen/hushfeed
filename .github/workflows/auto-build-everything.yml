@@ -205,7 +205,7 @@ jobs:
       - name: Download kveld9 bundle and hosts blocklist
         run: |
           mkdir -p bundles
-          KVELD9_URL=$(curl -sL "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-bundle.json" | jq -r '.download_url')
+          KVELD9_URL=$(curl -sL "https://git.kvkdns.org/kveld9/kveld-morphe-patches/raw/branch/main/patches-bundle.json" | jq -r '.download_url')
           if [ -z "$KVELD9_URL" ] || [ "$KVELD9_URL" == "null" ]; then
             echo "Could not find kveld9 download URL"
             exit 1
