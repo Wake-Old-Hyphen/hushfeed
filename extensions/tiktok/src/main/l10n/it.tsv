@@ -285,6 +285,8 @@ Block new bottom tabs	Blocca le nuove schede inferiori
 Block this commenter	Blocca l'autore del commento
 Block this creator	Blocca questo creator
 Block this sound	Blocca questo audio
+Block sound	Blocca audio
+Unblock sound	Sblocca audio
 Blocked	Bloccato
 Blocked %1$s	%1$s bloccato
 Blocked %1$s. Unblock	%1$s bloccato. Sblocca
@@ -606,6 +608,7 @@ Hide the tab names above the feed	Nascondi i nomi delle schede sopra il feed
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	I nomi “Seguiti” e “Per te” sopra il feed scompaiono. Scorrere tra i feed e il pulsante di ricerca restano come sono.
 Hide floating promotion badges, coins, and timer banners on the feed.	Nascondi i badge promozionali fluttuanti, le monete e i banner con timer nel feed.
 Hide floating promotions	Nascondi le promozioni fluttuanti
+Hide from the host next time	Nasconditi da chi conduce la prossima volta
 Hide inserted cards	Nascondi le card inserite
 Hide message requests	Nascondi le richieste di messaggio
 Hide message streaks	Nascondi le serie di messaggi
@@ -1074,6 +1077,10 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	Mostra una miniatura di anteprima del video mentre trascini la barra di avanzamento.
 Show the block button on videos	Mostra il pulsante di blocco sui video
 Show the block sound button	Mostra il pulsante per bloccare l'audio
+Show Block sound on sound pages	Mostra Blocca audio nelle pagine degli audio
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Aggiunge un pulsante Blocca audio sotto Salva nella pagina di un audio, quella che si apre dal disco che gira sul video. Salta ogni video che usa quell'audio.
+Hide sound page buttons	Nascondi i pulsanti della pagina dell'audio
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Nasconde Jam Sound e Usa audio in fondo alla pagina di un audio, quella che si apre dal disco che gira in un video.
 Show failures on screen	Mostra gli errori sullo schermo
 Show gates	Mostra i gate
 Show last report	Mostra l'ultimo rapporto
@@ -2285,6 +2292,7 @@ LIVE recording saved to %1$s	Registrazione del LIVE salvata in %1$s
 LIVE ended or dropped. Recording saved to %1$s	LIVE finito o caduto. Registrazione salvata: %1$s
 Storage almost full. Recording saved to %1$s	Memoria quasi piena. Registrazione salvata: %1$s
 Size limit reached. Recording saved to %1$s	Limite di dimensione raggiunto. Salvata in %1$s
+2 GB reached. Recording goes on in a new video.	2 GB raggiunti. Si continua in un nuovo video.
 TikTok closed. What was recorded is saved to %1$s	TikTok chiuso. Registrazione salvata in %1$s
 Recording stopped early. Saved to %1$s	Registrazione fermata in anticipo. Salvata in %1$s
 This LIVE's stream can't be saved	Lo stream di questo LIVE non può essere salvato
@@ -2420,7 +2428,7 @@ Blur the part of the video that sits behind the glass pill on the main feed, so 
 LIVE recording source	Origine della registrazione LIVE
 Stream only	Solo stream
 Screen	Schermo
-Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	Solo stream salva il video della stanza, come prima. Schermo registra ciò che mostra il telefono mentre guardi, con l'audio dell'app se TikTok ha il permesso del microfono. Android chiede ogni volta di consentire la registrazione dello schermo e mostra un suo avviso mentre registra.
+Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records. A screen recording looks as sharp as the quality you're watching. Hold the Record button in a LIVE to change it.	Solo stream salva il video della stanza, come prima. Schermo registra ciò che mostra il telefono mentre guardi, con l'audio dell'app se TikTok ha il permesso del microfono. Android chiede ogni volta di consentire la registrazione dello schermo e mostra un suo avviso mentre registra. Una registrazione dello schermo è nitida quanto la qualità che stai guardando. Tieni premuto il pulsante Registra in una LIVE per cambiarlo.
 Recording this LIVE's screen	Registrazione dello schermo di questa LIVE
 Screen recording wasn't allowed	Registrazione schermo non consentita
 Tap Stop or leave the room to save it.	Tocca Interrompi o esci dalla stanza per salvarla.
@@ -3115,7 +3123,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Attenua nome, data e descrizione
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Mostra il nome del creator, la data, la descrizione e la riga della musica sul video a questo livello, e restano toccabili. A 100 seguono Attenua i controlli del video. A 0 vengono nascosti.
 LIVE buttons in the long-press menu	Pulsanti LIVE nel menu a pressione prolungata
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Toglie i pulsanti Registra e Tocco automatico dal video e li mette nel menu che si apre tenendo premuto il centro di un LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Toglie i pulsanti Registra e Tocco automatico e l'occhio della Modalità fantasma dal video e li mette nel menu che si apre tenendo premuto il centro di un LIVE.
 Auto tap started	Tocco automatico avviato
 Hide stories from accounts you don't follow	Nascondi le storie degli account che non segui
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Le storie degli account che non segui escono dalla barra delle storie. Le storie degli account che segui restano.

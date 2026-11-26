@@ -285,6 +285,8 @@ Block new bottom tabs	บล็อกแท็บด้านล่างให�
 Block this commenter	บล็อกผู้แสดงความคิดเห็นนี้
 Block this creator	บล็อกครีเอเตอร์นี้
 Block this sound	บล็อกเสียงนี้
+Block sound	บล็อกเสียง
+Unblock sound	เลิกบล็อกเสียง
 Blocked	บล็อกแล้ว
 Blocked %1$s	บล็อก %1$s แล้ว
 Blocked %1$s. Unblock	บล็อก %1$s แล้ว เลิกบล็อก
@@ -606,6 +608,7 @@ Hide the tab names above the feed	ซ่อนชื่อแท็บเหน�
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	ชื่อกำลังติดตามและสำหรับคุณเหนือฟีดจะหายไป การปัดระหว่างฟีดและปุ่มค้นหาจะยังคงเหมือนเดิม
 Hide floating promotion badges, coins, and timer banners on the feed.	ซ่อนป้ายโปรโมชันแบบลอย เหรียญ และแบนเนอร์จับเวลาบนฟีด
 Hide floating promotions	ซ่อนโปรโมชันแบบลอย
+Hide from the host next time	ซ่อนจากโฮสต์ครั้งหน้า
 Hide inserted cards	ซ่อนการ์ดที่แทรกเข้ามา
 Hide message requests	ซ่อนคำขอส่งข้อความ
 Hide message streaks	ซ่อนสตรีคข้อความ
@@ -1074,6 +1077,10 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	แสดงรูปตัวอย่างขนาดย่อของวิดีโอขณะลากแถบความคืบหน้า
 Show the block button on videos	แสดงปุ่มบล็อกบนวิดีโอ
 Show the block sound button	แสดงปุ่มบล็อกเสียง
+Show Block sound on sound pages	แสดงปุ่มบล็อกเสียงในหน้าเสียง
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	เพิ่มปุ่มบล็อกเสียงใต้ปุ่มบันทึกในหน้าเสียง ซึ่งเปิดจากแผ่นเสียงที่หมุนอยู่บนวิดีโอ และข้ามทุกวิดีโอที่ใช้เสียงนั้น
+Hide sound page buttons	ซ่อนปุ่มในหน้าเสียง
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	ซ่อน Jam Sound และ ใช้เสียง ที่ด้านล่างของหน้าเสียง ซึ่งเป็นหน้าที่แผ่นเสียงหมุนในวิดีโอเปิดขึ้นมา
 Show failures on screen	แสดงข้อผิดพลาดบนหน้าจอ
 Show gates	แสดงเกต
 Show last report	แสดงรายงานล่าสุด
@@ -2288,6 +2295,7 @@ LIVE recording saved to %1$s	บันทึกการอัด LIVE ไปย
 LIVE ended or dropped. Recording saved to %1$s	LIVE จบหรือหลุด บันทึกการอัดไว้ที่ %1$s แล้ว
 Storage almost full. Recording saved to %1$s	พื้นที่จัดเก็บข้อมูลใกล้เต็ม บันทึกการอัดไปยัง %1$s แล้ว
 Size limit reached. Recording saved to %1$s	ถึงขีดจำกัดขนาดไฟล์แล้ว บันทึกการอัดไปยัง %1$s แล้ว
+2 GB reached. Recording goes on in a new video.	ครบ 2 GB แล้ว การอัดจะต่อในวิดีโอใหม่
 TikTok closed. What was recorded is saved to %1$s	TikTok ปิดแล้ว ส่วนที่อัดไว้บันทึกที่ %1$s
 Recording stopped early. Saved to %1$s	การบันทึกหยุดลงก่อนกำหนด บันทึกไปยัง %1$s แล้ว
 This LIVE's stream can't be saved	ไม่สามารถบันทึกสตรีมของ LIVE นี้ได้
@@ -2423,7 +2431,7 @@ Blur the part of the video that sits behind the glass pill on the main feed, so 
 LIVE recording source	แหล่งที่มาของการบันทึก LIVE
 Stream only	สตรีมเท่านั้น
 Screen	หน้าจอ
-Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	"สตรีมเท่านั้น" จะบันทึกเฉพาะวิดีโอของห้องเหมือนเดิม "หน้าจอ" จะบันทึกสิ่งที่โทรศัพท์ของคุณแสดงขณะที่คุณรับชม พร้อมเสียงที่แอปเล่นเมื่อ TikTok ได้รับสิทธิ์อนุญาตใช้ไมโครโฟน โดย Android จะขอให้คุณอนุญาตการบันทึกหน้าจอทุกครั้ง และจะแสดงการแจ้งเตือนขณะกำลังบันทึก
+Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records. A screen recording looks as sharp as the quality you're watching. Hold the Record button in a LIVE to change it.	"สตรีมเท่านั้น" จะบันทึกเฉพาะวิดีโอของห้องเหมือนเดิม "หน้าจอ" จะบันทึกสิ่งที่โทรศัพท์ของคุณแสดงขณะที่คุณรับชม พร้อมเสียงที่แอปเล่นเมื่อ TikTok ได้รับสิทธิ์อนุญาตใช้ไมโครโฟน โดย Android จะขอให้คุณอนุญาตการบันทึกหน้าจอทุกครั้ง และจะแสดงการแจ้งเตือนขณะกำลังบันทึก การบันทึกหน้าจอจะคมชัดเท่ากับคุณภาพที่คุณกำลังรับชม กดปุ่มบันทึกค้างไว้ใน LIVE เพื่อเปลี่ยน
 Recording this LIVE's screen	กำลังบันทึกหน้าจอ LIVE นี้
 Tap Stop or leave the room to save it.	แตะหยุดหรือออกจากห้องเพื่อบันทึก
 Screen recording wasn't allowed	ไม่อนุญาตให้บันทึกหน้าจอ
@@ -3118,7 +3126,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	เฟดชื่อ วันที่ และคำบรรยาย
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	แสดงชื่อครีเอเตอร์ วันที่ คำบรรยาย และบรรทัดเพลงบนวิดีโอที่ระดับนี้ และยังแตะได้ตามเดิม ที่ 100 จะเป็นไปตาม เฟดตัวควบคุมวิดีโอ. ที่ 0 จะถูกซ่อน
 LIVE buttons in the long-press menu	ปุ่ม LIVE ในเมนูกดค้าง
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	นำปุ่ม บันทึก และ แตะอัตโนมัติ ออกจากวิดีโอ แล้วไปไว้ในเมนูที่เปิดขึ้นเมื่อกดค้างตรงกลาง LIVE
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	นำปุ่ม บันทึก และ แตะอัตโนมัติ รวมถึงไอคอนตาของโหมดล่องหน ออกจากวิดีโอ แล้วไปไว้ในเมนูที่เปิดขึ้นเมื่อกดค้างตรงกลาง LIVE
 Auto tap started	เริ่มแตะอัตโนมัติแล้ว
 Hide stories from accounts you don't follow	ซ่อนสตอรี่จากบัญชีที่คุณไม่ได้ติดตาม
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	สตอรี่จากบัญชีที่คุณไม่ได้ติดตามจะหายไปจากถาดสตอรี่ ส่วนสตอรี่จากบัญชีที่คุณติดตามยังคงอยู่

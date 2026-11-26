@@ -330,6 +330,8 @@ Block new bottom tabs	Блокировать новые нижние вклад�
 Block this commenter	Заблокировать этого комментирующего
 Block this creator	Заблокировать этого автора
 Block this sound	Заблокировать этот звук
+Block sound	Заблокировать звук
+Unblock sound	Разблокировать звук
 Blocked	Заблокировано
 Blocked %1$s	Заблокировано: %1$s
 Blocked %1$s. Unblock	Заблокировано: %1$s. Разблокировать
@@ -663,6 +665,7 @@ Hide the tab names above the feed	Скрывать названия вкладо
 The Following and For You names above the feed go away. Swiping between the feeds and the search button stay as they are.	Названия Подписки и Рекомендации над лентой исчезают. Переключение между лентами свайпом и кнопка поиска остаются как есть.
 Hide floating promotion badges, coins, and timer banners on the feed.	Скрывать плавающие рекламные значки, монеты и баннеры таймера в ленте.
 Hide floating promotions	Скрывать плавающую рекламу
+Hide from the host next time	Скрыться от ведущего в следующий раз
 Hide inserted cards	Скрывать вставленные карточки
 Hide message requests	Скрывать запросы на сообщения
 Hide message streaks	Скрывать серии сообщений
@@ -1149,6 +1152,10 @@ Show the search entry inside TikTok's LIVE drawer, where available. This doesn't
 Show a video preview thumbnail while dragging the progress bar.	Показывать превью видео при перетаскивании полосы прогресса.
 Show the block button on videos	Показывать кнопку блокировки на видео
 Show the block sound button	Показывать кнопку блокировки звука
+Show Block sound on sound pages	Показывать «Заблокировать звук» на страницах звуков
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Добавляет кнопку «Заблокировать звук» под «Сохранить» на странице звука, которую открывает вращающаяся пластинка на видео. Пропускает все видео с этим звуком.
+Hide sound page buttons	Скрыть кнопки на странице звука
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Скрывает Jam Sound и «Использовать звук» внизу страницы звука, которую открывает вращающаяся пластинка в видео.
 Show failures on screen	Показывать ошибки на экране
 Show gates	Показывать переключатели
 Show last report	Показать последний отчёт
@@ -2465,6 +2472,7 @@ LIVE recording saved to %1$s	Запись LIVE сохранена в %1$s
 LIVE ended or dropped. Recording saved to %1$s	LIVE завершён или прерван. Запись сохранена: %1$s
 Storage almost full. Recording saved to %1$s	Память почти заполнена. Запись сохранена: %1$s
 Size limit reached. Recording saved to %1$s	Достигнут лимит размера. Запись сохранена: %1$s
+2 GB reached. Recording goes on in a new video.	Достигнуто 2 ГБ. Запись идёт в новом видео.
 TikTok closed. What was recorded is saved to %1$s	TikTok закрылся. Записанное сохранено в %1$s
 Recording stopped early. Saved to %1$s	Запись остановлена раньше. Сохранено в %1$s
 This LIVE's stream can't be saved	Трансляцию этого LIVE нельзя сохранить
@@ -2600,7 +2608,7 @@ Blur the part of the video that sits behind the glass pill on the main feed, so 
 LIVE recording source	Источник записи LIVE
 Stream only	Только поток
 Screen	Экран
-Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	Только поток сохраняет видео комнаты, как раньше. Экран записывает то, что показывает телефон, со звуком приложения, если у TikTok есть доступ к микрофону. Android каждый раз спрашивает разрешение на запись экрана и показывает своё уведомление во время записи.
+Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records. A screen recording looks as sharp as the quality you're watching. Hold the Record button in a LIVE to change it.	Только поток сохраняет видео комнаты, как раньше. Экран записывает то, что показывает телефон, со звуком приложения, если у TikTok есть доступ к микрофону. Android каждый раз спрашивает разрешение на запись экрана и показывает своё уведомление во время записи. Запись экрана получается такой же чёткой, как качество, которое вы смотрите. Удерживайте кнопку «Запись» в LIVE, чтобы сменить источник.
 Recording this LIVE's screen	Идёт запись экрана этого LIVE
 Tap Stop or leave the room to save it.	Нажмите «Стоп» или выйдите из комнаты, чтобы сохранить запись.
 Screen recording wasn't allowed	Запись экрана не разрешена
@@ -3316,7 +3324,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Приглушить имя, дату и подпись
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Показывает имя автора, дату, подпись и строку с музыкой поверх видео на этом уровне, и на них по-прежнему можно нажимать. При 100 они следуют настройке Приглушить кнопки поверх видео. При 0 они скрыты.
 LIVE buttons in the long-press menu	Кнопки LIVE в меню долгого нажатия
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Убирает кнопки Запись и Автонажатие с видео и помещает их в меню, которое открывается при долгом нажатии на середину LIVE.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Убирает кнопки Запись и Автонажатие и глаз Режима призрака с видео и помещает их в меню, которое открывается при долгом нажатии на середину LIVE.
 Auto tap started	Автонажатие запущено
 Hide stories from accounts you don't follow	Скрывать истории аккаунтов, на которые вы не подписаны
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	Истории аккаунтов, на которые вы не подписаны, исчезают из панели историй. Истории аккаунтов, на которые вы подписаны, остаются.

@@ -279,6 +279,8 @@ Block the creator in one tap. Once TikTok confirms, skip to the next video. A sm
 Block this commenter	Bu şərh yazanı bloklayın
 Block this creator	Bu yaradıcını bloklayın
 Block this sound	Bu səsi bloklayın
+Block sound	Səsi blokla
+Unblock sound	Səsi blokdan çıxar
 Blocked	Bloklanıb
 Blocked %1$s	%1$s bloklandı
 Blocked %1$s. Unblock	%1$s bloklandı. Blokdan çıxarın
@@ -605,6 +607,7 @@ Hide conversations	Söhbətləri gizlədin
 Hide every direct message conversation. Leaves the Inbox empty apart from whatever else is still turned on.	Bütün birbaşa mesaj söhbətlərini gizlədin. Hələ də yandırılmış başqa şeylər istisna olmaqla, Gələnlər boş qalır.
 Hide floating promotion badges, coins, and timer banners on the feed.	Lentdəki üzən tanıtım nişanlarını, sikkələri və taymer bannerlərini gizlədin.
 Hide floating promotions	Üzən tanıtımları gizlədin
+Hide from the host next time	Növbəti dəfə aparıcıdan gizlən
 Hide inserted cards	Əlavə edilmiş kartları gizlədin
 Hide location labels	Məkan etiketlərini gizlədin
 Hide message requests	Mesaj sorğularını gizlədin
@@ -1103,6 +1106,10 @@ Show the mute button on videos	Videolarda səssiz düyməsini göstərin
 Add a button beside the block control that turns the feed's sound off and on.	Bloklama idarəetməsinin yanına lentin səsini söndürüb yandıran düymə əlavə edin.
 Show the block button on videos	Videolarda bloklama düyməsini göstərin
 Show the block sound button	Səsi bloklama düyməsini göstərin
+Show Block sound on sound pages	Səs səhifələrində Səsi blokla düyməsini göstər
+Add a Block sound button under Save on a sound's page, the one the spinning record on a video opens. It skips every video that uses that sound.	Səs səhifəsində Yadda saxla düyməsinin altına Səsi blokla düyməsi əlavə edir. Bu, videodakı fırlanan valın açdığı səhifədir. O səsdən istifadə edən bütün videoları keçir.
+Hide sound page buttons	Səs səhifəsinin düymələrini gizlət
+Hide Jam Sound and Use sound at the bottom of a sound's page, the one the spinning record on a video opens.	Səs səhifəsinin altındakı Jam Sound və Səsdən istifadə et düymələrini gizlət. Bu, videodakı fırlanan valın açdığı səhifədir.
 Show the country a video was posted from next to the creator's name.	Videonun paylaşıldığı ölkəni yaradıcının adının yanında göstərin.
 Show the current spoken caption while the other controls are hidden.	Digər idarəetmələr gizlədiləndə cari danışılan başlığı göstərin.
 Show the handle instead of the name	Ad əvəzinə istifadəçi adını göstərin
@@ -2285,6 +2292,7 @@ LIVE recording saved to %1$s	LIVE yazısı %1$s qovluğuna saxlanıldı
 LIVE ended or dropped. Recording saved to %1$s	LIVE bitdi və ya kəsildi. Qeyd saxlandı: %1$s
 Storage almost full. Recording saved to %1$s	Yaddaş dolmaq üzrədir. Qeyd saxlandı: %1$s
 Size limit reached. Recording saved to %1$s	Ölçü həddinə çatıldı. Qeyd saxlandı: %1$s
+2 GB reached. Recording goes on in a new video.	2 GB-a çatdı. Qeyd yeni videoda davam edir.
 TikTok closed. What was recorded is saved to %1$s	TikTok bağlandı. Qeyd saxlandı: %1$s
 Recording stopped early. Saved to %1$s	Qeyd vaxtından əvvəl dayandı. Saxlandı: %1$s
 This LIVE's stream can't be saved	Bu LIVE-ın yayımını saxlamaq mümkün deyil
@@ -2420,7 +2428,7 @@ Blur the part of the video that sits behind the glass pill on the main feed, so 
 LIVE recording source	LIVE yazısının mənbəyi
 Stream only	Yalnız yayım
 Screen	Ekran
-Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records.	Yalnız yayım otağın videosunu əvvəlki kimi saxlayır. Ekran izləyərkən telefonunuzun göstərdiyini yazır, TikTok-un mikrofon icazəsi varsa tətbiqin səsi ilə. Android hər dəfə ekran yazısına icazə istəyir və yazarkən öz bildirişini göstərir.
+Stream only saves the room's own video, as before. Screen records what your phone shows while you watch, with the sound the app plays when TikTok has the microphone permission. Android asks you to allow screen recording each time, and shows its own notice while it records. A screen recording looks as sharp as the quality you're watching. Hold the Record button in a LIVE to change it.	Yalnız yayım otağın videosunu əvvəlki kimi saxlayır. Ekran izləyərkən telefonunuzun göstərdiyini yazır, TikTok-un mikrofon icazəsi varsa tətbiqin səsi ilə. Android hər dəfə ekran yazısına icazə istəyir və yazarkən öz bildirişini göstərir. Ekran yazısı izlədiyiniz keyfiyyət qədər aydın olur. Dəyişmək üçün LIVE-da Yaz düyməsini basıb saxlayın.
 Recording this LIVE's screen	Bu LIVE-ın ekranı yazılır
 Tap Stop or leave the room to save it.	Saxlamaq üçün Dayandır düyməsinə toxunun və ya otaqdan çıxın.
 Screen recording wasn't allowed	Ekran yazısına icazə verilmədi
@@ -3115,7 +3123,7 @@ Writes TikTok's date by the creator's name with the month's name, like Oct 12. D
 Fade the name, date and caption	Ad, tarix və açıqlamanı solğunlaşdır
 Draws the creator's name, the date, the caption and the music line over the video at this level, and they still take taps. At 100 they follow Fade the video controls. At 0 they're hidden.	Yaradıcının adını, tarixi, açıqlamanı və musiqi sətrini videonun üzərində bu səviyyədə göstərir, onlara toxunmaq yenə mümkündür. 100 olduqda Video idarəetmələrini solğunlaşdır ayarına uyğun olur. 0 olduqda gizlənir.
 LIVE buttons in the long-press menu	LIVE düymələri uzun basma menyusunda
-Takes the Record and Auto tap buttons off the video and puts them in the menu you get by holding the middle of a LIVE.	Yaz və Avto toxunma düymələrini videodan götürür və LIVE-ın ortasına basıb saxlayanda açılan menyuya qoyur.
+Takes the Record and Auto tap buttons and Ghost mode's eye off the video and puts them in the menu you get by holding the middle of a LIVE.	Yaz və Avto toxunma düymələrini və Xəyal rejiminin gözünü videodan götürür və LIVE-ın ortasına basıb saxlayanda açılan menyuya qoyur.
 Auto tap started	Avto toxunma başladı
 Hide stories from accounts you don't follow	İzləmədiyiniz hesabların hekayələrini gizlədin
 Stories from accounts you don't follow leave the stories tray. Stories from accounts you follow stay.	İzləmədiyiniz hesabların hekayələri hekayə panelindən çıxır. İzlədiyiniz hesabların hekayələri qalır.

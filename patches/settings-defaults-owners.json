@@ -122,6 +122,9 @@
       "VIDEO_BUTTON_SIZE",
       "VIDEO_BUTTONS_OVER_RAIL"
     ],
+    "Block sound on sound pages": [
+      "SOUND_PAGE_BLOCK_BUTTON"
+    ],
     "Block contact list access": [
       "BLOCK_CONTACT_LIST"
     ],
@@ -468,6 +471,9 @@
       "HIDE_SEARCH_REWARDS",
       "HIDE_SEARCH_SUGGESTIONS",
       "DISCOVER_SEARCH_BAR_ONLY"
+    ],
+    "Hide sound page buttons": [
+      "HIDE_SOUND_PAGE_BUTTONS"
     ],
     "Hide suggested accounts": [
       "HIDE_INBOX_SUGGESTED_ACCOUNTS",
