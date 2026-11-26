@@ -310,7 +310,8 @@ Free memory early	Belleği erken boşalt
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	%1$d ile %2$d arasında bir video sayısı seç. Bu aralığın dışındaki değerler en yakın geçerli sınırı kullanır. Bunu uygulamak için TikTok'u yeniden başlat.
 Choose a backup file. Your current settings are kept for Undo.	Bir yedek dosyası seç. Mevcut ayarların Geri al için saklanır.
 Pick a folder on internal storage, not an SD card	Dahili depolamada klasör seç, SD kart değil
-Choose a preset to fill the SIM details.	SIM bilgilerini doldurmak için bir hazır ayar seç.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	SIM bilgilerini doldurmak için bir hazır ayar işaretle ya da TikTok her açıldığında farklı birini kullanmak için birkaçını.
+A different preset each time TikTok starts, in this order: %1$s	TikTok her açıldığında farklı bir hazır ayar, bu sırayla: %1$s
 Choose a subfolder under %1$s.	%1$s altında bir alt klasör seç.
 Choose what reaches your feed	Akışına nelerin ulaşacağını seç
 Choose which bottom tabs stay visible.	Hangi alt sekmelerin görünür kalacağını seç.
@@ -1601,6 +1602,9 @@ Save again	Yeniden kaydet
 The saved-video choice couldn't open. Try again.	Kayıtlı video seçenekleri açılamadı. Yeniden deneyin.
 The saved-video choice is still open	Kayıtlı video seçenekleri hâlâ açık
 No full file for this video. Try again later.	Bu video için tam dosya yok. Sonra tekrar dene.
+Subscriber-only posts can't be saved	Abonelere özel gönderiler kaydedilemez
+Copy-protected videos can't be saved	Kopyalamaya karşı korumalı videolar kaydedilemez
+Not saved. The file wasn't a playable video.	Kaydedilmedi. Dosya oynatılabilir video değil.
 Saving video to %1$s	Video %1$s konumuna kaydediliyor
 Video and details saved to %1$s	Video ve ayrıntılar %1$s konumuna kaydedildi
 Saved, but a later save may make a second copy	Kaydedildi. Tekrar kaydetmek ikinci kopya yapabilir
@@ -1865,8 +1869,6 @@ Hide call buttons	Arama düğmelerini gizle
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Sesli ve görüntülü arama düğmeleri sohbetin üst kısmından kalkar. Aramalar yine çalar, sohbet ayrıntıları düğmesi ise yerinde kalır.
 Hide sticker suggestions	Çıkartma önerilerini gizle
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Çıkartma önerisi bannerı sohbette artık gösterilmez. Kendi çıkartmaların çıkartma seçicide durur.
-Hide suggested replies	Önerilen yanıtları gizle
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	TikTok'un önerdiği yanıtlar ve bunları tanıtan banner sohbette artık gösterilmez. Yazdığın veya aldığın mesajlara dokunulmaz.
 Hide online status	Çevrimiçi durumunu gizle
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	TikTok'tayken arkadaşların yeşil nokta veya Active now görmez. Ghost mode açık olmalı. Onların durumu sende güncellenmeyebilir, senin son durumun da bir süre görünür kalabilir.
 Stop LIVE previews opening by themselves	LIVE önizlemelerinin kendiliğinden açılmasını durdur
@@ -2526,7 +2528,6 @@ autoplay auto play	otomatik oynatma
 picture in picture PiP	resim içinde resim PiP
 search suggestions	arama önerileri
 AI chat	yapay zeka sohbeti
-AI Tako	yapay zeka Tako
 save photos	fotoğrafları kaydet
 download button	indirme düğmesi indir
 It's in %1$s, under %2$s. Tap to go there.	%1$s içinde, %2$s altında. Oraya gitmek için dokun.
@@ -2685,7 +2686,7 @@ Read receipts shown	Okundu bilgileri gösteriliyor
 Compact long-press menu everywhere	Her yerde kompakt uzun basma menüsü
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	Bir videoya uzun basmak, Sana Özel'de de TikTok'un küçük paylaşım sayfasını açar, bir yaratıcının videolarındakiyle aynı. Yukarıdaki iki tam menü anahtarına üstün gelir. Uzun basma ayarının TikTok varsayılanında olması gerekir.
 Hide streak pop-ups	Seri açılır pencerelerini gizle
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	TikTok'un üzerine kayan seri uyarılarını ve sohbetlerinize eklediği seri mesajlarını ve ipuçlarını durdurur.
+Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.	TikTok'un üzerine kayan seri uyarılarını, Gelen Kutusu'ndaki Streak Pet davetini ve sohbetlerinize eklediği seri mesajlarını ve ipuçlarını durdurur.
 Long press on For You opens my watch history	Senin İçin'e uzun basmak izleme geçmişimi açar
 Instead of these settings. The list has a button that brings you back here.	Bu ayarların yerine. Listede seni buraya geri getiren bir düğme var.
 Long press on Profile opens my watch history	Profil'e uzun basmak izleme geçmişimi açar
@@ -2841,6 +2842,8 @@ Hide Send to new group	Yeni gruba gönder düğmesini gizle
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Seçtiğin kişilerden yeni bir grup sohbeti oluşturan düğmeyi gizler. Ayrı ayrı gönder kalır.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	AMOLED karanlık mod
+Dark mode	Karanlık mod
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	TikTok Lite'ın içinde olan ama hiç seçtirmediği karanlık temayı açar. Değişikliği görmek için TikTok Lite'ı yeniden başlat.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Karanlık modu yama sırasında seçilen renkle doldurur, başka bir renk seçilmediyse tam siyah. TikTok'un kendi koyu grileri için kapat. Aydınlık mod değişmez. Değişikliği görmek için TikTok'u yeniden başlat.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

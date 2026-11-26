@@ -207,6 +207,9 @@
       "delete_watched_offline_videos",
       "keep_offline_videos"
     ],
+    "Dark mode": [
+      "lite_dark_mode"
+    ],
     "Device privacy guard": [
       "block_clipboard_reads",
       "hide_vpn",
@@ -449,7 +452,6 @@
       "hide_inbox_group_chat_banner",
       "hide_chat_call_buttons",
       "hide_chat_sticker_banner",
-      "hide_chat_ai_replies",
       "turn_off_chat_double_tap",
       "turn_off_chat_swipe_reply",
       "hide_inbox_custom_titles",
@@ -752,6 +754,7 @@
       "simspoof_time_zone",
       "simspoof_mccmnc",
       "simspoof_op_name",
+      "simspoof_presets",
       "simspoof_feed_real",
       "live_feed_countries"
     ],
@@ -790,6 +793,7 @@
       "simspoof_iso",
       "simspoof_mccmnc",
       "simspoof_op_name",
+      "simspoof_presets",
       "simspoof_feed_real"
     ],
     "Sanitize sharing links": [
@@ -2411,12 +2415,6 @@
       "type": "boolean",
       "default": false
     },
-    "hide_chat_ai_replies": {
-      "field": "HIDE_CHAT_AI_REPLIES",
-      "key": "hide_chat_ai_replies",
-      "type": "boolean",
-      "default": false
-    },
     "hide_chat_call_buttons": {
       "field": "HIDE_CHAT_CALL_BUTTONS",
       "key": "hide_chat_call_buttons",
@@ -3534,6 +3532,12 @@
     "liquid_glass_bottom_bar": {
       "field": "LIQUID_GLASS_BOTTOM_BAR",
       "key": "liquid_glass_bottom_bar",
+      "type": "boolean",
+      "default": false
+    },
+    "lite_dark_mode": {
+      "field": "LITE_DARK_MODE",
+      "key": "lite_dark_mode",
       "type": "boolean",
       "default": false
     },
@@ -4814,6 +4818,12 @@
       "key": "simspoof_op_name",
       "type": "string",
       "default": "T-Mobile"
+    },
+    "simspoof_presets": {
+      "field": "SIM_SPOOF_PRESETS",
+      "key": "simspoof_presets",
+      "type": "string",
+      "default": ""
     },
     "simspoof_time_zone": {
       "field": "SIM_SPOOF_TIME_ZONE",

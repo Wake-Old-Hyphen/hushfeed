@@ -147,6 +147,9 @@ public class Settings extends BaseSettings {
     // On by default: AMOLED dark theme is in a build only when it was picked, so black is the ask.
     // Off puts TikTok's own dark grays back at the next start (#372).
     public static final BooleanSetting AMOLED_DARK_MODE = new BooleanSetting("amoled_dark_mode", TRUE, true);
+    // TikTok Lite only: its own dark theme, which nothing in Lite lets you pick (#543). Off leaves
+    // Lite on the mode it saved, light unless something saved another.
+    public static final BooleanSetting LITE_DARK_MODE = new BooleanSetting("lite_dark_mode", FALSE, true);
     // Saved the first time a build with that switch runs (#521). For AMOLED dark theme to be
     // picked by default its switch has to start off, or every dark mode turns black at the next
     // update (#372), and this is what will keep it on for the people who already had it.
@@ -1658,8 +1661,6 @@ public class Settings extends BaseSettings {
             new BooleanSetting("hide_chat_call_buttons", FALSE);
     public static final BooleanSetting HIDE_CHAT_STICKER_BANNER =
             new BooleanSetting("hide_chat_sticker_banner", FALSE);
-    public static final BooleanSetting HIDE_CHAT_AI_REPLIES =
-            new BooleanSetting("hide_chat_ai_replies", FALSE);
     /** A message's double tap and sideways swipe in a chat, read at each gesture. */
     public static final BooleanSetting TURN_OFF_CHAT_DOUBLE_TAP =
             new BooleanSetting("turn_off_chat_double_tap", FALSE);
@@ -2081,6 +2082,9 @@ public class Settings extends BaseSettings {
     );
     public static final StringSetting SIMSPOOF_MCCMNC = new StringSetting("simspoof_mccmnc", "310260");
     public static final StringSetting SIMSPOOF_OP_NAME = new StringSetting("simspoof_op_name", "T-Mobile");
+    // The presets ticked in the preset dialog, as country codes in the order they were ticked
+    // (#538). With two or more, each start of TikTok takes the next one into the three fields above.
+    public static final StringSetting SIM_SPOOF_PRESETS = new StringSetting("simspoof_presets", "");
     // Read by the region patch's request hooks as each For You request is built, so no restart.
     public static final BooleanSetting SIM_SPOOF_FEED_REAL =
             new BooleanSetting("simspoof_feed_real", FALSE, false, Setting.parent(SIM_SPOOF));

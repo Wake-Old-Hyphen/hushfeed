@@ -204,6 +204,9 @@
       "DELETE_WATCHED_OFFLINE_VIDEOS",
       "KEEP_OFFLINE_VIDEOS"
     ],
+    "Dark mode": [
+      "LITE_DARK_MODE"
+    ],
     "Device privacy guard": [
       "BLOCK_CLIPBOARD_READS",
       "HIDE_VPN",
@@ -446,7 +449,6 @@
       "HIDE_INBOX_GROUP_CHAT_BANNER",
       "HIDE_CHAT_CALL_BUTTONS",
       "HIDE_CHAT_STICKER_BANNER",
-      "HIDE_CHAT_AI_REPLIES",
       "TURN_OFF_CHAT_DOUBLE_TAP",
       "TURN_OFF_CHAT_SWIPE_REPLY",
       "HIDE_INBOX_CUSTOM_TITLES",
@@ -746,6 +748,7 @@
       "SIM_SPOOF_TIME_ZONE",
       "SIMSPOOF_MCCMNC",
       "SIMSPOOF_OP_NAME",
+      "SIM_SPOOF_PRESETS",
       "SIM_SPOOF_FEED_REAL",
       "LIVE_FEED_COUNTRIES"
     ],
@@ -861,6 +864,7 @@
       "SIM_SPOOF_ISO",
       "SIMSPOOF_MCCMNC",
       "SIMSPOOF_OP_NAME",
+      "SIM_SPOOF_PRESETS",
       "SIM_SPOOF_FEED_REAL"
     ],
     "Skip content warnings": [

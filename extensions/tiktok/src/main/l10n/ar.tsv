@@ -376,7 +376,8 @@ Free memory early	تحرير الذاكرة مبكرًا
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	اختر من %1$d إلى %2$d مقطع فيديو. القيم خارج هذا النطاق تستخدم أقرب حد صالح. أعد تشغيل TikTok لتطبيق هذا.
 Choose a backup file. Your current settings are kept for Undo.	اختر ملف نسخة احتياطية. يتم الاحتفاظ بإعداداتك الحالية للتراجع.
 Pick a folder on internal storage, not an SD card	اختر مجلد في وحدة التخزين الداخلية، وليس على بطاقة SD
-Choose a preset to fill the SIM details.	اختر إعدادا مسبقا لملء تفاصيل شريحة الاتصال.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	حدد إعدادا مسبقا واحدا لملء تفاصيل شريحة الاتصال، أو عدة إعدادات لاستخدام إعداد مختلف في كل مرة يبدأ فيها TikTok.
+A different preset each time TikTok starts, in this order: %1$s	إعداد مسبق مختلف في كل مرة يبدأ فيها TikTok، بهذا الترتيب: %1$s
 Choose a subfolder under %1$s.	اختر مجلد فرعي داخل %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	اختر الإجراءات التي تريد إزالتها من قائمة المشاركة. الأسماء التي كتبتها يدويا ولم يعرضها TikTok بعد تبقى في القائمة أعلاه.
 Choose what reaches your feed	اختر ما يصل إلى خلاصتك
@@ -1788,6 +1789,9 @@ Save again	حفظ مرة أخرى
 The saved-video choice couldn't open. Try again.	تعذر فتح خيار الفيديو المحفوظ. حاول مرة أخرى.
 The saved-video choice is still open	اختيار الفيديو المحفوظ ما زال مفتوح
 No full file for this video. Try again later.	لا يوجد ملف كامل لهذا الفيديو. حاول لاحقًا.
+Subscriber-only posts can't be saved	لا يمكن حفظ منشورات للمشتركين فقط
+Copy-protected videos can't be saved	لا يمكن حفظ الفيديوهات المحمية من النسخ
+Not saved. The file wasn't a playable video.	لم يُحفظ. الملف ليس فيديو قابلا للتشغيل.
 Saving video to %1$s	جارٍ حفظ الفيديو إلى %1$s
 Video and details saved to %1$s	تم حفظ الفيديو والتفاصيل في %1$s
 Saved, but a later save may make a second copy	تم الحفظ، لكن قد يؤدي حفظ لاحق إلى إنشاء نسخة ثانية
@@ -2056,8 +2060,6 @@ Hide call buttons	إخفاء أزرار الاتصال
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	يغادر زرا المكالمة الصوتية ومكالمة الفيديو أعلى الدردشة. ما زالت المكالمات ترن، ويبقى زر تفاصيل الدردشة.
 Hide sticker suggestions	أخف اقتراحات الملصقات
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	يتوقف شريط اقتراحات الملصقات عن الظهور في المحادثة. ملصقاتك الخاصة تبقى في منتقي الملصقات.
-Hide suggested replies	إخفاء الردود المقترحة
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	تتوقف خلايا الردود المقترحة من TikTok وبانر التعريف بها عن الظهور في الدردشة. الرسائل التي تكتبها أو تستقبلها لا تتأثر.
 Hide online status	إخفاء حالة الاتصال
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	لن يرى أصدقاؤك نقطة خضراء أو «نشط الآن» أثناء وجودك في TikTok. يتطلب تفعيل «وضع الشبح». قد يتوقف تحديث حالة أصدقائك لديك، وقد تبقى آخر حالة لك ظاهرة لفترة.
 Stop LIVE previews opening by themselves	أوقف فتح معاينات LIVE تلقائيًا
@@ -2769,7 +2771,6 @@ autoplay auto play	تشغيل تلقائي تلقائي التشغيل
 picture in picture PiP	صورة داخل صورة PiP
 search suggestions	اقتراحات البحث
 AI chat	دردشة AI
-AI Tako	AI Tako
 save photos	حفظ الصور
 download button	زر التنزيل تنزيل
 It's in %1$s, under %2$s. Tap to go there.	تجده في %1$s ضمن %2$s. اضغط للانتقال إليه.
@@ -2936,7 +2937,7 @@ Read receipts shown	إيصالات القراءة ظاهرة
 Compact long-press menu everywhere	قائمة ضغط مطول مضغوطة في كل مكان
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	الضغط المطول على فيديو يفتح قائمة المشاركة الصغيرة من TikTok في تبويب لك أيضًا، نفس القائمة التي تحصل عليها فيديوهات صانعي المحتوى. لها الأولوية على مفتاحي القائمة الكاملة أعلاه. يتطلب أن يكون الضغط المطول على افتراضي TikTok.
 Hide streak pop-ups	إخفاء نوافذ السلاسل
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	أوقف تنبيهات السلاسل التي تنزلق فوق TikTok ورسائل السلاسل والنصائح التي يضيفها إلى محادثاتك.
+Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.	أوقف تنبيهات السلاسل التي تنزلق فوق TikTok، ودعوة Streak Pet في صندوق الوارد، ورسائل السلاسل والنصائح التي يضيفها إلى محادثاتك.
 Long press on For You opens my watch history	الضغط المطول على «لك» يفتح سجل مشاهداتي
 Instead of these settings. The list has a button that brings you back here.	بدلاً من هذه الإعدادات. تحتوي القائمة على زر يعيدك إلى هنا.
 Long press on Profile opens my watch history	الضغط المطول على «الملف الشخصي» يفتح سجل مشاهداتي
@@ -3092,6 +3093,8 @@ Hide Send to new group	إخفاء «إرسال إلى مجموعة جديدة»
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	يخفي الزر الذي يحوّل الأشخاص الذين اخترتهم إلى محادثة جماعية جديدة. يبقى الإرسال المنفصل.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	وضع AMOLED الداكن
+Dark mode	الوضع الداكن
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	يشغّل المظهر الداكن الموجود في TikTok Lite الذي لا يتيح لك اختياره أبدا. أعد تشغيل TikTok Lite لترى التغيير.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	يملأ الوضع الداكن باللون المختار أثناء التعديل، أسود نقي ما لم يُختر لون آخر. أوقف تشغيله للحصول على درجات TikTok الرمادية الداكنة. الوضع الفاتح لا يتغير. أعد تشغيل TikTok لرؤية التغيير.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

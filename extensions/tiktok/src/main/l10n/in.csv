@@ -299,7 +299,8 @@ Free memory early,Kosongkan memori lebih awal
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Pilih %1$d sampai %2$d video. Nilai di luar rentang ini memakai batas valid terdekat. Mulai ulang TikTok agar berlaku.
 Choose a backup file. Your current settings are kept for Undo.,Pilih berkas cadangan. Pengaturanmu yang sekarang disimpan untuk Urungkan.
 "Pick a folder on internal storage, not an SD card","Pilih folder di penyimpanan internal, bukan kartu SD"
-Choose a preset to fill the SIM details.,Pilih preset untuk mengisi detail SIM.
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.","Centang satu preset untuk mengisi detail SIM, atau beberapa untuk memakai preset yang berbeda setiap kali TikTok dibuka."
+"A different preset each time TikTok starts, in this order: %1$s","Preset berbeda setiap kali TikTok dibuka, dengan urutan ini: %1$s"
 Choose a subfolder under %1$s.,Pilih subfolder di %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.,Pilih tindakan yang ingin dihapus dari lembar berbagi. Nama yang kamu ketik sendiri dan belum ditampilkan TikTok tetap ada di daftar di atas.
 Choose what reaches your feed,Pilih apa yang sampai ke feed-mu
@@ -1578,6 +1579,9 @@ Save again,Simpan lagi
 The saved-video choice couldn't open. Try again.,Pilihan video tersimpan gagal dibuka. Coba lagi.
 The saved-video choice is still open,Pilihan untuk video tersimpan masih terbuka
 No full file for this video. Try again later.,File lengkap video ini belum ada. Coba lagi nanti.
+Subscriber-only posts can't be saved,Kiriman khusus pelanggan tidak bisa disimpan
+Copy-protected videos can't be saved,Video dengan proteksi salin tidak bisa disimpan
+Not saved. The file wasn't a playable video.,Tidak disimpan. File bukan video yang bisa diputar.
 Saving video to %1$s,Menyimpan video ke %1$s
 Video and details saved to %1$s,Video dan detail disimpan ke %1$s
 "Saved, but a later save may make a second copy","Tersimpan, tapi simpan lagi bisa membuat salinan kedua"
@@ -1836,8 +1840,6 @@ Hide call buttons,Sembunyikan tombol panggilan
 "The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.","Tombol panggilan suara dan video hilang dari bagian atas obrolan. Panggilan tetap berdering, dan tombol detail obrolan tetap ada."
 Hide sticker suggestions,Sembunyikan saran stiker
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.,Banner saran stiker tidak lagi muncul di obrolan. Stiker Anda sendiri tetap ada di pemilih stiker.
-Hide suggested replies,Sembunyikan balasan yang disarankan
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,Balasan yang disarankan TikTok dan banner pengantarnya tidak lagi muncul di obrolan. Pesan yang Anda ketik atau terima tidak diubah.
 Hide online status,Sembunyikan status online
 "Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.","Teman tidak akan melihat titik hijau atau Active now saat kamu ada di TikTok. Mode Ghost harus menyala. Status teman mungkin berhenti diperbarui untukmu, dan status terakhirmu bisa tetap terlihat beberapa saat."
 Stop LIVE previews opening by themselves,Hentikan pratinjau LIVE terbuka sendiri
@@ -2470,7 +2472,6 @@ autoplay auto play,putar otomatis autoplay
 picture in picture PiP,gambar dalam gambar PiP
 search suggestions,saran pencarian
 AI chat,chat AI
-AI Tako,AI Tako
 save photos,simpan foto
 download button,tombol unduh download
 "It's in %1$s, under %2$s. Tap to go there.","Ada di %1$s, di bawah %2$s. Ketuk untuk ke sana."
@@ -2626,7 +2627,7 @@ Read receipts shown,Tanda dibaca ditampilkan
 Compact long-press menu everywhere,Menu tekan lama ringkas di mana saja
 "A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.","Tekan lama pada video membuka lembar bagikan kecil TikTok juga di For You, sama seperti video kreator. Ini mengalahkan dua sakelar menu lengkap di atas. Perlu Tekan lama di bawaan TikTok."
 Hide streak pop-ups,Sembunyikan pop-up streak
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.,Menghentikan peringatan streak yang muncul di atas TikTok serta pesan dan tips streak yang ditambahkan ke obrolan Anda.
+"Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.","Menghentikan peringatan streak yang muncul di atas TikTok, undangan Streak Pet di Kotak Masuk, serta pesan dan tips streak yang ditambahkan ke obrolan Anda."
 Long press on For You opens my watch history,Tekan lama Untuk Kamu membuka riwayat tontonan saya
 Instead of these settings. The list has a button that brings you back here.,Sebagai ganti pengaturan ini. Daftarnya punya tombol untuk kembali ke sini.
 Long press on Profile opens my watch history,Tekan lama Profil membuka riwayat tontonan saya
@@ -2753,6 +2754,8 @@ Show the controls,Tampilkan kontrol
 Hide Send to new group,Sembunyikan Kirim ke grup baru
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,Sembunyikan tombol yang menjadikan orang yang kamu pilih obrolan grup baru. Kirim terpisah tetap ada.
 AMOLED dark mode,Mode gelap AMOLED
+Dark mode,Mode gelap
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.,Menyalakan tema gelap yang ada di TikTok Lite tetapi tidak pernah bisa dipilih. Mulai ulang TikTok Lite untuk melihat perubahannya.
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Mengisi mode gelap dengan warna yang dipilih saat patching, hitam pekat kecuali dipilih warna lain. Matikan untuk mendapatkan abu-abu gelap bawaan TikTok. Mode terang tidak berubah. Mulai ulang TikTok untuk melihat perubahannya."
 Check for Hushfeed updates,Periksa pembaruan Hushfeed
 "Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.","Sekali sehari saat TikTok dibuka, tanyakan ke GitHub apakah ada Hushfeed yang lebih baru dan tampilkan kartu jika ada. Permintaan itu hanya membawa versi Hushfeed-mu."

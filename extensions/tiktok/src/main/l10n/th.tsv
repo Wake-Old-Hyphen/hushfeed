@@ -316,7 +316,8 @@ Free memory early	คืนหน่วยความจำล่วงหน�
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	เลือกวิดีโอ %1$d ถึง %2$d รายการ ค่าที่อยู่นอกช่วงนี้จะใช้ขีดจำกัดที่ถูกต้องที่ใกล้เคียงที่สุด เริ่มการทำงานของ TikTok ใหม่เพื่อนำการตั้งค่านี้ไปใช้
 Choose a backup file. Your current settings are kept for Undo.	เลือกไฟล์สำรองข้อมูล การตั้งค่าปัจจุบันของคุณจะถูกเก็บไว้สำหรับการเลิกทำ
 Pick a folder on internal storage, not an SD card	เลือกโฟลเดอร์ในที่จัดเก็บข้อมูลภายใน ไม่ใช่การ์ด SD
-Choose a preset to fill the SIM details.	เลือกพรีเซ็ตเพื่อกรอกรายละเอียด SIM
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	เลือกพรีเซ็ตหนึ่งรายการเพื่อกรอกรายละเอียด SIM หรือเลือกหลายรายการเพื่อใช้รายการที่ต่างกันทุกครั้งที่ TikTok เริ่มทำงาน
+A different preset each time TikTok starts, in this order: %1$s	พรีเซ็ตที่ต่างกันทุกครั้งที่ TikTok เริ่มทำงาน ตามลำดับนี้: %1$s
 Choose a subfolder under %1$s.	เลือกโฟลเดอร์ย่อยภายใต้ %1$s
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	เลือกการดำเนินการที่จะลบออกจากแผ่นเมนูแชร์ ชื่อที่คุณพิมพ์เองซึ่ง TikTok ยังไม่ได้แสดงจะยังคงอยู่ในรายการด้านบน
 Choose what reaches your feed	เลือกสิ่งที่จะปรากฏในฟีดของคุณ
@@ -1604,6 +1605,9 @@ Save again	บันทึกอีกครั้ง
 The saved-video choice couldn't open. Try again.	ไม่สามารถเปิดตัวเลือกสำหรับวิดีโอที่บันทึกไว้ได้ โปรดลองอีกครั้ง
 The saved-video choice is still open	ตัวเลือกสำหรับวิดีโอที่บันทึกไว้ยังคงเปิดอยู่
 No full file for this video. Try again later.	ไม่มีไฟล์ฉบับเต็มสำหรับวิดีโอนี้ โปรดลองอีกครั้งในภายหลัง
+Subscriber-only posts can't be saved	บันทึกโพสต์เฉพาะสมาชิกไม่ได้
+Copy-protected videos can't be saved	วิดีโอที่ป้องกันการคัดลอกบันทึกไม่ได้
+Not saved. The file wasn't a playable video.	ไม่ได้บันทึก ไฟล์นี้ไม่ใช่วิดีโอที่เล่นได้
 Saving video to %1$s	กำลังบันทึกวิดีโอไปยัง %1$s
 Video and details saved to %1$s	บันทึกวิดีโอและรายละเอียดไปยัง %1$s แล้ว
 Saved, but a later save may make a second copy	บันทึกแล้ว แต่การบันทึกครั้งหน้าอาจได้สำเนาซ้ำ
@@ -1868,8 +1872,6 @@ Hide call buttons	ซ่อนปุ่มการโทร
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	ปุ่มการโทรด้วยเสียงและวิดีโอคอลจะถูกนำออกจากด้านบนของการแชท สายโทรเข้ายังคงดังตามปกติ และปุ่มรายละเอียดการแชทจะยังคงอยู่
 Hide sticker suggestions	ซ่อนคำแนะนำสติกเกอร์
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	แบนเนอร์แนะนำสติกเกอร์จะไม่แสดงในการแชทอีกต่อไป สติกเกอร์ของคุณเองจะยังคงอยู่ในเครื่องมือเลือกสติกเกอร์
-Hide suggested replies	ซ่อนคำตอบที่แนะนำ
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	กล่องคำตอบที่แนะนำของ TikTok และแบนเนอร์แนะนำจะไม่แสดงในการแชทอีกต่อไป ข้อความที่คุณพิมพ์หรือได้รับจะไม่ได้รับผลกระทบ
 Hide online status	ซ่อนสถานะออนไลน์
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	เพื่อนจะไม่เห็นจุดสีเขียวหรือ "ใช้งานอยู่ตอนนี้" ในขณะที่คุณอยู่ใน TikTok ต้องเปิดโหมด Ghost สถานะของพวกเขาอาจหยุดอัปเดตสำหรับคุณ และสถานะล่าสุดของคุณอาจค้างอยู่ครู่หนึ่ง
 Stop LIVE previews opening by themselves	หยุดการเปิดตัวอย่าง LIVE โดยอัตโนมัติ
@@ -2529,7 +2531,6 @@ autoplay auto play	เล่นอัตโนมัติ การเล่น
 picture in picture PiP	ภาพซ้อนภาพ PiP
 search suggestions	คำแนะนำการค้นหา
 AI chat	แชท AI
-AI Tako	AI Tako
 save photos	บันทึกรูปภาพ
 download button	ปุ่มดาวน์โหลด ดาวน์โหลด
 It's in %1$s, under %2$s. Tap to go there.	อยู่ใน %1$s ใต้ %2$s แตะเพื่อไปที่นั่น
@@ -2688,7 +2689,7 @@ Read receipts shown	แสดงสถานะการอ่านแล้ว
 Compact long-press menu everywhere	เมนูกะทัดรัดเมื่อแตะค้างทุกที่
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	การแตะค้างที่วิดีโอจะเปิดแผ่นเมนูแชร์ขนาดเล็กของ TikTok บนฟีดสำหรับคุณด้วย เช่นเดียวกับวิดีโอของครีเอเตอร์ โดยจะมีผลเหนือสวิตช์เมนูเต็มรูปแบบสองตัวด้านบน ต้องตั้งค่าการแตะค้างเป็นค่าเริ่มต้นของ TikTok
 Hide streak pop-ups	ซ่อนป๊อปอัป Streak
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	ปิดการแจ้งเตือน Streak ที่เลื่อนเข้ามาบน TikTok รวมถึงข้อความและเคล็ดลับ Streak ในแชทของคุณ
+Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.	ปิดการแจ้งเตือน Streak ที่เลื่อนเข้ามาบน TikTok คำเชิญ Streak Pet ในกล่องข้อความ รวมถึงข้อความและเคล็ดลับ Streak ในแชทของคุณ
 Long press on For You opens my watch history	แตะค้างที่สำหรับคุณเพื่อเปิดประวัติการรับชมของฉัน
 Instead of these settings. The list has a button that brings you back here.	แทนการตั้งค่าเหล่านี้ รายการจะมีปุ่มที่นำคุณกลับมาที่นี่
 Long press on Profile opens my watch history	แตะค้างที่โปรไฟล์เพื่อเปิดประวัติการรับชมของฉัน
@@ -2844,6 +2845,8 @@ Hide Send to new group	ซ่อน "ส่งไปยังกลุ่มใ�
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	ซ่อนปุ่มที่เปลี่ยนบุคคลที่คุณเลือกให้เป็นแชทกลุ่มใหม่ ปุ่ม "ส่งแยกกัน" จะยังคงอยู่
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	โหมดมืด AMOLED
+Dark mode	โหมดมืด
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	เปิดธีมมืดที่มีอยู่ใน TikTok Lite แต่ไม่เคยให้เลือก รีสตาร์ท TikTok Lite เพื่อดูการเปลี่ยนแปลง
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	เติมเต็มโหมดมืดด้วยสีที่เลือกไว้ขณะทำการแพตช์ ซึ่งจะเป็นสีดำสนิทเว้นแต่จะเลือกสีอื่นไว้ ปิดใช้งานตัวเลือกนี้เพื่อใช้สีเทาเข้มตามปกติของ TikTok โหมดสว่างจะไม่เปลี่ยนแปลง รีสตาร์ท TikTok เพื่อดูการเปลี่ยนแปลง
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

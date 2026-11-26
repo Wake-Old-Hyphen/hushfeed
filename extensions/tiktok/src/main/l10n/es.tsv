@@ -313,7 +313,8 @@ Free memory early	Liberar memoria antes
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Elige entre %1$d y %2$d vídeos. Los valores fuera de ese rango usan el límite válido más cercano. Reinicia TikTok para que se aplique.
 Choose a backup file. Your current settings are kept for Undo.	Elige un archivo de copia de seguridad. Tus ajustes actuales se guardan para Deshacer.
 Pick a folder on internal storage, not an SD card	Elige una carpeta interna, no de la tarjeta SD
-Choose a preset to fill the SIM details.	Elige un ajuste preestablecido para rellenar los datos de la SIM.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	Marca un ajuste preestablecido para rellenar los datos de la SIM, o varios para usar uno distinto cada vez que TikTok se abre.
+A different preset each time TikTok starts, in this order: %1$s	Un ajuste preestablecido distinto cada vez que TikTok se abre, en este orden: %1$s
 Choose a subfolder under %1$s.	Elige una subcarpeta dentro de %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Elige las acciones que quieres quitar de la hoja para compartir. Los nombres que escribiste a mano y que TikTok aún no ha mostrado se mantienen en la lista de arriba.
 Choose what reaches your feed	Elige qué llega a tu feed
@@ -1601,6 +1602,9 @@ Save again	Guardar de nuevo
 The saved-video choice couldn't open. Try again.	No se abrieron las opciones del video. Reintenta.
 The saved-video choice is still open	Las opciones del video guardado siguen abiertas
 No full file for this video. Try again later.	Sin archivo completo de este video. Reintenta luego.
+Subscriber-only posts can't be saved	Las publicaciones solo para suscriptores no se guardan
+Copy-protected videos can't be saved	Los videos protegidos contra copia no se pueden guardar
+Not saved. The file wasn't a playable video.	No se guardó. El archivo no era un video reproducible.
 Saving video to %1$s	Guardando video en %1$s
 Video and details saved to %1$s	Video y detalles guardados en %1$s
 Saved, but a later save may make a second copy	Guardado. Guardar de nuevo puede crear otra copia
@@ -1865,8 +1869,6 @@ Hide call buttons	Ocultar los botones de llamada
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Los botones de llamada de voz y de video salen de la parte superior de un chat. Las llamadas siguen sonando y el botón de detalles del chat se queda.
 Hide sticker suggestions	Ocultar las sugerencias de stickers
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	El banner de sugerencias de stickers deja de aparecer en un chat. Tus propios stickers siguen en el selector de stickers.
-Hide suggested replies	Ocultar las respuestas sugeridas
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	Las respuestas sugeridas de TikTok y su banner de presentación dejan de aparecer en un chat. Los mensajes que escribes o recibes no se tocan.
 Hide online status	Ocultar el estado en línea
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Tus amigos no verán un punto verde ni Active now mientras estés en TikTok. Necesita el modo Ghost activado. Es posible que el estado de ellos deje de actualizarse para ti, y tu último estado puede seguir visible un tiempo.
 Stop LIVE previews opening by themselves	Evitar que las vistas previas de LIVE se abran solas
@@ -2526,7 +2528,6 @@ autoplay auto play	reproducción automática autoplay
 picture in picture PiP	imagen en imagen PiP
 search suggestions	sugerencias de búsqueda
 AI chat	chat de IA
-AI Tako	IA Tako
 save photos	guardar fotos
 download button	botón de descarga descargar
 It's in %1$s, under %2$s. Tap to go there.	Está en %1$s, en %2$s. Toca para ir allí.
@@ -2685,7 +2686,7 @@ Read receipts shown	Confirmaciones de lectura visibles
 Compact long-press menu everywhere	Menú compacto al mantener pulsado en todas partes
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	Mantener pulsado un video abre la hoja pequeña de compartir de TikTok también en Para ti, la misma que tienen los videos de un creador. Tiene prioridad sobre los dos interruptores de menú completo de arriba. Necesita que Pulsación larga esté en el valor de TikTok.
 Hide streak pop-ups	Ocultar avisos de rachas
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	Detiene los avisos de rachas que aparecen sobre TikTok y los mensajes y consejos de rachas que añade a tus chats.
+Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.	Detiene los avisos de rachas que aparecen sobre TikTok, la invitación de Streak Pet en tu bandeja de entrada y los mensajes y consejos de rachas que añade a tus chats.
 Long press on For You opens my watch history	Una pulsación larga en Para ti abre mi historial de visualización
 Instead of these settings. The list has a button that brings you back here.	En lugar de estos ajustes. La lista tiene un botón que te trae de vuelta aquí.
 Long press on Profile opens my watch history	Una pulsación larga en Perfil abre mi historial de visualización
@@ -2841,6 +2842,8 @@ Hide Send to new group	Ocultar Enviar a un grupo nuevo
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Oculta el botón que convierte a las personas que elegiste en un chat grupal nuevo. Enviar por separado se queda.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	Modo oscuro AMOLED
+Dark mode	Modo oscuro
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	Activa el tema oscuro que TikTok Lite trae pero nunca deja elegir. Reinicia TikTok Lite para ver el cambio.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Llena el modo oscuro con el color elegido al parchear, negro puro salvo que se eligiera otro. Desactívalo para tener los grises oscuros propios de TikTok. El modo claro no cambia. Reinicia TikTok para ver el cambio.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

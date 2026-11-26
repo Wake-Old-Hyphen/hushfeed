@@ -361,7 +361,8 @@ Free memory early	Освобождать память заранее
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.	Выберите значение от %1$d до %2$d видео. Значения вне этого диапазона округляются до ближайшей допустимой границы. Перезапустите TikTok, чтобы это применить.
 Choose a backup file. Your current settings are kept for Undo.	Выберите файл резервной копии. Текущие настройки сохраняются для отмены.
 Pick a folder on internal storage, not an SD card	Выберите папку во внутренней памяти, не на SD-карте
-Choose a preset to fill the SIM details.	Выберите пресет, чтобы заполнить данные SIM.
+Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.	Отметьте один пресет, чтобы заполнить данные SIM, или несколько, чтобы при каждом запуске TikTok использовался другой.
+A different preset each time TikTok starts, in this order: %1$s	Другой пресет при каждом запуске TikTok, в таком порядке: %1$s
 Choose a subfolder under %1$s.	Выберите подпапку в %1$s.
 Pick the actions to remove from the share sheet. Names you typed by hand that TikTok hasn't shown yet stay in the list above.	Выберите действия, которые нужно убрать из меню «Поделиться». Введённые вручную названия, которые TikTok ещё не показывал, остаются в списке выше.
 Choose what reaches your feed	Выберите, что попадает в вашу ленту
@@ -1739,6 +1740,9 @@ Save again	Сохранить снова
 The saved-video choice couldn't open. Try again.	Выбор сохранённого видео не открылся. Повторите.
 The saved-video choice is still open	Выбор для сохранённого видео всё ещё открыт
 No full file for this video. Try again later.	Полного файла нет. Повторите позже.
+Subscriber-only posts can't be saved	Нельзя сохранить публикации для платных подписчиков
+Copy-protected videos can't be saved	Видео с защитой от копирования нельзя сохранить
+Not saved. The file wasn't a playable video.	Не сохранено. Файл не воспроизводится как видео.
 Saving video to %1$s	Видео сохраняется в %1$s
 Video and details saved to %1$s	Видео и детали сохранены в %1$s
 Saved, but a later save may make a second copy	Сохранено. Новое сохранение может создать вторую копию
@@ -2006,8 +2010,6 @@ Hide call buttons	Скрывать кнопки звонка
 The voice and video call buttons leave the top of a chat. Calls still ring, and the chat details button stays.	Кнопки голосового и видеозвонка пропадают из верхней части чата. Звонки по-прежнему звонят, а кнопка сведений о чате остаётся.
 Hide sticker suggestions	Скрывать подсказки стикеров
 The sticker suggestion banner stops showing in a chat. Your own stickers are still in the sticker picker.	Баннер с подсказками стикеров больше не показывается в чате. Ваши стикеры остаются в выборе стикеров.
-Hide suggested replies	Скрывать предложенные ответы
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.	Предложенные ответы TikTok и баннер, который их представляет, больше не показываются в чате. Сообщения, которые вы пишете или получаете, не затрагиваются.
 Hide online status	Скрыть статус «в сети»
 Friends won't see a green dot or Active now while you're in TikTok. Needs Ghost mode on. Their status may stop updating for you, and your last status can linger.	Друзья не увидят зелёную точку или Active now, пока вы в TikTok. Нужен включённый режим Ghost. Статус друзей у вас может перестать обновляться, а ваш последний статус ещё какое-то время может быть виден.
 Stop LIVE previews opening by themselves	Не открывать превью LIVE самостоятельно
@@ -2706,7 +2708,6 @@ autoplay auto play	автовоспроизведение автозапуск
 picture in picture PiP	картинка в картинке PiP
 search suggestions	подсказки поиска
 AI chat	чат ИИ
-AI Tako	ИИ Tako
 save photos	сохранить фото
 download button	кнопка скачивания скачать
 It's in %1$s, under %2$s. Tap to go there.	Находится в разделе %1$s, в группе %2$s. Нажмите, чтобы перейти туда.
@@ -2871,7 +2872,7 @@ Read receipts shown	Отметки о прочтении видны
 Compact long-press menu everywhere	Компактное меню долгого нажатия везде
 A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.	Долгое нажатие на видео открывает маленькое меню «Поделиться» TikTok и в «Рекомендациях», такое же, как у видео автора. Оно главнее двух переключателей полного меню выше. Нужно, чтобы «Долгое нажатие» было по умолчанию TikTok.
 Hide streak pop-ups	Скрыть всплывающие окна серий
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.	Убирает уведомления о сериях, которые выезжают поверх TikTok, а также сообщения и подсказки о сериях в ваших чатах.
+Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.	Убирает уведомления о сериях, которые выезжают поверх TikTok, приглашение Streak Pet во входящих, а также сообщения и подсказки о сериях в ваших чатах.
 Long press on For You opens my watch history	Долгое нажатие на «Рекомендации» открывает мою историю просмотров
 Instead of these settings. The list has a button that brings you back here.	Вместо этих настроек. В списке есть кнопка, которая вернёт вас сюда.
 Long press on Profile opens my watch history	Долгое нажатие на Профиль открывает мою историю просмотров
@@ -3027,6 +3028,8 @@ Hide Send to new group	Скрывать «Отправить в новую гр�
 Hides the button that turns the people you picked into a new group chat. Send separately stays.	Скрывает кнопку, которая делает из выбранных людей новый групповой чат. «Отправить по отдельности» остаётся.
 # context: Switch in Hushfeed settings > App > Appearance (#372)
 AMOLED dark mode	Тёмная тема AMOLED
+Dark mode	Тёмная тема
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.	Включает тёмную тему, которая есть в TikTok Lite, но которую там нельзя выбрать. Перезапустите TikTok Lite, чтобы увидеть изменения.
 # context: Summary under the AMOLED dark mode switch
 Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.	Заливает тёмную тему цветом, выбранным при патчинге, чисто чёрным, если не выбран другой. Выключите, чтобы вернуть собственные тёмно-серые цвета TikTok. Светлая тема не меняется. Перезапустите TikTok, чтобы увидеть изменения.
 # context: Switch in Hushfeed settings > App, under the startup message rows (#377)

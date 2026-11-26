@@ -151,7 +151,6 @@ A tap on Home or on the For You tab while For You is showing no longer reloads i
 A video you paused stays paused when you come back to the app instead of starting again. One you left playing starts as usual. It works on Android 10 and newer.,Video bạn tạm dừng sẽ tiếp tục ở trạng thái dừng khi bạn quay lại ứng dụng thay vì phát lại từ đầu. Video đang phát dở sẽ phát bình thường. Tính năng này hoạt động trên Android 10 trở lên.
 A web address someone left in a comment can be tapped instead of copied out by hand. Tapping anywhere else in the comment still does what it did.,Địa chỉ web do ai đó để lại trong bình luận có thể được chạm vào thay vì phải sao chép thủ công. Chạm vào bất kỳ vị trí nào khác trong bình luận vẫn thực hiện chức năng ban đầu của nó.
 AI Self,AI tự thân
-AI Tako,AI Tako
 AI chat,Trò chuyện AI
 AI-generated posts,Bài đăng do AI tạo
 About,Giới thiệu
@@ -349,7 +348,8 @@ Check for already-saved videos,Kiểm tra các video đã lưu trước đó
 Check the brackets and quotes in this JSON,Kiểm tra dấu ngoặc và dấu nháy trong JSON này
 Choose %1$d to %2$d videos. Values outside this range use the nearest valid limit. Restart TikTok to apply this.,Chọn từ %1$d đến %2$d video. Giá trị ngoài phạm vi này sẽ sử dụng giới hạn hợp lệ gần nhất. Khởi động lại TikTok để áp dụng.
 Choose a backup file. Your current settings are kept for Undo.,Chọn tệp sao lưu. Các cài đặt hiện tại của bạn được giữ lại để hoàn tác.
-Choose a preset to fill the SIM details.,Chọn một cấu hình sẵn có để điền thông tin SIM.
+"Tick one preset to fill the SIM details, or several to use a different one each time TikTok starts.","Đánh dấu một cấu hình sẵn có để điền thông tin SIM, hoặc nhiều cấu hình để dùng một cấu hình khác mỗi lần TikTok khởi động."
+"A different preset each time TikTok starts, in this order: %1$s","Một cấu hình sẵn có khác mỗi lần TikTok khởi động, theo thứ tự này: %1$s"
 Choose a subfolder under %1$s.,Chọn một thư mục con dưới %1$s.
 Choose counts for this signed-in account. Leave a field empty to use TikTok's count. Zero shows zero. Choices stay on this phone.,Chọn số lượng cho tài khoản đã đăng nhập này. Để trống để sử dụng số lượng mặc định của TikTok. Số 0 hiển thị là 0. Lựa chọn được lưu trên điện thoại này.
 Choose what reaches your feed,Chọn nội dung hiển thị trong bảng tin của bạn
@@ -838,7 +838,6 @@ Hide stories from the feed.,Ẩn tin khỏi bảng tin.
 Hide stories tray,Ẩn khay chứa tin
 Hide subscriber-only videos,Ẩn video dành riêng cho người đăng ký kênh
 Hide suggested accounts,Ẩn tài khoản được đề xuất
-Hide suggested replies,Ẩn phản hồi được gợi ý
 Hide suggestions on the search page,Ẩn gợi ý trên trang tìm kiếm
 Hide surveys,Ẩn khảo sát
 Hide tabs TikTok adds later unless you allow them.,Ẩn các thẻ mà TikTok thêm vào sau trừ khi bạn cho phép.
@@ -1279,6 +1278,9 @@ No folder picker here. Type the folder in the row.,Không có trình chọn thư
 No font is imported,Chưa nhập phông chữ nào
 "No full file at this quality, so TikTok saves it","Không có tệp đầy đủ ở chất lượng này, TikTok sẽ lưu"
 No full file for this video. Try again later.,Video này không có tệp đầy đủ. Hãy thử lại sau.
+Subscriber-only posts can't be saved,Không thể lưu bài đăng dành riêng cho người đăng ký
+Copy-protected videos can't be saved,Không thể lưu video được bảo vệ chống sao chép
+Not saved. The file wasn't a playable video.,Chưa lưu. Tệp không phải video phát được.
 No gate data is available. Refresh values from the menu to try again.,Dữ liệu cổng không khả dụng. Làm mới các giá trị từ menu để thử lại.
 No gate reads were recorded. Use a TikTok feature while recording.,Chưa ghi lại được dữ liệu đọc cổng nào. Hãy sử dụng một tính năng của TikTok trong khi ghi hình.
 No gates match this filter.,Không có cổng nào khớp với bộ lọc này.
@@ -2310,7 +2312,6 @@ TikTok's messages didn't start in time. It tries again at %1$s.,Tin nhắn của
 TikTok's own name,Tên gốc của TikTok
 TikTok's own value,Giá trị gốc của TikTok
 TikTok's size,Kích thước của TikTok
-TikTok's suggested reply cells and their intro banner stop showing in a chat. Messages you type or receive are untouched.,Các ô trả lời gợi ý của TikTok và biểu ngữ giới thiệu sẽ ngừng hiển thị trong khung chat. Tin nhắn bạn nhập hoặc nhận không bị ảnh hưởng.
 TikTok's total: %1$s. Filtered accounts: %2$s.,Tổng số của TikTok: %1$s. Tài khoản bị lọc: %2$s.
 Timed logging stopped,Đã dừng ghi nhật ký theo thời gian
 Times you can open the feed anyway,Số lần bạn vẫn có thể mở bảng tin
@@ -2624,7 +2625,7 @@ Read receipts shown,Đã hiện xác nhận đã đọc
 Compact long-press menu everywhere,Menu nhấn giữ gọn ở mọi nơi
 "A long press on a video opens TikTok's small share sheet on For You too, the same one a creator's videos get. It wins over the two full-menu switches above. It needs Long press on TikTok default.","Nhấn giữ một video sẽ mở bảng chia sẻ nhỏ của TikTok cả ở Dành cho bạn, giống video của nhà sáng tạo. Nó được ưu tiên hơn hai công tắc menu đầy đủ ở trên. Cần đặt Nhấn giữ ở mặc định của TikTok."
 Hide streak pop-ups,Ẩn cửa sổ bật lên chuỗi
-Stop the streak alerts that slide in over TikTok and the streak messages and tips it adds to your chats.,Chặn các cảnh báo chuỗi trượt vào trên TikTok cùng tin nhắn và mẹo về chuỗi mà nó thêm vào cuộc trò chuyện của bạn.
+"Stop the streak alerts that slide in over TikTok, the Streak Pet invite in your Inbox, and the streak messages and tips it adds to your chats.","Chặn các cảnh báo chuỗi trượt vào trên TikTok, lời mời Streak Pet trong Hộp thư và tin nhắn cùng mẹo về chuỗi mà nó thêm vào cuộc trò chuyện của bạn."
 Long press on For You opens my watch history,Nhấn giữ Dành cho bạn sẽ mở lịch sử xem của tôi
 Instead of these settings. The list has a button that brings you back here.,Thay cho phần cài đặt này. Danh sách có nút đưa bạn quay lại đây.
 Long press on Profile opens my watch history,Nhấn giữ Trang cá nhân sẽ mở lịch sử xem của tôi
@@ -2751,6 +2752,8 @@ Show the controls,Hiện các điều khiển
 Hide Send to new group,Ẩn Gửi tới nhóm mới
 Hides the button that turns the people you picked into a new group chat. Send separately stays.,Ẩn nút biến những người bạn đã chọn thành một nhóm chat mới. Gửi riêng vẫn giữ nguyên.
 AMOLED dark mode,Chế độ tối AMOLED
+Dark mode,Chế độ tối
+Turns on the dark theme TikTok Lite carries but never lets you pick. Restart TikTok Lite to see the change.,Bật giao diện tối có sẵn trong TikTok Lite nhưng không bao giờ cho chọn. Khởi động lại TikTok Lite để thấy thay đổi.
 "Fills dark mode with the color picked while patching, pure black unless another was chosen. Turn it off for TikTok's own dark grays. Light mode doesn't change. Restart TikTok to see the change.","Tô chế độ tối bằng màu đã chọn khi vá, đen tuyền trừ khi chọn màu khác. Tắt đi để dùng các sắc xám tối của chính TikTok. Chế độ sáng không thay đổi. Khởi động lại TikTok để xem thay đổi."
 Check for Hushfeed updates,Kiểm tra bản cập nhật Hushfeed
 "Once a day when TikTok opens, ask GitHub if a newer Hushfeed is out and show a card when it is. The request carries your Hushfeed version and nothing else.","Mỗi ngày một lần khi mở TikTok, hỏi GitHub xem đã có Hushfeed mới hơn chưa và hiện một thẻ nếu có. Yêu cầu chỉ gửi kèm phiên bản Hushfeed của bạn."
