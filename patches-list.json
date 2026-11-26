@@ -758,7 +758,7 @@
     },
     {
       "name": "Always show publish date",
-      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, hide the view counts there, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. On by default. Turn it off in Hushfeed settings > Feed screen.",
+      "description": "Shows the date a video was posted next to the creator's name, so you can tell how old it is. It can also show the exact time, dates and lengths on profile grids, hide the view counts there, sort the videos a grid has loaded, start your Liked grid at a year or month you pick, or add a drag handle and jump buttons to long grids. Its date options can cover the dates on comments, chats and search results too. On by default. Turn it off in Hushfeed settings > Feed screen.",
       "category": "Feed",
       "use": true,
       "dependencies": [
@@ -875,6 +875,15 @@
         {
           "key": "publish_date_instead_of_age",
           "title": "Default: publish date instead of age",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "publish_date_everywhere",
+          "title": "Default: publish date everywhere",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -3042,6 +3051,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "free_memory_early",
+          "title": "Default: free memory early",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         },
         {
@@ -6950,6 +6968,15 @@
           "values": null
         },
         {
+          "key": "pages_under_bottom_bar",
+          "title": "Default: pages under bottom bar",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
           "key": "floating_bottom_bar",
           "title": "Default: floating bottom bar",
           "description": null,
@@ -8088,6 +8115,42 @@
         {
           "key": "live_room_info",
           "title": "Default: live room info",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_room_id",
+          "title": "Default: hide live room id",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_ping",
+          "title": "Default: hide live ping",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_latency",
+          "title": "Default: hide live latency",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "hide_live_download_speed",
+          "title": "Default: hide live download speed",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",
@@ -11520,6 +11583,15 @@
         {
           "key": "show_join_date",
           "title": "Default: show join date",
+          "description": null,
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": false,
+          "values": null
+        },
+        {
+          "key": "show_profile_video_count",
+          "title": "Default: show profile video count",
           "description": null,
           "required": false,
           "type": "kotlin.Boolean",

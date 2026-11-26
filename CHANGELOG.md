@@ -4,6 +4,8 @@ Every Hushfeed release, newest first.
 
 ## Unreleased
 
+* New `Show how many videos a profile has` switch under `Show when an account was made`. It adds TikTok's own count, like "1,234 videos", to the line under the @username on any profile, yours too (#519).
+* New `Use this date format everywhere` switch under the publish date rows in Feed screen. Turn it on and `Day before month`, `Write the month as a word` and `Date instead of age` also change the dates on comments, the date headers in chats and the dates on search result cards. It's off until you turn it on, and comment dates need `Show commenter handle and region`, which is on by default (#536).
 * `Random time each day` can now run past midnight. Set `Latest time` earlier than `When to send`, like 11 PM to 2 AM, and each day's message goes out late that evening or early that morning (rimixyz's idea, from their pull request, #507).
 * New `Hide LIVE chat` switch under LIVE controls. It hides the messages that scroll over a LIVE so you only see the stream, and the comment box stays where it was (#525).
 * `SIM spoof` no longer leaves TikTok saying "No internet connection" on a phone with a SIM from China, Hong Kong, India and the other places TikTok isn't offered, or while a VPN is on. TikTok's network side keeps the preset there instead of going back to the real SIM (#523).
@@ -19,7 +21,14 @@ Every Hushfeed release, newest first.
 * `Video bitrate limit` has a 1.5 Mb/s choice between 1 and 2 Mb/s (#533).
 * New `Block sound on sound pages` patch. Tap the spinning record on a video and the sound's page has a `Block sound` button under `Save`, which skips every video using that sound. Tap it again to unblock. It needs `Feed filter`, and you can switch it off in Hushfeed settings > Feed screen.
 * New `Hide sound page buttons` patch. Turn on its switch in Hushfeed settings > Feed screen and a sound's page no longer shows `Jam Sound` and `Use sound` at the bottom (#535).
+* TikTok's feed should start over less often when its memory runs high. Android closes TikTok's main screen once the app fills three quarters of its memory, and the feed reloads when you come back. Now, when it gets close to that point, Hushfeed asks TikTok to clear its image caches first, the same request Android sends when memory runs low. It's on by default and does nothing until memory gets that high. `Free memory early` under Diagnostics turns it off, and the diagnostic report's `JAVA HEAP` section shows how high memory got and how much each cleanup freed (#419).
+* New `Pages under the bar` switch under `See-through bottom bar`. Home's Community grid and other pages that end at the tabs used to stop above them, so a see-through or floating bar sat on a black (or white) band. With the switch on, the page runs on to the bottom of the screen and shows through the bar, and its last row still scrolls up clear of the tabs. It's off by default (#436).
 * A diagnostic report now remembers suggested video notifications after TikTok restarts. Its push section says how many `Block suggested video notifications` stopped and how many got through, and when the last one came, so a report exported the next day still shows them.
+* With `Dark LIVE panels` on, a LIVE you open from search results shows the line under the sender's name in its gift banner again. It was there but drawn in no color at all (#362).
+* Turning `Country and date opacity` down now fades the shadow under that line too. The letters went faint but the shadow stayed as dark as before, so a low setting looked like a smudge (#519).
+* On profile grids with dates or video lengths turned on, the little play icon stays next to the view count. It used to sit halfway between the count and the date, or next to the date when a long one wrapped (#519).
+* `Hold TikTok's save button to download` now works when you're signed out too. Signed out, TikTok gives the save button a tap and no long press at all, so holding it did nothing. A tap on it still does what it did before (#499).
+* `Show the room ID and your connection` can leave parts off the line now. Pick the room ID, ping, latency or download speed in the new `Hide parts of the room line` row right under it. In a LIVE, a tap on the line shrinks it to a small dot that stays out of the way from room to room, and a tap on the dot brings it back. Copying the room ID moved to a long press on the line (#534).
 
 ## 0.85.0 (2026-11-24)
 

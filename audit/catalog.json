@@ -850,7 +850,8 @@
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/AlwaysShowPublishDatePatch.kt",
    "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/publishdate/AlwaysShowPublishDatePatch.java",
    "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/GridCorners.kt",
-   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/GridCorners.java"
+   "extensions/tiktok/src/main/java/app/morphe/extension/tiktok/feed/GridCorners.java",
+   "patches/src/main/kotlin/app/morphe/patches/tiktok/interaction/publishdate/DatesEverywhere.kt"
   ],
   "settings": [
    {
@@ -883,6 +884,12 @@
     "default": false,
     "type": "bool",
     "row": "Day before month"
+   },
+   {
+    "key": "publish_date_everywhere",
+    "default": false,
+    "type": "bool",
+    "row": "Use this date format everywhere"
    },
    {
     "key": "publish_date_on_grid",
@@ -11234,6 +11241,30 @@
     "row": "Show the room ID and your connection"
    },
    {
+    "key": "hide_live_room_id",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Room ID"
+   },
+   {
+    "key": "hide_live_ping",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Ping"
+   },
+   {
+    "key": "hide_live_latency",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Latency"
+   },
+   {
+    "key": "hide_live_download_speed",
+    "default": false,
+    "type": "bool",
+    "row": "Hide parts of the room line: Download speed"
+   },
+   {
     "key": "live_running_time",
     "default": false,
     "type": "bool",
@@ -15839,6 +15870,12 @@
     "default": false,
     "type": "bool",
     "row": "Show when an account was made"
+   },
+   {
+    "key": "show_profile_video_count",
+    "default": false,
+    "type": "bool",
+    "row": "Show how many videos a profile has"
    },
    {
     "key": "local_profile_counts",

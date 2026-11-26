@@ -887,6 +887,17 @@ public class Settings extends BaseSettings {
      * start time; the LIVE controls patch. Read every second, so no restart.
      */
     public static final BooleanSetting LIVE_RUNNING_TIME = new BooleanSetting("live_running_time", FALSE);
+    /** Each switch takes one part off the room line (#534). Read every second, so no restart. */
+    public static final BooleanSetting HIDE_LIVE_ROOM_ID = new BooleanSetting("hide_live_room_id", FALSE);
+    public static final BooleanSetting HIDE_LIVE_PING = new BooleanSetting("hide_live_ping", FALSE);
+    public static final BooleanSetting HIDE_LIVE_LATENCY = new BooleanSetting("hide_live_latency", FALSE);
+    public static final BooleanSetting HIDE_LIVE_DOWNLOAD_SPEED = new BooleanSetting("hide_live_download_speed", FALSE);
+    /**
+     * Whether the room line is shrunk to a dot (#534), flipped by a tap on the line or the dot and
+     * kept from room to room. How one phone's screen was left, so it stays out of backups.
+     */
+    public static final BooleanSetting LIVE_ROOM_INFO_COLLAPSED =
+            new BooleanSetting("live_room_info_collapsed", FALSE, false, false);
     /**
      * A LIVE opened from the row at the top of Following is followed, on a swipe, by the row's
      * other LIVEs in the row's order (#511); the LIVE controls patch. Read as the room opens.
@@ -1072,6 +1083,9 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting PUBLISH_DATE_MONTH_NAME = new BooleanSetting("publish_date_month_name", FALSE);
     /** A recent video's date by the creator's name in place of TikTok's age, 10-12 for 2d ago (#461). */
     public static final BooleanSetting PUBLISH_DATE_INSTEAD_OF_AGE = new BooleanSetting("publish_date_instead_of_age", FALSE);
+    /** The three date rows above on comments, chat date headers and search result cards too (#536). */
+    public static final BooleanSetting PUBLISH_DATE_EVERYWHERE = new BooleanSetting("publish_date_everywhere", FALSE,
+            false, Setting.parentsAny(PUBLISH_DATE_DAY_FIRST, PUBLISH_DATE_MONTH_NAME, PUBLISH_DATE_INSTEAD_OF_AGE));
     public static final BooleanSetting PUBLISH_DATE_ON_GRID = new BooleanSetting("publish_date_on_grid", FALSE);
     public static final BooleanSetting VIDEO_LENGTH_ON_GRID = new BooleanSetting("video_length_on_grid", FALSE);
     public static final BooleanSetting HIDE_GRID_VIEW_COUNT = new BooleanSetting("hide_grid_view_count", FALSE);
@@ -1403,6 +1417,14 @@ public class Settings extends BaseSettings {
      */
     public static final BooleanSetting SEE_THROUGH_VIDEO_IN_WINDOW = new BooleanSetting(
             "see_through_video_in_window", FALSE, true, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
+    /**
+     * With See-through bottom bar, lets a page that stops at the bar's top (Home's Community grid,
+     * another tab's list) run on under the bar, its last row padded clear of the tabs (#436).
+     * PageUnderBar does it on each layout and puts it back when this goes off. Off by default: it
+     * moves TikTok's own pages, not just the feed's, so it's asked for.
+     */
+    public static final BooleanSetting PAGES_UNDER_BOTTOM_BAR = new BooleanSetting(
+            "pages_under_bottom_bar", FALSE, false, Setting.parent(SEE_THROUGH_BOTTOM_BAR));
     /**
      * With See-through bottom bar, draws the tabs on a rounded see-through pill inset from the
      * bar's sides and bottom instead of nothing (#124). Only the bar's background changes, so the
@@ -2013,6 +2035,8 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting SHOW_FOLLOW_STATUS = new BooleanSetting("show_follow_status", TRUE);
     // "Joined Jan 2020" in the same spot on someone else's profile, read from the account's ID.
     public static final BooleanSetting SHOW_JOIN_DATE = new BooleanSetting("show_join_date", FALSE);
+    // "1,234 videos" at the end of that label on any profile, yours included, as TikTok counts them (#519).
+    public static final BooleanSetting SHOW_PROFILE_VIDEO_COUNT = new BooleanSetting("show_profile_video_count", FALSE);
     // "Since Nov 18: +12 followers" under it, from the counts each profile showed on this phone last time.
     public static final BooleanSetting SHOW_PROFILE_CHANGES = new BooleanSetting("show_profile_changes", FALSE);
     public static final BooleanSetting LOCAL_PROFILE_COUNTS = new BooleanSetting("local_profile_counts", FALSE, true);
@@ -2074,6 +2098,14 @@ public class Settings extends BaseSettings {
             "network_proxy_user", "", true, false, null, Setting.parent(NETWORK_PROXY));
     public static final StringSetting NETWORK_PROXY_PASSWORD = new StringSetting(
             "network_proxy_password", "", true, false, null, Setting.parent(NETWORK_PROXY));
+
+    /**
+     * Hands TikTok Android's running-low memory trim once its Java heap passes five eighths of
+     * the limit, before Android closes the main screen at three quarters (#419). On by default:
+     * it does nothing below that line, and the trim is the one Android itself sends a running
+     * app. Read after each garbage collection, so it applies without a restart.
+     */
+    public static final BooleanSetting FREE_MEMORY_EARLY = new BooleanSetting("free_memory_early", TRUE);
 
     /**
      * Made once per install so a hashed account id in a diagnostic report cannot be checked
