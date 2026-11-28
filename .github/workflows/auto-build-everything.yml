@@ -198,20 +198,22 @@ jobs:
           test -n "$FINAL_ALIAS"
           echo "SIGNING_ALIAS=$FINAL_ALIAS" >> "$GITHUB_ENV"
 
-      - name: Download base APK from PAB
+      - name: Download base APK from PAB (Exact Match)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           mkdir -p build
+          EXACT_FILE="com.zhiliaoapp.musically_${{ matrix.version }}-2024709030_minAPI23.arm64-v8a.armeabi-v7a.nodpi._apkmirror.com.apk"
           gh release download stock-tiktok-apk --repo Wake-Old-Hyphen/PAB \
-            --pattern "com.zhiliaoapp.musically_${{ matrix.version }}-*arm64-v8a.armeabi-v7a*.apk" --dir build/
-          mv build/com.zhiliaoapp.musically_${{ matrix.version }}-*.apk build/base.apk
+            --pattern "$EXACT_FILE" --dir build/
+          mv "build/$EXACT_FILE" build/base.apk
           FILE_SIZE=$(stat -c%s build/base.apk)
           if [ "$FILE_SIZE" -lt 100000000 ]; then
             echo "Base APK too small ($FILE_SIZE bytes) - download failed."
             exit 1
           fi
+          echo "Downloaded: $EXACT_FILE ($FILE_SIZE bytes)"
 
       - name: Download Hushfeed bundle
         run: |
